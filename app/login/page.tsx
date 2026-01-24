@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Phone,
@@ -25,6 +25,13 @@ export default function SignIn({ onClose }: SignInProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push('/');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +89,7 @@ export default function SignIn({ onClose }: SignInProps) {
       dir="rtl"
       className="fixed inset-0 bg-slate-950 text-white z-50 flex flex-col"
     >
-      <Header showSignUp={false} />
+      <Header onSignUp={() => {}} />
       
       <div className="absolute top-4 right-4 z-10">
         <button

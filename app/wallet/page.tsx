@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardFooter } from '../src/components/ui/card'
-import { ArrowDownCircle, ArrowUpCircle, Wallet, CreditCard, FileText, TrendingUp, Receipt, Coins, X, Plus, Trash2 } from 'lucide-react'
+import { ArrowDownCircle, ArrowUpCircle, Wallet, CreditCard, FileText, TrendingUp, Receipt, Coins, X, Plus, Trash2, ArrowRight } from 'lucide-react'
+import { useRouter } from "next/navigation";
 import {
     Table,
     TableBody,
@@ -167,6 +168,8 @@ const WalletPage = () => {
         }
     ]
 
+    const router = useRouter();
+
     return (
         <div className='w-full min-h-screen bg-white text-black' dir="rtl">
             <div className='flex'>
@@ -174,9 +177,18 @@ const WalletPage = () => {
                 <div className='fixed top-0 right-0 h-screen w-80 lg:w-96 p-4 z-10'>
                     <Card className='bg-white p-6 h-full'>
                         <CardHeader>
-                            <CardTitle className='text-xl font-bold text-black'>القائمة الرئيسية</CardTitle>
+                            <div className='space-y-4'>
+                                <button 
+                                  onClick={() => router.push('/')}
+                                  className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-gray-50 px-3 py-2 rounded-lg w-full"
+                                >
+                                  <ArrowRight className="w-5 h-5 transform rotate-180" />
+                                  <span className="font-medium">العودة للرئيسية</span>
+                                </button>
+                                <CardTitle className='text-xl font-bold text-black'>القائمة الرئيسية</CardTitle>
+                            </div>
                         </CardHeader>
-                        <div className='grid grid-rows-4 gap-4 h-[calc(100%-80px)] '>
+                        <div className='grid grid-rows-4 gap-4 h-[calc(100%-140px)] '>
                             {leftSectionItems.map((item, index) => (
                                 <button
                                     key={index}

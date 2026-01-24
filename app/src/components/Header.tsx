@@ -1,35 +1,68 @@
+
 "use client";
+import React, { useEffect, useState } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { Globe2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-interface HeaderProps {
-  onSignUp?: () => void;
-  showSignUp?: boolean;
-}
-
-export default function Header({ onSignUp, showSignUp = true }: HeaderProps) {
+export default function Header({ onSignUp }: { onSignUp: () => void }) {
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
-  return (
-    <nav className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-lg">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
-        <button onClick={() => router.push("/")} className="text-lg font-extrabold text-white">
-            عقارات السعودية
-          </button>
 
-        <div className="flex items-center gap-3">
-          <button className="bg-gray-700 text-white px-4 py-2 rounded-full hover:bg-gray-600" onClick={() => router.push("/customerservice")}>
-            تواصل معنا
-          </button>
-          <button className="flex items-center gap-2 rounded-4xl bg-gray-700 text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white px-4 py-2">
-            <span>EN/AR</span>
-            <Globe2 className="w-4 h-4 text-blue-500" />
-          </button>
-          <button className="bg-gray-700 text-white px-4 py-2 rounded-full hover:bg-gray-600" onClick={() => router.push("/details")}>
-            الصفحة الرئيسية
-          </button>
-        </div>
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+        try {
+            setUser(JSON.parse(storedUser));
+        } catch (e) {
+            console.error("Invalid user data");
+        }
+    }
+  }, []);
+
+  const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      setUser(null);
+      router.push('/');
+      window.location.reload(); 
+  };
+
+  return (
+    <header className="w-full h-16 bg-slate-900 border-b border-white/10 flex items-center justify-between px-6 z-50">
+      <div className="text-white font-bold text-lg">
+        <Link href="/">عقاراتي</Link>
       </div>
-    </nav>
+
+       <div className="flex gap-4 items-center">
+            {user && (
+                <div className="text-white text-sm bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                     مرحباً، {user.firstName || user.email}
+                </div>
+            )}
+             
+            {user?.role === 'ADMIN' && (
+                <Link href="/admin/dashboard" className="text-emerald-400 hover:text-emerald-300 font-medium text-sm">
+                    لوحة التحكم
+                </Link>
+            )}
+
+            {user ? (
+                 <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-all"
+                >
+                  تسجيل خروج
+                </button>
+            ) : (
+                <button
+                  onClick={onSignUp}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all"
+                >
+                  تسجيل دخول
+                </button>
+            )}
+      </div>
+    </header>
   );
 }

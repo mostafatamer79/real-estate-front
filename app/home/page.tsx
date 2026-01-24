@@ -1,6 +1,7 @@
 "use client";
 
-import Map from "../src/components/Map";
+import dynamic from 'next/dynamic';
+const Map = dynamic(() => import("../src/components/Map"), { ssr: false });
 
 export default function DetailsPage() {
   const propertyLocation: [number, number] = [24.7136, 46.6753]; // Riyadh, Saudi Arabia

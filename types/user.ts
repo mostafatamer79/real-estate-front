@@ -1,17 +1,18 @@
-// types/user.ts
 export enum Role {
-    ADMIN = 'admin',
-    USER = 'user',
-    PROVIDER = 'provider',
-    AGENT = 'agent',
-  }
-  
-  export enum VerifyStatus {
-    PENDING = 'pending',
-    VERIFIED = 'verified',
-    REJECTED = 'rejected',
-  }
-  
+  USER = 'user',
+  ADMIN = 'admin',
+  AGENT = 'agent',
+  LAWYER = 'lawyer',
+  NOTARY = 'notary',
+  MODERATOR = 'moderator'
+}
+
+export enum VerifyStatus {
+  PENDING = 'pending',
+  VERIFIED = 'verified',
+  REJECTED = 'rejected',
+}
+
   export interface User {
     id: string;
     firstName: string | null;

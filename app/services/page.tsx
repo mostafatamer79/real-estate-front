@@ -41,7 +41,7 @@ export default function Services() {
 
   return (
     <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col" dir="rtl">
-      <Header />
+      <Header onSignUp={() => {}} />
 
       {/* Navigation Arrow */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 mt-6">

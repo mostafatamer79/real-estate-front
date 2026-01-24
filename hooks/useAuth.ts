@@ -1,24 +1,5 @@
-// hooks/useAuth.ts
 import { useState, useEffect } from 'react';
-import { Role } from '@/types/user';
-
-interface User {
-  id: string;
-  firstName: string | null;
-  lastName: string | null;
-  phone: string | null;
-  email: string | null;
-  role: Role;
-  isVerified: boolean;
-  isActive: boolean;
-  agentLicenseNumber?: string;
-  agentVerificationStatus?: string;
-  address?: string;
-  city?: string;
-  country?: string;
-  profileImage?: string;
-  createAt: string;
-}
+import { User, Role } from '@/types/user';
 
 interface AuthData {
   user: User | null;
@@ -43,21 +24,20 @@ export function useAuth() {
     const refreshToken = localStorage.getItem('refreshToken');
 
     const parsedUser = user ? JSON.parse(user) : null;
-    
+
     // Check if user needs to complete profile
     let needsProfileCompletion = false;
     if (parsedUser) {
-      const isProfileComplete = 
-        parsedUser.firstName && 
-        parsedUser.lastName && 
+      const isProfileComplete =
+        parsedUser.firstName &&
+        parsedUser.lastName &&
         parsedUser.role !== Role.USER;
-      
-      const isAgentWithoutLicense = 
-        parsedUser.role === Role.AGENT && 
+
+      const isAgentWithoutLicense =
+        parsedUser.role === Role.AGENT &&
         !parsedUser.agentLicenseNumber;
-      
-      needsProfileCompletion = parsedUser.isVerified;
-      console.log(needsProfileCompletion)
+
+      const needsProfileCompletion = parsedUser.isVerified;
     }
 
     setAuthData({
@@ -74,23 +54,23 @@ export function useAuth() {
     if (currentUser) {
       const newUser = { ...currentUser, ...updatedUser };
       localStorage.setItem('user', JSON.stringify(newUser));
-      
+
       // Re-check profile completion
-      const isProfileComplete = 
-        newUser.firstName && 
-        newUser.lastName && 
+      const isProfileComplete =
+        newUser.firstName &&
+        newUser.lastName &&
         newUser.role !== Role.USER;
-      
-      const isAgentWithoutLicense = 
-        newUser.role === Role.AGENT && 
+
+      const isAgentWithoutLicense =
+        newUser.role === Role.AGENT &&
         !newUser.agentLicenseNumber;
-      
+
       const needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
-      
-      setAuthData(prev => ({ 
-        ...prev, 
+
+      setAuthData(prev => ({
+        ...prev,
         user: newUser,
-        needsProfileCompletion 
+        needsProfileCompletion
       }));
     }
   };

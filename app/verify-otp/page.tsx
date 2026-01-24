@@ -34,7 +34,7 @@ export default function VerifyOtpPage() {
       });
     }, 1000);
 
-    // Auto-focus first input on mount
+    // Auto-focus first input on mount (leftmost box visually)
     const firstInput = document.getElementById(`otp-0`);
     firstInput?.focus();
 
@@ -48,14 +48,14 @@ export default function VerifyOtpPage() {
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Auto-focus next input if value entered
+      // Auto-focus next input if value entered (move right visually)
       if (value && index < 5) {
         const nextIndex = index + 1;
         setInputIndex(nextIndex);
         const nextInput = document.getElementById(`otp-${nextIndex}`);
         nextInput?.focus();
       }
-      
+
       // Auto-focus previous input if value deleted and not first input
       if (!value && index > 0 && inputIndex === index) {
         const prevIndex = index - 1;
@@ -73,20 +73,20 @@ export default function VerifyOtpPage() {
       prevInput?.focus();
       setInputIndex(index - 1);
     }
-    
+
     // Handle arrow keys for navigation
     if (e.key === 'ArrowRight' && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
       setInputIndex(index + 1);
     }
-    
+
     if (e.key === 'ArrowLeft' && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
       prevInput?.focus();
       setInputIndex(index - 1);
     }
-    
+
     // Handle paste
     if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
@@ -99,7 +99,7 @@ export default function VerifyOtpPage() {
           }
         });
         setOtp(newOtp);
-        
+
         // Focus the next empty input after paste
         const nextEmptyIndex = newOtp.findIndex((digit, idx) => idx >= pastedDigits.length && idx < 6);
         const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
@@ -113,7 +113,7 @@ export default function VerifyOtpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const otpCode = otp.join('');
-    
+
     if (otpCode.length !== 6) {
       setError("يرجى إدخال رمز التحقق المكون من 6 أرقام");
       return;
@@ -142,18 +142,21 @@ export default function VerifyOtpPage() {
       }
 
       console.log('OTP verified successfully:', data);
-      
+
       // Store user data in localStorage
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('token', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
-      
+
       // Clear pending verification
       localStorage.removeItem('pendingVerification');
-      
-      // Redirect to dashboard or home page
+      if(data.user.isVerified === false) {
+        router.push('/complete-profile');
+        return;
+      }
+      else{
       router.push('/details');
-      
+      }
     } catch (err: any) {
       console.error('OTP verification error:', err);
       setError(err.message || 'رمز التحقق غير صحيح أو انتهت صلاحيته');
@@ -165,16 +168,16 @@ export default function VerifyOtpPage() {
   const handleResendOtp = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: email.includes('@') ? email : undefined,
-          phone: !email.includes('@') ? email : undefined 
+          phone: !email.includes('@') ? email : undefined
         }),
       });
 
@@ -188,11 +191,11 @@ export default function VerifyOtpPage() {
       setError(null);
       setOtp(["", "", "", "", "", ""]);
       setInputIndex(0);
-      
+
       // Focus first input again
       const firstInput = document.getElementById(`otp-0`);
       firstInput?.focus();
-      
+
     } catch (err: any) {
       setError(err.message || "فشل إعادة إرسال الرمز");
     } finally {
@@ -225,7 +228,7 @@ export default function VerifyOtpPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className="flex justify-center gap-2 sm:gap-3">
+            <div className="flex justify-center gap-2 sm:gap-3 flex-row-reverse">
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -239,9 +242,9 @@ export default function VerifyOtpPage() {
                   onFocus={() => setInputIndex(index)}
                   disabled={isLoading}
                   className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
-                  dir="ltr" // Force LTR for OTP inputs
+                  dir="ltr" // Keep LTR for numbers
                   autoComplete="one-time-code"
-                  style={{ 
+                  style={{
                     textAlign: 'center',
                     direction: 'ltr',
                     unicodeBidi: 'bidi-override'
@@ -252,7 +255,7 @@ export default function VerifyOtpPage() {
 
             <div className="text-center">
               <p className="text-white/60 text-sm mb-2">
-                أدخل الرمز من اليسار إلى اليمين
+                أدخل الرمز من اليمين إلى اليسار
               </p>
             </div>
 

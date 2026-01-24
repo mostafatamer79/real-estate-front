@@ -16,12 +16,17 @@ const serviceCategoryMap = {
   other: 'other'
 } as const;
 
-export default function ServiceForm() {
+import { Suspense } from 'react';
+
+function ServiceFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, token, isAuthenticated } = useAuth();
   const serviceType = (searchParams.get("type") || "postPurchase") as ServiceType;
 
+  // ... (rest of the component logic)
+
+  // Move all the state and logic here
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -80,7 +85,6 @@ export default function ServiceForm() {
     other: "خدمات أخرى",
   };
 
-  // Pre-fill user data if logged in
   useEffect(() => {
     if (user && isAuthenticated) {
       setFormData(prev => ({
@@ -99,7 +103,6 @@ export default function ServiceForm() {
       ...prev,
       [field]: value,
     }));
-    // Clear errors when user starts typing
     if (error) setError("");
   };
 
@@ -135,7 +138,6 @@ export default function ServiceForm() {
         'Content-Type': 'application/json',
       };
 
-      // Add authorization header if user is logged in
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -154,7 +156,6 @@ export default function ServiceForm() {
 
       setSuccess(`تم إرسال طلبك بنجاح (${serviceTitles[serviceType]})، سيتم التواصل معك قريباً`);
       
-      // Reset form
       setFormData({
         name: "",
         phone: "",
@@ -166,7 +167,6 @@ export default function ServiceForm() {
         termsAccepted: false,
       });
 
-      // Redirect to service requests page if logged in
       if (isAuthenticated) {
         setTimeout(() => {
           router.push('/services');
@@ -192,9 +192,8 @@ export default function ServiceForm() {
 
   return (
     <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col" dir="rtl">
-      <Header />
+      <Header onSignUp={() => {}} />
 
-      {/* Navigation Arrows */}
       <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 mt-6">
         <div className="flex gap-4">
           <button
@@ -254,6 +253,7 @@ export default function ServiceForm() {
                 onChange={(e) => handleInputChange("phone", e.target.value)}
                 placeholder="أدخل رقم الجوال"
                 className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+                dir="rtl"
               />
             </div>
           </div>
@@ -372,5 +372,13 @@ export default function ServiceForm() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function ServiceForm() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader2 className="w-8 h-8 text-white animate-spin" /></div>}>
+      <ServiceFormContent />
+    </Suspense>
   );
 }

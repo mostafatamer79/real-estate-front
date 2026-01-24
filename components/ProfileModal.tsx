@@ -1,63 +1,93 @@
 // app/components/ProfileModal.tsx
 "use client";
 
-import { useState } from 'react';
-import { X, Save, User, Shield, MapPin } from 'lucide-react';
-import { Role } from '@/types/user';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { X, Save, Loader2 } from 'lucide-react';
+import { Role, User } from '@/types/user';
+import api from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
+import { ApiResponse } from '@/types/api';
 
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
-  token: string;
-  onUpdate: (updatedUser: any) => void;
+  user: User | null;
+  onUpdate: (updatedUser: User) => void;
 }
 
-export default function ProfileModal({ isOpen, onClose, user, token, onUpdate }: ProfileModalProps) {
-  const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    role: user?.role || Role.USER,
-    agentLicenseNumber: user?.agentLicenseNumber || '',
-    address: user?.address || '',
-    city: user?.city || 'الرياض',
-    country: user?.country || 'السعودية',
+const profileSchema = z.object({
+  firstName: z.string().min(1, 'الاسم الأول مطلوب'),
+  lastName: z.string().min(1, 'الاسم الأخير مطلوب'),
+  role: z.nativeEnum(Role),
+  agentLicenseNumber: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().min(1, 'المدينة مطلوبة'),
+  country: z.string().min(1, 'الدولة مطلوبة'),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
+
+export default function ProfileModal({ isOpen, onClose, user, onUpdate }: ProfileModalProps) {
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      role: Role.USER,
+      agentLicenseNumber: '',
+      address: '',
+      city: 'الرياض',
+      country: 'السعودية',
+    },
   });
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
+  const selectedRole = watch('role');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setError('');
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
+  useEffect(() => {
+    if (isOpen && user) {
+      reset({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role || Role.USER,
+        agentLicenseNumber: user.agentLicenseNumber || '',
+        address: user.address || '',
+        city: user.city || 'الرياض',
+        country: user.country || 'السعودية',
       });
+    }
+  }, [isOpen, user, reset]);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'فشل تحديث الملف الشخصي');
-      }
-
-      onUpdate(data);
-      onClose();
+  const onSubmit = async (data: ProfileFormValues) => {
+    setIsSaving(true);
+    try {
+      const response = await api.put<ApiResponse<User>>('/user/profile', data);
       
-    } catch (err: any) {
-      setError(err.message || 'فشل تحديث الملف الشخصي');
+      onUpdate(response.data.data);
+      onClose();
+      toast({
+        title: "تم الحفظ بنجاح",
+        description: "تم تحديث بيانات الملف الشخصي",
+        variant: "default",
+      });
+    } catch (error: any) {
+        console.log(error);
+      toast({
+        title: "خطأ",
+        description: error.response?.data?.message || 'فشل تحديث الملف الشخصي',
+        variant: "destructive",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -70,7 +100,7 @@ export default function ProfileModal({ isOpen, onClose, user, token, onUpdate }:
       <div className="bg-slate-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">تعديل الملف الشخصي</h2>
+            <h2 className="text-xl font-bold text-white">تعديل الملف الشخصي</h2>
             <button
               onClick={onClose}
               className="text-white/70 hover:text-white"
@@ -79,85 +109,65 @@ export default function ProfileModal({ isOpen, onClose, user, token, onUpdate }:
             </button>
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-              <p className="text-red-300 text-sm">{error}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1">الاسم الأول</label>
+                <label className="block text-sm font-medium mb-1 text-slate-200">الاسم الأول</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                  required
+                  {...register('firstName')}
+                  className={`w-full px-3 py-2 bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-white ${errors.firstName ? 'border-red-500' : 'border-slate-600 focus:border-blue-500'}`}
                 />
+                {errors.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">الاسم الأخير</label>
+                <label className="block text-sm font-medium mb-1 text-slate-200">الاسم الأخير</label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                  required
+                  {...register('lastName')}
+                  className={`w-full px-3 py-2 bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-white ${errors.lastName ? 'border-red-500' : 'border-slate-600 focus:border-blue-500'}`}
                 />
+                {errors.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">نوع الحساب</label>
+              <label className="block text-sm font-medium mb-1 text-slate-200">نوع الحساب</label>
               <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                {...register('role')}
+                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
               >
                 <option value={Role.USER}>مستخدم</option>
-             
                 <option value={Role.AGENT}>مقدم الخدمة</option>
               </select>
             </div>
 
-            {formData.role === Role.AGENT && (
+            {selectedRole === Role.AGENT && (
               <div>
-                <label className="block text-sm font-medium mb-1">رقم الرخصة المهنية</label>
+                <label className="block text-sm font-medium mb-1 text-slate-200">رقم الرخصة المهنية</label>
                 <input
                   type="text"
-                  name="agentLicenseNumber"
-                  value={formData.agentLicenseNumber}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                  required={formData.role === Role.AGENT}
+                  {...register('agentLicenseNumber')}
+                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-1">العنوان</label>
+              <label className="block text-sm font-medium mb-1 text-slate-200">العنوان</label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                {...register('address')}
+                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1">المدينة</label>
+                <label className="block text-sm font-medium mb-1 text-slate-200">المدينة</label>
                 <select
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                  {...register('city')}
+                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
                 >
                   <option value="الرياض">الرياض</option>
                   <option value="جدة">جدة</option>
@@ -165,12 +175,10 @@ export default function ProfileModal({ isOpen, onClose, user, token, onUpdate }:
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">الدولة</label>
+                <label className="block text-sm font-medium mb-1 text-slate-200">الدولة</label>
                 <select
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                  {...register('country')}
+                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
                 >
                   <option value="السعودية">السعودية</option>
                   <option value="الإمارات">الإمارات</option>
@@ -183,18 +191,18 @@ export default function ProfileModal({ isOpen, onClose, user, token, onUpdate }:
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium text-sm transition-colors"
+                className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium text-sm text-white transition-colors"
               >
                 إلغاء
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isSaving ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <Loader2 className="animate-spin h-4 w-4" />
                     جاري الحفظ...
                   </>
                 ) : (
