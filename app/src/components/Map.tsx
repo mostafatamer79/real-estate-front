@@ -2,13 +2,14 @@
 
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { DivIcon } from "leaflet";
+// remove DivIcon import
 import { useEffect, useState, useMemo, useCallback, forwardRef } from "react";
 
 // ✅ Create a simple colored dot icon with emoji fallback
-const createIcon = (color: string = "#3b82f6", emoji?: string) => {
+const createIcon = (L: any, color: string = "#3b82f6", emoji?: string) => {
+  if (!L) return null;
   if (emoji) {
-    return new DivIcon({
+    return new L.DivIcon({
       html: `<div style="font-size: 20px; text-align: center; width: 30px; height: 30px;">${emoji}</div>`,
       iconSize: [30, 30],
       iconAnchor: [15, 30],
@@ -17,7 +18,7 @@ const createIcon = (color: string = "#3b82f6", emoji?: string) => {
     });
   }
 
-  return new DivIcon({
+  return new L.DivIcon({
     html: `
       <div style="
         background-color: ${color};
@@ -229,38 +230,38 @@ const getArabicName = (type: string): string => {
 };
 
 // ✅ Get icon for a place type
-const getPlaceIcon = (type: string) => {
-  if (!type) return createIcon("#6b7280");
+const getPlaceIcon = (L: any, type: string) => {
+  if (!L || !type) return createIcon(L, "#6b7280");
 
   const lowerType = type.toLowerCase();
 
   if (ICON_MAP[lowerType]) {
     const config = ICON_MAP[lowerType];
-    return createIcon(config.color, config.emoji);
+    return createIcon(L, config.color, config.emoji);
   }
 
   // Check for partial matches
   for (const [key, config] of Object.entries(ICON_MAP)) {
     if (key.endsWith('_') && lowerType.startsWith(key.slice(0, -1))) {
-      return createIcon(config.color);
+      return createIcon(L, config.color);
     }
   }
 
   // Smart matching for common patterns
-  if (lowerType.includes('animal')) return createIcon("#16a34a", "🐾");
-  if (lowerType.includes('bicycle')) return createIcon("#0891b2", "🚲");
-  if (lowerType.includes('car')) return createIcon("#475569", "🚗");
-  if (lowerType.includes('parking')) return createIcon("#475569", "🅿️");
-  if (lowerType.includes('school')) return createIcon("#10b981", "🏫");
-  if (lowerType.includes('shop') || lowerType.includes('market')) return createIcon("#f97316", "🛒");
-  if (lowerType.includes('office') || lowerType.includes('company')) return createIcon("#6366f1", "🏢");
-  if (lowerType.includes('water')) return createIcon("#0284c7", "💧");
-  if (lowerType.includes('charging')) return createIcon("#65a30d", "🔋");
-  if (lowerType.includes('recycling')) return createIcon("#15803d", "♻️");
-  if (lowerType.includes('social') || lowerType.includes('community')) return createIcon("#14b8a6", "👥");
-  if (lowerType.includes('public')) return createIcon("#6b7280", "🏛️");
-  if (lowerType.includes('station')) return createIcon("#475569", "🚉");
-  if (lowerType.includes('centre') || lowerType.includes('center')) return createIcon("#8b5cf6", "🏛️");
+  if (lowerType.includes('animal')) return createIcon(L, "#16a34a", "🐾");
+  if (lowerType.includes('bicycle')) return createIcon(L, "#0891b2", "🚲");
+  if (lowerType.includes('car')) return createIcon(L, "#475569", "🚗");
+  if (lowerType.includes('parking')) return createIcon(L, "#475569", "🅿️");
+  if (lowerType.includes('school')) return createIcon(L, "#10b981", "🏫");
+  if (lowerType.includes('shop') || lowerType.includes('market')) return createIcon(L, "#f97316", "🛒");
+  if (lowerType.includes('office') || lowerType.includes('company')) return createIcon(L, "#6366f1", "🏢");
+  if (lowerType.includes('water')) return createIcon(L, "#0284c7", "💧");
+  if (lowerType.includes('charging')) return createIcon(L, "#65a30d", "🔋");
+  if (lowerType.includes('recycling')) return createIcon(L, "#15803d", "♻️");
+  if (lowerType.includes('social') || lowerType.includes('community')) return createIcon(L, "#14b8a6", "👥");
+  if (lowerType.includes('public')) return createIcon(L, "#6b7280", "🏛️");
+  if (lowerType.includes('station')) return createIcon(L, "#475569", "🚉");
+  if (lowerType.includes('centre') || lowerType.includes('center')) return createIcon(L, "#8b5cf6", "🏛️");
 
   // Default icon based on first letter (for color variety)
   const colors = [
@@ -269,15 +270,15 @@ const getPlaceIcon = (type: string) => {
   ];
 
   const colorIndex = lowerType.charCodeAt(0) % colors.length;
-  return createIcon(colors[colorIndex]);
+  return createIcon(L, colors[colorIndex]);
 };
 
 // ✅ Default icons
-const DEFAULT_ICONS = {
-  property: createIcon("#ef4444", "🏠"),
-  currentLocation: createIcon("#10b981", "📍"),
-  default: createIcon("#3b82f6"),
-};
+const DEFAULT_ICONS = (L: any) => ({
+  property: createIcon(L, "#ef4444", "🏠"),
+  currentLocation: createIcon(L, "#10b981", "📍"),
+  default: createIcon(L, "#3b82f6"),
+});
 
 // ✅ Map Updater Component
 function MapUpdater({ center, zoom }: { center: [number, number]; zoom?: number }) {
@@ -348,6 +349,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<[number, number] | null>(null);
+  const [L, setL] = useState<any>(null); // Leaflet instance
 
   // ✅ Memoized values
   const mapCenter = useMemo(() => {
@@ -363,16 +365,30 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
     return mapCenter;
   }, [markerPosition, currentLocation, mapCenter, selectedPosition]);
 
-  const markerIcon = useMemo(() => DEFAULT_ICONS.property, []);
+  // ✅ Initialize Leaflet
+  useEffect(() => {
+    (async () => {
+      const leaflet = await import('leaflet');
+      setL(leaflet);
+      setMounted(true);
+    })();
+    return () => setMounted(false);
+  }, []);
+
+  const markerIcon = useMemo(() => {
+    if (!L) return null;
+    return DEFAULT_ICONS(L).property;
+  }, [L]);
 
   // ✅ Memoize place markers with icons and Arabic names
   const placeMarkers = useMemo(() => {
+    if (!L) return [];
     return places.map(place => ({
       ...place,
-      icon: getPlaceIcon(place.type),
+      icon: getPlaceIcon(L, place.type),
       arabicType: getArabicName(place.type),
     }));
-  }, [places]);
+  }, [places, L]);
 
   // ✅ Effects
   useEffect(() => {
