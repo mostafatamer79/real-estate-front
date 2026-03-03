@@ -1,0 +1,177 @@
+"use client";
+
+import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
+import { 
+  Shield, BookOpen, FileCheck, Phone, Mail, 
+  Instagram, Twitter, Facebook, ArrowRight, 
+  MapPin, Send, MessageCircle, 
+  X
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function Footer() {
+  const { t, language } = useLanguage();
+  const currentYear = new Date().getFullYear();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <footer className="relative bg-slate-950 text-white overflow-hidden mt-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Abstract Background Shapes */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[100px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-slate-900/10 blur-[100px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative z-10">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16"
+        >
+          {/* Brand Section */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-3xl font-black tracking-tight text-white">
+                {t("project.name")}
+                <span className="text-indigo-500">.</span>
+              </h2>
+              <p className="text-slate-400 text-sm leading-relaxed max-w-[420px]">
+                {t('footer.brand_desc')}
+              </p>
+            </div>
+            <div className="flex gap-4">
+              {[
+                { icon: X, href: "#" },
+                { icon: Instagram, href: "#" },
+                { icon: Facebook, href: "#" },
+              ].map((social, idx) => (
+                <Link 
+                  key={idx} 
+                  href={social.href}
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110 group"
+                >
+                  <social.icon className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Quick Links */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+              {t('footer.quick_links')}
+            </h3>
+            <ul className="space-y-4">
+              {[
+                { label: t('footer.home'), href: "/" },
+                { label: t('footer.offers'), href: "/offers" },
+                { label: t('footer.management'), href: "/buildingmanagement" },
+                { label: t('footer.services'), href: "/services" },
+              ].map((link, idx) => (
+                <li key={idx}>
+                  <Link href={link.href} className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 scale-0 group-hover:scale-100 transition-transform" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Legal & Support */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+               {t('footer.support')}
+            </h3>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/customerservice" className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
+                  <MessageCircle className="w-4 h-4 text-gray-500 " />
+                  {t("header.customerService")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/info?tab=terms" className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
+                  <Shield className="w-4 h-4 text-gray-500 " />
+                  {t("footer.terms")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/info?tab=usage" className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
+                  <BookOpen className="w-4 h-4 text-gray-500 " />
+                  {t("footer.usage")}
+                </Link>
+              </li>
+            </ul>
+          </motion.div>
+
+          {/* Contact Layout */}
+          <motion.div variants={itemVariants} className="space-y-6">
+             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+               {t('footer.contact_us')}
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3 text-slate-400 text-sm">
+                <Mail className="w-5 h-5 text-indigo-500 shrink-0" />
+                <a href="mailto:info@deeraqarak.com" className="hover:text-white transition-colors">info@deeraqarak.com</a>
+              </li>
+              <li className="flex items-center gap-3 text-slate-400 text-sm">
+                <Phone className="w-5 h-5 text-indigo-500 shrink-0" />
+                <a href="tel:+966555555555" className="hover:text-white transition-colors" dir="ltr">+966 5 5555 5555</a>
+              </li>
+            </ul>
+            
+            {/* Mini Newsletter */}
+            <div className="pt-2">
+              <div className="relative group">
+                <input 
+                  type="email" 
+                  placeholder={t('footer.newsletter')} 
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 focus:bg-white/10 transition-all font-medium"
+                />
+                <button className="absolute left-2 top-1.5 p-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors">
+                  <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Bottom Bar */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p className="text-slate-500 text-xs font-medium">
+            {t("footer.rights").replace("{year}", currentYear.toString())}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs text-slate-400 font-medium">{t('footer.systems_ok')}</span>
+          </div>
+        </motion.div>
+      </div>
+    </footer>
+  );
+}
+

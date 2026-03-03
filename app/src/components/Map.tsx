@@ -3,7 +3,8 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 // remove DivIcon import
-import { useEffect, useState, useMemo, useCallback, forwardRef } from "react";
+import { useEffect, useState, useMemo, useCallback, forwardRef, useRef } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ✅ Create a simple colored dot icon with emoji fallback
 const createIcon = (L: any, color: string = "#3b82f6", emoji?: string) => {
@@ -292,6 +293,14 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom?: number 
         map.setView(center, map.getZoom(), { animate: true });
       }
     }
+    // Fix for Leaflet rendering inside modals
+    const timer1 = setTimeout(() => map.invalidateSize(), 150);
+    const timer2 = setTimeout(() => map.invalidateSize(), 400);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, [center, zoom, map]);
 
   return null;
@@ -343,6 +352,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
   showControls = false,
   interactive = true,
 }: MapProps, ref) {
+  const { t } = useLanguage();
   // ✅ State
   const [mounted, setMounted] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
@@ -391,10 +401,14 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
   }, [places, L]);
 
   // ✅ Effects
+
+
+
+  // ✅ Keep latest callback in ref to avoid effect dependency
+  const onLocationSelectRef = useRef(onLocationSelect);
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
 
   useEffect(() => {
     if (useCurrentLocation && mounted && navigator.geolocation) {
@@ -407,18 +421,22 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
           setIsLoadingLocation(false);
           setLocationError(null);
 
-          if (onLocationSelect) {
-            onLocationSelect(latitude, longitude);
+          if (onLocationSelectRef.current) {
+            onLocationSelectRef.current(latitude, longitude);
           }
         },
         (error) => {
+          console.warn("Geolocation error:", error.message);
           setIsLoadingLocation(false);
-          setLocationError(error.message);
+          // Only show error if it's not a permission denial (code 1)
+          if (error.code !== 1) {
+             setLocationError(error.message);
+          }
         },
         { timeout: 10000 }
       );
     }
-  }, [useCurrentLocation, mounted, onLocationSelect]);
+  }, [useCurrentLocation, mounted]); // dependency onLocationSelect removed
 
   // ✅ Reset location
   const handleResetLocation = useCallback(() => {
@@ -434,38 +452,37 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
   if (!mounted) {
     return (
       <div
-        className={`w-full flex items-center justify-center bg-gray-100 ${className}`}
+        className={`w-full flex items-center justify-center bg-slate-100 ${className}`}
         style={{ height }}
       >
-        <div className="text-gray-600">تحميل الخريطة...</div>
+        <div className="text-gray-600">{t('map.loading')}</div>
       </div>
     );
   }
 
-  if (isLoadingLocation) {
-    return (
-      <div
-        className={`w-full flex items-center justify-center bg-gray-100 ${className}`}
-        style={{ height }}
-      >
-        <div className="text-gray-600">جاري تحديد موقعك...</div>
-      </div>
-    );
-  }
+  // Removed blocking isLoadingLocation check to allow map to render
 
   return (
     <div className="relative" ref={ref}>
       {/* ✅ Controls */}
       {showControls && onLocationSelect && (
-        <div className="absolute top-2 left-2 z-[1000]">
+        <div className="absolute top-2 left-2 z-[1000] flex flex-col gap-2">
           <button
             onClick={handleResetLocation}
-            className="bg-white hover:bg-gray-50 text-gray-800 px-3 py-2 rounded shadow text-sm flex items-center gap-1"
+            className="bg-white hover:bg-slate-50 text-gray-800 px-3 py-2 rounded shadow text-sm flex items-center gap-1"
             title="إعادة تعيين الموقع"
           >
             <span>🔄</span>
-            إعادة تعيين
+            {t('map.reset')}
           </button>
+        </div>
+      )}
+
+      {/* ✅ Locating Overlay */}
+      {isLoadingLocation && (
+        <div className="absolute top-2 right-2 z-[1000] bg-white/90 px-3 py-2 rounded shadow text-sm font-medium text-blue-600 animate-pulse flex items-center gap-2">
+            <span className="animate-spin">⏳</span>
+            {t('map.locating')}
         </div>
       )}
 
@@ -495,21 +512,24 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
           />
 
           {/* ✅ Property Marker */}
-          <Marker position={markerPos} icon={markerIcon}>
-            <Popup>
-              <div className="text-center min-w-[150px]">
-                <h3 className="font-bold mb-1">
-                  {useCurrentLocation && currentLocation ? "📍 موقعك الحالي" : markerTitle}
-                </h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  {useCurrentLocation && currentLocation ? "تم تحديد موقعك بنجاح" : markerDescription}
-                </p>
-                <div className="bg-gray-50 p-1 rounded text-xs font-mono">
-                  {markerPos[0].toFixed(6)}, {markerPos[1].toFixed(6)}
+          {/* ✅ Property Marker */}
+          {markerIcon && (
+            <Marker position={markerPos} icon={markerIcon}>
+              <Popup>
+                <div className="text-center min-w-[150px]">
+                  <h3 className="font-bold mb-1">
+                    {useCurrentLocation && currentLocation ? `📍 ${t('map.current_location')}` : markerTitle}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {useCurrentLocation && currentLocation ? t('map.location_success') : markerDescription}
+                  </p>
+                  <div className="bg-slate-50 p-1 rounded text-xs font-mono">
+                    {markerPos[0].toFixed(6)}, {markerPos[1].toFixed(6)}
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
+              </Popup>
+            </Marker>
+          )}
 
           {/* ✅ Place Markers */}
           {placeMarkers.map(place => (
@@ -522,7 +542,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
                 <div className="min-w-[150px]">
                   <strong className="block mb-1">{place.name}</strong>
                   <div className="flex items-center gap-1 mb-2">
-                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-slate-100 px-2 py-0.5 rounded">
                       {place.arabicType}
                     </span>
                     <span className="text-xs text-gray-500">({place.type})</span>
@@ -539,7 +559,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
           {onLocationSelect && (
             <div className="leaflet-bottom leaflet-left">
               <div className="leaflet-control bg-white/90 backdrop-blur-sm px-3 py-2 m-2 rounded shadow text-sm">
-                انقر على الخريطة لتحديد موقع جديد
+                {t('map.scan_desc')}
               </div>
             </div>
           )}
@@ -552,7 +572,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
           <div className="flex items-center gap-2 text-red-700">
             <span>⚠️</span>
             <div className="text-sm">
-              <p className="font-medium">خطأ في تحديد الموقع</p>
+              <p className="font-medium">{t('map.error')}</p>
               <p>{locationError}</p>
             </div>
           </div>
@@ -562,7 +582,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
       {/* ✅ Stats */}
       {places.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          <div className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+          <div className="text-sm bg-slate-50 text-blue-700 px-3 py-1 rounded-full">
             {places.length} مكان
           </div>
           <div className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-full">

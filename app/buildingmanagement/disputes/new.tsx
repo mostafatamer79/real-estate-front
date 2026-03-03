@@ -80,6 +80,7 @@ interface FormData {
   hasPool: string;
   hasElevator: string;
   furnitureStatus: string;
+  dealType: string;
 }
 
 export default function BuildingManagement() {
@@ -117,6 +118,7 @@ export default function BuildingManagement() {
     hasPool: "",
     hasElevator: "",
     furnitureStatus: "",
+    dealType: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -287,13 +289,14 @@ export default function BuildingManagement() {
       hasPool: "",
       hasElevator: "",
       furnitureStatus: "",
+      dealType: "",
     });
   };
 
   const renderMainContent = () => {
     if (selectedSection !== "offers") {
       return (
-        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="p-6 bg-slate-50 rounded-lg border border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
             {sidebarItems.find((item) => item.id === selectedSection)?.label}
           </h2>
@@ -307,7 +310,7 @@ export default function BuildingManagement() {
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 bg-blue-100 rounded-lg">
+          <div className="p-2 bg-slate-100 rounded-lg">
             <Home className="w-6 h-6 text-blue-600" />
           </div>
           <div>
@@ -335,7 +338,7 @@ export default function BuildingManagement() {
               />
               <label
                 htmlFor="file-upload"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
                 رفع الملفات
@@ -584,7 +587,7 @@ export default function BuildingManagement() {
 
           {/* بيانات تفصيلية */}
           {showDetails && (
-            <div className="mb-8 p-6 bg-blue-50 rounded-lg">
+            <div className="mb-8 p-6 bg-slate-50 rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">بيانات تفصيلية</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* عدد الغرف */}
@@ -813,9 +816,9 @@ export default function BuildingManagement() {
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">المرفقات</h2>
 
-            {/* طلب اوراق العقار */}
+            {/* اضافة اوراقالعقار */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">طلب اوراق العقار</label>
+              <label className="block text-gray-700 mb-2">اضافة اوراقالعقار</label>
               <textarea
                 placeholder="اكتب طلباتك أو معلومات إضافية هنا..."
                 value={additionalNotes}
@@ -830,56 +833,15 @@ export default function BuildingManagement() {
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 />
               </div>
+              </div>
             </div>
-
-            {/* ايداع صورة من الشيك */}
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">ايداع صورة من الشيك</label>
-              {checkImage ? (
-                <div className="relative border rounded-lg p-4 max-w-xs">
-                  <button
-                    type="button"
-                    onClick={removeCheckImage}
-                    className="absolute top-2 left-2 p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                  <div className="mt-2 text-center">
-                    <FileText className="w-12 h-12 text-blue-500 mx-auto mb-2" />
-                    <p className="text-sm font-medium truncate">{checkImage.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {(checkImage.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center max-w-xs">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCheckImageUpload}
-                    className="hidden"
-                    id="check-upload"
-                    ref={checkImageInputRef}
-                  />
-                  <label htmlFor="check-upload" className="cursor-pointer block">
-                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">انقر لرفع صورة الشيك</p>
-                  </label>
-                </div>
-              )}
-              <p className="text-gray-500 text-sm mt-2">
-                استخدام الشيك كضمان يتعارض مع مبادئه الأساسية كأداة وفاء وليست ضمان ائتمان.
-              </p>
-            </div>
-          </div>
 
           {/* أزرار الإرسال */}
           <div className="flex gap-4">
             <button
               type="submit"
               disabled={isSubmitting || offersLoading}
-              className="px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {(isSubmitting || offersLoading) && (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -890,7 +852,7 @@ export default function BuildingManagement() {
               type="button"
               onClick={resetForm}
               disabled={isSubmitting || offersLoading}
-              className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-slate-200 text-gray-700 rounded-lg hover:bg-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               إلغاء
             </button>
@@ -915,8 +877,8 @@ export default function BuildingManagement() {
 
       <div className="w-full min-h-screen bg-white flex" dir="rtl">
         {/* Fixed Sidebar */}
-        <div className="fixed top-0 right-0 h-screen w-80 bg-gray-50 border-l border-gray-200 p-6 overflow-y-auto">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">إدارة العقارات</h1>
+        <div className="fixed top-0 right-0 h-screen w-80 bg-slate-50 border-l border-gray-200 p-6 overflow-y-auto">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">إدارة الاملاك</h1>
 
           <div className="space-y-3">
             {sidebarItems.map((item) => {
@@ -928,8 +890,8 @@ export default function BuildingManagement() {
                   onClick={() => setSelectedSection(item.id)}
                   className={`w-full p-4 rounded-lg text-right transition-colors ${
                     isSelected
-                      ? "bg-gray-700 text-white"
-                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                      ? "bg-slate-700 text-white"
+                      : "bg-white text-gray-700 border border-gray-200 hover:bg-slate-100"
                   }`}
                 >
                   <div className="flex items-center gap-3">

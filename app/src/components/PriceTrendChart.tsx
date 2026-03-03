@@ -1,75 +1,139 @@
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface PriceTrendChartProps {
   data?: number[];
+  labels?: string[];
+  color?: string;
 }
 
-export default function PriceTrendChart({ data = [1200, 1250, 1180, 1300, 1280, 1350, 1320, 1400, 1380, 1450] }: PriceTrendChartProps) {
+export default function PriceTrendChart({
+  data = [1200, 1250, 1180, 1300, 1280, 1350, 1320, 1400, 1380, 1450],
+  labels,
+  color = '#818cf8',
+}: PriceTrendChartProps) {
+  const { t } = useLanguage();
   const maxValue = Math.max(...data);
   const minValue = Math.min(...data);
+  const range = maxValue - minValue || 1;
+
+  const toY = (v: number) => 100 - ((v - minValue) / range) * 78;
+
+  const linePath = data
+    .map((v, i) => `${i === 0 ? 'M' : 'L'} ${(i / (data.length - 1)) * 100}% ${toY(v)}%`)
+    .join(' ');
+
+  const areaPath = `M 0% ${toY(data[0])}% ${data
+    .map((v, i) => `L ${(i / (data.length - 1)) * 100}% ${toY(v)}%`)
+    .join(' ')} L 100% 100% L 0% 100% Z`;
+
+  const latest = data[data.length - 1];
+  const previous = data[data.length - 2];
+  const pctChange = previous ? (((latest - previous) / previous) * 100).toFixed(1) : '0.0';
+  const isUp = latest >= (previous ?? latest);
 
   return (
-    <div className="bg-slate-900 rounded-xl p-4">
-      <h3 className="font-bold text-white mb-3">اتجاه الأسعار الشهري</h3>
-      <div className="bg-slate-800 rounded-lg p-3 h-64">
-        <div className="h-full relative">
-          {/* Grid lines - visible */}
-          <div className="absolute inset-0 flex flex-col justify-between">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="border-t border-slate-600/50"></div>
-            ))}
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full font-sans border border-slate-700/40">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            {t('chart.monthly_trend')}
+          </p>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-3xl font-black text-slate-100 tracking-tighter">
+              {latest?.toLocaleString()}
+            </span>
+            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+              isUp
+                ? 'text-emerald-300 bg-emerald-500/10 border border-emerald-500/20'
+                : 'text-rose-300   bg-rose-500/10   border border-rose-500/20'
+            }`}>
+              {isUp ? '+' : ''}{pctChange}%
+            </span>
           </div>
-
-          {/* Horizontal grid lines */}
-          <div className="absolute inset-0 flex justify-between px-2">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="border-r border-slate-600/50"></div>
-            ))}
-          </div>
-
-          {/* Line Chart - Visible lines */}
-          <div className="h-full flex items-end justify-between px-2">
-            {data.map((value, index) => {
-              const percentage = ((value - minValue) / (maxValue - minValue)) * 85;
-
-              return (
-                <div key={index} className="flex flex-col items-center w-full">
-                  <div className="relative w-full flex-1 flex items-end">
-                    {/* Connect lines - thicker and visible */}
-                    {index < data.length - 1 && (
-                      <svg className="absolute top-0 left-1/2 w-full h-full" style={{ transform: 'translateX(-50%)' }}>
-                        <line
-                          x1="50%"
-                          y1={`${100 - percentage}%`}
-                          x2="150%"
-                          y2={`${100 - ((data[index + 1] - minValue) / (maxValue - minValue)) * 85}%`}
-                          stroke="#3b82f6"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    )}
-                    {/* Data point - larger and visible */}
-                    <div
-                      className="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-lg"
-                      style={{ bottom: `${percentage}%` }}
-                    ></div>
-                  </div>
-                  {/* Month labels */}
-                  <span className="text-xs text-white/60 mt-2">{['ي', 'ف', 'م', 'أ', 'م', 'ي', 'ي', 'أ', 'س', 'أ'][index]}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-white/60 pr-2">
-            <span className="font-bold">{maxValue}</span>
-            <span>{Math.round((maxValue + minValue) / 2)}</span>
-            <span className="font-bold">{minValue}</span>
-          </div>
+          <p className="text-[10px] text-slate-600 font-semibold mt-1">{t('chart.unit_price')}</p>
         </div>
-        <p className="text-center text-sm text-white/60 mt-2">ريال/م²</p>
+
+        {/* Mini legend */}
+        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
+          <span className="w-3 h-0.5 rounded bg-indigo-400 inline-block" />
+          SAR / m²
+        </div>
+      </div>
+
+      {/* Chart area */}
+      <div className="relative h-44">
+        {/* Grid lines */}
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="border-t border-slate-700/30" />
+          ))}
+        </div>
+
+        {/* SVG chart */}
+        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor={color} stopOpacity="0.25" />
+              <stop offset="100%" stopColor={color} stopOpacity="0"    />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="1.5" result="blur" />
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          {/* Area fill */}
+          <path
+            d={areaPath}
+            fill="url(#areaGrad)"
+            className="transition-all duration-700"
+          />
+
+          {/* Main line */}
+          <path
+            d={linePath}
+            fill="none"
+            stroke={color}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            filter="url(#glow)"
+            className="drop-shadow-lg transition-all duration-700"
+          />
+
+          {/* Data dots */}
+          {data.map((v, i) => (
+            <circle
+              key={i}
+              cx={`${(i / (data.length - 1)) * 100}%`}
+              cy={`${toY(v)}%`}
+              r="1.8"
+              fill={color}
+              stroke="#1e293b"
+              strokeWidth="1.2"
+              className="opacity-0 hover:opacity-100 transition-opacity"
+            />
+          ))}
+        </svg>
+
+        {/* Y-axis: max/min labels */}
+        <div className="absolute top-0 right-0 text-[9px] text-slate-600 font-bold leading-none">
+          {maxValue.toLocaleString()}
+        </div>
+        <div className="absolute bottom-0 right-0 text-[9px] text-slate-600 font-bold leading-none">
+          {minValue.toLocaleString()}
+        </div>
+      </div>
+
+      {/* Month labels */}
+      <div className="flex items-center justify-between mt-3 px-1">
+        {data.map((_, index) => (
+          <span key={index} className="text-[9px] text-slate-600 font-bold uppercase tracking-wide">
+            {labels && labels[index] ? labels[index] : t(`chart.months.short.${index + 1}`)}
+          </span>
+        ))}
       </div>
     </div>
   );

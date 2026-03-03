@@ -27,7 +27,7 @@ export default function ProfileCard() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-800 rounded-xl p-3 backdrop-blur-sm border border-slate-700 transition-colors"
       >
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+        <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
           <User className="w-5 h-5" />
         </div>
         <div className="text-right">
@@ -52,7 +52,7 @@ export default function ProfileCard() {
             {/* Header */}
             <div className="p-4 border-b border-slate-700">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center">
                   <User className="w-6 h-6" />
                 </div>
                 <div className="flex-1">

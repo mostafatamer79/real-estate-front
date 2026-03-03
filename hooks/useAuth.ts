@@ -37,7 +37,7 @@ export function useAuth() {
         parsedUser.role === Role.AGENT &&
         !parsedUser.agentLicenseNumber;
 
-      const needsProfileCompletion = parsedUser.isVerified;
+      needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
     }
 
     setAuthData({
@@ -86,6 +86,7 @@ export function useAuth() {
       isLoading: false,
       needsProfileCompletion: false,
     });
+    window.location.href = '/login'; 
   };
 
   return {

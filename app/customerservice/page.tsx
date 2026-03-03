@@ -1,51 +1,48 @@
 "use client";
 
 import React, { useState } from "react";
-import Header from "../src/components/Header";
 import {
-  Twitter,
-  Mail,
-  MessageCircle,
-  Phone,
-  HelpCircle,
-  Share2,
-  ChevronDown,
-  X,
-  User,
+  Twitter, Mail, MessageCircle, Phone,
+  HelpCircle, ChevronDown, Send,
+  User, ExternalLink, X, Building2, Sparkles,
+  ChevronLeft, ArrowRight, ShieldCheck, Headphones,
+  Search, Home, BadgeDollarSign, Tag
 } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/app/src/components/ui/card";
+import { useRouter } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { faqData } from "./faq-data";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CustomerService() {
+  const router = useRouter();
+  const { t, language } = useLanguage();
+  const { user } = useAuth();
+
+  const categoryIcons: Record<string, React.ElementType> = {
+    "أسئلة عامة": HelpCircle,
+    "أسئلة البحث والعرض": Search,
+    "أسئلة الشراء": ShieldCheck,
+    "أسئلة الإيجار": Home,
+    "أسئلة البيع": Tag,
+    "أسئلة الدفع": BadgeDollarSign,
+    "أسئلة الدعم": Headphones,
+  };
+ 
   const [question, setQuestion] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [contactMethod, setContactMethod] = useState<"email" | "phone">("email");
   const [name, setName] = useState("");
-  const [expandedSections, setExpandedSections] = useState({
-    communication: false,
-    customerService: false,
-    contact: false,
-    inquiries: false,
-  });
-
-  // Add character limit state
   const [charCount, setCharCount] = useState(0);
-  const MAX_CHARACTERS = 200; // Set your desired limit here
+  const MAX_CHARACTERS = 200;
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
-
-  // Handle textarea change with character limit
   const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     if (text.length <= MAX_CHARACTERS) {
@@ -54,294 +51,258 @@ export default function CustomerService() {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(t('cs.alert.success'));
+    setQuestion("");
+    setEmail("");
+    setPhoneNumber("");
+    setName("");
+    setCharCount(0);
+  };
+
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col" dir="rtl">
-      <Header onSignUp={() => {}} />
-
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 items-start justify-items-center">
-        {/* قنوات التواصل Card - Updated with correct contact info */}
-        <Card className={`bg-gray-800 border-2 border-gray-600 hover:border-gray-500 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-white rounded-full w-56 sm:w-60 lg:w-64 p-4 sm:p-5 lg:p-6 justify-start overflow-y-auto hide-scrollbar relative ${
-          expandedSections.communication ? "h-[460px] sm:h-[490px] lg:h-[520px]" : "h-56 sm:h-60 lg:h-64"
-        }`}>
-          <CardHeader className="w-full px-0 pb-1">
-            <button
-              onClick={() => toggleSection("communication")}
-              className="cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg mb-3 mx-auto flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md"
-            >
-              <Mail className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-            </button>
-            <CardTitle className="text-sm sm:text-base lg:text-lg font-bold mb-3 text-gray-100 tracking-tight">قنوات التواصل</CardTitle>
-          </CardHeader>
-          <CardContent
-            className={`transition-all duration-500 ease-in-out w-full px-0 ${
-              expandedSections.communication ? "opacity-100 mt-2 block pb-12" : "max-h-0 opacity-0 hidden"
-            }`}
-          >
-            <div className="space-y-2.5 w-full py-1">
-              {/* Updated X account link */}
-              <a
-                href="https://x.com/Deer_Aqarak" // Add full X.com URL
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between bg-gray-600 hover:bg-gray-500 transition-all duration-200 rounded-full px-3 py-2.5 text-xs shadow-md hover:shadow-lg hover:scale-105"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-700">
-                    <X className="w-3 h-3 text-white" />
+    <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      
+      {/* Premium Header Container */}
+      <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden">
+          <div className="max-w-7xl mx-auto relative z-10">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="space-y-3">
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-[9px] font-black uppercase tracking-[0.2em] text-slate-600"
+                      >
+                      
+                      </motion.div>
+                      <motion.h1 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-slate-950"
+                      >
+                          {t('cs.title')}
+                      </motion.h1>
+                      <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                          className="text-slate-500 font-medium text-sm md:text-base leading-relaxed whitespace-nowrap"
+                      >
+                        نحن هنا للإجابة على جميع استفساراتكم. فريقنا المختص جاهز لتقديم الدعم العقاري على مدار الساعة.
+                      </motion.p>
                   </div>
-                  <span>Deer_Aqarak@</span> {/* Updated X handle display */}
-                </div>
-                <span className="text-xs text-slate-300">فتح</span>
-              </a>
+                  
+             
+              </div>
+          </div>
+      </section>
 
-              {/* Updated email link */}
-              <a
-                href="mailto:Info@Deer_Aqarak.com" // Changed to mailto: link
-                className="flex items-center justify-between bg-gray-600 hover:bg-gray-500 transition-all duration-200 rounded-full px-3 py-2.5 text-xs shadow-md hover:shadow-lg hover:scale-105"
+      <div className="max-w-7xl mx-auto px-6">
+          {/* Contact Channels Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {[
+              { id: 'phone', href: "tel:+966555555555", icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: '+966 5 5555 5555' },
+              { id: 'email', href: "mailto:Info@Deer_Aqarak.com", icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: 'Info@Deer_Aqarak.com' },
+              { id: 'x', href: "https://x.com/Deer_Aqarak", icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: '@Deer_Aqarak' }
+            ].map((item) => (
+              <motion.a 
+                key={item.id}
+                whileHover={{ y: -5 }}
+                href={item.href}
+                className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
               >
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-700">
-                    <Mail className="w-3 h-3 text-white" />
-                  </div>
-                  <span>Info@Deer_Aqarak.com</span> {/* Updated email display */}
+                <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
+                    <item.icon className="w-6 h-6" />
                 </div>
-                <span className="text-xs text-slate-300">إرسال</span> {/* Changed from "فتح" to "إرسال" */}
-              </a>
-            </div>
-          </CardContent>
-          <CardFooter className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-full justify-center px-0">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md hover:shadow-lg transition-all duration-200">
-              <ChevronDown
-                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-transform duration-500 ${
-                  expandedSections.communication ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-          </CardFooter>
-        </Card>
+                <h3 className="text-sm font-black text-slate-900 mb-1">{item.title}</h3>
+                <p className="text-xs text-slate-400 font-bold font-mono" dir="ltr">{item.val}</p>
+              </motion.a>
+            ))}
+          </div>
 
-         <Card className={`bg-gray-800 border-2 border-gray-600 hover:border-gray-500 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-white rounded-full w-56 sm:w-60 lg:w-64 p-4 sm:p-5 lg:p-6 justify-start overflow-y-auto hide-scrollbar relative ${
-          expandedSections.contact ? "h-[460px] sm:h-[490px] lg:h-[520px]" : "h-56 sm:h-60 lg:h-64"
-        }`}>
-          <CardHeader className="w-full px-0 pb-1">
-            <button
-              onClick={() => toggleSection("contact")}
-              className="cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg mb-3 mx-auto flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md"
-            >
-              <Phone className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-            </button>
-            <CardTitle className="text-sm sm:text-base lg:text-lg font-bold mb-3 text-gray-100 tracking-tight">رقم التواصل</CardTitle>
-          </CardHeader>
-          <CardContent
-            className={`transition-all duration-500 ease-in-out w-full px-0 ${
-              expandedSections.contact ? "opacity-100 mt-2 block pb-12" : "max-h-0 opacity-0 hidden"
-            }`}
-          >
-            <div className="w-full flex items-center justify-center bg-gray-600 hover:bg-gray-500 transition-all duration-200 rounded-full px-4 py-3.5 shadow-md hover:shadow-lg hover:scale-105">
-              <span className="text-sm sm:text-base font-semibold text-gray-100">+966 5 5555 5555</span>
-            </div>
-          </CardContent>
-          <CardFooter className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-full justify-center px-0">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md hover:shadow-lg transition-all duration-200">
-              <ChevronDown
-                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-transform duration-500 ${
-                  expandedSections.contact ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-          </CardFooter>
-        </Card>
-        <Card className={`bg-gray-800 border-2 border-gray-600 hover:border-gray-500 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-white rounded-full w-56 sm:w-60 lg:w-64 p-4 sm:p-5 lg:p-6 justify-start overflow-y-auto hide-scrollbar relative ${
-          expandedSections.customerService ? "h-[560px] sm:h-[600px] lg:h-[640px]" : "h-56 sm:h-60 lg:h-64"
-        }`}>
-          <CardHeader className="w-full px-0 pb-1">
-            <button
-              onClick={() => toggleSection("customerService")}
-              className="cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg mb-3 mx-auto flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md"
-            >
-              <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-            </button>
-            <CardTitle className="text-sm sm:text-base lg:text-lg font-bold  text-gray-100 tracking-tight">خدمة عملاء</CardTitle>
-          </CardHeader>
-          <CardContent
-            className={`transition-all duration-500 ease-in-out w-full px-0 ${
-              expandedSections.customerService ? "opacity-100  block pb-14" : "max-h-0 opacity-0 hidden"
-            }`}
-          >
-            <p className="text-xs sm:text-sm text-slate-300 mb-1 font-medium text-center">
-              اكتب استفسارك وسنرد عليك في أقرب وقت ممكن
-            </p>
-            <div className="space-y-3 w-full py-1">
-              <div className="bg-white rounded-full flex items-center p-3.5 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-gray-400 focus-within:shadow-lg">
-                <User className="w-5 h-5 text-slate-700 ml-2 " />
-                <input
-                  type="text"
-                  value={name || ""}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                  dir="rtl"
-                  placeholder="الاسم"
-                  className="flex-1 outline-none text-black placeholder-slate-500 text-right text-sm bg-transparent focus:ring-0"
-                />
-              </div>
-
-              <div className="flex items-center justify-center gap-2">
-                <button
-                  onClick={() => {
-                    setContactMethod("email");
-                    setPhoneNumber("");
-                  }}
-                  className={`flex-1 rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                    contactMethod === "email"
-                      ? "bg-gray-600 text-white shadow-md"
-                      : "bg-gray-700 text-gray-400 hover:bg-gray-600"
-                  }`}
-                >
-                  <Mail className="w-4 h-4 inline ml-1" />
-                  البريد
-                </button>
-                <button
-                  onClick={() => {
-                    setContactMethod("phone");
-                    setEmail("");
-                  }}
-                  className={`flex-1 rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                    contactMethod === "phone"
-                      ? "bg-gray-600 text-white shadow-md"
-                      : "bg-gray-700 text-gray-400 hover:bg-gray-600"
-                  }`}
-                >
-                  <Phone className="w-4 h-4 inline ml-1" />
-                  الجوال
-                </button>
-              </div>
-
-              {contactMethod === "email" && (
-                <div className="bg-white rounded-full flex items-center p-3.5 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-gray-400 focus-within:shadow-lg">
-                  <Mail className="w-5 h-5 text-slate-700 ml-2" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    dir="rtl"
-                    placeholder="البريد الإلكتروني"
-                    className="flex-1 outline-none text-black placeholder-slate-500 text-right text-sm bg-transparent focus:ring-0"
-                  />
-                </div>
-              )}
-
-              {contactMethod === "phone" && (
-                <div className="bg-white rounded-full flex items-center p-3.5 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-gray-400 focus-within:shadow-lg">
-                  <Phone className="w-5 h-5 text-slate-700 ml-2" />
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    dir="rtl"
-                    placeholder="رقم الجوال"
-                    className="flex-1 outline-none text-black placeholder-slate-500 text-right text-sm bg-transparent focus:ring-0"
-                  />
-                </div>
-              )}
-
-              {/* Replaced input with textarea for multi-line description */}
-              <div className="bg-white rounded-2xl p-3.5 shadow-sm hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-gray-400 focus-within:shadow-lg">
-                <div className="flex items-start gap-2 mb-2">
-                  <MessageCircle className="w-5 h-5 text-slate-700 mt-1 flex-shrink-0" />
-                  <textarea
-                    value={question}
-                    onChange={handleQuestionChange}
-                    dir="rtl"
-                    placeholder="اكتب استفسارك هنا... (حد أقصى ٢٠٠ حرف)"
-                    className="flex-1 outline-none text-black placeholder-slate-500 text-right text-sm bg-transparent focus:ring-0 min-h-[100px] w-full resize-none"
-                    rows={4} // Set initial visible rows
-                  />
-                </div>
-                {/* Character counter display */}
-                <div className="text-left mt-2">
-                  <span className={`text-xs ${charCount > MAX_CHARACTERS * 0.8 ? 'text-amber-500' : 'text-gray-500'}`}>
-                    {charCount} / {MAX_CHARACTERS} حرف
-                  </span>
-                  {charCount === MAX_CHARACTERS && (
-                    <span className="text-red-500 text-xs mr-2"> ✓ وصلت للحد الأقصى</span>
-                  )}
-                </div>
-              </div>
-
-              <button
-                disabled={!question.trim() || !name.trim() || (contactMethod === "email" ? !email.trim() : !phoneNumber.trim()) || charCount > MAX_CHARACTERS}
-                className={`w-full rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-200 shadow-md mt-2 mb-12 ${
-                  question.trim() && name.trim() && (contactMethod === "email" ? email.trim() : phoneNumber.trim()) && charCount <= MAX_CHARACTERS
-                    ? "bg-gray-600 hover:bg-gray-500 text-white hover:shadow-lg hover:scale-105"
-                    : "bg-gray-700 text-gray-400 cursor-not-allowed"
-                }`}
-                onClick={() => {
-                  alert("تم إرسال سؤالك، وسيتم الرد خلال ٢٤ ساعة إن شاء الله");
-                  setQuestion("");
-                  setEmail("");
-                  setPhoneNumber("");
-                  setName("");
-                  setCharCount(0);
-                }}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Form */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="space-y-6"
               >
-                إرسال السؤال
-              </button>
-            </div>
-          </CardContent>
-          <CardFooter className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-full justify-center px-0 z-10">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md hover:shadow-lg transition-all duration-200">
-              <ChevronDown
-                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-transform duration-500 ${
-                  expandedSections.customerService ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-          </CardFooter>
-        </Card>
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
+                      <MessageCircle className="w-4 h-4" />
+                    </div>
+                    {t('cs.service')}
+                </h2>
+                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.name')}</Label>
+                        <div className="relative group">
+                            <Input 
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="h-12 rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 px-4 transition-all text-sm font-bold placeholder:text-slate-300"
+                                placeholder={t('cs.name')}
+                            />
+                        </div>
+                    </div>
 
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">طريقة التواصل المفضلة</Label>
+                        <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                            <button
+                                type="button"
+                                onClick={() => setContactMethod("email")}
+                                className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
+                                    contactMethod === "email" 
+                                    ? "bg-slate-900 text-white shadow-sm" 
+                                    : "text-slate-400 hover:text-slate-600"
+                                }`}
+                            >
+                                <Mail className="w-3.5 h-3.5" />
+                                البريد
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setContactMethod("phone")}
+                                className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
+                                    contactMethod === "phone" 
+                                    ? "bg-slate-900 text-white shadow-sm" 
+                                    : "text-slate-400 hover:text-slate-600"
+                                }`}
+                            >
+                                <Phone className="w-3.5 h-3.5" />
+                                الجوال
+                            </button>
+                        </div>
+                    </div>
 
-        <Card className={`bg-gray-800 border-2 border-gray-600 hover:border-gray-500 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-white rounded-full w-56 sm:w-60 lg:w-64 p-4 sm:p-5 lg:p-6 justify-start overflow-y-auto hide-scrollbar relative ${
-          expandedSections.inquiries ? "h-[460px] sm:h-[490px] lg:h-[520px]" : "h-56 sm:h-60 lg:h-64"
-        }`}>
-          <CardHeader className="w-full px-0 pb-1">
-            <button
-              onClick={() => toggleSection("inquiries")}
-              className="cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg mb-3 mx-auto flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md"
-            >
-              <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-            </button>
-            <CardTitle className="text-sm sm:text-base lg:text-lg font-bold mb-3 text-gray-100 tracking-tight">الاستفسارات</CardTitle>
-          </CardHeader>
-          <CardContent
-            className={`transition-all duration-500 ease-in-out w-full px-0 ${
-              expandedSections.inquiries ? "opacity-100 mt-2 block pb-12" : "max-h-0 opacity-0 hidden"
-            }`}
-          >
-            <ul className="space-y-2.5 w-full py-1">
-              {["كيف أضيف عقار؟", "كيف اتواصل مع المعلن؟", "هل توجد عمولة؟"].map(
-                (q, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center justify-center bg-gray-600 hover:bg-gray-500 transition-all duration-200 rounded-full px-4 py-2.5 shadow-md hover:shadow-lg hover:scale-105 cursor-pointer"
-                  >
-                    <span className="text-xs sm:text-sm text-center font-medium text-gray-100">{q}</span>
-                  </li>
-                )
-              )}
-            </ul>
-          </CardContent>
-          <CardFooter className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-full justify-center px-0">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-600 hover:bg-gray-500 shadow-md hover:shadow-lg transition-all duration-200">
-              <ChevronDown
-                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-transform duration-500 ${
-                  expandedSections.inquiries ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-          </CardFooter>
-        </Card>
-      </main>
-    </section>
+                    {contactMethod === "email" ? (
+                        <div className="space-y-3">
+                            <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.email')}</Label>
+                            <Input 
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold text-indigo-600"
+                                placeholder="name@example.com"
+                                dir="ltr"
+                            />
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.phone')}</Label>
+                            <Input 
+                                type="tel"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold text-indigo-600"
+                                placeholder="05xxxxxxxx"
+                                dir="ltr"
+                            />
+                        </div>
+                    )}
+
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.placeholder.inquiry')}</Label>
+                        <div className="relative">
+                          <Textarea 
+                              value={question}
+                              onChange={handleQuestionChange}
+                              className="min-h-[120px] rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 p-4 transition-all text-sm font-bold resize-none"
+                          />
+                          <div className="absolute bottom-3 left-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                              {charCount}/{MAX_CHARACTERS}
+                          </div>
+                        </div>
+                    </div>
+
+                    <Button 
+                        type="submit"
+                        disabled={!question.trim() || !name.trim() || (contactMethod === "email" ? !email.trim() : !phoneNumber.trim()) || charCount > MAX_CHARACTERS}
+                        className="w-full h-12 bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all active:scale-[0.98] gap-2"
+                    >
+                        {t('cs.submit')}
+                        <Send className="w-3.5 h-3.5 ml-2" />
+                    </Button>
+                </form>
+              </motion.div>
+
+              {/* FAQ Section */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="space-y-6"
+              >
+                  <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
+                      <HelpCircle className="w-4 h-4" />
+                    </div>
+                    الأسئلة المتكررة
+                </h2>
+                <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8">
+                  <Accordion type="multiple" className="w-full space-y-6">
+                    {faqData.map((section, idx) => {
+                      const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
+                      return (
+                        <AccordionItem
+                          key={idx}
+                          value={`section-${idx}`}
+                          className="border-none glass bg-white/50 rounded-[2.5rem] px-6 md:px-8 transition-all hover:bg-white"
+                        >
+                          <AccordionTrigger className="text-slate-600 font-black hover:no-underline text-right py-6 group">
+                            <span className="flex items-center gap-3 flex-1 text-right ">
+                              <CategoryIcon className="w-4 h-4" />
+                              {section.category}
+                            </span>
+                            <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                              <ChevronDown className="h-4 w-4" />
+                            </span>
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-6">
+                            <Accordion type="single" collapsible className="w-full space-y-4">
+                              {section.items.map((item, itemIdx) => (
+                                <AccordionItem
+                                  key={itemIdx}
+                                  value={`item-${idx}-${itemIdx}`}
+                                  className="border-none glass bg-white/40 rounded-3xl px-6 transition-all hover:bg-white"
+                                >
+                                  <AccordionTrigger className="text-slate-900 font-bold hover:no-underline text-right py-6 group">
+                                    <span className="flex-1 text-right">{item.question}</span>
+                                    <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                                      <ChevronDown className="h-4 h-4" />
+                                    </span>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="text-slate-500 font-medium leading-[1.8] text-right pb-6">
+                                    {item.answer}
+                                  </AccordionContent>
+                                </AccordionItem>
+                              ))}
+                            </Accordion>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                </div>
+              </motion.div>
+          </div>
+      </div>
+
+      {/* Navigation Floating Button */}
+      {user?.role === "admin" && (
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => router.push('/admin/dashboard')}
+        className="fixed bottom-8 left-8 w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-2xl z-50 group border border-white/10"
+      >
+        <div className="absolute inset-0 bg-indigo-600 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 -z-10" />
+        <ChevronLeft className={`w-8 h-8 ${language === 'ar' ? 'rotate-180' : ''}`} />
+      </motion.button>
+      )}
+    </div>
   );
 }
-
-

@@ -90,7 +90,7 @@ export default function CommissionManager() {
                     <CardTitle className='text-2xl font-bold text-black text-right'>إدارة العمولات (السعي)</CardTitle>
                     <Button
                         onClick={() => setView('form')}
-                        className='px-6 py-2 text-white bg-gray-800 hover:bg-gray-700 rounded-lg'
+                        className='px-6 py-2 text-white bg-slate-800 hover:bg-slate-700 rounded-lg'
                     >
                         طلب سعي جديد
                     </Button>
@@ -153,7 +153,7 @@ export default function CommissionManager() {
                     className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
                 >
                     <span>رجوع للقائمة</span>
-                    <ArrowDownCircle className="h-5 w-5 bg-gray-200 rounded-full rotate-90" />
+                    <ArrowDownCircle className="h-5 w-5 bg-slate-200 rounded-full rotate-90" />
                 </button>
             </CardHeader>
             
@@ -190,7 +190,7 @@ export default function CommissionManager() {
                     <h3 className="text-xl font-bold text-right border-b pb-2">بيانات الأطراف</h3>
                     
                     {/* Owner/Seller Section */}
-                    <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div className="bg-slate-50 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المالك أو البائع</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.ownerName} onChange={(e) => setCommissionForm(prev => ({...prev, ownerName: e.target.value}))} className="text-right"/></div>
@@ -199,7 +199,7 @@ export default function CommissionManager() {
                     </div>
 
                     {/* Buyer Section */}
-                    <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div className="bg-slate-50 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المشتري</h4>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.buyerName} onChange={(e) => setCommissionForm(prev => ({...prev, buyerName: e.target.value}))} className="text-right"/></div>
@@ -243,7 +243,7 @@ export default function CommissionManager() {
                 {/* Submit Buttons */}
                 <div className="flex gap-4 pt-4 border-t mt-4">
                     <Button onClick={() => setView('list')} className="flex-1" variant="outline">إلغاء</Button>
-                    <Button onClick={() => { alert('تم الحفظ'); setView('list'); }} className="flex-1 bg-gray-900 text-white hover:bg-gray-800">حفظ وإرسال الطلب</Button>
+                    <Button onClick={() => { alert('تم الحفظ'); setView('list'); }} className="flex-1 bg-slate-900 text-white hover:bg-slate-800">حفظ وإرسال الطلب</Button>
                 </div>
             </CardContent>
 

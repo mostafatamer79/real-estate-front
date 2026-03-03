@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function VerifyOtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -12,6 +13,7 @@ export default function VerifyOtpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
+  const { t, language } = useLanguage();
   const router = useRouter();
 
   useEffect(() => {
@@ -115,7 +117,7 @@ export default function VerifyOtpPage() {
     const otpCode = otp.join('');
 
     if (otpCode.length !== 6) {
-      setError("يرجى إدخال رمز التحقق المكون من 6 أرقام");
+      setError(t('otp.errorRequired'));
       return;
     }
 
@@ -138,7 +140,7 @@ export default function VerifyOtpPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'فشل التحقق من الرمز');
+        throw new Error(data.message || t('otp.errorGeneric'));
       }
 
       console.log('OTP verified successfully:', data);
@@ -150,16 +152,17 @@ export default function VerifyOtpPage() {
 
       // Clear pending verification
       localStorage.removeItem('pendingVerification');
-      if(data.user.isVerified === false) {
-        router.push('/complete-profile');
-        return;
-      }
-      else{
-      router.push('/details');
-      }
+      // Redirect to home page
+      router.push('/');
     } catch (err: any) {
       console.error('OTP verification error:', err);
-      setError(err.message || 'رمز التحقق غير صحيح أو انتهت صلاحيته');
+      // Try to translate if key exists (err.message), else show generic invalid
+      // If the backend sends specific keys like "auth.user_not_found", t() will translate them.
+      // If it sends generic English text not in our keys, t() returns the key (the text).
+      // But we want to localize common backend errors.
+      // If err.message is "Invalid or expired OTP", we want to show t('auth.otp_invalid')?
+      // For now, simpler:
+      setError(t(err.message) !== err.message ? t(err.message) : t('otp.errorInvalid'));
     } finally {
       setIsLoading(false);
     }
@@ -184,7 +187,7 @@ export default function VerifyOtpPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'فشل إعادة إرسال الرمز');
+        throw new Error(data.message || t('otp.errorGeneric'));
       }
 
       setTimer(300); // Reset timer to 5 minutes
@@ -197,7 +200,7 @@ export default function VerifyOtpPage() {
       firstInput?.focus();
 
     } catch (err: any) {
-      setError(err.message || "فشل إعادة إرسال الرمز");
+      setError(err.message || t('otp.resendBtn') + ": " + t('common.error'));
     } finally {
       setIsLoading(false);
     }
@@ -210,25 +213,25 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 pt-20">
       <div className="w-full max-w-md">
         <button
           onClick={() => router.back()}
           className="mb-8 flex items-center gap-2 text-white/80 hover:text-white"
         >
-          <ArrowLeft className="w-4 h-4" />
-          رجوع
+          <ArrowLeft className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
+          {t('common.back')}
         </button>
 
-        <h1 className="text-2xl font-bold mb-2 text-center">تحقق من رمز التحقق</h1>
+        <h1 className="text-2xl font-bold mb-2 text-center">{t('otp.title')}</h1>
         <p className="text-white/60 text-center mb-8">
-          تم إرسال رمز مكون من 6 أرقام إلى{" "}
+          {t('otp.sentTo')}{" "}
           <span className="text-white font-medium">{email}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className="flex justify-center gap-2 sm:gap-3 flex-row-reverse">
+            <div className={`flex justify-center gap-2 sm:gap-3 ${language==='ar' ? 'flex-row-reverse' : ''}`}>
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -255,7 +258,7 @@ export default function VerifyOtpPage() {
 
             <div className="text-center">
               <p className="text-white/60 text-sm mb-2">
-                أدخل الرمز من اليمين إلى اليسار
+                {t('otp.enterRightToLeft')}
               </p>
             </div>
 
@@ -267,7 +270,7 @@ export default function VerifyOtpPage() {
 
             <div className="text-center">
               <p className="text-white/60">
-                الوقت المتبقي:{" "}
+                {t('otp.timeLeft')}{" "}
                 <span className={`font-medium ${timer < 60 ? "text-red-400" : "text-green-400"}`}>
                   {formatTime(timer)}
                 </span>
@@ -279,15 +282,15 @@ export default function VerifyOtpPage() {
             <button
               type="submit"
               disabled={isLoading || otp.join('').length !== 6}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-slate-600 hover:bg-slate-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  جاري التحقق...
+                  {t('otp.verifying')}
                 </span>
               ) : (
-                "تأكيد الرمز"
+                t('otp.verifyBtn')
               )}
             </button>
 
@@ -301,10 +304,10 @@ export default function VerifyOtpPage() {
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    جاري إعادة الإرسال...
+                    {t('otp.resending')}
                   </span>
                 ) : (
-                  "إعادة إرسال الرمز"
+                  t('otp.resendBtn')
                 )}
               </button>
             )}
@@ -312,7 +315,7 @@ export default function VerifyOtpPage() {
         </form>
 
         <div className="mt-8 text-center text-sm text-white/60">
-          <p>لم تتلقَ الرمز؟ تأكد من مجلد الرسائل المزعجة أو المحاولة مرة أخرى</p>
+          <p>{t('otp.didNotReceive')}</p>
         </div>
       </div>
     </div>

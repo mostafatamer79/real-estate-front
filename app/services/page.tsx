@@ -1,79 +1,123 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Header from "../src/components/Header";
-import { ArrowRight } from "lucide-react";
 import {
-  ShoppingBag,
-  Scale,
-  Hammer,
-  MoreHorizontal,
+  ShoppingBag, Scale, Hammer, Megaphone, MoreHorizontal, ArrowLeft, ChevronRight
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { motion } from "framer-motion";
+
+const serviceCards = [
+  { id: "postPurchase", icon: ShoppingBag, index: "01", span: "md:col-span-2 lg:col-span-3" },
+  { id: "legal",        icon: Scale,       index: "02", span: "md:col-span-2 lg:col-span-3" },
+  { id: "construction", icon: Hammer,      index: "03", span: "md:col-span-2 lg:col-span-2" },
+  { id: "marketing",    icon: Megaphone,   index: "04", span: "md:col-span-2 lg:col-span-2" },
+  { id: "other",        icon: MoreHorizontal, index: "05", span: "md:col-span-4 lg:col-span-2" },
+];
 
 export default function Services() {
   const router = useRouter();
-
-  const serviceCards = [
-    {
-      id: "postPurchase",
-      title: "خدمات ما بعد الشراء",
-      icon: ShoppingBag,
-    },
-    {
-      id: "legal",
-      title: "الخدمات القانونية",
-      icon: Scale,
-    },
-    {
-      id: "construction",
-      title: "أعمال البناء",
-      icon: Hammer,
-    },
-    {
-      id: "other",
-      title: "خدمات أخرى",
-      icon: MoreHorizontal,
-    },
-  ];
-
-  const handleCardClick = (cardId: string) => {
-    router.push(`/services/form?type=${cardId}`);
-  };
+  const { t, language } = useLanguage();
+  const isRtl = language === "ar";
 
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col" dir="rtl">
-      <Header onSignUp={() => {}} />
-
-      {/* Navigation Arrow */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 mt-6">
-        <button
-          onClick={() => router.push("/details")}
-          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors text-sm"
-        >
-          <ArrowRight className="w-4 h-4" />
-          الصفحة الرئيسية   
-               </button>
+    <section className="w-full min-h-screen bg-slate-950 flex flex-col overflow-x-hidden relative" dir={isRtl ? "rtl" : "ltr"}>
+      {/* Ambient background glows matching details/page.tsx */}
+      <div className="absolute inset-0 overflow-hidden bg-slate-950 pointer-events-none z-0">
+        <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
+        <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
+        <div className="absolute top-[45%] right-[20%] w-[25%] h-[25%] rounded-full bg-gray-500/4 blur-[100px]" />
       </div>
 
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-items-center">
+      {/* Header row */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-0">
+        <motion.button
+          initial={{ opacity: 0, x: isRtl ? 10 : -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          onClick={() => router.push("/details")}
+          className="group flex items-center gap-2 text-white/50 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest mb-6 sm:mb-8"
+        >
+          <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center transition-all duration-200">
+            <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
+          </div>
+          {t("common.back")}
+        </motion.button>
+
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 mb-3 flex-row-reverse">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" />
+            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
+              {t("services.platformServices") || "خدمات المنصة"}
+            </p>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[-0.03em] leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
+            {t("services.title") || "خدماتنا"}
+          </h1>
+          <p className="text-white/40 text-sm max-w-lg leading-relaxed">
+            نقدم مجموعة متكاملة من الخدمات العقارية لتسهيل رحلتك في السوق.
+          </p>
+        </motion.div>
+
+        <div className="h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6 sm:mb-8" />
+      </div>
+
+      {/* Grid */}
+      <motion.main
+        initial="hidden"
+        animate="show"
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
+        className="relative z-10 max-w-7xl w-full bg-slate-950 mx-auto px-4 sm:px-6 md:px-10 pb-12 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3"
+      >
         {serviceCards.map((card) => {
-          const IconComponent = card.icon;
+          const Icon = card.icon;
           return (
-            <div
+            <motion.button
               key={card.id}
-              onClick={() => handleCardClick(card.id)}
-              className="bg-gray-800 border border-gray-600 rounded-lg hover:border-gray-500 flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-white w-56 p-6 justify-center cursor-pointer h-56"
+              variants={{
+                hidden: { opacity: 0, y: 16, scale: 0.97 },
+                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+              }}
+              whileHover="hovered"
+              onClick={() => router.push(`/services/form?type=${card.id}`)}
+              className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-white/[0.02] border border-white/[0.08] hover:border-white/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[140px] sm:min-h-[160px] cursor-pointer overflow-hidden transition-all duration-300 hover:-translate-y-0.5`}
             >
-              <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-gray-700">
-                <IconComponent className="w-7 h-7 text-white" />
+              {/* Hover bg */}
+              <motion.div
+                variants={{ hovered: { opacity: 1 }, hidden: { opacity: 0 } }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 bg-white/[0.03] pointer-events-none"
+              />
+
+              {/* Shimmer line */}
+              <motion.div
+                variants={{ hovered: { opacity: 1, x: "100%" }, hidden: { opacity: 0, x: "-100%" } }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              />
+
+              <div className="flex items-start justify-between w-full relative z-10">
+                <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+                  <Icon className="w-4 h-4 text-white/50 group-hover:text-white/90 transition-colors duration-200" />
+                </div>
+                <span className="text-[10px] font-black text-white/15 tracking-widest font-mono group-hover:text-white/30 transition-colors">
+                  {card.index}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">
-                {card.title}
-              </h3>
-              <p className="text-gray-400 text-sm">انقر للاطلاع على الخدمات</p>
-            </div>
+
+              <div className="mt-auto pt-4 relative z-10 w-full flex flex-row items-end justify-between">
+                <h3 className="text-base sm:text-lg font-bold text-white/80 leading-tight group-hover:text-white transition-colors duration-200 pointer-events-none">
+                  {t(`services.${card.id}`)}
+                </h3>
+                <div className="flex items-center gap-1.5 pointer-events-none">
+                  <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center opacity-0 transform translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-200">
+                    <ChevronRight className={`w-3 h-3 text-white/60 ${isRtl ? "rotate-180" : ""}`} />
+                  </div>
+                </div>
+              </div>
+            </motion.button>
           );
         })}
-      </main>
+      </motion.main>
     </section>
   );
 }

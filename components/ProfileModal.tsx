@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { X, Save, Loader2 } from 'lucide-react';
+import { X, Save, Loader2, ShieldCheck, Briefcase, Gavel, Receipt, Building2, Eye, PlusCircle, CheckSquare, XSquare } from 'lucide-react';
 import { Role, User } from '@/types/user';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -186,6 +186,43 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
                 </select>
               </div>
             </div>
+            <div className="bg-slate-700/30 p-4 rounded-xl border border-slate-600 space-y-3">
+              <h3 className="text-sm font-semibold text-blue-400 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" />
+                الصلاحيات والوصول
+              </h3>
+              
+              <div className="space-y-2">
+                <p className="text-xs text-slate-400">الأقسام المتاحة:</p>
+                <div className="flex flex-wrap gap-2">
+                  {user?.role === Role.ADMIN && <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30">جميع الأقسام</span>}
+                  {(user?.role === Role.AGENT || user?.role === Role.BROKER) && <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded border border-indigo-500/30 flex items-center gap-1"><Building2 className="w-3 h-3" /> ادارة الاملاك</span>}
+                  {user?.role === Role.MARKETING && <span className="text-[10px] bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30 flex items-center gap-1"><Briefcase className="w-3 h-3" /> ادارة التسويق</span>}
+                  {user?.role === Role.LEGAL && <span className="text-[10px] bg-slate-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 flex items-center gap-1"><Gavel className="w-3 h-3" /> ادارة القانونية</span>}
+                  {user?.role === Role.FINANCE && <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded border border-emerald-500/30 flex items-center gap-1"><Receipt className="w-3 h-3" /> الادارة المالية</span>}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs text-slate-400">الإجراءات المسموحة:</p>
+                <div className="flex flex-wrap gap-2">
+                  {user?.role === Role.ADMIN ? (
+                    <span className="text-[10px] bg-slate-600/50 text-slate-200 px-2 py-1 rounded border border-slate-500/30">تحكم كامل</span>
+                  ) : (
+                    <>
+                      <span className="text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><Eye className="w-3 h-3" /> عرض</span>
+                      {(user?.role === Role.AGENT || user?.role === Role.BROKER) && <span className="text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><PlusCircle className="w-3 h-3" /> إنشاء طلبات</span>}
+                      {[Role.MARKETING, Role.LEGAL, Role.FINANCE].includes(user?.role as Role) && (
+                        <>
+                          <span className="text-[10px] bg-green-500/10 text-green-300 px-2 py-1 rounded border border-green-500/20 flex items-center gap-1"><CheckSquare className="w-3 h-3" /> اعتماد</span>
+                          <span className="text-[10px] bg-red-500/10 text-red-300 px-2 py-1 rounded border border-red-500/20 flex items-center gap-1"><XSquare className="w-3 h-3" /> رفض</span>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
 
             <div className="flex gap-3 pt-4">
               <button
@@ -198,7 +235,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg font-medium text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isSaving ? (
                   <>

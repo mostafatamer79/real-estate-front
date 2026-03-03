@@ -3,242 +3,485 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ordersApi } from "@/lib/api";
-import { CreateOrderDto } from "@/types/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreateOrderDto, Order } from "@/types/api";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, ArrowRight, PlusCircle, List, MapPin, Ruler, DollarSign, Calendar } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
-const propertyTypes = [
-  "شقة", "فيلا", "أرض", "عمارة", "استراحة", "محل تجاري", "مكتب", "مستودع"
-];
+  const propertyTypes = [
+    { value: "شقة", label: "property.type.apartment" },
+    { value: "فيلا", label: "property.type.villa" },
+    { value: "قصر", label: "property.type.palace" },
+    { value: "أرض", label: "property.type.land" },
+    { value: "عمارة", label: "property.type.building" },
+    { value: "استراحة", label: "property.type.restHouse" },
+    { value: "محل تجاري", label: "property.type.shop" },
+    { value: "مكتب", label: "property.type.office" },
+    { value: "مستودع", label: "property.type.warehouse" }
+  ];
 
-const orderTypes = [
-  { value: "buy", label: "شراء" },
-  { value: "rent", label: "إيجار" }
-];
+  const orderTypes = [
+    { value: "buy", label: "orders.buy" },
+    { value: "rent", label: "orders.rent" }
+  ];
 
-const deedTypes = [
-  { value: "electronic", label: "صك إلكتروني" },
-  { value: "paper", label: "صك ورقي" },
-  { value: "other", label: "أخرى" }
-];
+  const deedTypes = [
+    { value: "electronic", label: "property.deed.electronic" },
+    { value: "paper", label: "property.deed.paper" },
+    { value: "other", label: "property.deed.other" }
+  ];
 
-const propertyAges = [
-  "جديد", "أقل من 5 سنوات", "5-10 سنوات", "10-20 سنة", "أكثر من 20 سنة"
-];
+  const propertyAges = [
+    { value: "جديد", label: "property.age.new" },
+    { value: "أقل من 5 سنوات", label: "property.age.less5" },
+    { value: "5-10 سنوات", label: "property.age.5to10" },
+    { value: "10-20 سنة", label: "property.age.10to20" },
+    { value: "أكثر من 20 سنة", label: "property.age.more20" }
+  ];
 
-export default function CreateOrderPage() {
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<CreateOrderDto>({
-    orderType: "buy",
-    propertyType: "شقة",
-    city: "",
-    neighborhood: "",
-    area: 0,
-    propertyAge: "جديد",
-    deedType: "electronic",
-    price: 0,
-    additionalDetails: ""
-  });
+  export default function CreateOrderPage() {
+    const router = useRouter();
+    const { t, language } = useLanguage();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState("create");
+    const [myOrders, setMyOrders] = useState<Order[]>([]);
+    const [loadingMyOrders, setLoadingMyOrders] = useState(false);
 
-  const handleChange = (field: keyof CreateOrderDto, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      if (!formData.city || !formData.neighborhood || !formData.price || !formData.area) {
-        throw new Error("الرجاء ملء جميع الحقول المطلوبة");
+    const [formData, setFormData] = useState<CreateOrderDto>({
+      orderType: "buy",
+      propertyType: "شقة",
+      city: "",
+      neighborhood: "",
+      area: 0,
+      propertyAge: "جديد",
+      deedType: "electronic",
+      price: 0,
+      rooms: 0,
+      bathrooms: 0,
+      livingRooms: 0,
+      kitchens: 0,
+      floors: 0,
+      apartments: 0,
+      hasMaidRoom: false,
+      hasRoof: false,
+      hasExternalAnnex: false,
+      buildingArea: 0,
+      hasGarage: false,
+      hasPool: false,
+      hasElevator: false,
+      furnitureStatus: "unfurnished",
+      additionalDetails: ""
+    });
+  
+    const handleChange = (field: keyof CreateOrderDto, value: any) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    };
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+  
+      try {
+        if (!formData.city || !formData.neighborhood || !formData.price || !formData.area) {
+          throw new Error(t('orders.required'));
+        }
+  
+        await ordersApi.create(formData);
+        toast.success(t('orders.success'));
+        
+        // Reset form
+        setFormData({
+          orderType: "buy",
+          propertyType: "شقة",
+          city: "",
+          neighborhood: "",
+          area: 0,
+          propertyAge: "جديد",
+          deedType: "electronic",
+          price: 0,
+          rooms: 0,
+          bathrooms: 0,
+          livingRooms: 0,
+          kitchens: 0,
+          floors: 0,
+          apartments: 0,
+          hasMaidRoom: false,
+          hasRoof: false,
+          hasExternalAnnex: false,
+          buildingArea: 0,
+          hasGarage: false,
+          hasPool: false,
+          hasElevator: false,
+          furnitureStatus: "unfurnished",
+          additionalDetails: ""
+        });
+  
+      } catch (err: any) {
+        console.error(err);
+        toast.error(err.message || t('orders.error'));
+      } finally {
+        setIsSubmitting(false);
       }
+    };
+  
+    const showDetailedFields = ["فيلا", "قصر", "شقة"].includes(formData.propertyType);
 
-      await ordersApi.create(formData);
-      toast.success("تم إنشاء طلب العقار بنجاح");
-      
-      // Reset form
-      setFormData({
-        orderType: "buy",
-        propertyType: "شقة",
-        city: "",
-        neighborhood: "",
-        area: 0,
-        propertyAge: "جديد",
-        deedType: "electronic",
-        price: 0,
-        additionalDetails: ""
-      });
+    const fetchMyOrders = async () => {
+      try {
+        setLoadingMyOrders(true);
+        const response = await ordersApi.findMyOrders();
+        setMyOrders(response.data);
+      } catch (error) {
+        console.error("Error fetching my orders:", error);
+        toast.error("Failed to load your orders");
+      } finally {
+        setLoadingMyOrders(false);
+      }
+    };
 
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "حدث خطأ أثناء إنشاء الطلب");
-    } finally {
-      setIsSubmitting(false);
+    React.useEffect(() => {
+      if (activeTab === "my-orders") {
+        fetchMyOrders();
+      }
+    }, [activeTab]);
+
+    const handleDeleteOrder = async (id: string) => {
+        if(!confirm(t('common.confirmDelete'))) return;
+
+        try {
+            await ordersApi.delete(id);
+            toast.success(t('common.deletedSuccess'));
+            setMyOrders(myOrders.filter(o => o.id !== id));
+        } catch (error) {
+             toast.error(t('common.deleteError'));
+        }
     }
-  };
 
   return (
-    <div className="container mx-auto px-4 py-8" dir="rtl">
-      <Toaster />
-      <div className="max-w-3xl mx-auto">
-        <Button 
-          variant="ghost" 
-          onClick={() => router.back()} 
-          className="mb-4 flex items-center gap-2 hover:bg-gray-100"
-        >
-            <ArrowRight className="w-4 h-4" />
-            عودة
-        </Button>
-        <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">طلب عقار جديد</h1>
-            <p className="text-gray-500">سجل طلبك وسنقوم بالبحث عن العقار المناسب لك</p>
-        </div>
+      <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <Toaster />
+        <div className="max-w-3xl mx-auto">
+          <Button 
+            variant="ghost" 
+            onClick={() => router.back()} 
+            className="mb-4 flex items-center gap-2 hover:bg-slate-100"
+          >
+              <ArrowRight className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
+              {t('common.back')}
+          </Button>
+          <div className="mb-8 text-center">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('orders.title')}</h1>
+              <p className="text-gray-500">{t('orders.subtitle')}</p>
+          </div>
 
-        <form onSubmit={handleSubmit}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">بيانات الطلب</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              <div className="space-y-2">
-                <Label>نوع الطلب</Label>
-                <Select 
-                    value={formData.orderType} 
-                    onValueChange={(val) => handleChange("orderType", val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {orderTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="create" className="flex items-center gap-2">
+                <PlusCircle className="w-4 h-4" />
+                {t('orders.createOrder')}
+              </TabsTrigger>
+              <TabsTrigger value="my-orders" className="flex items-center gap-2">
+                <List className="w-4 h-4" />
+                {t('orders.myOrders')}
+              </TabsTrigger>
+            </TabsList>
 
-              <div className="space-y-2">
-                <Label>نوع العقار</Label>
-                <Select 
-                    value={formData.propertyType} 
-                    onValueChange={(val) => handleChange("propertyType", val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {propertyTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>المدينة</Label>
-                <Input 
-                  value={formData.city}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  placeholder="مثال: الرياض"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>الحي</Label>
-                <Input 
-                  value={formData.neighborhood}
-                  onChange={(e) => handleChange("neighborhood", e.target.value)}
-                  placeholder="مثال: النرجس"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>المساحة المطلوبة (م²)</Label>
-                <Input 
-                  type="number"
-                  value={formData.area || ''}
-                  onChange={(e) => handleChange("area", Number(e.target.value))}
-                  placeholder="0"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>السعر المتوقع (ريال)</Label>
-                <Input 
-                  type="number"
-                  value={formData.price || ''}
-                  onChange={(e) => handleChange("price", Number(e.target.value))}
-                  placeholder="0"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>عمر العقار</Label>
-                <Select 
-                    value={formData.propertyAge} 
-                    onValueChange={(val) => handleChange("propertyAge", val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {propertyAges.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>نوع الصك</Label>
-                <Select 
-                    value={formData.deedType} 
-                    onValueChange={(val) => handleChange("deedType", val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {deedTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <Label>تفاصيل إضافية</Label>
-                <Textarea 
-                  value={formData.additionalDetails}
-                  onChange={(e) => handleChange("additionalDetails", e.target.value)}
-                  placeholder="أي تفاصيل أخرى ترغب بإضافتها..."
-                  className="min-h-[100px]"
-                />
-              </div>
-
-              <div className="md:col-span-2 pt-4">
-                <Button 
-                  type="submit" 
-                  className="w-full bg-blue-900 hover:bg-blue-800 h-12 text-lg"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                        <Loader2 className="animate-spin w-5 h-5" />
-                        جاري الإرسال...
+            <TabsContent value="create">
+              <form onSubmit={handleSubmit}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">{t('orders.details')}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div className="space-y-2">
+                  <Label>{t('orders.type')}</Label>
+                  <Select 
+                      value={formData.orderType} 
+                      onValueChange={(val) => handleChange("orderType", val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {orderTypes.map(type => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {t(type.label)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.propType')}</Label>
+                  <Select 
+                      value={formData.propertyType} 
+                      onValueChange={(val) => handleChange("propertyType", val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {propertyTypes.map(pType => <SelectItem key={pType.value} value={pType.value}>{t(pType.label)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.city')}</Label>
+                  <Input 
+                    value={formData.city}
+                    onChange={(e) => handleChange("city", e.target.value)}
+                    placeholder={language === 'ar' ? "مثال: الرياض" : "e.g. Riyadh"}
+                    required
+                  />
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.neighborhood')}</Label>
+                  <Input 
+                    value={formData.neighborhood}
+                    onChange={(e) => handleChange("neighborhood", e.target.value)}
+                    placeholder={language === 'ar' ? "مثال: النرجس" : "e.g. Al-Narjis"}
+                    required
+                  />
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.area')}</Label>
+                  <Input 
+                    type="number"
+                    value={formData.area || ''}
+                    onChange={(e) => handleChange("area", Number(e.target.value))}
+                    placeholder="0"
+                    required
+                  />
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.price')}</Label>
+                  <Input 
+                    type="number"
+                    value={formData.price || ''}
+                    onChange={(e) => handleChange("price", Number(e.target.value))}
+                    placeholder="0"
+                    required
+                  />
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.age')}</Label>
+                  <Select 
+                      value={formData.propertyAge} 
+                      onValueChange={(val) => handleChange("propertyAge", val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {propertyAges.map(item => <SelectItem key={item.value} value={item.value}>{t(item.label)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+  
+                <div className="space-y-2">
+                  <Label>{t('orders.deed')}</Label>
+                  <Select 
+                      value={formData.deedType} 
+                      onValueChange={(val) => handleChange("deedType", val)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {deedTypes.map(item => <SelectItem key={item.value} value={item.value}>{t(item.label)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+  
+              {showDetailedFields && (
+                <div className="md:col-span-2 pt-6 border-t">
+                  <h3 className="text-lg font-semibold mb-6">{t('bm.offer.detailed')}</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="space-y-2">
+                      <Label>{t('orders.rooms')}</Label>
+                      <Input type="number" value={formData.rooms || ''} onChange={(e) => handleChange("rooms", Number(e.target.value))} placeholder="0" />
                     </div>
-                  ) : "إرسال الطلب"}
-                </Button>
-              </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.baths')}</Label>
+                      <Input type="number" value={formData.bathrooms || ''} onChange={(e) => handleChange("bathrooms", Number(e.target.value))} placeholder="0" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.living')}</Label>
+                      <Input type="number" value={formData.livingRooms || ''} onChange={(e) => handleChange("livingRooms", Number(e.target.value))} placeholder="0" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.kitchens')}</Label>
+                      <Input type="number" value={formData.kitchens || ''} onChange={(e) => handleChange("kitchens", Number(e.target.value))} placeholder="0" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.floors')}</Label>
+                      <Input type="number" value={formData.floors || ''} onChange={(e) => handleChange("floors", Number(e.target.value))} placeholder="0" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.apartments')}</Label>
+                      <Input type="number" value={formData.apartments || ''} onChange={(e) => handleChange("apartments", Number(e.target.value))} placeholder="0" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('orders.buildArea')}</Label>
+                      <Input type="number" value={formData.buildingArea || ''} onChange={(e) => handleChange("buildingArea", Number(e.target.value))} placeholder="0" />
+                    </div>
+                  </div>
 
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="maid" checked={formData.hasMaidRoom} onCheckedChange={(val) => handleChange("hasMaidRoom", !!val)} />
+                      <Label htmlFor="maid" className="cursor-pointer">{t('orders.maid')}</Label>
+                    </div>
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="roof" checked={formData.hasRoof} onCheckedChange={(val) => handleChange("hasRoof", !!val)} />
+                      <Label htmlFor="roof" className="cursor-pointer">{t('orders.roof')}</Label>
+                    </div>
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="annex" checked={formData.hasExternalAnnex} onCheckedChange={(val) => handleChange("hasExternalAnnex", !!val)} />
+                      <Label htmlFor="annex" className="cursor-pointer">{t('orders.annex')}</Label>
+                    </div>
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="garage" checked={formData.hasGarage} onCheckedChange={(val) => handleChange("hasGarage", !!val)} />
+                      <Label htmlFor="garage" className="cursor-pointer">{t('orders.garage')}</Label>
+                    </div>
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="pool" checked={formData.hasPool} onCheckedChange={(val) => handleChange("hasPool", !!val)} />
+                      <Label htmlFor="pool" className="cursor-pointer">{t('orders.pool')}</Label>
+                    </div>
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                      <Checkbox id="elevator" checked={formData.hasElevator} onCheckedChange={(val) => handleChange("hasElevator", !!val)} />
+                      <Label htmlFor="elevator" className="cursor-pointer">{t('orders.elevator')}</Label>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-2">
+                    <Label>{t('orders.furniture')}</Label>
+                    <Select 
+                      value={formData.furnitureStatus} 
+                      onValueChange={(val) => handleChange("furnitureStatus", val)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="furnished">{t('orders.furnished')}</SelectItem>
+                        <SelectItem value="unfurnished">{t('orders.unfurnished')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+                <div className="md:col-span-2 space-y-2">
+                  <Label>{t('orders.details')}</Label>
+                  <Textarea 
+                    value={formData.additionalDetails}
+                    onChange={(e) => handleChange("additionalDetails", e.target.value)}
+                    placeholder={language === 'ar' ? "أي تفاصيل أخرى ترغب بإضافتها..." : "Any additional details..."}
+                    className="min-h-[100px]"
+                  />
+                </div>
+  
+                <div className="md:col-span-2 pt-4">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-slate-900 hover:bg-slate-800 h-12 text-lg"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                          <Loader2 className="animate-spin w-5 h-5" />
+                          {t('orders.submitting')}
+                      </div>
+                    ) : t('orders.submit')}
+                  </Button>
+                </div>
+  
             </CardContent>
           </Card>
         </form>
+      </TabsContent>
+
+      <TabsContent value="my-orders">
+        {loadingMyOrders ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+          </div>
+        ) : myOrders.length === 0 ? (
+          <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-gray-200">
+            <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
+            <Button variant="link" onClick={() => setActiveTab("create")}>
+              {t('orders.createOrder')}
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {myOrders.map((order) => (
+              <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                <CardHeader className="bg-slate-50/50 pb-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                        <CardTitle className="text-lg font-bold flex items-center gap-2">
+                            {order.propertyType}
+                            <Badge variant={order.orderType === 'buy' ? 'default' : 'secondary'} className="text-xs">
+                                {t(`orders.${order.orderType}`)}
+                            </Badge>
+                        </CardTitle>
+                        <p className="text-xs text-gray-500 mt-1">
+                            {new Date(order.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
+                        </p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4 grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <span>{order.city} - {order.neighborhood}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Ruler className="w-4 h-4 text-gray-400" />
+                    <span>{order.area} م²</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                     <DollarSign className="w-4 h-4 text-gray-400" />
+                     <span className="font-bold text-gray-900">{order.price.toLocaleString()}</span>
+                  </div>
+                   <div className="flex items-center gap-2 text-gray-600">
+                     <Calendar className="w-4 h-4 text-gray-400" />
+                     <span>{order.propertyAge}</span>
+                  </div>
+                </CardContent>
+                <CardFooter className="bg-slate-50/50 py-3 flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDeleteOrder(order.id)}>
+                        {t('common.delete')}
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => router.push(`/orders/${order.id}`)}>
+                        {t('common.details')}
+                    </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

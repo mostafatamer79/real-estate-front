@@ -27,12 +27,14 @@ export interface LegalDisputeFormData {
   firstPartyAgent?: {
     name: string;
     agencyNumber: string;
+    idNumber: string;
   };
   secondPartyAgent?: {
     name: string;
     agencyNumber: string;
+    idNumber: string;
   };
-  disputeType: string;
+  disputeType?: string;
   otherDisputeType?: string;
   disputeDescription: string;
   documentIds?: string[];
@@ -61,15 +63,18 @@ export interface CreateLegalDisputeDto {
     phone: string;
     email: string;
   };
-  disputeType: string;
+  disputeType?: string;
   disputeDescription: string;
   otherDisputeType?: string;
   firstPartyAgent?: {
     name: string;
     agencyNumber: string;
+    idNumber: string;
   };
   secondPartyAgent?: {
+    name: string;
     agencyNumber: string;
+    idNumber: string;
   };
   documentIds?: string[];
 }
@@ -336,5 +341,14 @@ export const legalServicesApi = {
   getLegalEnums: async () => {
     const response = await api.get('/legal-services/enums');
     return response.data;
-  }
+  },
+
+  // Aliases for better naming
+  createOtherService: async (data: any) => {
+    return legalServicesApi.createOtherLegalService(data);
+  },
+
+  createDocumentation: async (data: any) => {
+    return legalServicesApi.createLegalDocumentation(data);
+  },
 };

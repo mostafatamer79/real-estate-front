@@ -4,6 +4,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MessageCircle, Search, Filter, User, Clock, Check, CheckCheck, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { chatApi } from "@/lib/chat";
 
 interface ChatRoom {
   id: string;
@@ -29,6 +31,7 @@ interface ChatRoom {
 }
 
 export default function ChatPage() {
+  const router = useRouter();
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,22 +58,11 @@ export default function ChatPage() {
   const fetchChats = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-
-      const response = await fetch('/api/chat/rooms', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch chats');
-      }
-
-      const result = await response.json();
+      const data = await chatApi.getUserRooms();
 
       // Transform rooms to include additional data
-      const transformedRooms: ChatRoom[] = result.data.map((room: any) => {
+      const rooms = data.data || data;
+      const transformedRooms: ChatRoom[] = Array.isArray(rooms) ? rooms.map((room: any) => {
         const otherParticipant = room.participants?.find(
           (p: any) => p.id !== currentUser?.id
         );
@@ -84,7 +76,7 @@ export default function ChatPage() {
           offerId: room.offerId,
           otherParticipant,
         };
-      });
+      }) : [];
 
       setChats(transformedRooms);
     } catch (error) {
@@ -94,8 +86,10 @@ export default function ChatPage() {
     }
   };
 
-  const getFullName = (firstName: string = '', lastName: string = '') => {
-    return `${firstName} ${lastName}`.trim() || 'مستخدم';
+  const getFullName = (firstName: string | null = '', lastName: string | null = '') => {
+    const first = firstName || '';
+    const last = lastName || '';
+    return `${first} ${last}`.trim() || t('chat.user') || 'مستخدم';
   };
 
   const filteredChats = chats.filter(chat => {
@@ -120,20 +114,20 @@ export default function ChatPage() {
       const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
       if (diffInHours < 24) {
-        return date.toLocaleTimeString('ar-SA', {
+        return date.toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', {
           hour: '2-digit',
           minute: '2-digit'
         });
       } else if (diffInHours < 48) {
-        return 'أمس';
+        return t('chat.yesterday');
       } else {
-        return date.toLocaleDateString('ar-SA', {
+        return date.toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
           month: 'short',
           day: 'numeric'
         });
       }
     } catch {
-      return 'الآن';
+      return t('chat.now');
     }
   };
 
@@ -143,40 +137,43 @@ export default function ChatPage() {
     }
 
     // Fallback to room name if no participant found
-    return chat.name || 'محادثة';
+    return chat.name || t('chat.conversation');
   };
 
   const getLastMessagePreview = (chat: ChatRoom) => {
-    if (!chat.lastMessage) return 'بدء محادثة جديدة';
+    if (!chat.lastMessage) return t('chat.startNew');
 
-    const senderName = chat.lastMessage.sender.id === currentUser?.id
-      ? 'أنت'
-      : getFullName(chat.lastMessage.sender.firstName, chat.lastMessage.sender.lastName);
+    const sender = chat.lastMessage.sender;
+    const senderName = sender?.id === currentUser?.id
+      ? t('chat.you')
+      : getFullName(sender?.firstName, sender?.lastName);
 
-    return `${senderName}: ${chat.lastMessage.content}`;
+    return `${senderName}: ${chat.lastMessage.content || ''}`;
   };
+
+  /* ... */
+
+  const { t, language } = useLanguage();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-700"></div>
       </div>
     );
   }
 
-  const router = useRouter();
-
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto p-4 md:p-6">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
              <div className="flex items-center gap-3">
                 <MessageCircle className="w-8 h-8 text-gray-700" />
-                <h1 className="text-2xl font-bold text-gray-800">المحادثات</h1>
+                <h1 className="text-2xl font-bold text-gray-800">{t('chat.title')}</h1>
                 {chats.length > 0 && (
-                <span className="bg-gray-700 text-white text-sm px-2 py-1 rounded-full">
+                <span className="bg-slate-700 text-white text-sm px-2 py-1 rounded-full">
                     {chats.length}
                 </span>
                 )}
@@ -185,21 +182,21 @@ export default function ChatPage() {
                 onClick={() => router.push('/')}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors bg-white px-4 py-2 rounded-lg shadow-sm"
               >
-                <ArrowRight className="w-5 h-5 transform rotate-180" />
-                <span>العودة للرئيسية</span>
+                <ArrowRight className={`w-5 h-5 transform ${language === 'ar' ? 'rotate-180' : ''}`} />
+                <span>{t('chat.back')}</span>
               </button>
           </div>
 
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5`} />
             <input
               type="text"
-              placeholder="ابحث في المحادثات..."
+              placeholder={t('chat.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
-              dir="rtl"
+              className={`w-full ${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600`}
+              dir={language === 'ar' ? 'rtl' : 'ltr'}
             />
           </div>
         </div>
@@ -208,13 +205,13 @@ export default function ChatPage() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="border-b p-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-gray-800">جميع المحادثات</h2>
+              <h2 className="font-semibold text-gray-800">{t('chat.all')}</h2>
               <button
                 onClick={fetchChats}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
               >
                 <Filter className="w-4 h-4" />
-                <span className="text-sm">تحديث</span>
+                <span className="text-sm">{t('chat.refresh')}</span>
               </button>
             </div>
           </div>
@@ -223,12 +220,12 @@ export default function ChatPage() {
             <div className="p-8 text-center">
               <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                {searchQuery ? "لا توجد نتائج" : "لا توجد محادثات"}
+                {searchQuery ? t('chat.noResults') : t('chat.noChats')}
               </h3>
               <p className="text-gray-500">
                 {searchQuery
-                  ? "لم يتم العثور على محادثات تطابق بحثك"
-                  : "ابدأ محادثة جديدة من خلال صفحة العروض"
+                  ? t('chat.noMatch')
+                  : t('chat.start')
                 }
               </p>
             </div>
@@ -242,14 +239,14 @@ export default function ChatPage() {
                   <div
                     key={chat.id}
                     onClick={() => window.location.href = `/chat/${chat.id}`}
-                    className="flex items-center gap-3 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="flex items-center gap-3 p-4 hover:bg-slate-50 cursor-pointer transition-colors"
                   >
                     <div className="relative">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                      <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center">
                         <User className="w-6 h-6 text-gray-600" />
                       </div>
                       {chat.unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                           {chat.unreadCount}
                         </span>
                       )}
@@ -281,7 +278,7 @@ export default function ChatPage() {
                         {chat.unreadCount > 0 ? (
                           <Check className="w-4 h-4 text-gray-400" />
                         ) : (
-                          <CheckCheck className="w-4 h-4 text-blue-500" />
+                          <CheckCheck className="w-4 h-4 text-gray-800" />
                         )}
                       </div>
                     </div>

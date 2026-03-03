@@ -2,16 +2,27 @@
 
 import { useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { Place } from "@/types/map";
+import { useLanguage } from "@/context/LanguageContext";
+import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
+import { financialApi } from "@/lib/api";
+import { toast } from "react-hot-toast";
 
-// ✅ Dynamically import the Map component to avoid SSR issues
+// ✅ Dynamic Import with Loading Component
+const MapLoading = () => {
+  const { t } = useLanguage();
+  return (
+    <div className="h-[70vh] bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl animate-pulse flex items-center justify-center">
+      <div className="text-slate-400">{t('scan.loadingMap')}</div>
+    </div>
+  );
+};
+
 const Map = dynamic(() => import("../src/components/Map"), {
   ssr: false,
-  loading: () => (
-    <div className="h-[70vh] bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl animate-pulse flex items-center justify-center">
-      <div className="text-slate-400">جاري تحميل الخريطة...</div>
-    </div>
-  ),
+  loading: () => <MapLoading />,
 });
 
 // ✅ Constants
@@ -28,8 +39,15 @@ export default function ScanMapPage() {
   const [searchRadius, setSearchRadius] = useState(RADIUS);
   const [isSelectingLocation, setIsSelectingLocation] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPaid, setIsPaid] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
+  const [creatingInvoice, setCreatingInvoice] = useState(false);
+  const { t, language } = useLanguage();
+  const router = useRouter();
 
   // ✅ Memoized values
+  const reportPrice = useMemo(() => Math.max(30, Math.floor(25 + (searchRadius / 100))), [searchRadius]);
   const hasPlaces = useMemo(() => places.length > 0, [places]);
   const uniqueTypes = useMemo(() => new Set(places.map(p => p.type)).size, [places]);
 
@@ -62,6 +80,10 @@ export default function ScanMapPage() {
   // ✅ Optimized scan function
   const scanArea = useCallback(async () => {
     if (loading) return;
+    // if (!isPaid) {
+    //   setError(t('scan.paymentRequired'));
+    //   return;
+    // }
 
     setLoading(true);
     setError(null);
@@ -76,18 +98,18 @@ export default function ScanMapPage() {
       const response = await fetch(`${API_URL}/places?${params}`);
 
       if (!response.ok) {
-        throw new Error(`خطأ في الخادم: ${response.status}`);
+        throw new Error(`${t('scan.serverError')}: ${response.status}`);
       }
 
       const data = await response.json();
 
       if (!Array.isArray(data)) {
-        throw new Error("تنسيق البيانات غير صحيح");
+        throw new Error(t('scan.dataError'));
       }
 
       setPlaces(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "حدث خطأ غير متوقع";
+      const errorMessage = err instanceof Error ? err.message : t('scan.unexpectedError');
       setError(errorMessage);
       console.error("Error scanning area:", err);
     } finally {
@@ -102,7 +124,7 @@ export default function ScanMapPage() {
     const csvRows = [];
 
     // Headers
-    csvRows.push(["الاسم", "النوع", "المسافة (م)", "العرض", "الطول", "المدينة"].join(","));
+    csvRows.push([t('scan.csv.name'), t('scan.csv.type'), t('scan.csv.distance'), t('scan.csv.lat'), t('scan.csv.lng'), t('scan.csv.city')].join(","));
 
     // Data rows
     places.forEach(place => {
@@ -164,14 +186,34 @@ export default function ScanMapPage() {
     setSearchRadius(RADIUS);
     setIsSelectingLocation(false);
     setError(null);
+    setIsPaid(false);
+    setInvoiceId(null);
   }, []);
+
+  // ✅ Create Invoice for Neighborhood Report
+  const handleRequestReport = async () => {
+    setCreatingInvoice(true);
+    try {
+      const resp = await financialApi.createInvoice({
+        amount: reportPrice,
+        referenceType: 'NeighborhoodReport',
+        description: `${t('scan.neighborReport')} - ${propertyLocation[0].toFixed(4)}, ${propertyLocation[1].toFixed(4)} (Radius: ${searchRadius}m)`,
+      });
+      setInvoiceId(resp.data.id);
+      setIsPaymentModalOpen(true);
+    } catch (err) {
+      toast.error(t('scan.unexpectedError'));
+    } finally {
+      setCreatingInvoice(false);
+    }
+  };
 
   // ✅ Format distance for display
   const formatDistance = useCallback((distance: number) => {
     if (distance < 1000) {
-      return `${Math.round(distance)} متر`;
+      return `${Math.round(distance)} ${t('scan.unit.meter')}`;
     }
-    return `${(distance / 1000).toFixed(1)} كيلومتر`;
+    return `${(distance / 1000).toFixed(1)} ${t('scan.unit.km')}`;
   }, []);
 
   // ✅ Get distance color class
@@ -183,14 +225,23 @@ export default function ScanMapPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Back Button */}
+      <button 
+        onClick={() => router.push('/details')}
+        className="absolute top-6 left-6 z-10 p-2 bg-slate-800/50 hover:bg-slate-700/80 rounded-full text-slate-300 transition-colors border border-slate-700"
+        title={t('common.back')}
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
+
       {/* Header */}
-      <header className="mb-8">
+      <header className="mb-8 relative">
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-emerald-400">
-          🗺️ نظام مسح المناطق المحيطة
+          🗺️ {t('scan.title')}
         </h1>
         <p className="text-slate-400 text-center text-sm md:text-base">
-          حدد موقع العقار ثم امسح المنطقة المحيطة للعثور على الخدمات القريبة
+          {t('scan.desc')}
         </p>
       </header>
 
@@ -201,14 +252,14 @@ export default function ScanMapPage() {
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
               <span className="text-emerald-400">📍</span>
-              موقع العقار
+              {t('scan.propertyLocation')}
             </h2>
 
             <div className="space-y-4">
               {/* Location Display */}
               <div className="bg-slate-900/80 p-4 rounded-xl">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-slate-400 text-sm">الإحداثيات:</span>
+                  <span className="text-slate-400 text-sm">{t('scan.coordinates')}:</span>
                   <button
                     onClick={() => setIsSelectingLocation(!isSelectingLocation)}
                     className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
@@ -217,7 +268,7 @@ export default function ScanMapPage() {
                         : 'bg-slate-700 hover:bg-slate-600'
                     }`}
                   >
-                    {isSelectingLocation ? "❌ إلغاء التحديد" : "📍 تحديد جديد"}
+                    {isSelectingLocation ? `❌ ${t('scan.cancelSelect')}` : `📍 ${t('scan.selectNew')}`}
                   </button>
                 </div>
                 <div className="font-mono text-sm bg-slate-800 p-2 rounded-lg text-center">
@@ -230,7 +281,7 @@ export default function ScanMapPage() {
               {/* Search Radius Slider */}
               <div>
                 <label className="block text-sm text-slate-400 mb-2">
-                  🔍 نصف قطر البحث: <span className="text-emerald-400">{searchRadius.toLocaleString()} متر</span>
+                  🔍 {t('scan.radius')}: <span className="text-emerald-400">{searchRadius.toLocaleString()} {t('chat.meters')}</span>
                 </label>
                 <input
                   type="range"
@@ -242,9 +293,9 @@ export default function ScanMapPage() {
                   className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500"
                 />
                 <div className="flex justify-between text-xs text-slate-500 mt-1">
-                  <span>500م</span>
-                  <span>2.5كم</span>
-                  <span>5كم</span>
+                  <span>500 {t('scan.unit.meter')}</span>
+                  <span>2.5 {t('scan.unit.km')}</span>
+                  <span>5 {t('scan.unit.km')}</span>
                 </div>
               </div>
 
@@ -258,12 +309,12 @@ export default function ScanMapPage() {
                   {loading ? (
                     <>
                       <span className="animate-spin">⟳</span>
-                      جاري المسح...
+                      {t('scan.scanning')}
                     </>
                   ) : (
                     <>
                       <span>🔍</span>
-                      بدء المسح
+                      {t('scan.start')}
                     </>
                   )}
                 </button>
@@ -274,7 +325,7 @@ export default function ScanMapPage() {
                     className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     <span>🏠</span>
-                    الافتراضي
+                    {t('scan.default')}
                   </button>
 
                   {hasPlaces && (
@@ -283,10 +334,46 @@ export default function ScanMapPage() {
                       className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <span>{showTable ? "👁️‍🗨️" : "📊"}</span>
-                      {showTable ? "إخفاء الجدول" : "عرض الجدول"}
+                      {showTable ? t('scan.hideTable') : t('scan.showTable')}
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* Neighborhood Report Service Card */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700 mt-6 bg-gradient-to-br from-slate-800 to-indigo-950/30">
+                <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                  <span className="text-indigo-400">📄</span>
+                  {t('scan.neighborReport')}
+                </h2>
+                <p className="text-xs text-slate-400 mb-4">
+                  {t('scan.paymentRequired')}
+                </p>
+                <div className="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl mb-4">
+                  <span className="text-sm">{t('scan.price')}</span>
+                  <span className="font-bold text-emerald-400">{reportPrice} {t('chat.currency')}</span>
+                </div>
+                
+                {isPaid ? (
+                  <div className="bg-emerald-900/20 border border-emerald-500/50 text-emerald-400 p-3 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
+                    <span>✅</span> {t('scan.unlocked')}
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleRequestReport}
+                    disabled={creatingInvoice}
+                    className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    {creatingInvoice ? (
+                      <span className="animate-spin text-lg">⟳</span>
+                    ) : (
+                      <>
+                        <span>💳</span>
+                        {t('scan.payNow')}
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -296,7 +383,7 @@ export default function ScanMapPage() {
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <span className="text-blue-400">📊</span>
-                نتائج المسح
+                {t('scan.results')}
               </h2>
 
               <div className="space-y-4">
@@ -304,18 +391,18 @@ export default function ScanMapPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-900/80 p-4 rounded-xl text-center">
                     <div className="text-2xl font-bold text-emerald-400">{places.length}</div>
-                    <div className="text-sm text-slate-400">عدد الأماكن</div>
+                    <div className="text-sm text-slate-400">{t('scan.placesCount')}</div>
                   </div>
                   <div className="bg-slate-900/80 p-4 rounded-xl text-center">
                     <div className="text-2xl font-bold text-blue-400">{uniqueTypes}</div>
-                    <div className="text-sm text-slate-400">عدد الأنواع</div>
+                    <div className="text-sm text-slate-400">{t('scan.typesCount')}</div>
                   </div>
                 </div>
 
                 {/* Top Types */}
                 {typeCounts.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-300 mb-2">أكثر الأنواع تواجداً:</h3>
+                    <h3 className="text-sm font-semibold text-slate-300 mb-2">{t('scan.topTypes')}:</h3>
                     <div className="space-y-2">
                       {typeCounts.map(([type, count]) => (
                         <div key={type} className="flex items-center justify-between bg-slate-900/60 p-2 rounded-lg">
@@ -334,7 +421,7 @@ export default function ScanMapPage() {
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   <span>⬇️</span>
-                  تصدير نتائج CSV
+                  {t('scan.export')}
                 </button>
               </div>
             </div>
@@ -346,7 +433,7 @@ export default function ScanMapPage() {
               <div className="flex items-start gap-3">
                 <div className="text-red-400 text-xl mt-1">⚠️</div>
                 <div>
-                  <h3 className="font-bold text-red-300 mb-1">خطأ</h3>
+                  <h3 className="font-bold text-red-300 mb-1">{t('scan.error.title')}</h3>
                   <p className="text-sm text-red-200/80">{error}</p>
                 </div>
               </div>
@@ -359,9 +446,9 @@ export default function ScanMapPage() {
               <div className="flex items-start gap-3">
                 <div className="text-yellow-400 text-xl mt-1">💡</div>
                 <div>
-                  <h3 className="font-bold text-yellow-300 mb-1">وضع تحديد الموقع</h3>
+                  <h3 className="font-bold text-yellow-300 mb-1">{t('scan.tips.title')}</h3>
                   <p className="text-sm text-yellow-200/80">
-                    انقر على الخريطة لتحديد موقع العقار الجديد، ثم اضغط على زر "بدء المسح"
+                    {t('scan.tips.desc')}
                   </p>
                 </div>
               </div>
@@ -380,8 +467,8 @@ export default function ScanMapPage() {
               places={places}
               onLocationSelect={handleLocationSelect}
               useCurrentLocation={false}
-              markerTitle="موقع العقار"
-              markerDescription="انقر لتحديد موقع جديد"
+              markerTitle={t('map.markerProp')}
+              markerDescription={t('scan.tips.desc')}
               showControls={isSelectingLocation}
             />
           </div>
@@ -392,14 +479,14 @@ export default function ScanMapPage() {
               <div className="p-4 bg-slate-800/70 border-b border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <span>📋</span>
-                  جدول النتائج ({places.length} مكان)
+                  {t('scan.table.results')} ({places.length} {t('scan.table.places')})
                 </h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowTable(false)}
                     className="text-sm bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors"
                   >
-                    إغلاق الجدول
+                    {t('scan.table.close')}
                   </button>
                 </div>
               </div>
@@ -409,10 +496,10 @@ export default function ScanMapPage() {
                   <thead className="bg-slate-800/80 sticky top-0">
                     <tr>
                       <th className="p-3 text-right font-semibold text-slate-300">#</th>
-                      <th className="p-3 text-right font-semibold text-slate-300">الاسم</th>
-                      <th className="p-3 text-right font-semibold text-slate-300">النوع</th>
-                      <th className="p-3 text-right font-semibold text-slate-300">المسافة</th>
-                      <th className="p-3 text-right font-semibold text-slate-300">الإحداثيات</th>
+                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.name')}</th>
+                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.type')}</th>
+                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.distance')}</th>
+                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.coords')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -462,7 +549,7 @@ export default function ScanMapPage() {
 
               {/* Table Footer */}
               <div className="p-4 bg-slate-800/70 border-t border-slate-700 text-sm text-slate-400">
-                تم العثور على {places.length} مكان ضمن دائرة نصف قطرها {searchRadius.toLocaleString()} متر
+                {t('scan.footer.found', { count: places.length, radius: searchRadius.toLocaleString() })}
               </div>
             </div>
           )}
@@ -471,9 +558,21 @@ export default function ScanMapPage() {
 
       {/* Footer */}
       <footer className="mt-8 pt-4 border-t border-slate-800 text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} نظام مسح المناطق المحيطة. جميع الحقوق محفوظة.</p>
-        <p className="mt-1">تحديث البيانات في الوقت الفعلي عبر OpenStreetMap</p>
+        <p>© {new Date().getFullYear()} {t('scan.footer.rights')}</p>
+        <p className="mt-1">{t('scan.footer.update')}</p>
       </footer>
+
+      {/* Payment Modal */}
+      <PaymentMethodsModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        invoiceId={invoiceId || ""}
+        price={reportPrice}
+        onPaymentSuccess={() => {
+          setIsPaid(true);
+          toast.success(t('scan.unlocked'));
+        }}
+      />
     </div>
   );
 }

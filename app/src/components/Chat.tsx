@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { X, Send, MoreVertical, Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,14 +28,23 @@ interface ChatProps {
 }
 
 export default function Chat({ isOpen, onClose, offerId, personName, address }: ChatProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      text: `مرحباً! أنا ${personName || "المسؤول"}. كيف يمكنني مساعدتك بخصوص ${address || "هذا العقار"}؟`,
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ]);
+  const { t, language } = useLanguage();
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+     setMessages([
+        {
+          id: "1",
+          text: t('chat.welcome', { 
+            name: personName || t('chat.defaultName'), 
+            address: address || t('chat.defaultAddress') 
+          }),
+          sender: "bot",
+          timestamp: new Date(),
+        },
+      ]);
+  }, [language, personName, address, offerId]); // Added language to dependencies
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -50,20 +60,13 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
     scrollToBottom();
   }, [messages]);
 
-  // Reset messages when offer changes
-  useEffect(() => {
-    if (isOpen && offerId) {
-      setMessages([
-        {
-          id: "1",
-          text: `مرحباً! أنا ${personName || "المسؤول"}. كيف يمكنني مساعدتك بخصوص ${address || "هذا العقار"}؟`,
-          sender: "bot",
-          timestamp: new Date(),
-        },
-      ]);
-      setInputValue("");
-    }
-  }, [offerId, isOpen, personName, address]);
+  // Reset messages when offer changes is now handled by the main useEffect above
+  // Removing redundant effect or merging logic.
+  // The logic above handles initialization. 
+  // Let's keep a specific one for "Reset on open" if needed, but the above covers it.
+  
+  // Actually, the original code had a separate effect for 'offerId' changes to reset. 
+  // I merged them. I will just remove the second separate useEffect to avoid conflicts.
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -81,10 +84,10 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
     // Simulate bot response
     setTimeout(() => {
       // DEBUG: Simulate Agent sending a Booking Offer if user types "booking"
-      if (inputValue.includes("حجز")) {
+      if (inputValue.includes("حجز") || inputValue.toLowerCase().includes("book")) {
          const offerMsg: Message = {
             id: (Date.now() + 1).toString(),
-            text: "عرض حجز موعد",
+            text: t('chat.simulateOffer'),
             sender: "bot",
             timestamp: new Date(),
             type: "booking_offer",
@@ -97,7 +100,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
       } else {
         const botResponse: Message = {
             id: (Date.now() + 1).toString(),
-            text: "شكراً لرسالتك. سأقوم بالرد عليك قريباً.",
+            text: t('chat.botResponse'),
             sender: "bot",
             timestamp: new Date(),
         };
@@ -110,7 +113,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
       // Simulate Agent creating booking then asking for payment
       const paymentMsg: Message = {
           id: Date.now().toString(),
-          text: "طلب دفع دفعة أولى",
+          text: t('chat.simulatePayment'),
           sender: "bot",
           timestamp: new Date(),
           type: "payment_request",
@@ -150,19 +153,19 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-4 scale-95 pointer-events-none"
         }`}
-        dir="rtl"
+        dir={language === 'ar' ? "rtl" : "ltr"}
       >
         <div className="bg-white rounded-2xl shadow-2xl w-96 h-[500px] flex flex-col border border-gray-200 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-gray-700 text-white">
+          <div className="flex items-center justify-between px-4 py-3 bg-slate-700 text-white">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center shrink-0">
                 <span className="text-gray-600 font-semibold text-sm">
-                  {(personName || "م")[0]}
+                  {(personName || t('chat.defaultName'))[0]}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-base font-medium truncate">{personName || "الدردشة"}</h2>
+                <h2 className="text-base font-medium truncate">{personName || t('chat.title')}</h2>
                 {address && (
                   <p className="text-xs text-gray-200 truncate">{address}</p>
                 )}
@@ -206,30 +209,30 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                       <div className="space-y-2">
                           <div className="flex items-center gap-2 text-blue-600 font-semibold border-b pb-2">
                              <Calendar className="w-4 h-4" />
-                             <span>عرض حجز</span>
+                             <span>{t('chat.bookingOffer')}</span>
                           </div>
                           <div className="text-sm">
-                              <p>تاريخ: {new Date(message.metadata?.date || '').toLocaleDateString('ar-SA')}</p>
-                              <p>السعر: {message.metadata?.price?.toLocaleString()} ريال</p>
+                              <p>{t('chat.date')}: {new Date(message.metadata?.date || '').toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</p>
+                              <p>{t('chat.price')}: {message.metadata?.price?.toLocaleString()} {t('chat.currency')}</p>
                           </div>
-                          <Button size="sm" className="w-full mt-2 bg-blue-600 hover:bg-blue-700">قبول الحجز</Button>
+                          <Button size="sm" className="w-full mt-2 bg-slate-600 hover:bg-slate-700">{t('chat.acceptBooking')}</Button>
                       </div>
                   ) : message.type === 'payment_request' ? (
                        <div className="space-y-2">
                           <div className="flex items-center gap-2 text-green-600 font-semibold border-b pb-2">
                              <CreditCard className="w-4 h-4" />
-                             <span>طلب دفع</span>
+                             <span>{t('chat.paymentRequest')}</span>
                           </div>
                           <div className="text-sm">
-                              <p className="font-bold text-lg">{message.metadata?.price?.toLocaleString()} ريال</p>
-                              <p className="text-gray-500 text-xs">دفعة مقدمة / عربون</p>
+                              <p className="font-bold text-lg">{message.metadata?.price?.toLocaleString()} {t('chat.currency')}</p>
+                              <p className="text-gray-500 text-xs">{t('chat.downPayment')}</p>
                           </div>
                           <Button 
                             size="sm" 
                             className="w-full mt-2 bg-green-600 hover:bg-green-700"
                             onClick={() => openPayment(message.metadata?.bookingId!, message.metadata?.price!)}
                           >
-                            ادفع الآن
+                            {t('chat.payNow')}
                           </Button>
                       </div>
                   ) : (
@@ -237,7 +240,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                   )}
                   
                   <span className="text-[10px] text-gray-400 block text-left mt-1">
-                    {message.timestamp.toLocaleTimeString("ar-SA", {
+                    {message.timestamp.toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -256,15 +259,15 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="اكتب رسالتك..."
+                  placeholder={t('chat.inputPlaceholder')}
                   className="border-0 focus-visible:ring-0 bg-transparent text-right"
-                  dir="rtl"
+                  dir={language === 'ar' ? "rtl" : "ltr"}
                 />
               </div>
               <button
                 onClick={handleSend}
                 disabled={!inputValue.trim()}
-                className="bg-gray-700 text-white p-2.5 rounded-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-slate-700 text-white p-2.5 rounded-full hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -283,7 +286,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                 setMessages(prev => [...prev, {
                     id: Date.now().toString(),
                     sender: 'user', // System message really
-                    text: 'تم الدفع بنجاح ✅',
+                    text: t('chat.paymentSuccess'),
                     timestamp: new Date(),
                     type: 'text'
                 }]);

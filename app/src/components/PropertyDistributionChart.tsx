@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface PropertyType {
   name: string;
@@ -10,57 +11,115 @@ interface PropertyDistributionChartProps {
   data?: PropertyType[];
 }
 
-export default function PropertyDistributionChart({ 
-  data = [
-    { name: 'سكني', value: 40, color: 'bg-blue-500' },
-    { name: 'تجاري', value: 30, color: 'bg-green-500' },
-    { name: 'مكاتب', value: 20, color: 'bg-purple-500' },
-    { name: 'أخرى', value: 10, color: 'bg-yellow-500' }
-  ] 
-}: PropertyDistributionChartProps) {
+export default function PropertyDistributionChart({ data }: PropertyDistributionChartProps) {
+  const { t } = useLanguage();
+
+  const defaultData = [
+    { name: t('chart.residential'), value: 40, color: 'bg-indigo-400',   hex: '#818cf8' },
+    { name: t('chart.commercial'),  value: 25, color: 'bg-slate-400',    hex: '#94a3b8' },
+    { name: t('chart.office'),      value: 20, color: 'bg-gray-400',     hex: '#9ca3af' },
+    { name: t('chart.other'),       value: 15, color: 'bg-slate-600',    hex: '#475569' },
+  ];
+
+  const chartData = (data && data.length > 0)
+    ? data.map((d, i) => ({ ...d, hex: ['#818cf8','#94a3b8','#9ca3af','#475569'][i % 4] }))
+    : defaultData;
+
+  const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
+  const circumference = 2 * Math.PI * 42; // r=42
+
+  // Build segments
+  let cumulativePercent = 0;
+  const segments = chartData.map((item) => {
+    const pct = item.value / totalValue;
+    const dashArray = pct * circumference;
+    const dashOffset = cumulativePercent * circumference;
+    cumulativePercent += pct;
+    return { ...item, dashArray, dashOffset };
+  });
+
   return (
-    <div className="bg-slate-900 rounded-xl p-4">
-      <h3 className="font-bold text-white mb-3">توزيع أنواع العقارات</h3>
-      <div className="bg-slate-800 rounded-lg p-3 h-64">
-        <div className="h-full flex flex-col items-center justify-center">
-          {/* Pie Chart */}
-          <div className="relative w-40 h-40 mb-4">
-            {/* Pie segments - visible */}
-            <div className="absolute inset-0 rounded-full border-[20px] border-blue-500"></div>
-            <div className="absolute inset-0 rounded-full border-[20px] border-green-500" style={{ clipPath: 'inset(0 50% 0 0)' }}></div>
-            <div className="absolute inset-0 rounded-full border-[20px] border-purple-500" style={{ clipPath: 'inset(0 0 50% 50%)' }}></div>
-            <div className="absolute inset-0 rounded-full border-[20px] border-yellow-500" style={{ clipPath: 'inset(50% 0 0 50%)' }}></div>
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full font-sans border border-slate-700/40">
+      {/* Header */}
+      <div className="flex flex-col mb-6">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          {t('chart.property_dist_title')}
+        </p>
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="text-3xl font-black text-slate-100 tracking-tighter">
+            {totalValue.toLocaleString()}
+          </span>
+          <span className="text-[10px] text-slate-500 font-bold">Total Volume MTD</span>
+        </div>
+      </div>
 
-            {/* Center */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-slate-800 rounded-full w-20 h-20 flex items-center justify-center shadow-inner">
-                <div className="text-white font-bold text-lg">100%</div>
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-col items-center">
+        {/* Donut Chart */}
+        <div className="relative w-44 h-44 mb-6 group cursor-pointer">
+          {/* Glow behind donut */}
+          <div className="absolute inset-0 rounded-full bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-all duration-700" />
 
-          {/* Legend */}
-          <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
-            {data.map((type, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded ${type.color}`}></div>
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <span className="text-white text-sm">{type.name}</span>
-                    <span className="text-white/70 text-sm">{type.value}%</span>
-                  </div>
-                  <div className="w-20 h-1.5 bg-slate-700 rounded-full overflow-hidden mt-1">
-                    <div
-                      className={`h-full ${type.color}`}
-                      style={{ width: `${type.value}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
+          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            {/* Track ring */}
+            <circle
+              cx="50" cy="50" r="42"
+              fill="none"
+              stroke="rgba(51,65,85,0.5)"
+              strokeWidth="10"
+            />
+            {/* Segments */}
+            {segments.map((seg, i) => (
+              <circle
+                key={i}
+                cx="50" cy="50" r="42"
+                fill="none"
+                stroke={seg.hex}
+                strokeWidth="10"
+                strokeDasharray={`${seg.dashArray} ${circumference}`}
+                strokeDashoffset={-seg.dashOffset}
+                strokeLinecap="butt"
+                className="transition-all duration-700 group-hover:opacity-90"
+                style={{ filter: `drop-shadow(0 0 4px ${seg.hex}55)` }}
+              />
             ))}
+            {/* Gap overlay for spacing between segments */}
+          </svg>
+
+          {/* Center label */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Total</span>
+            <span className="text-2xl font-black text-slate-100 tracking-tighter leading-tight">
+              {totalValue.toLocaleString()}
+            </span>
           </div>
         </div>
-        <p className="text-center text-sm text-white/60 mt-2">مجموع: ٢٣٤ عقار</p>
+
+        {/* Legend */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-3 w-full max-w-xs px-2">
+          {chartData.map((type, index) => {
+            const seg = segments[index];
+            return (
+              <div key={index} className="flex items-center justify-between gap-2 group/leg cursor-default">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-2 h-2 rounded-full shrink-0 transition-transform duration-200 group-hover/leg:scale-125"
+                    style={{ backgroundColor: seg.hex, boxShadow: `0 0 6px ${seg.hex}80` }}
+                  />
+                  <span className="text-[11px] text-slate-400 font-semibold group-hover/leg:text-slate-200 transition-colors">
+                    {type.name}
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 font-bold group-hover/leg:text-slate-300 transition-colors">
+                  {type.value.toFixed(1)}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="text-center text-xs text-slate-600 mt-5">
+          {t('chart.total_properties', { count: 234 })}
+        </p>
       </div>
     </div>
   );

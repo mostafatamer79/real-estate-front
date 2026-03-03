@@ -1,4 +1,6 @@
+"use client";
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from "@/context/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Elements } from '@stripe/react-stripe-js';
 import stripePromise from '@/lib/stripe';
@@ -9,23 +11,24 @@ import { ordersApi } from '@/lib/api'; // We might need a paymentApi, let's assu
 interface StripePaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  bookingId: string;
+  bookingId?: string;
+  invoiceId?: string;
   price: number;
   onPaymentSuccess: () => void;
 }
 
-export default function StripePaymentModal({ isOpen, onClose, bookingId, price, onPaymentSuccess }: StripePaymentModalProps) {
+export default function StripePaymentModal({ isOpen, onClose, bookingId, invoiceId, price, onPaymentSuccess }: StripePaymentModalProps) {
+  const { t, language } = useLanguage();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen && bookingId) {
+    if (isOpen && (bookingId || invoiceId)) {
       const fetchClientSecret = async () => {
         setLoading(true);
         setError(null);
         try {
-          // TODO: Replace with proper API call from lib/api
           const token = localStorage.getItem('token');
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3009'}/payment/intent`, {
             method: 'POST',
@@ -33,7 +36,7 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, price, 
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ bookingId }),
+            body: JSON.stringify({ bookingId, invoiceId }),
           });
           
           if (!res.ok) {
@@ -45,7 +48,7 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, price, 
           setClientSecret(data.clientSecret);
         } catch (err: any) {
           console.error(err);
-          setError(err.message || 'Error initializing payment');
+          setError(err.message || t('payment.errorInit'));
         } finally {
           setLoading(false);
         }
@@ -53,15 +56,15 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, price, 
 
       fetchClientSecret();
     }
-  }, [isOpen, bookingId]);
+  }, [isOpen, bookingId, invoiceId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
+      <DialogContent className="sm:max-w-md" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader>
-          <DialogTitle>إتمام عملية الدفع</DialogTitle>
+          <DialogTitle>{t('payment.title')}</DialogTitle>
           <DialogDescription>
-            المبلغ المطلوب: {price} ريال
+             {t('payment.amountRequired')}: {price} {t('chat.currency')}
           </DialogDescription>
         </DialogHeader>
         

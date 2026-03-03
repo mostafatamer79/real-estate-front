@@ -42,7 +42,7 @@ export default function VerificationBadge({ status, type = 'general', className 
           icon: AlertCircle,
           text: 'غير موثق',
           color: 'text-gray-400',
-          bg: 'bg-gray-500/20',
+          bg: 'bg-slate-500/20',
           border: 'border-gray-500/30'
         };
     }

@@ -7,9 +7,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Save, User, Shield, MapPin, ArrowRight, CheckCircle2, Building2, Globe } from 'lucide-react';
 import { Role } from '@/types/user';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 export default function CompleteProfilePage() {
   const router = useRouter();
   const { user, token, isLoading: authLoading, isAuthenticated, updateUser } = useAuth();
+  const { t, language } = useLanguage();
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,7 +20,7 @@ export default function CompleteProfilePage() {
     firstName: '',
     lastName: '',
     role: Role.USER,
-    agentLicenseNumber: '',
+    licenseNumber: '',
     address: '',
     city: 'الرياض',
     country: 'السعودية',
@@ -36,7 +39,7 @@ export default function CompleteProfilePage() {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         role: user.role || Role.USER,
-        agentLicenseNumber: user.agentLicenseNumber || '',
+        licenseNumber: user.agentLicenseNumber || user.lawLicenseNumber || user.falLicenseNumber || '',
         address: user.address || '',
         city: user.city || 'الرياض',
         country: user.country || 'السعودية',
@@ -57,13 +60,14 @@ export default function CompleteProfilePage() {
     setErrors({});
 
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      setErrors({ general: 'الاسم الأول والاسم الأخير مطلوبان' });
+      setErrors({ general: t('profile.error.names') });
       setIsSaving(false);
       return;
     }
 
-    if (formData.role === Role.AGENT && !formData.agentLicenseNumber.trim()) {
-      setErrors({ agentLicenseNumber: 'رقم الرخصة المهنية مطلوب للوكلاء' });
+    const rolesWithLicense = [Role.AGENT, Role.BROKER, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT];
+    if (rolesWithLicense.includes(formData.role) && !formData.licenseNumber.trim()) {
+      setErrors({ licenseNumber: t('profile.error.license') });
       setIsSaving(false);
       return;
     }
@@ -75,7 +79,12 @@ export default function CompleteProfilePage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          agentLicenseNumber: formData.role === Role.AGENT || formData.role === Role.BROKER ? formData.licenseNumber : undefined,
+          lawLicenseNumber: [Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role) ? formData.licenseNumber : undefined,
+          falLicenseNumber: formData.role === Role.BROKER ? formData.licenseNumber : undefined,
+        }),
       });
 
       const data = await response.json();
@@ -99,7 +108,7 @@ export default function CompleteProfilePage() {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="relative">
-            <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 bg-slate-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
             <Loader2 className="w-12 h-12 text-blue-500 animate-spin relative z-10" />
         </div>
       </div>
@@ -109,10 +118,10 @@ export default function CompleteProfilePage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-200 relative overflow-hidden font-sans" dir="rtl">
+    <div className="min-h-screen bg-[#0B1120] text-slate-200 relative overflow-hidden font-sans" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px]"></div>
+          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-slate-600/10 rounded-full blur-[100px]"></div>
           <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
       </div>
 
@@ -123,8 +132,8 @@ export default function CompleteProfilePage() {
             onClick={() => router.push("/")}
             className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
             >
-            <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium">العودة للرئيسية</span>
+            <ArrowRight className={`w-5 h-5 transition-transform ${language === 'en' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+            <span className="font-medium">{t('profile.backHome')}</span>
             </button>
         </div>
 
@@ -133,21 +142,21 @@ export default function CompleteProfilePage() {
             <div className="lg:col-span-4 space-y-6">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        إكمال الملف الشخصي
+                        {t('profile.complete.title')}
                     </h1>
                     <p className="text-slate-400 leading-relaxed">
-                        قم بتحديث بياناتك للحصول على تجربة مخصصة والوصول إلى كافة المميزات.
+                        {t('profile.complete.desc')}
                     </p>
                 </div>
                 
-                <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div className="slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 space-y-4">
                     <div className="flex items-start gap-4">
-                        <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                        <div className="p-3 bg-slate-500/10 rounded-xl text-blue-400">
                             <User className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-white">هويتك الرقمية</h3>
-                            <p className="text-sm text-slate-400 mt-1">تأكد من صحة بياناتك لسهولة التواصل والتوثيق.</p>
+                            <h3 className="font-semibold text-white">{t('profile.digitalId')}</h3>
+                            <p className="text-sm text-slate-400 mt-1">{t('profile.digitalIdDesc')}</p>
                         </div>
                     </div>
                     <div className="w-full h-px bg-slate-800"></div>
@@ -156,8 +165,8 @@ export default function CompleteProfilePage() {
                             <Shield className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-white">حساب موثوق</h3>
-                            <p className="text-sm text-slate-400 mt-1">البيانات الصحيحة تزيد من موثوقية حسابك لدى العملاء.</p>
+                            <h3 className="font-semibold text-white">{t('profile.trusted')}</h3>
+                            <p className="text-sm text-slate-400 mt-1">{t('profile.trustedDesc')}</p>
                         </div>
                     </div>
                 </div>
@@ -165,7 +174,7 @@ export default function CompleteProfilePage() {
 
             {/* Right Column: Form */}
             <div className="lg:col-span-8">
-                <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
                      {/* Glass effect highlight */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
 
@@ -181,29 +190,29 @@ export default function CompleteProfilePage() {
                         <div className="space-y-4">
                             <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
                                 <User className="w-5 h-5 text-blue-400" />
-                                المعلومات الشخصية
+                                {t('profile.personalInfo')}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">الاسم الأول</label>
+                                    <label className="text-sm font-medium text-slate-300">{t('login.placeholder.firstName') || "First Name"}</label>
                                     <input
                                         type="text"
                                         name="firstName"
                                         value={formData.firstName}
                                         onChange={handleChange}
                                         className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-600"
-                                        placeholder="الاسم الأول"
+                                        placeholder={t('login.placeholder.firstName')}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">الاسم الأخير</label>
+                                    <label className="text-sm font-medium text-slate-300">{t('login.placeholder.lastName') || "Last Name"}</label>
                                     <input
                                         type="text"
                                         name="lastName"
                                         value={formData.lastName}
                                         onChange={handleChange}
                                         className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-600"
-                                        placeholder="الاسم الأخير"
+                                        placeholder={t('login.placeholder.lastName')}
                                     />
                                 </div>
                             </div>
@@ -213,11 +222,11 @@ export default function CompleteProfilePage() {
                         <div className="space-y-4">
                             <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
                                 <Shield className="w-5 h-5 text-purple-400" />
-                                نوع الحساب
+                                {t('profile.accountType')}
                             </h2>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.USER ? 'bg-blue-600/10 border-blue-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.USER ? 'bg-slate-600/10 border-blue-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
                                         <input 
                                             type="radio" 
                                             name="role" 
@@ -228,44 +237,96 @@ export default function CompleteProfilePage() {
                                         />
                                         <div className="flex items-center gap-3">
                                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.USER ? 'border-blue-500' : 'border-slate-500'}`}>
-                                                {formData.role === Role.USER && <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div>}
+                                                {formData.role === Role.USER && <div className="w-2.5 h-2.5 rounded-full bg-slate-500"></div>}
                                             </div>
-                                            <span className={`font-medium ${formData.role === Role.USER ? 'text-blue-400' : 'text-slate-400'}`}>مستخدم</span>
+                                            <span className={`font-medium ${formData.role === Role.USER ? 'text-blue-400' : 'text-slate-400'}`}>{t('profile.role.user')}</span>
                                         </div>
                                     </label>
 
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.AGENT ? 'bg-purple-600/10 border-purple-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'bg-purple-600/10 border-purple-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
                                         <input 
                                             type="radio" 
                                             name="role" 
-                                            value={Role.AGENT}
-                                            checked={formData.role === Role.AGENT}
+                                            value={Role.BROKER}
+                                            checked={formData.role === Role.BROKER || formData.role === Role.AGENT}
                                             onChange={handleChange}
                                             className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
                                         />
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.AGENT ? 'border-purple-500' : 'border-slate-500'}`}>
-                                                 {formData.role === Role.AGENT && <div className="w-2.5 h-2.5 rounded-full bg-purple-500"></div>}
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'border-purple-500' : 'border-slate-500'}`}>
+                                                 {[Role.AGENT, Role.BROKER].includes(formData.role) && <div className="w-2.5 h-2.5 rounded-full bg-purple-500"></div>}
                                             </div>
-                                            <span className={`font-medium ${formData.role === Role.AGENT ? 'text-purple-400' : 'text-slate-400'}`}>مقدم خدمة</span>
+                                            <span className={`font-medium ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'text-purple-400' : 'text-slate-400'}`}>{t('profile.role.broker')}</span>
+                                        </div>
+                                    </label>
+
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.LAWYER ? 'bg-amber-600/10 border-amber-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="role" 
+                                            value={Role.LAWYER}
+                                            checked={formData.role === Role.LAWYER}
+                                            onChange={handleChange}
+                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
+                                        />
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.LAWYER ? 'border-amber-500' : 'border-slate-500'}`}>
+                                                 {formData.role === Role.LAWYER && <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>}
+                                            </div>
+                                            <span className={`font-medium ${formData.role === Role.LAWYER ? 'text-amber-400' : 'text-slate-400'}`}>{t('profile.role.lawyer')}</span>
+                                        </div>
+                                    </label>
+
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.NOTARY ? 'bg-emerald-600/10 border-emerald-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="role" 
+                                            value={Role.NOTARY}
+                                            checked={formData.role === Role.NOTARY}
+                                            onChange={handleChange}
+                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
+                                        />
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.NOTARY ? 'border-emerald-500' : 'border-slate-500'}`}>
+                                                 {formData.role === Role.NOTARY && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>}
+                                            </div>
+                                            <span className={`font-medium ${formData.role === Role.NOTARY ? 'text-emerald-400' : 'text-slate-400'}`}>{t('profile.role.notary')}</span>
+                                        </div>
+                                    </label>
+
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.LEGAL_CONSULTANT ? 'bg-indigo-600/10 border-indigo-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="role" 
+                                            value={Role.LEGAL_CONSULTANT}
+                                            checked={formData.role === Role.LEGAL_CONSULTANT}
+                                            onChange={handleChange}
+                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
+                                        />
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.LEGAL_CONSULTANT ? 'border-indigo-500' : 'border-slate-500'}`}>
+                                                 {formData.role === Role.LEGAL_CONSULTANT && <div className="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>}
+                                            </div>
+                                            <span className={`font-medium ${formData.role === Role.LEGAL_CONSULTANT ? 'text-indigo-400' : 'text-slate-400'}`}>{t('profile.role.legal_consultant')}</span>
                                         </div>
                                     </label>
                                 </div>
 
-                                {formData.role === Role.AGENT && (
+                                {([Role.AGENT, Role.BROKER, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role)) && (
                                     <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className="text-sm font-medium text-slate-300 mb-2 block">رقم الرخصة المهنية</label>
+                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.license.num')}</label>
                                         <input
                                             type="text"
-                                            name="agentLicenseNumber"
-                                            value={formData.agentLicenseNumber}
+                                            name="licenseNumber"
+                                            value={formData.licenseNumber}
                                             onChange={handleChange}
                                             className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder:text-slate-600"
-                                            placeholder="أدخل رقم الرخصة (مطلوب)"
+                                            placeholder={t('profile.license.num')}
                                         />
+                                         {errors.licenseNumber && <p className="text-red-500 text-xs mt-1">{errors.licenseNumber}</p>}
                                          <p className="text-xs text-purple-400/80 mt-2 flex items-center gap-1">
                                             <Shield className="w-3 h-3" />
-                                            سيتم التحقق من الوثائق خلال 24 ساعة
+                                            {t('profile.verifyDocs')}
                                          </p>
                                     </div>
                                 )}
@@ -276,11 +337,11 @@ export default function CompleteProfilePage() {
                         <div className="space-y-4">
                              <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
                                 <MapPin className="w-5 h-5 text-emerald-400" />
-                                الموقع الجغرافي
+                                {t('profile.location')}
                             </h2>
                             <div className="space-y-4">
                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">العنوان</label>
+                                    <label className="text-sm font-medium text-slate-300">{t('profile.address')}</label>
                                     <div className="relative">
                                         <Building2 className="absolute right-4 top-3.5 w-5 h-5 text-slate-500" />
                                         <input
@@ -289,26 +350,26 @@ export default function CompleteProfilePage() {
                                             value={formData.address}
                                             onChange={handleChange}
                                             className="w-full bg-slate-950/50 border border-slate-700 rounded-xl pr-12 pl-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none placeholder:text-slate-600"
-                                            placeholder="العنوان ومكان الإقامة"
+                                            placeholder={t('profile.addressPlaceholder')}
                                         />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-300">المدينة</label>
+                                        <label className="text-sm font-medium text-slate-300">{t('city.name')}</label>
                                         <select
                                             name="city"
                                             value={formData.city}
                                             onChange={handleChange}
                                             className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
                                         >
-                                            {['الرياض', 'جدة', 'الدمام', 'مكة', 'المدينة', 'الطائف', 'أبها', 'حائل'].map(c => (
-                                                <option key={c} value={c} className="bg-slate-900">{c}</option>
+                                            {['riyadh', 'jeddah', 'dammam', 'mecca', 'medina', 'taif', 'abha', 'hail', 'other'].map(c => (
+                                                <option key={c} value={t(`city.${c}`)} className="slate-900">{t(`city.${c}`)}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-300">الدولة</label>
+                                        <label className="text-sm font-medium text-slate-300">{t('country.name')}</label>
                                         <div className="relative">
                                              <Globe className="absolute right-4 top-3.5 w-5 h-5 text-slate-500" />
                                             <select
@@ -317,8 +378,8 @@ export default function CompleteProfilePage() {
                                                 onChange={handleChange}
                                                 className="w-full bg-slate-950/50 border border-slate-700 rounded-xl pr-12 pl-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
                                             >
-                                                {['السعودية', 'الإمارات', 'الكويت', 'قطر', 'عمان', 'البحرين'].map(c => (
-                                                    <option key={c} value={c} className="bg-slate-900">{c}</option>
+                                                {['sa', 'uae', 'kw', 'qa', 'om', 'bh'].map(c => (
+                                                    <option key={c} value={t(`country.${c}`)} className="slate-900">{t(`country.${c}`)}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -339,12 +400,12 @@ export default function CompleteProfilePage() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="w-5 h-5 animate-spin" />
-                                            جاري المعالجة...
+                                            {t('profile.processing')}
                                         </>
                                     ) : (
                                         <>
                                             <Save className="w-5 h-5" />
-                                            حفظ التغييرات
+                                            {t('profile.saveChanges')}
                                         </>
                                     )}
                                 </span>

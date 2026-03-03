@@ -6,10 +6,35 @@ import {
   Offer, 
   FindAllParams, 
   CreateOrderDto, 
-  Order 
+  Order,
+  CreateBookingDto,
+  Booking,
+  CreatePropertyDto,
+  Property,
+  CreateUnitDto,
+  Unit,
+  CreateTenantDto,
+  TenantProfile,
+  CreateLeaseDto,
+  Lease,
+  CreatePaymentDto,
+  Payment,
+  MaintenanceRequest,
+  CreateSubscriptionDto,
+  UpdateSubscriptionDto,
+  CancelSubscriptionDto,
+  Subscription
 } from '@/types/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const getApiUrl = () => {
+  let url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api';
+  if (url && !url.startsWith('http') && !url.startsWith('https')) {
+    url = `https://${url}`;
+  }
+  return url;
+};
+
+const API_URL = getApiUrl();
 
 // Create axios instance
 const api = axios.create({
@@ -73,8 +98,13 @@ export const offersApi = {
     api.patch(`/offers/${id}/status`, { status }),
 
   // Soft delete (deactivate) offer
+  // Soft delete (deactivate) offer
   remove: (id: string): Promise<ApiResponse<Offer>> =>
     api.delete(`/offers/${id}`),
+  
+  // Get my offers
+  findMyOffers: (): Promise<ApiResponse<Offer[]>> =>
+    api.get('/offers/my-offers'),
 
   // Hard delete offer (admin only)
   delete: (id: string): Promise<ApiResponse<void>> =>
@@ -101,6 +131,18 @@ export const offersApi = {
   // Get filtered offers
   getFilteredOffers: (filters: FindAllParams): Promise<ApiResponse<Offer[]>> =>
     api.get('/offers/filter', { params: filters }),
+
+  // Create Purchase Request
+  createPurchase: (id: string): Promise<ApiResponse<any>> =>
+    api.post(`/offers/${id}/purchase`),
+
+  // Create Visit Request
+  createVisit: (id: string, data: any): Promise<ApiResponse<any>> =>
+    api.post(`/offers/${id}/visit`, data),
+
+  // Increment view count
+  incrementViews: (id: string): Promise<void> =>
+    api.post(`/offers/${id}/view`),
 };
 
 
@@ -119,6 +161,89 @@ export const ordersApi = {
 
   delete: (id: string): Promise<ApiResponse<void>> =>
     api.delete(`/orders/${id}`),
+};
+
+export const usersApi = {
+  findAll: (): Promise<ApiResponse<any[]>> =>
+    api.get('/user'),
+    
+  create: (data: any): Promise<ApiResponse<any>> =>
+    api.post('/user', data),
+};
+
+export const bookingsApi = {
+  create: (data: CreateBookingDto): Promise<ApiResponse<Booking>> =>
+    api.post('/booking', data),
+    
+  findAll: (): Promise<ApiResponse<Booking[]>> =>
+    api.get('/booking'),
+    
+  findIncoming: (): Promise<ApiResponse<Booking[]>> =>
+    api.get('/booking/incoming'),
+
+  getUserBookings: (userId: string): Promise<ApiResponse<Booking[]>> =>
+    api.get(`/booking/user/${userId}`),
+
+  getOfferBookings: (offerId: string): Promise<ApiResponse<Booking[]>> =>
+    api.get(`/booking/offer/${offerId}`),
+};
+
+export const propertiesApi = {
+  // Properties
+  create: (data: CreatePropertyDto): Promise<ApiResponse<Property>> =>
+    api.post('/properties', data),
+
+  findAll: (ownerId?: string): Promise<ApiResponse<Property[]>> =>
+    api.get('/properties', { params: { ownerId } }),
+
+  findOne: (id: string): Promise<ApiResponse<Property>> =>
+    api.get(`/properties/${id}`),
+
+  update: (id: string, data: Partial<CreatePropertyDto>): Promise<ApiResponse<Property>> =>
+    api.patch(`/properties/${id}`, data),
+
+  delete: (id: string): Promise<ApiResponse<void>> =>
+    api.delete(`/properties/${id}`),
+
+  // Units
+  createUnit: (data: CreateUnitDto): Promise<ApiResponse<Unit>> =>
+    api.post('/properties/units', data),
+
+  getUnits: (propertyId: string): Promise<ApiResponse<Unit[]>> =>
+    api.get(`/properties/${propertyId}/units`),
+
+  updateUnit: (id: string, data: Partial<CreateUnitDto>): Promise<ApiResponse<Unit>> =>
+    api.patch(`/properties/units/${id}`, data),
+
+  // Tenants
+  createTenant: (data: CreateTenantDto): Promise<ApiResponse<TenantProfile>> =>
+    api.post('/properties/tenants', data),
+
+  getTenants: (): Promise<ApiResponse<TenantProfile[]>> =>
+    api.get('/properties/tenants/all'),
+
+  deleteTenant: (id: string): Promise<ApiResponse<void>> =>
+    api.delete(`/properties/tenants/${id}`),
+
+  // Leases
+  createLease: (data: CreateLeaseDto): Promise<ApiResponse<Lease>> =>
+    api.post('/properties/leases', data),
+
+  getLeases: (): Promise<ApiResponse<Lease[]>> =>
+    api.get('/properties/leases/all'),
+
+  // Payments
+  createPayment: (data: CreatePaymentDto): Promise<ApiResponse<Payment>> =>
+    api.post('/properties/payments', data),
+
+  getPayments: (): Promise<ApiResponse<Payment[]>> =>
+    api.get('/properties/payments/all'),
+
+  getMaintenanceLogs: (): Promise<ApiResponse<MaintenanceRequest[]>> =>
+    api.get('/properties/maintenance/all'),
+
+  createMaintenanceLog: (data: Partial<MaintenanceRequest>): Promise<ApiResponse<MaintenanceRequest>> =>
+    api.post('/properties/maintenance', data),
 };
 
 // File upload helper
@@ -167,8 +292,107 @@ export const prepareOfferData = (formData: any): CreateOfferDto => {
     checkImage: '', // Will be populated after file upload
     mediaFiles: [], // Will be populated after file upload
     threeDVideos: [], // Will be populated after file upload
+    video3d: formData.video3d || undefined,
+    locationUrl: formData.locationUrl || undefined,
+    dealType: formData.dealType || undefined,
+    mainCategory: formData.mainCategory || undefined,
     status: 'draft',
   };
+};
+
+export const subscriptionsApi = {
+  create: (data: CreateSubscriptionDto): Promise<ApiResponse<Subscription>> =>
+    api.post('/subscriptions', data),
+
+  findAll: (): Promise<ApiResponse<Subscription[]>> =>
+    api.get('/subscriptions'),
+
+  findMySubscriptions: (): Promise<ApiResponse<Subscription[]>> =>
+    api.get('/subscriptions/my'),
+
+  findActiveSubscriptions: (): Promise<ApiResponse<Subscription[]>> =>
+    api.get('/subscriptions/my/active'),
+
+  findOne: (id: string): Promise<ApiResponse<Subscription>> =>
+    api.get(`/subscriptions/${id}`),
+
+  update: (id: string, data: UpdateSubscriptionDto): Promise<ApiResponse<Subscription>> =>
+    api.put(`/subscriptions/${id}`, data),
+
+  cancel: (id: string, data: CancelSubscriptionDto): Promise<ApiResponse<Subscription>> =>
+    api.delete(`/subscriptions/${id}`, { data }),
+
+  activate: (id: string): Promise<ApiResponse<Subscription>> =>
+    api.post(`/subscriptions/${id}/activate`),
+
+  getByProperty: (propertyId: string): Promise<ApiResponse<Subscription[]>> =>
+    api.get(`/subscriptions/property/${propertyId}`),
+
+  getByUnit: (unitId: string): Promise<ApiResponse<Subscription[]>> =>
+    api.get(`/subscriptions/unit/${unitId}`),
+};
+
+export const financialApi = {
+  getWallet: (): Promise<ApiResponse<any>> =>
+    api.get('/financial/my-wallet'),
+
+  getInvoices: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/invoices/my'),
+
+  getUserInvoices: (userId: string): Promise<ApiResponse<any[]>> =>
+    api.get(`/financial/invoices/user/${userId}`),
+
+  getCommissions: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/commissions/my'),
+
+  getFiles: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/files/my'),
+
+  getDashboardStats: (): Promise<ApiResponse<any>> =>
+    api.get('/financial/dashboard'),
+
+  getTransactions: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/transactions'),
+
+  createInvoice: (data: { amount: number; referenceType?: string; referenceId?: string; description?: string }): Promise<ApiResponse<any>> =>
+    api.post('/financial/invoices', data),
+    
+  payInvoice: (id: string, paymentMethod: string): Promise<ApiResponse<any>> =>
+    api.post(`/financial/invoices/${id}/pay`, { paymentMethod }),
+};
+
+export const commissionApi = {
+  create: (data: any): Promise<ApiResponse<any>> =>
+    api.post('/commissions', data),
+
+  findMyCommissions: (params?: any): Promise<ApiResponse<any[]>> =>
+    api.get('/commissions', { params }),
+
+  findOne: (id: string): Promise<ApiResponse<any>> =>
+    api.get(`/commissions/${id}`),
+
+  submit: (id: string): Promise<ApiResponse<any>> =>
+    api.post(`/commissions/${id}/submit`),
+};
+
+export const adminApi = {
+  getPurchaseRequests: (): Promise<ApiResponse<any[]>> =>
+    api.get('/admin/bookings/purchase'),
+
+  getVisitRequests: (): Promise<ApiResponse<any[]>> =>
+    api.get('/admin/bookings/visit'),
+
+  getAllOrders: (): Promise<ApiResponse<any[]>> =>
+    api.get('/admin/bookings/orders'),
+
+  updatePurchaseStatus: (id: string, status: string): Promise<ApiResponse<any>> =>
+    api.patch(`/admin/bookings/${id}/status-purchase`, { status }),
+
+  updateVisitStatus: (id: string, status: string): Promise<ApiResponse<any>> =>
+    api.patch(`/admin/bookings/${id}/status-visit`, { status }),
+
+  assignAgent: (id: string, agentId: string): Promise<ApiResponse<any>> =>
+    api.patch(`/admin/bookings/${id}/assign-agent`, { agentId }),
 };
 
 export default api;

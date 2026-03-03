@@ -12,6 +12,16 @@ export const chatApi = {
     return response.data;
   },
 
+  // Create or get order chat room
+  async getOrCreateOrderRoom(data: {
+    orderId: string;
+    otherId: string; // The owner of the order
+    title: string;
+  }) {
+    const response = await api.post('/chat/rooms/order', data);
+    return response.data;
+  },
+
   // Send message
   async sendMessage(roomId: string, content: string) {
     const response = await api.post(`/chat/rooms/${roomId}/messages`, { content });

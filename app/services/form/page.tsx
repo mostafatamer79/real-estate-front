@@ -1,375 +1,408 @@
-// app/service-form/page.tsx (updated)
+// app/service-form/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Header from "../../src/components/Header";
-import { ArrowRight, Loader2 } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
+import { ArrowLeft, Loader2, CheckCircle2, ChevronLeft, Calendar, Clock, Hash } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
+import { toast } from "react-hot-toast";
 
-type ServiceType = "postPurchase" | "legal" | "construction" | "other";
+type ServiceType = "postPurchase" | "legal" | "construction" | "marketing" | "leasing" | "visit" | "other";
 
 const serviceCategoryMap = {
-  postPurchase: 'postPurchase',
-  legal: 'legal',
-  construction: 'construction',
-  other: 'other'
+  postPurchase: "postPurchase", legal: "legal", construction: "construction",
+  marketing: "marketing", leasing: "leasing", visit: "visit", other: "other",
 } as const;
 
-import { Suspense } from 'react';
+const serviceConfig: Record<ServiceType, { title: string; description: string; index: string }> = {
+  postPurchase:  { title: "خدمات ما بعد الشراء",      description: "نقدم لك حلولاً متكاملة للعناية بمنزلك وتجهيزه بأفضل المعايير.", index: "01" },
+  legal:         { title: "الخدمات القانونية",          description: "حلول قانونية احترافية مدعومة بفريق من الخبراء لضمان حقوقك العقارية.", index: "02" },
+  construction:  { title: "خدمات البناء والمقاولات",   description: "خبرة متكاملة في البناء، التشطيب، والإشراف الهندسي.", index: "03" },
+  marketing:     { title: "خدمات التسويق العقاري",     description: "نبرز جمال عقارك بأحدث تقنيات التصوير والحملات الجذابة.", index: "04" },
+  leasing:       { title: "خدمات التأجير والإدارة",    description: "إدارة ذكية لعقودك وتحصيل إيجاراتك بكل يسر وأمان.", index: "05" },
+  visit:         { title: "طلب زيارة العقار",          description: "خدمات ميدانية لمعاينة العقار، تصويره، أو استلام تقارير مفصلة عنه.", index: "06" },
+  other:         { title: "خدمات أخرى",                description: "خدمات استشارية وتقييمية شاملة تلبي كافة احتياجاتك العقارية.", index: "07" },
+};
+
+const serviceOptions: Record<ServiceType, string[]> = {
+  postPurchase: ["الغاز", "نقل وتركيب الأثاث", "التأمين على المنزل", "الصيانة (سباكة / كهرباء)", "خدمة التنظيف", "تنسيق حدائق", "أنظمة أمنية", "أخرى"],
+  legal: [],
+  construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
+  marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية", "أخرى"],
+  leasing: ["تأجير العقار", "إدارة عقود الإيجار", "تحصيل الإيجارات", "أخرى"],
+  visit: ["زيارة شخصية", "زيارة بالنيابة", "تصوير العقار", "تقرير مفصل", "جولة مع الوكيل", "أخرى"],
+  other: ["التقييم العقاري", "المسح الهندسي",  "أخرى"],
+};
+
+// Navbar-matching input style: bg-slate-950/white/10 system
+const inputClass = "w-full h-13 bg-slate-950 border border-white/10 hover:border-white/20 focus:border-white/30 rounded-2xl px-5 text-white text-sm font-bold placeholder:text-white/20 focus:outline-none transition-all duration-200";
+const labelClass = "text-[9px] font-black text-white/30 uppercase tracking-[0.22em] mb-2 block";
+
+const sectionDivider = (label: string) => (
+  <div className="flex items-center gap-4 py-1">
+    <div className="h-px flex-1 bg-white/[0.06]" />
+    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">{label}</span>
+    <div className="h-px flex-1 bg-white/[0.06]" />
+  </div>
+);
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.07, duration: 0.4 } },
+};
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
 
 function ServiceFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, token, isAuthenticated } = useAuth();
   const serviceType = (searchParams.get("type") || "postPurchase") as ServiceType;
+  const config = serviceConfig[serviceType];
 
-  // ... (rest of the component logic)
-
-  // Move all the state and logic here
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    city: "",
-    district: "",
-    service: "",
-    quantity: "",
-    description: "",
+    name: "", phone: "", city: "", district: "",
+    service: "", otherService: "", quantity: "1", description: "",
+    propertyId: "", appointmentDate: "", appointmentTime: "",
+    visitPhotographyType: "", // "video" | "live"
     termsAccepted: false,
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const serviceOptions = {
-    postPurchase: [
-      "الغاز",
-      "نقل وتركيب الأثاث",
-      "التأمين على المنزل",
-      "الصيانة (سباكة / كهرباء)",
-      "خدمة التنظيف",
-      "تنسيق حدائق",
-      "أنظمة أمنية",
-    ],
-    legal: [
-      "التوثيق ونقل الملكية",
-      "تحديث الصكوك",
-      "حل المنازعات العقارية",
-      "صياغة ومراجعة العقود العقارية",
-      "تقديم الاستشارات العقارية",
-    ],
-    construction: [
-      "مقاول عظم",
-      "تصميم هندسي",
-      "تشطيبات",
-      "كهرباء",
-      "سباكة",
-      "نجارة",
-      "دهانات",
-      "ألمنيوم",
-      "إشراف هندسي",
-      "تصميم داخلي",
-    ],
-    other: [
-      "التقييم العقاري",
-      "المسح الهندسي",
-      "تقرير عن الحي"
-    ],
-  };
-
-  const serviceTitles = {
-    postPurchase: "خدمات ما بعد الشراء",
-    legal: "الخدمات القانونية",
-    construction: "أعمال البناء",
-    other: "خدمات أخرى",
-  };
 
   useEffect(() => {
     if (user && isAuthenticated) {
       setFormData(prev => ({
         ...prev,
-        name: user.firstName && user.lastName 
-          ? `${user.firstName} ${user.lastName}`
-          : prev.name,
+        name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : prev.name,
         phone: user.phone || prev.phone,
         city: user.city || prev.city,
+        district: user.district || prev.district,
       }));
     }
   }, [user, isAuthenticated]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    if (error) setError("");
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const isFormValid =
+    formData.name.trim() && formData.phone.trim() && formData.city.trim() && formData.district.trim() &&
+    (serviceType === "legal" ? true :
+      serviceType === "marketing" ? (formData.propertyId && formData.appointmentDate && formData.appointmentTime) :
+      serviceType === "visit" && formData.service === "تصوير العقار" ? (formData.service.trim() && formData.visitPhotographyType) :
+      formData.service.trim()) &&
+    formData.quantity.trim() && formData.termsAccepted;
 
   const handleSubmit = async () => {
     if (!formData.termsAccepted) {
-      setError("يجب الموافقة على الشروط والأحكام");
+      toast.error("يجب الموافقة على الشروط والأحكام");
       return;
     }
-
     if (!isFormValid) {
-      setError("يرجى ملء جميع الحقول المطلوبة");
+      toast.error("يرجى ملء جميع الحقول المطلوبة");
       return;
     }
 
     setIsSubmitting(true);
-    setError("");
-    setSuccess("");
+    const loadingToast = toast.loading("جاري إرسال طلبك...");
 
     try {
+      let finalDescription = formData.description;
+      if (serviceType === "marketing") {
+        finalDescription = `[Photography Schedule]\nProperty ID: ${formData.propertyId}\nDate: ${formData.appointmentDate}\nTime: ${formData.appointmentTime}\n---\nNotes: ${formData.description}`;
+      }
+      if (serviceType === "visit" && formData.service === "تصوير العقار") {
+        finalDescription = `[Photography Type: ${formData.visitPhotographyType === 'video' ? 'Video' : 'Live'}]\n---\n${formData.description}`;
+      }
+
       const requestData = {
         category: serviceCategoryMap[serviceType],
-        serviceType: formData.service,
+        serviceType: formData.service === "أخرى" ? formData.otherService : (formData.service || (serviceType === "marketing" ? "Photography Session" : "")),
         clientName: formData.name,
         phone: formData.phone,
         city: formData.city,
         district: formData.district,
-        quantity: parseInt(formData.quantity),
-        description: formData.description || undefined,
+        quantity: parseInt(formData.quantity || "1"),
+        description: finalDescription || undefined,
         userId: user?.id || undefined,
       };
 
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
-        method: 'POST',
-        headers,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(requestData),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'فشل إرسال الطلب');
+        toast.dismiss(loadingToast);
+        if (Array.isArray(result.message)) {
+          result.message.forEach((msg: string) => toast.error(msg));
+        } else {
+          toast.error(result.message || "فشل إرسال الطلب");
+        }
+        return;
       }
 
-      setSuccess(`تم إرسال طلبك بنجاح (${serviceTitles[serviceType]})، سيتم التواصل معك قريباً`);
-      
-      setFormData({
-        name: "",
-        phone: "",
-        city: "",
-        district: "",
-        service: "",
-        quantity: "",
-        description: "",
-        termsAccepted: false,
-      });
-
-      if (isAuthenticated) {
-        setTimeout(() => {
-          router.push('/services');
-        }, 2000);
-      }
-
+      toast.success("تم إنشاء طلب الخدمة بنجاح، سيقوم الفريق بالمراجعة والرد عليك قريباً", { id: loadingToast, duration: 4000 });
+      setTimeout(() => router.push("/wallet"), 4000);
     } catch (err: any) {
-      console.error('Submission error:', err);
-      setError(err.message || 'حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.');
+      toast.error("حدث خطأ أثناء إرسال الطلب", { id: loadingToast });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isFormValid = 
-    formData.name.trim() &&
-    formData.phone.trim() &&
-    formData.city.trim() &&
-    formData.district.trim() &&
-    formData.service.trim() &&
-    formData.quantity.trim() &&
-    formData.termsAccepted;
-
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col" dir="rtl">
-      <Header onSignUp={() => {}} />
+    <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col font-sans overflow-x-hidden selection:bg-white/10" dir="rtl">
+      {/* Same radial as navbar-matching pages */}
+      <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% -5%, rgba(255,255,255,0.04) 0%, transparent 60%)" }} />
 
-      <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 mt-6">
-        <div className="flex gap-4">
-          <button
-            onClick={() => router.push("/services")}
-            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors text-sm"
-          >
-            <ArrowRight className="w-4 h-4" />
-            العودة للخدمات
-          </button>
-        </div>
+      {/* Back nav */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 max-w-3xl mx-auto w-full px-6 pt-10"
+      >
+        <button
+          onClick={() => router.push("/services")}
+          className="group flex items-center gap-3 text-white/40 hover:text-white/70 transition-colors text-[10px] font-black uppercase tracking-[0.25em]"
+        >
+          <div className="w-8 h-8 rounded-full border border-white/10 group-hover:border-white/20 flex items-center justify-center transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </div>
+          العودة للخدمات
+        </button>
+      </motion.div>
+
+      {/* Hero */}
+      <div className="relative z-10 max-w-3xl mx-auto w-full px-6 pt-12 pb-10">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-white mb-4">{config.title}</h1>
+          <p className="text-white/35 text-sm max-w-md leading-relaxed">{config.description}</p>
+        </motion.div>
       </div>
 
-      <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4">
-            {serviceTitles[serviceType]}
-          </h1>
-          <p className="text-gray-400 text-center text-sm sm:text-base">
-            املأ النموذج أدناه لطلب الخدمة
-          </p>
-        </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
-            <p className="text-red-300 text-center">{error}</p>
-          </div>
+      <div className="relative z-10 max-w-3xl mx-auto w-full px-6 pb-24">
+        {/* Legal Flow */}
+        {serviceType === "legal" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+            <LegalRequestFlow />
+          </motion.div>
         )}
 
-        {success && (
-          <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
-            <p className="text-green-300 text-center">{success}</p>
-          </div>
-        )}
+        {/* Standard Form */}
+        {serviceType !== "legal" && (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="relative bg-white/[0.02] border border-white/10 rounded-[2.5rem] p-8 sm:p-12 overflow-hidden"
+          >
+            {/* Top shimmer — same as navbar bottom border */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                الاسم <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="أدخل الاسم"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                رقم الجوال <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder="أدخل رقم الجوال"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-                dir="rtl"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                المدينة <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
-                placeholder="أدخل المدينة"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                الحي <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.district}
-                onChange={(e) => handleInputChange("district", e.target.value)}
-                placeholder="أدخل الحي"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                الخدمة <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={formData.service}
-                onChange={(e) => handleInputChange("service", e.target.value)}
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gray-400 transition-colors"
-              >
-                <option value="" disabled>اختر الخدمة</option>
-                {serviceOptions[serviceType].map((service, index) => (
-                  <option key={index} value={service}>{service}</option>
+            <div className="relative space-y-7">
+              {/* Personal Info */}
+              <motion.div variants={itemVariants}>{sectionDivider("البيانات الشخصية")}</motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {[
+                  { label: "الاسم بالكامل", field: "name", placeholder: "الاسم الثلاثي أو الرباعي", dir: "rtl" },
+                  { label: "رقم الجوال",    field: "phone", placeholder: "05xxxxxxxx",               dir: "ltr" },
+                  { label: "المدينة",        field: "city",  placeholder: "اسم المدينة",               dir: "rtl" },
+                  { label: "الحي",           field: "district", placeholder: "اسم الحي السكني",       dir: "rtl" },
+                ].map(f => (
+                  <motion.div key={f.field} variants={itemVariants} className="space-y-2">
+                    <label className={labelClass}>{f.label}</label>
+                    <input
+                      className={inputClass}
+                      style={{ height: "3.25rem" }}
+                      value={(formData as any)[f.field]}
+                      onChange={(e) => handleInputChange(f.field, e.target.value)}
+                      placeholder={f.placeholder}
+                      dir={f.dir}
+                    />
+                  </motion.div>
                 ))}
-              </select>
-            </div>
+              </div>
 
-            <div>
-              <label className="text-gray-300 mb-2 block text-right">
-                العدد المطلوب <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                value={formData.quantity}
-                onChange={(e) => handleInputChange("quantity", e.target.value)}
-                placeholder="أدخل العدد"
-                min="1"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              />
-            </div>
-          </div>
+              {/* Service Details */}
+              <motion.div variants={itemVariants} className="pt-2">{sectionDivider("تفاصيل الخدمة")}</motion.div>
 
-          <div>
-            <label className="text-gray-300 mb-2 block text-right">الوصف</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder="أدخل الوصف (اختياري)"
-              rows={3}
-              className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="flex items-center gap-2 cursor-pointer text-sm sm:text-base text-gray-300">
-              <input
-                type="checkbox"
-                checked={formData.termsAccepted}
-                onChange={(e) => handleInputChange("termsAccepted", e.target.checked)}
-                className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500"
-              />
-              <span>
-                أقرّ بأنّي اطلعت على الشروط والأحكام وأوافق عليها
-              </span>
-            </label>
-          </div>
-          
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">
-              سيتم إدراج فاتورة هذه الخدمة في قسم المحفظة فور إتمام الطلب
-            </p>
-          </div>
-
-          <div className="flex justify-center pt-4">
-            <button
-              disabled={!isFormValid || isSubmitting}
-              onClick={handleSubmit}
-              className={`w-full max-w-md rounded-lg px-6 py-3 font-semibold transition-all flex items-center justify-center gap-2 ${
-                isFormValid && !isSubmitting
-                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
-              }`}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  جاري الإرسال...
-                </>
+              {serviceType === "marketing" ? (
+                <div className="space-y-5">
+                  <motion.div variants={itemVariants} className="space-y-2">
+                    <label className={labelClass}>نوع الخدمة التسويقية</label>
+                    <div className="relative">
+                      <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
+                        {serviceOptions.marketing.map((s, i) => <option key={i} value={s} className="bg-slate-950">{s}</option>)}
+                      </select>
+                      <ChevronLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 -rotate-90 text-white/20 pointer-events-none" />
+                    </div>
+                  </motion.div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { label: "كود الوحدة (PRP)", field: "propertyId", icon: Hash, type: "text", placeholder: "PRP-X" },
+                      { label: "تاريخ الجلسة", field: "appointmentDate", icon: Calendar, type: "date", placeholder: "" },
+                      { label: "وقت الجلسة", field: "appointmentTime", icon: Clock, type: "time", placeholder: "" },
+                    ].map(f => (
+                      <motion.div key={f.field} variants={itemVariants} className="space-y-2">
+                        <label className={labelClass}>{f.label}</label>
+                        <div className="relative">
+                          <f.icon className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+                          <input type={f.type} className={inputClass + " pr-10"} style={{ height: "3.25rem" }} value={(formData as any)[f.field]} onChange={(e) => handleInputChange(f.field, e.target.value)} placeholder={f.placeholder} dir="ltr" />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               ) : (
-                "إرسال الطلب"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <motion.div variants={itemVariants} className="space-y-2">
+                    <label className={labelClass}>نوع الخدمة المطلوبة</label>
+                    <div className="relative">
+                      <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
+                        <option value="" disabled className="bg-slate-950">اختر من القائمة...</option>
+                        {serviceOptions[serviceType].map((s, i) => <option key={i} value={s} className="bg-slate-950">{s}</option>)}
+                      </select>
+                      </div>
+                  </motion.div>
+                  <motion.div variants={itemVariants} className="space-y-2">
+                    <label className={labelClass}>الكمية / العدد</label>
+                    <input type="number" className={inputClass} style={{ height: "3.25rem" }} value={formData.quantity} onChange={(e) => handleInputChange("quantity", e.target.value)} min="1" />
+                  </motion.div>
+                  {formData.service === "أخرى" && (
+                    <motion.div variants={itemVariants} className="space-y-2 md:col-span-2 animate-in slide-in-from-top-2 duration-300">
+                      <label className={labelClass}>اكتب نوع الخدمة المطلوبة</label>
+                      <input 
+                        type="text" 
+                        className={inputClass} 
+                        style={{ height: "3.25rem" }} 
+                        value={formData.otherService} 
+                        onChange={(e) => handleInputChange("otherService", e.target.value)} 
+                        placeholder="ما هي الخدمة التي تحتاجها؟" 
+                      />
+                    </motion.div>
+                  )}
+                </div>
               )}
-            </button>
-          </div>
-        </div>
+
+              {/* Visit Photography Type Conditional */}
+              {serviceType === "visit" && formData.service === "تصوير العقار" && (
+                <motion.div variants={itemVariants} className="space-y-2">
+                    <label className={labelClass}>نوع التصوير</label>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { id: 'video', label: 'فيديو' },
+                            { id: 'live', label: 'لايف' }
+                        ].map((opt) => (
+                            <div 
+                                key={opt.id}
+                                onClick={() => handleInputChange("visitPhotographyType", opt.id)}
+                                className={`flex items-center justify-center p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                                    formData.visitPhotographyType === opt.id 
+                                    ? "bg-white text-slate-950 border-white" 
+                                    : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                                }`}
+                            >
+                                <span className="font-black text-sm">{opt.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+              )}
+
+              {/* Notes */}
+              <motion.div variants={itemVariants} className="space-y-2 pt-2">
+                <label className={labelClass}>تفاصيل وملاحظات</label>
+                <textarea
+                  className={inputClass + " h-28 py-4 resize-none"}
+                  value={formData.description}
+                  onChange={(e) => handleInputChange("description", e.target.value)}
+                  placeholder="اشرح لنا حاجتك بالتفصيل..."
+                />
+              </motion.div>
+
+              {/* Terms Toggle — same white/[0.03] bg-white flip as other UI */}
+              <motion.div variants={itemVariants} className="pt-2">
+                <div
+                  onClick={() => handleInputChange("termsAccepted", !formData.termsAccepted)}
+                  className={`flex items-center gap-4 p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                    formData.termsAccepted
+                      ? "bg-white text-slate-950 border-white"
+                      : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${formData.termsAccepted ? "border-slate-950 bg-slate-950" : "border-white/20"}`}>
+                    <CheckCircle2 className={`w-3.5 h-3.5 transition-opacity ${formData.termsAccepted ? "text-white opacity-100" : "opacity-0"}`} />
+                  </div>
+                  <div>
+                    <p className={`text-[10px] font-medium mt-0.5 ${formData.termsAccepted ? "text-slate-700" : "text-white/30"}`}>
+                      أوافق على{' '}
+                      <a
+                        href="/info?tab=usage"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`underline underline-offset-2 decoration-dotted hover:decoration-solid transition-all duration-150 ${
+                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-white/30 hover:text-white/50"
+                        }`}
+                      >
+                        سياسة الاستخدام
+                      </a>
+                      {' '}و{' '}
+                      <a
+                        href="/info?tab=terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`underline underline-offset-2 decoration-dotted hover:decoration-solid transition-all duration-150 ${
+                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-white/30 hover:text-white/50"
+                        }`}
+                      >
+                        الشروط والأحكام
+                      </a>
+                      {' '}ومعالجة البيانات المدخلة.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Submit CTA */}
+              <motion.div variants={itemVariants} className="pt-4 space-y-4">
+                <motion.button
+                  whileTap={isFormValid && !isSubmitting ? { scale: 0.99 } : {}}
+                  disabled={!isFormValid || isSubmitting}
+                  onClick={handleSubmit}
+                  className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
+                    isFormValid && !isSubmitting
+                      ? "bg-white text-slate-950 hover:bg-white/90 shadow-[0_0_40px_rgba(255,255,255,0.06)]"
+                      : "bg-white/[0.03] text-white/20 cursor-not-allowed border border-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    {isSubmitting
+                      ? <><Loader2 className="w-4 h-4 animate-spin" /><span>جاري المعالجة...</span></>
+                      : <><span>إرسال طلب الخدمة</span><ArrowLeft className="w-4 h-4 rotate-180" /></>
+                    }
+                  </div>
+                </motion.button>
+                <p className="text-center text-[9px] font-bold text-white/20 tracking-widest uppercase">
+                  سيتم الرد على طلبكم خلال 24 ساعة عمل
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -377,7 +410,13 @@ function ServiceFormContent() {
 
 export default function ServiceForm() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center"><Loader2 className="w-8 h-8 text-white animate-spin" /></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center">
+          <Loader2 className="w-5 h-5 text-white/20 animate-spin" />
+        </div>
+      </div>
+    }>
       <ServiceFormContent />
     </Suspense>
   );

@@ -1,129 +1,168 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
-import { offersApi } from "@/lib/api";
-import { Offer } from "@/types/api";
+import React, { useState, useEffect } from "react";
+import { 
+  Search, 
+  ArrowUpRight,
+  ArrowDownRight,
+  User,
+  CheckCircle, 
+  XCircle, 
+  Clock,
+  Filter
+} from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { financialApi } from "@/lib/api";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "react-hot-toast";
 
 export default function TransactionsPage() {
-    const [offers, setOffers] = useState<Offer[]>([]);
-    const [loading, setLoading] = useState(true);
+  const { t, language } = useLanguage();
+  const [loading, setLoading] = useState(true);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
 
-    useEffect(() => {
-        const fetchOffers = async () => {
-            try {
-                const res = await offersApi.findAll();
-                setOffers(res.data);
-            } catch (error) {
-                console.error("Failed to fetch offers", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const res = await financialApi.getTransactions();
+      if (res.data) {
+        setTransactions(res.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch transactions", error);
+      toast.error(t('admin.error.fetch_failed') || "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        fetchOffers();
-    }, []);
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
-    const handleStatusUpdate = async (id: string, status: string) => {
-        if (!confirm('هل أنت متأكد من تغيير حالة العرض؟')) return;
-        try {
-            await offersApi.updateStatus(id, status);
-            setOffers(offers.map(offer => offer.id === id ? { ...offer, status } : offer));
-        } catch (error) {
-            console.error("Failed to update status", error);
-            alert("فشل تحديث الحالة");
-        }
-    };
+  const filteredTransactions = transactions.filter(tx => 
+    tx.id.includes(search) ||
+    tx.fromUser?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+    tx.toUser?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+    tx.type?.toLowerCase().includes(search.toLowerCase())
+  );
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('هل أنت متأكد من حذف العرض نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
-        try {
-            await offersApi.delete(id);
-            setOffers(offers.filter(offer => offer.id !== id));
-        } catch (error) {
-            console.error("Failed to delete offer", error);
-            alert("فشل حذف العرض");
-        }
-    };
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed': return <Badge className="bg-green-100 text-green-700 hover:bg-green-200">Completed</Badge>;
+      case 'failed': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Failed</Badge>;
+      case 'cancelled': return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200">Cancelled</Badge>;
+      default: return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200">Pending</Badge>;
+    }
+  };
 
-    if (loading) return <div className="p-8">جاري التحميل...</div>;
+  const getTypeIcon = (type: string) => {
+      switch (type) {
+          case 'deposit': return <ArrowDownRight className="w-4 h-4 text-green-500" />;
+          case 'withdrawal': return <ArrowUpRight className="w-4 h-4 text-red-500" />;
+          case 'commission': return <CheckCircle className="w-4 h-4 text-blue-500" />;
+          default: return <Clock className="w-4 h-4 text-gray-500" />;
+      }
+  };
 
-    return (
+  return (
+    <div className="space-y-8 p-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 className="text-3xl font-bold mb-6">المعاملات العقارية</h1>
-            <div className="bg-white rounded-xl shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التاريخ</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">العنوان/الوصف</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">النوع</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المدينة</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">السعر</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {offers.map((offer) => (
-                            <tr key={offer.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(offer.createdAt).toLocaleDateString('ar-SA')}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {offer.additionalNotes ? offer.additionalNotes.substring(0, 30) + '...' : `${offer.propertyType} - ${offer.city}`}
-                                </td>
-                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {offer.propertyType}
-                                </td>
-                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {offer.city}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {offer.price?.toLocaleString()} ر.س
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                        offer.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' : 
-                                        offer.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
-                                        offer.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
-                                        'bg-gray-100 text-gray-800'
-                                    }`}>
-                                        {offer.status || 'نشط'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div className="flex items-center gap-2">
-                                        {offer.status !== 'ACCEPTED' && (
-                                            <button
-                                                onClick={() => handleStatusUpdate(offer.id, 'ACCEPTED')}
-                                                className="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md"
-                                            >
-                                                قبول
-                                            </button>
-                                        )}
-                                        {offer.status !== 'REJECTED' && (
-                                            <button
-                                                onClick={() => handleStatusUpdate(offer.id, 'REJECTED')}
-                                                className="text-orange-600 hover:text-orange-900 bg-orange-50 px-3 py-1 rounded-md"
-                                            >
-                                                رفض
-                                            </button>
-                                        )}
-                                        <button
-                                            onClick={() => handleDelete(offer.id)}
-                                            className="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md"
-                                        >
-                                            حذف
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-               {offers.length === 0 && <div className="p-8 text-center text-gray-500">لا توجد معاملات حالياً</div>}
-            </div>
+          <h1 className="text-3xl font-black tracking-tight text-slate-950 mb-2">
+            {t('admin.transactions.title') || "Transactions"}
+          </h1>
+          <p className="text-slate-500 font-medium">
+            {t('admin.transactions.desc') || "View all financial transactions"}
+          </p>
         </div>
-    );
+        <div className="relative">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+             <input 
+                type="text" 
+                placeholder={t('admin.search') || "Search..."} 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
+             />
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50/50">
+            <TableRow>
+              <TableHead className="py-5 font-black text-slate-900">ID</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">Type</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">Amount</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">From</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">To</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">Status</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+                <TableRow>
+                    <TableCell colSpan={7} className="text-center py-10">Loading...</TableCell>
+                </TableRow>
+            ) : filteredTransactions.length === 0 ? (
+                <TableRow>
+                    <TableCell colSpan={7} className="text-center py-10 text-slate-500">No transactions found</TableCell>
+                </TableRow>
+            ) : (
+                filteredTransactions.map((tx) => (
+                <TableRow key={tx.id} className="hover:bg-slate-50/50 group whitespace-nowrap">
+                    <TableCell className="font-mono text-xs text-slate-500">#{tx.id.substring(0, 8)}</TableCell>
+                    <TableCell>
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center">
+                                {getTypeIcon(tx.type)}
+                            </div>
+                            <span className="font-bold text-slate-700 capitalize">
+                                {t(`admin.transactions.type.${tx.type}`) || tx.type}
+                            </span>
+                        </div>
+                    </TableCell>
+                    <TableCell className="font-black text-slate-900">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR' }).format(Number(tx.amount))}
+                    </TableCell>
+                    <TableCell>
+                        {tx.fromUser ? (
+                             <div className="flex items-center gap-2">
+                                <User className="w-3 h-3 text-slate-400" />
+                                <span className="text-sm text-slate-600">{tx.fromUser.firstName} {tx.fromUser.lastName}</span>
+                             </div>
+                        ) : <span className="text-slate-400">-</span>}
+                    </TableCell>
+                    <TableCell>
+                        {tx.toUser ? (
+                             <div className="flex items-center gap-2">
+                                <User className="w-3 h-3 text-slate-400" />
+                                <span className="text-sm text-slate-600">{tx.toUser.firstName} {tx.toUser.lastName}</span>
+                             </div>
+                        ) : <span className="text-slate-400">-</span>}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(tx.status)}</TableCell>
+                    <TableCell className="text-slate-500 text-xs">
+                        {new Date(tx.createdAt || tx.transactionDate).toLocaleDateString()}
+                    </TableCell>
+                </TableRow>
+                ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
 }

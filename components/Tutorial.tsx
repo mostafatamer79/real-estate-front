@@ -112,7 +112,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-8 border-2 border-blue-500/30 animate-in fade-in zoom-in duration-300">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
+                <div className="p-3 bg-slate-500/20 rounded-xl text-blue-400">
                   {currentStepData.icon}
                 </div>
                 <div>
@@ -141,7 +141,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
                   <div
                     key={index}
                     className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                      index <= currentStep ? 'bg-blue-500' : 'bg-gray-700'
+                      index <= currentStep ? 'bg-slate-500' : 'bg-slate-700'
                     }`}
                   />
                 ))}
@@ -161,7 +161,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
               )}
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-4 bg-slate-600 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {currentStep === steps.length - 1 ? 'ابدأ الآن' : 'التالي'}
                 {currentStep !== steps.length - 1 && <ChevronLeft className="w-5 h-5" />}
@@ -238,7 +238,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
         >
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+              <div className="p-2 bg-slate-500/20 rounded-lg text-blue-400">
                 {currentStepData.icon}
               </div>
               <div>
@@ -266,7 +266,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
               <div
                 key={index}
                 className={`h-1 flex-1 rounded-full transition-all ${
-                  index <= currentStep ? 'bg-blue-500' : 'bg-gray-700'
+                  index <= currentStep ? 'bg-slate-500' : 'bg-slate-700'
                 }`}
               />
             ))}
@@ -284,7 +284,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
             )}
             <button
               onClick={handleNext}
-              className="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+              className="flex-1 py-2 px-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
             >
               {currentStep === steps.length - 1 ? 'إنهاء' : 'التالي'}
               {currentStep !== steps.length - 1 && <ChevronLeft className="w-4 h-4" />}

@@ -22,6 +22,8 @@ export interface MarketingRequest {
   clientId: string;
   details?: Record<string, any>;
   assignedTo?: string;
+  views?: number;
+  engagement?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -71,5 +73,47 @@ export const marketingApi = {
   // Delete a request
   deleteRequest: async (id: string): Promise<void> => {
     await api.delete(`/marketing/${id}`);
+  },
+
+  // Get campaign analytics
+  getCampaignAnalytics: async (id: string): Promise<any> => {
+    const response = await api.get(`/marketing/campaigns/${id}/analytics`);
+    return response.data;
+  },
+
+  // Email Marketing
+  getEmailMarketing: async (): Promise<any[]> => {
+    const response = await api.get('/marketing/email');
+    return response.data;
+  },
+
+  createEmailMarketing: async (data: any): Promise<any> => {
+    const response = await api.post('/marketing/email', data);
+    return response.data;
+  },
+
+  deleteEmailMarketing: async (id: string): Promise<void> => {
+    await api.delete(`/marketing/email/${id}`);
+  },
+
+  // Resource Fetching for Campaigns
+  getProperties: async (): Promise<any[]> => {
+    const response = await api.get('/properties');
+    return response.data;
+  },
+
+  getOrders: async (): Promise<any[]> => {
+    const response = await api.get('/orders');
+    return response.data;
+  },
+
+  getOffers: async (): Promise<any[]> => {
+    const response = await api.get('/offers');
+    return response.data;
+  },
+
+  getBookings: async (): Promise<any[]> => {
+    const response = await api.get('/booking');
+    return response.data;
   }
 };

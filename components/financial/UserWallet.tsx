@@ -89,12 +89,12 @@ export default function UserWallet() {
 
                         {/* Right Side - Action Buttons */}
                         <div className='flex gap-3 w-full md:w-auto flex-wrap md:flex-nowrap'>
-                            <Button className='px-6 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg text-sm whitespace-nowrap'>
+                            <Button className='px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg text-sm whitespace-nowrap'>
                                 إضافة رصيد
                             </Button>
                             <Button 
                                 onClick={() => setShowWithdrawModal(true)}
-                                className='px-6 py-4 text-white bg-gray-800 hover:bg-gray-700 font-semibold rounded-lg text-sm whitespace-nowrap'>
+                                className='px-6 py-4 text-white bg-slate-800 hover:bg-slate-700 font-semibold rounded-lg text-sm whitespace-nowrap'>
                                 سحب رصيد
                             </Button>
                         </div>
@@ -191,18 +191,18 @@ export default function UserWallet() {
                             </button>
                         </div>
                         <div className="p-6 grid grid-cols-2 gap-4">
-                            <button className="w-full p-4 bg-gray-800 text-white hover:bg-gray-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <span className="font-semibold">الدفع من الرصيد</span>
                                 <Wallet className="h-5 w-5" />
                             </button>
 
-                            <button className="w-full p-4 bg-gray-800 text-white hover:bg-gray-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <span className="font-semibold">دفع ببطاقات الائتمان</span>
                                 <CreditCard className="h-5 w-5" />
                             </button>
                         </div>
                         <div className="p-6 pt-0">
-                            <button className="w-full p-4 bg-gray-800 text-white hover:bg-gray-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <div className="text-right">
                                     <div className="font-semibold">دفع من تابي وتمارا</div>
                                     <div className="text-sm text-gray-400 mt-1">12 قسط</div>

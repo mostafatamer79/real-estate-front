@@ -11,8 +11,9 @@ import {
   Mail,
   Loader2,
 } from "lucide-react";
+import Link from 'next/link';
 import { useRouter } from "next/navigation";
-import Header from "../src/components/Header";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface SignInProps {
   onClose?: () => void;
@@ -25,11 +26,22 @@ export default function SignIn({ onClose }: SignInProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { t, language } = useLanguage();
+
+  useEffect(() => {
+    // Hide global header and disable scrolling when login overlay is active
+    document.body.setAttribute('data-hide-header', 'true');
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.removeAttribute('data-hide-header');
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      router.push('/');
+      router.push('/details');
     }
   }, [router]);
 
@@ -41,8 +53,8 @@ export default function SignIn({ onClose }: SignInProps) {
     try {
       const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
       const payload = isPhoneMode 
-        ? { phone,  } // You might want to add password field
-        : { email,  };
+        ? { phone } 
+        : { email };
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -53,28 +65,23 @@ export default function SignIn({ onClose }: SignInProps) {
       });
 
       let data;
-
       try {
         data = await response.json();
       } catch {
-        data = null; // response was empty or not JSON
-      }
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        data = null;
       }
 
-      console.log('Registration successful:', data);
-      
-      // Store user email/phone for OTP verification page
+      if (!response.ok) {
+        throw new Error(data?.message || t('login.error.generic'));
+      }
+
       const userIdentifier = isPhoneMode ? phone : email;
       localStorage.setItem('pendingVerification', userIdentifier);
-      
-      // Redirect to OTP verification page
       router.push('/verify-otp');
       
     } catch (err: any) {
       console.error('Registration error:', err);
-      setError(err.message || 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.');
+      setError(t(err.message) !== err.message ? t(err.message) : t('login.error.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -86,160 +93,169 @@ export default function SignIn({ onClose }: SignInProps) {
 
   return (
     <div
-      dir="rtl"
-      className="fixed inset-0 bg-slate-950 text-white z-50 flex flex-col"
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-8 md:pt-16 p-6 z-[60] overflow-hidden"
     >
-      <Header onSignUp={() => {}} />
-      
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={onClose}
-          disabled={isLoading}
-          className="flex items-center gap-2 text-white/80 hover:text-white bg-slate-800/50 backdrop-blur-sm rounded-full p-2 disabled:opacity-50"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
+      {/* Background Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-600/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-pulse delay-700"></div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 text-center">
-        <h2 className="text-xl font-medium text-white mb-8">
-          {isPhoneMode 
-            ? "أدخل رقم جوالك لتسجيل الدخول" 
-            : "أدخل بريدك الإلكتروني لتسجيل الدخول"
-          }
-        </h2>
+      {/* Decorative Lines */}
+      <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
 
-        <div className={`w-32 h-32 rounded-full flex items-center justify-center mb-8 shadow-lg ${
-          isPhoneMode ? "bg-gray-700" : "bg-gray-700"
-        }`}>
-          {isPhoneMode ? (
-            <Smartphone className="w-16 h-16 text-white" />
-          ) : (
-            <Mail className="w-16 h-16 text-white" />
-          )}
-        </div>
-
-        <div className="w-full max-w-sm mb-6">
-          <div className="flex items-center justify-center bg-slate-800 rounded-lg p-1">
-            <button
-              onClick={() => setIsPhoneMode(true)}
-              disabled={isLoading}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md ${
-                isPhoneMode
-                  ? "bg-gray-500 text-white"
-                  : "text-slate-400 hover:text-white"
-              } disabled:opacity-50`}
-            >
-              <Phone className="w-4 h-4" />
-              <span className="text-sm font-medium">رقم الجوال</span>
-            </button>
-            <button
-              onClick={() => setIsPhoneMode(false)}
-              disabled={isLoading}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md ${
-                !isPhoneMode
-                  ? "bg-gray-500 text-white"
-                  : "text-slate-400 hover:text-white"
-              } disabled:opacity-50`}
-            >
-              <Mail className="w-4 h-4" />
-              <span className="text-sm font-medium">البريد الإلكتروني</span>
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="w-full max-w-sm mb-10">
-          {isPhoneMode ? (
-            <div className="relative mb-4">
-              <div className="flex items-center border border-slate-400 rounded-lg px-4 py-3 bg-white">
-                <div className="flex items-center space-x-reverse space-x-2 text-slate-950">
-                  <ChevronDown className="w-4 h-4" />
-                  <span className="text-lg">🇸🇦</span>
-                </div>
-                <input
-                  type="tel"
-                  dir="rtl"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  disabled={isLoading}
-                  className="flex-1 mr-3 outline-none text-black placeholder-gray-600 text-right disabled:opacity-50"
-                  placeholder="5XXXXXXXX"
-                  required
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="relative mb-4">
-              <div className="flex items-center border border-slate-400 rounded-lg px-4 py-3 bg-white">
-                <div className="flex items-center space-x-reverse space-x-2 text-slate-950">
-                  <ChevronDown className="w-4 h-4" />
-                  <Mail className="w-5 h-5" />
-                </div>
-                <input
-                  type="email"
-                  dir="rtl"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  className="flex-1 mr-3 outline-none text-black placeholder-gray-600 text-right disabled:opacity-50"
-                  placeholder="example@email.com"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-              <p className="text-red-300 text-sm">{error}</p>
-            </div>
-          )}
-
-          <div className="flex items-start mb-6 space-x-reverse space-x-2">
-            <Info className={`w-4 h-4 mt-1 shrink-0 ${
-              isPhoneMode ? "text-gray-600" : "text-gray-600"
-            }`} />
-            <p className="text-sm text-white/80 text-right">
-              {isPhoneMode 
-                ? "سيتم إرسال رمز التحقق إلى رقم جوالك" 
-                : "سيتم إرسال رمز التحقق إلى بريدك الإلكتروني"
-              }
-            </p>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!isFormValid || isLoading}
-            className={`flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-base font-medium shadow-lg w-full ${
-              isFormValid && !isLoading
-                ? isPhoneMode 
-                  ? "bg-gray-500 hover:bg-gray-700 text-white"
-                  : "bg-gray-500 hover:bg-gray-700 text-white"
-                : "bg-gray-700 text-gray-400 cursor-not-allowed"
-            } disabled:opacity-50`}
+      <div className="w-full max-w-md relative z-10">
+        {/* Header/Back Link */}
+        <div className="flex justify-between items-center mb-8">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                جاري الإرسال...
-              </>
-            ) : (
-              <>
-                <ArrowLeft className="w-4 h-4" />
-                {isPhoneMode ? "إرسال رمز التحقق" : "إرسال رمز التحقق"}
-              </>
-            )}
+            <ArrowLeft className={`w-4 h-4 ${language === 'en' ? '' : 'rotate-180'}`} />
+            <span className="text-sm font-medium">{t('common.back')}</span>
           </button>
-        </form>
-
-        <div className="mt-4">
-          <p className="text-sm text-white/60">
-            {isPhoneMode 
-              ? "سوف تتلقى رسالة نصية قصيرة برمز التحقق"
-              : "سوف تتلقى رسالة بريد إلكتروني برمز التحقق"
-            }
-          </p>
+          
+          <Link href="/customerservice" className="text-white/40 hover:text-white text-xs transition-colors underline underline-offset-4">
+            {t('header.customerService')}
+          </Link>
         </div>
+
+        {/* Login Card */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative">
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
+                disabled={isLoading}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+
+            <div className="text-center mb-10">
+               <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-6 group hover:scale-110 transition-transform">
+                  {isPhoneMode ? (
+                    <Smartphone className="w-8 h-8 text-white" />
+                  ) : (
+                    <Mail className="w-8 h-8 text-white" />
+                  )}
+                </div>
+                <h1 className="text-2xl font-bold mb-2">
+                  {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
+                </h1>
+                <p className="text-white/60 text-sm">
+                  {isPhoneMode ? t('login.info.phone') : t('login.info.email')}
+                </p>
+            </div>
+
+            {/* Mode Switcher */}
+            <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-8 border border-white/5">
+                <button
+                  onClick={() => setIsPhoneMode(true)}
+                  disabled={isLoading}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                    isPhoneMode
+                      ? "bg-white/10 text-white shadow-lg"
+                      : "text-white/40 hover:text-white/60"
+                  } disabled:opacity-50`}
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
+                </button>
+                <button
+                  onClick={() => setIsPhoneMode(false)}
+                  disabled={isLoading}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                    !isPhoneMode
+                      ? "bg-white/10 text-white shadow-lg"
+                      : "text-white/40 hover:text-white/60"
+                  } disabled:opacity-50`}
+                >
+                  <Mail className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{t('login.tab.email')}</span>
+                </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-1">
+                <div className="relative group">
+                  <div className={`absolute inset-0 bg-slate-600/20 rounded-2xl blur-md opacity-0 group-focus-within:opacity-100 transition-opacity`}></div>
+                  <div className="relative flex items-center bg-slate-900/80 border border-white/10 rounded-2xl p-4 focus-within:border-blue-500/50 transition-all">
+                    {isPhoneMode ? (
+                      <>
+                        <div className="flex items-center gap-2 border-l border-white/10 pl-3">
+                          <span className="text-lg">🇸🇦</span>
+                          <ChevronDown className="w-4 h-4 text-white/40" />
+                        </div>
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          disabled={isLoading}
+                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/20"
+                          placeholder={t('login.placeholder.phone')}
+                          required
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-5 h-5 text-white/40 mr-3" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={isLoading}
+                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/20"
+                          placeholder={t('login.placeholder.email')}
+                          required
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                  <p className="text-red-400 text-xs text-center font-medium leading-relaxed">{error}</p>
+                </div>
+              )}
+
+              <div className="flex items-start gap-3 px-1 text-white/40">
+                <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                <p className="text-[11px] leading-relaxed">
+                  {isPhoneMode ? t('login.note.phone') : t('login.note.email')}
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!isFormValid || isLoading}
+                className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all ${
+                  isFormValid && !isLoading
+                    ? "bg-slate-600 hover:bg-slate-500 text-white shadow-xl shadow-blue-600/20"
+                    : "bg-white/5 text-white/20 cursor-not-allowed"
+                }`}
+              >
+                <div className="relative z-10 flex items-center justify-center gap-2">
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>{t('login.sending')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{t('login.submit')}</span>
+                      <ArrowLeft className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
+                    </>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full duration-1000 transition-transform"></div>
+              </button>
+            </form>
+        </div>
+
+        {/* Footer Info */}
+      
       </div>
     </div>
   );
