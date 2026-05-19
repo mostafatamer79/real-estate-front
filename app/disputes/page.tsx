@@ -18,6 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
 import LegalRequestFlow from '@/components/legal/LegalRequestFlow';
 import { PlusCircle } from "lucide-react";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 
 export default function DisputesPage() {
@@ -26,6 +28,7 @@ export default function DisputesPage() {
   const [disputes, setDisputes] = useState<LegalDispute[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const { isOpen, message, isAdmin } = useSectionGuard('disputes');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -38,6 +41,8 @@ export default function DisputesPage() {
       router.push('/login');
     }
   }, [router]);
+
+
 
   useEffect(() => {
     const fetchDisputes = async () => {
@@ -79,12 +84,15 @@ export default function DisputesPage() {
     dispute.disputeNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     dispute.disputeType?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  if (!isOpen) {
+    return <ComingSoonOverlay sectionName={t('disputes.title')} message={message} isAdmin={isAdmin} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       
       {/* Premium Header Container */}
-      <section className="relative overflow-hidden mb-12 p-8 md:p-12 rounded-b-[3rem] bg-slate-950 text-white shadow-2xl">
+      <section className="relative overflow-hidden mb-8 md:mb-12 p-6 md:p-12 rounded-b-[2rem] md:rounded-b-[3rem] bg-slate-950 text-white shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-slate-600 rounded-full blur-[100px]" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
@@ -130,17 +138,17 @@ export default function DisputesPage() {
 
       <div className="max-w-7xl mx-auto px-6">
         <Tabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
-          <div className="flex justify-center mb-8">
-            <TabsList className="inline-flex h-16 items-center justify-center rounded-2xl bg-white border border-slate-100 p-1.5 shadow-xl shadow-slate-100/50">
-              <TabsTrigger value="disputes" className="px-8 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-xs transition-all">
+          <div className="flex justify-center mb-8 w-full">
+            <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-white border border-slate-100 p-1.5 shadow-xl shadow-slate-100/50 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
+              <TabsTrigger value="disputes" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <Gavel className="w-4 h-4" />
                 {t('disputes.tab.disputes')}
               </TabsTrigger>
-              <TabsTrigger value="service_requests" className="px-8 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-xs transition-all">
+              <TabsTrigger value="service_requests" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <Scale className="w-4 h-4" />
                 {t('disputes.tab.service_requests')}
               </TabsTrigger>
-              <TabsTrigger value="new_request" className="px-8 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-xs transition-all">
+              <TabsTrigger value="new_request" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <PlusCircle className="w-4 h-4" />
                 طلب جديد
               </TabsTrigger>

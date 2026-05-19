@@ -29,21 +29,23 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
     const isHiddenHeader = 
         pathname?.startsWith('/wallet') || 
         pathname?.startsWith('/buildingmanagement') || 
+        pathname?.startsWith('/department-hub') || 
+        pathname?.startsWith('/admin') || 
+        pathname?.startsWith('/internal') || 
+        pathname?.startsWith('/offers') || 
+        pathname?.startsWith('/orders') || 
         pathname === '/login';
     
     const isHomePage = pathname === '/';
 
-    // We add padding if the header is visible AND it's not the home page AND not details page
-    const needsPadding = !isHiddenHeader && !isHomePage 
-      && !pathname?.startsWith('/details')
-      && !pathname?.startsWith('/customerservice')
-      && !pathname?.startsWith('/verify-otp');
+    // We add padding if the header is visible AND it's not the home page
+    const needsPadding = !isHiddenHeader && !isHomePage;
     
     setShouldAddPadding(needsPadding);
   }, [pathname]);
 
   return (
-    <main className={shouldAddPadding ? "pt-12 " : ""}>
+    <main className={shouldAddPadding ? "pt-16" : ""}>
       {children}
     </main>
   );

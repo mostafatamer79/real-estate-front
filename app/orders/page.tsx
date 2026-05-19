@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, ArrowRight, PlusCircle, List, MapPin, Ruler, DollarSign, Calendar } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
   const propertyTypes = [
     { value: "شقة", label: "property.type.apartment" },
@@ -51,11 +53,16 @@ import { useLanguage } from "@/context/LanguageContext";
   export default function CreateOrderPage() {
     const router = useRouter();
     const { t, language } = useLanguage();
+    const { isOpen, message, isAdmin } = useSectionGuard('orders');
+
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState("create");
     const [myOrders, setMyOrders] = useState<Order[]>([]);
     const [loadingMyOrders, setLoadingMyOrders] = useState(false);
-
+    const [isDeptUser, setIsDeptUser] = React.useState(false);
+    const [deptName, setDeptName] = React.useState('');
     const [formData, setFormData] = useState<CreateOrderDto>({
       orderType: "buy",
       propertyType: "شقة",
@@ -81,6 +88,37 @@ import { useLanguage } from "@/context/LanguageContext";
       furnitureStatus: "unfurnished",
       additionalDetails: ""
     });
+
+    const DEPT_NAMES: Record<string,string> = {
+      marketing: 'إدارة التسويق',
+      properties: 'إدارة الاملاك',
+      finance: 'الإدارة المالية',
+      legal: 'الإدارة القانونية',
+      employees: 'إدارة الموظفين',
+    };
+
+    React.useEffect(() => {
+      try {
+        const stored = localStorage.getItem('user');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.department) {
+            setIsDeptUser(true);
+            setDeptName(DEPT_NAMES[parsed.department] ?? parsed.department);
+          }
+        }
+      } catch {}
+    }, []);
+
+    React.useEffect(() => {
+      if (activeTab === "my-orders") {
+        fetchMyOrders();
+      }
+    }, [activeTab]);
+
+
+
+
   
     const handleChange = (field: keyof CreateOrderDto, value: any) => {
       setFormData(prev => ({ ...prev, [field]: value }));
@@ -148,11 +186,6 @@ import { useLanguage } from "@/context/LanguageContext";
       }
     };
 
-    React.useEffect(() => {
-      if (activeTab === "my-orders") {
-        fetchMyOrders();
-      }
-    }, [activeTab]);
 
     const handleDeleteOrder = async (id: string) => {
         if(!confirm(t('common.confirmDelete'))) return;
@@ -166,13 +199,17 @@ import { useLanguage } from "@/context/LanguageContext";
         }
     }
 
+  if (!isOpen) {
+      return <ComingSoonOverlay sectionName={t('action.requests') || 'الطلبات'} message={message} isAdmin={isAdmin} />;
+  }
+
   return (
       <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Toaster />
         <div className="max-w-3xl mx-auto">
           <Button 
             variant="ghost" 
-            onClick={() => router.back()} 
+            onClick={() => router.push('/details')} 
             className="mb-4 flex items-center gap-2 hover:bg-slate-100"
           >
               <ArrowRight className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />

@@ -23,17 +23,27 @@ import ReportsManager from '@/components/financial/ReportsManager';
 import PaymentsManager from '@/components/financial/PaymentsManager';
 import { financialApi, FinancialTransaction } from '@/lib/financial-service';
 import { useLanguage } from "@/context/LanguageContext";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
-export default function FinancialPage() {
+export default function FinancialPage({ embedded = false, initialTab = "dashboard" }: { embedded?: boolean; initialTab?: string } = {}) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState("dashboard");
+    const [activeTab, setActiveTab] = useState(initialTab || "dashboard");
     const { t, language } = useLanguage();
+    const { isOpen, message, isAdmin } = useSectionGuard('financial');
+
+
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             const user = JSON.parse(storedUser);
-            if (!['admin', 'finance', 'finance_admin', 'viewer'].includes(user.role)) {
+            const departments = user.departments || [];
+            const hasDept = departments.some((d: string) => d.toLowerCase() === 'finance' || d.toLowerCase() === 'financial');
+            const hasPerm = (user.departmentPermissions?.finance && user.departmentPermissions.finance !== 'none') || 
+                           (user.departmentPermissions?.financial && user.departmentPermissions.financial !== 'none');
+            
+            if (!['admin', 'finance', 'finance_admin', 'viewer', 'manager'].includes(user.role) && !hasDept && !hasPerm) {
                 router.push('/');
             }
         } else {
@@ -41,10 +51,19 @@ export default function FinancialPage() {
         }
     }, [router]);
 
+    useEffect(() => {
+        setActiveTab(initialTab || "dashboard");
+    }, [initialTab]);
+
+    if (!isOpen) {
+        return <ComingSoonOverlay sectionName={t('admin.settings.financial') || 'المالية'} message={message} isAdmin={isAdmin} />;
+    }
+
     return (
-        <div className="min-h-screen bg-white pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className={`${embedded ? '' : 'min-h-screen bg-white pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {/* Premium Header Container */}
              {/* Optimized Premium Header */}
+      {!embedded && (
       <section className="relative overflow-hidden mb-10 pb-10 border-b border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8">
@@ -60,7 +79,7 @@ export default function FinancialPage() {
                 <motion.h1 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl md:text-5xl font-black tracking-tight text-blue-950"
+                  className="text-3xl md:text-5xl font-black tracking-tight text-slate-950"
                 >
                   {t('fin.title')}
                 </motion.h1>
@@ -68,7 +87,7 @@ export default function FinancialPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-slate-400 font-bold max-w-xl text-sm leading-relaxed"
+                  className="text-slate-500 font-bold max-w-xl text-sm leading-relaxed"
                 >
                   {t('fin.header.desc')}
                 </motion.p>
@@ -85,13 +104,14 @@ export default function FinancialPage() {
           </div>
         </div>
       </section>
+      )}
 
 
-            <div className="max-w-7xl mx-auto px-6">
-                <Tabs defaultValue="dashboard" className="w-full space-y-8" onValueChange={setActiveTab}>
+            <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-6'}`}>
+                <Tabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
                     {/* Scrollable Premium Tabs */}
                     <div className="overflow-x-auto pb-2 hide-scrollbar">
-                        <TabsList className="inline-flex h-14 items-center gap-1.5 rounded-2xl bg-slate-50 border border-slate-100 p-1.5 min-w-max" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <TabsList className="inline-flex h-14 items-center gap-1.5 rounded-2xl bg-slate-50 border border-slate-100 p-1.5 min-w-max" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                             {[
                               { val: 'dashboard', icon: LayoutDashboard, label: t('fin.tab.dashboard') },
                               { val: 'transactions', icon: Receipt, label: t('fin.tab.transactions') },
@@ -101,8 +121,8 @@ export default function FinancialPage() {
                                { val: 'settlements', icon: Briefcase, label: t('fin.tab.settlements') },
                                { val: 'service_requests', icon: LayoutDashboard, label: t('fin.tab.service_requests') }
                             ].map((tab) => (
-                              <TabsTrigger key={tab.val} value={tab.val} className="px-5 rounded-xl h-10 gap-2.5 data-[state=active]:bg-white data-[state=active]:text-blue-950 data-[state=active]:shadow-sm font-bold text-[11px] uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
-                                <tab.icon className={`w-3.5 h-3.5 transition-colors ${activeTab === tab.val ? 'text-blue-950' : 'text-slate-400'}`} />
+                              <TabsTrigger key={tab.val} value={tab.val} className="px-5 rounded-xl h-10 gap-2.5 data-[state=active]:bg-white data-[state=active]:text-slate-950 data-[state=active]:shadow-sm font-bold text-[11px] uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
+                                <tab.icon className={`w-3.5 h-3.5 transition-colors ${activeTab === tab.val ? 'text-slate-950' : 'text-slate-400'}`} />
                                 {tab.label}
                               </TabsTrigger>
                             ))}
@@ -118,7 +138,7 @@ export default function FinancialPage() {
                             transition={{ duration: 0.2, ease: "easeOut" }}
                             className="outline-none"
                         >
-                            <TabsContent value="dashboard" className="m-0"><GeneralDashboard /></TabsContent>
+                            <TabsContent value="dashboard" className="m-0"><GeneralDashboard embedded={embedded} /></TabsContent>
                             <TabsContent value="transactions" className="m-0"><TransactionsSection /></TabsContent>
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
@@ -146,9 +166,9 @@ export default function FinancialPage() {
                                             <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 mb-5 group-hover:rotate-6 transition-all border border-slate-100">
                                               <TrendingUp className="w-8 h-8" />
                                             </div>
-                                            <h4 className="text-xl font-black text-blue-950 mb-1.5">{t('fin.policy.update')}</h4>
+                                            <h4 className="text-xl font-black text-slate-950 mb-1.5">{t('fin.policy.update')}</h4>
                                             <p className="text-slate-400 font-bold text-xs leading-relaxed max-w-xs">{t('fin.policy.desc')}</p>
-                                            <Button variant="outline" className="mt-6 rounded-xl h-10 px-6 font-black text-xs uppercase tracking-widest bg-slate-950 text-white border-blue-950 hover:bg-slate-900">{t('fin.settings.edit')}</Button>
+                                            <Button variant="outline" className="mt-6 rounded-xl h-10 px-6 font-black text-xs uppercase tracking-widest bg-slate-950 text-white border-slate-950 hover:bg-slate-900">{t('fin.settings.edit')}</Button>
                                          </div>
                                      </div>
                                      <CommissionManager />
@@ -173,7 +193,8 @@ export default function FinancialPage() {
                 </Tabs>
             </div>
 
-            {/* Navigation Floating Button */}
+            {!embedded && (
+            /* Navigation Floating Button */
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -182,11 +203,12 @@ export default function FinancialPage() {
             >
               <ChevronLeft className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
             </motion.button>
+            )}
         </div>
     );
 }
 
-function GeneralDashboard() {
+function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { t } = useLanguage();
@@ -194,7 +216,7 @@ function GeneralDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const data = await financialApi.getDashboardStats();
+                const data = await financialApi.getWorkspaceSummary();
                 setStats(data);
             } catch (err) { console.error(err); } 
             finally { setLoading(false); }
@@ -218,28 +240,161 @@ function GeneralDashboard() {
     );
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {kpis.map((kpi, idx) => (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.05 }}
-                  key={idx} 
-                  className="p-6 rounded-3xl bg-white border border-slate-100 hover:border-slate-300 transition-all duration-300 group"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-slate-100`}>
-                            <kpi.icon className="w-5 h-5" />
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {kpis.map((kpi, idx) => (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      key={idx} 
+                      className="p-6 rounded-3xl bg-white border border-slate-100 hover:border-slate-300 transition-all duration-300 group"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-slate-100`}>
+                                <kpi.icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{kpi.label}</p>
+                                <h3 className="text-lg font-black text-slate-900 transition-colors">
+                                  {Number(kpi.value || 0).toLocaleString()} <span className="text-[10px] opacity-40 font-bold">{kpi.unit}</span>
+                                </h3>
+                            </div>
                         </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
+                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                    <div className="flex items-center justify-between gap-3 mb-5">
                         <div>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{kpi.label}</p>
-                            <h3 className="text-lg font-black text-slate-900 transition-colors">
-                              {kpi.value.toLocaleString()} <span className="text-[10px] opacity-40 font-bold">{kpi.unit}</span>
-                            </h3>
+                            <h3 className="text-lg font-black text-slate-950">أداء آخر 6 أشهر</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Income vs expenses</p>
+                        </div>
+                        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-900" />الدخل</span>
+                            <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-300" />المصروفات</span>
                         </div>
                     </div>
-                </motion.div>
-            ))}
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 items-end min-h-[220px]">
+                        {(stats?.monthlyTotals || []).slice(-6).map((item: any, idx: number) => {
+                            const maxValue = Math.max(
+                              ...((stats?.monthlyTotals || []).slice(-6).flatMap((m: any) => [Number(m.income || 0), Number(m.expenses || 0)])),
+                              1
+                            );
+                            const incomeHeight = Math.max((Number(item.income || 0) / maxValue) * 140, 8);
+                            const expenseHeight = Math.max((Number(item.expenses || 0) / maxValue) * 140, 8);
+                            return (
+                                <motion.div
+                                  key={`${item.month}-${idx}`}
+                                  initial={{ opacity: 0, y: 16 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: idx * 0.05 }}
+                                  className="flex flex-col items-center gap-3"
+                                >
+                                    <div className="w-full h-40 flex items-end justify-center gap-2">
+                                        <div className="w-5 rounded-t-xl bg-slate-300" style={{ height: `${expenseHeight}px` }} />
+                                        <div className="w-5 rounded-t-xl bg-slate-900" style={{ height: `${incomeHeight}px` }} />
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-[11px] font-black text-slate-900">{item.month}</p>
+                                        <p className="text-[9px] font-bold text-slate-400">{Number(item.net || 0).toLocaleString()} {t('fin.currency')}</p>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <h3 className="text-lg font-black text-slate-950">حالة الفواتير</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Invoice health</p>
+                        </div>
+                        <ShieldCheck className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="space-y-3">
+                        {[
+                          { label: 'مدفوعة', count: stats?.invoiceStats?.paidCount || 0, total: stats?.invoiceStats?.paidTotal || 0, tone: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
+                          { label: 'غير مدفوعة', count: stats?.invoiceStats?.unpaidCount || 0, total: stats?.invoiceStats?.outstandingTotal || 0, tone: 'bg-amber-50 text-amber-700 border-amber-100' },
+                          { label: 'مسودة', count: stats?.invoiceStats?.draftCount || 0, total: 0, tone: 'bg-slate-50 text-slate-700 border-slate-100' },
+                        ].map((row) => (
+                          <div key={row.label} className={`rounded-2xl border p-4 ${row.tone}`}>
+                              <div className="flex items-center justify-between">
+                                  <div>
+                                      <p className="text-xs font-black">{row.label}</p>
+                                      <p className="text-[10px] font-bold opacity-70 mt-1">{row.count} عنصر</p>
+                                  </div>
+                                  <div className="text-left">
+                                      <p className="text-sm font-black tabular-nums">{Number(row.total || 0).toLocaleString()}</p>
+                                      <p className="text-[10px] font-bold opacity-70">{t('fin.currency')}</p>
+                                  </div>
+                              </div>
+                          </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6">
+                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <h3 className="text-lg font-black text-slate-950">المصروفات حسب الفئة</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Expense breakdown</p>
+                        </div>
+                        <PieChart className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="space-y-3">
+                        {(stats?.expenseBreakdown?.length ? stats.expenseBreakdown : [{ category: 'لا توجد بيانات', total: 0 }]).map((item: any) => {
+                            const maxExpense = Math.max(...((stats?.expenseBreakdown || []).map((e: any) => Number(e.total || 0))), 1);
+                            const width = Math.max((Number(item.total || 0) / maxExpense) * 100, item.total ? 12 : 0);
+                            return (
+                                <div key={item.category} className="space-y-2">
+                                    <div className="flex items-center justify-between text-sm font-black text-slate-900">
+                                        <span>{item.category}</span>
+                                        <span className="tabular-nums">{Number(item.total || 0).toLocaleString()} {t('fin.currency')}</span>
+                                    </div>
+                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                        <div className="h-full rounded-full bg-slate-900" style={{ width: `${width}%` }} />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <h3 className="text-lg font-black text-slate-950">آخر النشاطات المالية</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Recent activity</p>
+                        </div>
+                        <Sparkles className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="space-y-3">
+                        {(stats?.recentTransactions?.length ? stats.recentTransactions : []).slice(0, embedded ? 5 : 8).map((tx: any) => (
+                            <div key={tx.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                                <div className="min-w-0">
+                                    <p className="text-sm font-black text-slate-950 truncate">{tx.description || tx.type}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{tx.type} • {tx.status}</p>
+                                </div>
+                                <div className="text-left shrink-0">
+                                    <p className="text-sm font-black text-slate-950 tabular-nums">{Number(tx.amount || 0).toLocaleString()}</p>
+                                    <p className="text-[10px] font-bold text-slate-400">{t('fin.currency')}</p>
+                                </div>
+                            </div>
+                        ))}
+                        {!stats?.recentTransactions?.length && (
+                            <div className="h-44 rounded-2xl border border-dashed border-slate-200 flex items-center justify-center text-sm font-bold text-slate-300">
+                                لا توجد حركة مالية حديثة
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

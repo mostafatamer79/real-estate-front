@@ -7,7 +7,33 @@ export const translations: Record<Language, Record<string, string>> = {
     "header.customerService": "خدمة العملاء",
     "header.login": "تسجيل دخول",
     "header.logout": "تسجيل خروج",
+    "header.myRequests": "طلباتي",
+    "admin.offers.title": "العروض",
+    "admin.search": "بحث",
     "header.welcome": "مرحباً",
+    "admin.nav.dashboard": "لوحة التحكم",
+    "admin.nav.users": "المستخدمين",
+    "admin.nav.orders_mgmt": "إدارة الطلبات",
+    "admin.nav.offers": "إدارة العروض",
+    "admin.nav.wallet": "إدارة المحفظة",
+    "admin.nav.services_mgmt": "إدارة الخدمات",
+    "admin.nav.subscriptions": "إدارة الاشتراكات",
+    "admin.nav.transactions": "العمليات",
+    "admin.nav.marketing": "إدارة التسويق عبر البريد",
+    "admin.nav.services": "الخدمات",
+    "admin.nav.legal": "الإدارة القانونية",
+    "admin.nav.customer_service": "خدمة العملاء",
+    "admin.nav.info_content": "المحتوى القانوني",
+    "admin.nav.packages": "الباقات",
+    "admin.nav.settings": "الإعدادات والتحكم",
+    "admin.nav.back_to_details": "العودة للتفاصيل",
+    "admin.nav.brand": "الوساطة الرقمية ADMIN",
+    "admin.identity.badge": "ADMIN",
+    "admin.identity.manager": "مدير النظام",
+    "home.controlPanel": "لوحة التحكم",
+    "footer.offers": "العروض العقارية",
+    "footer.management": "إدارة الأملاك",
+    "footer.usage": "سياسة الاستخدام",
     "admin.legal.dashboard": "لوحة التحكم",
     "admin.legal.all": "جميع الطلبات",
     "admin.legal.disputes": "المنازعات العقارية",
@@ -17,7 +43,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.legal.recent_requests": "أحدث الطلبات القانونية",
     "admin.legal.disputes_short": "المنازعات",
     "admin.legal.services_short": "خدمات قانونية",
-    "project.name": "دير عقارك",
+    "project.name": "الوساطة الرقمية",
     "bm.order.neighborhood": "الحي",
     "bm.order.price": "السعر",
     "bm.prop.age": "عمر العقار",
@@ -155,6 +181,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Chat
     "chat.customer": "محادثة العميل",
     "chat.title": "الدردشة",
+    "chat.myRequests": "مركز طلبات الخدمات",
     "chat.defaultName": "المسؤول",
     "chat.defaultAddress": "هذا العقار",
     "chat.welcome": "مرحباً! أنا {name}. كيف يمكنني مساعدتك بخصوص {address}؟",
@@ -204,6 +231,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "action.services": "الخدمات الإدارية",
     "action.offers": "العروض العقارية",
     "action.requests": "مركز الطلبات",
+    "action.myRequests": "طلبات الخدمات",
     "action.assetManagement": "إدارة المحفظة العقارية",
     "action.tenantRelations": "إدارة شؤون المستأجرين",
     "action.collectionCashflow": "التحصيل والتدفقات النقدية",
@@ -316,8 +344,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.tenants": "إدارة المستأجرين",
     "pm.reports": "التقارير التشغيلية",
     "pm.financial.desc": "التحصيل والتدفقات النقدية",
-    
-    
+
+
     // Details Page
     "details.header.title": "نظرة عامة على",
     "details.header.highlight": "العقارات",
@@ -332,7 +360,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "header.legal_management": "ادارة القانونية",
     "header.financial_management": "الادارة المالية",
     "header.property_management": "ادارة الاملاك",
-    
+
 
     // Admin General
     "admin.nav.logout": "تسجيل الخروج",
@@ -410,6 +438,15 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.packages.form.cancel": "إلغاء",
     "admin.packages.form.save": "حفظ الباقة",
     "admin.packages.form.yearlyPrice": "السعر السنوي",
+    "admin.packages.currencyPerMonth": "ر.س / شهري",
+    "admin.packages.discount": "خصم",
+    "admin.packages.features": "الميزات",
+    "admin.packages.administrations": "الإدارات المشمولة",
+    "admin.packages.services": "الخدمات المشمولة",
+    "admin.packages.more": "المزيد",
+    "admin.packages.form.administrations": "الإدارات",
+    "admin.packages.form.services": "الخدمات",
+    "admin.packages.info": "معلومات الباقة",
     "admin.packages.form.monthlyPrice": "السعر الشهري",
     "admin.packages.form.discount": "الخصم",
 
@@ -436,6 +473,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.settings.logsDesc": "عرض من قام بتعديل الإعدادات وتاريخ الوصول.",
     "admin.settings.commissions": "إدارة العمولات",
     "admin.settings.commissionsDesc": "تحديث نسب العمولات للوسطاء والشركاء.",
+    "admin.settings.tab.pricing": "التسعير والرسوم",
+    "admin.settings.tab.appearance": "المظهر والهوية",
+    "admin.settings.tab.text": "إدارة النصوص",
+    "admin.settings.tab.control": "التحكم والوصول",
+    "admin.settings.identity.title": "هوية المنصة",
+    "admin.settings.identity.suffix": "اللاحقة الاحترافية (مثلاً: ADMIN)",
+    "admin.settings.identity.role": "المسمى الوظيفي للمدير",
 
     // Admin Dashboard (Consolidated)
     "admin.dashboard.title": "لوحة التحكم المركزية",
@@ -450,9 +494,10 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.activity.new_user": "مستخدم جديد انضم للنظام",
     "admin.activity.time_ago": "منذ {time}",
     "admin.activity.view_all": "عرض كل السجلات",
+    "admin.activity.details": "تفاصيل النشاط",
     "admin.system.online": "حالة النظام: متصل",
     "admin.special_tool": "أداة خاصة",
-    
+
     // Property Management Tabs
     "pm.tab.portfolio": "المحفظة العقارية",
     "pm.status.vacant": "شاغر",
@@ -470,7 +515,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.tab.payments": "سجل التدفقات المالية",
     "pm.tab.utilities": "فواتير الخدمات",
     "pm.tab.maintenance": "مركز خدمات الصيانة",
-    "pm.tab.expenses": "إدارة التكاليف التشغيلية", 
+    "pm.tab.expenses": "إدارة التكاليف التشغيلية",
     "pm.tab.roi": "العائد على الاستثمار",
     "pm.roi.annualIncome": "الدخل السنوي",
     "pm.roi.annualExpenses": "المصاريف السنوية",
@@ -480,7 +525,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.maintenance.completionDate": "تاريخ انتهاء العمل",
     "pm.maintenance.routine": "صيانة دورية",
     "pm.maintenance.emergency": "صيانة طارئة",
-    
+
     // Property Fields
     "pm.field.propertyName": "مسمى العقار",
     "pm.field.address": "الحي",
@@ -496,7 +541,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "common.clear":"مسح",
     "common.clean":"تنظيف",
     "chat.email":"البريد الإلكتروني",
-    
+
     // Unit Fields
     "pm.field.unitNumber": "رقم الوحدة",
     "pm.field.unitType": "نوع الوحدة",
@@ -504,7 +549,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.field.rooms": "توزيع الغرف والخدمات",
     "pm.field.status": "حالة الإشغال",
     "pm.field.expectedVacancy": "تاريخ السغور المتوقع",
-    
+
     // Tenant Fields
     "pm.field.tenantName": "اسم المستأجر",
     "pm.field.idNumber": "رقم الهوية / الإقامة",
@@ -512,7 +557,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.field.email": "البريد الإلكتروني",
     "pm.field.employer": "جهة العمل",
     "pm.field.paymentDay": "يوم الدفع المفضل",
-    
+
     // Financial Fields
     "pm.field.dueDate": "تاريخ الاستحقاق",
     "pm.field.amount": "القيمة",
@@ -524,7 +569,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.field.securityDeposit": "مبلغ التأمين",
     "pm.field.depositStatus": "حالة التأمين",
     "pm.field.deductionReason": "أسباب الخصم",
-    
+
     // Statuses
     "pm.status.pending": "قيد الانتظار",
     "pm.status.paid": "مدفوع",
@@ -589,7 +634,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "wallet.broker.edit": "تعديل بيانات الوسيط",
     "wallet.broker.addNew": "إضافة وسيط جديد",
     "wallet.commission.tax15": "15%",
-    
+
     // Wallet - Form Labels
     "wallet.form.name": "الاسم",
     "wallet.form.idNumber": "رقم الهوية",
@@ -711,6 +756,16 @@ export const translations: Record<Language, Record<string, string>> = {
     "marketing.table.date": "التاريخ والوقت",
     "marketing.table.assignedTo": "مكلف بـ",
     "marketing.table.actions": "الإجراءات",
+    "admin.trans.role.user":"مشاهد (Viewer)",
+    "admin.trans.role.manager":"مدير (Manager)",
+    "admin.trans.role.employee":"موظف (Employee)",
+    "admin.trans.role.viewer":"مشاهد (Viewer)",
+    "admin.trans.role.broker":"وسيط (Broker)",
+    "admin.trans.role.marketing":"تسويق (Marketing)",
+    "admin.trans.role.legal":"محامي (Lawyer)",
+    "admin.trans.role.finance":"مالي (Finance)",
+    "pagination.page": "صفحة",
+    "pagination.of": "من",
     "marketing.export.pdf": "تصدير PDF",
     "marketing.filter": "تصفية",
     "marketing.table.details": "التفاصيل",
@@ -796,7 +851,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "fin.table.status": "الحالة",
     "fin.table.date": "التاريخ",
     "fin.soon.desc": "نحن نعمل على تطوير ميزات متقدمة لهذه الوحدة لجعل تجربتك أفضل.",
-    
+
     // Payment Management
     "fin.payment.title": "سجل المدفوعات",
     "fin.payment.add": "تسجيل دفعة",
@@ -835,13 +890,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "fin.status.completed": "مكتمل",
     "fin.status.failed": "فشل",
     "fin.status.cancelled": "ملغي",
-    
+
     // Commission Management
     "fin.commissions.distribution": "توزيع العمولات",
     "fin.commissions.brokers": "عمولة الوسطاء",
     "fin.commissions.platform": "عمولة المنصة",
     "fin.settlements.title": "التسويات",
-    
+
     // Expense Management
     "fin.expense.title": "سجل المصروفات",
     "fin.expense.add": "تسجيل مصروف",
@@ -896,6 +951,10 @@ export const translations: Record<Language, Record<string, string>> = {
   "bm.users.newDesc": "إضافة موظف جديد",
   "bm.form.nationalId": "الهوية الوطنية",
     "profile.role.user": "مستخدم",
+    "profile.role.admin": "مدير النظام",
+    "profile.role.manager": "مدير",
+    "profile.role.employee": "موظف",
+    "profile.role.collaborator": "متعاون",
     "profile.role.broker": "وسيط عقاري",
     "profile.role.office": "مكتب عقاري",
     "profile.role.owner": "مالك عقار",
@@ -919,13 +978,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "cs.phone": "رقم الجوال",
     "cs.placeholder.inquiry": "اكتب استفسارك هنا...",
     "cs.chars": "حرف",
-    'footer.usage':"شروط الاستخدام",
     "cs.maxReached": "وصلت للحد الأقصى",
     "cs.submit": "إرسال السؤال",
     "cs.alert.success": "تم إرسال سؤالك، وسيتم الرد خلال ٢٤ ساعة إن شاء الله",
     "cs.faq.add": "كيف أضيف عقار؟",
     "cs.faq.contact": "كيف اتواصل مع المعلن؟",
-    "cs.faq.commission": "هل توجد عمولة؟",
 
     "offer.price": "السعر",
     "offer.area": "المساحة",
@@ -1013,7 +1070,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.saving": "جاري الحفظ...",
     "profile.processing": "جاري المعالجة...",
     "profile.backHome": "العودة للرئيسية",
-    
+
     // Profile Specific Labels
     "profile.activityType": "تحديد النشاط",
     "profile.activityPlaceholder": "اكتب نوع الخدمة المقدمة",
@@ -1042,7 +1099,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.nameDesc": "الاسم",
     "profile.nameLabel": "الاسم",
     "profile.roleLabel": "مستخدم",
-    
+
     // New Profile Keys
     "profile.nationalId": "رقم الهوية الوطنية",
     "profile.verification.title": "التحقق من الهوية (نفاذ)",
@@ -1070,7 +1127,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "home.scanDesc": "استكشف العقارات المحيطة بك بسهولة",
     "home.scan": "استكشف العقارات المحيطة بك بسهولة",
     'home.manage':'إدارة عقاراتك',
-    'home.controlPanel':'لوحة التحكم',
     // Cities
     "city.riyadh": "الرياض",
     "city.jeddah": "جدة",
@@ -1123,7 +1179,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "offers.details": "عرض التفاصيل",
     "offers.owner": "المالك",
     "offers.broker": "الوسيط",
-    
+
     "orders.title": "طلب عقار جديد",
     "orders.myOrders": "طلباتي",
     "orders.createOrder": "إنشاء طلب",
@@ -1217,7 +1273,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "bm.service.consult": "استشارات قانونية",
     "bm.service.report": "تقارير قانونية",
     "bm.users.title": "ادارة الموظفين",
-    
+
     "bm.role.seller": "بائع",
     "bm.role.buyer": "مشتري",
     "bm.role.broker": "وسيط",
@@ -1273,6 +1329,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "bm.users.perm.properties": "إدارة الأملاك",
     "bm.users.perm.legal": "الإدارة القانونية",
     "bm.users.perm.employees": "إدارة الموظفين (وصول كامل)",
+    "bm.users.emailUsed": "البريد الإلكتروني أو رقم الجوال مستخدم مسبقاً. يرجى طلب تسجيل الدخول من المستخدم أو مراجعة الإدارة.",
     "bm.users.status": "الحالة",
     "bm.users.lastSeen": "آخر ظهور",
     "bm.users.online": "متصل",
@@ -1349,7 +1406,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "wallet.invest": "الاستثمارات",
     "wallet.desc.invest": "المحفظة الاستثمارية",
     "wallet.premium.status": "الوضع المميز",
-    "wallet.premium.pro": "دير عقارك برو",
+    "wallet.premium.pro": "الوساطة الرقمية برو",
     "wallet.service": "خدمة",
 
     "wallet.balance.label": "الرصيد",
@@ -1372,7 +1429,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.decision.accept": "قبول",
     "wallet.invoices.add": "إضافة فاتورة",
     "wallet.insufficientBalance":"الرصيد غير كافي",
-    
+
 
     "wallet.table.invoiceNumber": "رقم الفاتورة",
     "wallet.table.service": "الخدمة",
@@ -1391,8 +1448,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "wallet.actions.viewInvoice": "عرض الفاتورة",
     "wallet.actions.pay": "دفع",
 
-    "footer.offers": "العروض",
-    "footer.management": "الإدارات",
+
     "footer.services": "الخدمات",
     "chat.meters": "متر",
     "wallet.wallet": "المحفظة",
@@ -1421,7 +1477,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "wallet.commission.placeholder.email": "أدخل البريد الإلكتروني",
     "wallet.commission.placeholder.amount": "أدخل قيمة السعي",
     "wallet.commission.falLicense": "رخصة فال",
- 
+
     "wallet.commission.form.name": "الاسم",
     "wallet.commission.form.license": "الرخصة",
     "wallet.commission.form.party": "بيانات الأطراف",
@@ -1613,7 +1669,11 @@ export const translations: Record<Language, Record<string, string>> = {
     // Legal Services - Comprehensive Translations
     "legal.selectService": "اختر نوع الخدمة القانونية",
     "legal.selectServiceDesc": "حدد الخدمة التي ترغب في طلبها",
-    
+    "bm.users.emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
+    "common.disable": "غير مفعل",
+    "common.active": "مفعل",
+    "common.edit": "تعديل",
+    "common.delete": "حذف",
     // Legal Disputes
     "legal.dispute.title": "المنازعات العقارية",
     "legal.dispute.new": "طلب منازعة عقارية جديدة",
@@ -1644,7 +1704,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.dispute.descriptionPlaceholder": "اكتب وصفاً تفصيلياً للنزاع...",
     "legal.dispute.documents": "المستندات",
     "legal.dispute.uploadDocs": "رفع المستندات (Word, PDF, صور)",
-    
+
     // Contracts
     "legal.contract.title": "العقود",
     "legal.contract.new": "طلب عقد جديد",
@@ -1693,7 +1753,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.contract.applicantRoleSelect": "اختر صفة مقدم الطلب",
     "legal.contract.uploadContract": "رفع العقد",
     "legal.contract.additionalDocs": "مستندات إضافية",
-    
+
     // Documentation
     "legal.doc.title": "التوثيق",
     "legal.doc.new": "طلب توثيق جديد",
@@ -1713,7 +1773,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.doc.saleAmountProof": "رفع إثبات مبلغ البيع",
     "legal.doc.otherDocs": "مستندات أخرى",
     "legal.doc.uploadOtherDocs": "رفع مستندات إضافية",
-    
+
     // Other Services
     "legal.other.title": "خدمات قانونية أخرى",
     "legal.other.new": "طلب خدمة قانونية",
@@ -1740,7 +1800,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.other.legalStatusPlaceholder": "سيتم إصدار التقرير هنا",
     "legal.other.reportDetails": "تفاصيل التقرير",
     "legal.other.uploadDocs": "رفع المستندات",
-    
+
     // Common Legal Service Fields
     "legal.submit": "إرسال الطلب",
     "legal.submitting": "جاري الإرسال...",
@@ -1764,8 +1824,9 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.next": "التالي",
     "legal.previous": "السابق",
     "legal.close": "إغلاق",
-
-
+    "admin.service_requests.title": "طلبات الخدمات",
+    "admin.service_requests.subtitle":"إدارة طلبات الخدمات المقدمة من العملاء",
+    "admin.service_requests.no_data":"لا توجد طلبات خدمات",
     "bm.offer.propertyType": "نوع العقار",
     "bm.offer.area": "المساحة",
     "bm.prop.residential": "سكني",
@@ -1799,7 +1860,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "scan.typesCount": "عدد الأنواع",
     "scan.topTypes": "أهم الأنواع",
     "scan.export": "تصدير CSV",
-    
+
     "admin.transactions.type.deposit": "إيداع",
     "admin.transactions.type.withdrawal": "سحب",
     "admin.transactions.type.commission": "عمولة (سعي)",
@@ -1852,8 +1913,6 @@ export const translations: Record<Language, Record<string, string>> = {
 
     "common.yes": "نعم",
     "common.no": "لا",
-    "common.active": "نشط",
-
 
 
     // Common Actions
@@ -1863,9 +1922,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "wallet.sendRequest": "إرسال الطلب",
     "wallet.status.pending": "قيد الانتظار",
 
-    "common.undefined": "غير محدد",
-    "common.edit": "تعديل",
-    "common.delete": "حذف",
+
     "common.cancel": "إلغاء",
     "common.save": "حفظ",
     "common.add": "إضافة",
@@ -1979,7 +2036,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "invoice.printBtn": "طباعة الفاتورة",
     "invoice.downloadBtn": "تحميل PDF",
     "invoice.payNow": "اتمام الدفع الآن",
-    
+
     // Header
 
 
@@ -1991,7 +2048,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "cards.ops.aptJeddah": "شقة في جدة",
     "cards.ads.featured": "إعلان مميز",
     "cards.ads.special": "عرض خاص على العقارات",
-    "cards.ads.new": "إعلان جديد", 
+    "cards.ads.new": "إعلان جديد",
     "cards.ads.units": "وحدات متاحة للبيع",
     "cards.ops.date": "تاريخ العملية:",
     "cards.ads.date": "تاريخ النشر:",
@@ -2034,6 +2091,34 @@ export const translations: Record<Language, Record<string, string>> = {
     "sub.validation.property": "الرجاء اختيار عقار",
     "sub.validation.amount": "الرجاء إدخال قيمة الاشتراك",
     "sub.validation.customPeriod": "الرجاء إدخال المدة بالأشهر",
+    "sub.public.quickAction": "الاشتراكات",
+    "sub.public.badge": "اشتراكات الإدارات الداخلية",
+    "sub.public.heroTitle": "اختر باقة الإدارة المناسبة لك",
+    "sub.public.heroDesc": "هذه الباقات ينشئها المدير من لوحة التحكم. كل باقة تحتوي على الإدارات التي ستحصل على الوصول إليها مثل القانونية أو المالية أو الموظفين، ويمكنك الاختيار بين الاشتراك الشهري أو السنوي.",
+    "sub.public.packagesTitle": "الباقات المتاحة",
+    "sub.public.emptyPackages": "لا توجد باقات اشتراك مفعلة حالياً",
+    "sub.public.packageFallbackDesc": "اشتراك للوصول إلى إدارات داخلية محددة",
+    "sub.public.departmentsOnly": "الوصول حسب الإدارات المشمولة فقط",
+    "sub.public.discount": "خصم",
+    "sub.public.detailsTitle": "تفاصيل الاشتراك",
+    "sub.public.duration": "مدة الاشتراك",
+    "sub.public.notesPlaceholder": "أي تفاصيل إضافية",
+    "sub.public.selectedPackage": "الباقة المختارة",
+    "sub.public.selectFromList": "اختر باقة من القائمة",
+    "sub.public.total": "الإجمالي",
+    "sub.public.afterPayment": "بعد الدفع سيتم تفعيل الإدارات الموجودة في هذه الباقة داخل حسابك ثم يمكنك الدخول إلى القسم الداخلي.",
+    "sub.public.submit": "إنشاء الاشتراك والذهاب للدفع",
+    "sub.public.previousSubscriptions": "اشتراكاتي السابقة",
+    "sub.public.noPreviousSubscriptions": "لا توجد اشتراكات سابقة",
+    "sub.public.viewInWallet": "عرض في المحفظة",
+    "sub.public.loadError": "تعذر تحميل باقات الاشتراك",
+    "sub.public.selectPackageFirst": "اختر الباقة أولاً",
+    "sub.public.createdRedirect": "تم إنشاء الاشتراك. أكمل الدفع من المحفظة",
+    "sub.dept.properties": "إدارة الأملاك",
+    "sub.dept.marketing": "إدارة التسويق",
+    "sub.dept.legal": "الإدارة القانونية",
+    "sub.dept.finance": "الإدارة المالية",
+    "sub.dept.employees": "إدارة الموظفين",
 
     "pm.details.title": "تفاصيل العقار",
     "pm.units.title": "الوحدات",
@@ -2070,12 +2155,12 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.financial.paymentTrack": "تتبع المدفوعات",
     "pm.roi.expectedIncome": "الدخل السنوي المتوقع",
     "pm.maintenance.empty": "لا توجد سجلات صيانة حالياً",
-    
+
     "pm.payment.annual": "سنوي",
     "pm.payment.biannual": "نصف سنوي",
     "pm.payment.quarterly": "ربع سنوي",
     "pm.payment.monthly": "شهري",
-    
+
     "property.feature.maid": "غرفة خادمة",
     "property.feature.roof": "سطح",
     "property.feature.annex": "ملحق خارجي",
@@ -2083,20 +2168,17 @@ export const translations: Record<Language, Record<string, string>> = {
     "property.feature.pool": "مسبح",
     "property.feature.elevator": "مصعد",
     "property.area.build": "مساحة البناء",
-      
+
     "offer.apartments": "عدد الشقق",
     "footer.offer":"صفحة العروض",
-    
+    "bm.quick.actions": "خدمات سريعة",
+    "bm.properties.add":"اضافة عقار",
+    "common.viewAll":"عرض الكل",
+    "pm.financial.income":"الدخل",
+    "common.welcome":"اهلا وسهلا بك",
 
 
 
-    // Admin Navbar
-    "admin.nav.dashboard": "لوحة التحكم",
-    "admin.nav.users": "المستخدمين",
-    "admin.nav.transactions": "العمليات",
-    "admin.nav.packages": "الباقات",
-    "admin.nav.settings": "الإعدادات",
-    "admin.nav.back_to_details": "العودة للتفاصيل",
 
     // Admin Package Features
     "admin.feat.financial": "الإدارة المالية",
@@ -2107,13 +2189,27 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.feat.cleaning": "خدمات التنظيف",
     "admin.feat.tenant": "إدارة المستأجرين",
     "admin.feat.marketing": "التسويق والتأجير",
+    "admin.dept.real_estate": "إدارة الأملاك",
+    "admin.dept.marketing": "إدارة التسويق",
+    "admin.dept.legal": "الإدارة القانونية",
+    "admin.dept.finance": "الإدارة المالية",
+    "admin.dept.security": "إدارة الأمن",
+    "admin.dept.hr": "إدارة الموظفين",
+    "admin.serv.maintenance": "الصيانة العامة",
+    "admin.serv.cleaning": "التنظيف",
+    "admin.serv.security_guards": "الحراسات الأمنية",
+    "admin.serv.concierge": "الكونسيرج",
+    "admin.serv.parking": "إدارة المواقف",
+    "admin.serv.pest_control": "مكافحة الآفات",
+    "admin.serv.landscaping": "تنسيق الحدائق",
 
     "admin.service_requests.quantity": "العدد المطلوب",
     "admin.service_requests.details_title": "تفاصيل الطلب",
     "admin.service_requests.date": "تاريخ الطلب",
     "admin.service_requests.price": "السعر (ريال)",
     "admin.service_requests.save_changes": "حفظ التغييرات",
-    "admin.service_requests.accept_forward": "تأكيد وتوجيه الطلب للإدارة",
+    "admin.service_requests.status": "الحالة",
+    "admin.service_requestsaccept_forward": "تأكيد وتوجيه الطلب للإدارة",
     "admin.service_requests.related_info": "معلومات ذات صلة",
     "admin.service_requests.customer_visits": "زيارات العميل",
     "admin.service_requests.customer_invoices": "فواتير العميل",
@@ -2202,7 +2298,6 @@ export const translations: Record<Language, Record<string, string>> = {
 "admin.service_requests.targetDept.legal": "الإدارة القانونية",
 
 "admin.service_requests.location_info": "معلومات الموقع",
-"admin.service_requests.status": "الحالة",
 
 "admin.service_requests.first_party": "الطرف الأول",
 "admin.service_requests.second_party": "الطرف الثاني",
@@ -2210,14 +2305,134 @@ export const translations: Record<Language, Record<string, string>> = {
 "admin.service_requests.name": "الاسم",
 "admin.service_requests.identity": "الهوية",
 
-"admin.service_requests.description": "الوصف"
+"admin.service_requests.description": "الوصف",
+
+    "internal.common.loading": "جاري التحميل...",
+    "internal.common.refresh": "تحديث",
+
+    "internal.nav.backHome": "العودة إلى الرئيسية",
+    "internal.nav.logout": "تسجيل الخروج",
+    "internal.nav.subscriptions": "الاشتراكات",
+    "internal.nav.chat": "الدردشة",
+    "internal.nav.languageSwitch": "English",
+
+    "admin.customer_service.title": "خدمة العملاء",
+    "admin.customer_service.subtitle": "إدارة التصنيفات والأسئلة والرسائل",
+    "admin.customer_service.tabs.faqs": "الأسئلة",
+    "admin.customer_service.tabs.feedback": "الرسائل",
+    "admin.customer_service.loadDefaults": "تحميل الافتراضي",
+    "admin.customer_service.categories": "التصنيفات",
+    "admin.customer_service.addCategory": "إضافة تصنيف",
+    "admin.customer_service.editCategory": "تعديل تصنيف",
+    "admin.customer_service.addQuestion": "إضافة سؤال",
+    "admin.customer_service.editQuestion": "تعديل سؤال",
+    "admin.customer_service.questionsList": "قائمة الأسئلة",
+    "admin.customer_service.customerFeedback": "رسائل العملاء",
+    "admin.customer_service.new": "جديد",
+    "admin.customer_service.resolved": "تم الحل",
+    "admin.customer_service.confirmDeleteCategoryTitle": "حذف التصنيف",
+    "admin.customer_service.confirmDeleteCategoryDesc": "سيتم حذف التصنيف. الأسئلة المرتبطة ستبقى بدون تصنيف.",
+    "admin.customer_service.confirmDeleteQuestionTitle": "حذف السؤال",
+    "admin.customer_service.confirmDeleteQuestionDesc": "هل أنت متأكد من حذف هذا السؤال؟",
+    "admin.customer_service.confirmDeleteMessageTitle": "حذف الرسالة",
+    "admin.customer_service.confirmDeleteMessageDesc": "هل أنت متأكد من حذف هذه الرسالة؟",
+
+    "admin.info_content.title": "المحتوى القانوني",
+    "admin.info_content.subtitle": "إدارة صفحة المعلومات",
+    "admin.info_content.tabs": "التبويبات",
+    "admin.info_content.tabContent": "محتوى التبويب",
+    "admin.info_content.addTab": "إضافة تبويب",
+    "admin.info_content.editTab": "تعديل تبويب",
+    "admin.info_content.addBlock": "إضافة عنصر",
+    "admin.info_content.editBlock": "تعديل عنصر",
+    "admin.info_content.confirmDeleteTabTitle": "حذف التبويب",
+    "admin.info_content.confirmDeleteTabDesc": "سيتم حذف التبويب وجميع العناصر بداخله.",
+    "admin.info_content.confirmDeleteBlockTitle": "حذف العنصر",
+    "admin.info_content.confirmDeleteBlockDesc": "هل أنت متأكد من حذف هذا العنصر؟",
+
+    "common.moveUp": "لأعلى",
+    "common.moveDown": "لأسفل",
+    "common.selectFirst": "اختر أولاً",
+
+    "internal.dashboard.title": "لوحة الإدارة",
+    "internal.dashboard.welcome": "اهلا وسهلا بك،",
+    "internal.dashboard.welcomeFallback": "مرحباً",
+    "internal.dashboard.overview": "ملخص سريع حسب الأقسام المتاحة لك",
+    "internal.dashboard.noDepartments": "لا توجد أقسام متاحة",
+    "internal.dashboard.enterDepartment": "الدخول للقسم",
+    "internal.dashboard.quickServices": "خدمات سريعة",
+    "internal.dashboard.reviewChats": "مراجعة المحادثات",
+    "internal.dashboard.details": "التفاصيل",
+    "internal.dashboard.profile": "ملفك الشخصي",
+    "internal.dashboard.latestRequests": "أحدث الطلبات",
+    "internal.dashboard.viewAll": "عرض الكل",
+    "internal.dashboard.unavailable": "غير متاح",
+    "internal.dashboard.noRecentRequests": "لا توجد طلبات حديثة",
+
+    "internal.dept.properties": "إدارة الاملاك",
+    "internal.dept.finance": "الإدارة المالية",
+    "internal.dept.legal": "الإدارة القانونية",
+    "internal.dept.marketing": "إدارة التسويق",
+    "internal.dept.employees": "إدارة الموظفين",
+
+    "internal.chat.centerTitle": "مركز المحادثات",
+    "internal.chat.centerSubtitle": "تواصل مع العملاء والموظفين في مكان واحد",
+    "internal.chat.searchPlaceholder": "البحث عن محادثة...",
+    "internal.chat.userFallback": "مستخدم",
+    "internal.chat.yesterday": "أمس",
+    "internal.chat.now": "الآن",
+    "internal.chat.conversationFallback": "محادثة",
+    "internal.chat.startNew": "ابدأ محادثة جديدة",
+    "internal.chat.you": "أنت",
+    "internal.chat.emptyTitle": "لا توجد محادثات",
+    "internal.chat.emptySubtitle": "ابدأ التواصل مع فريقك أو عملائك",
+    "internal.chat.offerTag": "عرض عقاري",
+    "internal.chat.activeNow": "نشط الآن",
+    "internal.chat.inactive": "غير نشط",
+    "internal.chat.startTitle": "بداية المحادثة",
+    "internal.chat.startSubtitle": "أرسل رسالتك الأولى لبدء التواصل",
+    "internal.chat.messagePlaceholder": "اكتب رسالتك هنا...",
+
+    "internal.profile.title": "الملف الشخصي",
+    "internal.profile.uploadImage": "رفع الصورة",
+    "internal.profile.uploading": "جاري الرفع...",
+    "internal.profile.openFull": "فتح الملف الكامل",
+
+    "internal.sub.statusTitle": "حالة الاشتراك",
+    "internal.sub.openEnded": "صلاحية مفتوحة",
+    "internal.sub.expired": "منتهي",
+    "internal.sub.daysLeft": "يتبقى {days} يوم"
   },
   en: {
     // Header
     "header.customerService": "Customer Service",
     "header.login": "Login",
     "header.logout": "Logout",
+    "header.myRequests": "My Requests",
     "header.welcome": "Welcome",
+    "admin.nav.dashboard": "Dashboard",
+    "admin.nav.users": "Users",
+    "admin.nav.orders_mgmt": "Orders Management",
+    "admin.nav.offers": "Offers Management",
+    "admin.nav.wallet": "Wallet Management",
+    "admin.nav.services_mgmt": "Services Management",
+    "admin.nav.subscriptions": "Subscriptions Management",
+    "admin.nav.transactions": "Operations",
+    "admin.nav.marketing": "Marketing Management",
+    "admin.nav.services": "Services",
+    "admin.nav.legal": "Legal Management",
+    "admin.nav.customer_service": "Customer Service",
+    "admin.nav.info_content": "Legal Content",
+    "admin.nav.packages": "Packages",
+    "admin.nav.settings": "Settings & Control",
+    "admin.nav.back_to_details": "Back to Details",
+    "admin.nav.brand": "Digital Brokerage ADMIN",
+    "admin.identity.badge": "ADMIN",
+    "admin.identity.manager": "System Manager",
+    "home.controlPanel": "Control Panel",
+    "footer.offers": "Property Offers",
+    "footer.management": "Property Management",
+    "footer.usage": "Usage Policy",
     "header.dashboard": "Dashboard",
     "admin.legal.desc": "Legal Disputes, Contracts, Documentation & Services Management",
     "admin.legal.dashboard": "Dashboard",
@@ -2229,11 +2444,23 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.legal.recent_requests": "Recent Legal Requests",
     "admin.legal.disputes_short": "Disputes",
     "admin.legal.services_short": "Legal Services",
-    "project.name": "Manage Your Property",
+    "project.name": "Digital Brokerage",
+    "admin.trans.role.user": "Viewer",
+    "admin.trans.role.manager": "Manager",
+    "admin.trans.role.employee": "Employee",
+    "admin.trans.role.viewer": "Viewer",
+    "admin.trans.role.broker": "Broker",
+    "admin.trans.role.marketing": "Marketing",
+    "admin.trans.role.legal": "Lawyer / Legal",
+    "admin.trans.role.finance": "Finance",
+    "pagination.page": "Page",
+    "pagination.of": "Of",
+    "admin.users.total": "Total",
 
     // Chat
     "chat.customer": "Chat with Customer",
     "chat.title": "Chat",
+    "chat.myRequests": "My Service Requests",
     "chat.defaultName": "Admin",
     "chat.defaultAddress": "this property",
     "chat.welcome": "Hello! I am {name}. How can I help you regarding {address}?",
@@ -2271,6 +2498,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "action.services": "Services",
     "action.offers": "Offers",
     "action.requests": "Requests",
+    "action.myRequests": "My Requests",
     "action.assetManagement": "Asset Management",
     "action.tenantRelations": "Tenant Relations",
     "action.collectionCashflow": "Collection & Cashflow",
@@ -2285,7 +2513,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "map.error": "Location Error",
     "map.current_location": "Current Location",
     "map.location_success": "Location found successfully",
-
+    "bm.quick.actions": "Quick Actions",
     // Details Page
     "details.header.title": "Overview of",
     "details.header.highlight": "Real Estate",
@@ -2334,12 +2562,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Admin General
 
     "admin.nav.logout": "Logout",
-    "admin.nav.dashboard": "Dashboard",
-    "admin.nav.users": "Users",
-    "admin.nav.transactions": "Transactions",
-    "admin.nav.packages": "Packages",
-    "admin.nav.settings": "Settings",
-    "admin.nav.back_to_details": "Back to Details",
+
 
     // Admin Package Features
     "admin.feat.financial": "Financial Management",
@@ -2354,7 +2577,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.users.directory": "User Directory",
     "admin.users.title": "User Management",
     "admin.users.desc": "Control access permissions and manage member data in the system.",
-    "admin.users.total": "Total Count",
     "admin.users.searchPlaceholder": "Search by name or email...",
     "admin.users.filter": "Filter",
     "admin.users.table.user": "User",
@@ -2455,6 +2677,13 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.settings.updateSuccess": "Settings updated successfully",
     "admin.settings.updateFail": "Update failed - check permissions",
     "admin.settings.saveError": "Error occurred while saving",
+    "admin.settings.tab.pricing": "Pricing & Fees",
+    "admin.settings.tab.appearance": "Appearance & Identity",
+    "admin.settings.tab.text": "Text Management",
+    "admin.settings.tab.control": "Site Control",
+    "admin.settings.identity.title": "Platform Identity",
+    "admin.settings.identity.suffix": "Professional Suffix (e.g., ADMIN)",
+    "admin.settings.identity.role": "Manager Job Title",
     "admin.settings.logs": "Change Logs",
     "admin.settings.logsDesc": "View who modified settings and access history.",
     "admin.settings.commissions": "Commission Management",
@@ -2473,6 +2702,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.activity.new_user": "New user joined the system",
     "admin.activity.time_ago": "{time} ago",
     "admin.activity.view_all": "View All Logs",
+    "admin.activity.details": "Activity Details",
     "admin.system.online": "System Status: Online",
     "admin.special_tool": "Special Tool",
 
@@ -2522,7 +2752,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "bm.form.type.other": "legal service",
     "bm.form.type.dispute": "real estate disputes",
     "bm.form.type.offer": "add new offer",
-    
+
     // Verify OTP
     "otp.title": "Verify Code",
     "otp.sentTo": "A 6-digit code has been sent to",
@@ -2644,6 +2874,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "marketing.table.engagement": "Engagement",
     "marketing.table.status": "Status",
     "marketing.table.requestId": "Request ID",
+
     "marketing.field.autoPublish": "Auto Publish",
     "marketing.table.serviceType": "Service Type",
     "marketing.table.date": "Date",
@@ -2846,7 +3077,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "fin.currencyShort": "SAR",
 
 
-    
+
     // Payment Management
     "fin.payment.title": "Payment Records",
     "fin.payment.add": "Record Payment",
@@ -2879,19 +3110,19 @@ export const translations: Record<Language, Record<string, string>> = {
     "fin.payment.loadError": "Failed to load payments",
     "fin.payment.noData": "No payments recorded",
     "fin.payment.validation.amount": "Please enter a valid amount",
-    
+
     // Transaction Status
     "fin.status.pending": "Pending",
     "fin.status.completed": "Completed",
     "fin.status.failed": "Failed",
     "fin.status.cancelled": "Cancelled",
-    
+
     // Commission Management
     "fin.commissions.distribution": "Commission Distribution",
     "fin.commissions.brokers": "Broker Commissions",
     "fin.commissions.platform": "Platform Commission",
     "fin.settlements.title": "Settlements",
-    
+
     // Expense Management
     "fin.expense.title": "Expense Records",
     "fin.expense.add": "Record Expense",
@@ -2956,6 +3187,10 @@ export const translations: Record<Language, Record<string, string>> = {
 
 
     "profile.role.user": "Araib",
+    "profile.role.admin": "System Admin",
+    "profile.role.manager": "Manager",
+    "profile.role.employee": "Employee",
+    "profile.role.collaborator": "Collaborator",
     "profile.role.broker": "Real Estate Broker",
     "profile.role.office": "Real Estate Office",
     "profile.role.owner": "Property Owner",
@@ -3024,7 +3259,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.saving": "Saving...",
     "profile.processing": "Processing...",
     "profile.backHome": "Back to Home",
-    
+
     // Profile Specific Labels
     "profile.activityType": "Activity Type",
     "profile.activityPlaceholder": "Enter service type provided",
@@ -3054,7 +3289,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.nameDesc": "Personal/Business Name",
     "profile.nameLabel": "Name",
     "profile.roleLabel": "Araib",
-    "profile.verification.sentToPhone": "Verification code will be sent to your phone registered in Absher/Nafath", 
+    "profile.verification.sentToPhone": "Verification code will be sent to your phone registered in Absher/Nafath",
     "profile.nameRequired": "Name is required",
 
     // Cities
@@ -3158,7 +3393,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "service.traditionalAds": "Traditional Ad Campaign",
     "common.close": "Close",
     "footer.terms": "Terms & Conditions",
-    "footer.usage": "Usage Policy",
 
     "footer.permits": "Permits & Licenses",
     "footer.contact": "Contact Us",
@@ -3279,7 +3513,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "bm.service.consult": "Legal Consultation",
     "bm.service.report": "Legal Report",
     "bm.users.title": "User Management",
-    
+
     "bm.role.seller": "Seller",
     "bm.role.buyer": "Buyer",
     "bm.role.broker": "Broker",
@@ -3442,7 +3676,6 @@ export const translations: Record<Language, Record<string, string>> = {
     // Home/Details
     "home.manage": "Manage Your Property",
     "home.scan": "Scan Surrounding Area",
-    "home.controlPanel": "Control Panel",
 
     // Property Types & Filters (New)
     "property.type.apartment": "Apartment",
@@ -3484,7 +3717,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     "property.furniture.furnished": "Furnished",
     "property.furniture.unfurnished": "Unfurnished",
-    
+
     "common.yes": "Yes",
     "common.no": "No",
     "common.active": "Active",
@@ -3758,7 +3991,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Legal Services - Comprehensive Translations
     "legal.selectService": "Select Legal Service Type",
     "legal.selectServiceDesc": "Choose the service you wish to request",
-    
+
     // Legal Disputes
     "legal.dispute.title": "Legal Disputes",
     "legal.dispute.new": "New Legal Dispute Request",
@@ -3789,7 +4022,6 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.dispute.descriptionPlaceholder": "Enter detailed description of the dispute...",
     "legal.dispute.documents": "Documents",
     "legal.dispute.uploadDocs": "Upload Documents (Word, PDF, Images)",
-    "footer.offers": "Offers",
 "footer.mangement": "Managements",
 "footer.services": "Services",
 
@@ -3841,7 +4073,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.contract.applicantRoleSelect": "Select Applicant Role",
     "legal.contract.uploadContract": "Upload Contract",
     "legal.contract.additionalDocs": "Additional Documents",
-    
+
     // Documentation
     "legal.doc.title": "Documentation",
     "legal.doc.new": "New Documentation Request",
@@ -3893,7 +4125,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "legal.other.legalStatusPlaceholder": "Report will be issued here",
     "legal.other.reportDetails": "Report Details",
     "legal.other.uploadDocs": "Upload Documents",
-    
+
     // Common Legal Service Fields
     "legal.submit": "Submit Request",
     "legal.submitting": "Submitting...",
@@ -3965,7 +4197,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.transactions.date": "Date",
 
 
-    
+
 
 
     // Common
@@ -4048,6 +4280,34 @@ export const translations: Record<Language, Record<string, string>> = {
     "sub.validation.property": "Please select a property",
     "sub.validation.amount": "Please enter subscription amount",
     "sub.validation.customPeriod": "Please enter period in months",
+    "sub.public.quickAction": "Subscriptions",
+    "sub.public.badge": "Internal Department Subscriptions",
+    "sub.public.heroTitle": "Choose the right department package",
+    "sub.public.heroDesc": "These packages are created by the admin. Each package includes the internal departments you will access, such as legal, finance, or employees, and you can choose monthly or yearly billing.",
+    "sub.public.packagesTitle": "Available Packages",
+    "sub.public.emptyPackages": "There are no active subscription packages right now",
+    "sub.public.packageFallbackDesc": "Subscription for access to selected internal departments",
+    "sub.public.departmentsOnly": "Access is limited to the included departments only",
+    "sub.public.discount": "Discount",
+    "sub.public.detailsTitle": "Subscription Details",
+    "sub.public.duration": "Subscription Duration",
+    "sub.public.notesPlaceholder": "Any extra details",
+    "sub.public.selectedPackage": "Selected Package",
+    "sub.public.selectFromList": "Choose a package from the list",
+    "sub.public.total": "Total",
+    "sub.public.afterPayment": "After payment, the departments included in this package will be activated on your account and you will be able to enter the internal area.",
+    "sub.public.submit": "Create Subscription and Go to Payment",
+    "sub.public.previousSubscriptions": "My Previous Subscriptions",
+    "sub.public.noPreviousSubscriptions": "No previous subscriptions",
+    "sub.public.viewInWallet": "View in Wallet",
+    "sub.public.loadError": "Failed to load subscription packages",
+    "sub.public.selectPackageFirst": "Select a package first",
+    "sub.public.createdRedirect": "Subscription created. Complete payment from the wallet",
+    "sub.dept.properties": "Properties Department",
+    "sub.dept.marketing": "Marketing Department",
+    "sub.dept.legal": "Legal Department",
+    "sub.dept.finance": "Finance Department",
+    "sub.dept.employees": "Employees Department",
 
     "pm.details.title": "Property Details",
     "pm.units.title": "Units",
@@ -4074,7 +4334,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.roi.purchasePrice": "Purchase Price / Cost",
     "property.type.compound": "Compound",
 
-    
+
     "common.add": "Add",
     "common.next": "Next",
     "common.prev": "Previous",
@@ -4086,7 +4346,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.financial.paymentTrack": "Payment Tracking",
     "pm.roi.expectedIncome": "Expected Annual Income",
     "pm.maintenance.empty": "No maintenance records yet",
-    
+
     "pm.payment.annual": "Annual",
     "pm.payment.biannual": "Bi-Annual",
     "pm.payment.quarterly": "Quarterly",
@@ -4205,6 +4465,102 @@ export const translations: Record<Language, Record<string, string>> = {
 
 "admin.service_requests.name": "Name",
 "admin.service_requests.identity": "Identity",
+
+    "internal.common.loading": "Loading...",
+    "internal.common.refresh": "Refresh",
+
+    "internal.nav.backHome": "Back to home",
+    "internal.nav.logout": "Logout",
+    "internal.nav.subscriptions": "Subscriptions",
+    "internal.nav.chat": "Chat",
+    "internal.nav.languageSwitch": "العربية",
+
+    "admin.customer_service.title": "Customer Service",
+    "admin.customer_service.subtitle": "Manage categories, FAQs and feedback",
+    "admin.customer_service.tabs.faqs": "FAQs",
+    "admin.customer_service.tabs.feedback": "Feedback",
+    "admin.customer_service.loadDefaults": "Load defaults",
+    "admin.customer_service.categories": "Categories",
+    "admin.customer_service.addCategory": "Add category",
+    "admin.customer_service.editCategory": "Edit category",
+    "admin.customer_service.addQuestion": "Add question",
+    "admin.customer_service.editQuestion": "Edit question",
+    "admin.customer_service.questionsList": "Questions list",
+    "admin.customer_service.customerFeedback": "Customer feedback",
+    "admin.customer_service.new": "new",
+    "admin.customer_service.resolved": "resolved",
+    "admin.customer_service.confirmDeleteCategoryTitle": "Delete category",
+    "admin.customer_service.confirmDeleteCategoryDesc": "The category will be deleted. Related FAQs will remain uncategorized.",
+    "admin.customer_service.confirmDeleteQuestionTitle": "Delete question",
+    "admin.customer_service.confirmDeleteQuestionDesc": "Are you sure you want to delete this question?",
+    "admin.customer_service.confirmDeleteMessageTitle": "Delete message",
+    "admin.customer_service.confirmDeleteMessageDesc": "Are you sure you want to delete this message?",
+
+    "admin.info_content.title": "Legal / Info Content",
+    "admin.info_content.subtitle": "Manage /info page",
+    "admin.info_content.tabs": "Tabs",
+    "admin.info_content.tabContent": "Tab content",
+    "admin.info_content.addTab": "Add tab",
+    "admin.info_content.editTab": "Edit tab",
+    "admin.info_content.addBlock": "Add block",
+    "admin.info_content.editBlock": "Edit block",
+    "admin.info_content.confirmDeleteTabTitle": "Delete tab",
+    "admin.info_content.confirmDeleteTabDesc": "This will delete the tab and all blocks inside it.",
+    "admin.info_content.confirmDeleteBlockTitle": "Delete block",
+    "admin.info_content.confirmDeleteBlockDesc": "Are you sure you want to delete this block?",
+
+    "common.moveUp": "Move up",
+    "common.moveDown": "Move down",
+    "common.selectFirst": "Select first",
+
+    "internal.dashboard.title": "Admin Dashboard",
+    "internal.dashboard.welcome": "Welcome back,",
+    "internal.dashboard.welcomeFallback": "there",
+    "internal.dashboard.overview": "Quick overview based on your available departments",
+    "internal.dashboard.noDepartments": "No departments available",
+    "internal.dashboard.enterDepartment": "Open department",
+    "internal.dashboard.quickServices": "Quick services",
+    "internal.dashboard.reviewChats": "Review conversations",
+    "internal.dashboard.details": "Details",
+    "internal.dashboard.profile": "Your profile",
+    "internal.dashboard.latestRequests": "Latest requests",
+    "internal.dashboard.viewAll": "View all",
+    "internal.dashboard.unavailable": "Unavailable",
+    "internal.dashboard.noRecentRequests": "No recent requests",
+
+    "internal.dept.properties": "Properties",
+    "internal.dept.finance": "Finance",
+    "internal.dept.legal": "Legal",
+    "internal.dept.marketing": "Marketing",
+    "internal.dept.employees": "Employees",
+
+    "internal.chat.centerTitle": "Chat Center",
+    "internal.chat.centerSubtitle": "Talk with customers and staff in one place",
+    "internal.chat.searchPlaceholder": "Search conversations...",
+    "internal.chat.userFallback": "User",
+    "internal.chat.yesterday": "Yesterday",
+    "internal.chat.now": "Now",
+    "internal.chat.conversationFallback": "Conversation",
+    "internal.chat.startNew": "Start a new conversation",
+    "internal.chat.you": "You",
+    "internal.chat.emptyTitle": "No conversations",
+    "internal.chat.emptySubtitle": "Start chatting with your team or customers",
+    "internal.chat.offerTag": "Property offer",
+    "internal.chat.activeNow": "Active now",
+    "internal.chat.inactive": "Inactive",
+    "internal.chat.startTitle": "Start of conversation",
+    "internal.chat.startSubtitle": "Send your first message to begin",
+    "internal.chat.messagePlaceholder": "Type your message here...",
+
+    "internal.profile.title": "Profile",
+    "internal.profile.uploadImage": "Upload image",
+    "internal.profile.uploading": "Uploading...",
+    "internal.profile.openFull": "Open full profile",
+
+    "internal.sub.statusTitle": "Subscription status",
+    "internal.sub.openEnded": "Open-ended",
+    "internal.sub.expired": "Expired",
+    "internal.sub.daysLeft": "{days} days left"
 
   }
 };

@@ -223,7 +223,7 @@ export default function OfferDetailsPage() {
         description: t('offer.loginDesc'),
         variant: "destructive",
       });
-      router.push("/auth/login");
+      router.push("/login");
       return;
     }
 
@@ -331,7 +331,7 @@ export default function OfferDetailsPage() {
             description: t('offer.loginDesc'),
             variant: "destructive",
         });
-        router.push("/auth/login");
+        router.push("/login");
         return;
     }
 

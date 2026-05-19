@@ -1,19 +1,25 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, BookOpen, FileCheck, Phone, ChevronLeft, Handshake, Scale, CheckCircle2, Landmark, UserCheck, Lock, Server, FileText, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 import { TermsPrivacyModal } from "@/components/modals/terms-privacy-modal";
+import { infoContentApi, type InfoBlock, type InfoTab } from "@/lib/api";
 
 function InfoPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t, language } = useLanguage();
+  const { isOpen, message, isAdmin } = useSectionGuard('info');
+
+
   const defaultTab = searchParams.get("tab") || "terms";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +29,72 @@ function InfoPageContent() {
     setModalTab(tab);
     setIsModalOpen(true);
   };
+
+  const isRtl = language === "ar";
+  const [infoTabs, setInfoTabs] = useState<InfoTab[] | null>(null);
+  const [infoBlocks, setInfoBlocks] = useState<InfoBlock[] | null>(null);
+  const [infoLoading, setInfoLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setInfoLoading(true);
+      try {
+        const res = await infoContentApi.getAll();
+        setInfoTabs(Array.isArray(res.data?.tabs) ? res.data.tabs : []);
+        setInfoBlocks(Array.isArray(res.data?.blocks) ? res.data.blocks : []);
+      } catch {
+        setInfoTabs(null);
+        setInfoBlocks(null);
+      } finally {
+        setInfoLoading(false);
+      }
+    })();
+  }, []);
+
+  const tabsToRender = useMemo(() => {
+    const fallback = [
+      { key: "terms", title: t("footer.terms") || "الشروط والأحكام", icon: Shield },
+      { key: "usage", title: t("footer.usage") || "سياسة الاستخدام", icon: BookOpen },
+      { key: "permits", title: t("footer.permits") || "التراخيص والتصاريح", icon: FileCheck },
+      { key: "contact", title: t("footer.contact") || "اتصل بنا", icon: Phone },
+    ];
+    if (!infoTabs) return fallback;
+    const keyToIcon: Record<string, any> = { terms: Shield, usage: BookOpen, permits: FileCheck, contact: Phone };
+    return infoTabs
+      .slice()
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+      .map((tab) => ({
+        key: tab.key,
+        title: isRtl ? tab.titleAr : tab.titleEn,
+        icon: keyToIcon[tab.key] || Shield,
+      }));
+  }, [infoTabs, isRtl, t]);
+
+  const blocksByTabKey = useMemo(() => {
+    const map = new Map<string, Array<{ label: string; text: string; sortOrder: number }>>();
+    if (!infoTabs || !infoBlocks) return map;
+    const tabById = new Map(infoTabs.map((t) => [t.id, t.key]));
+    for (const b of infoBlocks) {
+      const key = tabById.get(b.tabId);
+      if (!key) continue;
+      const arr = map.get(key) || [];
+      arr.push({
+        label: isRtl ? b.labelAr : b.labelEn,
+        text: isRtl ? b.textAr : b.textEn,
+        sortOrder: b.sortOrder ?? 0,
+      });
+      map.set(key, arr);
+    }
+    for (const [k, arr] of map.entries()) {
+      arr.sort((a, b) => a.sortOrder - b.sortOrder);
+      map.set(k, arr);
+    }
+    return map;
+  }, [infoTabs, infoBlocks, isRtl]);
+
+  if (!isOpen) {
+      return <ComingSoonOverlay sectionName={t('footer.support') || 'المعلومات'} message={message} isAdmin={isAdmin} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white pb-20 pt-24" dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -56,123 +128,86 @@ function InfoPageContent() {
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <TabsList className="flex h-14 items-center justify-start rounded-2xl bg-white/5 border border-white/5 p-1.5 w-full overflow-x-auto overflow-y-hidden no-scrollbar gap-2">
-            <TabsTrigger value="terms" className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter">
-                <Shield className="w-4 h-4" />
-              {t("footer.terms")}
-            </TabsTrigger>
-            <TabsTrigger value="usage" className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter">
-              <BookOpen className="w-4 h-4" />
-              {t("footer.usage")}
-            </TabsTrigger>
-            <TabsTrigger value="permits" className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter">
-              <FileCheck className="w-4 h-4" />
-              {t("footer.permits")}
-            </TabsTrigger>
-            <TabsTrigger value="contact" className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter">
-              <Phone className="w-4 h-4" />
-              {t("footer.contact")}
-            </TabsTrigger>
+            {tabsToRender.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <TabsTrigger
+                  key={tab.key}
+                  value={tab.key}
+                  className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.title}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
           <AnimatePresence mode="wait">
-            <TabsContent key="terms" value="terms" className="m-0 outline-none">
-              <InfoSection 
-                title={t("footer.terms")}
-                icon={<Shield className="w-8 h-8 text-slate-400" />}
-                content={[
-                  { label: "قبول الشروط", text: "باستخدامك للمنصة، فإنك توافق على الالتزام بكافة الشروط والأحكام المذكورة في سياط المنصة." },
-                  { label: "الملكية الفكرية", text: "جميع المحتويات، العلامات التجارية، والبيانات الموجودة على المنصة مملوكة حصرياً لنا." },
-                  { label: "التزامات المستخدم", text: "يجب على المستخدم تقديم معلومات دقيقة وصحيحة عند التسجيل أو إضافة العقارات." }
-                ]}
-                actionBtn={
-                  <button onClick={() => openModal("privacy")} className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all">
-                    <span>قراءة الشروط والأحكام بالتفصيل</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </button>
-                }
-                bgColor="bg-slate-500/20"
-              />
-            </TabsContent>
-
-            <TabsContent key="usage" value="usage" className="m-0 outline-none">
-              <InfoSection 
-                title={t("footer.usage")}
-                icon={<BookOpen className="w-8 h-8 text-slate-400" />}
-                content={[
-                  { label: "الغرض من الاستخدام", text: "تم تصميم المنصة لتسهيل تداول العقارات والخدمات المرتبطة بها بشكل قانوني." },
-                  { label: "السلوك الممنوع", text: "يُمنع استخدام المنصة لأي أغراض غير قانونية أو نشر محتوى مضلل." },
-                  { label: "خصوصية البيانات", text: "نحن ملتزمون بحماية بياناتك الشخصية واستخدامها فقط للأغراض الموضحة في سياسة الخصوصية." }
-                ]}
-                actionBtn={
-                  <button onClick={() => openModal("terms")} className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all">
-                    <span>قراءة سياسة الخصوصية بالتفصيل</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </button>
-                }
-                bgColor="bg-slate-500/20"
-              />
-            </TabsContent>
-
-            <TabsContent key="permits" value="permits" className="m-0 outline-none">
-              <InfoSection 
-                title={t("footer.permits")}
-                icon={<FileCheck className="w-8 h-8 text-slate-400" />}
-                content={[
-                  { label: "ترخيص المنصة", text: "المنصة حاصلة على كافة التراخيص اللازمة من الهيئة العامة للعقار." },
-                  { label: "تراخيص الوسطاء", text: "يتم التحقق من رخص كافة الوسطاء والمكاتب العقارية المسوقة عبر المنصة." },
-                  { label: "الامتثال للأنظمة", text: "نحن نتبع كافة الأنظمة واللوائح العقارية المعمول بها في المملكة العربية السعودية." }
-                ]}
-                bgColor="bg-slate-500/20"
-              />
-            </TabsContent>
-
-            <TabsContent key="contact" value="contact" className="m-0 outline-none">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
-                  <div className="p-4 bg-slate-700/30 rounded-2xl w-fit">
-                    <Phone className="w-8 h-8 text-slate-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black mb-2">{t("footer.contact")}</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">
-                      فريق الدعم الفني متواجد لمساعدتك على مدار الساعة.
-                    </p>
-                  </div>
-                  <div className="space-y-4 pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-4 group cursor-pointer">
-                      <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                        <Phone className="w-4 h-4 text-slate-300" />
-                      </div>
-                      <span className="text-sm font-bold tracking-tight">92000XXXX</span>
-                    </div>
-                    <div className="flex items-center gap-4 group cursor-pointer">
-                      <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                        <Scale className="w-4 h-4 text-slate-300" />
-                      </div>
-                      <span className="text-sm font-bold tracking-tight">info@dealapp.sa</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
-                  <div className="p-4 bg-slate-700/30 rounded-2xl w-fit">
-                    <Handshake className="w-8 h-8 text-slate-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black mb-2">خدمة العملاء</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">
-                      تواصل معنا مباشرة عبر قسم خدمة العملاء لتقديم الشكاوى أو الاقتراحات.
-                    </p>
-                  </div>
-                  <button 
-                    onClick={() => router.push('/customerservice')}
-                    className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-black text-sm transition-colors"
+            {tabsToRender.map((tab) => {
+              const Icon = tab.icon;
+              const content =
+                blocksByTabKey.get(tab.key)?.map(({ label, text }) => ({ label, text })) || [];
+              const actionBtn =
+                tab.key === "terms" ? (
+                  <button
+                    onClick={() => openModal("privacy")}
+                    className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all"
                   >
-                    فتح تذكرة دعم
+                    <span>{isRtl ? "قراءة الشروط والأحكام بالتفصيل" : "Read full terms"}</span>
+                    <ExternalLink className="w-4 h-4" />
                   </button>
-                </div>
-              </div>
-            </TabsContent>
+                ) : tab.key === "usage" ? (
+                  <button
+                    onClick={() => openModal("terms")}
+                    className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all"
+                  >
+                    <span>{isRtl ? "قراءة سياسة الخصوصية بالتفصيل" : "Read full privacy policy"}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                ) : tab.key === "contact" ? (
+                  <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                    <div className="p-4 bg-slate-700/30 rounded-2xl w-fit">
+                      <Handshake className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black mb-2">{isRtl ? "خدمة العملاء" : "Customer Service"}</h3>
+                      <p className="text-slate-400 text-sm leading-relaxed">
+                        {isRtl
+                          ? "تواصل معنا مباشرة عبر قسم خدمة العملاء لتقديم الشكاوى أو الاقتراحات."
+                          : "Contact us via Customer Service to submit complaints or suggestions."}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => router.push("/customerservice")}
+                      className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-black text-sm transition-colors"
+                    >
+                      {isRtl ? "فتح تذكرة دعم" : "Open support ticket"}
+                    </button>
+                  </div>
+                ) : undefined;
+
+              return (
+                <TabsContent key={tab.key} value={tab.key} className="m-0 outline-none">
+                  <InfoSection
+                    title={tab.title}
+                    icon={<Icon className="w-8 h-8 text-slate-400" />}
+                    content={
+                      content.length > 0
+                        ? content
+                        : [
+                            {
+                              label: isRtl ? "ملاحظة" : "Note",
+                              text: infoLoading ? (isRtl ? "جاري تحميل المحتوى..." : "Loading content...") : (isRtl ? "لا يوجد محتوى." : "No content."),
+                            },
+                          ]
+                    }
+                    actionBtn={actionBtn}
+                    bgColor="bg-slate-500/20"
+                  />
+                </TabsContent>
+              );
+            })}
           </AnimatePresence>
         </Tabs>
       </div>

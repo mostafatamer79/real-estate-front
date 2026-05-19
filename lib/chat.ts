@@ -39,4 +39,10 @@ export const chatApi = {
     const response = await api.get('/chat/rooms');
     return response.data;
   },
+
+  // Mark room as read
+  async markRoomAsRead(roomId: string) {
+    const response = await api.post(`/chat/rooms/${roomId}/read`);
+    return response.data;
+  },
 };

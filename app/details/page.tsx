@@ -12,6 +12,8 @@ import QuickActions from "../src/components/QuickActions";
 import PriceTrendChart from "../src/components/PriceTrendChart";
 import PropertyDistributionChart from "../src/components/PropertyDistributionChart";
 import ProfileModal from "@/components/ProfileModal";
+import ComingSoonInline from "@/components/ComingSoonInline";
+import RecentActivity from "../src/components/RecentActivity";
 import Footer from "../src/components/Footer";
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
@@ -22,6 +24,9 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
+import { useSectionGuard } from '@/hooks/useSectionGuard';
+import { useSettings } from '@/context/SettingsContext';
+import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 
 export default function HomePage() {
   const propertyLocation: [number, number] = [24.7136, 46.6753];
@@ -29,6 +34,22 @@ export default function HomePage() {
   const router = useRouter();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { t, language } = useLanguage();
+  const { isOpen, message, isAdmin } = useSectionGuard('details');
+
+
+  const { settings } = useSettings();
+  const ui = settings.uiFlags;
+
+  const detailsPartStatus = (id: 'map' | 'stats' | 'charts' | 'quick_actions'): 'enabled' | 'soon' | 'hidden' => {
+    const explicit = settings.detailsPartFlags?.[id];
+    if (explicit) return explicit;
+    // Backward-compatible fallback to old boolean uiFlags
+    if (id === 'map' && ui?.show_map_section === false) return 'hidden';
+    if (id === 'stats' && ui?.show_stats_cards === false) return 'hidden';
+    if (id === 'charts' && ui?.show_charts_section === false) return 'hidden';
+    if (id === 'quick_actions' && ui?.show_quick_actions === false) return 'hidden';
+    return 'enabled';
+  };
 
   const [priceData, setPriceData] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
@@ -82,7 +103,7 @@ export default function HomePage() {
       }
 
       const [opsData, adsData] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/financial/transactions`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/activities/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }).then(r => r.ok ? r.json() : []),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/marketing/email`, {
@@ -96,7 +117,17 @@ export default function HomePage() {
     }
   };
 
+  // useEffect(() => {
+  //   if (user && user.departments && user.departments.length > 0 && user.role !== 'admin') {
+  //     router.push('/department-hub');
+  //   }
+  // }, [user, router]);
+
   useEffect(() => { if (token) fetchData(); }, [selectedStatus, selectedRange]);
+
+  if (!isOpen) {
+    return <ComingSoonOverlay sectionName={t('common.details') || 'التفاصيل'} message={message} isAdmin={isAdmin} />;
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -116,7 +147,7 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="w-full min-h-screen bg-slate-950 pt-28 pb-12 relative overflow-hidden"
+      <div className="w-full min-h-screen bg-slate-950 pt-12 pb-12 relative overflow-hidden"
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
         {/* Ambient background glows */}
@@ -147,6 +178,7 @@ export default function HomePage() {
 
           <div className="space-y-10">
             {/* Map Section */}
+            {detailsPartStatus('map') !== 'hidden' && (
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-slate-900 border border-slate-700/60 text-slate-400">
@@ -155,56 +187,78 @@ export default function HomePage() {
                 <h2 className="text-base font-bold text-slate-300 tracking-tight">{t('details.map.title')}</h2>
               </div>
 
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/15 to-slate-600/20 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-700 cursor-pointer"
-                  onClick={() => router.push('/scan-map')} />
-                <div className="relative w-full h-[350px] bg-slate-800 rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-slate-700/40">
-                  <Map center={propertyLocation} zoom={15} markerPosition={propertyLocation}
-                    markerTitle={t('map.markerProp')} markerDescription={t('map.markerDefault')} />
-                </div>
+              {detailsPartStatus('map') === 'soon' ? (
+                <ComingSoonInline sectionName={t('details.map.title')} message={settings.detailsPartMessages?.map} />
+              ) : settings.sectionFlags.scan_map === 'closed' ? (
+                <ComingSoonInline 
+                  sectionName={t('details.map.title')} 
+                  message={settings.sectionMessages.scan_map} 
+                />
+              ) : (
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/15 to-slate-600/20 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-700 cursor-pointer"
+                    onClick={() => router.push('/scan-map')} />
+                  <div className="relative w-full h-[350px] bg-slate-800 rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-slate-700/40">
+                    <Map center={propertyLocation} zoom={15} markerPosition={propertyLocation}
+                      markerTitle={t('map.markerProp')} markerDescription={t('map.markerDefault')} />
+                  </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.01, y: -2 }} whileTap={{ scale: 0.99 }}
-                  onClick={() => router.push('/scan-map')}
-                  className="relative w-full mt-6 bg-gradient-to-b from-slate-800 to-slate-850
-                    hover:from-slate-780 hover:to-slate-820
-                    border border-slate-700/60 hover:border-slate-600/80
-                    text-slate-300 hover:text-slate-100
-                    py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.4em]
-                    shadow-[0_4px_24px_rgba(0,0,0,0.4)]
-                    hover:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(99,102,241,0.07)]
-                    transition-all duration-300
-                    flex items-center justify-center gap-4 group cursor-pointer overflow-hidden"
-                >
-                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
-                  <MapIcon className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
-                  {t('home.scan')}
-                  <Zap className="w-4 h-4 text-emerald-500/70 group-hover:text-emerald-400 group-hover:animate-pulse" />
-                </motion.button>
-              </div>
+                  <motion.button
+                    whileHover={{ scale: 1.01, y: -2 }} whileTap={{ scale: 0.99 }}
+                    onClick={() => router.push('/scan-map')}
+                    className="relative w-full mt-6 bg-gradient-to-b from-slate-800 to-slate-850
+                      hover:from-slate-780 hover:to-slate-820
+                      border border-slate-700/60 hover:border-slate-600/80
+                      text-slate-300 hover:text-slate-100
+                      py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.4em]
+                      shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+                      hover:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(99,102,241,0.07)]
+                      transition-all duration-300
+                      flex items-center justify-center gap-4 group cursor-pointer overflow-hidden"
+                  >
+                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
+                    <MapIcon className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                    {t('home.scan')}
+                    <Zap className="w-4 h-4 text-emerald-500/70 group-hover:text-emerald-400 group-hover:animate-pulse" />
+                  </motion.button>
+                </div>
+              )}
             </motion.div>
+            )}
 
             {/* Stats / Info Cards */}
-            <motion.div variants={itemVariants} className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-400">
-                  <Grid className="w-4 h-4" />
+            {detailsPartStatus('stats') !== 'hidden' && (
+              <motion.div variants={itemVariants} className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-400">
+                    <Grid className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base font-bold text-slate-300 tracking-tight">{t('details.stats.title')}</h2>
                 </div>
-                <h2 className="text-base font-bold text-slate-300 tracking-tight">{t('details.stats.title')}</h2>
-              </div>
 
-              <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-900/70
-                rounded-3xl border border-slate-700/50
-                shadow-[0_4px_32px_rgba(0,0,0,0.4)] p-6 overflow-hidden">
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/40 to-transparent" />
-                <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
-                <PropertyInfoCards operations={operations} marketingRequests={marketingRequests} />
-              </div>
-            </motion.div>
+                {detailsPartStatus('stats') === 'soon' ? (
+                  <ComingSoonInline sectionName={t('details.stats.title')} message={settings.detailsPartMessages?.stats} />
+                ) : settings.sectionFlags.financial === 'closed' ? (
+                  <ComingSoonInline 
+                    sectionName={t('details.stats.title')} 
+                    message={settings.sectionMessages.financial} 
+                  />
+                ) : (
+                  <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-900/70
+                    rounded-3xl border border-slate-700/50
+                    shadow-[0_4px_32px_rgba(0,0,0,0.4)] p-6 overflow-hidden">
+                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/40 to-transparent" />
+                    <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
+                    <PropertyInfoCards operations={operations} marketingRequests={marketingRequests} userRole={user?.role} />
+                  </div>
+                )}
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
         {/* Charts Section */}
+        {detailsPartStatus('charts') !== 'hidden' && (
         <section className="w-full bg-transparent py-24 relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-800/60 to-transparent" />
 
@@ -217,33 +271,42 @@ export default function HomePage() {
                     {t('details.charts.title')}
                   </h2>
                 </div>
-
-               
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
-                {[
-                  <PriceTrendChart key="price" data={priceData.length > 0 ? priceData : undefined} labels={chartLabels} />,
-                  <PropertyDistributionChart key="dist" data={propertyTypes.length > 0 ? propertyTypes : undefined} />
-                ].map((chart, i) => (
-                  <motion.div key={i} whileHover={{ y: -4 }}
-                    className="relative bg-gradient-to-b from-slate-900 to-slate-950
-                      border border-slate-800/70 hover:border-slate-700/60
-                      rounded-[2rem] overflow-hidden
-                      shadow-[0_4px_24px_rgba(0,0,0,0.5)]
-                      hover:shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(99,102,241,0.04)]
-                      transition-all duration-300 h-full"
-                  >
-                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-800/50 to-transparent" />
-                    {chart}
-                  </motion.div>
-                ))}
-              </div>
+              {detailsPartStatus('charts') === 'soon' ? (
+                <ComingSoonInline sectionName={t('details.charts.title')} message={settings.detailsPartMessages?.charts} />
+              ) : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
+                <ComingSoonInline 
+                  sectionName={t('details.charts.title')} 
+                  message={settings.sectionMessages.financial} 
+                />
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+                  {[
+                    <PriceTrendChart key="price" data={priceData.length > 0 ? priceData : undefined} labels={chartLabels} />,
+                    <PropertyDistributionChart key="dist" data={propertyTypes.length > 0 ? propertyTypes : undefined} />
+                  ].map((chart, i) => (
+                    <motion.div key={i} whileHover={{ y: -4 }}
+                      className="relative bg-gradient-to-b from-slate-900 to-slate-950
+                        border border-slate-800/70 hover:border-slate-700/60
+                        rounded-[2rem] overflow-hidden
+                        shadow-[0_4px_24px_rgba(0,0,0,0.5)]
+                        hover:shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(99,102,241,0.04)]
+                        transition-all duration-300 h-full"
+                    >
+                      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-800/50 to-transparent" />
+                      {chart}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           </div>
         </section>
+        )}
 
         {/* Quick Actions */}
+        {detailsPartStatus('quick_actions') !== 'hidden' && (
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
           className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="space-y-20 pb-20">
@@ -254,10 +317,15 @@ export default function HomePage() {
                 </div>
                 <h2 className="text-base font-bold text-slate-300 tracking-tight">{t('details.quickActions.title')}</h2>
               </div>
-              <QuickActions />
+              {detailsPartStatus('quick_actions') === 'soon' ? (
+                <ComingSoonInline sectionName={t('details.quickActions.title')} message={settings.detailsPartMessages?.quick_actions} />
+              ) : (
+                <QuickActions />
+              )}
             </motion.div>
           </div>
         </motion.div>
+        )}
       </div>
 
       {user && token && (

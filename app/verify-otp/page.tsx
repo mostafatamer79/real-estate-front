@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { Role } from "@/types/user";
 
 export default function VerifyOtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -20,28 +21,29 @@ export default function VerifyOtpPage() {
     // Get email/phone from localStorage
     const pendingVerification = localStorage.getItem('pendingVerification');
     if (!pendingVerification) {
-      router.push('/signin');
+      router.push('/login');
       return;
     }
     setEmail(pendingVerification);
+  }, [router]);
 
-    // Start countdown timer
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
+  useEffect(() => {
     // Auto-focus first input on mount (leftmost box visually)
     const firstInput = document.getElementById(`otp-0`);
     firstInput?.focus();
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [router]);
+  useEffect(() => {
+    if (timer <= 0) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setTimer((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [timer]);
 
   const handleOtpChange = (index: number, value: string) => {
     // Allow only digits
@@ -150,10 +152,27 @@ export default function VerifyOtpPage() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
 
+      // Dispatch custom event for reactive components (Navbar, AdminLayout)
+      window.dispatchEvent(new Event('auth-change'));
+
       // Clear pending verification
       localStorage.removeItem('pendingVerification');
-      // Redirect to home page
-      router.push('/');
+
+      const internalRoles: string[] = [Role.MANGER, Role.EMPLOYEE, Role.COLLABORATOR, Role.VIEWER];
+      const assignedDepartments = Array.isArray(data.user?.departments) ? data.user.departments : [];
+      const permissionDepartments = Object.entries(data.user?.departmentPermissions || {})
+        .filter(([, value]) => value === true || value === 'manage' || value === 'view')
+        .map(([key]) => key);
+      const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
+
+      if (data.user?.role === Role.ADMIN) {
+        router.push('/admin/dashboard');
+      } else if ((internalRoles.includes(data.user?.role) || hasDepartmentAccess) && hasDepartmentAccess) {
+        router.push('/internal');
+      } else {
+        router.push('/details');
+      }
+
     } catch (err: any) {
       console.error('OTP verification error:', err);
       // Try to translate if key exists (err.message), else show generic invalid
@@ -200,7 +219,7 @@ export default function VerifyOtpPage() {
       firstInput?.focus();
 
     } catch (err: any) {
-      setError(err.message || t('otp.resendBtn') + ": " + t('common.error'));
+      setError(t(err.message) !== err.message ? t(err.message) : t('otp.errorGeneric'));
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +232,7 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 pt-20">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 pt-4">
       <div className="w-full max-w-md">
         <button
           onClick={() => router.back()}

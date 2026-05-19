@@ -10,9 +10,12 @@ import InvestmentSection from './components/InvestmentSection'
 import { useLanguage } from '@/context/LanguageContext'
 import { financialApi } from '@/lib/api'
 import { apiClient } from '@/lib/client'
+import { useSectionGuard } from '@/hooks/useSectionGuard'
+import ComingSoonOverlay from '@/components/ComingSoonOverlay'
 
 const WalletPage = () => {
     const { t } = useLanguage()
+    const { isOpen, message, isAdmin } = useSectionGuard('wallet')
     const [activeTab, setActiveTab] = useState<WalletTab>('invoices')
     const [isCommissionFormOpen, setIsCommissionFormOpen] = useState(false)
     const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -24,11 +27,12 @@ const WalletPage = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const [invoicesRes, commissionsRes, filesRes, requestsRes, walletRes] = await Promise.all([
+            const [invoicesRes, commissionsRes, filesRes, requestsRes, subscriptionsRes, walletRes] = await Promise.all([
                 financialApi.getInvoices(),
                 financialApi.getCommissions(),
                 financialApi.getFiles(),
                 apiClient.get('/service-requests').catch(() => ({ data: [] })),
+                apiClient.get('/subscriptions/my').catch(() => ({ data: [] })),
                 financialApi.getWallet().catch(() => ({ data: { balance: 0 } }))
             ]);
 
@@ -41,7 +45,7 @@ const WalletPage = () => {
             if (invoicesRes.data) {
                 mappedInvoices = invoicesRes.data.map((inv: any) => ({
                     status: inv.status === 'paid' ? t('wallet.paid') : t('wallet.pay'),
-                    amount: Number(inv.total).toLocaleString(), // Use 'total' not 'amount'
+                    amount: Number(inv.total).toLocaleString(),
                     date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-CA') : '',
                     service: inv.description || t('wallet.service.default'),
                     invoice: inv.id.substring(0, 8).toUpperCase(),
@@ -51,10 +55,8 @@ const WalletPage = () => {
                 }));
             }
 
-            // Merge pending service requests as invoices requiring decision or under review
-            // ONLY for 'legal' and 'marketing' categories, as other categories auto-generate real invoices
             if (requestsRes.data) {
-                const requestsData = requestsRes.data.data || requestsRes.data;
+                const requestsData = requestsRes.data.items || requestsRes.data.data || requestsRes.data;
                 const pendingReqs = Array.isArray(requestsData) 
                     ? requestsData.filter((r: any) => 
                         (r.category === 'legal' || r.category === 'marketing') && 
@@ -78,16 +80,26 @@ const WalletPage = () => {
                 mappedInvoices = [...mappedServiceInvoices, ...mappedInvoices];
             }
 
+            if (subscriptionsRes.data) {
+                const subscriptionItems = Array.isArray(subscriptionsRes.data) ? subscriptionsRes.data : [];
+                const mappedSubscriptions = subscriptionItems.map((sub: any) => ({
+                    status: sub.status,
+                    amount: Number(sub.amount || 0).toLocaleString(),
+                    date: sub.createdAt ? new Date(sub.createdAt).toLocaleDateString('en-CA') : '',
+                    service: `اشتراك ${sub.managementPackage?.name || sub.departmentSlug || ''}`.trim(),
+                    invoice: `SUB-${String(sub.id).substring(0, 5).toUpperCase()}`,
+                    originalStatus: sub.status,
+                    id: sub.id,
+                    isSubscription: true,
+                    isSubscriptionActive: sub.status === 'نشط',
+                    subscriptionId: sub.id,
+                }));
+                mappedInvoices = [...mappedSubscriptions, ...mappedInvoices];
+            }
+
             setInvoices(mappedInvoices);
-
-            if (commissionsRes.data) {
-                // Map commissions if needed, currently direct mapping might work based on types
-                setCommissions(commissionsRes.data);
-            }
-
-            if (filesRes.data) {
-                setFiles(filesRes.data);
-            }
+            if (commissionsRes.data) setCommissions(commissionsRes.data);
+            if (filesRes.data) setFiles(filesRes.data);
 
         } catch (error) {
             console.error("Failed to fetch wallet data:", error);
@@ -97,28 +109,33 @@ const WalletPage = () => {
     }
 
     React.useEffect(() => {
-        fetchData();
-    }, []);
+        if (isOpen) {
+            fetchData();
+        }
+    }, [isOpen]);
 
     const handleTabChange = (tab: WalletTab) => {
         setActiveTab(tab)
-        // Reset commission form view when switching tabs
         if (tab !== 'commission') {
             setIsCommissionFormOpen(false)
         }
     }
 
+
+
+    if (!isOpen) {
+        return <ComingSoonOverlay sectionName={t('wallet.wallet')} message={message} isAdmin={isAdmin} />
+    }
+
     return (
         <div className='w-full min-h-screen bg-slate-50/50 text-black' dir="rtl">
             <div className='flex max-w-[1600px] mx-auto'>
-                {/* Fixed Sidebar */}
                 <WalletSidebar 
                     activeTab={activeTab} 
                     onTabChange={handleTabChange} 
                 />
 
-                {/* Main Content */}
-                <div className='flex-1 mr-80 lg:mr-96 p-4'>
+                <div className='flex-1 lg:mr-96 p-4'>
                     {activeTab === 'invoices' && (
                         <InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} />
                     )}

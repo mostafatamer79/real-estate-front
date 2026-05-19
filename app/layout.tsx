@@ -5,9 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from "./src/components/Header";
 import PageWrapper from "./src/components/PageWrapper";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { Toaster as SonnerToaster } from "sonner";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { fetchPublicSettings } from "@/lib/runtime-config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,10 +22,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "دير عقارك",
-  description: "دير عقارك - منصة عقارية شاملة",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const settings = await fetchPublicSettings();
+    const appName =
+      settings.find((s) => s.key === "theme_appName")?.value || "الوساطة الرقمية";
+    const description =
+      settings.find((s) => s.key === "theme_description")?.value ||
+      "الوساطة الرقمية - منصة عقارية شاملة";
+
+    return {
+      title: appName,
+      description,
+    };
+  } catch {
+    // Fall back to static metadata when the API is unavailable at build time.
+  }
+
+  return {
+    title: "الوساطة الرقمية",
+    description: "الوساطة الرقمية - منصة عقارية شاملة",
+  };
+}
 
 export default function RootLayout({
   children,
@@ -35,20 +56,23 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <LanguageProvider>
-          <NotificationProvider>
-            <TooltipProvider>
-              <div className="flex flex-col min-h-screen">
-                <Header />
-                <PageWrapper>
-                  {children}
-                </PageWrapper>
-              </div>
-              <Toaster />
-              <HotToaster position="top-center" />
-            </TooltipProvider>
-          </NotificationProvider>
-        </LanguageProvider>
+        <SettingsProvider>
+          <LanguageProvider>
+            <NotificationProvider>
+              <TooltipProvider>
+                <div className="flex flex-col min-h-screen">
+                  <Header />
+                  <PageWrapper>
+                    {children}
+                  </PageWrapper>
+                </div>
+                <Toaster />
+                <SonnerToaster richColors />
+                <HotToaster position="top-center" />
+              </TooltipProvider>
+            </NotificationProvider>
+          </LanguageProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

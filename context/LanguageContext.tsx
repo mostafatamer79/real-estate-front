@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { translations } from "./translations";
+import { useSettings } from "./SettingsContext";
 
 type Language = "ar" | "en";
 type Direction = "rtl" | "ltr";
@@ -17,6 +18,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const { settings } = useSettings();
   const [language, setLanguage] = useState<Language>("ar");
   const [direction, setDirection] = useState<Direction>("rtl");
 
@@ -39,10 +41,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguage((prev) => (prev === "ar" ? "en" : "ar"));
   };
 
-  // Basic dictionary placeholder
-  // Imported from translations.ts
   const t = (key: string, params?: Record<string, string | number>) => {
-    const text = translations[language][key] || key;
+    // Check for dynamic override first from SettingsContext
+    const overrides = settings.textOverrides || {};
+    const overrideKey = `${language}_${key}`;
+    const text = overrides[overrideKey] || overrides[key] || translations[language][key] || key;
+    
     if (params) {
         return Object.keys(params).reduce((acc, current) => {
             return acc.replace(new RegExp(`{${current}}`, 'g'), String(params[current]));

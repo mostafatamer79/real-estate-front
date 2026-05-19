@@ -1,13 +1,8 @@
 export enum Role {
-  USER = 'user', // Beneficiary
   ADMIN = 'admin',
-  BROKER = 'broker', // Wasit
-  REAL_ESTATE_OFFICE = 'real_estate_office',
-  OWNER = 'owner',
-  LAWYER = 'lawyer',
-  ENGINEERING_OFFICE = 'engineering_office',
-  OTHER = 'other',
-  AGENT = 'agent', // Legacy match for Broker
+  USER = 'user', // Beneficiary / المستفيد
+  MANGER = 'manager', // Manager
+  EMPLOYEE = 'employee', // Employee / موظف
   MARKETING = 'marketing',
   MARKETING_ADMIN = 'marketing_admin',
   LEGAL = 'legal',
@@ -15,8 +10,24 @@ export enum Role {
   FINANCE = 'finance',
   FINANCE_ADMIN = 'finance_admin',
   VIEWER = 'viewer',
+  AGENT = 'agent',
+  BROKER = 'broker',
+  REAL_ESTATE_OFFICE = 'real_estate_office',
+  OWNER = 'owner',
+  LAWYER = 'lawyer',
   NOTARY = 'notary',
   LEGAL_CONSULTANT = 'legal_consultant',
+  ENGINEERING_OFFICE = 'engineering_office',
+  COLLABORATOR = 'collaborator',
+  OTHER = 'other',
+}
+
+export enum Department {
+  MARKETING = 'marketing',
+  PROPERTIES = 'properties',
+  FINANCE = 'finance',
+  LEGAL = 'legal',
+  EMPLOYEES = 'employees',
 }
 
 export enum VerifyStatus {
@@ -35,6 +46,7 @@ export interface User {
   roleOtherDescription?: string;
   isVerified: boolean;
   isActive: boolean;
+  parentId?:string;
   
   // Licenses & Classifications
   falLicenseNumber?: string;
@@ -61,4 +73,6 @@ export interface User {
   unitNumber?: string;
   licenseIssueDate?: string;
   brokerType?: 'individual' | 'office';
+  departments?: Department[];
+  departmentPermissions?: Record<string, any>;
 }

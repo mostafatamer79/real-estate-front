@@ -20,12 +20,12 @@ export default function PriceTrendChart({
   const toY = (v: number) => 100 - ((v - minValue) / range) * 78;
 
   const linePath = data
-    .map((v, i) => `${i === 0 ? 'M' : 'L'} ${(i / (data.length - 1)) * 100}% ${toY(v)}%`)
+    .map((v, i) => `${i === 0 ? 'M' : 'L'} ${(i / (data.length - 1)) * 100} ${toY(v)}`)
     .join(' ');
 
-  const areaPath = `M 0% ${toY(data[0])}% ${data
-    .map((v, i) => `L ${(i / (data.length - 1)) * 100}% ${toY(v)}%`)
-    .join(' ')} L 100% 100% L 0% 100% Z`;
+  const areaPath = `M 0 ${toY(data[0])} ${data
+    .map((v, i) => `L ${(i / (data.length - 1)) * 100} ${toY(v)}`)
+    .join(' ')} L 100 100 L 0 100 Z`;
 
   const latest = data[data.length - 1];
   const previous = data[data.length - 2];
@@ -107,8 +107,8 @@ export default function PriceTrendChart({
           {data.map((v, i) => (
             <circle
               key={i}
-              cx={`${(i / (data.length - 1)) * 100}%`}
-              cy={`${toY(v)}%`}
+              cx={(i / (data.length - 1)) * 100}
+              cy={toY(v)}
               r="1.8"
               fill={color}
               stroke="#1e293b"

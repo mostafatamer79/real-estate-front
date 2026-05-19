@@ -34,14 +34,14 @@ const departments = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:      "bg-amber-100 text-amber-700",
-  assigned:     "bg-blue-100 text-blue-700",
-  in_progress:  "bg-violet-100 text-violet-700",
-  completed:    "bg-emerald-100 text-emerald-700",
-  cancelled:    "bg-rose-100 text-rose-700",
-  invoice_sent: "bg-blue-100 text-blue-700",
-  accepted:     "bg-emerald-100 text-emerald-700",
-  rejected:     "bg-rose-100 text-rose-700",
+  pending:      "bg-slate-100 text-slate-600",
+  assigned:     "bg-slate-100 text-slate-600",
+  in_progress:  "bg-slate-100 text-slate-600",
+  completed:    "bg-slate-900 text-white",
+  cancelled:    "bg-slate-50 text-slate-400",
+  invoice_sent: "bg-slate-100 text-slate-600",
+  accepted:     "bg-slate-900 text-white",
+  rejected:     "bg-slate-50 text-slate-400",
 };
 
 export default function ServiceRequestsPage() {
@@ -80,7 +80,14 @@ export default function ServiceRequestsPage() {
             });
             if (response.ok) {
                 const data = await response.json();
-                setRequests(data);
+                // Handle both paginated response { items: [], total: 0 } and direct array
+                if (data && typeof data === 'object' && Array.isArray(data.items)) {
+                    setRequests(data.items);
+                } else if (Array.isArray(data)) {
+                    setRequests(data);
+                } else {
+                    setRequests([]);
+                }
             }
         } catch (error) {
             console.error("Failed to fetch requests:", error);
@@ -147,7 +154,7 @@ export default function ServiceRequestsPage() {
         }
     };
 
-    const filteredRequests = requests.filter(req => 
+    const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => 
         req.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         req.serviceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         req.phone?.includes(searchTerm)
@@ -524,11 +531,11 @@ export default function ServiceRequestsPage() {
                                                     ⚖️ {t('legal.invoice.sendBtn')}
                                                 </label>
                                                 {selectedRequest.invoiceSent ? (
-                                                    <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full">
+                                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full border border-slate-200">
                                                         ✓ {t('legal.invoice.sent')}
                                                     </span>
                                                 ) : (
-                                                    <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">
+                                                    <span className="bg-slate-50 text-slate-400 text-[10px] font-black px-3 py-1 rounded-full border border-slate-100">
                                                         ⏳ {t('legal.invoice.notSent')}
                                                     </span>
                                                 )}
@@ -635,9 +642,9 @@ export default function ServiceRequestsPage() {
                                                     </div>
                                                     <div className="flex justify-between items-center mt-3">
                                                         <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                                                            booking.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' :
-                                                            booking.status === 'cancelled' ? 'bg-rose-100 text-rose-700' :
-                                                            'bg-amber-100 text-amber-700'
+                                                            booking.status === 'confirmed' ? 'bg-slate-900 text-white' :
+                                                            booking.status === 'cancelled' ? 'bg-slate-50 text-slate-400' :
+                                                            'bg-slate-100 text-slate-600'
                                                         }`}>
                                                             {booking.status}
                                                         </span>
@@ -672,7 +679,7 @@ export default function ServiceRequestsPage() {
                                                     <div className="text-right">
                                                         <p className="font-black text-slate-900">{invoice.amount} SAR</p>
                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                                            invoice.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                                                            invoice.status === 'paid' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'
                                                         }`}>
                                                             {invoice.status}
                                                         </span>

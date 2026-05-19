@@ -88,8 +88,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     fetchNotifications();
 
     // Setup WebSocket connection
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const newSocket = io(`${API_URL}/notifications`, {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api';
+    const socketBaseUrl = API_URL.replace(/\/api\/?$/, '');
+    const newSocket = io(`${socketBaseUrl}/notifications`, {
       auth: { token },
       transports: ['websocket', 'polling'],
     });
@@ -115,7 +116,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     setSocket(newSocket);
 
+    const handleRefresh = () => {
+      fetchNotifications();
+    };
+
+    window.addEventListener('refresh-notifications', handleRefresh);
+
     return () => {
+      window.removeEventListener('refresh-notifications', handleRefresh);
       newSocket.close();
     };
   }, [fetchNotifications]);

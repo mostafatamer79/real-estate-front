@@ -7,7 +7,19 @@ import { useLanguage } from '@/context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-export default function NotificationBell() {
+interface NotificationBellProps {
+  buttonClassName?: string;
+  panelClassName?: string;
+  align?: 'left' | 'right';
+  variant?: 'dark' | 'light';
+}
+
+export default function NotificationBell({
+  buttonClassName,
+  panelClassName,
+  align = 'left',
+  variant = 'dark',
+}: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, loading } = useNotifications();
   const { t, language } = useLanguage();
@@ -60,12 +72,28 @@ export default function NotificationBell() {
     }
   };
 
+  const isLight = variant === 'light';
+  const panelBaseClass = isLight
+    ? 'bg-white border-slate-200 shadow-2xl'
+    : 'bg-slate-800 border-gray-700 shadow-xl';
+  const headerBorderClass = isLight ? 'border-slate-100' : 'border-gray-700';
+  const titleClass = isLight ? 'text-slate-950' : 'text-white';
+  const actionClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';
+  const emptyTextClass = isLight ? 'text-slate-400' : 'text-gray-400';
+  const listDividerClass = isLight ? 'divide-slate-100' : 'divide-gray-700';
+  const unreadClass = isLight ? 'bg-slate-50' : 'bg-slate-750/50';
+  const itemHoverClass = isLight ? 'hover:bg-slate-50' : 'hover:bg-slate-750';
+  const messageClass = isLight ? 'text-slate-500' : 'text-gray-400';
+  const timeClass = isLight ? 'text-slate-400' : 'text-gray-500';
+  const markReadClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';
+  const deleteClass = isLight ? 'text-red-500 hover:text-red-600' : 'text-red-400 hover:text-red-300';
+
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Bell Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-300 hover:text-white transition-colors"
+        className={`relative p-2 text-gray-300 hover:text-white transition-colors ${buttonClassName || ''}`}
         aria-label={t('notification.bell')}
       >
         <Bell className="h-6 w-6" />
@@ -79,16 +107,18 @@ export default function NotificationBell() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-96 bg-slate-800 border border-gray-700 rounded-lg shadow-xl z-[9999] max-h-[600px] flex flex-col"
+        <div className={`absolute mt-2 w-96 border rounded-lg z-[9999] max-h-[600px] flex flex-col ${
+          align === 'right' ? 'right-0' : 'left-0'
+        } ${panelBaseClass} ${panelClassName || ''}`}
           dir={language === 'ar' ? 'rtl' : 'ltr'}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
-            <h3 className="text-lg font-semibold text-white">{t('notification.title')}</h3>
+          <div className={`flex items-center justify-between p-4 border-b ${headerBorderClass}`}>
+            <h3 className={`text-lg font-semibold ${titleClass}`}>{t('notification.title')}</h3>
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                className={`text-sm flex items-center gap-1 ${actionClass}`}
               >
                 <CheckCheck className="h-4 w-4" />
                 {t('notification.markAllRead')}
@@ -99,21 +129,21 @@ export default function NotificationBell() {
           {/* Notifications List */}
           <div className="overflow-y-auto flex-1">
             {loading ? (
-              <div className="p-8 text-center text-gray-400">
+              <div className={`p-8 text-center ${emptyTextClass}`}>
                 {t('common.loading')}
               </div>
             ) : notifications.length === 0 ? (
-              <div className="p-8 text-center text-gray-400">
+              <div className={`p-8 text-center ${emptyTextClass}`}>
                 <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>{t('notification.empty')}</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-700">
+              <div className={`divide-y ${listDividerClass}`}>
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 hover:bg-slate-750 transition-colors ${
-                      !notification.isRead ? 'bg-slate-750/50' : ''
+                    className={`p-4 transition-colors ${itemHoverClass} ${
+                      !notification.isRead ? unreadClass : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -123,13 +153,13 @@ export default function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-white">
+                            <p className={`text-sm font-medium ${titleClass}`}>
                               {notification.title}
                             </p>
-                            <p className="text-sm text-gray-400 mt-1">
+                            <p className={`text-sm mt-1 ${messageClass}`}>
                               {notification.message}
                             </p>
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className={`text-xs mt-2 ${timeClass}`}>
                               {formatTime(notification.createdAt)}
                             </p>
                           </div>
@@ -137,7 +167,7 @@ export default function NotificationBell() {
                             {!notification.isRead && (
                               <button
                                 onClick={() => markAsRead(notification.id)}
-                                className="p-1 text-blue-400 hover:text-blue-300 transition-colors"
+                                className={`p-1 transition-colors ${markReadClass}`}
                                 title={t('notification.markRead')}
                               >
                                 <Check className="h-4 w-4" />
@@ -145,7 +175,7 @@ export default function NotificationBell() {
                             )}
                             <button
                               onClick={() => deleteNotification(notification.id)}
-                              className="p-1 text-red-400 hover:text-red-300 transition-colors"
+                              className={`p-1 transition-colors ${deleteClass}`}
                               title={t('notification.delete')}
                             >
                               <X className="h-4 w-4" />

@@ -66,6 +66,29 @@ export interface WalletData {
   transactions: FinancialTransaction[];
 }
 
+export interface FinancialWorkspaceSummary {
+  totalUsers: number;
+  activeOperations: number;
+  totalRevenue: number;
+  conversionRate: number;
+  totalSales: number;
+  totalRentals: number;
+  totalCommission: number;
+  totalExpenses: number;
+  totalTax: number;
+  netProfit: number;
+  invoiceStats: {
+    paidCount: number;
+    unpaidCount: number;
+    draftCount: number;
+    paidTotal: number;
+    outstandingTotal: number;
+  };
+  recentTransactions: FinancialTransaction[];
+  monthlyTotals: Array<{ month: string; income: number; expenses: number; net: number }>;
+  expenseBreakdown: Array<{ category: string; total: number }>;
+}
+
 export const financialApi = {
   // Create a new transaction
   createTransaction: async (data: CreateTransactionDto): Promise<FinancialTransaction> => {
@@ -88,6 +111,11 @@ export const financialApi = {
   // Get dashboard statistics
   getDashboardStats: async (): Promise<any> => {
     const response = await api.get('/financial/dashboard');
+    return response.data;
+  },
+
+  getWorkspaceSummary: async (): Promise<FinancialWorkspaceSummary> => {
+    const response = await api.get('/financial/workspace-summary');
     return response.data;
   },
 

@@ -5,7 +5,11 @@ import { io, Socket } from "socket.io-client";
 
 class SocketClient {
   private socket: Socket | null = null;
-  private url: string = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3009") + "/chat";
+  private url: string = (() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
+    const socketBaseUrl = apiUrl.replace(/\/api\/?$/, "");
+    return `${socketBaseUrl}/chat`;
+  })();
 
   connect() {
     if (this.socket?.connected) return;
@@ -25,7 +29,7 @@ class SocketClient {
         token,
         userId: user.id
       },
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
     });
 
     this.socket.on('connect', () => {

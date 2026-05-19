@@ -12,15 +12,19 @@ import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useSettings } from "@/context/SettingsContext";
+import ComingSoonInline from "@/components/ComingSoonInline";
 
 interface PropertyInfoCardsProps {
   propertyId?: string;
   operations?: any[];
   marketingRequests?: any[];
+  userRole?: string;
 }
 
-export default function PropertyInfoCards({ propertyId, operations = [], marketingRequests = [] }: PropertyInfoCardsProps) {
+export default function PropertyInfoCards({ propertyId, operations = [], marketingRequests = [], userRole }: PropertyInfoCardsProps) {
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   const handleCardClick = (cardType: string) => setSelectedCard(cardType);
@@ -53,8 +57,32 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(99,102,241,0.08)]
               transition-all duration-500
             "
-            onClick={() => handleCardClick("operations")}
+            onClick={() => {
+              if (settings.sectionFlags.wallet === 'closed') return;
+              handleCardClick("operations");
+            }}
           >
+            {settings.sectionFlags.wallet === 'closed' ? (
+              <div className="absolute inset-0 z-50">
+                <ComingSoonInline 
+                  sectionName={t('cards.prevOperations')} 
+                  message={settings.sectionMessages.wallet} 
+                />
+              </div>
+            ) : null}
+            {/* Soon Badge */}
+            {settings.sectionFlags.financial === 'closed' && (
+              <div
+                className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
+                style={{
+                  backgroundColor: "var(--soon-badge-bg, #ffffff)",
+                  color: "var(--soon-badge-text, #000000)",
+                  borderColor: "var(--soon-badge-bg, #ffffff)",
+                }}
+              >
+                {t('common.soon') || 'قريباً'}
+              </div>
+            )}
             {/* Ambient glow */}
             <div className="absolute top-0 right-0 w-48 h-48 -mr-20 -mt-20 rounded-full bg-indigo-500/8 blur-3xl group-hover:bg-indigo-500/15 transition-all duration-700" />
             <div className="absolute bottom-0 left-0 w-32 h-32 -ml-10 -mb-10 rounded-full bg-slate-600/20 blur-2xl" />
@@ -94,16 +122,16 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                       transition-all duration-200
                     "
                   >
-                    <p className="font-semibold text-sm mb-1 text-slate-200">{op.description || t('cards.ops.sale2024')}</p>
-                    <p className="text-slate-400 text-xs">{op.amount ? `${op.amount} SAR` : t('cards.ops.propRiyadh')}</p>
+                    <p className="font-semibold text-sm mb-1 text-slate-200">{op.title || op.description}</p>
+                    <p className="text-slate-400 text-xs">{op.description || ""}</p>
                   </div>
                 ))}
                 {operations.length === 0 && (
-                  <div className="flex flex-col items-center gap-3 py-6">
-                    <div className="p-4 rounded-full bg-slate-700/30 border border-slate-700/40">
-                      <FileText className="w-7 h-7 text-slate-500" />
+                  <div className="flex flex-col items-center justify-center py-10 px-4 bg-slate-900/30 border border-slate-700/40 rounded-2xl border-dashed">
+                    <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3">
+                      <FileText className="w-6 h-6 text-slate-500" />
                     </div>
-                    <p className="text-slate-500 text-xs text-center px-4">{t('cards.noOperations')}</p>
+                    <p className="text-slate-500 text-[11px] font-medium text-center">{t('cards.noOperations')}</p>
                   </div>
                 )}
               </div>
@@ -146,8 +174,32 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(16,185,129,0.06)]
               transition-all duration-500
             "
-            onClick={() => handleCardClick("ads")}
+            onClick={() => {
+              if (settings.sectionFlags.marketing === 'closed') return;
+              handleCardClick("ads");
+            }}
           >
+            {settings.sectionFlags.marketing === 'closed' ? (
+              <div className="absolute inset-0 z-50">
+                <ComingSoonInline 
+                  sectionName={t('cards.dealsAds')} 
+                  message={settings.sectionMessages.marketing} 
+                />
+              </div>
+            ) : null}
+            {/* Soon Badge */}
+            {settings.sectionFlags.marketing === 'closed' && (
+              <div
+                className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
+                style={{
+                  backgroundColor: "var(--soon-badge-bg, #ffffff)",
+                  color: "var(--soon-badge-text, #000000)",
+                  borderColor: "var(--soon-badge-bg, #ffffff)",
+                }}
+              >
+                {t('common.soon') || 'قريباً'}
+              </div>
+            )}
             {/* Ambient glow */}
             <div className="absolute top-0 right-0 w-48 h-48 -mr-20 -mt-20 rounded-full bg-emerald-500/6 blur-3xl group-hover:bg-emerald-500/12 transition-all duration-700" />
             <div className="absolute bottom-0 left-0 w-32 h-32 -ml-10 -mb-10 rounded-full bg-slate-600/20 blur-2xl" />
@@ -191,11 +243,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                   </div>
                 ))}
                 {marketingRequests.length === 0 && (
-                  <div className="flex flex-col items-center gap-3 py-6">
-                    <div className="p-4 rounded-full bg-slate-700/30 border border-slate-700/40">
-                      <Megaphone className="w-7 h-7 text-slate-500" />
+                  <div className="flex flex-col items-center justify-center py-10 px-4 bg-slate-900/30 border border-slate-700/40 rounded-2xl border-dashed">
+                    <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3">
+                      <Megaphone className="w-6 h-6 text-slate-500" />
                     </div>
-                    <p className="text-slate-500 text-xs text-center px-4">{t('cards.noAds')}</p>
+                    <p className="text-slate-500 text-[11px] font-medium text-center">{t('cards.noAds')}</p>
                   </div>
                 )}
               </div>
@@ -279,12 +331,12 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                       {operations.length > 0 ? operations.map((op, i) => (
                         <div key={i} className="p-5 rounded-2xl bg-slate-700/30 border border-slate-700/40 hover:border-slate-600/50 hover:bg-slate-700/50 transition-all">
                           <div className="flex justify-between items-start mb-2">
-                            <p className="font-bold text-slate-100 text-base">{op.description || t('cards.ops.sale2024')}</p>
+                            <p className="font-bold text-slate-100 text-base">{op.title || op.description}</p>
                             <span className="text-[10px] font-bold uppercase text-slate-500 bg-slate-700/60 border border-slate-600/40 px-2.5 py-1 rounded-full">
-                              {op.transactionDate ? new Date(op.transactionDate).toLocaleDateString() : ""}
+                              {op.timestamp ? new Date(op.timestamp).toLocaleDateString() : ""}
                             </span>
                           </div>
-                          <p className="text-slate-400 text-sm">{op.amount ? `${op.amount} SAR` : ""}</p>
+                          <p className="text-slate-400 text-sm">{op.description || ""}</p>
                         </div>
                       )) : (
                         <div className="text-center text-slate-500 py-8">{t('cards.noOperations')}</div>

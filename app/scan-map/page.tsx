@@ -9,6 +9,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
 import { financialApi } from "@/lib/api";
 import { toast } from "react-hot-toast";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 // ✅ Dynamic Import with Loading Component
 const MapLoading = () => {
@@ -45,11 +47,23 @@ export default function ScanMapPage() {
   const [creatingInvoice, setCreatingInvoice] = useState(false);
   const { t, language } = useLanguage();
   const router = useRouter();
+  const { isOpen, message, isAdmin } = useSectionGuard('scan_map');
+
+
 
   // ✅ Memoized values
   const reportPrice = useMemo(() => Math.max(30, Math.floor(25 + (searchRadius / 100))), [searchRadius]);
   const hasPlaces = useMemo(() => places.length > 0, [places]);
   const uniqueTypes = useMemo(() => new Set(places.map(p => p.type)).size, [places]);
+
+  // ✅ Automatic Zoom calculation based on radius
+  const dynamicZoom = useMemo(() => {
+    // Basic logarithmic formula to adjust zoom based on radius in meters
+    // 2000m -> level 14
+    // 1000m -> level 15
+    // 4000m -> level 13
+    return Math.round(14 - Math.log2(searchRadius / 2000));
+  }, [searchRadius]);
 
   // ✅ Handle location selection from Map
   const handleLocationSelect = useCallback((lat: number, lng: number) => {
@@ -223,6 +237,10 @@ export default function ScanMapPage() {
     if (distance < 2000) return "bg-orange-900/30 text-orange-400";
     return "bg-red-900/30 text-red-400";
   }, []);
+
+  if (!isOpen) {
+    return <ComingSoonOverlay sectionName={t('action.scan-map') || 'المسح والمخططات'} message={message} isAdmin={isAdmin} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -462,7 +480,7 @@ export default function ScanMapPage() {
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-1 border border-slate-700 overflow-hidden">
             <Map
               center={propertyLocation}
-              zoom={14}
+              zoom={dynamicZoom}
               height="70vh"
               places={places}
               onLocationSelect={handleLocationSelect}

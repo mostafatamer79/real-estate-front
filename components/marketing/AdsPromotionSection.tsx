@@ -49,7 +49,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/context/LanguageContext";
-import { marketingApi, MarketingRequestStatus } from '@/lib/marketing-service';
+import { EmailMarketingStats, marketingApi } from '@/lib/marketing-service';
 import { toast } from 'react-hot-toast';
 
 export default function AdsPromotionSection() {
@@ -62,6 +62,14 @@ export default function AdsPromotionSection() {
     const [wizardOpen, setWizardOpen] = useState(false);
     const [wizardStep, setWizardStep] = useState(1);
     const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+    const [statsSummary, setStatsSummary] = useState<EmailMarketingStats>({
+        totalSent: 0,
+        openRate: 0,
+        clickRate: 0,
+        sentTrend: 0,
+        openRateTrend: 0,
+        clickRateTrend: 0,
+    });
 
     const searchParams = useSearchParams();
 
@@ -100,12 +108,13 @@ export default function AdsPromotionSection() {
         const loadResources = async () => {
             try {
                 // Fetch potential entities to promote using the unified service
-                const [orders, appts, offers, props, campaignsData] = await Promise.all([
+                const [orders, appts, offers, props, campaignsData, statsData] = await Promise.all([
                     marketingApi.getOrders(),
                     marketingApi.getBookings(),
                     marketingApi.getOffers(),
                     marketingApi.getProperties(),
-                    marketingApi.getEmailMarketing()
+                    marketingApi.getEmailMarketing(),
+                    marketingApi.getEmailMarketingStats()
                 ]);
                 
                 setResources({ 
@@ -115,6 +124,7 @@ export default function AdsPromotionSection() {
                     properties: Array.isArray(props) ? props : []
                 });
                 setCampaigns(campaignsData);
+                setStatsSummary(statsData);
             } catch (err) {
                 console.error("Resource error:", err);
             }
@@ -152,10 +162,14 @@ export default function AdsPromotionSection() {
         }
     };
 
+    const formatNumber = (value: number) => new Intl.NumberFormat(language === 'ar' ? 'ar-SA' : 'en-US').format(value || 0);
+    const formatPercent = (value: number) => `${(value || 0).toFixed(1)}%`;
+    const formatTrend = (value: number) => `${value > 0 ? '+' : ''}${(value || 0).toFixed(1)}%`;
+
     const stats = [
-        { label: t('marketing.stats.sent'), value: '45,200', trend: '+12%', color: 'text-blue-600' },
-        { label: t('marketing.stats.openRate'), value: '24.5%', trend: '+3.2%', color: 'text-emerald-600' },
-        { label: t('marketing.stats.clickRate'), value: '8.4%', trend: '-0.5%', color: 'text-purple-600' },
+        { label: t('marketing.stats.sent'), value: formatNumber(statsSummary.totalSent), trend: formatTrend(statsSummary.sentTrend), color: statsSummary.sentTrend >= 0 ? 'text-blue-600' : 'text-red-500' },
+        { label: t('marketing.stats.openRate'), value: formatPercent(statsSummary.openRate), trend: formatTrend(statsSummary.openRateTrend), color: statsSummary.openRateTrend >= 0 ? 'text-emerald-600' : 'text-red-500' },
+        { label: t('marketing.stats.clickRate'), value: formatPercent(statsSummary.clickRate), trend: formatTrend(statsSummary.clickRateTrend), color: statsSummary.clickRateTrend >= 0 ? 'text-purple-600' : 'text-red-500' },
     ];
 
     return (

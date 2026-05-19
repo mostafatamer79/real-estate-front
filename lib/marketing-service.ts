@@ -39,6 +39,15 @@ export interface UpdateMarketingRequestDto {
   details?: Record<string, any>;
 }
 
+export interface EmailMarketingStats {
+  totalSent: number;
+  openRate: number;
+  clickRate: number;
+  sentTrend: number;
+  openRateTrend: number;
+  clickRateTrend: number;
+}
+
 export const marketingApi = {
   // Create a new marketing request
   createRequest: async (data: CreateMarketingRequestDto): Promise<MarketingRequest> => {
@@ -87,6 +96,11 @@ export const marketingApi = {
     return response.data;
   },
 
+  getEmailMarketingStats: async (): Promise<EmailMarketingStats> => {
+    const response = await api.get('/marketing/email/stats');
+    return response.data;
+  },
+
   createEmailMarketing: async (data: any): Promise<any> => {
     const response = await api.post('/marketing/email', data);
     return response.data;
@@ -103,12 +117,12 @@ export const marketingApi = {
   },
 
   getOrders: async (): Promise<any[]> => {
-    const response = await api.get('/orders');
+    const response = await api.get('/orders/my-orders');
     return response.data;
   },
 
   getOffers: async (): Promise<any[]> => {
-    const response = await api.get('/offers');
+    const response = await api.get('/offers/my-offers');
     return response.data;
   },
 

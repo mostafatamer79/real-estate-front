@@ -43,7 +43,7 @@ const getStatusConfig = (req: LegalRequest, t: (k: string) => string) => {
   return   { label: t("legal.decision.pending"),         dot: "bg-white/60",  text: "text-white/70", ring: "border-white/20", pill: "bg-white/5" };
 };
 
-export default function LegalRequestsPage() {
+export default function LegalRequestsPage({ embedded = false }: { embedded?: boolean } = {}) {
   const { t, language } = useLanguage();
   const { token } = useAuth();
   const isRtl = language === "ar";
@@ -64,7 +64,7 @@ export default function LegalRequestsPage() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setRequests(Array.isArray(data) ? data : data.data ?? []);
+      setRequests(Array.isArray(data) ? data : (data.items || data.data || []));
     } catch { setError(t("common.error")); }
     finally { setIsLoading(false); }
   }, [token, t]);
@@ -89,11 +89,12 @@ export default function LegalRequestsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white" dir={isRtl ? "rtl" : "ltr"}>
-      <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% -5%, rgba(255,255,255,0.04) 0%, transparent 60%)" }} />
+    <div className={`${embedded ? '' : 'min-h-screen bg-slate-950 text-white'}`} dir={isRtl ? "rtl" : "ltr"}>
+      {!embedded && <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% -5%, rgba(255,255,255,0.04) 0%, transparent 60%)" }} />}
 
-      {/* Sticky header — same as navbar */}
-      <div className="sticky top-0 z-20 bg-slate-950 border-b border-white/10">
+      {/* Sticky header — Adjusted for global header */}
+      {!embedded && (
+      <div className="sticky top-16 z-20 bg-slate-950 border-b border-white/10">
         <div className="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link href="/services" className="w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors">
@@ -118,8 +119,9 @@ export default function LegalRequestsPage() {
           </Link>
         </div>
       </div>
+      )}
 
-      <div className="relative z-10 max-w-3xl mx-auto px-6 py-10">
+      <div className={`${embedded ? '' : 'relative z-10 max-w-3xl mx-auto px-6 py-10'}`}>
 
         {/* Loading */}
         {isLoading && (
@@ -228,7 +230,7 @@ export default function LegalRequestsPage() {
                           <div className="border-t border-white/[0.06] px-5 py-5 space-y-4">
                             {/* Parties */}
                             {(req.firstParty || req.secondParty) && (
-                              <div className="grid grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {[req.firstParty && { label: t("disputes.firstParty"), party: req.firstParty }, req.secondParty && { label: t("disputes.secondParty"), party: req.secondParty }]
                                   .filter(Boolean).map((item: any) => (
                                   <div key={item.label} className="p-4 bg-white/[0.02] rounded-2xl border border-white/[0.06]">

@@ -42,12 +42,15 @@ export default function SimpleChatModal({
   useEffect(() => {
     if (!isOpen) return;
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
+    const socketBaseUrl = apiUrl.replace(/\/api\/?$/, "");
+
     // Connect to Socket.IO
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000", {
-        path: "/socket.io",
-        auth: {
-            userId: userId
-        }
+    const newSocket = io(`${socketBaseUrl}/chat`, {
+      path: "/socket.io",
+      query: { userId },
+      auth: { userId },
+      transports: ["websocket", "polling"],
     });
 
     setSocket(newSocket);

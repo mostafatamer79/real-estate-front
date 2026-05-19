@@ -286,11 +286,18 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom?: number 
   const map = useMap();
 
   useEffect(() => {
-    if (center && Array.isArray(center) && center.length === 2) {
-      if (zoom !== undefined) {
-        map.setView(center, zoom, { animate: true });
-      } else {
-        map.setView(center, map.getZoom(), { animate: true });
+    if (center && Array.isArray(center) && center.length === 2 && map) {
+      try {
+        // Only set view if the map is actually in the document and has dimensions
+        if (map.getContainer()) {
+          if (zoom !== undefined) {
+            map.setView(center, zoom, { animate: true });
+          } else {
+            map.setView(center, map.getZoom(), { animate: true });
+          }
+        }
+      } catch (err) {
+        console.warn("Leaflet setView error:", err);
       }
     }
     // Fix for Leaflet rendering inside modals

@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
+import { useAuth } from "@/hooks/useAuth";
+import SoonBadge from "./SoonBadge";
 import { 
   Shield, BookOpen, FileCheck, Phone, Mail, 
   Instagram, Twitter, Facebook, ArrowRight, 
@@ -12,6 +15,8 @@ import { motion } from "framer-motion";
 
 export default function Footer() {
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
+  const { user } = useAuth();
   const currentYear = new Date().getFullYear();
 
   const containerVariants = {
@@ -80,18 +85,36 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4">
               {[
-                { label: t('footer.home'), href: "/" },
-                { label: t('footer.offers'), href: "/offers" },
-                { label: t('footer.management'), href: "/buildingmanagement" },
-                { label: t('footer.services'), href: "/services" },
-              ].map((link, idx) => (
-                <li key={idx}>
-                  <Link href={link.href} className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 scale-0 group-hover:scale-100 transition-transform" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+                { label: t('footer.home'), href: "/", key: 'details' },
+                { label: t('footer.offers'), href: "/offers", key: 'offers' },
+                { label: t('footer.management'), href: "/buildingmanagement", key: 'buildingmanagement' },
+                { label: t('footer.services'), href: "/services", key: 'services' },
+              ].filter(link => {
+                if (link.key === 'buildingmanagement') {
+                  if (!user) return false;
+                  if (user.role !== 'admin' && (!user.departments || user.departments.length === 0)) return false;
+                }
+                return true;
+              }).map((link, idx) => {
+                const isClosed = settings.sectionFlags[link.key] === 'closed';
+                return (
+                  <li key={idx} className="relative group/li">
+                    <Link 
+                      href={isClosed ? "#" : link.href} 
+                      onClick={(e) => isClosed && e.preventDefault()}
+                      className={`text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit ${isClosed ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 scale-0 group-hover:scale-100 transition-transform" />
+                      {link.label}
+                      {isClosed && (
+                        <SoonBadge className="ml-2">
+                          {t('common.soon') || 'قريباً'}
+                        </SoonBadge>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </motion.div>
 
@@ -102,9 +125,18 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4">
               <li>
-                <Link href="/customerservice" className="text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit">
+                <Link 
+                  href={settings.sectionFlags.customerservice === 'closed' ? "#" : "/customerservice"} 
+                  onClick={(e) => settings.sectionFlags.customerservice === 'closed' && e.preventDefault()}
+                  className={`text-slate-400 hover:text-white text-sm font-medium flex items-center gap-2 group transition-colors w-fit ${settings.sectionFlags.customerservice === 'closed' ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
+                >
                   <MessageCircle className="w-4 h-4 text-gray-500 " />
                   {t("header.customerService")}
+                  {settings.sectionFlags.customerservice === 'closed' && (
+                    <SoonBadge className="ml-2">
+                      {t('common.soon') || 'قريباً'}
+                    </SoonBadge>
+                  )}
                 </Link>
               </li>
               <li>
@@ -130,11 +162,11 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="w-5 h-5 text-indigo-500 shrink-0" />
-                <a href="mailto:info@deeraqarak.com" className="hover:text-white transition-colors">info@deeraqarak.com</a>
+                <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors">{settings.contactEmail}</a>
               </li>
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Phone className="w-5 h-5 text-indigo-500 shrink-0" />
-                <a href="tel:+966555555555" className="hover:text-white transition-colors" dir="ltr">+966 5 5555 5555</a>
+                <a href={`tel:${settings.contactPhone}`} className="hover:text-white transition-colors" dir="ltr">{settings.contactPhone}</a>
               </li>
             </ul>
             
@@ -174,4 +206,3 @@ export default function Footer() {
     </footer>
   );
 }
-

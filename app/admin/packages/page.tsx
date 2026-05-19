@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Check, X, Shield, Gavel, Wrench, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X, Loader2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/api";
@@ -14,40 +14,16 @@ interface ManagementPackage {
   monthlyPrice: number;
   discount: number;
   description: string;
-  features: string[];
   administrations: string[];
-  services: string[];
   isActive: boolean;
 }
-
-const AVAILABLE_FEATURES = [
-  "admin.feat.financial",
-  "admin.feat.legal",
-  "admin.feat.maintenance",
-  "admin.feat.security",
-  "admin.feat.concierge",
-  "admin.feat.cleaning",
-  "admin.feat.tenant",
-  "admin.feat.marketing"
-];
 
 const AVAILABLE_ADMINISTRATIONS = [
   "admin.dept.real_estate", // Real Estate Management
   "admin.dept.marketing",   // Marketing Management
   "admin.dept.legal",       // Legal Management
   "admin.dept.finance",     // Financial Management
-  "admin.dept.security",    // Security Management
   "admin.dept.hr"           // HR Management
-];
-
-const AVAILABLE_SERVICES = [
-  "admin.serv.maintenance",      // General Maintenance
-  "admin.serv.cleaning",         // Cleaning Services
-  "admin.serv.security_guards",  // Security Guards
-  "admin.serv.concierge",        // Concierge
-  "admin.serv.parking",          // Parking Management
-  "admin.serv.pest_control",     // Pest Control
-  "admin.serv.landscaping"       // Landscaping
 ];
 
 export default function AdminPackagesPage() {
@@ -64,9 +40,7 @@ export default function AdminPackagesPage() {
     monthlyPrice: "",
     discount: "0",
     description: "",
-    features: [] as string[],
     administrations: [] as string[],
-    services: [] as string[],
     isActive: true
   });
 
@@ -95,9 +69,7 @@ export default function AdminPackagesPage() {
         monthlyPrice: pkg.monthlyPrice.toString(),
         discount: pkg.discount.toString(),
         description: pkg.description || "",
-        features: pkg.features || [],
         administrations: pkg.administrations || [],
-        services: pkg.services || [],
         isActive: pkg.isActive
       });
     } else {
@@ -108,9 +80,7 @@ export default function AdminPackagesPage() {
         monthlyPrice: "",
         discount: "0",
         description: "",
-        features: [],
         administrations: [],
-        services: [],
         isActive: true
       });
     }
@@ -154,17 +124,6 @@ export default function AdminPackagesPage() {
     }
   };
 
-  const toggleFeature = (feature: string) => {
-    setFormData(prev => {
-      const exists = prev.features.includes(feature);
-      if (exists) {
-        return { ...prev, features: prev.features.filter(f => f !== feature) };
-      } else {
-        return { ...prev, features: [...prev.features, feature] };
-      }
-    });
-  };
-
   const toggleAdministration = (admin: string) => {
     setFormData(prev => {
       const exists = prev.administrations.includes(admin);
@@ -172,17 +131,6 @@ export default function AdminPackagesPage() {
         return { ...prev, administrations: prev.administrations.filter(a => a !== admin) };
       } else {
         return { ...prev, administrations: [...prev.administrations, admin] };
-      }
-    });
-  };
-
-  const toggleService = (service: string) => {
-    setFormData(prev => {
-      const exists = prev.services.includes(service);
-      if (exists) {
-        return { ...prev, services: prev.services.filter(s => s !== service) };
-      } else {
-        return { ...prev, services: [...prev.services, service] };
       }
     });
   };
@@ -244,20 +192,6 @@ export default function AdminPackagesPage() {
               <p className="text-gray-600 text-sm mb-6 line-clamp-2">{pkg.description}</p>
 
               <div className="space-y-4">
-                {/* Features Preview */}
-                <div className="space-y-2">
-                  <p className="text-xs font-bold text-gray-500 uppercase">{t('admin.packages.features')}</p>
-                  {pkg.features.slice(0, 3).map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm text-gray-700">
-                          <Check className="w-4 h-4 text-green-500 shrink-0" />
-                          <span>{t(feature)}</span>
-                      </div>
-                  ))}
-                  {pkg.features.length > 3 && (
-                      <p className="text-xs text-gray-400 pl-6">+{pkg.features.length - 3} {t('admin.packages.more')}</p>
-                  )}
-                </div>
-
                 {/* Administrations Preview */}
                 {pkg.administrations && pkg.administrations.length > 0 && (
                    <div className="space-y-1">
@@ -366,27 +300,6 @@ export default function AdminPackagesPage() {
                     </div>
 
                     <div className="space-y-6">
-                        {/* Features */}
-                        <div className="space-y-3">
-                            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.form.features')}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
-                                {AVAILABLE_FEATURES.map(feature => (
-                                    <div 
-                                        key={feature}
-                                        onClick={() => toggleFeature(feature)}
-                                        className={`p-2.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between text-sm ${
-                                            formData.features.includes(feature)
-                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                                        }`}
-                                    >
-                                        <span className="font-medium">{t(feature)}</span>
-                                        {formData.features.includes(feature) && <Check className="w-4 h-4" />}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
                         {/* Administrations */}
                         <div className="space-y-3">
                             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.administrations')}</h3>
@@ -408,26 +321,6 @@ export default function AdminPackagesPage() {
                             </div>
                         </div>
 
-                        {/* Services */}
-                        <div className="space-y-3">
-                            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.services')}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
-                                {AVAILABLE_SERVICES.map(service => (
-                                    <div 
-                                        key={service}
-                                        onClick={() => toggleService(service)}
-                                        className={`p-2.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between text-sm ${
-                                            formData.services.includes(service)
-                                            ? 'border-violet-500 bg-violet-50 text-violet-700'
-                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                                        }`}
-                                    >
-                                        <span className="font-medium">{t(service)}</span>
-                                        {formData.services.includes(service) && <Check className="w-4 h-4" />}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                     </div>
                 </div>
 

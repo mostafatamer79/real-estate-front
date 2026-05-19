@@ -48,10 +48,18 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
             });
             if (response.ok) {
                 const data = await response.json();
-                setRequests(data);
+                // Handle both paginated response { items: [], total: 0 } and direct array
+                if (data && typeof data === 'object' && Array.isArray(data.items)) {
+                    setRequests(data.items);
+                } else if (Array.isArray(data)) {
+                    setRequests(data);
+                } else {
+                    setRequests([]);
+                }
             }
         } catch (error) {
             console.error("Failed to fetch requests:", error);
+            setRequests([]);
         } finally {
             setIsLoading(false);
         }
@@ -93,7 +101,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         }
     };
 
-    const filteredRequests = requests.filter(req => {
+    const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => {
         const matchesSearch = 
             req.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             req.serviceType?.toLowerCase().includes(searchQuery.toLowerCase()) ||

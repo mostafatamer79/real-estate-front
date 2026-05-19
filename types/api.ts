@@ -246,6 +246,8 @@ export interface MaintenanceRequest {
 export interface CreateSubscriptionDto {
     propertyId?: string;
     unitId?: string;
+    packageId?: string;
+    departmentSlug?: string;
     subscriptionType: string;
     customPeriodMonths?: number;
     amount: number;
@@ -271,6 +273,8 @@ export interface Subscription {
     userId: string;
     propertyId?: string;
     unitId?: string;
+    packageId?: string;
+    departmentSlug?: string;
     subscriptionType: string;
     customPeriodMonths?: number;
     amount: number;
@@ -290,4 +294,5 @@ export interface Subscription {
     user?: any;
     property?: Property;
     unit?: Unit;
+    managementPackage?: any;
 }

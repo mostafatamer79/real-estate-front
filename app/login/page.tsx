@@ -14,6 +14,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
 
 interface SignInProps {
   onClose?: () => void;
@@ -22,11 +23,15 @@ interface SignInProps {
 export default function SignIn({ onClose }: SignInProps) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [isPhoneMode, setIsPhoneMode] = useState(true);
+  const [isPhoneMode, setIsPhoneMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
+  const loginConfig = settings.loginConfig;
+  const phoneLoginEnabled = false;
+  const effectivePhoneEnabled = loginConfig.phoneEnabled && phoneLoginEnabled;
 
   useEffect(() => {
     // Hide global header and disable scrolling when login overlay is active
@@ -41,7 +46,20 @@ export default function SignIn({ onClose }: SignInProps) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      router.push('/details');
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const u = JSON.parse(storedUser);
+        const assignedDepartments = Array.isArray(u.departments) ? u.departments : [];
+        const permissionDepartments = Object.entries(u.departmentPermissions || {})
+          .filter(([, value]) => value === true || value === 'manage' || value === 'view')
+          .map(([key]) => key);
+        const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
+        if (u.role === 'admin') router.push('/admin/dashboard');
+        else if ((['manager', 'employee', 'viewer', 'collaborator'].includes(u.role) || hasDepartmentAccess) && hasDepartmentAccess) router.push('/internal');
+        else router.push('/details');
+      } else {
+        router.push('/details');
+      }
     }
   }, [router]);
 
@@ -79,9 +97,10 @@ export default function SignIn({ onClose }: SignInProps) {
       localStorage.setItem('pendingVerification', userIdentifier);
       router.push('/verify-otp');
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration error:', err);
-      setError(t(err.message) !== err.message ? t(err.message) : t('login.error.generic'));
+      const message = err instanceof Error ? err.message : t('login.error.generic');
+      setError(t(message) !== message ? t(message) : t('login.error.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -148,32 +167,53 @@ export default function SignIn({ onClose }: SignInProps) {
             </div>
 
             {/* Mode Switcher */}
-            <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-8 border border-white/5">
-                <button
-                  onClick={() => setIsPhoneMode(true)}
-                  disabled={isLoading}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
-                    isPhoneMode
-                      ? "bg-white/10 text-white shadow-lg"
-                      : "text-white/40 hover:text-white/60"
-                  } disabled:opacity-50`}
-                >
-                  <Phone className="w-4 h-4" />
-                  <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
-                </button>
-                <button
-                  onClick={() => setIsPhoneMode(false)}
-                  disabled={isLoading}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
-                    !isPhoneMode
-                      ? "bg-white/10 text-white shadow-lg"
-                      : "text-white/40 hover:text-white/60"
-                  } disabled:opacity-50`}
-                >
-                  <Mail className="w-4 h-4" />
-                  <span className="text-sm font-semibold">{t('login.tab.email')}</span>
-                </button>
-            </div>
+            {(loginConfig.emailEnabled || loginConfig.phoneEnabled) && (
+              <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-8 border border-white/5">
+                  {/* Email tab */}
+                  {loginConfig.emailEnabled && (
+                    <button
+                      onClick={() => setIsPhoneMode(false)}
+                      disabled={isLoading}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                        !isPhoneMode
+                          ? "bg-white/10 text-white shadow-lg"
+                          : "text-white/40 hover:text-white/60"
+                      } disabled:opacity-50`}
+                    >
+                      <Mail className="w-4 h-4" />
+                      <span className="text-sm font-semibold">{t('login.tab.email')}</span>
+                    </button>
+                  )}
+
+                  {/* Phone tab */}
+                  {effectivePhoneEnabled ? (
+                    <button
+                      onClick={() => setIsPhoneMode(true)}
+                      disabled={isLoading}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                        isPhoneMode
+                          ? "bg-white/10 text-white shadow-lg"
+                          : "text-white/40 hover:text-white/60"
+                      } disabled:opacity-50`}
+                    >
+                      <Phone className="w-4 h-4" />
+                      <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
+                    </button>
+                  ) : (
+                    <div className="relative flex-1">
+                      <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-white/20 cursor-not-allowed select-none">
+                        <Phone className="w-4 h-4" />
+                        <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
+                      </div>
+                      {loginConfig.phoneLabel && (
+                        <span className="absolute -top-2.5 right-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/90 text-slate-950 shadow-lg shadow-amber-500/30 border border-amber-400/50 animate-pulse">
+                          {phoneLoginEnabled ? loginConfig.phoneLabel : t('common.soon')}
+                        </span>
+                      )}
+                    </div>
+                  )}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-1">

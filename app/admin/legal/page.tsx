@@ -39,46 +39,52 @@ const departments = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:      "bg-amber-100 text-amber-700",
-  assigned:     "bg-blue-100 text-blue-700",
-  in_progress:  "bg-violet-100 text-violet-700",
-  completed:    "bg-emerald-100 text-emerald-700",
-  cancelled:    "bg-rose-100 text-rose-700",
-  invoice_sent: "bg-blue-100 text-blue-700",
-  accepted:     "bg-emerald-100 text-emerald-700",
-  rejected:     "bg-rose-100 text-rose-700",
+  pending:      "bg-slate-100 text-slate-700",
+  assigned:     "bg-slate-100 text-slate-700",
+  in_progress:  "bg-slate-100 text-slate-700",
+  completed:    "bg-slate-100 text-slate-700",
+  cancelled:    "bg-slate-100 text-slate-700",
+  invoice_sent: "bg-slate-100 text-slate-700",
+  accepted:     "bg-slate-100 text-slate-700",
+  rejected:     "bg-slate-100 text-slate-700",
 };
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-function filterRequests(all: any[], tab: string) {
+function filterRequests(all: any, tab: string) {
+  const items = Array.isArray(all)
+    ? all
+    : all && typeof all === "object" && Array.isArray(all.items)
+    ? all.items
+    : [];
+
   switch (tab) {
     case "all":
-      return all.filter(
-        (r) => r.category === "legal" || r.targetDepartment === "legal"
+      return items.filter(
+        (r: any) => r.category === "legal" || r.targetDepartment === "legal"
       );
     case "disputes":
-      return all.filter(
-        (r) => (r.category === "legal" || (r.category === "other" && r.targetDepartment === "legal")) && 
+      return items.filter(
+        (r: any) => (r.category === "legal" || (r.category === "other" && r.targetDepartment === "legal")) && 
                (DISPUTE_TYPES.includes(r.serviceType) || r.serviceType?.includes("منازعة"))
       );
     case "contracts":
-      return all.filter(
-        (r) => (r.category === "legal" || (r.category === "other" && r.targetDepartment === "legal")) && 
+      return items.filter(
+        (r: any) => (r.category === "legal" || (r.category === "other" && r.targetDepartment === "legal")) && 
                CONTRACT_TYPES.includes(r.serviceType)
       );
     case "services":
-      return all.filter((r) => r.category === "legal");
+      return items.filter((r: any) => r.category === "legal");
     case "other":
-      return all.filter(
-        (r) => r.category === "other" && 
+      return items.filter(
+        (r: any) => r.category === "other" && 
                r.targetDepartment === "legal" && 
                !DISPUTE_TYPES.includes(r.serviceType) && 
                !r.serviceType?.includes("منازعة") &&
                !CONTRACT_TYPES.includes(r.serviceType)
       );
     default:
-      return all;
+      return items;
   }
 }
 
@@ -290,7 +296,7 @@ function RequestsTable({
 
 // ─── main page ──────────────────────────────────────────────────────────────
 
-export default function LegalAdminPage() {
+export default function LegalAdminPage({ embedded = false }: { embedded?: boolean } = {}) {
   const { t, language } = useLanguage();
   const { token } = useAuth();
 
@@ -322,7 +328,16 @@ export default function LegalAdminPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) setRequests(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        if (data && typeof data === 'object' && Array.isArray(data.items)) {
+          setRequests(data.items);
+        } else if (Array.isArray(data)) {
+          setRequests(data);
+        } else {
+          setRequests([]);
+        }
+      }
     } catch (err) {
       console.error("fetch requests:", err);
     } finally {
@@ -457,8 +472,8 @@ export default function LegalAdminPage() {
   const contracts   = filterRequests(requests, "contracts");
   const services    = filterRequests(requests, "services");
   const other       = filterRequests(requests, "other");
-  const pending     = allLegal.filter((r) => r.status === "pending").length;
-  const completed   = allLegal.filter((r) => r.status === "completed").length;
+  const pending     = allLegal.filter((r: any) => r.status === "pending").length;
+  const completed   = allLegal.filter((r: any) => r.status === "completed").length;
 
   // ── tab meta ─────────────────────────────────────────────────────────────
   const tabs = [
@@ -475,37 +490,58 @@ export default function LegalAdminPage() {
     all: allLegal, disputes, contracts, services, other,
   };
 
+  const shellClass = embedded
+    ? "space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
+    : "max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700";
+
   return (
-    <div
-      className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
-      dir={language === "ar" ? "rtl" : "ltr"}
-    >
-      {/* ── Page Header ──────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0">
-              <Scale className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                {t('pm.legal')}
-              </h1>
-              <p className="text-slate-400 text-xs font-bold mt-0.5">
-                {t('admin.legal.desc')}
-              </p>
+    <div className={shellClass} dir={language === "ar" ? "rtl" : "ltr"}>
+      {!embedded && (
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0">
+                <Scale className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                  {t('pm.legal')}
+                </h1>
+                <p className="text-slate-400 text-xs font-bold mt-0.5">
+                  {t('admin.legal.desc')}
+                </p>
+              </div>
             </div>
           </div>
+          <button
+            onClick={fetchRequests}
+            disabled={isLoading}
+            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
+            {t('common.refresh')}
+          </button>
         </div>
-        <button
-          onClick={fetchRequests}
-          disabled={isLoading}
-          className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
-        >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
-          {t('common.refresh')}
-        </button>
-      </div>
+      )}
+
+      {embedded && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              {t('admin.legal.desc')}
+            </p>
+            <h2 className="text-lg font-black text-slate-950">{t('pm.legal')}</h2>
+          </div>
+          <button
+            onClick={fetchRequests}
+            disabled={isLoading}
+            className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
+            {t('common.refresh')}
+          </button>
+        </div>
+      )}
 
       {/* ── Tab Bar ──────────────────────────────────────────────────────── */}
       <div className="flex gap-1 bg-slate-100 p-1.5 rounded-2xl w-full overflow-x-auto hide-scrollbar">
@@ -543,11 +579,11 @@ export default function LegalAdminPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <StatCard label={t("admin.legal.all")}       value={allLegal.length}   icon={Layers}   color="bg-slate-100 text-slate-700" />
-              <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-amber-100 text-amber-700" />
-              <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-blue-100 text-blue-700"   />
-              <StatCard label={t("admin.legal.services_short")}      value={services.length}   icon={Settings2} color="bg-violet-100 text-violet-700" />
-              <StatCard label={t("status.pending")}               value={pending}           icon={Clock3}   color="bg-rose-100 text-rose-700"   />
-              <StatCard label={t("status.completed")}              value={completed}         icon={CheckCircle} color="bg-emerald-100 text-emerald-700" />
+              <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-slate-100 text-slate-700" />
+              <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-slate-100 text-slate-700"   />
+              <StatCard label={t("admin.legal.services_short")}      value={services.length}   icon={Settings2} color="bg-slate-100 text-slate-700" />
+              <StatCard label={t("status.pending")}               value={pending}           icon={Clock3}   color="bg-slate-100 text-slate-700"   />
+              <StatCard label={t("status.completed")}              value={completed}         icon={CheckCircle} color="bg-slate-100 text-slate-700" />
             </div>
 
             {/* Recent Legal Requests */}
@@ -567,7 +603,7 @@ export default function LegalAdminPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {allLegal.slice(0, 5).map((req) => (
+                  {allLegal.slice(0, 5).map((req: any) => (
                     <div
                       key={req.id}
                       onClick={() => openDetail(req)}
@@ -757,7 +793,7 @@ export default function LegalAdminPage() {
                             <button
                               onClick={handleAccept}
                               disabled={isAccepting}
-                              className="bg-emerald-500 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                              className="bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
                             >
                               {isAccepting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                               {t("admin.service_requests.accept_forward")}
@@ -771,15 +807,15 @@ export default function LegalAdminPage() {
                   {selectedRequest.category === "legal" && (
                     <div className="space-y-4 pt-4 border-t-2 border-blue-100" dir="ltr">
                       <div className="flex items-center justify-between"dir="rtl">
-                        <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                        <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
                           ⚖️ {t("legal.invoice.sendBtn")}
                         </label>
                         {selectedRequest.invoiceSent ? (
-                          <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full">
+                          <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
                             ✓ {t("legal.invoice.sent")}
                           </span>
                         ) : (
-                          <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">
+                          <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
                             ⏳ {t("legal.invoice.notSent")}
                           </span>
                         )}
@@ -789,8 +825,8 @@ export default function LegalAdminPage() {
                         <div className="space-y-3">
                           <div className={`p-4 rounded-2xl text-xs font-black flex items-center justify-between ${
                             selectedRequest.clientDecision === "accepted"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                              : "bg-rose-50 text-rose-700 border border-rose-100"
+                              ? "bg-slate-100 text-slate-700 border border-slate-200"
+                              : "bg-slate-100 text-slate-700 border border-slate-200"
                           }`}>
                             <div className="flex items-center gap-2">
                               {selectedRequest.clientDecision === "accepted" ? (
@@ -808,8 +844,8 @@ export default function LegalAdminPage() {
                             {selectedRequest.clientDecision === "accepted" && (
                               <div className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedRequest.paymentStatus === "paid"
-                                  ? "bg-emerald-500 text-white border-emerald-600"
-                                  : "bg-rose-500 text-white border-rose-600"
+                                  ? "bg-slate-950 text-white border-slate-950"
+                                  : "bg-slate-200 text-slate-700 border-slate-200"
                               }`}>
                                 <Receipt className="w-3 h-3" />
                                 <span className="text-[10px] uppercase">
@@ -828,12 +864,12 @@ export default function LegalAdminPage() {
                             value={invoicePrice}
                             onChange={(e) => setInvoicePrice(e.target.value)}
                             placeholder={t("legal.invoice.price")}
-                            className="bg-blue-50 border border-blue-200 py-3 px-4 text-sm font-bold w-full outline-none focus:border-blue-500 rounded-xl transition-all"
+                            className="bg-slate-50 border border-slate-200 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-500 rounded-xl transition-all"
                           />
                           <button
                             onClick={handleSendInvoice}
                             disabled={isSendingInvoice || !invoicePrice}
-                            className="bg-blue-600 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                            className="bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
                           >
                             {isSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                             {t("legal.invoice.sendBtn")}
@@ -842,7 +878,7 @@ export default function LegalAdminPage() {
                       )}
 
                       {invoiceMessage && (
-                        <p className={`text-xs font-bold ${invoiceMessage.type === "success" ? "text-emerald-600" : "text-rose-500"}`}>
+                        <p className={`text-xs font-bold ${invoiceMessage.type === "success" ? "text-slate-700" : "text-slate-500"}`}>
                           {invoiceMessage.text}
                         </p>
                       )}
@@ -918,7 +954,7 @@ export default function LegalAdminPage() {
                           <div className="text-right">
                             <p className="font-black text-slate-900">{inv.amount} SAR</p>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              inv.status === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+                              inv.status === "paid" ? "bg-slate-100 text-slate-700" : "bg-slate-100 text-slate-700"
                             }`}>
                               {inv.status}
                             </span>

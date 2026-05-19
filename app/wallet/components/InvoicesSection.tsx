@@ -158,9 +158,16 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                     <CardContent className='relative z-10 p-0'>
                         <div className="mb-6 w-full rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
                             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-widest text-white/90">
-                                    <span className="inline-block h-2 w-2 rounded-full bg-amber-300/90 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-                                    قريباً
+                                <div
+                                    className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-widest border"
+                                    style={{
+                                        backgroundColor: "var(--soon-badge-bg, #ffffff)",
+                                        color: "var(--soon-badge-text, #000000)",
+                                        borderColor: "var(--soon-badge-bg, #ffffff)",
+                                    }}
+                                >
+                                    <span className="inline-block h-2 w-2 rounded-full opacity-70" style={{ backgroundColor: "var(--soon-badge-text, #000000)" }} />
+                                    {t("common.soon") || "قريباً"}
                                 </div>
                                 <div className='flex gap-3 w-full md:w-auto'>
                                     <Button 
@@ -170,7 +177,16 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     >
                                         <ArrowDownCircle className='mr-2 h-5 w-5' />
                                         {t('wallet.balance.add')}
-                                        <span className="ml-2 text-[10px] font-black uppercase tracking-wider text-slate-500">قريباً</span>
+                                        <span
+                                            className="ml-2 text-[10px] font-black uppercase tracking-wider border rounded-full px-2 py-0.5"
+                                            style={{
+                                                backgroundColor: "var(--soon-badge-bg, #ffffff)",
+                                                color: "var(--soon-badge-text, #000000)",
+                                                borderColor: "var(--soon-badge-bg, #ffffff)",
+                                            }}
+                                        >
+                                            {t("common.soon") || "قريباً"}
+                                        </span>
                                     </Button>
                                     <Button 
                                         onClick={() => setShowWithdrawDialog(true)}
@@ -179,7 +195,16 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     >
                                         <ArrowUpCircle className='mr-2 h-5 w-5' />
                                         {t('wallet.balance.withdraw')}
-                                        <span className="ml-2 text-[10px] font-black uppercase tracking-wider text-white/70">قريباً</span>
+                                        <span
+                                            className="ml-2 text-[10px] font-black uppercase tracking-wider border rounded-full px-2 py-0.5"
+                                            style={{
+                                                backgroundColor: "var(--soon-badge-bg, #ffffff)",
+                                                color: "var(--soon-badge-text, #000000)",
+                                                borderColor: "var(--soon-badge-bg, #ffffff)",
+                                            }}
+                                        >
+                                            {t("common.soon") || "قريباً"}
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
@@ -239,7 +264,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                         <TableCell className='font-black text-slate-900 py-4'>{invoice.amount} {t('wallet.balance.currency')}</TableCell>
                                         <TableCell className="py-4 text-center">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                                                invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
+                                                invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
                                                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
                                                 : invoice.isUnderReview
                                                     ? 'bg-slate-100 text-slate-500 border border-slate-200'
@@ -262,7 +287,9 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                                 >
                                                     {t('common.view')}
                                                 </Button>
-                                                {invoice.isUnderReview ? (
+                                                {invoice.isSubscriptionActive ? (
+                                                    <span className="text-[10px] font-bold text-emerald-600 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100">نشط</span>
+                                                ) : invoice.isUnderReview ? (
                                                     <span className="text-[10px] font-bold text-slate-400 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">بانتظار التسعير</span>
                                                 ) : (invoice.isPendingDecision && invoice.status !== t('wallet.paid') && invoice.status !== 'دفع') ? (
                                                     <div className="flex gap-2">
@@ -299,7 +326,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                                                 setIsPaymentModalOpen(true);
                                                             }}
                                                         >
-                                                            {t('wallet.pay')}
+                                                            {invoice.isSubscription ? 'دفع الاشتراك' : t('wallet.pay')}
                                                         </Button>
                                                     )
                                                 )}
@@ -423,7 +450,8 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
             <PaymentMethodsModal 
                 isOpen={isPaymentModalOpen}
                 onClose={() => setIsPaymentModalOpen(false)}
-                invoiceId={paymentInvoice?.id}
+                invoiceId={paymentInvoice?.isSubscription ? undefined : paymentInvoice?.id}
+                subscriptionId={paymentInvoice?.isSubscription ? paymentInvoice?.subscriptionId : undefined}
                 price={parseFloat(paymentInvoice?.amount?.replace(/,/g, '') || '0')}
                 onPaymentSuccess={async () => {
                     if (onRefresh) onRefresh();

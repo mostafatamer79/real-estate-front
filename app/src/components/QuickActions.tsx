@@ -1,12 +1,17 @@
 "use client";
 
-import { ShoppingBag, Scale, Hammer, Megaphone, MoreHorizontal, ChevronRight } from "lucide-react";
+import { ShoppingBag, Scale, Hammer, MoreHorizontal, CreditCard } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
+import { useSettings } from "@/context/SettingsContext";
+import { useAuth } from "@/hooks/useAuth";
+import SoonBadge from "./SoonBadge";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Role } from "@/types/user";
+
 
 interface QuickActionItem {
   id: string;
@@ -32,15 +37,18 @@ const serviceShortcuts: ServiceShortcut[] = [
 export default function QuickActions() {
   const router = useRouter();
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
+  const { user } = useAuth();
+  const ui = settings.uiFlags;
   const isRtl = language === "ar";
 
   const actions: QuickActionItem[] = [
     {
-      id: "buildingmanagement",
-      title: t('action.propertyManagement'),
-      icon: <Image src="/icons/1.png" alt="Property Management" width={44} height={44} className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
-      accentColor: "group-hover:border-indigo-500/50",
-      glowColor: "group-hover:shadow-[0_8px_30px_rgba(99,102,241,0.2)]",
+      id: "subscriptions",
+      title: t('sub.public.quickAction'),
+      icon: <CreditCard className="w-11 h-11 text-white/80 group-hover:text-white transition-colors" />,
+      accentColor: "group-hover:border-indigo-400/50",
+      glowColor: "group-hover:shadow-[0_8px_30px_rgba(99,102,241,0.15)]",
     },
     {
       id: "wallet",
@@ -49,6 +57,7 @@ export default function QuickActions() {
       accentColor: "group-hover:border-slate-500/60",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(148,163,184,0.15)]",
     },
+
     {
       id: "services",
       title: t('action.services'),
@@ -71,7 +80,29 @@ export default function QuickActions() {
       accentColor: "group-hover:border-slate-500/60",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(148,163,184,0.12)]",
     },
-  ];
+
+  ].filter((action) => {
+    // Hide buildingmanagement if user has no departments (and is not admin)
+    if (action.id === 'buildingmanagement') {
+      if (!user) return false;
+      if (user.role === Role.VIEWER) return false;
+      if (user.role !== Role.ADMIN && user.role !== Role.MANGER && (!user.departments || user.departments.length === 0)) return false;
+    }
+
+    // Filter icons based on admin UI flags
+    const flagMap: Record<string, string> = {
+      buildingmanagement: 'show_quickaction_buildingmgmt',
+      wallet:             'show_quickaction_wallet',
+      subscriptions:      'show_quickaction_subscriptions',
+      services:           'show_quickaction_services',
+      offers:             'show_quickaction_offers',
+      requests:           'show_quickaction_orders',
+      scan_map:           'show_map_section',
+    };
+    const flagKey = flagMap[action.id];
+    if (!flagKey) return true;
+    return ui[flagKey] !== false;
+  });
 
   const container = {
     hidden: { opacity: 0, y: 20 },
@@ -118,11 +149,16 @@ export default function QuickActions() {
                 whileHover={{ scale: 1.12, y: -8 }}
                 whileTap={{ scale: 0.92 }}
                 onClick={() => {
+                  const flagKey = action.id === 'requests' ? 'orders' : action.id;
+                  if (settings.sectionFlags[flagKey] === 'closed') return;
+
                   if (action.id === "services")           router.push("/services");
                   else if (action.id === "wallet")        router.push("/wallet");
+                  else if (action.id === "subscriptions") router.push("/subscriptions/new");
                   else if (action.id === "offers")        router.push("/offers");
                   else if (action.id === "requests")      router.push("/orders");
                   else if (action.id === "buildingmanagement") router.push("/buildingmanagement");
+                  else if (action.id === "scan_map")      router.push("/scan-map");
                 }}
                 className={`
                   group relative
@@ -135,11 +171,18 @@ export default function QuickActions() {
                   shadow-[0_2px_12px_rgba(0,0,0,0.3)]
                   ${action.glowColor}
                   transition-all duration-300
-                  cursor-pointer
+                  ${settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
                 `}
               >
                 {/* Inner shimmer */}
                 <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-transparent via-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Optimized Soon Badge */}
+                {settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' && (
+                  <SoonBadge className="absolute -top-1.5 -right-1.5 z-20 px-2 py-0.5 rounded-lg shadow-xl shadow-black/40">
+                    {t('common.soon') || 'قريباً'}
+                  </SoonBadge>
+                )}
 
                 {/* Icon */}
                 <div className="relative z-10 p-2 md:p-3">

@@ -6,6 +6,7 @@ import { Scale, FileText, ShieldCheck, CheckCircle2, MoreHorizontal, Loader2, Ar
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "react-hot-toast";
+import { useSettings } from "@/context/SettingsContext";
 
 const legalCategories = [
   { id: "disputes",      title: "المنازعات العقارية", desc: "منازعات الملكية، البيع، الرهن والمخالفات", icon: Scale },
@@ -72,6 +73,15 @@ const DropZone = ({ label, sub }: { label: string; sub?: string }) => (
 export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { onSuccessRedirect?: string }) {
   const router = useRouter();
   const { user, token, isAuthenticated } = useAuth();
+  const { settings } = useSettings();
+
+  const moduleStatus = (k: string): 'enabled' | 'soon' | 'disabled' => {
+    const v = (settings.moduleFlags as any)?.[k];
+    if (v === 'soon' || v === 'disabled') return v;
+    return 'enabled';
+  };
+  const moduleMessage = (k: string) => (settings.moduleMessages as any)?.[k] || '';
+  const isAdmin = (user as any)?.role === 'admin';
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -627,34 +637,99 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
   };
 
   // ─── Main Render ─────────────────────────────────────────────────────────────
-  return (
-    <div className="w-full" dir="rtl">
-      {!selectedCategory ? (
-        /* Category Selection Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {legalCategories.map((cat) => (
-            <motion.button
-              key={cat.id}
-              whileHover="hovered"
-              whileTap={{ scale: 0.98 }}
-              onClick={() => { setSelectedCategory(cat.id); }}
-              className="group relative bg-white/[0.02] border border-white/10 hover:border-white/20 rounded-[2rem] p-7 text-right flex flex-col gap-4 transition-all duration-300 overflow-hidden"
-            >
-              <motion.div
-                variants={{ hovered: { opacity: 1 }, initial: { opacity: 0 } }}
-                className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
-              />
-              <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 group-hover:border-white/20 flex items-center justify-center transition-colors">
-                <cat.icon className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors" />
-              </div>
-              <div>
-                <p className="font-black text-white/80 group-hover:text-white transition-colors">{cat.title}</p>
-                <p className="text-[10px] font-medium text-white/30 mt-1 leading-relaxed">{cat.desc}</p>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      ) : (
+	  return (
+	    <div className="w-full" dir="rtl">
+	      {!selectedCategory ? (
+	        /* Category Selection Grid */
+	        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+	          {legalCategories.map((cat) => {
+	            const moduleKey =
+	              cat.id === 'documentation' ? 'legal_documentation' :
+	              cat.id === 'contracts' ? 'legal_contracts' :
+	              cat.id === 'disputes' ? 'legal_disputes' :
+	              'legal_other';
+	            const status = moduleStatus(moduleKey);
+	            // Disabled modules should be removed from the page for everyone.
+	            if (status === 'disabled') return null;
+	            const disabled = status !== 'enabled';
+	            const isSoon = status === 'soon';
+	            return (
+	              <motion.div
+	                key={cat.id}
+	                whileHover={disabled ? undefined : "hovered"}
+	                whileTap={disabled ? undefined : { scale: 0.98 }}
+	                role="button"
+	                tabIndex={disabled ? -1 : 0}
+	                aria-disabled={disabled}
+	                onKeyDown={(e) => {
+	                  if (disabled) {
+	                    const msg = moduleMessage(moduleKey) || 'قريباً';
+	                    toast.error(msg);
+	                    return;
+	                  }
+	                  if (e.key === "Enter" || e.key === " ") {
+	                    e.preventDefault();
+	                    setSelectedCategory(cat.id);
+	                  }
+	                }}
+	                onClick={() => {
+	                  if (disabled) {
+	                    const msg = moduleMessage(moduleKey) || 'قريباً';
+	                    toast.error(msg);
+	                    return;
+	                  }
+	                  setSelectedCategory(cat.id);
+	                }}
+	                className={`group relative rounded-[2rem] p-7 text-right flex flex-col gap-4 transition-all duration-300 overflow-hidden border ${
+	                  disabled
+	                    ? 'bg-white/[0.01] border-white/[0.06] opacity-55 cursor-not-allowed'
+	                    : 'bg-white/[0.02] border-white/10 hover:border-white/20 cursor-pointer'
+	                }`}
+	              >
+	                {/* Stronger "not available" sheen for soon/disabled so it doesn't look normal even for admin */}
+	                {disabled && (
+	                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-transparent" />
+	                )}
+	                <motion.div
+	                  variants={{ hovered: { opacity: 1 }, initial: { opacity: 0 } }}
+	                  className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+	                />
+	                <div className="flex items-start justify-between gap-4">
+	                  <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 group-hover:border-white/20 flex items-center justify-center transition-colors">
+	                    <cat.icon className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors" />
+	                  </div>
+	                  {isSoon && (
+	                    <span className="text-[9px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full uppercase tracking-widest">
+	                      قريباً
+	                    </span>
+	                  )}
+	                </div>
+	                <div>
+	                  <p className="font-black text-white/80 group-hover:text-white transition-colors">{cat.title}</p>
+	                  <p className="text-[10px] font-medium text-white/30 mt-1 leading-relaxed">{cat.desc}</p>
+	                </div>
+
+	                {/* Admin-only explicit preview so "soon" doesn't behave like normal click */}
+	                {isAdmin && isSoon && (
+	                  <div className="pt-1">
+	                    <button
+	                      type="button"
+	                      onClick={(e) => {
+	                        e.stopPropagation();
+	                        setSelectedCategory(cat.id);
+	                      }}
+	                      className="h-9 px-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 text-[10px] font-black text-white/60 hover:text-white/90 transition-all inline-flex items-center gap-2"
+	                    >
+	                      <Info className="w-4 h-4" />
+	                      معاينة كمسؤول
+	                    </button>
+	                  </div>
+	                )}
+	              </motion.div>
+	            );
+	          })}
+	        </div>
+	      ) : (
         /* Selected Category Form */
         <div className="space-y-8">
           {/* Back button */}

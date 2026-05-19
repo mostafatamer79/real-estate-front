@@ -98,7 +98,7 @@ export default function MarketingPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 uppercase tracking-tight">
-            <div className="p-2 bg-blue-100 rounded-2xl text-blue-600">
+            <div className="p-2 bg-slate-100 rounded-2xl text-slate-700">
               <Mail className="w-8 h-8" />
             </div>
             {t('admin.marketing.title')}
@@ -110,7 +110,7 @@ export default function MarketingPage() {
           <button
             onClick={handleManualTrigger}
             disabled={triggering}
-            className="flex items-center gap-2 px-5 py-3 bg-amber-50 text-amber-600 rounded-2xl hover:bg-amber-100 transition-all border border-amber-200 text-xs font-black uppercase tracking-widest disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-slate-700 rounded-2xl hover:bg-slate-200 transition-all border border-slate-200 text-xs font-black uppercase tracking-widest disabled:opacity-50"
           >
             {triggering ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {t('admin.marketing.action.trigger')}
@@ -121,7 +121,7 @@ export default function MarketingPage() {
               setEditingCampaign(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-500/25"
+            className="flex items-center gap-2 px-6 py-3 bg-slate-950 text-white rounded-2xl hover:bg-slate-800 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-slate-500/20"
           >
             <Plus className="w-5 h-5" />
             {t('admin.marketing.create')}
@@ -133,7 +133,7 @@ export default function MarketingPage() {
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
         {loading ? (
           <div className="p-20 flex flex-col items-center justify-center space-y-4">
-            <RefreshCcw className="w-10 h-10 text-blue-500 animate-spin" />
+            <RefreshCcw className="w-10 h-10 text-slate-500 animate-spin" />
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
           </div>
         ) : campaigns.length === 0 ? (
@@ -170,9 +170,9 @@ export default function MarketingPage() {
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
                         <div className={`p-2.5 rounded-xl ${
-                          campaign.category === 'OFFERS' ? 'bg-emerald-50 text-emerald-600' :
-                          campaign.category === 'ORDERS' ? 'bg-orange-50 text-orange-600' :
-                          'bg-violet-50 text-violet-600'
+                          campaign.category === 'OFFERS' ? 'bg-slate-100 text-slate-700' :
+                          campaign.category === 'ORDERS' ? 'bg-slate-100 text-slate-700' :
+                          'bg-slate-100 text-slate-700'
                         }`}>
                           <AlertCircle className="w-4 h-4" />
                         </div>
@@ -182,7 +182,7 @@ export default function MarketingPage() {
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-700 border border-blue-100">
+                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-700 border border-slate-200">
                         {campaign.targetRole ? t(`admin.marketing.targetRole.${campaign.targetRole.toLowerCase()}`) : t('admin.marketing.targetRole.all')}
                       </span>
                     </td>
@@ -197,7 +197,7 @@ export default function MarketingPage() {
                         onClick={() => handleToggleStatus(campaign)}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                           campaign.isActive 
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                            ? 'bg-slate-100 text-slate-700 border border-slate-200' 
                             : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
                       >
@@ -217,7 +217,7 @@ export default function MarketingPage() {
                             setEditingCampaign(campaign);
                             setIsModalOpen(true);
                           }}
-                          className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                          className="p-2.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>

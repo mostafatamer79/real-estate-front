@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Twitter, Mail, MessageCircle, Phone,
   HelpCircle, ChevronDown, Send,
@@ -11,6 +11,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,11 +21,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { faqData } from "./faq-data";
 import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { customerServiceFaqApi, customerServiceFeedbackApi, customerServiceFaqCategoryApi, type CustomerServiceFaq, type CustomerServiceFaqCategory } from "@/lib/api";
 
 export default function CustomerService() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { user } = useAuth();
+  const { isOpen, message, isAdmin } = useSectionGuard('customerservice');
 
   const categoryIcons: Record<string, React.ElementType> = {
     "أسئلة عامة": HelpCircle,
@@ -43,6 +48,94 @@ export default function CustomerService() {
   const [charCount, setCharCount] = useState(0);
   const MAX_CHARACTERS = 200;
 
+  const isAdminUser = user?.role === "admin";
+
+  const [faqs, setFaqs] = useState<CustomerServiceFaq[] | null>(null);
+  const [faqCategories, setFaqCategories] = useState<CustomerServiceFaqCategory[] | null>(null);
+  const [faqsLoading, setFaqsLoading] = useState(false);
+  const [faqsError, setFaqsError] = useState<string | null>(null);
+
+  const refreshFaqs = async () => {
+    setFaqsLoading(true);
+    setFaqsError(null);
+    try {
+      const [catsRes, faqsRes] = await Promise.all([
+        customerServiceFaqCategoryApi.list(),
+        customerServiceFaqApi.list(),
+      ]);
+      setFaqCategories(Array.isArray(catsRes.data) ? catsRes.data : []);
+      setFaqs(Array.isArray(faqsRes.data) ? faqsRes.data : []);
+    } catch (e: any) {
+      setFaqsError(e?.message || "Failed to load FAQs");
+      setFaqs(null);
+      setFaqCategories(null);
+    } finally {
+      setFaqsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshFaqs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const faqSections = useMemo(() => {
+    if (!faqs || faqs.length === 0) return faqData;
+    // Build using categories table first (ordered), then append uncategorized.
+    const itemsByCat = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number }>>();
+    const uncategorized: Array<{ id: string; question: string; answer: string; sortOrder: number; category: string }> = [];
+
+    for (const item of faqs) {
+      const question = language === "ar" ? item.questionAr : item.questionEn;
+      const answer = language === "ar" ? item.answerAr : item.answerEn;
+      const sortOrder = item.sortOrder ?? 0;
+      if (item.categoryId) {
+        const arr = itemsByCat.get(item.categoryId) || [];
+        arr.push({ id: item.id, question, answer, sortOrder });
+        itemsByCat.set(item.categoryId, arr);
+      } else {
+        const category = language === "ar" ? (item.categoryAr || "أخرى") : (item.categoryEn || "Other");
+        uncategorized.push({ id: item.id, question, answer, sortOrder, category });
+      }
+    }
+
+    for (const [catId, arr] of itemsByCat.entries()) {
+      arr.sort((a, b) => a.sortOrder - b.sortOrder);
+      itemsByCat.set(catId, arr);
+    }
+    uncategorized.sort((a, b) => a.sortOrder - b.sortOrder);
+
+    const sections: Array<{ category: string; items: Array<{ id: string; question: string; answer: string }> }> = [];
+
+    const orderedCats = (faqCategories || []).slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    for (const cat of orderedCats) {
+      const arr = itemsByCat.get(cat.id) || [];
+      if (arr.length === 0) continue;
+      sections.push({
+        category: language === "ar" ? cat.nameAr : cat.nameEn,
+        items: arr.map(({ id, question, answer }) => ({ id, question, answer })),
+      });
+    }
+
+    // Group uncategorized by their category string (fallback legacy)
+    if (uncategorized.length > 0) {
+      const map = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number }>>();
+      for (const u of uncategorized) {
+        const arr = map.get(u.category) || [];
+        arr.push({ id: u.id, question: u.question, answer: u.answer, sortOrder: u.sortOrder });
+        map.set(u.category, arr);
+      }
+      for (const [cat, arr] of map.entries()) {
+        arr.sort((a, b) => a.sortOrder - b.sortOrder);
+        sections.push({ category: cat, items: arr.map(({ id, question, answer }) => ({ id, question, answer })) });
+      }
+    }
+
+    return sections.length > 0 ? sections : faqData;
+  }, [faqs, faqCategories, language]);
+
+  // Admin management is now in /admin/customer-service
+
   const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     if (text.length <= MAX_CHARACTERS) {
@@ -53,13 +146,35 @@ export default function CustomerService() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t('cs.alert.success'));
-    setQuestion("");
-    setEmail("");
-    setPhoneNumber("");
-    setName("");
-    setCharCount(0);
+    (async () => {
+      try {
+        await customerServiceFeedbackApi.create({
+          name,
+          contactMethod,
+          email: contactMethod === 'email' ? email : undefined,
+          phoneNumber: contactMethod === 'phone' ? phoneNumber : undefined,
+          question,
+          pagePath: '/customerservice',
+        });
+        alert(t('cs.alert.success'));
+        setQuestion("");
+        setEmail("");
+        setPhoneNumber("");
+        setName("");
+        setCharCount(0);
+      } catch (err: any) {
+        alert(language === 'ar' ? 'فشل إرسال الرسالة. حاول مرة أخرى.' : 'Failed to send. Please try again.');
+      }
+    })();
   };
+
+  if (!isOpen) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <ComingSoonOverlay sectionName={t('cs.title')} message={message} isAdmin={isAdmin} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -83,12 +198,12 @@ export default function CustomerService() {
                       >
                           {t('cs.title')}
                       </motion.h1>
-                      <motion.p 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                          className="text-slate-500 font-medium text-sm md:text-base leading-relaxed whitespace-nowrap"
-                      >
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                      className="text-slate-500 font-medium text-sm md:text-base leading-relaxed"
+                  >
                         نحن هنا للإجابة على جميع استفساراتكم. فريقنا المختص جاهز لتقديم الدعم العقاري على مدار الساعة.
                       </motion.p>
                   </div>
@@ -236,15 +351,31 @@ export default function CustomerService() {
                 viewport={{ once: true }}
                 className="space-y-6"
               >
-                  <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
-                      <HelpCircle className="w-4 h-4" />
-                    </div>
-                    الأسئلة المتكررة
-                </h2>
+                  <div className="flex items-center justify-between gap-4">
+                    <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
+                        <HelpCircle className="w-4 h-4" />
+                      </div>
+                      {language === "ar" ? "الأسئلة المتكررة" : "FAQs"}
+                    </h2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                      onClick={refreshFaqs}
+                      disabled={faqsLoading}
+                    >
+                      {language === "ar" ? "تحديث" : "Refresh"}
+                    </Button>
+                  </div>
                 <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8">
+                  {faqsError && (
+                    <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                      {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}
+                    </div>
+                  )}
                   <Accordion type="multiple" className="w-full space-y-6">
-                    {faqData.map((section, idx) => {
+                    {faqSections.map((section, idx) => {
                       const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
                       return (
                         <AccordionItem
@@ -263,7 +394,7 @@ export default function CustomerService() {
                           </AccordionTrigger>
                           <AccordionContent className="pb-6">
                             <Accordion type="single" collapsible className="w-full space-y-4">
-                              {section.items.map((item, itemIdx) => (
+                              {section.items.map((item: any, itemIdx: number) => (
                                 <AccordionItem
                                   key={itemIdx}
                                   value={`item-${idx}-${itemIdx}`}
@@ -290,6 +421,8 @@ export default function CustomerService() {
               </motion.div>
           </div>
       </div>
+
+      {/* FAQ admin management moved to /admin/customer-service */}
 
       {/* Navigation Floating Button */}
       {user?.role === "admin" && (

@@ -53,8 +53,10 @@ export default function ProfilePage() {
   const { user, token, updateUser } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-  const [isSaving, setIsSaving] = useState(false);
   const { t, language } = useLanguage();
+
+
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -83,14 +85,27 @@ export default function ProfilePage() {
   const [mockNationalId, setMockNationalId] = useState(''); // In real app, this comes from Nafath
   const [otpTimer, setOtpTimer] = useState(0);
 
+  useEffect(() => {
+    if (otpTimer <= 0) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setOtpTimer((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [otpTimer]);
+
   const handleVerifyStart = async () => {
      setIsVerifying(true);
      try {
-        // Mock send OTP
-        await api.post('/user/nafath/send-otp', { nationalId: '1000000000' }); // Dummy ID
+        const nationalId = mockNationalId || '1000000000';
+        const response = await api.post('/user/nafath/send-otp', { nationalId });
         setVerificationStep('otp');
         setOtpTimer(60);
-        setMockNationalId('1012345678'); // Simulate ID return
+        setOtpCode('');
+        setMockNationalId(response.data?.nationalId || nationalId);
      } catch (e) {
         toast({ title: t('common.error'), description: t('otp.errorGeneric'), variant: "destructive" });
      } finally {
@@ -209,7 +224,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-slate-50 p-4 md:p-10" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
@@ -306,7 +321,7 @@ export default function ProfilePage() {
                                     <input
                                     type="text"
                                     {...register('firstName')}
-                                    className={`w-full px-3 py-2 bg-slate-50 border rounded-lg focus:outline-none text-right ${errors.firstName ? 'border-red-500' : 'border-slate-300 focus:border-gray-500'}`}
+                                    className={`w-full px-3 py-2 bg-slate-50 border rounded-lg focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'} ${errors.firstName ? 'border-red-500' : 'border-slate-300 focus:border-gray-500'}`}
                                     />
                                     {errors.firstName && <p className="text-red-500 text-xs mt-1">{t(errors.firstName.message || 'profile.nameRequired')}</p>}
                                 </div>
@@ -340,7 +355,7 @@ export default function ProfilePage() {
                                             type="text"
                                             {...register('roleOtherDescription')}
                                             placeholder={t('profile.activityPlaceholder')}
-                                            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                            className={`w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                         />
                                     </div>
                                 )}
@@ -388,7 +403,7 @@ export default function ProfilePage() {
                                             <input
                                                 type="text"
                                                 {...register('falLicenseNumber')}
-                                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                                className={`w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
                                         </div>
                                         <div>
@@ -619,7 +634,7 @@ export default function ProfilePage() {
                     <div className="text-xs text-center text-slate-400">
                         {otpTimer > 0 ? `00:${otpTimer.toString().padStart(2, '0')}` : <span className="text-gray-400 font-bold bg-slate-100/50 cursor-pointer" onClick={handleVerifyStart}>{t('otp.resendBtn')}</span>}
                     </div>
-                    <Button onClick={handleVerifyOtp} disabled={isVerifying || otpCode.length < 4} className="w-full">
+                    <Button onClick={handleVerifyOtp} disabled={isVerifying || otpCode.length < 6} className="w-full">
                          {isVerifying ? t('otp.verifying') : t('otp.verifyBtn')}
                     </Button>
                 </div>

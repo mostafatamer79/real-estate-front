@@ -1,14 +1,14 @@
-// app/chat/[roomId]/page.tsx - Updated with proper API calls
 "use client";
+import { io } from "socket.io-client";
 import { useLanguage } from "@/context/LanguageContext";
-
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { ArrowRight, Send, User, Clock } from "lucide-react";
+import { ArrowRight, Send, User, Clock, CheckCheck, MessageSquare } from "lucide-react";
 import { chatApi } from "@/lib/chat";
 import api from "@/lib/api";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function ChatRoomPage() {
+export default function NormalChatRoomPage() {
   const params = useParams();
   const router = useRouter();
   const roomId = params.roomId as string;
@@ -23,9 +23,25 @@ export default function ChatRoomPage() {
   const [isOnline, setIsOnline] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const roomDetailsRef = useRef<any>(null);
+  const currentUserRef = useRef<any>(null);
 
   useEffect(() => {
-    // Get current user from localStorage
+    roomDetailsRef.current = roomDetails;
+  }, [roomDetails]);
+
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  useEffect(() => {
+    const otherId = getOtherParticipantId();
+    if (socket && otherId) {
+      socket.emit('checkUserStatus', { userId: otherId });
+    }
+  }, [roomDetails, currentUser, socket]);
+
+  useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       try {
@@ -35,11 +51,17 @@ export default function ChatRoomPage() {
       }
     }
 
+    let activeSocket: any = null;
+
     if (roomId) {
       fetchRoomDetails();
       fetchMessages();
-      setupWebSocket();
+      activeSocket = setupWebSocket();
     }
+
+    return () => {
+      if (activeSocket) activeSocket.disconnect();
+    };
   }, [roomId]);
 
   const fetchRoomDetails = async () => {
@@ -55,7 +77,8 @@ export default function ChatRoomPage() {
     try {
       const messages = await chatApi.getRoomMessages(roomId);
       setMessages(messages);
-      scrollToBottom();
+      setTimeout(scrollToBottom, 100);
+      window.dispatchEvent(new Event('refresh-notifications'));
     } catch (error) {
       console.error("Error fetching messages:", error);
     } finally {
@@ -64,8 +87,10 @@ export default function ChatRoomPage() {
   };
 
   const getOtherParticipantId = () => {
-    if (!roomDetails || !roomDetails.participants || !currentUser) return null;
-    const other = roomDetails.participants.find((p: any) => p.id !== currentUser.id);
+    const details = roomDetailsRef.current;
+    const user = currentUserRef.current;
+    if (!details || !details.participants || !user) return null;
+    const other = details.participants.find((p: any) => p.id !== user.id);
     return other?.id;
   }
 
@@ -73,62 +98,56 @@ export default function ChatRoomPage() {
     const token = localStorage.getItem('token');
     const userId = currentUser?.id || JSON.parse(localStorage.getItem('user') || '{}').id;
 
-    // Initialize WebSocket connection
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3030';
-    const ws = new WebSocket(`${wsUrl}/chat?token=${token}&userId=${userId}`);
+    const socketUrl = wsUrl.replace(/^ws/, 'http');
 
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      // Join the room
-      ws.send(JSON.stringify({
-        type: 'joinRoom',
-        roomId,
-      }));
+    const socketIo = io(`${socketUrl}/chat`, {
+      auth: {
+        token,
+        userId
+      },
+      transports: ['websocket', 'polling']
+    });
 
-       // Check status of other user
-       const otherId = getOtherParticipantId();
-       if (otherId) {
-         ws.send(JSON.stringify({
-           type: 'checkUserStatus',
-           userId: otherId
-         }));
-       }
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-
-        if (data.type === 'receiveMessage' || (data.event === 'receiveMessage')) {
-            // Handle both wrapper formats if applicable
-            const msg = data.message || data.data;
-            if (msg) {
-              setMessages(prev => [...prev, msg]);
-              scrollToBottom();
-            }
-        }
-        
-        if (data.event === 'userStatus' || data.type === 'userStatus') {
-           const moveData = data.data || data;
-           const otherId = getOtherParticipantId();
-           if (moveData.userId === otherId) {
-               setIsOnline(moveData.status === 'online');
-           }
-        }
-      } catch (e) {
-          console.error("WS Parse error", e);
+    socketIo.on('connect', () => {
+      socketIo.emit('joinRoom', { roomId });
+      const otherId = getOtherParticipantId();
+      if (otherId) {
+        socketIo.emit('checkUserStatus', { userId: otherId });
       }
-    };
+    });
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    socketIo.on('receiveMessage', (data) => {
+      const msg = data.message || data.data || data;
+      if (msg) {
+        setMessages(prev => {
+          if (prev.some(m => m.id === msg.id)) return prev;
+          return [...prev, msg];
+        });
+        setTimeout(scrollToBottom, 50);
 
-    setSocket(ws);
+        // Mark room as read on incoming message from other user
+        const otherId = getOtherParticipantId();
+        const senderId = msg.sender?.id || msg.senderId;
+        if (otherId && senderId === otherId) {
+          chatApi.markRoomAsRead(roomId)
+            .then(() => {
+              window.dispatchEvent(new Event('refresh-notifications'));
+            })
+            .catch(err => console.error('Failed to mark room as read:', err));
+        }
+      }
+    });
 
-    return () => {
-      ws.close();
-    };
+    socketIo.on('userStatus', (data) => {
+      const otherId = getOtherParticipantId();
+      if (data.userId === otherId) {
+        setIsOnline(data.status === 'online');
+      }
+    });
+
+    setSocket(socketIo);
+    return socketIo;
   };
 
   const scrollToBottom = () => {
@@ -137,18 +156,8 @@ export default function ChatRoomPage() {
 
   const sendMessage = async () => {
     if (!message.trim() || !socket) return;
-
     try {
-      // Send via WebSocket
-      socket.send(JSON.stringify({
-        type: 'sendMessage',
-        roomId,
-        content: message,
-      }));
-
-      // Also save to database via HTTP
-      await chatApi.sendMessage(roomId, message);
-
+      socket.emit('sendMessage', { roomId, senderId: currentUser?.id, content: message });
       setMessage("");
     } catch (error) {
       console.error('Error sending message:', error);
@@ -165,10 +174,7 @@ export default function ChatRoomPage() {
   const formatTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString("ar-SA", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return date.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
     } catch {
       return "الآن";
     }
@@ -176,22 +182,19 @@ export default function ChatRoomPage() {
 
   const getOtherParticipant = () => {
     if (!roomDetails || !roomDetails.participants || !currentUser) return null;
-
-    return roomDetails.participants.find(
-      (p: any) => p.id !== currentUser.id
-    );
+    return roomDetails.participants.find((p: any) => p.id !== currentUser.id);
   };
 
   const getFullName = (firstName: string | null = '', lastName: string | null = '') => {
     const first = firstName || '';
     const last = lastName || '';
-    return `${first} ${last}`.trim() || t('chat.user') || 'مستخدم';
+    return `${first} ${last}`.trim() || 'مستخدم';
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-700"></div>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -199,148 +202,104 @@ export default function ChatRoomPage() {
   const otherParticipant = getOtherParticipant();
   const otherParticipantName = otherParticipant
     ? getFullName(otherParticipant.firstName, otherParticipant.lastName)
-    : roomDetails?.name || t('chat.conversation') || 'محادثة';
+    : roomDetails?.name || 'محادثة';
 
   return (
-    <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Header */}
-      <div className="bg-white border-b shadow-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+    <div className="max-w-4xl mx-auto py-6 px-4" dir="rtl">
+      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden flex flex-col h-[80vh]">
+        
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push('/chat')}
+              className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-950 transition-all"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-              >
-                <ArrowRight className={`w-5 h-5 ${language === 'en' ? 'rotate-180' : ''}`} />
-                <span className="hidden md:inline">{t('chat.back')}</span>
-              </button>
-
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                    <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
-                    {otherParticipant ? (
-                        <span className="font-semibold text-gray-700">
-                        {getFullName(otherParticipant.firstName, otherParticipant.lastName).charAt(0)}
-                        </span>
-                    ) : (
-                        <User className="w-5 h-5 text-gray-600" />
-                    )}
-                    </div>
-                    {/* Status Dot */}
-                    <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <div className="relative">
+                <div className="w-11 h-11 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-700 font-black">
+                  {otherParticipantName.charAt(0)}
                 </div>
-                
-                <div>
-                  <h1 className="font-semibold text-gray-800 flex items-center gap-2">
-                    {otherParticipantName}
-                  </h1>
-                  <span className={`text-xs font-medium block ${isOnline ? 'text-green-600' : 'text-gray-500'}`}>
-                    {isOnline ? t('chat.activeNow') : t('chat.notActive')}
-                  </span>
-                </div>
+                <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Messages Container */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow-lg h-[calc(100vh-180px)] flex flex-col">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <User className="w-8 h-8 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-1">
-                  {t('chat.new')}
-                </h3>
-                <p className="text-gray-500">
-                  {otherParticipant
-                    ? `${t('chat.start')} ${otherParticipantName}`
-                    : t('chat.start')
-                  }
+              <div>
+                <h1 className="font-black text-slate-900 leading-tight">{otherParticipantName}</h1>
+                <p className={`text-[10px] font-black uppercase tracking-widest mt-0.5 ${isOnline ? 'text-green-600' : 'text-slate-400'}`}>
+                  {isOnline ? 'متصل الآن' : 'غير متصل'}
                 </p>
               </div>
-            ) : (
-              <>
-                {messages.map((msg, index) => {
-                  const ownMessage = msg.sender?.id === currentUser?.id;
-
-                  return (
-                    <div
-                      key={msg.id || index}
-                      className={`flex ${ownMessage ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-xs rounded-lg px-4 py-2 ${
-                          ownMessage
-                            ? 'bg-slate-700 text-white rounded-tr-none'
-                            : 'bg-slate-100 text-gray-800 rounded-tl-none'
-                        }`}
-                      >
-                        {!ownMessage && msg.sender && (
-                          <div className="flex items-center gap-2 mb-1">
-                            <div className="w-6 h-6 bg-slate-300 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-semibold text-gray-700">
-                                {getFullName(msg.sender.firstName, msg.sender.lastName).charAt(0)}
-                              </span>
-                            </div>
-                            <span className="text-xs font-medium">
-                              {getFullName(msg.sender.firstName, msg.sender.lastName)}
-                            </span>
-                          </div>
-                        )}
-
-                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-
-                        {msg.createdAt && (
-                          <div className={`flex items-center justify-end gap-2 mt-1 ${
-                            ownMessage ? 'text-gray-300' : 'text-gray-500'
-                          }`}>
-                            <Clock className="w-3 h-3" />
-                            <span className="text-xs">
-                              {formatTime(msg.createdAt)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-                <div ref={messagesEndRef} />
-              </>
-            )}
-          </div>
-
-          {/* Input Area */}
-          <div className="border-t p-4">
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={t('chat.typeMessage')}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600 resize-none"
-                  rows={2}
-                  dir={language === 'ar' ? 'rtl' : 'ltr'}
-                />
-              </div>
-              <button
-                onClick={sendMessage}
-                disabled={!message.trim()}
-                className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <Send className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
-                <span className="hidden sm:inline">{t('chat.send')}</span>
-              </button>
             </div>
           </div>
         </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30 scrollbar-hide">
+          <AnimatePresence initial={false}>
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center space-y-2 opacity-40">
+                <MessageSquare className="w-12 h-12" />
+                <p className="text-sm font-bold">لا توجد رسائل سابقة</p>
+              </div>
+            ) : (
+              messages.map((msg, index) => {
+                const isOwn = msg.sender?.id === currentUser?.id;
+                return (
+                  <motion.div
+                    key={msg.id || index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex flex-col gap-1 max-w-[80%]`}>
+                      <div
+                        className={`px-4 py-2.5 rounded-2xl shadow-sm ${
+                          isOwn
+                            ? 'bg-slate-900 text-white rounded-br-none'
+                            : 'bg-white border border-slate-100 text-slate-900 rounded-bl-none'
+                        }`}
+                      >
+                        <p className="text-[13px] font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      </div>
+                      <div className={`flex items-center gap-1.5 px-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                        <span className="text-[9px] font-black text-slate-400 uppercase">
+                          {formatTime(msg.createdAt)}
+                        </span>
+                        {isOwn && <CheckCheck className="w-3 h-3 text-slate-300" />}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })
+            )}
+          </AnimatePresence>
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
+        <div className="p-4 border-t border-slate-100 bg-white">
+          <div className="flex items-end gap-2">
+            <div className="flex-1">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="اكتب رسالة..."
+                className="w-full bg-slate-50 border border-slate-100 rounded-[1rem] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all resize-none min-h-[50px] max-h-[150px]"
+                rows={1}
+              />
+            </div>
+            <button
+              onClick={sendMessage}
+              disabled={!message.trim()}
+              className="w-12 h-12 bg-slate-900 text-white rounded-[1rem] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shadow-lg shadow-slate-900/20"
+            >
+              <Send className="w-5 h-5 -rotate-45 ml-1 mb-1" />
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

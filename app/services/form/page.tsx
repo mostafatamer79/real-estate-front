@@ -5,9 +5,11 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, CheckCircle2, ChevronLeft, Calendar, Clock, Hash } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSettings } from "@/context/SettingsContext";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
 import { toast } from "react-hot-toast";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 type ServiceType = "postPurchase" | "legal" | "construction" | "marketing" | "leasing" | "visit" | "other";
 
@@ -30,7 +32,7 @@ const serviceOptions: Record<ServiceType, string[]> = {
   postPurchase: ["الغاز", "نقل وتركيب الأثاث", "التأمين على المنزل", "الصيانة (سباكة / كهرباء)", "خدمة التنظيف", "تنسيق حدائق", "أنظمة أمنية", "أخرى"],
   legal: [],
   construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
-  marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية", "أخرى"],
+  marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية (وسائل التواصل الاجتماعي)", "حملة إعلانية (إعلانات طرق/تقليدية)", "أخرى"],
   leasing: ["تأجير العقار", "إدارة عقود الإيجار", "تحصيل الإيجارات", "أخرى"],
   visit: ["زيارة شخصية", "زيارة بالنيابة", "تصوير العقار", "تقرير مفصل", "جولة مع الوكيل", "أخرى"],
   other: ["التقييم العقاري", "المسح الهندسي",  "أخرى"],
@@ -61,8 +63,33 @@ function ServiceFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, token, isAuthenticated } = useAuth();
+  const { settings } = useSettings();
   const serviceType = (searchParams.get("type") || "postPurchase") as ServiceType;
   const config = serviceConfig[serviceType];
+
+  const moduleKey = `services_${serviceType}`;
+  const status: 'enabled' | 'soon' | 'disabled' = ((settings.moduleFlags as any)?.[moduleKey] as any) || 'enabled';
+  const msg = ((settings.moduleMessages as any)?.[moduleKey] as any) || '';
+  const isAdmin = (user as any)?.role === 'admin';
+  const isPreview = searchParams.get('preview') === '1';
+
+  // Disabled modules are removed from UI and blocked from direct navigation for everyone.
+  if (status === 'disabled') {
+    router.replace('/services');
+    return null;
+  }
+  // "Soon" modules are visible as disabled; direct navigation is blocked unless admin explicitly previews.
+  if (status === 'soon' && !(isAdmin && isPreview)) {
+    return <ComingSoonOverlay sectionName={config?.title || "الخدمات"} message={msg} isAdmin={isAdmin} />;
+  }
+
+  // Look up price from global settings
+  const getServicePrice = (service: string): number | null => {
+    if (!service || service === "أخرى") return null;
+    const key = `service_price_${serviceType}_${service}`.replace(/\s+/g, '_').toLowerCase();
+    const price = settings.servicePrices[key];
+    return price !== undefined ? price : null;
+  };
 
   const [formData, setFormData] = useState({
     name: "", phone: "", city: "", district: "",
@@ -331,6 +358,43 @@ function ServiceFormContent() {
                   placeholder="اشرح لنا حاجتك بالتفصيل..."
                 />
               </motion.div>
+
+              {/* Price Summary */}
+              {formData.service && formData.service !== "أخرى" && (() => {
+                const price = getServicePrice(formData.service);
+                const qty = parseInt(formData.quantity || "1") || 1;
+                return (
+                  <motion.div 
+                    key={formData.service}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white/30">سعر الخدمة التقديري</span>
+                      <span className="text-xl font-black text-white">
+                        {price !== null
+                          ? qty > 1
+                            ? <>{(price * qty).toLocaleString('ar-SA')} <span className="text-xs text-white/40">ريال ({qty} × {price.toLocaleString('ar-SA')})</span></>
+                            : <>{price.toLocaleString('ar-SA')} <span className="text-xs text-white/40">ريال</span></>
+                          : <span className="text-sm text-white/50">يحدد بعد المراجعة</span>
+                        }
+                      </span>
+                    </div>
+                    {price !== null && settings.taxPercentage > 0 && (
+                      <div className="flex justify-between items-center border-t border-white/[0.06] pt-3">
+                        <span className="text-[9px] font-black text-white/20 uppercase">شامل ضريبة {settings.taxPercentage}%</span>
+                        <span className="text-sm font-black text-white/50">
+                          {((price * qty) * (1 + settings.taxPercentage / 100)).toLocaleString('ar-SA')} ريال
+                        </span>
+                      </div>
+                    )}
+                    <p className="text-[9px] font-bold text-white/20 leading-relaxed uppercase tracking-wider">
+                      * سيتم تحديد السعر النهائي بدقة من قبل الفريق المختص بعد مراجعة الطلب.
+                    </p>
+                  </motion.div>
+                );
+              })()}
 
               {/* Terms Toggle — same white/[0.03] bg-white flip as other UI */}
               <motion.div variants={itemVariants} className="pt-2">

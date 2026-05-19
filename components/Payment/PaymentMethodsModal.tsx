@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Wallet, CreditCard, Calendar, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { financialApi } from '@/lib/api';
+import { apiClient } from '@/lib/client';
 import toast from 'react-hot-toast';
 
 interface PaymentMethodsModalProps {
@@ -12,11 +13,12 @@ interface PaymentMethodsModalProps {
   onClose: () => void;
   bookingId?: string;
   invoiceId?: string;
+  subscriptionId?: string;
   price: number;
   onPaymentSuccess: () => void;
 }
 
-export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoiceId, price, onPaymentSuccess }: PaymentMethodsModalProps) {
+export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoiceId, subscriptionId, price, onPaymentSuccess }: PaymentMethodsModalProps) {
   const { t, language } = useLanguage();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -48,9 +50,35 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
     setProcessing(true);
     try {
       const methodToPay = selectedMethod === 'installments' ? selectedInstallment : selectedMethod;
+      const subscriptionMethodMap: Record<string, string> = {
+        balance: 'نقدي',
+        credit: 'بطاقة ائتمان',
+        installments: 'بطاقة ائتمان',
+        tamara: 'بطاقة ائتمان',
+        tabby: 'بطاقة ائتمان',
+      };
       // Logic for different payment methods
       if (invoiceId) {
         await financialApi.payInvoice(invoiceId, methodToPay as string);
+        toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
+      } else if (subscriptionId) {
+        await apiClient.post(`/subscriptions/${subscriptionId}/activate`, {
+          paymentMethod: subscriptionMethodMap[methodToPay as string] || 'بطاقة ائتمان',
+        });
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const refreshRes = await apiClient.post('/auth/refresh', { refreshToken });
+          if (refreshRes.data?.accessToken) {
+            localStorage.setItem('token', refreshRes.data.accessToken);
+          }
+          if (refreshRes.data?.refreshToken) {
+            localStorage.setItem('refreshToken', refreshRes.data.refreshToken);
+          }
+          if (refreshRes.data?.user) {
+            localStorage.setItem('user', JSON.stringify(refreshRes.data.user));
+            window.dispatchEvent(new Event('auth-change'));
+          }
+        }
         toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
       } else {
         // Fallback for non-invoice payments if any (simulated for now)

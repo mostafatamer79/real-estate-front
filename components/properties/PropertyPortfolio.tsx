@@ -11,9 +11,9 @@ import { Property } from "@/types/api";
 interface PropertyPortfolioProps {
   properties: Property[];
   loading: boolean;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   onView: (property: Property) => void;
-  onCreate: () => void;
+  onCreate?: () => void;
 }
 
 export function PropertyPortfolio({
@@ -52,6 +52,7 @@ export function PropertyPortfolio({
                         className={`h-12 bg-slate-50 border-gray-100 ${language === 'ar' ? 'pr-11' : 'pl-11'} focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-500/5 transition-all font-bold text-slate-900 rounded-2xl text-xs`}
                     />
                 </div>
+                {onCreate && (
                 <Button
                     onClick={onCreate}
                     className="h-12 px-6 bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-2 shadow-lg shadow-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5"
@@ -59,6 +60,7 @@ export function PropertyPortfolio({
                     <Plus className="w-4 h-4" />
                     <span className="hidden sm:inline">{t('bm.offer.new')}</span>
                 </Button>
+                )}
            </div>
         </div>
       </div>
@@ -76,12 +78,14 @@ export function PropertyPortfolio({
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">{t('pm.list.empty')}</h3>
             <p className="text-slate-500 text-sm mb-8 max-w-xs mx-auto font-medium">{t('pm.list.emptyDesc')}</p>
+            {onCreate && (
             <Button 
                 onClick={onCreate} 
                 className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest px-8 h-12 shadow-sm transition-all"
             >
                {t('pm.list.createFirst')}
             </Button>
+            )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -101,12 +105,14 @@ export function PropertyPortfolio({
                             <span className="px-3 py-1 bg-slate-50 text-[10px] font-black uppercase tracking-wider rounded-lg text-slate-600 border border-slate-100 group-hover:border-slate-200 group-hover:bg-white transition-colors">
                                 {t(`property.type.${property.type}`) || property.type}
                             </span>
+                             {onDelete && (
                              <button 
                                 className="w-8 h-8 flex items-center justify-center bg-white border border-gray-100 rounded-lg shadow-sm hover:bg-red-50 hover:border-red-100 hover:text-red-600 transition-all opacity-40 group-hover:opacity-100" 
                                 onClick={(e) => { e.stopPropagation(); onDelete(property.id); }}
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
+                            )}
                         </div>
                      </div>
                      
