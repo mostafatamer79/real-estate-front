@@ -706,11 +706,12 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Topbar in sidebar */}
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100 shrink-0">
           <Image
-            src="/icons/black.png"
+            src={settings.logoBlackUrl || '/icons/black.png'}
             alt="Logo"
-            width={100}
-            height={32}
-            className="object-contain h-8 w-auto"
+            width={200}
+            height={settings.logoHeight || 40}
+            className="object-contain w-auto"
+            style={{ height: `${settings.logoHeight || 40}px` }}
             priority
           />
           <button type="button" onClick={() => setProfileOpen(true)}>

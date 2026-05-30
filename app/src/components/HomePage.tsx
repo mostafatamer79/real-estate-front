@@ -48,11 +48,12 @@ export default function HomePage() {
             <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
           ) : (
             <Image
-              src="/icons/white.png"
+              src={settings.logoWhiteUrl || '/icons/white.png'}
               alt={settings.appName}
-              width={240}
-              height={80}
-              className="object-contain h-20 w-auto"
+              width={480}
+              height={(settings.logoHeight || 40) * 3}
+              className="object-contain w-auto"
+              style={{ height: `${(settings.logoHeight || 40) * 3}px` }}
               priority
             />
           )}

@@ -178,11 +178,12 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         {/* Logo Section */}
         <div className="p-6 border-b border-white/5 flex items-center gap-3">
           <Image
-            src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a \u0627\u0628\u064a\u0636.png"
+            src={settings.logoWhiteUrl || '/icons/white.png'}
             alt="Logo"
-            width={isSidebarOpen ? 110 : 36}
-            height={36}
-            className="object-contain h-9 w-auto transition-all duration-300"
+            width={isSidebarOpen ? 150 : 44}
+            height={settings.logoHeight || 44}
+            className="object-contain w-auto transition-all duration-300"
+            style={{ height: isSidebarOpen ? `${settings.logoHeight || 44}px` : '36px' }}
             priority
           />
           {isSidebarOpen && (
@@ -327,11 +328,12 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 shrink-0">
            <div className="flex items-center gap-4">
              <Image
-               src="/icons/black.png"
+               src={settings.logoBlackUrl || '/icons/black.png'}
                alt="Logo"
-               width={100}
-               height={32}
-               className="object-contain h-8 w-auto"
+               width={200}
+               height={settings.logoHeight || 40}
+               className="object-contain w-auto"
+               style={{ height: `${settings.logoHeight || 40}px` }}
              />
            </div>
         </header>

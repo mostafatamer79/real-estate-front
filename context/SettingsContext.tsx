@@ -18,6 +18,9 @@ export interface GlobalSettings {
     isDark: boolean;
     contactEmail: string;
     contactPhone: string;
+    logoWhiteUrl: string;
+    logoBlackUrl: string;
+    logoHeight: number;
 
     // Pricing
     appointmentPrice: number;
@@ -81,6 +84,9 @@ const defaultSettings: GlobalSettings = {
     isDark: false,
     contactEmail: "info@deeraqarak.com",
     contactPhone: "+966555555555",
+    logoWhiteUrl: "/icons/white.png",
+    logoBlackUrl: "/icons/black.png",
+    logoHeight: 40,
     appointmentPrice: 0,
     purchaseFeePercentage: 2.5,
     taxPercentage: 15,
@@ -242,7 +248,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             const entries: Array<{ key: string; value: string; description?: string }> = [];
 
             // Theme / Identity keys
-            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone"];
+            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "logoWhiteUrl", "logoBlackUrl", "logoHeight"];
             themeKeys.forEach((key) => {
                 entries.push({
                     key: `theme_${key}`,

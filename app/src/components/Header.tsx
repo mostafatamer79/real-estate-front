@@ -138,11 +138,12 @@ export default function Header() {
           onClick={() => router.push('/details')}
         >
           <Image
-            src="/icons/white.png"
+            src={settings.logoWhiteUrl || '/icons/white.png'}
             alt={t('project.name')}
-            width={120}
-            height={40}
-            className="object-contain h-10 w-auto group-hover:opacity-80 transition-opacity"
+            width={280}
+            height={settings.logoHeight || 40}
+            className="object-contain w-auto group-hover:opacity-80 transition-opacity"
+            style={{ height: `${settings.logoHeight || 40}px` }}
             priority
           />
         </div>

@@ -6,7 +6,7 @@ import {
     Settings2, Save, Palette, Type, DollarSign, ShieldAlert, 
     ArrowRight, Loader2, History, X, ShieldCheck, Sparkles, 
     ChevronDown, Moon, Sun, Search, RefreshCw, Smartphone, 
-    LayoutGrid, Zap, ShieldQuestion
+    LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -350,6 +350,35 @@ function PricingTab({
 }
 
 function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
+    const [uploadingWhite, setUploadingWhite] = React.useState(false);
+    const [uploadingBlack, setUploadingBlack] = React.useState(false);
+
+    const uploadLogo = async (file: File, type: 'white' | 'black') => {
+        const setter = type === 'white' ? setUploadingWhite : setUploadingBlack;
+        setter(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/user/upload`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData,
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const url = data.url || data.imageUrl || data.path;
+                if (url) {
+                    updateSettings(type === 'white' ? { logoWhiteUrl: url } : { logoBlackUrl: url });
+                }
+            }
+        } catch (e) {
+            console.error('Logo upload failed', e);
+        } finally {
+            setter(false);
+        }
+    };
+
     return (
         <div className="p-8 space-y-10">
             <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
@@ -359,6 +388,90 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 <div>
                     <h3 className="text-xl font-black">هوية النظام</h3>
                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">تخصيص الألوان والسمات البصرية</p>
+                </div>
+            </div>
+
+            {/* ── Logo Management ── */}
+            <div className="space-y-6">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <ImageIcon className="w-3 h-3" /> إدارة الشعار
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* White Logo */}
+                    <div className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-4">
+                        <p className="text-[11px] font-black text-white/60 uppercase tracking-widest">الشعار الأبيض (على الخلفيات الداكنة)</p>
+                        <div className="flex items-center justify-center h-20">
+                            {localSettings.logoWhiteUrl ? (
+                                <img src={localSettings.logoWhiteUrl} alt="white logo" className="max-h-full max-w-full object-contain" />
+                            ) : (
+                                <div className="text-white/20 text-[10px] font-black uppercase">لا يوجد شعار</div>
+                            )}
+                        </div>
+                        <label className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all">
+                            {uploadingWhite ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                            {uploadingWhite ? 'جارٍ الرفع...' : 'رفع الشعار الأبيض'}
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) uploadLogo(e.target.files[0], 'white'); }} />
+                        </label>
+                        <input
+                            type="text"
+                            value={localSettings.logoWhiteUrl || ''}
+                            onChange={(e) => updateSettings({ logoWhiteUrl: e.target.value })}
+                            placeholder="أو أدخل رابط الشعار مباشرة..."
+                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-[11px] font-mono text-white/60 outline-none focus:border-white/30"
+                        />
+                    </div>
+                    {/* Black Logo */}
+                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                        <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">الشعار الأسود (على الخلفيات الفاتحة)</p>
+                        <div className="flex items-center justify-center h-20">
+                            {localSettings.logoBlackUrl ? (
+                                <img src={localSettings.logoBlackUrl} alt="black logo" className="max-h-full max-w-full object-contain" />
+                            ) : (
+                                <div className="text-slate-300 text-[10px] font-black uppercase">لا يوجد شعار</div>
+                            )}
+                        </div>
+                        <label className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-slate-900 hover:bg-black text-white text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all">
+                            {uploadingBlack ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                            {uploadingBlack ? 'جارٍ الرفع...' : 'رفع الشعار الأسود'}
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) uploadLogo(e.target.files[0], 'black'); }} />
+                        </label>
+                        <input
+                            type="text"
+                            value={localSettings.logoBlackUrl || ''}
+                            onChange={(e) => updateSettings({ logoBlackUrl: e.target.value })}
+                            placeholder="أو أدخل رابط الشعار مباشرة..."
+                            className="w-full bg-white border border-slate-100 rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
+                        />
+                    </div>
+                </div>
+                {/* Size Slider */}
+                <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-black text-slate-600 uppercase tracking-widest">حجم الشعار في كل الصفحات</label>
+                        <span className="text-2xl font-black text-slate-900">{localSettings.logoHeight || 40}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
+                    </div>
+                    <input
+                        type="range"
+                        min={24}
+                        max={120}
+                        step={2}
+                        value={localSettings.logoHeight || 40}
+                        onChange={(e) => updateSettings({ logoHeight: parseInt(e.target.value) })}
+                        className="w-full accent-slate-900 h-2"
+                    />
+                    <div className="flex justify-between text-[10px] font-black text-slate-300 uppercase">
+                        <span>24px صغير</span>
+                        <span>كبير 120px</span>
+                    </div>
+                    {/* Live preview */}
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                        <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${(localSettings.logoHeight || 40) + 32}px` }}>
+                            {localSettings.logoWhiteUrl && <img src={localSettings.logoWhiteUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
+                        </div>
+                        <div className="rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-4" style={{ minHeight: `${(localSettings.logoHeight || 40) + 32}px` }}>
+                            {localSettings.logoBlackUrl && <img src={localSettings.logoBlackUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
+                        </div>
+                    </div>
                 </div>
             </div>
 

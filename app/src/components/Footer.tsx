@@ -55,11 +55,12 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-4">
               <Image
-                src="/icons/white.png"
+                src={settings.logoWhiteUrl || '/icons/white.png'}
                 alt={t('project.name')}
-                width={160}
-                height={52}
-                className="object-contain h-13 w-auto"
+                width={320}
+                height={(settings.logoHeight || 40) * 1.5}
+                className="object-contain w-auto"
+                style={{ height: `${(settings.logoHeight || 40) * 1.5}px` }}
               />
               <p className="text-slate-400 text-sm leading-relaxed max-w-[420px]">
                 {t('footer.brand_desc')}
