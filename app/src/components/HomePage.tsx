@@ -43,23 +43,22 @@ export default function HomePage() {
 
       {/* Splash — shown while not logged in and sign-in not yet shown */}
       {!isLoggedIn && !showSignIn && (
-          {/* Logo */}
-          <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700">
-            {isLoading ? (
-              <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
-            ) : (
-              <Image
-                src="/icons/white.png"
-                alt={settings.appName}
-                width={240}
-                height={80}
-                className="object-contain h-20 w-auto"
-                priority
-              />
-            )}
-            <p className="text-white/30 text-sm font-medium">
-              {isLoading ? '' : settings.description}
-            </p>
+        <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700">
+          {isLoading ? (
+            <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
+          ) : (
+            <Image
+              src="/icons/white.png"
+              alt={settings.appName}
+              width={240}
+              height={80}
+              className="object-contain h-20 w-auto"
+              priority
+            />
+          )}
+          <p className="text-white/30 text-sm font-medium">
+            {isLoading ? '' : settings.description}
+          </p>
           {/* Loading dots */}
           <div className="flex gap-1.5 mt-4">
             {[0, 1, 2].map((i) => (
