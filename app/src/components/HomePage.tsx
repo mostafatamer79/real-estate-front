@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import SignIn from "../../login/page";
 import { useRouter } from 'next/navigation';
 import { useSettings } from '@/context/SettingsContext';
@@ -42,18 +43,23 @@ export default function HomePage() {
 
       {/* Splash — shown while not logged in and sign-in not yet shown */}
       {!isLoggedIn && !showSignIn && (
-        <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700">
-          {/* App name from settings */}
-          <h1 className="text-5xl sm:text-6xl font-black text-white tracking-tight text-center transition-all duration-500">
+          {/* Logo */}
+          <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700">
             {isLoading ? (
-              <span className="inline-block w-48 h-10 bg-white/5 rounded-2xl animate-pulse" />
+              <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
             ) : (
-              settings.appName
+              <Image
+                src="/icons/white.png"
+                alt={settings.appName}
+                width={240}
+                height={80}
+                className="object-contain h-20 w-auto"
+                priority
+              />
             )}
-          </h1>
-          <p className="text-white/30 text-sm font-medium">
-            {isLoading ? '' : settings.description}
-          </p>
+            <p className="text-white/30 text-sm font-medium">
+              {isLoading ? '' : settings.description}
+            </p>
           {/* Loading dots */}
           <div className="flex gap-1.5 mt-4">
             {[0, 1, 2].map((i) => (

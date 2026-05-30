@@ -1,5 +1,6 @@
 "use client";
 import React from 'react'
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { Card, CardFooter, CardHeader, CardTitle } from './ui/card'
 import {
@@ -187,7 +188,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                         <FileText className='h-8 w-8 text-blue-600' />
                                         <div>
                                             <CardTitle className='text-3xl font-bold text-gray-900'>{t('invoice.title')}</CardTitle>
-                                            <p className='text-gray-600'>{t('project.name')} - {t('pm.legal.title')}</p>
+                                            <Image src="/icons/black.png" alt="Logo" width={100} height={32} className="object-contain h-8 w-auto mb-1" />
+                                            <p className='text-gray-600'>{t('pm.legal.title')}</p>
                                         </div>
                                     </div>
 

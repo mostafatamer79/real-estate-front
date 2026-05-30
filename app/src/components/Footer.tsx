@@ -55,7 +55,7 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-4">
               <Image
-                src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a \u0627\u0628\u064a\u0636.png"
+                src="/icons/white.png"
                 alt={t('project.name')}
                 width={160}
                 height={52}

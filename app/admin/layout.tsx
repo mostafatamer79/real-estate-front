@@ -327,7 +327,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 shrink-0">
            <div className="flex items-center gap-4">
              <Image
-               src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a.png"
+               src="/icons/black.png"
                alt="Logo"
                width={100}
                height={32}

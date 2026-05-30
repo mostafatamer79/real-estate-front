@@ -26,10 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const settings = await fetchPublicSettings();
     const appName =
-      settings.find((s) => s.key === "theme_appName")?.value || "الوساطة الرقمية";
+      settings.find((s) => s.key === "theme_appName")?.value || "دير عقارك";
     const description =
       settings.find((s) => s.key === "theme_description")?.value ||
-      "الوساطة الرقمية - منصة عقارية شاملة";
+      "دير عقارك - منصة عقارية شاملة";
 
     return {
       title: appName,
@@ -40,8 +40,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: "الوساطة الرقمية",
-    description: "الوساطة الرقمية - منصة عقارية شاملة",
+    title: "دير عقارك",
+    description: "دير عقارك - منصة عقارية شاملة",
   };
 }
 

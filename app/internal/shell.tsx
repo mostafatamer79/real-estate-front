@@ -706,7 +706,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Topbar in sidebar */}
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100 shrink-0">
           <Image
-            src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a.png"
+            src="/icons/black.png"
             alt="Logo"
             width={100}
             height={32}
