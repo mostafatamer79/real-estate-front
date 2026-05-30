@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import api from "@/lib/api";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -704,9 +705,14 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       >
         {/* Topbar in sidebar */}
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100 shrink-0">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            {user.firstName}
-          </span>
+          <Image
+            src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a.png"
+            alt="Logo"
+            width={100}
+            height={32}
+            className="object-contain h-8 w-auto"
+            priority
+          />
           <button type="button" onClick={() => setProfileOpen(true)}>
             {avatarNode("w-9 h-9 rounded-full bg-slate-950", "text-[11px] font-black text-white")}
           </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -53,10 +54,13 @@ export default function Footer() {
           {/* Brand Section */}
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="space-y-4">
-              <h2 className="text-3xl font-black tracking-tight text-white">
-                {t("project.name")}
-                <span className="text-indigo-500">.</span>
-              </h2>
+              <Image
+                src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a \u0627\u0628\u064a\u0636.png"
+                alt={t('project.name')}
+                width={160}
+                height={52}
+                className="object-contain h-13 w-auto"
+              />
               <p className="text-slate-400 text-sm leading-relaxed max-w-[420px]">
                 {t('footer.brand_desc')}
               </p>

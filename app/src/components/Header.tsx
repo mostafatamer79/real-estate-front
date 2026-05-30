@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
@@ -136,10 +137,14 @@ export default function Header() {
           className="flex items-center gap-3 cursor-pointer group"
           onClick={() => router.push('/details')}
         >
-          <h1 className="text-2xl font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">
-             {t('project.name')}
-          </h1>
-
+          <Image
+            src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a \u0627\u0628\u064a\u0636.png"
+            alt={t('project.name')}
+            width={120}
+            height={40}
+            className="object-contain h-10 w-auto group-hover:opacity-80 transition-opacity"
+            priority
+          />
         </div>
 
         {/* Desktop Navigation */}

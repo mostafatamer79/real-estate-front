@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { 
   LayoutDashboard, 
@@ -176,16 +177,21 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       >
         {/* Logo Section */}
         <div className="p-6 border-b border-white/5 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0">
-            <Briefcase className="w-5 h-5 text-slate-950" />
-          </div>
+          <Image
+            src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a \u0627\u0628\u064a\u0636.png"
+            alt="Logo"
+            width={isSidebarOpen ? 110 : 36}
+            height={36}
+            className="object-contain h-9 w-auto transition-all duration-300"
+            priority
+          />
           {isSidebarOpen && (
             <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="font-black tracking-tighter text-lg whitespace-nowrap uppercase"
             >
-              {settings.appName} <span className="text-white/40">{settings.textOverrides?.['admin_badge'] || 'ADMIN'}</span>
+              <span className="text-white/40">{settings.textOverrides?.['admin_badge'] || 'ADMIN'}</span>
             </motion.span>
           )}
         </div>
@@ -317,10 +323,16 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header Placeholder */}
-        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-end px-8 shrink-0">
+        {/* Top Header */}
+        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 shrink-0">
            <div className="flex items-center gap-4">
-             {/* Add Notifications or Language Switcher if needed */}
+             <Image
+               src="/icons/\u0627\u0644\u0645\u0641\u0631\u063a.png"
+               alt="Logo"
+               width={100}
+               height={32}
+               className="object-contain h-8 w-auto"
+             />
            </div>
         </header>
 
