@@ -465,10 +465,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </div>
                     {/* Live preview */}
                     <div className="mt-4 grid grid-cols-2 gap-4">
-                        <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${(localSettings.logoHeight || 40) + 32}px` }}>
+                        <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
                             {localSettings.logoWhiteUrl && <img src={localSettings.logoWhiteUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
-                        <div className="rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-4" style={{ minHeight: `${(localSettings.logoHeight || 40) + 32}px` }}>
+                        <div className="rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
                             {localSettings.logoBlackUrl && <img src={localSettings.logoBlackUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
                     </div>
