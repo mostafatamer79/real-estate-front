@@ -74,6 +74,14 @@ export default function CustomerService() {
   const [faqsLoading, setFaqsLoading] = useState(false);
   const [faqsError, setFaqsError] = useState<string | null>(null);
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/details");
+  };
+
   const refreshFaqs = async () => {
     setFaqsLoading(true);
     setFaqsError(null);
@@ -201,6 +209,14 @@ export default function CustomerService() {
       {/* Premium Header Container */}
       <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden">
           <div className="max-w-7xl mx-auto relative z-10">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="mb-8 inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 text-[11px] font-black text-slate-700 transition-all hover:border-slate-200 hover:bg-white hover:text-slate-950"
+              >
+                {language === 'ar' ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                {language === 'ar' ? 'رجوع' : 'Back'}
+              </button>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="space-y-3">
                       <motion.div 
