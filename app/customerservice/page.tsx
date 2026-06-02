@@ -236,23 +236,28 @@ export default function CustomerService() {
           {/* Contact Channels Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
-              { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone },
+              settings.contactPhone?.trim()
+                ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone }
+                : null,
               { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: settings.contactEmail },
               { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
-            ].map((item) => (
-              <motion.a 
-                key={item.id}
-                whileHover={{ y: -5 }}
-                href={item.href}
-                className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
-              >
-                <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
-                    <item.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-sm font-black text-slate-900 mb-1">{item.title}</h3>
-                <p className="text-xs text-slate-400 font-bold font-mono" dir="ltr">{item.val}</p>
-              </motion.a>
-            ))}
+            ].filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => {
+              const Icon = item.icon;
+              return (
+                <motion.a 
+                  key={item.id}
+                  whileHover={{ y: -5 }}
+                  href={item.href}
+                  className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
+                >
+                  <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
+                      <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-sm font-black text-slate-900 mb-1">{item.title}</h3>
+                  <p className="text-xs text-slate-400 font-bold font-mono" dir="ltr">{item.val}</p>
+                </motion.a>
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

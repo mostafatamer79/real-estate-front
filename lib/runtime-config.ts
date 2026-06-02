@@ -25,5 +25,28 @@ export async function fetchPublicSettings(): Promise<Array<{ key: string; value:
     throw new Error(`Failed to fetch public settings: ${res.status}`);
   }
 
-  return res.json();
+  const settings = await res.json();
+  return Array.isArray(settings)
+    ? settings.map((setting) => ({
+        ...setting,
+        value: normalizeLegacyPublicSetting(setting.key, setting.value),
+      }))
+    : settings;
+}
+
+function normalizeLegacyPublicSetting(key: string, value: string): string {
+  if (typeof value !== "string") return value;
+
+  if (key === "theme_appName" || key === "txt_project.name") {
+    if (value === "دير عقارك") return "الوساطة الرقمية";
+    if (value === "Deer Aqarak") return "Digital Brokerage";
+  }
+
+  if (key === "theme_description") {
+    return value
+      .replace(/دير عقارك/g, "الوساطة الرقمية")
+      .replace(/Deer Aqarak/g, "Digital Brokerage");
+  }
+
+  return value;
 }

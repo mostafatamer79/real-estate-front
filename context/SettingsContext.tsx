@@ -84,7 +84,7 @@ const defaultSettings: GlobalSettings = {
     description: "الوساطة الرقمية - منصة عقارية شاملة",
     isDark: false,
     contactEmail: "info@digital-brokerage.com",
-    contactPhone: "+966555555555",
+    contactPhone: "",
     contactTwitter: "@DigitalBrokerage",
     logoWhiteUrl: "/icons/white.png",
     logoBlackUrl: "/icons/black.png",
