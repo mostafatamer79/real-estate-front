@@ -538,6 +538,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             <label className="text-[11px] font-black text-slate-600">اسم النظام (العلامة التجارية)</label>
                             <input type="text" value={localSettings.appName} onChange={(e) => updateSettings({ appName: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 shadow-inner" placeholder="اسم النظام..." />
                         </div>
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-black text-slate-600">وصف النظام في شاشة البداية</label>
+                            <input type="text" value={localSettings.description || ''} onChange={(e) => updateSettings({ description: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="وصف مختصر يظهر تحت الشعار..." />
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">لاحقة العنوان (Badge)</label>
@@ -555,6 +559,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">رقم الهاتف للتواصل</label>
                             <input type="text" value={localSettings.contactPhone} onChange={(e) => updateSettings({ contactPhone: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="+966..." />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-black text-slate-600">حساب X / تويتر</label>
+                            <input type="text" value={localSettings.contactTwitter || ''} onChange={(e) => updateSettings({ contactTwitter: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="@account أو رابط الحساب" dir="ltr" />
                         </div>
                         <div className="pt-4">
                             <label className="text-[11px] font-black text-slate-600 mb-2 block">النمط الليلي / النهاري</label>

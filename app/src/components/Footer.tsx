@@ -8,11 +8,18 @@ import { useAuth } from "@/hooks/useAuth";
 import SoonBadge from "./SoonBadge";
 import { 
   Shield, BookOpen, FileCheck, Phone, Mail, 
-  Instagram, Twitter, Facebook, ArrowRight, 
+  Instagram, Facebook, ArrowRight, 
   MapPin, Send, MessageCircle, 
   X
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+function getXProfileUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "#";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://x.com/${trimmed.replace(/^@/, "")}`;
+}
 
 export default function Footer() {
   const { t, language } = useLanguage();
@@ -68,7 +75,7 @@ export default function Footer() {
             </div>
             <div className="flex gap-4">
               {[
-                { icon: X, href: "#" },
+                { icon: X, href: getXProfileUrl(settings.contactTwitter) },
                 { icon: Instagram, href: "#" },
                 { icon: Facebook, href: "#" },
               ].map((social, idx) => (

@@ -18,7 +18,7 @@ export function getApiBaseUrl(): string {
 
 export async function fetchPublicSettings(): Promise<Array<{ key: string; value: string }>> {
   const res = await fetch(`${getApiBaseUrl()}/settings/public`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
   });
 
   if (!res.ok) {

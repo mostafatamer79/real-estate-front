@@ -23,12 +23,31 @@ import { faqData } from "./faq-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { customerServiceFaqApi, customerServiceFeedbackApi, customerServiceFaqCategoryApi, type CustomerServiceFaq, type CustomerServiceFaqCategory } from "@/lib/api";
+import { useSettings } from "@/context/SettingsContext";
+
+function getXProfileUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "#";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://x.com/${trimmed.replace(/^@/, "")}`;
+}
+
+function getXDisplayHandle(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    const path = trimmed.replace(/\/+$/, "").split("/").pop();
+    return path ? `@${path}` : trimmed;
+  }
+  return trimmed.startsWith("@") ? trimmed : `@${trimmed}`;
+}
 
 export default function CustomerService() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { user } = useAuth();
   const { isOpen, message, isAdmin } = useSectionGuard('customerservice');
+  const { settings } = useSettings();
 
   const categoryIcons: Record<string, React.ElementType> = {
     "أسئلة عامة": HelpCircle,
@@ -217,9 +236,9 @@ export default function CustomerService() {
           {/* Contact Channels Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
-              { id: 'phone', href: "tel:+966555555555", icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: '+966 5 5555 5555' },
-              { id: 'email', href: "mailto:Info@Deer_Aqarak.com", icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: 'Info@Deer_Aqarak.com' },
-              { id: 'x', href: "https://x.com/Deer_Aqarak", icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: '@Deer_Aqarak' }
+              { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone },
+              { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: settings.contactEmail },
+              { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
             ].map((item) => (
               <motion.a 
                 key={item.id}

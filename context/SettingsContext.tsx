@@ -18,6 +18,7 @@ export interface GlobalSettings {
     isDark: boolean;
     contactEmail: string;
     contactPhone: string;
+    contactTwitter: string;
     logoWhiteUrl: string;
     logoBlackUrl: string;
     logoHeight: number;
@@ -79,11 +80,12 @@ const defaultSettings: GlobalSettings = {
     soonBadgeBg: "#ffffff",
     soonBadgeText: "#000000",
     fontSize: "15px",
-    appName: "دير عقارك",
-    description: "دير عقارك - منصة عقارية شاملة",
+    appName: "الوساطة الرقمية",
+    description: "الوساطة الرقمية - منصة عقارية شاملة",
     isDark: false,
-    contactEmail: "info@deeraqarak.com",
+    contactEmail: "info@digital-brokerage.com",
     contactPhone: "+966555555555",
+    contactTwitter: "@DigitalBrokerage",
     logoWhiteUrl: "/icons/white.png",
     logoBlackUrl: "/icons/black.png",
     logoHeight: 40,
@@ -248,7 +250,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             const entries: Array<{ key: string; value: string; description?: string }> = [];
 
             // Theme / Identity keys
-            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "logoWhiteUrl", "logoBlackUrl", "logoHeight"];
+            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "contactTwitter", "logoWhiteUrl", "logoBlackUrl", "logoHeight"];
             themeKeys.forEach((key) => {
                 entries.push({
                     key: `theme_${key}`,
