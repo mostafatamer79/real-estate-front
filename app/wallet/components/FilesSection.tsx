@@ -22,6 +22,20 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     const [showInvoiceModal, setShowInvoiceModal] = useState(false)
     const [selectedInvoice, setSelectedInvoice] = useState<any>(null)
 
+    const resolveFileUrl = (url?: string) => {
+        if (!url) return ''
+        if (url.startsWith('http://') || url.startsWith('https://')) return url
+        const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api').replace(/\/+$/, '').replace(/\/api$/, '')
+        return `${apiBase}${url.startsWith('/') ? url : `/${url}`}`
+    }
+
+    const getFileTypeLabel = (file: any) => {
+        if (file.type === 'invoice') return t('wallet.invoice')
+        if (file.type === 'scan_report_pdf') return 'PDF'
+        if (file.type === 'scan_report_excel') return 'Excel'
+        return t('wallet.commission')
+    }
+
     const handleViewFile = (file: any) => {
         if (file.type === 'invoice' && file.raw) {
             const inv = file.raw;
@@ -54,7 +68,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
         } else {
             // For other files, or fallback, just open URL
             if (file.url) {
-                window.open(file.url, '_blank');
+                window.open(resolveFileUrl(file.url), '_blank');
             }
         }
     }
@@ -85,12 +99,22 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                             <div className='p-2 bg-blue-50 text-blue-600 rounded-lg'>
                                                 <FileText className='w-5 h-5' />
                                             </div>
-                                            <span className='font-bold text-slate-700'>{file.name}</span>
+                                            <div>
+                                                <span className='font-bold text-slate-700'>{file.name}</span>
+                                                {file.locationName && (
+                                                    <p className='text-[11px] font-bold text-slate-400 mt-1'>
+                                                        اسم المكان: {file.locationName}
+                                                    </p>
+                                                )}
+                                                {file.description && !file.locationName && (
+                                                    <p className='text-[11px] font-bold text-slate-400 mt-1'>{file.description}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </TableCell>
                                     <TableCell className='text-right py-4'>
                                         <span className='px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
-                                            {file.type === 'invoice' ? t('wallet.invoice') : t('wallet.commission')}
+                                            {getFileTypeLabel(file)}
                                         </span>
                                     </TableCell>
                                     <TableCell className='text-right text-slate-400 font-bold py-4'>
@@ -104,7 +128,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                                 <Eye className='w-4 h-4' />
                                             </Button>
                                             <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900'
-                                                onClick={() => window.open(file.url, '_blank')}
+                                                onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
                                             >
                                                 <Download className='w-4 h-4' />
                                             </Button>

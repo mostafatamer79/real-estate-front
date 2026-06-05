@@ -54,10 +54,7 @@ export default function SignIn({ onClose }: SignInProps) {
           .filter(([, value]) => value === true || value === 'manage' || value === 'view')
           .map(([key]) => key);
         const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
-        if (u.role === 'admin') router.push('/admin/dashboard');
-        else if ((['manager', 'employee', 'viewer', 'collaborator'].includes(u.role) || hasDepartmentAccess) && hasDepartmentAccess) router.push('/internal');
-        else router.push('/details');
-      } else {
+
         router.push('/details');
       }
     }
@@ -70,8 +67,8 @@ export default function SignIn({ onClose }: SignInProps) {
 
     try {
       const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
-      const payload = isPhoneMode 
-        ? { phone } 
+      const payload = isPhoneMode
+        ? { phone }
         : { email };
 
       const response = await fetch(endpoint, {
@@ -96,7 +93,7 @@ export default function SignIn({ onClose }: SignInProps) {
       const userIdentifier = isPhoneMode ? phone : email;
       localStorage.setItem('pendingVerification', userIdentifier);
       router.push('/verify-otp');
-      
+
     } catch (err: unknown) {
       console.error('Registration error:', err);
       const message = err instanceof Error ? err.message : t('login.error.generic');
@@ -106,8 +103,8 @@ export default function SignIn({ onClose }: SignInProps) {
     }
   };
 
-  const isFormValid = isPhoneMode 
-    ? phone.trim().length > 0 
+  const isFormValid = isPhoneMode
+    ? phone.trim().length > 0
     : email.trim().length > 0;
 
   return (
@@ -125,14 +122,14 @@ export default function SignIn({ onClose }: SignInProps) {
       <div className="w-full max-w-md relative z-10">
         {/* Header/Back Link */}
         <div className="flex justify-between items-center mb-8">
-          <button 
+          <button
             onClick={() => router.back()}
             className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
           >
             <ArrowLeft className={`w-4 h-4 ${language === 'en' ? '' : 'rotate-180'}`} />
             <span className="text-sm font-medium">{t('common.back')}</span>
           </button>
-          
+
           <Link href="/customerservice" className="text-white/40 hover:text-white text-xs transition-colors underline underline-offset-4">
             {t('header.customerService')}
           </Link>
@@ -295,7 +292,7 @@ export default function SignIn({ onClose }: SignInProps) {
         </div>
 
         {/* Footer Info */}
-      
+
       </div>
     </div>
   );

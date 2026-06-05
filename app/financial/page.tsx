@@ -6,9 +6,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { 
-    LayoutDashboard, Receipt, Banknote, CreditCard, 
-    Calculator, FileText, Wallet, ArrowUpRight, 
+import {
+    LayoutDashboard, Receipt, Banknote, CreditCard,
+    Calculator, FileText, Wallet, ArrowUpRight,
     ArrowDownLeft, DollarSign, Briefcase, Loader2,
     TrendingUp, ShieldCheck, PieChart, Sparkles,
     ChevronLeft, MoreHorizontal, ArrowRight, Filter, Rocket
@@ -40,9 +40,9 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
             const user = JSON.parse(storedUser);
             const departments = user.departments || [];
             const hasDept = departments.some((d: string) => d.toLowerCase() === 'finance' || d.toLowerCase() === 'financial');
-            const hasPerm = (user.departmentPermissions?.finance && user.departmentPermissions.finance !== 'none') || 
+            const hasPerm = (user.departmentPermissions?.finance && user.departmentPermissions.finance !== 'none') ||
                            (user.departmentPermissions?.financial && user.departmentPermissions.financial !== 'none');
-            
+
             if (!['admin', 'finance', 'finance_admin', 'viewer', 'manager'].includes(user.role) && !hasDept && !hasPerm) {
                 router.push('/');
             }
@@ -68,22 +68,22 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
         <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8">
             <div className="space-y-4">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.2em]"
               >
-            
+
               </motion.div>
               <div className="space-y-2">
-                <motion.h1 
+                <motion.h1
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="text-3xl md:text-5xl font-black tracking-tight text-slate-950"
                 >
                   {t('fin.title')}
                 </motion.h1>
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -93,13 +93,13 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 </motion.p>
               </div>
             </div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-6"
             >
-        
+
             </motion.div>
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                                  <PlaceholderSection title={t('fin.settlements.title')} />
                              </TabsContent>
                              <TabsContent value="service_requests" className="m-0">
-                                 <ServiceRequestsTable 
+                                 <ServiceRequestsTable
                                     title={t('fin.tab.service_requests')}
                                     subtitle={t('fin.transactions.desc')}
                                     department="finance"
@@ -198,7 +198,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => router.push('/admin/dashboard')}
+              onClick={() => router.push('/details')}
               className="fixed bottom-6 left-6 w-12 h-12 rounded-full bg-slate-950 text-white flex items-center justify-center shadow-xl z-50 border border-white/10"
             >
               <ChevronLeft className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
@@ -218,7 +218,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
             try {
                 const data = await financialApi.getWorkspaceSummary();
                 setStats(data);
-            } catch (err) { console.error(err); } 
+            } catch (err) { console.error(err); }
             finally { setLoading(false); }
         };
         fetchStats();
@@ -243,11 +243,11 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {kpis.map((kpi, idx) => (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
-                      key={idx} 
+                      key={idx}
                       className="p-6 rounded-3xl bg-white border border-slate-100 hover:border-slate-300 transition-all duration-300 group"
                     >
                         <div className="flex items-center gap-4">
@@ -409,7 +409,7 @@ function TransactionsSection() {
             try {
                 const data = await financialApi.getAllTransactions();
                 setTransactions(data);
-            } catch (err) { console.error(err); } 
+            } catch (err) { console.error(err); }
             finally { setLoading(false); }
         };
         load();
@@ -444,11 +444,11 @@ function TransactionsSection() {
                           <TableRow><TableCell colSpan={6} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-300" /></TableCell></TableRow>
                         ) : transactions.length > 0 ? (
                             transactions.map((tx, idx) => (
-                                <motion.tr 
+                                <motion.tr
                                   initial={{ opacity: 0, x: 10 }}
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: idx * 0.05 }}
-                                  key={tx.id} 
+                                  key={tx.id}
                                   className="hover:bg-slate-50 transition-colors group"
                                 >
                                     <TableCell className="px-8 py-5">

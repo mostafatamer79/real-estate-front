@@ -21,6 +21,7 @@ export interface GlobalSettings {
     contactTwitter: string;
     logoWhiteUrl: string;
     logoBlackUrl: string;
+    reportCoverUrl: string;
     logoHeight: number;
 
     // Pricing
@@ -88,6 +89,7 @@ const defaultSettings: GlobalSettings = {
     contactTwitter: "@DigitalBrokerage",
     logoWhiteUrl: "/icons/white.png",
     logoBlackUrl: "/icons/black.png",
+    reportCoverUrl: "",
     logoHeight: 40,
     appointmentPrice: 0,
     purchaseFeePercentage: 2.5,
@@ -250,7 +252,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             const entries: Array<{ key: string; value: string; description?: string }> = [];
 
             // Theme / Identity keys
-            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "contactTwitter", "logoWhiteUrl", "logoBlackUrl", "logoHeight"];
+            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "contactTwitter", "logoWhiteUrl", "logoBlackUrl", "reportCoverUrl", "logoHeight"];
             themeKeys.forEach((key) => {
                 entries.push({
                     key: `theme_${key}`,

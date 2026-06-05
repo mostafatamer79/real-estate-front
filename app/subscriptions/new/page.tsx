@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, CheckCircle2, CreditCard, Loader2, Shield } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, CreditCard, Loader2, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { subscriptionsApi } from "@/lib/api";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
@@ -116,13 +116,23 @@ export default function NewSubscriptionPage() {
                 {t("sub.public.heroDesc")}
               </p>
             </div>
-            <button
-              onClick={() => router.push("/wallet")}
-              className="h-12 px-5 rounded-2xl bg-white text-slate-950 font-black text-sm hover:bg-slate-100 transition-colors flex items-center gap-2"
-            >
-              <CreditCard className="w-4 h-4" />
-              {t("action.wallet")}
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="h-12 px-5 rounded-2xl bg-white/10 text-white font-black text-sm hover:bg-white/15 transition-colors flex items-center justify-center gap-2 border border-white/15"
+              >
+                <ArrowRight className="w-4 h-4" />
+                رجوع
+              </button>
+              <button
+                onClick={() => router.push("/wallet")}
+                className="h-12 px-5 rounded-2xl bg-white text-slate-950 font-black text-sm hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
+              >
+                <CreditCard className="w-4 h-4" />
+                {t("action.wallet")}
+              </button>
+            </div>
           </div>
         </div>
 

@@ -531,6 +531,9 @@ export const financialApi = {
 
   createInvoice: (data: { amount: number; referenceType?: string; referenceId?: string; description?: string }): Promise<ApiResponse<any>> =>
     api.post('/financial/invoices', data),
+
+  generateScanReport: (data: { latitude: number; longitude: number; radius: number; mapImage?: string; locationName?: string }): Promise<ApiResponse<any>> =>
+    api.post('/financial/scan-report', data),
     
   payInvoice: (id: string, paymentMethod: string): Promise<ApiResponse<any>> =>
     api.post(`/financial/invoices/${id}/pay`, { paymentMethod }),

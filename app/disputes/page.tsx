@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { legalServicesApi, LegalDispute } from "@/lib/legal-services";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, User, FileText, Gavel, 
+import {
+  Calendar, User, FileText, Gavel,
   ArrowRight, ChevronDown, Search, Filter,
   ShieldAlert, Sparkles, Scale, Info,
   MoreHorizontal, ChevronLeft, ShieldCheck
@@ -80,7 +80,7 @@ export default function DisputesPage() {
     }
   };
 
-  const filteredDisputes = disputes.filter(dispute => 
+  const filteredDisputes = disputes.filter(dispute =>
     dispute.disputeNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     dispute.disputeType?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -90,7 +90,7 @@ export default function DisputesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      
+
       {/* Premium Header Container */}
       <section className="relative overflow-hidden mb-8 md:mb-12 p-6 md:p-12 rounded-b-[2rem] md:rounded-b-[3rem] bg-slate-950 text-white shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
@@ -100,7 +100,7 @@ export default function DisputesPage() {
           <div className="max-w-7xl mx-auto relative z-10">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="space-y-3">
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em]"
@@ -108,14 +108,14 @@ export default function DisputesPage() {
                         <ShieldAlert className="w-3 h-3 text-slate-300" />
                         Legal Protection
                       </motion.div>
-                      <motion.h1 
+                      <motion.h1
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="text-2xl md:text-4xl font-black tracking-tight leading-tight"
                       >
                           {t('disputes.title')}
                       </motion.h1>
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
@@ -124,7 +124,7 @@ export default function DisputesPage() {
                         {t('bm.disputes.title')}: {t('disputes.tab.disputes')}, {t('disputes.tab.service_requests')}، المتابعة القانونية، وفض الخلافات بمهنية وشفافية تامة.
                       </motion.p>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                       <div className="glass p-6 rounded-[2rem] bg-white/10 border-white/10 text-center min-w-[160px]">
                           <p className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-1">قضايا تحت المراجعة</p>
@@ -161,14 +161,14 @@ export default function DisputesPage() {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="relative w-full md:w-80 group">
                     <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors`} />
-                    <input 
+                    <input
                         placeholder="ابحث عن قضية..."
                         className="h-12 w-full rounded-xl border border-slate-100 bg-white px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                
+
                 <div className="flex gap-2 w-full md:w-auto">
                   <Button variant="outline" className="flex-1 md:flex-none h-12 px-6 rounded-xl border-slate-100 font-bold text-xs uppercase tracking-widest gap-2 hover:bg-slate-50 transition-all">
                     <Filter className="w-4 h-4" />
@@ -194,11 +194,11 @@ export default function DisputesPage() {
               {filteredDisputes.map((dispute, idx) => {
                 const status = getStatusConfig(dispute.status);
                 return (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    key={dispute.id} 
+                    key={dispute.id}
                     className="bg-white border border-slate-100 rounded-[2rem] group hover:border-slate-900 transition-all duration-300 overflow-hidden"
                   >
                     <div className="p-8 space-y-6">
@@ -266,7 +266,7 @@ export default function DisputesPage() {
       </TabsContent>
 
       <TabsContent value="service_requests" className="m-0">
-         <ServiceRequestsTable 
+         <ServiceRequestsTable
             title={t('disputes.tab.service_requests')}
             subtitle="إدارة طلبات المراجعة القانونية والاستشارات"
             department="legal"
@@ -295,7 +295,7 @@ export default function DisputesPage() {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => router.push('/admin/dashboard')}
+        onClick={() => router.push('/details')}
         className="fixed bottom-8 left-8 w-16 h-16 rounded-full bg-slate-950 text-white flex items-center justify-center shadow-2xl z-50 group border border-white/10"
       >
         <div className="absolute inset-0 bg-slate-600 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 -z-10" />

@@ -114,6 +114,14 @@ const WalletPage = () => {
         }
     }, [isOpen]);
 
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const tab = new URLSearchParams(window.location.search).get('tab') as WalletTab | null;
+        if (tab && ['invoices', 'commission', 'files', 'invest'].includes(tab)) {
+            setActiveTab(tab);
+        }
+    }, []);
+
     const handleTabChange = (tab: WalletTab) => {
         setActiveTab(tab)
         if (tab !== 'commission') {

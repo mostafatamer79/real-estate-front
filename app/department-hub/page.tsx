@@ -14,7 +14,7 @@ const canonicalDeptSlug = (slug: string) => {
 
 export default function DepartmentHub() {
   const router = useRouter();
-  
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
@@ -43,7 +43,7 @@ export default function DepartmentHub() {
     };
 
     if (user.role === 'admin') {
-      router.push('/admin/dashboard');
+      router.push('/details');
       return;
     }
 

@@ -352,9 +352,10 @@ function PricingTab({
 function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
     const [uploadingWhite, setUploadingWhite] = React.useState(false);
     const [uploadingBlack, setUploadingBlack] = React.useState(false);
+    const [uploadingCover, setUploadingCover] = React.useState(false);
 
-    const uploadLogo = async (file: File, type: 'white' | 'black') => {
-        const setter = type === 'white' ? setUploadingWhite : setUploadingBlack;
+    const uploadLogo = async (file: File, type: 'white' | 'black' | 'cover') => {
+        const setter = type === 'white' ? setUploadingWhite : type === 'black' ? setUploadingBlack : setUploadingCover;
         setter(true);
         try {
             const formData = new FormData();
@@ -367,9 +368,9 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
             });
             if (res.ok) {
                 const data = await res.json();
-                const url = data.url || data.imageUrl || data.path;
+                const url = data.url || data.imageUrl || data.path || data.data?.url;
                 if (url) {
-                    updateSettings(type === 'white' ? { logoWhiteUrl: url } : { logoBlackUrl: url });
+                    updateSettings(type === 'white' ? { logoWhiteUrl: url } : type === 'black' ? { logoBlackUrl: url } : { reportCoverUrl: url });
                 }
             }
         } catch (e) {
@@ -377,6 +378,13 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
         } finally {
             setter(false);
         }
+    };
+
+    const resolveAssetUrl = (url?: string) => {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+        const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api').replace(/\/+$/, '').replace(/\/api$/, '');
+        return `${apiBase}${url.startsWith('/') ? url : `/${url}`}`;
     };
 
     return (
@@ -402,7 +410,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[11px] font-black text-white/60 uppercase tracking-widest">الشعار الأبيض (على الخلفيات الداكنة)</p>
                         <div className="flex items-center justify-center h-20">
                             {localSettings.logoWhiteUrl ? (
-                                <img src={localSettings.logoWhiteUrl} alt="white logo" className="max-h-full max-w-full object-contain" />
+                                <img src={resolveAssetUrl(localSettings.logoWhiteUrl)} alt="white logo" className="max-h-full max-w-full object-contain" />
                             ) : (
                                 <div className="text-white/20 text-[10px] font-black uppercase">لا يوجد شعار</div>
                             )}
@@ -425,7 +433,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">الشعار الأسود (على الخلفيات الفاتحة)</p>
                         <div className="flex items-center justify-center h-20">
                             {localSettings.logoBlackUrl ? (
-                                <img src={localSettings.logoBlackUrl} alt="black logo" className="max-h-full max-w-full object-contain" />
+                                <img src={resolveAssetUrl(localSettings.logoBlackUrl)} alt="black logo" className="max-h-full max-w-full object-contain" />
                             ) : (
                                 <div className="text-slate-300 text-[10px] font-black uppercase">لا يوجد شعار</div>
                             )}
@@ -443,6 +451,32 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             className="w-full bg-white border border-slate-100 rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
                         />
                     </div>
+                </div>
+
+                <div className="p-6 bg-white rounded-3xl border border-slate-100 space-y-4">
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">غلاف تقارير مسح الخريطة PDF</p>
+                    <div className="flex items-center justify-center h-36 rounded-2xl bg-slate-100 overflow-hidden">
+                        {localSettings.reportCoverUrl ? (
+                            <img src={resolveAssetUrl(localSettings.reportCoverUrl)} alt="report cover" className="h-full w-full object-cover" />
+                        ) : (
+                            <div className="text-slate-300 text-[10px] font-black uppercase">لا توجد صورة غلاف</div>
+                        )}
+                    </div>
+                    <label className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-slate-900 hover:bg-black text-white text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all">
+                        {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                        {uploadingCover ? 'جارٍ الرفع...' : 'رفع غلاف التقرير'}
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) uploadLogo(e.target.files[0], 'cover'); }} />
+                    </label>
+                    <input
+                        type="text"
+                        value={localSettings.reportCoverUrl || ''}
+                        onChange={(e) => updateSettings({ reportCoverUrl: e.target.value })}
+                        placeholder="أو أدخل رابط صورة الغلاف مباشرة..."
+                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
+                    />
+                    <p className="text-[10px] font-bold text-slate-400 leading-relaxed">
+                        تستخدم هذه الصورة كخلفية للصفحة الأولى في تقارير مسح الخريطة، ويمكن تغييرها من الأدمن في أي وقت.
+                    </p>
                 </div>
                 {/* Size Slider */}
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
@@ -466,10 +500,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     {/* Live preview */}
                     <div className="mt-4 grid grid-cols-2 gap-4">
                         <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
-                            {localSettings.logoWhiteUrl && <img src={localSettings.logoWhiteUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
+                            {localSettings.logoWhiteUrl && <img src={resolveAssetUrl(localSettings.logoWhiteUrl)} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
                         <div className="rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
-                            {localSettings.logoBlackUrl && <img src={localSettings.logoBlackUrl} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
+                            {localSettings.logoBlackUrl && <img src={resolveAssetUrl(localSettings.logoBlackUrl)} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, Scale, Hammer, MoreHorizontal, CreditCard } from "lucide-react";
+import { ShoppingBag, Scale, Hammer, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
@@ -46,14 +46,14 @@ export default function QuickActions() {
     {
       id: "subscriptions",
       title: t('sub.public.quickAction'),
-      icon: <CreditCard className="w-11 h-11 text-white/80 group-hover:text-white transition-colors" />,
+      icon: <Image src="/icons/subscriptions-transparent.png" alt="Subscriptions" width={40} height={40} className="h-10 w-10 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
       accentColor: "group-hover:border-indigo-400/50",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(99,102,241,0.15)]",
     },
     {
       id: "wallet",
       title: t('action.wallet'),
-      icon: <Image src="/icons/wallet.png" alt="Wallet" width={44} height={44} className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
+      icon: <Image src="/icons/wallet.png" alt="Wallet" width={56} height={56} className="h-14 w-14 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
       accentColor: "group-hover:border-slate-500/60",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(148,163,184,0.15)]",
     },
@@ -61,14 +61,14 @@ export default function QuickActions() {
     {
       id: "services",
       title: t('action.services'),
-      icon: <Image src="/icons/2.png" alt="Services" width={44} height={44} className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
+      icon: <Image src="/icons/2.png" alt="Services" width={56} height={56} className="h-14 w-14 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
       accentColor: "group-hover:border-gray-500/60",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(156,163,175,0.15)]",
     },
     {
       id: "offers",
       title: t('action.offers'),
-      icon: <Image src="/icons/3.png" alt="Offers" width={44} height={44} className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
+      icon: <Image src="/icons/3.png" alt="Offers" width={56} height={56} className="h-14 w-14 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
       accentColor: "group-hover:border-slate-400/50",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(148,163,184,0.12)]",
     },
@@ -76,7 +76,7 @@ export default function QuickActions() {
     {
       id: "requests",
       title: t('action.requests'),
-      icon: <Image src="/icons/4.png" alt="Requests" width={44} height={44} className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
+      icon: <Image src="/icons/4.png" alt="Requests" width={56} height={56} className="h-14 w-14 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />,
       accentColor: "group-hover:border-slate-500/60",
       glowColor: "group-hover:shadow-[0_8px_30px_rgba(148,163,184,0.12)]",
     },

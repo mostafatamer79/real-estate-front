@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FolderOpen, Loader2 } from "lucide-react";
 import { Place } from "@/types/map";
 import { useLanguage } from "@/context/LanguageContext";
 import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
@@ -45,6 +45,9 @@ export default function ScanMapPage() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
   const [creatingInvoice, setCreatingInvoice] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
+  const [generatedFiles, setGeneratedFiles] = useState<any[]>([]);
+  const mapCaptureRef = useRef<HTMLDivElement | null>(null);
   const { t, language } = useLanguage();
   const router = useRouter();
   const { isOpen, message, isAdmin } = useSectionGuard('scan_map');
@@ -64,6 +67,24 @@ export default function ScanMapPage() {
     // 4000m -> level 13
     return Math.round(14 - Math.log2(searchRadius / 2000));
   }, [searchRadius]);
+
+  const captureMapImage = useCallback(async () => {
+    if (!mapCaptureRef.current) return undefined;
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(mapCaptureRef.current, {
+        backgroundColor: '#0f172a',
+        useCORS: true,
+        allowTaint: true,
+        scale: 1,
+        logging: false,
+      });
+      return canvas.toDataURL('image/jpeg', 0.82);
+    } catch (captureError) {
+      console.warn('Map capture failed, report will use diagram fallback:', captureError);
+      return undefined;
+    }
+  }, []);
 
   // ✅ Handle location selection from Map
   const handleLocationSelect = useCallback((lat: number, lng: number) => {
@@ -122,6 +143,27 @@ export default function ScanMapPage() {
       }
 
       setPlaces(data);
+
+      if (data.length > 0) {
+        setGeneratingReport(true);
+        setGeneratedFiles([]);
+        try {
+          const reportResponse = await financialApi.generateScanReport({
+            latitude: propertyLocation[0],
+            longitude: propertyLocation[1],
+            radius: searchRadius,
+            mapImage: await captureMapImage(),
+            locationName: data[0]?.city || data[0]?.name || `موقع ${propertyLocation[0].toFixed(4)}, ${propertyLocation[1].toFixed(4)}`,
+          });
+          setGeneratedFiles(reportResponse.data?.files || []);
+          toast.success('تم إنشاء ملفات Excel و PDF وحفظها في صفحة الملفات');
+        } catch (reportError) {
+          console.error("Error generating scan report files:", reportError);
+          toast.error('تم المسح بنجاح، لكن تعذر إنشاء ملفات التقرير');
+        } finally {
+          setGeneratingReport(false);
+        }
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t('scan.unexpectedError');
       setError(errorMessage);
@@ -129,7 +171,7 @@ export default function ScanMapPage() {
     } finally {
       setLoading(false);
     }
-  }, [propertyLocation, searchRadius, loading]);
+  }, [propertyLocation, searchRadius, loading, captureMapImage]);
 
   // ✅ Export CSV function
   const exportCSV = useCallback(() => {
@@ -202,6 +244,7 @@ export default function ScanMapPage() {
     setError(null);
     setIsPaid(false);
     setInvoiceId(null);
+    setGeneratedFiles([]);
   }, []);
 
   // ✅ Create Invoice for Neighborhood Report
@@ -244,6 +287,22 @@ export default function ScanMapPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {generatingReport && (
+        <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-8 text-center">
+            <div className="mx-auto mb-5 h-16 w-16 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-emerald-300" />
+            </div>
+            <h2 className="text-xl font-black mb-2">جاري إنشاء التقرير الذكي</h2>
+            <p className="text-sm text-slate-400 leading-7">
+              يتم الآن توليد PDF و Excel، إضافة صورة الخريطة، حساب المؤشرات، وبناء الرسوم البيانية ثلاثية الأبعاد. الرجاء الانتظار حتى يكتمل الحفظ في صفحة الملفات.
+            </p>
+            <div className="mt-6 h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      )}
       {/* Back Button */}
       <button 
         onClick={() => router.push('/details')}
@@ -434,13 +493,18 @@ export default function ScanMapPage() {
 
                 {/* Export Button */}
                 <button
-                  onClick={exportCSV}
-                  disabled={!hasPlaces}
+                  onClick={() => router.push('/wallet?tab=files')}
+                  disabled={!hasPlaces || generatingReport}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  <span>⬇️</span>
-                  {t('scan.export')}
+                  {generatingReport ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderOpen className="h-4 w-4" />}
+                  {generatingReport ? 'جاري إنشاء Excel و PDF...' : 'عرض الملفات المحفوظة'}
                 </button>
+                {generatedFiles.length > 0 && (
+                  <p className="text-xs text-emerald-400 text-center font-bold">
+                    تم حفظ {generatedFiles.length} ملفات في صفحة الملفات
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -477,7 +541,7 @@ export default function ScanMapPage() {
         {/* Right Column - Map & Table */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-1 border border-slate-700 overflow-hidden">
+          <div ref={mapCaptureRef} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-1 border border-slate-700 overflow-hidden">
             <Map
               center={propertyLocation}
               zoom={dynamicZoom}

@@ -19,9 +19,8 @@ export default function HomePage() {
       if (storedUser) {
         try {
           const u = JSON.parse(storedUser);
-          if (u.role === 'admin') router.push('/admin/dashboard');
-          else if (u.departments && u.departments.length > 0) router.push('/department-hub');
-          else router.push('/details');
+
+           router.push('/details');
         } catch (e) {
           router.push('/details');
         }

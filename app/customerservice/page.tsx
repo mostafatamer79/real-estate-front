@@ -58,7 +58,7 @@ export default function CustomerService() {
     "أسئلة الدفع": BadgeDollarSign,
     "أسئلة الدعم": Headphones,
   };
- 
+
   const [question, setQuestion] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -205,7 +205,7 @@ export default function CustomerService() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      
+
       {/* Premium Header Container */}
       <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden">
           <div className="max-w-7xl mx-auto relative z-10">
@@ -219,21 +219,21 @@ export default function CustomerService() {
               </button>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="space-y-3">
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-[9px] font-black uppercase tracking-[0.2em] text-slate-600"
                       >
-                      
+
                       </motion.div>
-                      <motion.h1 
+                      <motion.h1
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-slate-950"
                       >
                           {t('cs.title')}
                       </motion.h1>
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
@@ -242,8 +242,8 @@ export default function CustomerService() {
                         نحن هنا للإجابة على جميع استفساراتكم. فريقنا المختص جاهز لتقديم الدعم العقاري على مدار الساعة.
                       </motion.p>
                   </div>
-                  
-             
+
+
               </div>
           </div>
       </section>
@@ -260,7 +260,7 @@ export default function CustomerService() {
             ].filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => {
               const Icon = item.icon;
               return (
-                <motion.a 
+                <motion.a
                   key={item.id}
                   whileHover={{ y: -5 }}
                   href={item.href}
@@ -278,7 +278,7 @@ export default function CustomerService() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -294,7 +294,7 @@ export default function CustomerService() {
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.name')}</Label>
                         <div className="relative group">
-                            <Input 
+                            <Input
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="h-12 rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 px-4 transition-all text-sm font-bold placeholder:text-slate-300"
@@ -310,8 +310,8 @@ export default function CustomerService() {
                                 type="button"
                                 onClick={() => setContactMethod("email")}
                                 className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
-                                    contactMethod === "email" 
-                                    ? "bg-slate-900 text-white shadow-sm" 
+                                    contactMethod === "email"
+                                    ? "bg-slate-900 text-white shadow-sm"
                                     : "text-slate-400 hover:text-slate-600"
                                 }`}
                             >
@@ -322,8 +322,8 @@ export default function CustomerService() {
                                 type="button"
                                 onClick={() => setContactMethod("phone")}
                                 className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
-                                    contactMethod === "phone" 
-                                    ? "bg-slate-900 text-white shadow-sm" 
+                                    contactMethod === "phone"
+                                    ? "bg-slate-900 text-white shadow-sm"
                                     : "text-slate-400 hover:text-slate-600"
                                 }`}
                             >
@@ -336,7 +336,7 @@ export default function CustomerService() {
                     {contactMethod === "email" ? (
                         <div className="space-y-3">
                             <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.email')}</Label>
-                            <Input 
+                            <Input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -348,7 +348,7 @@ export default function CustomerService() {
                     ) : (
                         <div className="space-y-3">
                             <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.phone')}</Label>
-                            <Input 
+                            <Input
                                 type="tel"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -362,7 +362,7 @@ export default function CustomerService() {
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.placeholder.inquiry')}</Label>
                         <div className="relative">
-                          <Textarea 
+                          <Textarea
                               value={question}
                               onChange={handleQuestionChange}
                               className="min-h-[120px] rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 p-4 transition-all text-sm font-bold resize-none"
@@ -373,7 +373,7 @@ export default function CustomerService() {
                         </div>
                     </div>
 
-                    <Button 
+                    <Button
                         type="submit"
                         disabled={!question.trim() || !name.trim() || (contactMethod === "email" ? !email.trim() : !phoneNumber.trim()) || charCount > MAX_CHARACTERS}
                         className="w-full h-12 bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all active:scale-[0.98] gap-2"
@@ -385,7 +385,7 @@ export default function CustomerService() {
               </motion.div>
 
               {/* FAQ Section */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -469,7 +469,7 @@ export default function CustomerService() {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => router.push('/admin/dashboard')}
+        onClick={() => router.push('/details')}
         className="fixed bottom-8 left-8 w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-2xl z-50 group border border-white/10"
       >
         <div className="absolute inset-0 bg-indigo-600 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 -z-10" />
