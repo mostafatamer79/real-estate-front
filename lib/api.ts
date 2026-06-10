@@ -388,6 +388,9 @@ export const propertiesApi = {
   getTenants: (ownerId?: string): Promise<ApiResponse<TenantProfile[]>> =>
     api.get('/properties/tenants/all', { params: { ownerId } }),
 
+  updateTenant: (id: string, data: Partial<CreateTenantDto>): Promise<ApiResponse<TenantProfile>> =>
+    api.patch(`/properties/tenants/${id}`, data),
+
   deleteTenant: (id: string): Promise<ApiResponse<void>> =>
     api.delete(`/properties/tenants/${id}`),
 
@@ -398,6 +401,12 @@ export const propertiesApi = {
   getLeases: (ownerId?: string): Promise<ApiResponse<Lease[]>> =>
     api.get('/properties/leases/all', { params: { ownerId } }),
 
+  updateLease: (id: string, data: Partial<CreateLeaseDto>): Promise<ApiResponse<Lease>> =>
+    api.patch(`/properties/leases/${id}`, data),
+
+  deleteLease: (id: string): Promise<ApiResponse<void>> =>
+    api.delete(`/properties/leases/${id}`),
+
   // Payments
   createPayment: (data: CreatePaymentDto): Promise<ApiResponse<Payment>> =>
     api.post('/properties/payments', data),
@@ -405,11 +414,23 @@ export const propertiesApi = {
   getPayments: (ownerId?: string): Promise<ApiResponse<Payment[]>> =>
     api.get('/properties/payments/all', { params: { ownerId } }),
 
+  updatePayment: (id: string, data: Partial<CreatePaymentDto>): Promise<ApiResponse<Payment>> =>
+    api.patch(`/properties/payments/${id}`, data),
+
+  deletePayment: (id: string): Promise<ApiResponse<void>> =>
+    api.delete(`/properties/payments/${id}`),
+
   getMaintenanceLogs: (ownerId?: string): Promise<ApiResponse<MaintenanceRequest[]>> =>
     api.get('/properties/maintenance/all', { params: { ownerId } }),
 
   createMaintenanceLog: (data: Partial<MaintenanceRequest>): Promise<ApiResponse<MaintenanceRequest>> =>
     api.post('/properties/maintenance', data),
+
+  updateMaintenanceLog: (id: string, data: Partial<MaintenanceRequest>): Promise<ApiResponse<MaintenanceRequest>> =>
+    api.patch(`/properties/maintenance/${id}`, data),
+
+  deleteMaintenanceLog: (id: string): Promise<ApiResponse<void>> =>
+    api.delete(`/properties/maintenance/${id}`),
 };
 
 // File upload helper
@@ -505,20 +526,79 @@ export const financialApi = {
   getInvoices: (): Promise<ApiResponse<any[]>> =>
     api.get('/financial/invoices/my'),
 
+  getAllInvoices: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/invoices'),
+
   getUserInvoices: (userId: string): Promise<ApiResponse<any[]>> =>
     api.get(`/financial/invoices/user/${userId}`),
+
+  getUserWallet: (userId: string): Promise<ApiResponse<any>> =>
+    api.get(`/financial/wallet/user/${userId}`),
+
+  createUserInvoice: (userId: string, data: { amount: number; referenceType?: string; referenceId?: string; description?: string; documentUrl?: string }): Promise<ApiResponse<any>> =>
+    api.post(`/financial/invoices/user/${userId}`, data),
+
+  updateInvoice: (id: string, data: { amount?: number; description?: string; status?: string; documentUrl?: string | null }): Promise<ApiResponse<any>> =>
+    api.put(`/financial/invoices/${id}`, data),
+
+  deleteInvoice: (id: string): Promise<ApiResponse<any>> =>
+    api.delete(`/financial/invoices/${id}`),
 
   getCommissions: (): Promise<ApiResponse<any[]>> =>
     api.get('/financial/commissions/my'),
 
+  getUserCommissions: (userId: string): Promise<ApiResponse<any[]>> =>
+    api.get(`/financial/commissions/user/${userId}`),
+
+  updateCommission: (id: string, data: { status?: string; finalCommissionAmount?: number; notes?: string; attachmentUrl?: string }): Promise<ApiResponse<any>> =>
+    api.put(`/financial/commissions/${id}`, data),
+
+  deleteCommission: (id: string): Promise<ApiResponse<any>> =>
+    api.delete(`/financial/commissions/${id}`),
+
   getFiles: (): Promise<ApiResponse<any[]>> =>
     api.get('/financial/files/my'),
+
+  getAllFiles: (): Promise<ApiResponse<any[]>> =>
+    api.get('/financial/files'),
+
+  getUserFiles: (userId: string): Promise<ApiResponse<any[]>> =>
+    api.get(`/financial/files/user/${userId}`),
+
+  updateInvoiceDocument: (id: string, documentUrl: string | null): Promise<ApiResponse<any>> =>
+    api.put(`/financial/files/invoice/${id}`, { documentUrl }),
+
+  removeCommissionAttachment: (id: string, url: string): Promise<ApiResponse<any>> =>
+    api.delete(`/financial/files/commission/${id}/attachments`, { data: { url } }),
+
+  uploadUserDocument: (userId: string, file: File, data?: { title?: string; description?: string; type?: string; folder?: string }): Promise<ApiResponse<any>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('recipientId', userId);
+    formData.append('title', data?.title || file.name);
+    formData.append('description', data?.description || '');
+    formData.append('type', data?.type || 'other');
+    formData.append('folder', data?.folder || 'admin-wallet');
+    formData.append('tags', JSON.stringify(['admin-wallet']));
+    return api.post('/documents/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
 
   getDashboardStats: (): Promise<ApiResponse<any>> =>
     api.get('/financial/dashboard'),
 
   getTransactions: (): Promise<ApiResponse<any[]>> =>
     api.get('/financial/transactions'),
+
+  createTransaction: (data: any): Promise<ApiResponse<any>> =>
+    api.post('/financial/transaction', data),
+
+  updateTransaction: (id: string, data: any): Promise<ApiResponse<any>> =>
+    api.put(`/financial/transactions/${id}`, data),
+
+  deleteTransaction: (id: string): Promise<ApiResponse<any>> =>
+    api.delete(`/financial/transactions/${id}`),
 
   exportTransactions: (params?: {
     type?: string;
@@ -548,6 +628,12 @@ export const commissionApi = {
 
   findOne: (id: string): Promise<ApiResponse<any>> =>
     api.get(`/commissions/${id}`),
+
+  update: (id: string, data: any): Promise<ApiResponse<any>> =>
+    api.put(`/commissions/${id}`, data),
+
+  delete: (id: string): Promise<ApiResponse<any>> =>
+    api.delete(`/commissions/${id}`),
 
   submit: (id: string): Promise<ApiResponse<any>> =>
     api.post(`/commissions/${id}/submit`),

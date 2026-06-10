@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import api from "@/lib/api";
 import { User, Role } from "@/types/user";
 import { 
@@ -537,7 +538,9 @@ export default function UsersPage() {
                                                 {user.firstName?.[0]}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-slate-950">{user.firstName} {user.lastName}</p>
+                                                <Link href={`/admin/users/${user.id}`} className="text-sm font-black text-slate-950 hover:underline">
+                                                    {user.firstName} {user.lastName}
+                                                </Link>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {user.id.substring(0, 8)}</p>
                                             </div>
                                         </div>

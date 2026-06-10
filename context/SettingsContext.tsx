@@ -13,6 +13,14 @@ export interface GlobalSettings {
     soonBadgeBg: string;
     soonBadgeText: string;
     fontSize: string;
+    fontFamily: string;
+    cardBg: string;
+    cardText: string;
+    cardBorder: string;
+    cardRadius: string;
+    iconBg: string;
+    iconColor: string;
+    buttonRadius: string;
     appName: string;
     description: string;
     isDark: boolean;
@@ -81,6 +89,14 @@ const defaultSettings: GlobalSettings = {
     soonBadgeBg: "#ffffff",
     soonBadgeText: "#000000",
     fontSize: "15px",
+    fontFamily: "system-ui",
+    cardBg: "#ffffff",
+    cardText: "#0f172a",
+    cardBorder: "#e2e8f0",
+    cardRadius: "24px",
+    iconBg: "#f8fafc",
+    iconColor: "#0f172a",
+    buttonRadius: "16px",
     appName: "الوساطة الرقمية",
     description: "الوساطة الرقمية - منصة عقارية شاملة",
     isDark: false,
@@ -137,6 +153,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         root.style.setProperty("--sidebar", s.sidebar);
         root.style.setProperty("--soon-badge-bg", s.soonBadgeBg);
         root.style.setProperty("--soon-badge-text", s.soonBadgeText);
+        root.style.setProperty("--app-font-family", s.fontFamily);
+        root.style.setProperty("--platform-card-bg", s.cardBg);
+        root.style.setProperty("--platform-card-text", s.cardText);
+        root.style.setProperty("--platform-card-border", s.cardBorder);
+        root.style.setProperty("--platform-card-radius", s.cardRadius);
+        root.style.setProperty("--platform-icon-bg", s.iconBg);
+        root.style.setProperty("--platform-icon-color", s.iconColor);
+        root.style.setProperty("--platform-button-radius", s.buttonRadius);
         root.style.setProperty("font-size", s.fontSize);
         if (s.isDark) {
             root.classList.add("dark");
@@ -252,7 +276,34 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             const entries: Array<{ key: string; value: string; description?: string }> = [];
 
             // Theme / Identity keys
-            const themeKeys = ["primary", "background", "foreground", "accent", "sidebar", "soonBadgeBg", "soonBadgeText", "fontSize", "appName", "isDark", "description", "contactEmail", "contactPhone", "contactTwitter", "logoWhiteUrl", "logoBlackUrl", "reportCoverUrl", "logoHeight"];
+            const themeKeys = [
+                "primary",
+                "background",
+                "foreground",
+                "accent",
+                "sidebar",
+                "soonBadgeBg",
+                "soonBadgeText",
+                "fontSize",
+                "fontFamily",
+                "cardBg",
+                "cardText",
+                "cardBorder",
+                "cardRadius",
+                "iconBg",
+                "iconColor",
+                "buttonRadius",
+                "appName",
+                "isDark",
+                "description",
+                "contactEmail",
+                "contactPhone",
+                "contactTwitter",
+                "logoWhiteUrl",
+                "logoBlackUrl",
+                "reportCoverUrl",
+                "logoHeight",
+            ];
             themeKeys.forEach((key) => {
                 entries.push({
                     key: `theme_${key}`,

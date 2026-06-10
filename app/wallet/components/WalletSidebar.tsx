@@ -35,7 +35,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             id: 'commission' as WalletTab
         },
         {
-            icon: '/icons/الملفات والمستندات.png',
+            icon: '/icons/files-documents.png',
             label: 'الملفات والمستندات',
             description: t('wallet.desc.files'),
             id: 'files' as WalletTab

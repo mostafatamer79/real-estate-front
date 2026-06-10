@@ -76,6 +76,14 @@
   --sidebar-accent-foreground: oklch(0.15 0.01 264);
   --sidebar-border: oklch(0.9 0.005 264);
   --sidebar-ring: oklch(0.2 0.02 264 / 30%);
+  --app-font-family: system-ui;
+  --platform-card-bg: #ffffff;
+  --platform-card-text: #0f172a;
+  --platform-card-border: #e2e8f0;
+  --platform-card-radius: 24px;
+  --platform-icon-bg: #f8fafc;
+  --platform-icon-color: #0f172a;
+  --platform-button-radius: 16px;
 }
 
 .dark {
@@ -115,6 +123,7 @@
 
   body {
     @apply bg-background text-foreground selection:bg-primary/10;
+    font-family: var(--app-font-family), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-feature-settings: "cv11", "ss01";
     font-size: 0.92rem;
     line-height: 1.55;
@@ -126,6 +135,14 @@
   select,
   button {
     line-height: 1.45;
+  }
+
+  button,
+  a[role="button"],
+  input,
+  textarea,
+  select {
+    border-radius: min(var(--platform-button-radius, 16px), 28px);
   }
 
   ::placeholder {
@@ -159,10 +176,12 @@
   }
 
   .premium-card {
-    background-color: oklch(1 0 0 / 90%);
+    background-color: color-mix(in oklab, var(--platform-card-bg, #fff) 90%, transparent);
+    color: var(--platform-card-text, var(--foreground));
     backdrop-filter: blur(8px);
-    border: 1px solid oklch(0 0 0 / 5%);
-    @apply rounded-xl p-5 transition-all duration-300;
+    border: 1px solid var(--platform-card-border, oklch(0 0 0 / 5%));
+    border-radius: var(--platform-card-radius, 24px);
+    @apply p-5 transition-all duration-300;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   }
   .premium-card:hover {
@@ -194,6 +213,23 @@
 
   .premium-text {
     @apply text-slate-100 font-black;
+  }
+
+  .platform-card {
+    background: var(--platform-card-bg, #fff);
+    color: var(--platform-card-text, var(--foreground));
+    border: 1px solid var(--platform-card-border, #e2e8f0);
+    border-radius: var(--platform-card-radius, 24px);
+  }
+
+  .platform-icon-box {
+    background: var(--platform-icon-bg, #f8fafc);
+    color: var(--platform-icon-color, var(--foreground));
+    border-radius: min(var(--platform-card-radius, 24px), 24px);
+  }
+
+  .platform-button {
+    border-radius: var(--platform-button-radius, 16px);
   }
 }
 

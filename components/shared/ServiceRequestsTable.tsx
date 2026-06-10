@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Loader2, User, Calendar, 
   ExternalLink, Search, Filter,
   Briefcase, Mail, Phone, MapPin, X, CheckCircle,
-  AlertCircle, CheckCircle2
+  AlertCircle, CheckCircle2, MessageSquare, Trash2, Save
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,7 @@ interface ServiceRequestsTableProps {
 
 export default function ServiceRequestsTable({ title, subtitle, department }: ServiceRequestsTableProps) {
 
+    const router = useRouter();
     const { t, language } = useLanguage();
     const { token } = useAuth();
     
@@ -36,12 +38,15 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const [invoicePrice, setInvoicePrice] = useState("");
     const [isSendingInvoice, setIsSendingInvoice] = useState(false);
     const [invoiceMessage, setInvoiceMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [statusValue, setStatusValue] = useState("pending");
+    const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchRequests = useCallback(async () => {
         if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -98,6 +103,72 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
             setInvoiceMessage({ type: 'error', text: 'حدث خطأ أثناء إرسال الفاتورة' });
         } finally {
             setIsSendingInvoice(false);
+        }
+    };
+
+    const openDetails = (req: any) => {
+        setSelectedRequest(req);
+        setStatusValue(req.status || "pending");
+        setInvoicePrice(req.invoicePrice || req.price || "");
+        setInvoiceMessage(null);
+        setIsDetailsOpen(true);
+    };
+
+    const handleUpdateStatus = async () => {
+        if (!token || !selectedRequest) return;
+        setIsUpdatingStatus(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: statusValue })
+            });
+            if (!res.ok) throw new Error('Failed to update status');
+            await fetchRequests();
+            setSelectedRequest({ ...selectedRequest, status: statusValue });
+            setInvoiceMessage({ type: 'success', text: 'تم تحديث حالة الطلب' });
+        } catch {
+            setInvoiceMessage({ type: 'error', text: 'تعذر تحديث حالة الطلب' });
+        } finally {
+            setIsUpdatingStatus(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!token || !selectedRequest) return;
+        if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error('Failed to delete request');
+            await fetchRequests();
+            setIsDetailsOpen(false);
+            setSelectedRequest(null);
+        } catch {
+            setInvoiceMessage({ type: 'error', text: 'تعذر حذف الطلب' });
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleOpenChat = async () => {
+        if (!token || !selectedRequest) return;
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/chat`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error('Failed to open chat');
+            const data = await res.json();
+            router.push(`/chat/${data.chatRoomId}`);
+        } catch {
+            setInvoiceMessage({ type: 'error', text: 'تعذر فتح محادثة الطلب' });
         }
     };
 
@@ -226,10 +297,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         </td>
                                         <td className="px-8 py-6 text-center">
                                             <button 
-                                                onClick={() => {
-                                                    setSelectedRequest(req);
-                                                    setIsDetailsOpen(true);
-                                                }}
+                                                onClick={() => openDetails(req)}
                                                 className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
@@ -296,10 +364,10 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                             <span className="font-bold text-slate-900">{selectedRequest.city}, {selectedRequest.district}</span>
                                         </div>
                                     </div>
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">المبلغ والدفع</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">المبلغ والدفع</label>
                                         
-                                        {(department === 'marketing' && !selectedRequest.invoiceSent) ? (
+                                        {((department === 'marketing' || department === 'legal') && !selectedRequest.invoiceSent) ? (
                                             <div className="space-y-3 pt-2">
                                                 <div className="flex flex-col gap-2">
                                                     <div className="relative">
@@ -360,6 +428,54 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                             </div>
                                         )}
                                     </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 pt-6 border-t border-slate-100">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">حالة الطلب</label>
+                                        <select
+                                            value={statusValue}
+                                            onChange={(e) => setStatusValue(e.target.value)}
+                                            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+                                        >
+                                            <option value="pending">قيد الانتظار</option>
+                                            <option value="assigned">تم التعيين</option>
+                                            <option value="in_progress">قيد المعالجة</option>
+                                            <option value="completed">مكتمل</option>
+                                            <option value="cancelled">ملغي</option>
+                                        </select>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleUpdateStatus}
+                                        disabled={isUpdatingStatus}
+                                        className="self-end bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
+                                    >
+                                        {isUpdatingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                        حفظ الحالة
+                                    </button>
+                                </div>
+
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={handleOpenChat}
+                                        className="bg-slate-100 text-slate-700 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center gap-2"
+                                    >
+                                        <MessageSquare className="w-4 h-4" />
+                                        فتح الشات
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleDelete}
+                                        disabled={isDeleting}
+                                        className="bg-red-50 text-red-600 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                                    >
+                                        {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                        حذف الطلب
+                                    </button>
                                 </div>
                             </div>
 

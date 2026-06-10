@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Settings2, Save, Palette, Type, DollarSign, ShieldAlert, 
-    ArrowRight, Loader2, History, X, ShieldCheck, Sparkles, 
-    ChevronDown, Moon, Sun, Search, RefreshCw, Smartphone, 
+import {
+    Settings2, Save, Palette, Type, DollarSign, ShieldAlert,
+    ArrowRight, Loader2, History, X, ShieldCheck, Sparkles,
+    ChevronDown, Moon, Sun, Search, RefreshCw, Smartphone,
     LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
@@ -83,7 +83,7 @@ function SettingsPageInner() {
             setPurchaseFee(settings.purchaseFeePercentage.toString());
             setTaxPercentage(settings.taxPercentage.toString());
             setTextOverrides(settings.textOverrides || {});
-            
+
             // Re-map nested objects to ensure clean state
             setLocalSettings({
                 ...settings,
@@ -95,7 +95,7 @@ function SettingsPageInner() {
                 uiFlags: { ...settings.uiFlags },
                 texts: { ...settings.textOverrides }
             });
-            
+
             const initialPrices: Record<string, string> = {};
             Object.entries(settings.servicePrices || {}).forEach(([k, v]) => {
                 initialPrices[k] = (v as any).toString();
@@ -190,13 +190,13 @@ function SettingsPageInner() {
                     </button>
                 ))}
             </nav>
-            
+
             <main className="rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-xl bg-white min-h-[500px]">
                 <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                     {activeTab === 'pricing' && (
-                        <PricingTab 
-                            localSettings={localSettings} updateSettings={updateSettings} t={t} 
-                            price={price} setPrice={setPrice} 
+                        <PricingTab
+                            localSettings={localSettings} updateSettings={updateSettings} t={t}
+                            price={price} setPrice={setPrice}
                             purchaseFee={purchaseFee} setPurchaseFee={setPurchaseFee}
                             taxPercentage={taxPercentage} setTaxPercentage={setTaxPercentage}
                             servicePrices={servicePrices} setServicePrices={setServicePrices}
@@ -207,7 +207,7 @@ function SettingsPageInner() {
                         <AppearanceTab localSettings={localSettings} updateSettings={updateSettings} t={t} />
                     )}
                     {activeTab === 'text' && (
-                        <TextTab 
+                        <TextTab
                             localSettings={localSettings} updateSettings={updateSettings} t={t}
                             searchTerm={searchTerm} setSearchTerm={setSearchTerm}
                             textOverrides={textOverrides} setTextOverrides={setTextOverrides}
@@ -220,7 +220,7 @@ function SettingsPageInner() {
                         <SiteControlTab localSettings={localSettings} updateSettings={updateSettings} t={t} />
                     )}
                 </motion.div>
-                
+
                 <AnimatePresence>
                     {message && (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className={`${messageType === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white p-6 flex items-center justify-center gap-3`}>
@@ -264,8 +264,8 @@ function SettingsPageInner() {
 
 // ─── Sub-Components ───────────────────────────────────────────────────────────
 
-function PricingTab({ 
-    localSettings, updateSettings, t, 
+function PricingTab({
+    localSettings, updateSettings, t,
     price, setPrice, purchaseFee, setPurchaseFee, taxPercentage, setTaxPercentage,
     servicePrices, setServicePrices, collapsedCategories, setCollapsedCategories
 }: PricingTabProps) {
@@ -286,8 +286,7 @@ function PricingTab({
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الإعدادات المالية العامة</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[11px] font-black text-slate-600 px-1">سعر حجز الموعد</label>
-                            <div className="relative">
+56emwst                            <div className="relative">
                                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
                                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">ريال</span>
                             </div>
@@ -318,7 +317,7 @@ function PricingTab({
                         { category: 'marketing', label: 'خدمات التسويق', services: ['تصوير فوتوغرافي للعقار', 'حملة إعلانية (وسائل التواصل الاجتماعي)', 'حملة إعلانية (إعلانات طرق/تقليدية)'] }
                     ].map((group) => (
                         <div key={group.category} className="border border-slate-100 rounded-3xl overflow-hidden mb-4">
-                            <button 
+                            <button
                                 onClick={() => setCollapsedCategories(prev => ({ ...prev, [group.category]: !prev[group.category] }))}
                                 className="w-full flex items-center justify-between p-6 bg-slate-50 hover:bg-slate-100 transition-colors"
                             >
@@ -386,6 +385,13 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
         const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api').replace(/\/+$/, '').replace(/\/api$/, '');
         return `${apiBase}${url.startsWith('/') ? url : `/${url}`}`;
     };
+
+    const colorPickerValue = (value?: string, fallback = '#ffffff') => {
+        if (typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value.trim())) return value.trim();
+        return fallback;
+    };
+
+    const setThemeValue = (key: string, value: string) => updateSettings({ [key]: value } as any);
 
     return (
         <div className="p-8 space-y-10">
@@ -516,17 +522,72 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         {[
                             { id: 'primary', label: 'اللون الأساسي', value: localSettings.primary },
                             { id: 'accent', label: 'لون التمييز', value: localSettings.accent },
-                            { id: 'background', label: 'لون الخلفية', value: localSettings.background }
+                            { id: 'background', label: 'لون الخلفية', value: localSettings.background, fallback: '#f8fafc' },
+                            { id: 'foreground', label: 'لون الخط العام', value: localSettings.foreground, fallback: '#0f172a' },
+                            { id: 'sidebar', label: 'لون القائمة الجانبية', value: localSettings.sidebar, fallback: '#ffffff' },
                         ].map((color) => (
                             <div key={color.id} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value as string }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
-                                    <input type="text" value={color.value as string} onChange={(e) => updateSettings({ [color.id]: e.target.value })} className="w-full bg-transparent border-none text-xs font-mono outline-none text-slate-400" />
+                                    <input type="text" value={color.value as string} onChange={(e) => setThemeValue(color.id, e.target.value)} className="w-full bg-transparent border-none text-xs font-mono outline-none text-slate-400" />
                                 </div>
-                                <input type="color" value={color.value as string} onChange={(e) => updateSettings({ [color.id]: e.target.value })} className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent" />
+                                <input type="color" value={colorPickerValue(color.value as string, color.fallback)} onChange={(e) => setThemeValue(color.id, e.target.value)} className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent" />
                             </div>
                         ))}
+                    </div>
+
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] pt-6">المربعات والأيقونات</h4>
+                    <div className="grid grid-cols-1 gap-6">
+                        {[
+                            { id: 'cardBg', label: 'خلفية المربعات', value: (localSettings as any).cardBg || '#ffffff', fallback: '#ffffff' },
+                            { id: 'cardText', label: 'لون نص المربعات', value: (localSettings as any).cardText || '#0f172a', fallback: '#0f172a' },
+                            { id: 'cardBorder', label: 'لون حدود المربعات', value: (localSettings as any).cardBorder || '#e2e8f0', fallback: '#e2e8f0' },
+                            { id: 'iconBg', label: 'خلفية الأيقونات', value: (localSettings as any).iconBg || '#f8fafc', fallback: '#f8fafc' },
+                            { id: 'iconColor', label: 'لون الأيقونات', value: (localSettings as any).iconColor || '#0f172a', fallback: '#0f172a' },
+                        ].map((color) => (
+                            <div key={color.id} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-xl">
+                                <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value }} />
+                                <div className="flex-grow">
+                                    <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
+                                    <input type="text" value={color.value} onChange={(e) => setThemeValue(color.id, e.target.value)} className="w-full bg-transparent border-none text-xs font-mono outline-none text-slate-400" />
+                                </div>
+                                <input type="color" value={colorPickerValue(color.value, color.fallback)} onChange={(e) => setThemeValue(color.id, e.target.value)} className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent" />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[11px] font-black text-slate-600">استدارة المربعات</label>
+                                <span className="text-sm font-black text-slate-900">{(localSettings as any).cardRadius || '24px'}</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0}
+                                max={40}
+                                step={1}
+                                value={parseInt(((localSettings as any).cardRadius || '24px').replace('px', ''), 10)}
+                                onChange={(e) => setThemeValue('cardRadius', `${e.target.value}px`)}
+                                className="w-full accent-slate-900"
+                            />
+                        </div>
+                        <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[11px] font-black text-slate-600">استدارة الأزرار والحقول</label>
+                                <span className="text-sm font-black text-slate-900">{(localSettings as any).buttonRadius || '16px'}</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={0}
+                                max={32}
+                                step={1}
+                                value={parseInt(((localSettings as any).buttonRadius || '16px').replace('px', ''), 10)}
+                                onChange={(e) => setThemeValue('buttonRadius', `${e.target.value}px`)}
+                                className="w-full accent-slate-900"
+                            />
+                        </div>
                     </div>
 
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] pt-6">شارة "قريباً"</h4>
@@ -556,7 +617,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 </div>
                                 <input
                                     type="color"
-                                    value={color.value as string}
+                                    value={colorPickerValue(color.value as string, color.id === 'soonBadgeText' ? '#000000' : '#ffffff')}
                                     onChange={(e) => updateSettings({ [color.id]: e.target.value } as any)}
                                     className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
                                 />
@@ -575,6 +636,41 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">وصف النظام في شاشة البداية</label>
                             <input type="text" value={localSettings.description || ''} onChange={(e) => updateSettings({ description: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="وصف مختصر يظهر تحت الشعار..." />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-black text-slate-600">حجم الخط في المنصة</label>
+                                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-[10px] font-black text-slate-400">12px</span>
+                                        <span className="text-sm font-black text-slate-900">{localSettings.fontSize || '15px'}</span>
+                                        <span className="text-[10px] font-black text-slate-400">20px</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={12}
+                                        max={20}
+                                        step={1}
+                                        value={parseInt((localSettings.fontSize || '15px').replace('px', ''), 10)}
+                                        onChange={(e) => setThemeValue('fontSize', `${e.target.value}px`)}
+                                        className="w-full accent-slate-900"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[11px] font-black text-slate-600">نوع الخط</label>
+                                <select
+                                    value={localSettings.fontFamily || 'system-ui'}
+                                    onChange={(e) => setThemeValue('fontFamily', e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-4 text-xs font-bold outline-none focus:border-slate-900"
+                                >
+                                    <option value="system-ui">System UI</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Tahoma">Tahoma</option>
+                                    <option value="'Segoe UI'">Segoe UI</option>
+                                    <option value="'Noto Sans Arabic'">Noto Sans Arabic</option>
+                                </select>
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -605,6 +701,69 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 <button onClick={() => updateSettings({ isDark: true })} className={`flex items-center gap-2 px-6 py-2 rounded-xl transition-all ${localSettings.isDark ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400'}`}><Moon className="w-4 h-4" /> ليلي</button>
                             </div>
                         </div>
+
+                        <div className="pt-6">
+                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4">معاينة شكل المنصة</h4>
+                            <div
+                                className="p-6 border space-y-5"
+                                style={{
+                                    backgroundColor: localSettings.background,
+                                    color: localSettings.foreground,
+                                    borderColor: (localSettings as any).cardBorder || '#e2e8f0',
+                                    borderRadius: (localSettings as any).cardRadius || '24px',
+                                    fontFamily: localSettings.fontFamily || 'system-ui',
+                                }}
+                            >
+                                <div
+                                    className="p-5 border shadow-sm"
+                                    style={{
+                                        backgroundColor: (localSettings as any).cardBg || '#ffffff',
+                                        color: (localSettings as any).cardText || '#0f172a',
+                                        borderColor: (localSettings as any).cardBorder || '#e2e8f0',
+                                        borderRadius: (localSettings as any).cardRadius || '24px',
+                                    }}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div
+                                            className="w-12 h-12 flex items-center justify-center"
+                                            style={{
+                                                backgroundColor: (localSettings as any).iconBg || '#f8fafc',
+                                                color: (localSettings as any).iconColor || '#0f172a',
+                                                borderRadius: `min(${(localSettings as any).cardRadius || '24px'}, 24px)`,
+                                            }}
+                                        >
+                                            <Sparkles className="w-5 h-5" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-black truncate">{localSettings.appName || 'الوساطة الرقمية'}</p>
+                                            <p className="text-[11px] opacity-70 font-bold truncate">{localSettings.description || 'منصة عقارية شاملة'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3 mt-5">
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 text-[11px] font-black text-white"
+                                            style={{
+                                                backgroundColor: localSettings.primary,
+                                                borderRadius: (localSettings as any).buttonRadius || '16px',
+                                            }}
+                                        >
+                                            متاح
+                                        </button>
+                                        <span
+                                            className="px-3 py-1.5 text-[10px] font-black"
+                                            style={{
+                                                backgroundColor: (localSettings as any).soonBadgeBg || '#ffffff',
+                                                color: (localSettings as any).soonBadgeText || '#000000',
+                                                borderRadius: (localSettings as any).buttonRadius || '16px',
+                                            }}
+                                        >
+                                            قريباً
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -612,8 +771,8 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
     );
 }
 
-function TextTab({ 
-    localSettings, updateSettings, t, 
+function TextTab({
+    localSettings, updateSettings, t,
     searchTerm, setSearchTerm, textOverrides, setTextOverrides, language,
     selectedCategory, setSelectedCategory
 }: TextTabProps & { selectedCategory: string, setSelectedCategory: (v: string) => void }) {
@@ -660,11 +819,11 @@ function TextTab({
                             ].map(item => (
                                 <div key={item.key} className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-500 px-1">{item.label}</label>
-                                    <input 
-                                        type="text" 
-                                        value={(localSettings.texts || {})[item.key] || ''} 
-                                        onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), [item.key]: e.target.value } })} 
-                                        className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-[11px] font-black outline-none focus:ring-2 focus:ring-slate-900/5 transition-all" 
+                                    <input
+                                        type="text"
+                                        value={(localSettings.texts || {})[item.key] || ''}
+                                        onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), [item.key]: e.target.value } })}
+                                        className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-[11px] font-black outline-none focus:ring-2 focus:ring-slate-900/5 transition-all"
                                     />
                                 </div>
                             ))}
@@ -679,11 +838,11 @@ function TextTab({
                                 .filter(key => {
                                     const matchesSearch = key.toLowerCase().includes(searchTerm.toLowerCase()) || translations.ar[key].includes(searchTerm);
                                     if (!matchesSearch) return false;
-                                    
+
                                     if (selectedCategory === 'all') return true;
                                     const cat = TRANSLATION_CATEGORIES.find(c => c.id === selectedCategory);
                                     if (!cat) return true;
-                                    
+
                                     const prefix = key.split('.')[0];
                                     return cat.prefixes.includes(prefix);
                                 })
@@ -694,8 +853,8 @@ function TextTab({
                                             <div className="w-2 h-2 rounded-full bg-slate-900/20" />
                                             <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest font-mono">{key}</span>
                                         </div>
-                                        <button 
-                                            onClick={() => { const n = { ...textOverrides }; delete n['ar_' + key]; delete n['en_' + key]; setTextOverrides(n); }} 
+                                        <button
+                                            onClick={() => { const n = { ...textOverrides }; delete n['ar_' + key]; delete n['en_' + key]; setTextOverrides(n); }}
                                             className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 transition-all"
                                         >
                                             <RefreshCw className="w-4 h-4" />
@@ -704,20 +863,20 @@ function TextTab({
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-slate-400 uppercase px-1">العربية</label>
-                                            <input 
-                                                type="text" 
-                                                value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : translations.ar[key as keyof typeof translations.ar]} 
-                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))} 
-                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all" 
+                                            <input
+                                                type="text"
+                                                value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : translations.ar[key as keyof typeof translations.ar]}
+                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
+                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all"
                                             />
                                         </div>
                                         <div dir="ltr" className="space-y-2">
                                             <label className="text-[10px] font-black text-slate-400 uppercase px-1">English</label>
-                                            <input 
-                                                type="text" 
-                                                value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")} 
-                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))} 
-                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all" 
+                                            <input
+                                                type="text"
+                                                value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")}
+                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))}
+                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all"
                                             />
                                         </div>
                                     </div>
@@ -771,7 +930,7 @@ function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
                                         <span className={`text-[9px] font-black uppercase ${(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'text-emerald-500' : 'text-amber-500'}`}>
                                             {(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'متاح' : 'قريباً'}
                                         </span>
-                                        <button 
+                                        <button
                                             onClick={() => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [sectionKey]: (localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'closed' : 'open' } })}
                                             className={`w-12 h-6 rounded-full relative transition-all ${(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'bg-slate-900' : 'bg-slate-200'}`}
                                         >
@@ -782,7 +941,7 @@ function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
                                 {(localSettings.sectionFlags || {})[sectionKey] === 'closed' && (
                                     <div className="space-y-1.5 pt-2 border-t border-slate-100 animate-in fade-in slide-in-from-top-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase">رسالة "قريباً"</label>
-                                        <input 
+                                        <input
                                             type="text"
                                             value={(localSettings.sectionMessages || {})[sectionKey] || ""}
                                             onChange={(e) => updateSettings({ sectionMessages: { ...(localSettings.sectionMessages || {}), [sectionKey]: e.target.value } })}
@@ -895,7 +1054,7 @@ function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
                             return (
                             <div key={method.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
                                 <span className="text-sm font-bold">{method.label}</span>
-                                <button 
+                                <button
                                     onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
                                     className={`w-12 h-6 rounded-full relative transition-all ${localSettings.loginConfig[methodKey] ? 'bg-slate-900' : 'bg-slate-200'}`}
                                 >
@@ -905,7 +1064,7 @@ function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
                         )})}
                         <div className="space-y-2 pt-2">
                              <label className="text-[10px] font-black text-slate-400 uppercase">شارة تسجيل دخول الهاتف</label>
-                             <input 
+                             <input
                                  type="text"
                                  value={localSettings.loginConfig.phoneLabel || ""}
                                  onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
@@ -930,7 +1089,7 @@ function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
                         ].map(flag => (
                             <div key={flag.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
                                 <span className="text-sm font-bold">{flag.label}</span>
-                                <button 
+                                <button
                                     onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [flag.id]: !localSettings.uiFlags[flag.id] } })}
                                     className={`w-12 h-6 rounded-full relative transition-all ${localSettings.uiFlags[flag.id] ? 'bg-slate-900' : 'bg-slate-200'}`}
                                 >
@@ -1176,7 +1335,14 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     ]);
 
     const modules = filterByQuery([
+        { id: 'dashboard', label: 'لوح التحكم' },
+        { id: 'users', label: 'المستخدمين' },
         { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)' },
+        { id: 'map_control', label: 'الخريطة' },
+        { id: 'operations', label: 'الإحصائيات والعمليات' },
+        { id: 'trends', label: 'التحليلات والاتجاهات' },
+        { id: 'customer_service', label: 'خدمة العملاء' },
+        { id: 'settings', label: 'الإعدادات والتحكم' },
         { id: 'chat', label: 'الدردشة' },
         { id: 'service_requests', label: 'طلبات الخدمات' },
         { id: 'marketing', label: 'إدارة التسويق' },
@@ -1187,6 +1353,11 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         { id: 'offers', label: 'العروض' },
         { id: 'orders', label: 'الطلبات' },
         { id: 'subscriptions', label: 'الباقات والاشتراكات' },
+        { id: 'wallet', label: 'المحفظة' },
+        { id: 'wallet_invoices', label: 'المحفظة: الفواتير' },
+        { id: 'wallet_commissions', label: 'المحفظة: العمولات' },
+        { id: 'wallet_files', label: 'المحفظة: الملفات والمستندات' },
+        { id: 'wallet_investments', label: 'المحفظة: الاستثمارات' },
         { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء' },
         { id: 'services_legal', label: 'الخدمات: القانونية' },
         { id: 'services_construction', label: 'الخدمات: البناء والمقاولات' },

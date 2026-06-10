@@ -56,6 +56,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Pagination } from "../../src/components/Pagination";
 
 // --- Components ---
 
@@ -544,6 +545,8 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showAssign, setShowAssign] = useState(false);
   const [assigningOrder, setAssigningOrder] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchOrders = async () => {
     try {
@@ -592,6 +595,12 @@ export default function OrdersPage() {
         o.clientName?.toLowerCase().includes(search.toLowerCase())
     )
   );
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -678,7 +687,7 @@ export default function OrdersPage() {
                         <TableRow><TableCell colSpan={8} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-200" /></TableCell></TableRow>
                     ) : filteredOrders.length === 0 ? (
                         <TableRow><TableCell colSpan={8} className="py-20 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</TableCell></TableRow>
-                    ) : filteredOrders.map(order => (
+                    ) : paginatedOrders.map(order => (
                         <TableRow key={order.id} className="group hover:bg-slate-50/50 transition-colors">
                             <TableCell className="text-center font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</TableCell>
                             <TableCell>
@@ -782,6 +791,13 @@ export default function OrdersPage() {
                 </TableBody>
             </Table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredOrders.length}
+          itemsLabel="طلب"
+        />
       </div>
 
       <AnimatePresence>

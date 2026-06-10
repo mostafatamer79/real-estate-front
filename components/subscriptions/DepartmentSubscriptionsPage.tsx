@@ -6,7 +6,7 @@ import { CheckCircle2, CreditCard, Loader2, Shield, Wallet } from "lucide-react"
 import toast from "react-hot-toast";
 import api, { subscriptionsApi } from "@/lib/api";
 
-type DeptSlug = "properties" | "marketing" | "legal" | "finance" | "employees";
+type DeptSlug = "properties" | "finance" | "employees";
 
 interface ManagementPackage {
   id: string;
@@ -36,16 +36,12 @@ interface SubscriptionRecord {
 
 const DEPT_TO_PACKAGE_ADMIN: Record<DeptSlug, string> = {
   properties: "admin.dept.real_estate",
-  marketing: "admin.dept.marketing",
-  legal: "admin.dept.legal",
   finance: "admin.dept.finance",
   employees: "admin.dept.hr",
 };
 
 const DEPT_LABELS: Record<DeptSlug, string> = {
   properties: "إدارة الاشتراكات",
-  marketing: "اشتراكات إدارة التسويق",
-  legal: "اشتراكات الإدارة القانونية",
   finance: "اشتراكات الإدارة المالية",
   employees: "اشتراكات إدارة الموظفين",
 };

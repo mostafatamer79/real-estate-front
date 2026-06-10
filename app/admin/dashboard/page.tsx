@@ -1,312 +1,164 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { 
-  Users, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Activity, 
-  CreditCard, 
-  TrendingUp,
-  Clock,
-  ExternalLink,
-  Map,
-  ShieldCheck,
-  X
-} from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
-
-import { financialApi, activitiesApi } from "@/lib/api";
+import React, { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { Activity, LockKeyhole, Trash2, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { arSA } from "date-fns/locale";
+import { activitiesApi, financialApi, usersApi } from "@/lib/api";
+import { useLanguage } from "@/context/LanguageContext";
+
+const isClosedUser = (user: any) => user?.isActive === false || user?.status === "closed";
+const isDeletedUser = (user: any) => Boolean(user?.deletedAt || user?.isDeleted || user?.status === "deleted");
 
 export default function AdminDashboard() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [dashboardStats, setDashboardStats] = useState<any>(null);
+  const [users, setUsers] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
-  const [selectedActivity, setSelectedActivity] = useState<any>(null);
+  const isRtl = language === "ar";
 
   useEffect(() => {
-    const fetchStats = async () => {
-        try {
-            const [statsRes, activitiesRes] = await Promise.all([
-                financialApi.getDashboardStats(),
-                activitiesApi.getRecent()
-            ]);
-            
-            if (statsRes.data) {
-                setDashboardStats(statsRes.data);
-            }
-            if (activitiesRes.data) {
-                setActivities(activitiesRes.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch dashboard data", error);
-        } finally {
-            setLoading(false);
-        }
+    const fetchDashboard = async () => {
+      try {
+        const [statsRes, usersRes, activitiesRes] = await Promise.all([
+          financialApi.getDashboardStats(),
+          usersApi.findAll(),
+          activitiesApi.getRecent(),
+        ]);
+
+        setDashboardStats(statsRes.data || null);
+        setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
+        setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
+      } catch (error) {
+        console.error("Failed to fetch admin dashboard", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchStats();
+
+    fetchDashboard();
   }, []);
 
-  const stats = [
-    { label: t('admin.stats.total_users'), value: dashboardStats?.totalUsers || '0', change: '+0%', trend: 'up', icon: Users },
-    { label: t('admin.stats.active_ops'), value: dashboardStats?.activeOperations || '0', change: '+0%', trend: 'up', icon: Activity },
-    { label: t('admin.stats.total_revenue'), value: new Intl.NumberFormat('en-US').format(dashboardStats?.totalRevenue || 0), change: '+0%', trend: 'up', icon: TrendingUp },
-    { label: t('admin.stats.conv_rate'), value: `${dashboardStats?.conversionRate || 0}%`, change: '+0%', trend: 'up', icon: ShieldCheck },
-  ];
+  const stats = useMemo(() => {
+    const closedAccounts = users.filter(isClosedUser).length;
+    const deletedAccounts = users.filter(isDeletedUser).length;
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'user_joined': return Users;
-      case 'property_added': return Activity;
-      case 'order_placed': return CreditCard;
-      case 'payment_received': return TrendingUp;
-      case 'booking_made': return Clock;
-      default: return ShieldCheck;
-    }
+    return [
+      {
+        label: isRtl ? "إجمالي المستخدمين" : "Total users",
+        value: dashboardStats?.totalUsers ?? users.length,
+        icon: Users,
+      },
+      {
+        label: isRtl ? "العمليات النشطة" : "Active operations",
+        value: dashboardStats?.activeOperations ?? 0,
+        icon: Activity,
+      },
+      {
+        label: isRtl ? "الحسابات المغلقة" : "Closed accounts",
+        value: closedAccounts,
+        icon: LockKeyhole,
+      },
+      {
+        label: isRtl ? "الحسابات المحذوفة" : "Deleted accounts",
+        value: deletedAccounts,
+        icon: Trash2,
+      },
+    ];
+  }, [dashboardStats, isRtl, users]);
+
+  const getActivityTitle = (activity: any) => {
+    if (isRtl) return activity.titleAr || activity.title || activity.type || "نشاط";
+    return activity.title || activity.titleAr || activity.type || "Activity";
   };
 
-  const getActivityMessage = (activity: any) => {
-    switch (activity.type) {
-      case 'user_joined': return t('admin.activity.new_user');
-      default: return language === 'ar' ? (activity.titleAr || activity.title) : activity.title;
-    }
-  };
-
-  if (loading) return (
-    <div className="space-y-8 animate-pulse">
-      <div className="h-10 w-48 bg-slate-200 rounded-lg" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-200 rounded-3xl" />)}
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-pulse">
+        <div className="h-10 w-56 rounded-xl bg-slate-200" />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="h-32 rounded-2xl bg-slate-200" />
+          ))}
+        </div>
+        <div className="h-96 rounded-2xl bg-slate-200" />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 h-96 bg-slate-200 rounded-[2rem]" />
-        <div className="h-96 bg-slate-200 rounded-[2rem]" />
-      </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="space-y-10">
-      {/* Activity Detail Modal */}
-      <AnimatePresence>
-        {selectedActivity && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedActivity(null)}
-              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl border border-slate-100"
-            >
-              <div className="p-8 space-y-8">
-                <div className="flex items-start justify-between">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-950 border border-slate-100">
-                    {React.createElement(getActivityIcon(selectedActivity.type), { className: "w-8 h-8" })}
-                  </div>
-                  <button 
-                    onClick={() => setSelectedActivity(null)}
-                    className="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[8px] font-black uppercase tracking-widest">
-                    {selectedActivity.type}
-                  </div>
-                  <h3 className="text-2xl font-black text-slate-950 leading-tight">
-                    {getActivityMessage(selectedActivity)}
-                  </h3>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                     {new Date(selectedActivity.createdAt).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US', {
-                       dateStyle: 'full',
-                       timeStyle: 'short'
-                     })}
-                  </p>
-                </div>
-
-                {selectedActivity.description && (
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-slate-600 text-sm font-medium leading-relaxed">
-                      {selectedActivity.description}
-                    </p>
-                  </div>
-                )}
-
-                {selectedActivity.metadata && Object.keys(selectedActivity.metadata).length > 0 && (
-                  <div className="space-y-4">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
-                      {t('admin.activity.details')}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {Object.entries(selectedActivity.metadata).map(([key, value]: [string, any]) => (
-                        <div key={key} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100/50">
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
-                          <p className="text-xs font-bold text-slate-950 truncate">{String(value)}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-4">
-                   <button 
-                    onClick={() => setSelectedActivity(null)}
-                    className="w-full py-4 bg-slate-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all"
-                  >
-                    {t('common.close')}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Header */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
-            <Activity className="w-3 h-3" />
-            {t('admin.system.online')}
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
-            {t('admin.dashboard.title')}
-          </h1>
-          <p className="text-slate-400 text-xs font-bold font-mono">
-            {new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
+    <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
+      <header className="space-y-2">
+        <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+          <Activity className="h-3.5 w-3.5" />
+          {isRtl ? "الرئيسية" : "Home"}
         </div>
-      </section>
+        <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          {isRtl ? "لوح التحكم" : "Admin Dashboard"}
+        </h1>
+      </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {stats.map((stat, index) => (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
             key={stat.label}
-            className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:border-slate-900 transition-all group"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-slate-950 group-hover:text-white transition-colors">
-                <stat.icon className="w-5 h-5" />
-              </div>
-              <div className={`flex items-center gap-1 text-[10px] font-black ${stat.trend === 'up' ? 'text-slate-950' : 'text-slate-400'}`}>
-                {stat.trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                {stat.change}
-              </div>
+            <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+              <stat.icon className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-            <p className="text-2xl font-black text-slate-950 tabular-nums">{stat.value}</p>
+            <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+            <p className="text-3xl font-black tabular-nums text-slate-950">{stat.value}</p>
           </motion.div>
         ))}
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Main Map Tool Card */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="lg:col-span-8 bg-slate-950 text-white rounded-[2.5rem] p-10 relative overflow-hidden group shadow-2xl"
-        >
-          <div className="relative z-10 h-full flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em]">
-                <Map className="w-3.5 h-3.5" />
-                {t('admin.special_tool')}
-              </div>
-              <h2 className="text-4xl font-black max-w-md leading-tight">
-                {t('admin.scan.title')}
-              </h2>
-              <p className="text-white/40 text-sm font-bold max-w-sm leading-relaxed">
-                {t('admin.scan.desc')}
-              </p>
-            </div>
-            
-            <Link 
-              href="/scan-map" 
-              className="inline-flex items-center gap-3 mt-12 px-8 py-4 bg-white text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all group"
-            >
-              {t('admin.scan.btn')}
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </Link>
+      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-black text-slate-950">{isRtl ? "النشاطات الأخيرة" : "Recent activities"}</h2>
+            <p className="text-xs font-bold text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
           </div>
-
-          {/* Decorative Elements */}
-          <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -right-20 w-96 h-96 border border-white/5 rounded-full" />
-        </motion.div>
-
-        {/* Side Notification Card */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white border border-slate-100 rounded-[2rem] p-8 h-full flex flex-col">
-             <div className="flex items-center justify-between mb-8">
-               <h3 className="font-black text-lg text-slate-950 flex items-center gap-2">
-                 {t('admin.activity.title')}
-                 <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-               </h3>
-               <button className="p-2 hover:bg-slate-50 rounded-lg transition-colors">
-                 <Clock className="w-4 h-4 text-slate-400" />
-               </button>
-             </div>
-
-             <div className="flex-1 space-y-6">
-               {activities.length > 0 ? activities.map((activity, i) => {
-                 const Icon = getActivityIcon(activity.type);
-                 return (
-                  <motion.div 
-                    key={activity.id || i} 
-                    whileHover={{ x: 5 }}
-                    onClick={() => setSelectedActivity(activity)}
-                    className="flex gap-4 group cursor-pointer"
-                  >
-                     <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-slate-950 group-hover:text-white transition-all">
-                       <Icon className="w-4 h-4" />
-                     </div>
-                     <div className="space-y-1">
-                       <p className="text-xs font-black text-slate-950 leading-tight group-hover:text-blue-600 transition-colors">
-                         {getActivityMessage(activity)}
-                       </p>
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                         {t('admin.activity.time_ago', { 
-                           time: formatDistanceToNow(new Date(activity.createdAt), { 
-                             addSuffix: false, 
-                             locale: language === 'ar' ? arSA : undefined 
-                           }) 
-                         })}
-                       </p>
-                     </div>
-                  </motion.div>
-                 );
-               }) : (
-                 <div className="flex flex-col items-center justify-center py-10 text-slate-400">
-                   <Activity className="w-8 h-8 mb-2 opacity-20" />
-                   <p className="text-[10px] font-black uppercase tracking-widest">{t('common.noData')}</p>
-                 </div>
-               )}
-             </div>
-
-             <button className="w-full mt-8 py-4 border border-slate-100 rounded-2xl font-black text-[9px] uppercase tracking-widest text-slate-400 hover:bg-slate-50 hover:text-slate-950 transition-all flex items-center justify-center gap-2">
-               {t('admin.activity.view_all')}
-               <ExternalLink className="w-3 h-3" />
-             </button>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+            <Activity className="h-5 w-5" />
           </div>
         </div>
-      </div>
+
+        {activities.length === 0 ? (
+          <div className="py-16 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+            {isRtl ? "لا توجد نشاطات" : "No activities"}
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {activities.map((activity, index) => (
+              <div key={activity.id || index} className="flex items-start gap-4 py-4">
+                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                  <Activity className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-black text-slate-950">{getActivityTitle(activity)}</p>
+                  {activity.description && (
+                    <p className="mt-1 line-clamp-2 text-xs font-medium leading-6 text-slate-500">{activity.description}</p>
+                  )}
+                  {activity.createdAt && (
+                    <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-300">
+                      {formatDistanceToNow(new Date(activity.createdAt), {
+                        addSuffix: true,
+                        locale: isRtl ? arSA : undefined,
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

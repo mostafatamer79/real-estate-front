@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Loader2, Save, CheckCircle2, Send,
   User, Phone, MapPin, Calendar, Search, Filter,
@@ -297,6 +298,7 @@ function RequestsTable({
 // ─── main page ──────────────────────────────────────────────────────────────
 
 export default function LegalAdminPage({ embedded = false }: { embedded?: boolean } = {}) {
+  const router = useRouter();
   const { t, language } = useLanguage();
   const { token } = useAuth();
 
@@ -325,7 +327,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
     if (!token) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -463,6 +465,21 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
       toast.error(t("legal.invoice.sendError"));
     } finally {
       setIsSendingInvoice(false);
+    }
+  };
+
+  const handleOpenChat = async () => {
+    if (!token || !selectedRequest) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/chat`,
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res.ok) throw new Error("Failed to open chat");
+      const data = await res.json();
+      router.push(`/chat/${data.chatRoomId}`);
+    } catch {
+      toast.error("تعذر فتح محادثة الطلب");
     }
   };
 
@@ -886,14 +903,24 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   )}
 
                   {/* Date */}
-                  <div className="pt-2 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>
-                      {t("admin.service_requests.date")}:{" "}
-                      {format(new Date(selectedRequest.createdAt), "dd MMMM yyyy – hh:mm a", {
-                        locale: language === "ar" ? ar : enUS,
-                      })}
-                    </span>
+                  <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>
+                        {t("admin.service_requests.date")}:{" "}
+                        {format(new Date(selectedRequest.createdAt), "dd MMMM yyyy – hh:mm a", {
+                          locale: language === "ar" ? ar : enUS,
+                        })}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenChat}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-slate-700 hover:bg-slate-200"
+                    >
+                      <Send className="h-4 w-4" />
+                      فتح الشات
+                    </button>
                   </div>
                 </TabsContent>
 

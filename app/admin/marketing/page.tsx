@@ -12,13 +12,15 @@ import {
   RefreshCcw,
   AlertCircle,
   Clock,
-  Send
+  Send,
+  MessageSquare
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import MarketingCampaignModal from '@/components/marketing/MarketingCampaignModal';
+import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
 
 interface EmailMarketing {
   id: string;
@@ -38,6 +40,7 @@ export default function MarketingPage() {
   const [triggering, setTriggering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<EmailMarketing | null>(null);
+  const [activeTab, setActiveTab] = useState<'requests' | 'campaigns'>('requests');
 
   useEffect(() => {
     fetchCampaigns();
@@ -106,6 +109,7 @@ export default function MarketingPage() {
           <p className="mt-1 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.marketing.desc')}</p>
         </div>
 
+        {activeTab === 'campaigns' && (
         <div className="flex items-center gap-3">
           <button
             onClick={handleManualTrigger}
@@ -127,9 +131,41 @@ export default function MarketingPage() {
             {t('admin.marketing.create')}
           </button>
         </div>
+        )}
       </div>
 
-      {/* Campaigns Table */}
+      <div className="flex gap-2 rounded-2xl bg-slate-100 p-1.5 w-fit">
+        <button
+          type="button"
+          onClick={() => setActiveTab('requests')}
+          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
+            activeTab === 'requests' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          طلبات التسويق
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('campaigns')}
+          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
+            activeTab === 'campaigns' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Mail className="w-4 h-4" />
+          الحملات البريدية
+        </button>
+      </div>
+
+      {activeTab === 'requests' && (
+        <ServiceRequestsTable
+          title="طلبات التسويق"
+          subtitle="استقبال طلبات العملاء، تسعيرها، إرسال الفاتورة، تغيير الحالة، والرد من الشات"
+          department="marketing"
+        />
+      )}
+
+      {activeTab === 'campaigns' && (
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
         {loading ? (
           <div className="p-20 flex flex-col items-center justify-center space-y-4">
@@ -236,6 +272,7 @@ export default function MarketingPage() {
           </div>
         )}
       </div>
+      )}
 
       <MarketingCampaignModal 
         isOpen={isModalOpen}

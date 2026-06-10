@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { 
   CreditCard, 
   Search, 
@@ -335,6 +336,13 @@ export default function AdminSubscriptionsPage() {
         </div>
         
         <div className="flex flex-wrap gap-4">
+          <Link
+            href="/admin/packages"
+            className="h-12 px-6 bg-white text-slate-950 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:border-slate-950 transition-all shadow-sm"
+          >
+            <Package className="w-4 h-4" />
+            إدارة الباقات
+          </Link>
           <button 
             onClick={() => setIsModalOpen(true)}
             className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20"

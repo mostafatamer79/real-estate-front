@@ -73,7 +73,7 @@ export default function ServiceRequestsPage() {
         if (!token) return;
         setIsLoadingRequests(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

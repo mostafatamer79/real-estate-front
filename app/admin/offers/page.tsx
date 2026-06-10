@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { offersApi, usersApi } from "@/lib/api";
+import { Pagination } from "../../src/components/Pagination";
 import {
   Table,
   TableBody,
@@ -251,6 +252,8 @@ export default function AdminOffersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchOffers = async () => {
     try {
@@ -321,6 +324,12 @@ export default function AdminOffersPage() {
         offer.id.includes(search)
     )
   );
+  const totalPages = Math.ceil(filteredOffers.length / itemsPerPage);
+  const paginatedOffers = filteredOffers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -434,7 +443,7 @@ export default function AdminOffersPage() {
                       </TableCell>
                   </TableRow>
               ) : (
-                  filteredOffers.map((offer) => (
+                  paginatedOffers.map((offer) => (
                   <TableRow key={offer.id} className="hover:bg-slate-50/50 group transition-colors">
                       <TableCell className="px-6 py-5">
                         <div className="flex flex-col">
@@ -539,6 +548,13 @@ export default function AdminOffersPage() {
             </TableBody>
           </Table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredOffers.length}
+          itemsLabel="عرض"
+        />
       </div>
     </div>
   );
