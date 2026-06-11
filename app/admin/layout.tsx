@@ -96,7 +96,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 // ...existing code...
   const menuSections = [
     {
-       
+
       title: '',
       items: [
         { id: 'details', href: '/details', icon: ArrowLeft, label: t('admin.nav.back_to_details') || (isRtl ? 'العودة للموقع' : 'Back to site') },
@@ -123,10 +123,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'marketing', href: '/admin/marketing', icon: Megaphone, label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
         { id: 'finance', href: '/admin/transactions', icon: Receipt, label: isRtl ? 'الإدارة المالية' : 'Financial Management' },
         { id: 'properties-management', href: '/admin/properties-management', icon: Building2, label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
-        { id: 'properties-tenants', href: '/admin/properties-management?tab=tenants', icon: Users, label: isRtl ? 'المستأجرين' : 'Tenants' },
-        { id: 'properties-leases', href: '/admin/properties-management?tab=leases', icon: FileText, label: isRtl ? 'العقود' : 'Leases' },
-        { id: 'properties-payments', href: '/admin/properties-management?tab=payments', icon: CreditCard, label: isRtl ? 'مدفوعات الأملاك' : 'Property Payments' },
-        { id: 'properties-maintenance', href: '/admin/properties-management?tab=maintenance', icon: Wrench, label: isRtl ? 'الصيانة' : 'Maintenance' },
         { id: 'legal', href: '/admin/legal', icon: Scale, label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
       ]
     },
@@ -145,10 +141,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       items: [
         { id: 'post-purchase', href: '/admin/services?type=post_purchase', icon: Wrench, label: isRtl ? 'خدمات ما بعد الشراء' : 'Post-purchase Services' },
         { id: 'legal-services', href: '/admin/services?type=legal', icon: ShieldAlert, label: isRtl ? 'الخدمات القانونية' : 'Legal Services' },
-        { id: 'legal-disputes-services', href: '/admin/services?type=legal_disputes', icon: Scale, label: isRtl ? 'القانونية: المنازعات' : 'Legal: Disputes' },
-        { id: 'legal-contracts-services', href: '/admin/services?type=legal_contracts', icon: FileText, label: isRtl ? 'القانونية: العقود' : 'Legal: Contracts' },
-        { id: 'legal-documentation-services', href: '/admin/services?type=legal_documentation', icon: ShieldAlert, label: isRtl ? 'القانونية: التوثيق' : 'Legal: Documentation' },
-        { id: 'legal-other-services', href: '/admin/services?type=legal_other', icon: Wrench, label: isRtl ? 'القانونية: أخرى' : 'Legal: Other' },
         { id: 'construction', href: '/admin/services?type=construction', icon: Building2, label: isRtl ? 'البناء والمقاولات' : 'Construction' },
         { id: 'marketing-services', href: '/admin/services?type=marketing', icon: Megaphone, label: isRtl ? 'خدمات التسويق' : 'Marketing Services' },
         { id: 'other-services', href: '/admin/services?type=other', icon: Wrench, label: isRtl ? 'أخرى' : 'Other' },

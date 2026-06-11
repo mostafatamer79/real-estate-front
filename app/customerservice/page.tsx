@@ -6,7 +6,7 @@ import {
   HelpCircle, ChevronDown, Send,
   User, ExternalLink, X, Building2, Sparkles,
   ChevronLeft, ArrowRight, ShieldCheck, Headphones,
-  Search, Home, BadgeDollarSign, Tag
+  Search, Home, BadgeDollarSign, Tag, CheckCircle2, AlertCircle
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
@@ -22,7 +22,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { faqData } from "./faq-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { customerServiceFaqApi, customerServiceFeedbackApi, customerServiceFaqCategoryApi, type CustomerServiceFaq, type CustomerServiceFaqCategory } from "@/lib/api";
+import { customerServiceFaqApi, customerServiceFeedbackApi, customerServiceFaqCategoryApi, type CustomerServiceFaq, type CustomerServiceFaqCategory, type CustomerServiceFeedback } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
 function getXProfileUrl(value: string) {
@@ -45,7 +45,7 @@ function getXDisplayHandle(value: string) {
 export default function CustomerService() {
   const router = useRouter();
   const { t, language } = useLanguage();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { isOpen, message, isAdmin } = useSectionGuard('customerservice');
   const { settings } = useSettings();
 
@@ -73,6 +73,16 @@ export default function CustomerService() {
   const [faqCategories, setFaqCategories] = useState<CustomerServiceFaqCategory[] | null>(null);
   const [faqsLoading, setFaqsLoading] = useState(false);
   const [faqsError, setFaqsError] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<CustomerServiceFeedback[]>([]);
+  const [ticketsLoading, setTicketsLoading] = useState(false);
+  const [ticketReplyDrafts, setTicketReplyDrafts] = useState<Record<string, string>>({});
+  const [replyingTicketId, setReplyingTicketId] = useState<string | null>(null);
+  const [submitNotice, setSubmitNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const showSubmitNotice = (type: "success" | "error", message: string) => {
+    setSubmitNotice({ type, message });
+    window.setTimeout(() => setSubmitNotice(null), 4500);
+  };
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -105,6 +115,33 @@ export default function CustomerService() {
     refreshFaqs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    setName((current) => current || `${user.firstName || ""} ${user.lastName || ""}`.trim());
+    setEmail((current) => current || user.email || "");
+    setPhoneNumber((current) => current || user.phone || "");
+    if (user.email) setContactMethod("email");
+    else if (user.phone) setContactMethod("phone");
+  }, [user]);
+
+  const refreshTickets = async () => {
+    if (!isAuthenticated) return;
+    setTicketsLoading(true);
+    try {
+      const res = await customerServiceFeedbackApi.listMine();
+      setTickets(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      setTickets([]);
+    } finally {
+      setTicketsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshTickets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   const faqSections = useMemo(() => {
     if (!faqs || faqs.length === 0) return faqData;
@@ -183,16 +220,39 @@ export default function CustomerService() {
           question,
           pagePath: '/customerservice',
         });
-        alert(t('cs.alert.success'));
+        showSubmitNotice("success", t('cs.alert.success'));
         setQuestion("");
-        setEmail("");
-        setPhoneNumber("");
-        setName("");
+        if (!user) {
+          setEmail("");
+          setPhoneNumber("");
+          setName("");
+        }
         setCharCount(0);
+        await refreshTickets();
       } catch (err: any) {
-        alert(language === 'ar' ? 'فشل إرسال الرسالة. حاول مرة أخرى.' : 'Failed to send. Please try again.');
+        showSubmitNotice("error", language === 'ar' ? 'فشل إرسال الرسالة. حاول مرة أخرى.' : 'Failed to send. Please try again.');
       }
     })();
+  };
+
+  const submitTicketReply = async (ticketId: string) => {
+    const reply = (ticketReplyDrafts[ticketId] || "").trim();
+    if (!reply) return;
+    setReplyingTicketId(ticketId);
+    try {
+      await customerServiceFeedbackApi.replyAsUser(ticketId, reply);
+      setTicketReplyDrafts((current) => ({ ...current, [ticketId]: "" }));
+      await refreshTickets();
+    } finally {
+      setReplyingTicketId(null);
+    }
+  };
+
+  const ticketStatusLabel = (status: CustomerServiceFeedback["status"]) => {
+    if (status === "resolved") return language === "ar" ? "تم الحل" : "resolved";
+    if (status === "replied") return language === "ar" ? "تم الرد" : "replied";
+    if (status === "customer_replied") return language === "ar" ? "تم ردك" : "your reply sent";
+    return language === "ar" ? "جديد" : "new";
   };
 
   if (!isOpen) {
@@ -205,6 +265,39 @@ export default function CustomerService() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <AnimatePresence>
+        {submitNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: -18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -18, scale: 0.98 }}
+            className="fixed left-1/2 top-5 z-[10000] w-[calc(100%-2rem)] max-w-md -translate-x-1/2"
+          >
+            <div className={`flex items-start gap-3 rounded-2xl border bg-white p-4 shadow-2xl shadow-slate-200/70 ${
+              submitNotice.type === "success" ? "border-emerald-100" : "border-red-100"
+            }`}>
+              <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                submitNotice.type === "success" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+              }`}>
+                {submitNotice.type === "success" ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-black text-slate-950">
+                  {submitNotice.type === "success" ? (language === "ar" ? "تم الإرسال" : "Sent") : (language === "ar" ? "تعذر الإرسال" : "Failed")}
+                </p>
+                <p className="mt-1 text-sm font-bold leading-6 text-slate-500">{submitNotice.message}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSubmitNotice(null)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-700"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Premium Header Container */}
       <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden">
@@ -275,6 +368,108 @@ export default function CustomerService() {
               );
             })}
           </div>
+
+          {isAuthenticated && (
+            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+              <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-lg font-black text-slate-900">
+                    {language === "ar" ? "تذاكري" : "My tickets"}
+                  </h2>
+                  <p className="mt-1 text-xs font-bold text-slate-400">
+                    {language === "ar" ? "تابع ردود خدمة العملاء ورد على التذاكر المفتوحة" : "Track customer service replies and respond to open tickets"}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-10 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                  onClick={refreshTickets}
+                  disabled={ticketsLoading}
+                >
+                  {ticketsLoading ? (language === "ar" ? "جار التحديث" : "Loading") : (language === "ar" ? "تحديث" : "Refresh")}
+                </Button>
+              </div>
+
+              {tickets.length === 0 ? (
+                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+                  {language === "ar" ? "لا توجد تذاكر بعد" : "No tickets yet"}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {tickets.map((ticket) => (
+                    <div key={ticket.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-black text-slate-950">#{ticket.id.slice(0, 8)}</span>
+                            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                              {ticketStatusLabel(ticket.status)}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[10px] font-black text-slate-400">
+                            {new Date(ticket.createdAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="rounded-xl bg-white p-4">
+                          <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            {language === "ar" ? "استفسارك" : "Your message"}
+                          </div>
+                          <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.question}</p>
+                        </div>
+
+                        {ticket.adminReply && (
+                          <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
+                              {language === "ar" ? "رد الإدارة" : "Admin reply"}
+                            </div>
+                            <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.adminReply}</p>
+                            {ticket.adminRepliedAt && (
+                              <p className="mt-2 text-[10px] font-black text-blue-500">
+                                {new Date(ticket.adminRepliedAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {ticket.userReply && (
+                          <div className="rounded-xl bg-white p-4">
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                              {language === "ar" ? "ردك الأخير" : "Your last reply"}
+                            </div>
+                            <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.userReply}</p>
+                          </div>
+                        )}
+
+                        <div className="rounded-xl bg-white p-3">
+                          <Textarea
+                            value={ticketReplyDrafts[ticket.id] || ""}
+                            onChange={(event) => setTicketReplyDrafts((current) => ({ ...current, [ticket.id]: event.target.value }))}
+                            className="min-h-24 rounded-xl border-slate-100 bg-slate-50 text-sm font-bold"
+                            placeholder={language === "ar" ? "اكتب ردك على التذكرة..." : "Write your reply..."}
+                          />
+                          <div className="mt-3 flex justify-end">
+                            <Button
+                              type="button"
+                              disabled={replyingTicketId === ticket.id || !(ticketReplyDrafts[ticket.id] || "").trim()}
+                              onClick={() => submitTicketReply(ticket.id)}
+                              className="h-10 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black"
+                            >
+                              {replyingTicketId === ticket.id ? (language === "ar" ? "جار الإرسال" : "Sending") : (language === "ar" ? "إرسال الرد" : "Send reply")}
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}

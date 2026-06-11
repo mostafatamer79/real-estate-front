@@ -56,9 +56,14 @@ export type CustomerServiceFeedback = {
   email?: string | null;
   phoneNumber?: string | null;
   question: string;
+  adminReply?: string | null;
+  adminRepliedAt?: string | null;
+  adminRepliedById?: string | null;
+  userReply?: string | null;
+  userRepliedAt?: string | null;
   userId?: string | null;
   pagePath?: string | null;
-  status: 'new' | 'resolved';
+  status: 'new' | 'replied' | 'customer_replied' | 'resolved';
   createdAt: string;
   updatedAt: string;
 };
@@ -269,8 +274,17 @@ export const customerServiceFeedbackApi = {
   list: (): Promise<{ success: boolean; data: CustomerServiceFeedback[] }> =>
     api.get('/customer-service/feedback').then((r) => r.data),
 
-  updateStatus: (id: string, status: 'new' | 'resolved'): Promise<{ success: boolean; data: CustomerServiceFeedback }> =>
+  listMine: (): Promise<{ success: boolean; data: CustomerServiceFeedback[] }> =>
+    api.get('/customer-service/feedback/my').then((r) => r.data),
+
+  updateStatus: (id: string, status: 'new' | 'replied' | 'customer_replied' | 'resolved'): Promise<{ success: boolean; data: CustomerServiceFeedback }> =>
     api.patch(`/customer-service/feedback/${id}`, { status }).then((r) => r.data),
+
+  replyAsAdmin: (id: string, reply: string): Promise<{ success: boolean; data: CustomerServiceFeedback }> =>
+    api.patch(`/customer-service/feedback/${id}/admin-reply`, { reply }).then((r) => r.data),
+
+  replyAsUser: (id: string, reply: string): Promise<{ success: boolean; data: CustomerServiceFeedback }> =>
+    api.patch(`/customer-service/feedback/${id}/user-reply`, { reply }).then((r) => r.data),
 
   remove: (id: string): Promise<{ success: boolean }> =>
     api.delete(`/customer-service/feedback/${id}`).then((r) => r.data),
@@ -332,6 +346,12 @@ export const ordersApi = {
 export const usersApi = {
   findAll: (): Promise<ApiResponse<any[]>> =>
     api.get('/user'),
+
+  findOne: (id: string): Promise<ApiResponse<any>> =>
+    api.get(`/user/${id}`),
+
+  getOverview: (id: string): Promise<ApiResponse<any>> =>
+    api.get(`/user/${id}/overview`),
     
   create: (data: any): Promise<ApiResponse<any>> =>
     api.post('/user', data),

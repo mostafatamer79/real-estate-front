@@ -21,6 +21,7 @@ import {
   Building2,
   Users,
   Edit,
+  Eye,
   Save,
   AlertCircle,
   Clock,
@@ -613,9 +614,17 @@ export default function UsersPage() {
                                                 </button>
                                             )}
                                             
+                                            <Link
+                                                 href={`/admin/users/${user.id}`}
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                                 title="الدخول للملف"
+                                             >
+                                                 <Eye className="w-4 h-4" />
+                                             </Link>
+
                                             <button 
                                                  onClick={() => handleEditUser(user)}
-                                                 className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-900 text-white hover:bg-slate-800 transition-all"
                                                  title="تعديل"
                                              >
                                                  <Edit className="w-4 h-4" />
@@ -623,7 +632,7 @@ export default function UsersPage() {
  
                                             <button 
                                                 onClick={() => handleDeleteUser(user.id)}
-                                                className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-300 hover:text-red-600 hover:bg-red-50 transition-all"
+                                                className="h-9 w-9 flex items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-700 hover:bg-red-100 transition-all"
                                                 title="حذف"
                                             >
                                                 <Trash2 className="w-4 h-4" />

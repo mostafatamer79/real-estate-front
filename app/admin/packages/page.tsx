@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Check, X, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Plus, Edit2, Trash2, Check, X, Loader2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/api";
@@ -28,6 +30,8 @@ const AVAILABLE_ADMINISTRATIONS = [
 
 export default function AdminPackagesPage() {
   const { t, language } = useLanguage();
+  const router = useRouter();
+  const isRtl = language === "ar";
   const [packages, setPackages] = useState<ManagementPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -137,18 +141,38 @@ export default function AdminPackagesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) router.back();
+              else router.push("/admin/subscriptions");
+            }}
+            className="mb-3 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition-all hover:border-slate-900"
+          >
+            <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
+            {isRtl ? "رجوع" : "Back"}
+          </button>
           <h1 className="text-2xl font-bold text-gray-900">{t('admin.packages.title')}</h1>
           <p className="text-gray-500 mt-1">{t('admin.packages.subtitle')}</p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          <span>{t('admin.packages.add')}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/admin/subscriptions"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 transition-colors hover:border-slate-900"
+          >
+            <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
+            <span>{isRtl ? "العودة للاشتراكات" : "Back to subscriptions"}</span>
+          </Link>
+          <button
+            onClick={() => handleOpenModal()}
+            className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            <span>{t('admin.packages.add')}</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (

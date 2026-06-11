@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
+import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical, Send, Mail } from "lucide-react";
 
 type TabKey = "faqs" | "feedback";
 
@@ -33,6 +33,8 @@ export default function AdminCustomerServicePage() {
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [loadingFaqs, setLoadingFaqs] = useState(false);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+  const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
@@ -253,6 +255,33 @@ export default function AdminCustomerServicePage() {
   const updateFeedbackStatus = async (id: string, status: "new" | "resolved") => {
     await customerServiceFeedbackApi.updateStatus(id, status);
     await loadFeedback();
+  };
+
+  const submitAdminReply = async (id: string) => {
+    const reply = (replyDrafts[id] || "").trim();
+    if (!reply) return;
+    setReplyingFeedbackId(id);
+    try {
+      await customerServiceFeedbackApi.replyAsAdmin(id, reply);
+      setReplyDrafts((current) => ({ ...current, [id]: "" }));
+      await loadFeedback();
+    } finally {
+      setReplyingFeedbackId(null);
+    }
+  };
+
+  const statusLabel = (status: CustomerServiceFeedback["status"]) => {
+    if (status === "resolved") return t("admin.customer_service.resolved") || (isRtl ? "تم الحل" : "resolved");
+    if (status === "replied") return isRtl ? "تم الرد" : "replied";
+    if (status === "customer_replied") return isRtl ? "رد العميل" : "customer replied";
+    return t("admin.customer_service.new") || (isRtl ? "جديد" : "new");
+  };
+
+  const statusClass = (status: CustomerServiceFeedback["status"]) => {
+    if (status === "resolved") return "text-emerald-600";
+    if (status === "replied") return "text-blue-600";
+    if (status === "customer_replied") return "text-indigo-600";
+    return "text-amber-600";
   };
 
   const resetDefaults = async () => {
@@ -650,12 +679,18 @@ export default function AdminCustomerServicePage() {
                       <div className="space-y-1">
                         <div className="text-slate-950 font-black">
                           {m.name}{" "}
-                          <span className={`text-[10px] font-black uppercase tracking-widest ml-2 ${m.status === "resolved" ? "text-emerald-600" : "text-amber-600"}`}>
-                            {m.status === "resolved" ? (t("admin.customer_service.resolved") || (isRtl ? "تم الحل" : "resolved")) : (t("admin.customer_service.new") || (isRtl ? "جديد" : "new"))}
+                          <span className={`text-[10px] font-black uppercase tracking-widest ml-2 ${statusClass(m.status)}`}>
+                            {statusLabel(m.status)}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-500 font-medium">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-medium">
                           {m.contactMethod === "email" ? `${m.email || ""}` : `${m.phoneNumber || ""}`}
+                          {m.email && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black text-blue-700">
+                              <Mail className="h-3 w-3" />
+                              {isRtl ? "يرسل بريد مع الرد" : "Email on reply"}
+                            </span>
+                          )}
                         </div>
                         {m.pagePath && (
                           <div className="text-[11px] text-slate-400 font-bold">
@@ -690,6 +725,46 @@ export default function AdminCustomerServicePage() {
                     </div>
 
                     <div className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{m.question}</div>
+                    {m.adminReply && (
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
+                          {isRtl ? "رد الإدارة" : "Admin reply"}
+                        </div>
+                        <div className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{m.adminReply}</div>
+                        {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-blue-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
+                      </div>
+                    )}
+                    {m.userReply && (
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                          {isRtl ? "رد العميل" : "Customer reply"}
+                        </div>
+                        <div className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{m.userReply}</div>
+                        {m.userRepliedAt && <div className="mt-2 text-[10px] font-black text-slate-400">{new Date(m.userRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
+                      </div>
+                    )}
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                      <Label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        {isRtl ? "اكتب رد الإدارة" : "Admin reply"}
+                      </Label>
+                      <Textarea
+                        value={replyDrafts[m.id] ?? ""}
+                        onChange={(event) => setReplyDrafts((current) => ({ ...current, [m.id]: event.target.value }))}
+                        className="min-h-24 rounded-xl bg-white text-sm font-bold"
+                        placeholder={isRtl ? "اكتب الرد الذي سيظهر للعميل ويرسل للبريد إن وجد..." : "Write the reply shown to the customer and emailed if available..."}
+                      />
+                      <div className="mt-3 flex justify-end">
+                        <Button
+                          type="button"
+                          className="h-10 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black"
+                          disabled={replyingFeedbackId === m.id || !(replyDrafts[m.id] || "").trim()}
+                          onClick={() => submitAdminReply(m.id)}
+                        >
+                          <Send className="h-4 w-4" />
+                          {replyingFeedbackId === m.id ? (isRtl ? "جار الإرسال" : "Sending") : (isRtl ? "إرسال الرد" : "Send reply")}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

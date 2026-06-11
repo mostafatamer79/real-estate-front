@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Loader2, Save, CheckCircle2, Send,
   User, Phone, MapPin, Calendar, Search, Filter,
   ExternalLink, Receipt, Clock, Briefcase,
   Scale, FileText, Layers, BarChart3, Settings2,
-  TrendingUp, AlertCircle, CheckCircle, XCircle, Clock3
+  TrendingUp, AlertCircle, CheckCircle, XCircle, Clock3, ShieldAlert
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
@@ -499,7 +500,16 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
     { id: "disputes",  label: t("admin.legal.disputes"),  icon: Scale      },
     { id: "contracts", label: t("admin.legal.contracts"), icon: FileText   },
     { id: "services",  label: t("admin.legal.services"),  icon: Settings2  },
+    { id: "legal_services_manage", label: language === "ar" ? "خدمات قانونية" : "Legal Services", icon: ShieldAlert },
     { id: "other",     label: t("admin.legal.other"),     icon: Briefcase  },
+  ];
+
+  const legalServiceTabs = [
+    { id: "legal-services", href: "/admin/services?type=legal", icon: ShieldAlert, label: language === "ar" ? "الخدمات القانونية" : "Legal Services" },
+    { id: "legal-disputes-services", href: "/admin/services?type=legal_disputes", icon: Scale, label: language === "ar" ? "القانونية: المنازعات" : "Legal: Disputes" },
+    { id: "legal-contracts-services", href: "/admin/services?type=legal_contracts", icon: FileText, label: language === "ar" ? "القانونية: العقود" : "Legal: Contracts" },
+    { id: "legal-documentation-services", href: "/admin/services?type=legal_documentation", icon: ShieldAlert, label: language === "ar" ? "القانونية: التوثيق" : "Legal: Documentation" },
+    { id: "legal-other-services", href: "/admin/services?type=legal_other", icon: Briefcase, label: language === "ar" ? "القانونية: أخرى" : "Legal: Other" },
   ];
 
   // ── tabbed data ──────────────────────────────────────────────────────────
@@ -649,8 +659,34 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           </motion.div>
         )}
 
+        {activeTab === "legal_services_manage" && (
+          <motion.div
+            key="legal_services_manage"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+          >
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+              {legalServiceTabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <Link
+                    key={tab.id}
+                    href={tab.href}
+                    className="flex min-h-24 items-center justify-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-slate-950 hover:bg-slate-950 hover:text-white"
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    {tab.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+
         {/* List tabs: all / disputes / contracts / services / other */}
-        {activeTab !== "dashboard" && (
+        {activeTab !== "dashboard" && activeTab !== "legal_services_manage" && (
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}

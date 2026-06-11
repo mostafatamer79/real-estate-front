@@ -3,9 +3,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Ban, Calendar, CheckCircle, CreditCard, ExternalLink, FileText, FolderOpen, LockKeyhole, MessageSquare, Percent, Plus, RefreshCw, Save, Trash2, TrendingUp, Upload, User as UserIcon, Wallet } from "lucide-react";
+import { ArrowRight, Ban, BriefcaseBusiness, Calendar, CheckCircle, CreditCard, ExternalLink, FileText, FolderOpen, History, Layers3, LockKeyhole, MessageSquare, Percent, Plus, RefreshCw, Save, Shield, Trash2, TrendingUp, Upload, User as UserIcon, Wallet } from "lucide-react";
 import { toast } from "sonner";
-import api, { adminSubscriptionsApi, bookingsApi, financialApi, usersApi } from "@/lib/api";
+import api, { adminSubscriptionsApi, financialApi, usersApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
 
 const formatDate = (value: any, locale: string) => {
@@ -26,12 +26,19 @@ export default function AdminUserDetailsPage() {
   const [saving, setSaving] = useState(false);
   const [uploadingDocument, setUploadingDocument] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [overview, setOverview] = useState<any>(null);
   const [wallet, setWallet] = useState<any>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [commissions, setCommissions] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
   const [investments, setInvestments] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [offers, setOffers] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [serviceRequests, setServiceRequests] = useState<any[]>([]);
+  const [departmentRequests, setDepartmentRequests] = useState<any[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [subscriptionStatus, setSubscriptionStatus] = useState<any>(null);
   const [walletTab, setWalletTab] = useState<"invoices" | "commissions" | "files" | "investments">("invoices");
   const [invoiceForm, setInvoiceForm] = useState({ amount: "", description: "", status: "unpaid", documentUrl: "" });
@@ -41,27 +48,33 @@ export default function AdminUserDetailsPage() {
   const loadUser = async () => {
     setLoading(true);
     try {
-      const [usersRes, walletRes, invoicesRes, commissionsRes, filesRes, bookingsRes, subscriptionRes, serviceRequestsRes] = await Promise.all([
-        usersApi.findAll(),
+      const [overviewRes, walletRes, invoicesRes, commissionsRes, filesRes, subscriptionRes] = await Promise.all([
+        usersApi.getOverview(params.id),
         financialApi.getUserWallet(params.id).catch(() => ({ data: null })),
         financialApi.getUserInvoices(params.id).catch(() => ({ data: [] })),
         financialApi.getUserCommissions(params.id).catch(() => ({ data: [] })),
         financialApi.getUserFiles(params.id).catch(() => ({ data: [] })),
-        bookingsApi.getUserBookings(params.id).catch(() => ({ data: [] })),
         api.get(`/subscriptions/status?userId=${params.id}`).catch(() => ({ data: null })),
-        api.get("/service-requests", { params: { page: 1, limit: 500 } }).catch(() => ({ data: [] })),
       ]);
 
-      const foundUser = Array.isArray(usersRes.data) ? usersRes.data.find((item) => item.id === params.id) : null;
-      const serviceRequests = Array.isArray(serviceRequestsRes.data) ? serviceRequestsRes.data : [];
-      setUser(foundUser || null);
+      const nextOverview = overviewRes.data || null;
+      const nextServiceRequests = Array.isArray(nextOverview?.serviceRequests) ? nextOverview.serviceRequests : [];
+
+      setOverview(nextOverview);
+      setUser(nextOverview?.user || null);
       setWallet(walletRes.data || null);
       setInvoices(Array.isArray(invoicesRes.data) ? invoicesRes.data : []);
       setCommissions(Array.isArray(commissionsRes.data) ? commissionsRes.data : []);
       setFiles(Array.isArray(filesRes.data) ? filesRes.data : []);
-      setBookings(Array.isArray(bookingsRes.data) ? bookingsRes.data : []);
+      setBookings(Array.isArray(nextOverview?.bookings) ? nextOverview.bookings : []);
+      setOffers(Array.isArray(nextOverview?.offers) ? nextOverview.offers : []);
+      setOrders(Array.isArray(nextOverview?.orders) ? nextOverview.orders : []);
+      setServiceRequests(nextServiceRequests);
+      setDepartmentRequests(Array.isArray(nextOverview?.departmentRequests) ? nextOverview.departmentRequests : []);
+      setChats(Array.isArray(nextOverview?.chats) ? nextOverview.chats : []);
+      setActivities(Array.isArray(nextOverview?.activities) ? nextOverview.activities : []);
       setSubscriptionStatus(subscriptionRes.data || null);
-      setInvestments(serviceRequests.filter((item) => {
+      setInvestments(nextServiceRequests.filter((item: any) => {
         const ownerId = item.userId || item.user?.id;
         const text = `${item.category || ""} ${item.serviceType || ""} ${item.title || ""}`.toLowerCase();
         return ownerId === params.id && (text.includes("invest") || text.includes("استثمار"));
@@ -84,8 +97,12 @@ export default function AdminUserDetailsPage() {
       { label: isRtl ? "التحقق" : "Verification", value: user?.isVerified ? (isRtl ? "موثق" : "Verified") : (isRtl ? "معلق" : "Pending"), icon: CheckCircle },
       { label: isRtl ? "الاشتراك" : "Subscription", value: subscriptionStatus?.active ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive"), icon: CreditCard },
       { label: isRtl ? "رصيد المحفظة" : "Wallet balance", value: Number(wallet?.balance || 0).toLocaleString(locale), icon: Wallet },
+      { label: isRtl ? "العروض" : "Offers", value: Number(overview?.stats?.offers || 0).toLocaleString(locale), icon: Layers3 },
+      { label: isRtl ? "الخدمات" : "Services", value: Number(overview?.stats?.serviceRequests || 0).toLocaleString(locale), icon: BriefcaseBusiness },
+      { label: isRtl ? "المحادثات" : "Chats", value: Number(overview?.stats?.chats || 0).toLocaleString(locale), icon: MessageSquare },
+      { label: isRtl ? "السجل" : "Logs", value: Number(overview?.stats?.activities || 0).toLocaleString(locale), icon: History },
     ],
-    [isRtl, locale, subscriptionStatus?.active, user?.isActive, user?.isVerified, wallet?.balance],
+    [isRtl, locale, overview?.stats?.activities, overview?.stats?.chats, overview?.stats?.offers, overview?.stats?.serviceRequests, subscriptionStatus?.active, user?.isActive, user?.isVerified, wallet?.balance],
   );
 
   const resetInvoiceForm = () => {
@@ -401,6 +418,7 @@ export default function AdminUserDetailsPage() {
               [isRtl ? "البريد" : "Email", user.email || "—"],
               [isRtl ? "الجوال" : "Phone", user.phone || "—"],
               [isRtl ? "الدور" : "Role", user.role || "—"],
+              [isRtl ? "الإدارات" : "Departments", Array.isArray(user.departments) && user.departments.length ? user.departments.join(" , ") : "—"],
               [isRtl ? "تاريخ الإنشاء" : "Created", formatDate(user.createAt, locale)],
             ].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between gap-4 border-b border-slate-50 pb-3">
@@ -444,14 +462,146 @@ export default function AdminUserDetailsPage() {
 
         <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
-            <MessageSquare className="h-5 w-5" />
-            {isRtl ? "المحادثات والطلبات" : "Messages & requests"}
+            <Shield className="h-5 w-5" />
+            {isRtl ? "نطاق العمل" : "Scope"}
           </h2>
-          <p className="text-sm font-bold leading-7 text-slate-500">
-            {isRtl
-              ? "هذه الصفحة للقراءة والاطلاع. المحادثات الكاملة تحتاج API إداري مستقل للبحث حسب المستخدم."
-              : "This page is read-only. Full user chat browsing needs a dedicated admin chat API by user."}
-          </p>
+          <div className="space-y-3 text-sm">
+            {[
+              [isRtl ? "العروض المنشأة" : "Created offers", overview?.stats?.offers || 0],
+              [isRtl ? "طلبات الخدمة" : "Service requests", overview?.stats?.serviceRequests || 0],
+              [isRtl ? "طلبات ضمن الإدارة" : "Department requests", overview?.stats?.departmentRequests || 0],
+              [isRtl ? "المحادثات" : "Chats", overview?.stats?.chats || 0],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between border-b border-slate-50 pb-3">
+                <span className="font-black text-slate-400">{label}</span>
+                <span className="font-black text-slate-950">{Number(value || 0).toLocaleString(locale)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
+              <Layers3 className="h-5 w-5" />
+              {isRtl ? "العروض والطلبات" : "Offers & requests"}
+            </h2>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "العروض المنشأة" : "Created offers"}</p>
+              <div className="divide-y divide-slate-100">
+                {offers.slice(0, 6).map((offer) => (
+                  <div key={offer.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
+                    <div>
+                      <p className="font-black text-slate-900">{offer.propertyType || offer.mainCategory || offer.id}</p>
+                      <p className="mt-1 text-xs font-bold text-slate-400">{offer.city || "—"} · {offer.status || "draft"}</p>
+                    </div>
+                    <Link href={`/offers/${offer.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                      <ExternalLink className="h-4 w-4" />
+                      {isRtl ? "فتح" : "Open"}
+                    </Link>
+                  </div>
+                ))}
+                {!offers.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد عروض" : "No offers"}</div>}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "طلبات الخدمة" : "Service requests"}</p>
+              <div className="divide-y divide-slate-100">
+                {serviceRequests.slice(0, 6).map((request) => (
+                  <div key={request.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
+                    <div>
+                      <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
+                      <p className="mt-1 text-xs font-bold text-slate-400">{request.status || "pending"} · {formatDate(request.createdAt, locale)}</p>
+                    </div>
+                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                      <ExternalLink className="h-4 w-4" />
+                      {isRtl ? "إدارة" : "Manage"}
+                    </Link>
+                  </div>
+                ))}
+                {!serviceRequests.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات خدمة" : "No service requests"}</div>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
+              <BriefcaseBusiness className="h-5 w-5" />
+              {isRtl ? "عمل الإدارة والسجل" : "Department work & logs"}
+            </h2>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "طلبات مرتبطة بإدارته" : "Department requests"}</p>
+              <div className="divide-y divide-slate-100">
+                {departmentRequests.slice(0, 6).map((request) => (
+                  <div key={request.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
+                    <div>
+                      <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
+                      <p className="mt-1 text-xs font-bold text-slate-400">{request.targetDepartment || "—"} · {request.status || "pending"}</p>
+                    </div>
+                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                      <ExternalLink className="h-4 w-4" />
+                      {isRtl ? "فتح" : "Open"}
+                    </Link>
+                  </div>
+                ))}
+                {!departmentRequests.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا يوجد عمل إداري ظاهر" : "No department items"}</div>}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل والنشاط" : "Activity log"}</p>
+              <div className="divide-y divide-slate-100">
+                {activities.slice(0, 6).map((activity) => (
+                  <div key={activity.id} className="py-3 text-sm">
+                    <p className="font-black text-slate-900">{activity.title || activity.type || activity.id}</p>
+                    <p className="mt-1 text-xs font-bold text-slate-400">{activity.description || formatDate(activity.createdAt, locale)}</p>
+                  </div>
+                ))}
+                {!activities.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا يوجد سجل" : "No activity logs"}</div>}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
+          <MessageSquare className="h-5 w-5" />
+          {isRtl ? "محادثات المستخدم" : "User chats"}
+        </h2>
+        <div className="space-y-4">
+          {chats.slice(0, 8).map((chat) => (
+            <div key={chat.id} className="rounded-2xl border border-slate-100 p-4">
+              <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="font-black text-slate-900">{chat.name || chat.id}</p>
+                  <p className="mt-1 text-xs font-bold text-slate-400">
+                    {Array.isArray(chat.participants) ? chat.participants.map((participant: any) => `${participant.firstName || ""} ${participant.lastName || ""}`.trim() || participant.email).join("، ") : "—"}
+                  </p>
+                </div>
+                <span className="text-xs font-black text-slate-400">{formatDate(chat.createdAt, locale)}</span>
+              </div>
+              <div className="mt-3 divide-y divide-slate-100">
+                {(chat.recentMessages || []).slice(0, 3).map((message: any) => (
+                  <div key={message.id} className="py-2 text-sm">
+                    <p className="font-black text-slate-700">{message.sender?.firstName || (isRtl ? "مستخدم" : "User")}</p>
+                    <p className="mt-1 font-bold text-slate-500">{message.content}</p>
+                  </div>
+                ))}
+                {!chat.recentMessages?.length && <div className="py-3 text-xs font-black text-slate-300">{isRtl ? "لا توجد رسائل بعد" : "No messages yet"}</div>}
+              </div>
+            </div>
+          ))}
+          {!chats.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد محادثات" : "No chats"}</div>}
         </div>
       </section>
 
@@ -670,13 +820,25 @@ export default function AdminUserDetailsPage() {
           {isRtl ? "الطلبات والحجوزات" : "Requests & bookings"}
         </h2>
         <div className="divide-y divide-slate-100">
+          {orders.slice(0, 6).map((order) => (
+            <div key={order.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+              <div>
+                <span className="font-bold text-slate-700">{order.propertyType || order.orderType || order.id}</span>
+                <p className="mt-1 text-xs font-black text-slate-400">{order.status || "pending"} · {order.city || "—"}</p>
+              </div>
+              <span className="font-black text-slate-950">{formatDate(order.createdAt, locale)}</span>
+            </div>
+          ))}
           {bookings.slice(0, 10).map((booking, index) => (
             <div key={booking.id || index} className="flex items-center justify-between gap-4 py-3 text-sm">
-              <span className="font-bold text-slate-700">{booking.type || booking.status || booking.id}</span>
+              <div>
+                <span className="font-bold text-slate-700">{booking.type || booking.status || booking.id}</span>
+                <p className="mt-1 text-xs font-black text-slate-400">{booking.offer?.propertyType || booking.offerId || "—"}</p>
+              </div>
               <span className="font-black text-slate-950">{formatDate(booking.createdAt || booking.date, locale)}</span>
             </div>
           ))}
-          {!bookings.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات" : "No requests"}</div>}
+          {!orders.length && !bookings.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات" : "No requests"}</div>}
         </div>
       </section>
     </div>

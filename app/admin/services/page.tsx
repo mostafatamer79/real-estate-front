@@ -61,13 +61,20 @@ export default function AdminServicesManagementPage() {
     }
   }, [settings]);
 
-  const serviceCategories = [
+  const nonLegalServiceCategories = [
     { id: 'postPurchase', label: 'خدمات ما بعد الشراء', icon: ShoppingBag },
-    { id: 'legal', label: 'الخدمات القانونية', icon: Scale },
     { id: 'construction', label: 'خدمات البناء والمقاولات', icon: Hammer },
     { id: 'marketing', label: 'خدمات التسويق', icon: Megaphone },
     { id: 'other', label: 'خدمات أخرى', icon: MoreHorizontal },
   ];
+  const legalServiceCategories = [
+    { id: 'legal', label: 'الخدمات القانونية', icon: Scale },
+    { id: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
+    { id: "legal_contracts", label: "القانونية: العقود", icon: FileText },
+    { id: "legal_documentation", label: "القانونية: التوثيق", icon: ShieldAlert },
+    { id: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
+  ];
+  const serviceCategories = [...nonLegalServiceCategories, ...legalServiceCategories];
 
   const serviceTypeToCategory: Record<string, string> = {
     post_purchase: "postPurchase",
@@ -109,6 +116,22 @@ export default function AdminServicesManagementPage() {
 
   const activeCategoryConfig = pricingCategories.find((category) => category.id === activeServiceCategory) || serviceCategories[0];
   const activeCategoryServices = servicePriceGroups[activeServiceCategory] || [];
+  const legalServiceNavigationTabs = [
+    { id: "legal", type: "legal", label: "الخدمات القانونية", icon: Scale },
+    { id: "legal_disputes", type: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
+    { id: "legal_contracts", type: "legal_contracts", label: "القانونية: العقود", icon: FileText },
+    { id: "legal_documentation", type: "legal_documentation", label: "القانونية: التوثيق", icon: ShieldAlert },
+    { id: "legal_other", type: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
+  ];
+  const otherServiceNavigationTabs = [
+    { id: "postPurchase", type: "post_purchase", label: "خدمات ما بعد الشراء", icon: ShoppingBag },
+    { id: "construction", type: "construction", label: "البناء والمقاولات", icon: Hammer },
+    { id: "marketing", type: "marketing", label: "خدمات التسويق", icon: Megaphone },
+    { id: "other", type: "other", label: "أخرى", icon: MoreHorizontal },
+  ];
+  const isLegalServicesPage = activeServiceCategory === "legal" || activeServiceCategory.startsWith("legal_");
+  const serviceNavigationTabs = isLegalServicesPage ? legalServiceNavigationTabs : otherServiceNavigationTabs;
+  const visibleServiceCategories = isLegalServicesPage ? legalServiceCategories : nonLegalServiceCategories;
 
   const requestPageSize = 8;
 
@@ -312,6 +335,28 @@ export default function AdminServicesManagementPage() {
         </button>
       </header>
 
+      <nav className="rounded-[2rem] border border-slate-100 bg-white p-2 shadow-sm">
+        <div className="flex gap-2 overflow-x-auto">
+          {serviceNavigationTabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = activeServiceCategory === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => router.push(`/admin/services?type=${tab.type}`)}
+                className={`flex min-w-fit items-center justify-center gap-2 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${
+                  active ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-8">
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -320,7 +365,7 @@ export default function AdminServicesManagementPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            {serviceCategories.map((cat) => {
+            {visibleServiceCategories.map((cat) => {
               const status = localModuleFlags[`services_${cat.id}`] || 'enabled';
               return (
                 <div key={cat.id} className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">

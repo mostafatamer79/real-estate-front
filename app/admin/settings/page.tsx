@@ -11,6 +11,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
 import { translations } from '@/context/translations';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
@@ -42,25 +43,78 @@ interface TextTabProps extends TabProps {
     language: string;
 }
 
-const TRANSLATION_CATEGORIES = [
-    { id: 'all', label: 'الكل', prefixes: [] },
+type TranslationCategory = {
+    id: string;
+    label: string;
+    prefixes: string[];
+};
+
+const ADMIN_TEXT_SECTIONS: TranslationCategory[] = [
+    { id: 'admin_entry', label: 'العودة والهوية', prefixes: ['admin.nav.back_to_details', 'admin.nav.brand', 'admin.identity'] },
+    { id: 'admin_dashboard', label: 'لوحة التحكم', prefixes: ['admin.nav.dashboard', 'admin.dashboard', 'cards', 'chart', 'details', 'scan'] },
+    { id: 'admin_users', label: 'المستخدمين', prefixes: ['admin.nav.users', 'admin.users'] },
+    { id: 'admin_subscriptions', label: 'الاشتراكات والباقات', prefixes: ['admin.nav.subscriptions', 'admin.packages', 'sub'] },
+    { id: 'admin_map', label: 'الخريطة', prefixes: ['admin.nav.map', 'admin.map', 'map', 'scan'] },
+    { id: 'admin_operations', label: 'الإحصائيات والعمليات', prefixes: ['admin.operations', 'admin.transactions'] },
+    { id: 'admin_trends', label: 'التحليلات والاتجاهات', prefixes: ['admin.trends'] },
+    { id: 'admin_customer_service', label: 'خدمة العملاء', prefixes: ['admin.nav.customer_service', 'admin.customer_service', 'cs'] },
+    { id: 'admin_settings', label: 'الإعدادات والتحكم', prefixes: ['admin.nav.settings', 'admin.settings'] },
+    { id: 'admin_offers', label: 'إدارة العروض', prefixes: ['admin.nav.offers', 'admin.offers', 'offers', 'offer'] },
+    { id: 'admin_orders', label: 'إدارة الطلبات', prefixes: ['admin.nav.orders_mgmt', 'admin.orders', 'orders'] },
+    { id: 'admin_marketing', label: 'إدارة التسويق', prefixes: ['admin.nav.marketing', 'admin.marketing', 'marketing'] },
+    { id: 'admin_finance', label: 'الإدارة المالية', prefixes: ['admin.nav.wallet', 'admin.nav.transactions', 'admin.transactions', 'wallet', 'fin', 'invoice', 'payment'] },
+    { id: 'admin_properties', label: 'إدارة الأملاك', prefixes: ['admin.nav.properties', 'pm', 'bm', 'property', 'unit', 'tenant'] },
+    { id: 'admin_legal', label: 'الإدارة القانونية', prefixes: ['admin.nav.legal', 'admin.legal', 'legal', 'disputes'] },
+    { id: 'admin_info_content', label: 'المحتوى القانوني', prefixes: ['admin.nav.info_content', 'admin.info_content', 'info'] },
+    { id: 'admin_services', label: 'الخدمات', prefixes: ['admin.nav.services', 'admin.nav.services_mgmt', 'admin.services_mgmt', 'admin.service_requests', 'service'] },
+];
+
+const TRANSLATION_CATEGORIES: TranslationCategory[] = [
+    { id: 'admin_all', label: 'لوحة التحكم كاملة', prefixes: [] },
+    { id: 'admin_workspace', label: 'الرئيسية', prefixes: ADMIN_TEXT_SECTIONS.slice(0, 9).flatMap(section => section.prefixes) },
+    { id: 'admin_departments', label: 'الإدارات', prefixes: ADMIN_TEXT_SECTIONS.slice(9, 16).flatMap(section => section.prefixes) },
+    { id: 'admin_services_group', label: 'الخدمات', prefixes: ADMIN_TEXT_SECTIONS.find(section => section.id === 'admin_services')?.prefixes || [] },
+    { id: 'all', label: 'كل نصوص الموقع', prefixes: [] },
     { id: 'header_footer', label: 'الهوية والروابط', prefixes: ['header', 'footer', 'project'] },
     { id: 'auth', label: 'الدخول والأمان', prefixes: ['login', 'auth', 'otp', 'profile', 'notification'] },
-    { id: 'dashboard', label: 'لوحة التحكم', prefixes: ['home', 'cards', 'action', 'map', 'chart', 'details', 'scan'] },
     { id: 'management', label: 'إدارة الأملاك', prefixes: ['pm', 'bm', 'property', 'unit', 'tenant'] },
     { id: 'services', label: 'الخدمات المالية والقانونية', prefixes: ['service', 'legal', 'marketing', 'fin', 'wallet', 'chat', 'payment', 'orders', 'offers', 'offer', 'invoice'] },
     { id: 'general', label: 'إعدادات النظام العامة', prefixes: ['common', 'status', 'range', 'pagination', 'city', 'country', 'cs', 'disputes'] },
 ];
 
+const matchesTranslationPrefix = (key: string, prefix: string) => (
+    key === prefix || key.startsWith(`${prefix}.`) || key.split('.')[0] === prefix
+);
+
+const ADMIN_TEXT_PREFIX_ORDER = ADMIN_TEXT_SECTIONS.flatMap(section => section.prefixes);
+
+const getAdminTextRank = (key: string) => {
+    const rank = ADMIN_TEXT_PREFIX_ORDER.findIndex(prefix => matchesTranslationPrefix(key, prefix));
+    if (rank >= 0) return rank;
+    if (key.startsWith('admin.nav.')) return ADMIN_TEXT_PREFIX_ORDER.length + 1;
+    if (key.startsWith('admin.')) return ADMIN_TEXT_PREFIX_ORDER.length + 2;
+    return ADMIN_TEXT_PREFIX_ORDER.length + 100;
+};
+
+const getAdminTextSectionLabel = (key: string) => (
+    ADMIN_TEXT_SECTIONS.find(section => section.prefixes.some(prefix => matchesTranslationPrefix(key, prefix)))?.label || 'لوحة التحكم'
+);
+
+const isAdminPanelTextKey = (key: string) => (
+    key.startsWith('admin.') || ADMIN_TEXT_PREFIX_ORDER.some(prefix => matchesTranslationPrefix(key, prefix))
+);
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 function SettingsPageInner() {
     const { t, language } = useLanguage();
+    const isRtl = language === 'ar';
     const { settings, saveSettings, isLoading, refetch } = useSettings();
     const [activeTab, setActiveTab] = useState<'pricing' | 'appearance' | 'text' | 'site_control'>('pricing');
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+    const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
     const [isCommissionModalOpen, setIsCommissionModalOpen] = useState(false);
@@ -72,7 +126,7 @@ function SettingsPageInner() {
     const [servicePrices, setServicePrices] = useState<Record<string, string>>({});
     const [textOverrides, setTextOverrides] = useState<Record<string, string>>({});
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-    const [selectedTranslationCategory, setSelectedTranslationCategory] = useState('all');
+    const [selectedTranslationCategory, setSelectedTranslationCategory] = useState('admin_all');
 
     // Local settings sync
     const [localSettings, setLocalSettings] = useState<any>(null);
@@ -108,8 +162,7 @@ function SettingsPageInner() {
         setLocalSettings((prev: any) => ({ ...prev, ...updates }));
     };
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = async () => {
         setSaving(true);
         setMessage("");
 
@@ -131,17 +184,22 @@ function SettingsPageInner() {
             if (ok) {
                 setMessageType('success');
                 setMessage(t('admin.settings.updateSuccess') || "تم التحديث بنجاح");
-                toast.success("تم تحديث الإعدادات بنجاح");
+                toast.success(isRtl ? "تم حفظ التغييرات" : "Changes saved", {
+                    description: isRtl ? "تم تحديث الإعدادات بنجاح." : "Settings were updated successfully.",
+                    duration: 3500,
+                });
                 // Trigger refetch from context to update the UI globally
                 await refetch();
             } else {
                 setMessageType('error');
                 setMessage(t('admin.settings.updateFail') || "فشل التحديث");
+                toast.error(isRtl ? "تعذر حفظ التغييرات" : "Could not save changes");
             }
         } catch (error) {
             console.error("Save error:", error);
             setMessageType('error');
             setMessage(t('admin.settings.saveError') || "خطأ في الحفظ");
+            toast.error(isRtl ? "حدث خطأ أثناء الحفظ" : "Save failed");
         } finally {
             setSaving(false);
             // Hide message after 3 seconds
@@ -151,7 +209,7 @@ function SettingsPageInner() {
 
     const handleSaveWrapper = async (e: React.FormEvent) => {
         e.preventDefault();
-        await handleSave(e);
+        setIsSaveConfirmOpen(true);
     };
 
     if (isLoading || !localSettings) return (
@@ -191,6 +249,30 @@ function SettingsPageInner() {
                 ))}
             </nav>
 
+            <AnimatePresence>
+                {message && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                        className={`fixed top-6 ${isRtl ? 'left-4 md:left-6' : 'right-4 md:right-6'} z-[120] w-[calc(100vw-2rem)] max-w-md rounded-2xl border bg-white p-4 shadow-2xl ${messageType === 'success' ? 'border-emerald-100' : 'border-red-100'}`}
+                    >
+                        <div className="flex items-start gap-3">
+                            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${messageType === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                                {messageType === 'success' ? <ShieldCheck className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm font-black text-slate-950">{messageType === 'success' ? (isRtl ? "تم الحفظ" : "Saved") : (isRtl ? "تعذر الحفظ" : "Save failed")}</p>
+                                <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{message}</p>
+                            </div>
+                            <button type="button" onClick={() => setMessage("")} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <main className="rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-xl bg-white min-h-[500px]">
                 <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                     {activeTab === 'pricing' && (
@@ -221,14 +303,6 @@ function SettingsPageInner() {
                     )}
                 </motion.div>
 
-                <AnimatePresence>
-                    {message && (
-                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className={`${messageType === 'success' ? 'bg-emerald-500' : 'bg-red-500'} text-white p-6 flex items-center justify-center gap-3`}>
-                            {messageType === 'success' ? <ShieldCheck className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
-                            <span className="text-xs font-black uppercase tracking-widest">{message}</span>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
             </main>
 
             {activeTab === 'pricing' && (
@@ -258,6 +332,19 @@ function SettingsPageInner() {
 
             <LogsModal isOpen={isLogsModalOpen} onClose={setIsLogsModalOpen} />
             <CommissionModal isOpen={isCommissionModalOpen} onClose={setIsCommissionModalOpen} />
+            <ConfirmDialog
+                open={isSaveConfirmOpen}
+                onOpenChange={setIsSaveConfirmOpen}
+                title={isRtl ? "تأكيد حفظ التغييرات" : "Confirm save changes"}
+                description={isRtl ? "سيتم تطبيق التعديلات على إعدادات لوحة التحكم والنصوص. هل تريد المتابعة؟" : "Your changes will be applied to dashboard settings and text content. Continue?"}
+                confirmLabel={saving ? (isRtl ? "جار الحفظ..." : "Saving...") : (isRtl ? "نعم، احفظ" : "Yes, save")}
+                cancelLabel={isRtl ? "إلغاء" : "Cancel"}
+                onConfirm={async () => {
+                    setIsSaveConfirmOpen(false);
+                    await handleSave();
+                }}
+                loading={saving}
+            />
         </div>
     );
 }
@@ -776,6 +863,38 @@ function TextTab({
     searchTerm, setSearchTerm, textOverrides, setTextOverrides, language,
     selectedCategory, setSelectedCategory
 }: TextTabProps & { selectedCategory: string, setSelectedCategory: (v: string) => void }) {
+    const visibleTranslationKeys = React.useMemo(() => {
+        const normalizedSearch = searchTerm.trim().toLowerCase();
+        const category = [...TRANSLATION_CATEGORIES, ...ADMIN_TEXT_SECTIONS].find(c => c.id === selectedCategory);
+        const allKeys = Array.from(new Set([
+            ...Object.keys(translations.ar),
+            ...Object.keys(translations.en),
+        ]));
+
+        return allKeys
+            .filter((key) => {
+                const arValue = translations.ar[key as keyof typeof translations.ar] || "";
+                const enValue = translations.en[key as keyof typeof translations.en] || "";
+                const matchesSearch = !normalizedSearch
+                    || key.toLowerCase().includes(normalizedSearch)
+                    || arValue.toLowerCase().includes(normalizedSearch)
+                    || enValue.toLowerCase().includes(normalizedSearch);
+
+                if (!matchesSearch) return false;
+                if (selectedCategory === 'all') return true;
+                if (selectedCategory === 'admin_all') return isAdminPanelTextKey(key);
+                if (!category) return true;
+
+                return category.prefixes.some((prefix) => matchesTranslationPrefix(key, prefix));
+            })
+            .sort((a, b) => {
+                const adminA = getAdminTextRank(a);
+                const adminB = getAdminTextRank(b);
+                if (adminA !== adminB) return adminA - adminB;
+                return a.localeCompare(b);
+            });
+    }, [searchTerm, selectedCategory]);
+
     return (
         <div className="p-8 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-50 pb-6">
@@ -808,6 +927,21 @@ function TextTab({
                         ))}
                     </div>
 
+                    {selectedCategory === 'admin_all' && (
+                        <div className="bg-white rounded-[2rem] p-4 border border-slate-100 space-y-1">
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-4">ترتيب لوحة التحكم</h4>
+                            {ADMIN_TEXT_SECTIONS.map(section => (
+                                <button
+                                    key={section.id}
+                                    onClick={() => setSelectedCategory(section.id)}
+                                    className="w-full text-right px-4 py-2.5 rounded-2xl text-[11px] font-black text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-900"
+                                >
+                                    {section.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 space-y-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">عناصر الهوية والرسائل العامة</h4>
                         <div className="space-y-4">
@@ -834,23 +968,14 @@ function TextTab({
                 <div className="lg:col-span-3 space-y-4">
                     <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden">
                         <div className="max-h-[800px] overflow-y-auto pr-2 custom-scrollbar p-8 space-y-6">
-                            {Object.keys(translations.ar)
-                                .filter(key => {
-                                    const matchesSearch = key.toLowerCase().includes(searchTerm.toLowerCase()) || translations.ar[key].includes(searchTerm);
-                                    if (!matchesSearch) return false;
-
-                                    if (selectedCategory === 'all') return true;
-                                    const cat = TRANSLATION_CATEGORIES.find(c => c.id === selectedCategory);
-                                    if (!cat) return true;
-
-                                    const prefix = key.split('.')[0];
-                                    return cat.prefixes.includes(prefix);
-                                })
-                                .map((key) => (
+                            {visibleTranslationKeys.map((key) => (
                                 <div key={key} className="p-8 bg-slate-50/50 rounded-[2rem] border border-slate-100/50 transition-all hover:border-slate-900/20 group">
                                     <div className="flex items-center justify-between mb-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2 h-2 rounded-full bg-slate-900/20" />
+                                            {selectedCategory.startsWith('admin') && (
+                                                <span className="text-[10px] font-black text-slate-500 bg-white border border-slate-100 rounded-full px-3 py-1">{getAdminTextSectionLabel(key)}</span>
+                                            )}
                                             <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest font-mono">{key}</span>
                                         </div>
                                         <button
@@ -865,7 +990,7 @@ function TextTab({
                                             <label className="text-[10px] font-black text-slate-400 uppercase px-1">العربية</label>
                                             <input
                                                 type="text"
-                                                value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : translations.ar[key as keyof typeof translations.ar]}
+                                                value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : (translations.ar[key as keyof typeof translations.ar] || "")}
                                                 onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
                                                 className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all"
                                             />

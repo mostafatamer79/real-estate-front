@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, FolderOpen, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, FolderOpen, Loader2 } from "lucide-react";
 import { Place } from "@/types/map";
 import { useLanguage } from "@/context/LanguageContext";
 import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
@@ -52,7 +52,13 @@ export default function ScanMapPage() {
   const router = useRouter();
   const { isOpen, message, isAdmin } = useSectionGuard('scan_map');
 
-
+  const handleBack = useCallback(() => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push('/details');
+  }, [router]);
 
   // ✅ Memoized values
   const reportPrice = useMemo(() => Math.max(30, Math.floor(25 + (searchRadius / 100))), [searchRadius]);
@@ -303,17 +309,16 @@ export default function ScanMapPage() {
           </div>
         </div>
       )}
-      {/* Back Button */}
-      <button 
-        onClick={() => router.push('/details')}
-        className="absolute top-6 left-6 z-10 p-2 bg-slate-800/50 hover:bg-slate-700/80 rounded-full text-slate-300 transition-colors border border-slate-700"
-        title={t('common.back')}
-      >
-        <ArrowLeft className="w-6 h-6" />
-      </button>
-
       {/* Header */}
-      <header className="mb-8 relative">
+      <header className="mb-8 relative pt-2">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="mb-6 inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-[11px] font-black uppercase tracking-widest text-slate-200 backdrop-blur-sm transition-all hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-white"
+        >
+          {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+          {language === 'ar' ? 'رجوع' : 'Back'}
+        </button>
         <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-emerald-400">
           🗺️ {t('scan.title')}
         </h1>

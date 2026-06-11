@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { 
-  Search, 
-  ArrowUpRight,
+import React, { useEffect, useMemo, useState } from "react";
+import {
   ArrowDownRight,
-  User,
-  CheckCircle, 
-  XCircle, 
+  ArrowUpRight,
+  CheckCircle,
   Clock,
-  Filter
+  Edit2,
+  Loader2,
+  Plus,
+  Save,
+  Search,
+  Trash2,
+  User,
+  X,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { financialApi } from "@/lib/api";
@@ -21,26 +25,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-hot-toast";
 
+const transactionTypes = ["sale", "rent", "commission", "tax", "deposit", "withdrawal", "settlement", "expense"];
+const transactionStatuses = ["pending", "completed", "failed", "cancelled"];
+const paymentMethods = ["", "bank", "card", "apple_pay", "wallet", "cash"];
+
+const emptyForm = {
+  type: "sale",
+  amount: "",
+  status: "completed",
+  fromUserId: "",
+  toUserId: "",
+  taxAmount: "",
+  commissionAmount: "",
+  paymentMethod: "",
+  expenseCategory: "",
+  referenceType: "",
+  referenceId: "",
+  description: "",
+};
+
 export default function TransactionsPage() {
   const { t, language } = useLanguage();
+  const isRtl = language === "ar";
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState<Record<string, string>>(emptyForm);
+
+  const label = (key: string, fallbackAr: string, fallbackEn: string) => {
+    const value = t(key);
+    if (value && value !== key) return value;
+    return isRtl ? fallbackAr : fallbackEn;
+  };
 
   const fetchTransactions = async () => {
     try {
       setLoading(true);
       const res = await financialApi.getTransactions();
-      if (res.data) {
-        setTransactions(res.data);
-      }
+      setTransactions(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Failed to fetch transactions", error);
-      toast.error(t('admin.error.fetch_failed') || "Failed to fetch data");
+      toast.error(isRtl ? "فشل تحميل العمليات" : "Failed to load transactions");
     } finally {
       setLoading(false);
     }
@@ -48,117 +78,316 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredTransactions = transactions.filter(tx => 
-    tx.id.includes(search) ||
-    tx.fromUser?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-    tx.toUser?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-    tx.type?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredTransactions = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return transactions;
+    return transactions.filter((tx) => {
+      const haystack = [
+        tx.id,
+        tx.type,
+        tx.status,
+        tx.amount,
+        tx.fromUserId,
+        tx.toUserId,
+        tx.referenceType,
+        tx.referenceId,
+        tx.description,
+        tx.fromUser?.firstName,
+        tx.fromUser?.lastName,
+        tx.toUser?.firstName,
+        tx.toUser?.lastName,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [search, transactions]);
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'completed': return <Badge className="bg-green-100 text-green-700 hover:bg-green-200">Completed</Badge>;
-      case 'failed': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Failed</Badge>;
-      case 'cancelled': return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200">Cancelled</Badge>;
-      default: return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200">Pending</Badge>;
-    }
+    const styles: Record<string, string> = {
+      completed: "bg-green-100 text-green-700 hover:bg-green-100",
+      failed: "bg-red-100 text-red-700 hover:bg-red-100",
+      cancelled: "bg-slate-100 text-slate-700 hover:bg-slate-100",
+      pending: "bg-amber-100 text-amber-700 hover:bg-amber-100",
+    };
+    return <Badge className={styles[status] || styles.pending}>{status || "pending"}</Badge>;
   };
 
   const getTypeIcon = (type: string) => {
-      switch (type) {
-          case 'deposit': return <ArrowDownRight className="w-4 h-4 text-green-500" />;
-          case 'withdrawal': return <ArrowUpRight className="w-4 h-4 text-red-500" />;
-          case 'commission': return <CheckCircle className="w-4 h-4 text-blue-500" />;
-          default: return <Clock className="w-4 h-4 text-gray-500" />;
+    if (type === "deposit" || type === "sale" || type === "rent") return <ArrowDownRight className="h-4 w-4 text-green-500" />;
+    if (type === "withdrawal" || type === "expense" || type === "tax") return <ArrowUpRight className="h-4 w-4 text-red-500" />;
+    if (type === "commission") return <CheckCircle className="h-4 w-4 text-blue-500" />;
+    return <Clock className="h-4 w-4 text-slate-500" />;
+  };
+
+  const transactionTypeLabel = (type: string) => {
+    const value = t(`admin.transactions.type.${type}`);
+    if (value && value !== `admin.transactions.type.${type}`) return value;
+    const ar: Record<string, string> = {
+      sale: "بيع",
+      rent: "إيجار",
+      commission: "عمولة",
+      tax: "ضريبة",
+      deposit: "إيداع",
+      withdrawal: "سحب",
+      settlement: "تسوية",
+      expense: "مصروف",
+    };
+    return isRtl ? (ar[type] || type) : type.replace("_", " ");
+  };
+
+  const normalizePayload = () => {
+    const payload: Record<string, any> = {
+      type: form.type,
+      amount: Number(form.amount),
+      status: form.status,
+    };
+    ["fromUserId", "toUserId", "paymentMethod", "expenseCategory", "referenceType", "referenceId", "description"].forEach((key) => {
+      if (form[key]?.trim()) payload[key] = form[key].trim();
+    });
+    if (form.taxAmount) payload.taxAmount = Number(form.taxAmount);
+    if (form.commissionAmount) payload.commissionAmount = Number(form.commissionAmount);
+    return payload;
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+  };
+
+  const saveTransaction = async () => {
+    if (!form.amount || Number(form.amount) <= 0) {
+      toast.error(isRtl ? "أدخل مبلغ صحيح" : "Enter a valid amount");
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = normalizePayload();
+      if (editingId) {
+        await financialApi.updateTransaction(editingId, payload);
+        toast.success(isRtl ? "تم تحديث العملية" : "Transaction updated");
+      } else {
+        await financialApi.createTransaction(payload);
+        toast.success(isRtl ? "تم إنشاء العملية" : "Transaction created");
       }
+      resetForm();
+      await fetchTransactions();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || (isRtl ? "تعذر حفظ العملية" : "Failed to save transaction"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startEdit = (tx: any) => {
+    setEditingId(tx.id);
+    setForm({
+      type: tx.type || "sale",
+      amount: tx.amount != null ? String(tx.amount) : "",
+      status: tx.status || "completed",
+      fromUserId: tx.fromUserId || "",
+      toUserId: tx.toUserId || "",
+      taxAmount: tx.taxAmount != null ? String(tx.taxAmount) : "",
+      commissionAmount: tx.commissionAmount != null ? String(tx.commissionAmount) : "",
+      paymentMethod: tx.paymentMethod || "",
+      expenseCategory: tx.expenseCategory || "",
+      referenceType: tx.referenceType || "",
+      referenceId: tx.referenceId || "",
+      description: tx.description || "",
+    });
+  };
+
+  const deleteTransaction = async (id: string) => {
+    if (!confirm(isRtl ? "هل تريد حذف هذه العملية؟" : "Delete this transaction?")) return;
+    setSaving(true);
+    try {
+      await financialApi.deleteTransaction(id);
+      toast.success(isRtl ? "تم حذف العملية" : "Transaction deleted");
+      if (editingId === id) resetForm();
+      await fetchTransactions();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || (isRtl ? "تعذر حذف العملية" : "Failed to delete transaction"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <div className="space-y-8 p-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-8 p-6 lg:p-8" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950 mb-2">
-            {t('admin.transactions.title') || "Transactions"}
+          <h1 className="mb-2 text-3xl font-black tracking-tight text-slate-950">
+            {label("admin.transactions.title", "إدارة العمليات", "Transactions Management")}
           </h1>
-          <p className="text-slate-500 font-medium">
-            {t('admin.transactions.desc') || "View all financial transactions"}
+          <p className="font-medium text-slate-500">
+            {label("admin.transactions.desc", "إنشاء وتعديل وحذف العمليات المالية", "Create, update and delete financial transactions")}
           </p>
         </div>
-        <div className="relative">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-             <input 
-                type="text" 
-                placeholder={t('admin.search') || "Search..."} 
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
-             />
+        <div className="relative w-full md:w-80">
+          <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
+          <input
+            type="text"
+            placeholder={t("admin.search") || (isRtl ? "بحث" : "Search")}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className={`h-12 w-full rounded-2xl border border-slate-200 bg-white px-11 text-sm font-bold outline-none focus:border-slate-950`}
+          />
         </div>
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm">
+      <section className="rounded-[2rem] border border-slate-100 bg-white p-5 shadow-sm">
+        <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
+            {editingId ? <Edit2 className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+            {editingId ? (isRtl ? "تعديل عملية" : "Edit transaction") : (isRtl ? "إضافة عملية" : "Create transaction")}
+          </h2>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300"
+            >
+              <X className="h-4 w-4" />
+              {isRtl ? "إلغاء التعديل" : "Cancel edit"}
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
+            <select value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950">
+              {transactionTypes.map((type) => <option key={type} value={type}>{transactionTypeLabel(type)}</option>)}
+            </select>
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
+            <input type="number" min="0" value={form.amount} onChange={(event) => setForm((current) => ({ ...current, amount: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950" />
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
+            <select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950">
+              {transactionStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+            </select>
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "طريقة الدفع" : "Payment method"}</span>
+            <select value={form.paymentMethod} onChange={(event) => setForm((current) => ({ ...current, paymentMethod: event.target.value }))} className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950">
+              {paymentMethods.map((method) => <option key={method || "empty"} value={method}>{method || (isRtl ? "غير محدد" : "None")}</option>)}
+            </select>
+          </label>
+          {[
+            ["fromUserId", isRtl ? "من مستخدم ID" : "From user ID"],
+            ["toUserId", isRtl ? "إلى مستخدم ID" : "To user ID"],
+            ["taxAmount", isRtl ? "الضريبة" : "Tax"],
+            ["commissionAmount", isRtl ? "العمولة" : "Commission"],
+            ["expenseCategory", isRtl ? "تصنيف المصروف" : "Expense category"],
+            ["referenceType", isRtl ? "نوع المرجع" : "Reference type"],
+            ["referenceId", isRtl ? "معرف المرجع" : "Reference ID"],
+            ["description", isRtl ? "الوصف" : "Description"],
+          ].map(([key, text]) => (
+            <label key={key} className="space-y-1.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{text}</span>
+              <input
+                type={key === "taxAmount" || key === "commissionAmount" ? "number" : "text"}
+                value={form[key] || ""}
+                onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
+                className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950"
+              />
+            </label>
+          ))}
+          <button
+            type="button"
+            onClick={saveTransaction}
+            disabled={saving}
+            className="mt-auto inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {editingId ? (isRtl ? "حفظ التعديل" : "Save changes") : (isRtl ? "إضافة" : "Create")}
+          </button>
+        </div>
+      </section>
+
+      <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
         <Table>
           <TableHeader className="bg-slate-50/50">
             <TableRow>
-              <TableHead className="py-5 font-black text-slate-900">ID</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">Type</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">Amount</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">From</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">To</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">Status</TableHead>
-              <TableHead className="py-5 font-black text-slate-900">Date</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "المعرف" : "ID"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "النوع" : "Type"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "المبلغ" : "Amount"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "من" : "From"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "إلى" : "To"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "الحالة" : "Status"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "التاريخ" : "Date"}</TableHead>
+              <TableHead className="py-5 font-black text-slate-900">{isRtl ? "إجراءات" : "Actions"}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-                <TableRow>
-                    <TableCell colSpan={7} className="text-center py-10">Loading...</TableCell>
-                </TableRow>
+              <TableRow>
+                <TableCell colSpan={8} className="py-10 text-center">
+                  <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-300" />
+                </TableCell>
+              </TableRow>
             ) : filteredTransactions.length === 0 ? (
-                <TableRow>
-                    <TableCell colSpan={7} className="text-center py-10 text-slate-500">No transactions found</TableCell>
-                </TableRow>
+              <TableRow>
+                <TableCell colSpan={8} className="py-10 text-center text-slate-500">
+                  {isRtl ? "لا توجد عمليات" : "No transactions found"}
+                </TableCell>
+              </TableRow>
             ) : (
-                filteredTransactions.map((tx) => (
-                <TableRow key={tx.id} className="hover:bg-slate-50/50 group whitespace-nowrap">
-                    <TableCell className="font-mono text-xs text-slate-500">#{tx.id.substring(0, 8)}</TableCell>
-                    <TableCell>
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center">
-                                {getTypeIcon(tx.type)}
-                            </div>
-                            <span className="font-bold text-slate-700 capitalize">
-                                {t(`admin.transactions.type.${tx.type}`) || tx.type}
-                            </span>
-                        </div>
-                    </TableCell>
-                    <TableCell className="font-black text-slate-900">
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR' }).format(Number(tx.amount))}
-                    </TableCell>
-                    <TableCell>
-                        {tx.fromUser ? (
-                             <div className="flex items-center gap-2">
-                                <User className="w-3 h-3 text-slate-400" />
-                                <span className="text-sm text-slate-600">{tx.fromUser.firstName} {tx.fromUser.lastName}</span>
-                             </div>
-                        ) : <span className="text-slate-400">-</span>}
-                    </TableCell>
-                    <TableCell>
-                        {tx.toUser ? (
-                             <div className="flex items-center gap-2">
-                                <User className="w-3 h-3 text-slate-400" />
-                                <span className="text-sm text-slate-600">{tx.toUser.firstName} {tx.toUser.lastName}</span>
-                             </div>
-                        ) : <span className="text-slate-400">-</span>}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(tx.status)}</TableCell>
-                    <TableCell className="text-slate-500 text-xs">
-                        {new Date(tx.createdAt || tx.transactionDate).toLocaleDateString()}
-                    </TableCell>
+              filteredTransactions.map((tx) => (
+                <TableRow key={tx.id} className="whitespace-nowrap hover:bg-slate-50/50">
+                  <TableCell className="font-mono text-xs text-slate-500">#{String(tx.id).substring(0, 8)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50">
+                        {getTypeIcon(tx.type)}
+                      </div>
+                      <span className="font-bold capitalize text-slate-700">{transactionTypeLabel(tx.type)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-black text-slate-900">
+                    {new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", { style: "currency", currency: "SAR" }).format(Number(tx.amount || 0))}
+                  </TableCell>
+                  <TableCell>
+                    {tx.fromUser ? (
+                      <div className="flex items-center gap-2">
+                        <User className="h-3 w-3 text-slate-400" />
+                        <span className="text-sm text-slate-600">{tx.fromUser.firstName} {tx.fromUser.lastName}</span>
+                      </div>
+                    ) : tx.fromUserId ? <span className="font-mono text-xs text-slate-500">{tx.fromUserId.slice(0, 8)}</span> : <span className="text-slate-400">-</span>}
+                  </TableCell>
+                  <TableCell>
+                    {tx.toUser ? (
+                      <div className="flex items-center gap-2">
+                        <User className="h-3 w-3 text-slate-400" />
+                        <span className="text-sm text-slate-600">{tx.toUser.firstName} {tx.toUser.lastName}</span>
+                      </div>
+                    ) : tx.toUserId ? <span className="font-mono text-xs text-slate-500">{tx.toUserId.slice(0, 8)}</span> : <span className="text-slate-400">-</span>}
+                  </TableCell>
+                  <TableCell>{getStatusBadge(tx.status)}</TableCell>
+                  <TableCell className="text-xs text-slate-500">
+                    {tx.createdAt || tx.transactionDate ? new Date(tx.createdAt || tx.transactionDate).toLocaleDateString(isRtl ? "ar-SA" : "en-US") : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={() => startEdit(tx)} className="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300">
+                        <Edit2 className="h-3.5 w-3.5" />
+                        {isRtl ? "تعديل" : "Edit"}
+                      </button>
+                      <button type="button" onClick={() => deleteTransaction(tx.id)} disabled={saving} className="inline-flex h-9 items-center gap-2 rounded-xl bg-red-50 px-3 text-[10px] font-black uppercase tracking-widest text-red-600 hover:bg-red-100 disabled:opacity-50">
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {isRtl ? "حذف" : "Delete"}
+                      </button>
+                    </div>
+                  </TableCell>
                 </TableRow>
-                ))
+              ))
             )}
           </TableBody>
         </Table>

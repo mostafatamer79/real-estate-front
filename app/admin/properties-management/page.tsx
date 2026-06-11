@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Building2, Calendar, CreditCard, Edit2, FileText, Loader2, MapPin, Plus, Save, Search, Trash2, User, Wrench, X } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { propertiesApi } from "@/lib/api";
@@ -35,6 +36,13 @@ export default function AdminPropertiesManagementPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>(emptyForms.properties);
   const itemsPerPage = 10;
+  const propertyTabs = [
+    { id: "properties", href: "/admin/properties-management", icon: Building2, label: isRtl ? "الأملاك" : "Properties", count: properties.length },
+    { id: "tenants", href: "/admin/properties-management?tab=tenants", icon: User, label: isRtl ? "المستأجرين" : "Tenants", count: tenants.length },
+    { id: "leases", href: "/admin/properties-management?tab=leases", icon: FileText, label: isRtl ? "العقود" : "Leases", count: leases.length },
+    { id: "payments", href: "/admin/properties-management?tab=payments", icon: CreditCard, label: isRtl ? "مدفوعات الأملاك" : "Property Payments", count: payments.length },
+    { id: "maintenance", href: "/admin/properties-management?tab=maintenance", icon: Wrench, label: isRtl ? "الصيانة" : "Maintenance", count: maintenance.length },
+  ] as const;
 
   const fetchProperties = async () => {
     setLoading(true);
@@ -270,6 +278,30 @@ export default function AdminPropertiesManagementPage() {
         <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "صفحة التحكم" : "Control page"}</p>
           <p className="mt-1 text-lg font-black text-slate-950">{isRtl ? "إدارية فقط" : "Admin only"}</p>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-100 bg-white p-2 shadow-sm">
+        <div className="flex gap-2 overflow-x-auto">
+          {propertyTabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={`flex min-w-fit flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-widest transition-all ${
+                  active ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{tab.label}</span>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"}`}>
+                  {tab.count}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, X, Check, CheckCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,6 +24,7 @@ export default function NotificationBell({
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, loading } = useNotifications();
   const { t, language } = useLanguage();
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,6 +71,50 @@ export default function NotificationBell({
       });
     } catch {
       return dateString;
+    }
+  };
+
+  const getNotificationHref = (notification: any) => {
+    const data = notification?.data || {};
+
+    if (data.ticketId || data.type === 'customer_service_ticket') {
+      return data.action === 'admin_reply' ? '/customerservice' : '/admin/customer-service';
+    }
+    if (data.roomId) return `/chat/${data.roomId}`;
+    if (data.offerId) return `/offers/${data.offerId}`;
+    if (data.orderId) return `/orders/${data.orderId}`;
+    if (data.serviceRequestId) return `/admin/service-requests?requestId=${data.serviceRequestId}`;
+    if (data.commissionId) return '/wallet';
+    if (data.bookingId) return '/orders';
+
+    switch (notification.type) {
+      case 'chat':
+        return data.roomId ? `/chat/${data.roomId}` : '/chat';
+      case 'offer':
+        return data.offerId ? `/offers/${data.offerId}` : '/offers';
+      case 'order':
+        return data.orderId ? `/orders/${data.orderId}` : '/orders';
+      case 'booking':
+        return '/orders';
+      case 'commission':
+        return '/wallet';
+      case 'service_request':
+        return data.serviceRequestId ? `/admin/service-requests?requestId=${data.serviceRequestId}` : '/services/my-requests';
+      case 'legal_dispute':
+        return '/disputes';
+      default:
+        return null;
+    }
+  };
+
+  const handleNotificationClick = async (notification: any) => {
+    const href = getNotificationHref(notification);
+    if (!notification.isRead) {
+      await markAsRead(notification.id);
+    }
+    if (href) {
+      setIsOpen(false);
+      router.push(href);
     }
   };
 
@@ -142,7 +188,16 @@ export default function NotificationBell({
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 transition-colors ${itemHoverClass} ${
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleNotificationClick(notification)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        handleNotificationClick(notification);
+                      }
+                    }}
+                    className={`p-4 cursor-pointer transition-colors ${itemHoverClass} ${
                       !notification.isRead ? unreadClass : ''
                     }`}
                   >
@@ -166,7 +221,10 @@ export default function NotificationBell({
                           <div className="flex items-center gap-1">
                             {!notification.isRead && (
                               <button
-                                onClick={() => markAsRead(notification.id)}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  markAsRead(notification.id);
+                                }}
                                 className={`p-1 transition-colors ${markReadClass}`}
                                 title={t('notification.markRead')}
                               >
@@ -174,7 +232,10 @@ export default function NotificationBell({
                               </button>
                             )}
                             <button
-                              onClick={() => deleteNotification(notification.id)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                deleteNotification(notification.id);
+                              }}
                               className={`p-1 transition-colors ${deleteClass}`}
                               title={t('notification.delete')}
                             >

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Activity, LockKeyhole, Trash2, Users } from "lucide-react";
+import { Activity, BarChart3, Building2, CreditCard, FileText, Headphones, LineChart, LockKeyhole, MapPinned, Megaphone, Receipt, Scale, Settings, ShoppingBag, Trash2, Users, Wallet, Wrench } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { activitiesApi, financialApi, usersApi } from "@/lib/api";
@@ -18,6 +19,23 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const isRtl = language === "ar";
+  const dashboardNavigation = [
+    { href: "/admin/users", label: isRtl ? "المستخدمين" : "Users", icon: Users },
+    { href: "/admin/subscriptions", label: isRtl ? "الاشتراكات" : "Subscriptions", icon: CreditCard },
+    { href: "/admin/map-control", label: isRtl ? "الخريطة" : "Map", icon: MapPinned },
+    { href: "/admin/operations", label: isRtl ? "الإحصائيات والعمليات" : "Stats & Operations", icon: BarChart3 },
+    { href: "/admin/trends", label: isRtl ? "التحليلات والاتجاهات" : "Analytics & Trends", icon: LineChart },
+    { href: "/admin/customer-service", label: isRtl ? "خدمة العملاء" : "Customer Service", icon: Headphones },
+    { href: "/admin/settings", label: isRtl ? "الإعدادات والتحكم" : "Settings", icon: Settings },
+    { href: "/admin/offers", label: isRtl ? "إدارة العروض" : "Offers", icon: FileText },
+    { href: "/admin/orders", label: isRtl ? "إدارة الطلبات" : "Orders", icon: ShoppingBag },
+    { href: "/admin/marketing", label: isRtl ? "إدارة التسويق" : "Marketing", icon: Megaphone },
+    { href: "/admin/transactions", label: isRtl ? "الإدارة المالية" : "Finance", icon: Receipt },
+    { href: "/admin/wallet", label: isRtl ? "المحفظة" : "Wallet", icon: Wallet },
+    { href: "/admin/properties-management", label: isRtl ? "إدارة الأملاك" : "Properties", icon: Building2 },
+    { href: "/admin/legal", label: isRtl ? "الإدارة القانونية" : "Legal", icon: Scale },
+    { href: "/admin/services?type=post_purchase", label: isRtl ? "الخدمات" : "Services", icon: Wrench },
+  ];
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -50,21 +68,25 @@ export default function AdminDashboard() {
         label: isRtl ? "إجمالي المستخدمين" : "Total users",
         value: dashboardStats?.totalUsers ?? users.length,
         icon: Users,
+        href: "/admin/users",
       },
       {
         label: isRtl ? "العمليات النشطة" : "Active operations",
         value: dashboardStats?.activeOperations ?? 0,
         icon: Activity,
+        href: "/admin/operations",
       },
       {
         label: isRtl ? "الحسابات المغلقة" : "Closed accounts",
         value: closedAccounts,
         icon: LockKeyhole,
+        href: "/admin/users",
       },
       {
         label: isRtl ? "الحسابات المحذوفة" : "Deleted accounts",
         value: deletedAccounts,
         icon: Trash2,
+        href: "/admin/users",
       },
     ];
   }, [dashboardStats, isRtl, users]);
@@ -100,6 +122,24 @@ export default function AdminDashboard() {
         </h1>
       </header>
 
+      <section className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+        <div className="flex gap-2 overflow-x-auto">
+          {dashboardNavigation.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex min-w-fit items-center justify-center gap-2 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all hover:bg-slate-950 hover:text-white"
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, index) => (
           <motion.div
@@ -107,13 +147,14 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
           >
-            <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
-              <stat.icon className="h-5 w-5" />
-            </div>
-            <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
-            <p className="text-3xl font-black tabular-nums text-slate-950">{stat.value}</p>
+            <Link href={stat.href} className="block rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+                <stat.icon className="h-5 w-5" />
+              </div>
+              <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+              <p className="text-3xl font-black tabular-nums text-slate-950">{stat.value}</p>
+            </Link>
           </motion.div>
         ))}
       </section>

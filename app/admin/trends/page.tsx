@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { LineChart, Save, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { LayoutDashboard, LineChart, Package, Save, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { financialApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
@@ -53,6 +54,38 @@ export default function AdminTrendsPage() {
           {isRtl ? "تحليلات واتجاهات المنصة" : "Platform Analytics & Trends"}
         </h1>
       </header>
+
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Link
+          href="/admin/dashboard"
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-900"
+        >
+          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white">
+            <LayoutDashboard className="h-5 w-5" />
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            {isRtl ? "لوحة التحكم" : "Dashboard"}
+          </p>
+          <p className="mt-1 text-xl font-black text-slate-950">
+            {isRtl ? "الرجوع إلى لوحة التحكم" : "Open dashboard"}
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/packages"
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-900"
+        >
+          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white">
+            <Package className="h-5 w-5" />
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            {isRtl ? "الباقات" : "Packages"}
+          </p>
+          <p className="mt-1 text-xl font-black text-slate-950">
+            {isRtl ? "الانتقال إلى إدارة الباقات" : "Open package management"}
+          </p>
+        </Link>
+      </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {cards.map((card) => (
