@@ -357,9 +357,8 @@ export default function NewSubscriptionPage() {
                     const monthly = Number(globalPricing.departmentPrices?.[department]?.monthly || 0);
                     const yearly = Number(globalPricing.departmentPrices?.[department]?.yearly || 0);
                     return (
-                      <button
+                      <div
                         key={department}
-                        type="button"
                         onClick={() => {
                           setSelectedDepartments((current) => {
                             const next = checked ? current.filter((item) => item !== department) : [...current, department];
@@ -367,7 +366,7 @@ export default function NewSubscriptionPage() {
                             return next;
                           });
                         }}
-                        className={`rounded-3xl border p-4 text-right transition-all ${
+                        className={`cursor-pointer rounded-3xl border p-4 text-right transition-all ${
                           checked ? "border-slate-950 bg-slate-50 shadow-sm" : "border-slate-100 hover:border-slate-300"
                         }`}
                       >
@@ -392,7 +391,7 @@ export default function NewSubscriptionPage() {
                           </div>
                           {checked && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -412,15 +411,14 @@ export default function NewSubscriptionPage() {
                   const finalPrice = currentPrice * (1 - Number(pkg.discount || 0) / 100);
 
                   return (
-                    <button
+                    <div
                       key={pkg.id}
-                      type="button"
                       onClick={() => {
                         setSelectedPackageId(pkg.id);
                         setSelectedDepartments([]);
                         setEmployeeSeats(0);
                       }}
-                      className={`text-right rounded-[1.75rem] border p-5 transition-all ${
+                      className={`cursor-pointer text-right rounded-[1.75rem] border p-5 transition-all ${
                         isSelected ? "border-slate-900 bg-slate-50 shadow-sm" : "border-slate-100 hover:border-slate-300 bg-white"
                       }`}
                     >
@@ -461,7 +459,7 @@ export default function NewSubscriptionPage() {
                       <div className="text-sm text-slate-500 font-bold">
                         {subscriptionType === "سنوي" ? "سعر الباقة السنوي" : "سعر الباقة الشهري"}
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
