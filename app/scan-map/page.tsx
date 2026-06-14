@@ -31,6 +31,15 @@ const Map = dynamic(() => import("../src/components/Map"), {
 const DEFAULT_LOCATION: [number, number] = [24.7136, 46.6753];
 const RADIUS = 2000;
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3009";
+const SCAN_DISCLAIMER_AR = `اولاً: يُقر ويحيط علمًا كل من يلج إلى هذا التقرير أو يستخرجه عبر المنصة —بحسب طبيعة حسابه وصلاحياته التقنية— بأن هذا التقرير يتم إنشاؤه آلياً بالكامل عبر تقنيات وخوارزميات الذكاء الاصطناعي وتحليل البيانات الجغرافية الرقمية؛ ونظراً للطبيعة التقنية لهذه الأدوات القائمة على النمذجة والتنبؤ الرقمي والاستقراء الإحصائي، فإن وجود هامش خطأ، أو تباين، أو تفاوت إحصائي يُعد أمراً وارداً ومقبولاً تقنياً وفنياً. وبناءً عليه، لا تقدم المنصة أي ضمانات صريحة أو ضمنية بشأن دقة، أو كفاية، أو مطلقية المخرجات والنتائج الواردة فيه.
+
+ثانياً: إن حصر أعداد العقارات السكنية والتجارية، وتصنيف الأنشطة، والخدمات، والكثافة العمرانية المتاحة داخل النطاق الجغرافي المستهدف يمثل قراءة رقمية تقريبية وتخمينية، مبنية على آخر تحديث لقواعد البيانات والمدخلات التي غُذي بها نظام الذكاء الاصطناعي للمنصة. وتقتصر الغاية من هذه المؤشرات على بناء تصور استرشادي عام ومبدئي، ولا تُعد —بأي حال من الأحوال— نصيحة استثمارية، أو توصية مالية، أو استشارة مهنية مستقرة.
+
+ثالثاً: تتسم الأحياء والنطاقات الجغرافية بالتغير المستمر والنشاط التجاري والعمراني المتسارع في المملكة (سواء بإغلاق أنشطة، أو افتتاح مرافق جديدة، أو تعديل استخدامات الأراضي والمخططات من الجهات التنظيمية)؛ وبناءً عليه، فإن هذا التقرير يعكس حالة النطاق الجغرافي وفقاً للمسح الرقمي المتوفر في تاريخ وساعة إصداره الموضحة فيه فقط، ولا تتحمل المنصة أو إدارتها أي التزام قانوني أو تشغيلي بتحديث هذه البيانات، أو معالجة أي فجوة أو تباين بين التوقع التقني والواقع الميداني الفعلي.
+
+رابعاً: تُخلي المنصة مسؤوليتها القانونية، والمالية، والتعاقدية الكاملة والمطلقة عن أي خسائر (مباشرة أو غير مباشرة)، أو فوات كسب، أو قرارات استثمارية، أو صفقات عقارية وعمرانية (بيع، شراء، استئجار، تمويل، تطوير) يتم اتخاذها أو الارتباط بها بناءً على نتائج هذا المسح الذكي. ويُعد هذا التقرير أداة دعم تقنية مساعدة ومجردة، ويقع عبء التحقق المستقل وإجراء المعاينة الميدانية النافية للجهالة، ومطابقة البيانات مع الواقع الميداني والمنصات الحكومية الرسمية المختصة، على عاتق من اتخذ القرار الاستثماري أو الإعلاني بموجبه ومسؤوليته المنفردة.
+
+يُعد استخدامك لخدمة مسح الحي بالذكاء الاصطناعي أو اعتمادك على هذا التقرير، إقراراً علنياً وصريحاً منك بالعلم التام بطبيعة الخدمات التقنية واحتمالية وجود نسبة خطأ أو تباين إحصائي في مخرجاتها.`;
 
 export default function ScanMapPage() {
   // ✅ State
@@ -47,6 +56,9 @@ export default function ScanMapPage() {
   const [creatingInvoice, setCreatingInvoice] = useState(false);
   const [generatingReport, setGeneratingReport] = useState(false);
   const [generatedFiles, setGeneratedFiles] = useState<any[]>([]);
+  const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
+  const [acceptedScanDisclaimer, setAcceptedScanDisclaimer] = useState(false);
+  const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const mapCaptureRef = useRef<HTMLDivElement | null>(null);
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -179,6 +191,15 @@ export default function ScanMapPage() {
     }
   }, [propertyLocation, searchRadius, loading, captureMapImage]);
 
+  const handleStartScan = useCallback(() => {
+    if (!acceptedScanDisclaimer) {
+      setDisclaimerChecked(false);
+      setIsDisclaimerOpen(true);
+      return;
+    }
+    scanArea();
+  }, [acceptedScanDisclaimer, scanArea]);
+
   // ✅ Export CSV function
   const exportCSV = useCallback(() => {
     if (!hasPlaces) return;
@@ -251,6 +272,8 @@ export default function ScanMapPage() {
     setIsPaid(false);
     setInvoiceId(null);
     setGeneratedFiles([]);
+    setAcceptedScanDisclaimer(false);
+    setDisclaimerChecked(false);
   }, []);
 
   // ✅ Create Invoice for Neighborhood Report
@@ -305,6 +328,57 @@ export default function ScanMapPage() {
             </p>
             <div className="mt-6 h-2 rounded-full bg-slate-800 overflow-hidden">
               <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      )}
+      {isDisclaimerOpen && (
+        <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[2rem] border border-white/10 bg-white text-slate-950 shadow-2xl" dir="rtl">
+            <div className="border-b border-slate-100 bg-slate-950 px-6 py-5 text-white">
+              <h2 className="text-2xl font-black">إخلاء مسؤولية</h2>
+              <p className="mt-2 text-xs font-bold leading-6 text-slate-300">
+                يجب قراءة الإقرار والموافقة عليه قبل بدء مسح الحي بالذكاء الاصطناعي وإنشاء التقرير.
+              </p>
+            </div>
+            <div className="max-h-[52vh] overflow-y-auto px-6 py-5">
+              <div className="whitespace-pre-line rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm font-bold leading-8 text-slate-700">
+                {SCAN_DISCLAIMER_AR}
+              </div>
+            </div>
+            <div className="border-t border-slate-100 bg-white px-6 py-5">
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-slate-800">
+                <input
+                  type="checkbox"
+                  checked={disclaimerChecked}
+                  onChange={(event) => setDisclaimerChecked(event.target.checked)}
+                  className="mt-1 h-5 w-5 rounded border-slate-300 accent-slate-950"
+                />
+                <span>
+                  أقر بأنني قرأت إخلاء المسؤولية وأوافق على إنشاء التقرير مع علمي بطبيعته التقنية واحتمالية وجود هامش خطأ أو تباين في المخرجات.
+                </span>
+              </label>
+              <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsDisclaimerOpen(false)}
+                  className="h-12 rounded-2xl border border-slate-200 bg-white px-6 text-sm font-black text-slate-600 hover:bg-slate-50"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="button"
+                  disabled={!disclaimerChecked}
+                  onClick={() => {
+                    setAcceptedScanDisclaimer(true);
+                    setIsDisclaimerOpen(false);
+                    scanArea();
+                  }}
+                  className="h-12 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40 hover:bg-black"
+                >
+                  أوافق وابدأ المسح
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -384,7 +458,7 @@ export default function ScanMapPage() {
               {/* Action Buttons */}
               <div className="flex flex-col gap-2">
                 <button
-                  onClick={scanArea}
+                  onClick={handleStartScan}
                   disabled={loading || isSelectingLocation}
                   className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2"
                 >

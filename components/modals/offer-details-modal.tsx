@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Offer } from "@/types/api";
 import { useLanguage } from "@/context/LanguageContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { chatApi } from "@/lib/chat";
+import { offersApi } from "@/lib/api";
 import { 
     Home, 
     Maximize, 
@@ -37,10 +38,38 @@ interface OfferDetailsModalProps {
 export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetailsModalProps) {
     const { t, language } = useLanguage();
     const router = useRouter();
+    const pathname = usePathname();
     const { user: currentUser } = useAuth();
     const [isChatLoading, setIsChatLoading] = useState(false);
+    const [hydratedOffer, setHydratedOffer] = useState<Offer | null>(offer);
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
-    if (!offer) return null;
+    useEffect(() => {
+        setHydratedOffer(offer);
+    }, [offer]);
+
+    useEffect(() => {
+        const fetchOfferDetails = async () => {
+            if (!isOpen || !offer?.id) return;
+            try {
+                setIsLoadingDetails(true);
+                const response = await offersApi.findOne(offer.id);
+                setHydratedOffer(response.data || offer);
+            } catch (error) {
+                console.error("Failed to load offer details:", error);
+                setHydratedOffer(offer);
+            } finally {
+                setIsLoadingDetails(false);
+            }
+        };
+
+        fetchOfferDetails();
+    }, [isOpen, offer]);
+
+    if (!hydratedOffer) return null;
+
+    const activeOffer = hydratedOffer;
+    const chatBasePath = pathname?.startsWith('/internal') ? '/internal/chat' : '/chat';
 
     const handleChat = async () => {
         if (!currentUser) {
@@ -50,7 +79,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
         }
 
         // Check if the offer advertiser ID exists. We'll try to find it in 'userId' or 'user.id'
-        const advertiserId = (offer as any).userId || (offer as any).user?.id;
+        const advertiserId = (activeOffer as any).userId || (activeOffer as any).user?.id;
 
         if (!advertiserId) {
             toast.error(t('chat.noAdvertiser') || 'Advertiser information missing');
@@ -65,14 +94,14 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
         setIsChatLoading(true);
         try {
             const room = await chatApi.getOrCreateOfferRoom({
-                offerId: offer.id,
+                offerId: activeOffer.id,
                 sellerId: advertiserId,
                 buyerId: currentUser.id,
-                offerTitle: `${offer.propertyType} ${t('offer.in')} ${offer.city}`
+                offerTitle: `${activeOffer.propertyType} ${t('offer.in')} ${activeOffer.city}`
             });
 
             if (room && room.id) {
-                router.push(`/chat/${room.id}`);
+                router.push(`${chatBasePath}/${room.id}`);
             } else {
                 throw new Error('Failed to create chat room');
             }
@@ -104,11 +133,11 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
             <DialogContent className="sm:max-w-[750px] max-h-[92vh] rounded-[2.5rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
                 <div className="h-72 w-full bg-slate-950 relative shrink-0">
-                    {offer.mediaFiles && offer.mediaFiles.length > 0 ? (
+                    {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (
                         <div className="w-full h-full relative">
                             <img 
-                                src={offer.mediaFiles[0]} 
-                                alt={offer.propertyType} 
+                                src={activeOffer.mediaFiles[0]} 
+                                alt={activeOffer.propertyType} 
                                 className="w-full h-full object-cover opacity-70" 
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
@@ -132,23 +161,23 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     <div className="absolute bottom-8 left-8 right-8 z-10">
                         <div className="flex items-center gap-2 mb-3">
                             <span className="px-3 py-1 bg-slate-800/80 backdrop-blur-md text-white text-[10px] font-black rounded-lg uppercase tracking-widest border border-slate-700/50">
-                                {offer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
+                                {activeOffer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                             </span>
                             <span className="px-3 py-1 bg-white text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg">
-                                {offer.propertyType}
+                                {activeOffer.propertyType}
                             </span>
                         </div>
                         <h2 className="text-3xl font-black text-white mb-2 tracking-tight">
-                            {offer.propertyType} {t('offer.in')} {offer.city}
+                            {activeOffer.propertyType} {t('offer.in')} {activeOffer.city}
                         </h2>
                         <div className="flex items-center gap-4 text-slate-300">
                             <p className="text-xs font-bold flex items-center gap-1.5 bg-white/5 backdrop-blur-sm px-2.5 py-1 rounded-full">
                                 <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                                {offer.city} • {offer.neighborhood}
+                                {activeOffer.city} • {activeOffer.neighborhood}
                             </p>
-                            {offer.locationUrl && (
+                            {activeOffer.locationUrl && (
                                 <a 
-                                    href={offer.locationUrl} 
+                                    href={activeOffer.locationUrl} 
                                     target="_blank" 
                                     rel="noreferrer"
                                     className="text-xs font-bold flex items-center gap-1.5 hover:text-white transition-colors"
@@ -172,7 +201,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.price')}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-4xl font-black text-slate-900 tracking-tighter">
-                                    {offer.price.toLocaleString()}
+                                {activeOffer.price.toLocaleString()}
                                 </span>
                                 <span className="text-sm font-black text-slate-400 uppercase tracking-widest">SAR</span>
                             </div>
@@ -184,7 +213,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.area')}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-4xl font-black text-slate-900 tracking-tighter">
-                                    {offer.area}
+                                    {activeOffer.area}
                                 </span>
                                 <span className="text-sm font-black text-slate-400 uppercase tracking-widest">m²</span>
                             </div>
@@ -199,17 +228,17 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                              <div className="h-[1px] flex-1 bg-slate-100" />
                         </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            <SpecItem icon={Calendar} label={t('offer.age')} value={offer.propertyAge} />
-                            <SpecItem icon={Compass} label={t('offer.direction')} value={offer.direction} />
-                            <SpecItem icon={Tag} label={t('offer.deed')} value={offer.deedType} />
-                            <SpecItem icon={Maximize} label={t('offer.streetWidth')} value={offer.streetWidth ? `${offer.streetWidth}m` : null} />
-                            <SpecItem icon={Layers} label={t('offer.floors')} value={offer.floors} />
-                            <SpecItem icon={Info} label={t('offer.condition')} value={offer.propertyCondition} />
+                            <SpecItem icon={Calendar} label={t('offer.age')} value={activeOffer.propertyAge} />
+                            <SpecItem icon={Compass} label={t('offer.direction')} value={activeOffer.direction} />
+                            <SpecItem icon={Tag} label={t('offer.deed')} value={activeOffer.deedType} />
+                            <SpecItem icon={Maximize} label={t('offer.streetWidth')} value={activeOffer.streetWidth ? `${activeOffer.streetWidth}m` : null} />
+                            <SpecItem icon={Layers} label={t('offer.floors')} value={activeOffer.floors} />
+                            <SpecItem icon={Info} label={t('offer.condition')} value={activeOffer.propertyCondition} />
                         </div>
                     </section>
 
                     {/* Rooms & Facilities */}
-                    {(offer.rooms || offer.bathrooms || offer.livingRooms || offer.kitchens) && (
+                    {(activeOffer.rooms || activeOffer.bathrooms || activeOffer.livingRooms || activeOffer.kitchens) && (
                         <section>
                             <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                                 <div className="h-[1px] flex-1 bg-slate-100" />
@@ -217,16 +246,16 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 <div className="h-[1px] flex-1 bg-slate-100" />
                             </h3>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                <SpecItem icon={Home} label={t('offer.rooms')} value={offer.rooms} />
-                                <SpecItem icon={Home} label={t('offer.baths')} value={offer.bathrooms} />
-                                <SpecItem icon={Home} label={t('offer.living')} value={offer.livingRooms} />
-                                <SpecItem icon={Home} label={t('offer.kitchens')} value={offer.kitchens} />
+                                <SpecItem icon={Home} label={t('offer.rooms')} value={activeOffer.rooms} />
+                                <SpecItem icon={Home} label={t('offer.baths')} value={activeOffer.bathrooms} />
+                                <SpecItem icon={Home} label={t('offer.living')} value={activeOffer.livingRooms} />
+                                <SpecItem icon={Home} label={t('offer.kitchens')} value={activeOffer.kitchens} />
                             </div>
                         </section>
                     )}
 
                     {/* Features/Amenities */}
-                    {(offer.hasElevator || offer.hasGarage || offer.hasPool || offer.hasRoof || offer.hasMaidRoom) && (
+                    {(activeOffer.hasElevator || activeOffer.hasGarage || activeOffer.hasPool || activeOffer.hasRoof || activeOffer.hasMaidRoom) && (
                          <section>
                             <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                                 <div className="h-[1px] flex-1 bg-slate-100" />
@@ -234,31 +263,31 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 <div className="h-[1px] flex-1 bg-slate-100" />
                             </h3>
                             <div className="flex flex-wrap gap-3">
-                                {offer.hasElevator && (
+                                {activeOffer.hasElevator && (
                                     <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                                         <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.elevator')}
                                     </div>
                                 )}
-                                {offer.hasGarage && (
+                                {activeOffer.hasGarage && (
                                     <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                                         <Car className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.garage')}
                                     </div>
                                 )}
-                                {offer.hasPool && (
+                                {activeOffer.hasPool && (
                                     <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                                         <Waves className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.pool')}
                                     </div>
                                 )}
-                                {offer.hasRoof && (
+                                {activeOffer.hasRoof && (
                                     <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                                         <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.roof')}
                                     </div>
                                 )}
-                                {offer.hasMaidRoom && (
+                                {activeOffer.hasMaidRoom && (
                                     <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                                         <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.maid')}
@@ -269,11 +298,11 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     )}
 
                     {/* Description */}
-                    {offer.additionalNotes && (
+                    {activeOffer.additionalNotes && (
                         <section className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100/50">
                             <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">{t('marketing.field.description')}</h3>
                             <p className="text-sm text-slate-600 leading-[1.8] font-medium italic">
-                                "{offer.additionalNotes}"
+                                "{activeOffer.additionalNotes}"
                             </p>
                         </section>
                     )}
@@ -283,7 +312,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 <div className="p-6 sm:p-8 bg-white border-t border-slate-100 flex flex-col sm:flex-row gap-4 shrink-0">
                     <Button 
                         onClick={handleChat}
-                        disabled={isChatLoading}
+                        disabled={isChatLoading || isLoadingDetails}
                         className="flex-[2] h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-sm tracking-widest uppercase flex items-center justify-center gap-3 shadow-xl shadow-slate-900/10 transition-all active:scale-95 disabled:opacity-70"
                     >
                         {isChatLoading ? (

@@ -31,6 +31,8 @@ import NotificationBell from "@/app/src/components/NotificationBell";
 import { useLanguage } from "@/context/LanguageContext";
 import { Role } from "@/types/user";
 import { useSettings } from "@/context/SettingsContext";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 /* ─── Department config ─── */
 const DEPT_CONFIG: Record<
@@ -73,7 +75,7 @@ function SideNavItem({
 }) {
   return (
     <motion.div
-      whileHover={!disabled ? { x: -4, scale: 1.01 } : {}}
+      whileHover={!disabled ? { x: -2 } : {}}
       whileTap={!disabled ? { scale: 0.98 } : {}}
       className="w-full"
     >
@@ -83,42 +85,24 @@ function SideNavItem({
           if (disabled) { e.preventDefault(); return; }
           onClick?.();
         }}
-        className={`group flex items-center justify-between gap-3 w-full rounded-[1.5rem] px-4 py-3.5 transition-all duration-300 ${
+        className={`group flex items-center gap-3 w-full rounded-lg px-2 py-2 transition-colors duration-150 border-r-2 ${
           isActive
-            ? "bg-slate-950 shadow-xl shadow-slate-950/20"
+            ? "bg-white/10 text-white border-white/70"
             : disabled
-              ? "opacity-40 cursor-not-allowed bg-slate-50/50"
-              : "bg-white hover:bg-slate-50 shadow-sm shadow-slate-200/40 hover:shadow-lg hover:shadow-slate-200/60 border border-slate-100"
+              ? "opacity-40 cursor-not-allowed text-white/40 border-transparent"
+              : "text-white/70 hover:text-white hover:bg-white/5 border-transparent hover:border-white/30"
         }`}
       >
-        {/* Left arrow */}
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
-          isActive ? "bg-white/10" : "bg-slate-100 group-hover:bg-slate-200 shadow-inner"
+        <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
+          isActive ? "bg-white text-slate-950 border-white/20" : "bg-white/5 border-white/10 group-hover:bg-white/10"
         }`}>
-          <ArrowLeft className={`w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 ${
-            isActive ? "text-white/60" : "text-slate-400"
-          }`} />
+          <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-white/80"}`} />
         </div>
-
-        {/* Label */}
-        <div className="flex-1 text-right min-w-0">
-          <p className={`text-[12px] font-black truncate leading-tight tracking-tight ${
-            isActive ? "text-white" : "text-slate-700"
-          }`}>{label}</p>
+        <div className="min-w-0 flex-1 text-right">
+          <p className="text-[12px] font-black truncate tracking-tight">{label}</p>
           {sublabel && (
-            <p className={`text-[10px] font-bold mt-0.5 tracking-wide ${
-              isActive ? "text-white/50" : "text-slate-400"
-            }`}>{sublabel}</p>
+            <p className={`text-[10px] font-bold mt-0.5 ${isActive ? "text-white/50" : "text-white/30"}`}>{sublabel}</p>
           )}
-        </div>
-
-        {/* Right icon tile */}
-        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${
-          isActive
-            ? "bg-slate-800 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-            : "bg-slate-100 group-hover:bg-slate-200 group-hover:scale-110"
-        }`}>
-          <Icon className={`w-6 h-6 transition-all duration-300 ${isActive ? "text-white scale-110" : "text-slate-600"}`} />
         </div>
       </Link>
     </motion.div>
@@ -132,17 +116,30 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   const searchParams = useSearchParams();
   const { t, language, toggleLanguage } = useLanguage();
   const [user, setUser]         = useState<any>(null);
+  const [impersonatedByAdmin, setImpersonatedByAdmin] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [subStatus, setSubStatus] = useState<{ active: boolean; daysLeft: number; noExpiry: boolean; subscription?: any } | null>(null);
   const { settings } = useSettings();
   const isRtl = language === "ar";
+  const exactBuildingManagementPaths = new Set([
+    "/internal",
+    "/internal/properties",
+    "/internal/marketing",
+    "/internal/legal",
+    "/internal/employees",
+  ]);
+  const shouldUseExactBuildingManagementLayout = exactBuildingManagementPaths.has(pathname);
 
   const isChat     = pathname === "/internal/chat" || pathname.startsWith("/internal/chat/");
   const deptSlug   = isChat ? "" : canonicalDeptSlug(pathname.split("/")[2] ?? "");
   const dept       = DEPT_CONFIG[deptSlug];
   const currentView = searchParams.get("view") || "dashboard";
+  const currentSection = searchParams.get("section") || "";
+  const isPreview = searchParams.get("preview") === "1";
+  const moduleFlagsKey = JSON.stringify(settings.moduleFlags || {});
+  const isRenewSubscriptionPage = pathname === "/internal/renew-subscription";
   const isHub      = !isChat && (!deptSlug || deptSlug === "internal" || !dept);
   const dashboardTitle = t("internal.dashboard.title");
   const loadingText = t("internal.common.loading");
@@ -162,11 +159,19 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   const languageSwitchLabel = t("internal.nav.languageSwitch");
 
   const syncUserFromStorage = () => {
-    const stored = localStorage.getItem("user");
-    if (!stored) return null;
-    const parsed = JSON.parse(stored);
-    setUser(parsed);
-    return parsed;
+    try {
+      const stored = localStorage.getItem("user");
+      const impersonationAdmin = localStorage.getItem("impersonatedByAdmin");
+      setImpersonatedByAdmin(impersonationAdmin ? JSON.parse(impersonationAdmin) : null);
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      setUser(parsed);
+      return parsed;
+    } catch {
+      setUser(null);
+      setImpersonatedByAdmin(null);
+      return null;
+    }
   };
 
   const persistUser = (nextUser: any) => {
@@ -184,8 +189,11 @@ export default function InternalShell({ children }: { children: React.ReactNode 
 
   /* section guard */
   const deptToSection: Record<string, string> = {
-    marketing: "marketing", properties: "buildingmanagement",
-    finance: "financial",   legal: "disputes",
+    marketing: "marketing",
+    properties: "buildingmanagement",
+    finance: "financial",
+    legal: "disputes",
+    employees: "buildingmanagement",
   };
   const { isOpen, message, isAdmin } = useSectionGuard(deptToSection[deptSlug] || "internal");
 
@@ -204,13 +212,15 @@ export default function InternalShell({ children }: { children: React.ReactNode 
     const hasPerm      = (parsed.departmentPermissions?.[deptSlug] && parsed.departmentPermissions[deptSlug] !== "none") ||
                          (deptSlug === "finance" && parsed.departmentPermissions?.financial && parsed.departmentPermissions.financial !== "none");
     const canAccess    = parsed.role === Role.ADMIN || hasDept || hasPerm;
+    if (shouldUseExactBuildingManagementLayout) return;
+
     const modSt        = (settings.moduleFlags as any)?.[deptSlug] || "enabled";
-    const isPreview    = searchParams.get("preview") === "1";
     const blocked      = modSt === "disabled" || (modSt === "soon" && !(parsed.role === Role.ADMIN && isPreview));
 
     if (!isHub && (!canAccess || blocked) && deptSlug) {
       const first = departments[0] || "";
-      if (first) router.push(`/internal/${first}`);
+      const fallback = first === "offers" || first === "orders" ? "properties" : first;
+      if (fallback) router.push(`/internal/${fallback}`);
       else router.push("/");
     }
 
@@ -231,13 +241,43 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       window.removeEventListener("user-updated", sync);
       window.removeEventListener("storage", sync);
     };
-  }, [router, deptSlug, settings.moduleFlags, searchParams, isHub]);
+  }, [router, deptSlug, moduleFlagsKey, isPreview, isHub, shouldUseExactBuildingManagementLayout]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("adminImpersonationSession");
+    localStorage.removeItem("impersonatedByAdmin");
     window.dispatchEvent(new Event("auth-change"));
     router.push("/login");
+  };
+
+  const handleReturnToAdmin = () => {
+    const rawSession = localStorage.getItem("adminImpersonationSession");
+    if (!rawSession) return;
+
+    try {
+      const session = JSON.parse(rawSession);
+      if (session.token) localStorage.setItem("token", session.token);
+      else localStorage.removeItem("token");
+
+      if (session.refreshToken) localStorage.setItem("refreshToken", session.refreshToken);
+      else localStorage.removeItem("refreshToken");
+
+      if (session.user) localStorage.setItem("user", session.user);
+      else localStorage.removeItem("user");
+
+      localStorage.removeItem("adminImpersonationSession");
+      localStorage.removeItem("impersonatedByAdmin");
+      setImpersonatedByAdmin(null);
+      window.dispatchEvent(new Event("auth-change"));
+      router.push(session.returnTo || "/admin/users");
+    } catch {
+      localStorage.removeItem("adminImpersonationSession");
+      localStorage.removeItem("impersonatedByAdmin");
+      router.push("/admin/users");
+    }
   };
 
   const handleProfileImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,33 +339,55 @@ export default function InternalShell({ children }: { children: React.ReactNode 
     const perm  = perms[canonical];
     const alias = canonical === "finance" ? perms.financial : canonical === "employees" ? perms.employee :
                   canonical === "properties" ? (perms.property || perms.property_management || perms.pm) : undefined;
-    return allowed.has(canonical) || (perm && perm !== "none") || (alias && alias !== "none");
+    const hasDirectAccess = allowed.has(canonical) || (perm && perm !== "none") || (alias && alias !== "none");
+    if (canonical === "properties") {
+      return hasDirectAccess || allowed.has("offers") || allowed.has("orders") ||
+        (perms.offers && perms.offers !== "none") ||
+        (perms.orders && perms.orders !== "none");
+    }
+    return hasDirectAccess;
   };
 
-  /* dept feature items */
+  const canAccessFeatureItem = (itemId: string) => {
+    if (user?.role === Role.ADMIN) return true;
+    if (itemId === "buildingmanagement") {
+      const allowed = new Set((Array.isArray(user?.departments) ? user.departments : []).map((d: any) => canonicalDeptSlug(d)));
+      const perms = user?.departmentPermissions || {};
+      return allowed.has("properties") ||
+        (perms.properties && perms.properties !== "none") ||
+        (perms.property && perms.property !== "none") ||
+        (perms.property_management && perms.property_management !== "none") ||
+        (perms.pm && perms.pm !== "none");
+    }
+    if (itemId === "offers") return canAccess("properties") || canAccess("offers");
+    if (itemId === "orders") return canAccess("properties") || canAccess("orders");
+    return true;
+  };
+
   const deptFeatureItems: Record<string, Array<{ id: string; href: string; icon: React.ElementType; label: string; moduleKey: string }>> = {
-    marketing:  [{ id: "marketing",              href: `/internal/${deptSlug}?view=marketing&section=marketing`,         icon: Megaphone,  label: "التسويق",          moduleKey: "marketing"   }],
-    finance:    [
-      { id: "financial-dashboard",     href: `/internal/${deptSlug}?view=financial&section=financial`,       icon: Wallet, label: "لوحة مالية",        moduleKey: "finance" },
-      { id: "financial-transactions",  href: `/internal/${deptSlug}?view=financial&section=transactions`,    icon: Wallet, label: "العمليات",           moduleKey: "finance" },
-      { id: "financial-payments",      href: `/internal/${deptSlug}?view=financial&section=payments`,        icon: Wallet, label: "المدفوعات",          moduleKey: "finance" },
-      { id: "financial-expenses",      href: `/internal/${deptSlug}?view=financial&section=expenses`,        icon: Wallet, label: "المصروفات",          moduleKey: "finance" },
-      { id: "financial-reports",       href: `/internal/${deptSlug}?view=financial&section=reports`,         icon: Wallet, label: "التقارير",           moduleKey: "finance" },
-      { id: "financial-settlements",   href: `/internal/${deptSlug}?view=financial&section=settlements`,     icon: Wallet, label: "التسويات",           moduleKey: "finance" },
+    marketing: [{ id: "marketing", href: `/internal/${deptSlug}?view=marketing&section=marketing`, icon: Megaphone, label: "التسويق", moduleKey: "marketing" }],
+    finance: [
+      { id: "financial-dashboard", href: `/internal/${deptSlug}?view=financial&section=financial`, icon: Wallet, label: "لوحة مالية", moduleKey: "finance" },
+      { id: "financial-transactions", href: `/internal/${deptSlug}?view=financial&section=transactions`, icon: Wallet, label: "العمليات", moduleKey: "finance" },
+      { id: "financial-payments", href: `/internal/${deptSlug}?view=financial&section=payments`, icon: Wallet, label: "المدفوعات", moduleKey: "finance" },
+      { id: "financial-expenses", href: `/internal/${deptSlug}?view=financial&section=expenses`, icon: Wallet, label: "المصروفات", moduleKey: "finance" },
+      { id: "financial-reports", href: `/internal/${deptSlug}?view=financial&section=reports`, icon: Wallet, label: "التقارير", moduleKey: "finance" },
+      { id: "financial-settlements", href: `/internal/${deptSlug}?view=financial&section=settlements`, icon: Wallet, label: "التسويات", moduleKey: "finance" },
       { id: "financial-service-requests", href: `/internal/${deptSlug}?view=financial&section=service_requests`, icon: Wallet, label: "إدارة الخدمات", moduleKey: "finance" },
     ],
-    legal:      [{ id: "legal",                  href: `/internal/${deptSlug}?view=legal&section=legal`,                icon: Scale,      label: "الإدارة القانونية", moduleKey: "legal"       }],
+    legal: [{ id: "legal", href: `/internal/${deptSlug}?view=legal&section=legal`, icon: Scale, label: "الإدارة القانونية", moduleKey: "legal" }],
     properties: [
       { id: "buildingmanagement", href: `/internal/${deptSlug}?view=properties&section=dashboard`, icon: Building2, label: "إدارة المباني", moduleKey: "properties" },
-      { id: "offers",             href: `/internal/${deptSlug}?view=properties&section=offers`,    icon: Building2, label: "العروض",        moduleKey: "offers"     },
-      { id: "orders",             href: `/internal/${deptSlug}?view=properties&section=orders`,    icon: Building2, label: "الطلبات",       moduleKey: "orders"     },
+      { id: "offers", href: `/internal/${deptSlug}?view=properties&section=offers`, icon: Building2, label: "إدارة العروض", moduleKey: "offers" },
+      { id: "orders", href: `/internal/${deptSlug}?view=properties&section=orders`, icon: Building2, label: "إدارة الطلبات", moduleKey: "orders" },
     ],
-    employees:  [{ id: "employees",              href: `/internal/${deptSlug}?view=employees&section=users`,            icon: Users,      label: "الموظفين",         moduleKey: "employees"   }],
+    employees: [{ id: "employees", href: `/internal/${deptSlug}?view=employees&section=users`, icon: Users, label: "الموظفين", moduleKey: "employees" }],
   };
 
   const commonItems = [
     { id: "dashboard", href: isHub ? "/internal" : `/internal/${deptSlug}?view=dashboard`, icon: LayoutDashboard, label: "الإحصاءات",      moduleKey: "internal_stats"   },
     { id: "requests",  href: isHub ? `/internal/properties?view=requests` : `/internal/${deptSlug}?view=requests`, icon: MessageSquare, label: "طلبات الخدمات", moduleKey: "service_requests" },
+    { id: "subscriptions", href: "/internal/renew-subscription", icon: CreditCard, label: subscriptionsLabel, moduleKey: "subscriptions" },
   ];
   const featureItems = (!isHub && deptFeatureItems[deptSlug]) || [];
 
@@ -337,10 +399,14 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       const url = new URL(href, "http://x");
       const v   = url.searchParams.get("view");
       const s   = url.searchParams.get("section");
-      if (v) return currentView === v && (s ? searchParams.get("section") === s : true);
+      if (v) return currentView === v && (s ? currentSection === s : true);
     } catch {}
     return currentView === id || pathname === href;
   };
+
+  if (shouldUseExactBuildingManagementLayout) {
+    return <>{children}</>;
+  }
 
   /* ─── loading ─── */
   if (!user) {
@@ -352,62 +418,57 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   }
 
   /* ─── subscription guard ─── */
-  if (subStatus && !subStatus.active) {
+  if (subStatus && !subStatus.active && !isRenewSubscriptionPage) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px]" />
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center space-y-8 max-w-md">
-          {/* Icon */}
-          <div className="w-24 h-24 rounded-[2rem] bg-red-500/20 border border-red-500/20 flex items-center justify-center">
-            <Clock className="w-12 h-12 text-red-400" />
+      <Dialog open={true} onOpenChange={() => {}}>
+        <DialogContent className="max-w-lg">
+          <div className="px-6 pt-6 pb-5">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-slate-950">
+                {language === "ar" ? "انتهى اشتراكك" : "Subscription inactive"}
+              </DialogTitle>
+              <DialogDescription>
+                {language === "ar"
+                  ? "لا يمكن الوصول إلى الخدمات قبل تفعيل الاشتراك. اختر باقة جاهزة أو اشتراكًا مخصصًا."
+                  : "You need an active subscription to continue. Choose a package or create a custom subscription."}
+              </DialogDescription>
+            </DialogHeader>
+            {subStatus.subscription && (
+              <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-600">
+                {language === "ar"
+                  ? `آخر اشتراك انتهى في: ${new Date(subStatus.subscription.endDate).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}`
+                  : `Last subscription ended on: ${new Date(subStatus.subscription.endDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`}
+              </div>
+            )}
           </div>
-
-          {/* Text */}
-          <div className="space-y-3">
-            <h1 className="text-4xl font-black text-white tracking-tight">انتهى اشتراكك</h1>
-            <p className="text-slate-400 text-sm max-w-sm mx-auto font-medium leading-relaxed">
-              لقد انتهت فترة اشتراكك في المنصة. يمكنك تجديد اشتراكك للاستمرار في الوصول إلى جميع الخدمات، أو العودة إلى الصفحة الرئيسية.
-            </p>
-          </div>
-
-          {/* Subscription info if available */}
-          {subStatus.subscription && (
-            <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-right space-y-1">
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">آخر اشتراك</p>
-              <p className="text-white font-bold text-sm">
-                انتهى في: {new Date(subStatus.subscription.endDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </p>
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex flex-col w-full gap-3">
-            <button
-              onClick={() => router.push('/internal/renew-subscription')}
-              className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-black text-sm tracking-wide transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+          <DialogFooter className="px-6 pb-6 pt-0">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 rounded-2xl border-slate-200 px-5 font-bold"
+              onClick={() => router.push("/subscriptions/new")}
             >
-              <CreditCard className="w-5 h-5" />
-              تجديد الاشتراك
-            </button>
-            <button
-              onClick={() => router.push('/details')}
-              className="w-full h-12 bg-white/10 hover:bg-white/15 text-white rounded-2xl font-bold text-sm transition-all border border-white/10"
+              <CreditCard className="h-4 w-4" />
+              {language === "ar" ? "اشتراك مخصص" : "Custom subscription"}
+            </Button>
+            <Button
+              type="button"
+              className="h-11 rounded-2xl px-5 font-bold"
+              onClick={() => router.push("/internal/renew-subscription")}
             >
-              الذهاب إلى الصفحة الرئيسية
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full h-10 text-slate-500 hover:text-slate-300 text-xs font-bold transition-colors"
+              {language === "ar" ? "تجديد الاشتراك" : "Renew subscription"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-11 rounded-2xl px-5 font-bold text-slate-500"
+              onClick={() => router.push("/details")}
             >
-              تسجيل الخروج
-            </button>
-          </div>
-        </div>
-      </div>
+              {language === "ar" ? "العودة للرئيسية" : "Back to home"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 
@@ -428,20 +489,20 @@ export default function InternalShell({ children }: { children: React.ReactNode 
     if (!subStatus) return null;
     const isLow = subStatus.daysLeft <= 7 && !subStatus.noExpiry;
     return (
-      <div className={`mx-3 mb-2 p-3 rounded-2xl border transition-all ${
-        subStatus.noExpiry ? 'bg-slate-50 border-slate-100' :
-        isLow ? 'bg-red-50 border-red-100 animate-pulse' : 'bg-slate-50 border-slate-100'
+      <div className={`mb-2 rounded-lg border px-3 py-2 transition-all ${
+        subStatus.noExpiry ? 'bg-white/5 border-white/10' :
+        isLow ? 'bg-red-500/10 border-red-300/20 animate-pulse' : 'bg-white/5 border-white/10'
       }`}>
         <div className="flex items-center justify-between gap-3">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-            subStatus.noExpiry ? 'bg-slate-200 text-slate-600' :
-            isLow ? 'bg-red-100 text-red-600' : 'bg-slate-200 text-slate-600'
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+            subStatus.noExpiry ? 'bg-white/10 text-white/70' :
+            isLow ? 'bg-red-500/15 text-red-200' : 'bg-white/10 text-white/70'
           }`}>
             <Clock className="w-4 h-4" />
           </div>
           <div className="flex-1 text-right">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{subscriptionStatusLabel}</p>
-            <p className={`text-[11px] font-black ${isLow ? 'text-red-600' : 'text-slate-900'}`}>
+            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">{subscriptionStatusLabel}</p>
+            <p className={`text-[11px] font-black ${isLow ? 'text-red-200' : 'text-white/80'}`}>
               {subStatus.noExpiry ? openEndedLabel : 
                subStatus.daysLeft <= 0 ? expiredLabel : 
                daysLeftLabel(subStatus.daysLeft)}
@@ -562,7 +623,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         <div className="px-5 pt-5 pb-2">
           <Link
             href="/internal"
-            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-700 text-[11px] font-black uppercase tracking-widest transition-colors"
+            className="inline-flex items-center gap-1.5 text-white/35 hover:text-white text-[11px] font-black uppercase tracking-widest transition-colors"
           >
             <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
             {backToHomeLabel}
@@ -571,19 +632,19 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       )}
 
       {/* ── Title ── */}
-      <div className="px-5 pt-4 pb-5 border-b border-slate-100">
-        <h2 className="text-[18px] font-black text-slate-950 tracking-tight">
+      <div className="px-5 pt-4 pb-5 border-b border-white/5">
+        <h2 className="text-[18px] font-black text-white tracking-tight">
           {isChat ? chatCenterLabel : isHub ? dashboardTitle : isRtl ? dept?.nameAr : dept?.nameEn}
         </h2>
         {!isHub && !isChat && (
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+          <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mt-0.5">
             {dept?.nameEn} DEPT
           </p>
         )}
       </div>
 
       {/* ── Nav items ── */}
-      <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-1">
 
         {/* Hub: show all accessible departments */}
         {isHub && accessibleDepts.map(([dSlug, dConfig]) => {
@@ -622,10 +683,11 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Dept: feature items */}
         {!isHub && featureItems.length > 0 && (
           <>
-            <div className="h-px bg-slate-100 mx-2 my-2" />
+            <div className="my-4 h-px bg-white/5" />
             {featureItems.map((item) => {
               const st = modStatus(item.moduleKey);
               if (st === "disabled") return null;
+              if (!canAccessFeatureItem(item.id)) return null;
               return (
                 <SideNavItem
                   key={item.id}
@@ -644,7 +706,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Hub: common bottom items */}
         {isHub && (
           <>
-            <div className="h-px bg-slate-100 mx-2 my-2" />
+            <div className="my-4 h-px bg-white/5" />
             {commonItems.slice(1).map((item) => {
               const st = modStatus(item.moduleKey);
               if (st === "disabled") return null;
@@ -663,15 +725,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         )}
       </nav>
 
-      <div className="px-4 pb-5 pt-3 border-t border-slate-100 space-y-2">
+      <div className="p-4 border-t border-white/5 space-y-2">
         <SubscriptionBadge />
-        {isHub && (
-          <SideNavItem
-            href="/subscriptions/new"
-            icon={CreditCard}
-            label={subscriptionsLabel}
-          />
-        )}
         <SideNavItem
           href="/details"
           icon={ArrowLeft}
@@ -680,12 +735,12 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         />
         <button
           onClick={handleLogout}
-          className="group flex items-center justify-between gap-3 w-full rounded-[1.5rem] px-4 py-3.5 bg-white hover:bg-red-50 border border-slate-100 hover:border-red-100 shadow-sm transition-all duration-200"
+          className="group flex items-center gap-3 w-full rounded-lg px-2 py-2 text-white/70 hover:text-white hover:bg-red-500/10 transition-colors border-r-2 border-transparent hover:border-red-300/60"
         >
-          <div className="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
-            <LogOut className="w-4 h-4 text-slate-400 group-hover:text-red-500 transition-colors" />
+          <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
+            <LogOut className="w-4 h-4 text-white/80 group-hover:rotate-12 transition-transform" />
           </div>
-          <span className="flex-1 text-right text-[12px] font-black text-slate-700 group-hover:text-red-600 transition-colors">
+          <span className="flex-1 text-right text-[12px] font-black tracking-tight">
             {logoutLabel}
           </span>
         </button>
@@ -695,27 +750,29 @@ export default function InternalShell({ children }: { children: React.ReactNode 
 
   /* ─── Layout ─── */
   return (
-    <div className="flex h-screen bg-[#f7f7f8] overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="flex h-screen bg-slate-50 overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
 
       {/* ══ Desktop Sidebar ══ */}
       <aside
-        className={`hidden lg:flex flex-col w-72 shrink-0 bg-white shadow-sm overflow-hidden ${
-          isRtl ? "border-l border-slate-100" : "border-r border-slate-100"
-        }`}
+        className="hidden lg:flex flex-col w-64 shrink-0 bg-slate-950 text-white overflow-hidden shadow-xl shadow-black/20 lg:shadow-none"
       >
         {/* Topbar in sidebar */}
-        <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100 shrink-0">
-          <Image
-            src={settings.logoBlackUrl || '/icons/black.png'}
-            alt="Logo"
-            width={200}
-            height={settings.logoHeight || 40}
-            className="object-contain w-auto"
-            style={{ height: `${settings.logoHeight || 40}px` }}
-            priority
-          />
+        <div className="flex items-center justify-between p-5 border-b border-white/5 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <Building2 className="w-5 h-5 text-white" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-black text-sm tracking-tight leading-tight truncate">
+                {isChat ? chatCenterLabel : isHub ? dashboardTitle : isRtl ? dept?.nameAr : dept?.nameEn}
+              </p>
+              <p className="text-white/30 text-[9px] font-black uppercase tracking-widest truncate">
+                {isHub ? "INTERNAL DEPT." : dept?.nameEn ? `${dept.nameEn} DEPT.` : "INTERNAL"}
+              </p>
+            </div>
+          </div>
           <button type="button" onClick={() => setProfileOpen(true)}>
-            {avatarNode("w-9 h-9 rounded-full bg-slate-950", "text-[11px] font-black text-white")}
+            {avatarNode("w-9 h-9 rounded-full bg-white/10", "text-[11px] font-black text-white")}
           </button>
         </div>
 
@@ -725,11 +782,11 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       {/* ══ Mobile: hamburger + drawer ══ */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className={`fixed top-4 z-50 lg:hidden w-10 h-10 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-md ${
+        className={`fixed top-4 z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-sm shadow-black/20 ${
           isRtl ? "right-4" : "left-4"
         }`}
       >
-        <Menu className="w-5 h-5 text-slate-600" />
+        <Menu className="w-5 h-5" />
       </button>
 
       <AnimatePresence>
@@ -749,17 +806,17 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               animate={{ x: 0 }}
               exit={{ x: isRtl ? "100%" : "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className={`fixed inset-y-0 z-50 w-72 bg-white shadow-2xl lg:hidden overflow-hidden ${
+              className={`fixed inset-y-0 z-50 w-64 bg-slate-950 text-white shadow-2xl lg:hidden overflow-hidden ${
                 isRtl ? "right-0" : "left-0"
               }`}
             >
               <button
                 onClick={() => setSidebarOpen(false)}
-                className={`absolute top-4 w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center ${
+                className={`absolute top-4 w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center ${
                   isRtl ? "left-4" : "right-4"
                 }`}
               >
-                <X className="w-4 h-4 text-slate-500" />
+                <X className="w-4 h-4 text-white/70" />
               </button>
               <SidebarContent />
             </motion.aside>
@@ -770,23 +827,33 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       {/* ══ Main content ══ */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Slim top bar */}
-        <div className="h-14 bg-white border-b border-slate-100 flex items-center justify-between px-6 gap-3 shrink-0">
+        <div className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 gap-3 shrink-0">
           <div className="lg:hidden w-8" /> {/* spacer for hamburger */}
           <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-slate-100 transition-colors">
+              <Menu className="w-4 h-4 text-slate-400" />
+            </button>
+            <div className="hidden lg:block h-4 w-px bg-slate-200" />
             {isChat ? (
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-slate-500" />
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">{chatCenterLabel}</span>
+            <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+              <MessageSquare className="w-4 h-4 text-slate-700" />
+              <span className="text-[12px] font-black text-slate-900 truncate">{chatCenterLabel}</span>
             </div>
           ) : DeptIcon && !isHub ? (
-            <div className="flex items-center gap-2">
-              <DeptIcon className="w-4 h-4 text-slate-500" />
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+                <DeptIcon className="w-4 h-4 text-slate-700 shrink-0" />
+                <span className="text-[12px] font-black text-slate-900 truncate">
                 {isRtl ? dept?.nameAr : dept?.nameEn}
-              </span>
+                </span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">DEPT</span>
+              </div>
+              <div className="hidden sm:flex items-center h-9 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black">
+                {currentView}
+              </div>
             </div>
           ) : (
-            <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
+            <span className="flex items-center h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-[12px] font-black text-slate-900">
               {dashboardTitle}
             </span>
           )}
@@ -810,12 +877,11 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               <Globe className="w-4 h-4 sm:hidden" />
             </button>
             <NotificationBell
-              variant="light"
               align="left"
-              buttonClassName="rounded-2xl bg-slate-100 text-slate-500 hover:text-slate-950 hover:bg-slate-200"
+              buttonClassName="rounded-xl bg-slate-100 text-slate-500 hover:text-slate-950 hover:bg-slate-200"
             />
             <button type="button" onClick={() => setProfileOpen(true)} className="shrink-0">
-              {avatarNode("w-10 h-10 rounded-2xl bg-slate-950", "text-sm font-black text-white")}
+              {avatarNode("w-8 h-8 rounded-full bg-slate-950", "text-[10px] font-black text-white")}
             </button>
           </div>
         </div>

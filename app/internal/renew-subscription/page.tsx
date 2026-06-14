@@ -1,308 +1,264 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
   Clock,
   CreditCard,
-  CheckCircle,
-  ArrowLeft,
   Loader2,
-  Shield,
-  Zap,
-  Star,
+  PackageCheck,
+  ShieldCheck,
+  SlidersHorizontal,
+  Wallet,
 } from "lucide-react";
 import api from "@/lib/api";
+import { useLanguage } from "@/context/LanguageContext";
+import { Button } from "@/components/ui/button";
 
-const PLANS = [
-  {
-    id: "monthly",
-    label: "شهري",
-    type: "شهري",
-    months: 1,
-    price: 299,
-    badge: null,
-    description: "مثالي للتجربة",
-  },
-  {
-    id: "quarterly",
-    label: "ربع سنوي",
-    type: "مخصص",
-    months: 3,
-    price: 799,
-    badge: "وفّر 11%",
-    description: "الأكثر مرونة",
-  },
-  {
-    id: "yearly",
-    label: "سنوي",
-    type: "سنوي",
-    months: 12,
-    price: 2499,
-    badge: "الأفضل قيمة",
-    description: "وفّر 30%",
-  },
-];
-
-const PAYMENT_METHODS = [
-  { id: "بطاقة ائتمان", label: "بطاقة ائتمان / مدى", icon: "💳" },
-  { id: "تحويل بنكي", label: "تحويل بنكي", icon: "🏦" },
-  { id: "Apple Pay", label: "Apple Pay", icon: "🍎" },
-  { id: "STC Pay", label: "STC Pay", icon: "📱" },
-];
-
-const FEATURES = [
-  "وصول كامل لجميع الأقسام",
-  "إدارة الموظفين والصلاحيات",
-  "التقارير المالية المفصّلة",
-  "إدارة العقارات والوحدات",
-  "دعم فني متواصل",
-  "تحديثات مجانية مستمرة",
-];
+type SubscriptionStatus = {
+  active: boolean;
+  daysLeft?: number;
+  noExpiry?: boolean;
+  subscription?: {
+    endDate?: string;
+    managementPackage?: { name?: string } | null;
+    amount?: number;
+    subscriptionType?: string;
+  } | null;
+};
 
 export default function RenewSubscriptionPage() {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState(PLANS[2]);
-  const [selectedPayment, setSelectedPayment] = useState(PAYMENT_METHODS[0].id);
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [currentStatus, setCurrentStatus] = useState<any>(null);
+  const { language } = useLanguage();
+  const isRtl = language === "ar";
+  const [status, setStatus] = useState<SubscriptionStatus | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
-    if (!stored) { router.push("/login"); return; }
-    setUser(JSON.parse(stored));
+    if (!stored) {
+      router.push("/login");
+      return;
+    }
 
-    // Load current subscription status
-    api.get("/subscriptions/status").then((res) => {
-      setCurrentStatus(res.data);
-    }).catch(() => {});
+    api
+      .get("/subscriptions/status")
+      .then((res) => setStatus(res.data || null))
+      .catch(() => setStatus(null))
+      .finally(() => setLoading(false));
   }, [router]);
 
-  const handleRenew = async () => {
-    if (!user) return;
-    setIsLoading(true);
-    setError(null);
-
-    const today = new Date();
-    const endDate = new Date(today);
-    if (selectedPlan.type === "سنوي") {
-      endDate.setFullYear(today.getFullYear() + 1);
-    } else {
-      endDate.setMonth(today.getMonth() + selectedPlan.months);
+  const statusCopy = useMemo(() => {
+    if (!status) {
+      return {
+        title: isRtl ? "حالة الاشتراك غير متاحة" : "Subscription status unavailable",
+        desc: isRtl ? "يمكنك اختيار باقة جديدة أو إنشاء اشتراك مخصص." : "Choose a package or create a custom subscription.",
+        tone: "neutral",
+      };
     }
-
-    try {
-      await api.post("/subscriptions", {
-        userId: user.id,
-        subscriptionType: selectedPlan.type,
-        customPeriodMonths: selectedPlan.type === "مخصص" ? selectedPlan.months : undefined,
-        amount: selectedPlan.price,
-        startDate: today.toISOString().split("T")[0],
-        endDate: endDate.toISOString().split("T")[0],
-        paymentMethod: selectedPayment,
-        status: "نشط",
-        noExpiry: false,
-      });
-
-      setSuccess(true);
-      setTimeout(() => {
-        router.push("/internal");
-      }, 2500);
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-        "حدث خطأ أثناء تجديد الاشتراك. يرجى المحاولة مرة أخرى."
-      );
-    } finally {
-      setIsLoading(false);
+    if (status.active) {
+      return {
+        title: isRtl ? "اشتراكك نشط" : "Your subscription is active",
+        desc: status.noExpiry
+          ? (isRtl ? "هذا الاشتراك غير محدود ولا يحتاج إلى تجديد." : "This subscription has no expiry date.")
+          : (isRtl ? `متبقي ${status.daysLeft ?? 0} يوم على الاشتراك الحالي.` : `${status.daysLeft ?? 0} days remaining on your current subscription.`),
+        tone: "active",
+      };
     }
-  };
+    return {
+      title: isRtl ? "الاشتراك غير نشط" : "Subscription inactive",
+      desc: isRtl ? "فعّل اشتراكك للعودة إلى الإدارات والميزات الداخلية." : "Activate your subscription to regain access to internal departments.",
+      tone: "expired",
+    };
+  }, [isRtl, status]);
 
-  if (success) {
+  const currentSub = status?.subscription;
+  const locale = isRtl ? "ar-SA" : "en-US";
+  const lastEndDate = currentSub?.endDate
+    ? new Date(currentSub.endDate).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })
+    : null;
+
+  const actionCards = [
+    {
+      id: "packages",
+      title: isRtl ? "اختيار باقة جاهزة" : "Choose Package",
+      desc: isRtl ? "باقات جاهزة بسعر شهري أو سنوي حسب الإدارات المحددة من الإدارة." : "Ready packages with monthly or yearly pricing.",
+      icon: PackageCheck,
+      action: () => router.push("/subscriptions/new?mode=packages"),
+      cta: isRtl ? "عرض الباقات" : "View packages",
+    },
+    {
+      id: "custom",
+      title: isRtl ? "اشتراك مخصص" : "Custom Subscription",
+      desc: isRtl ? "اختر الإدارات التي تحتاجها وعدد موظفي إدارة الموظفين." : "Choose departments and employee seats.",
+      icon: SlidersHorizontal,
+      action: () => router.push("/subscriptions/new?mode=custom"),
+      cta: isRtl ? "إنشاء مخصص" : "Create custom",
+    },
+    {
+      id: "wallet",
+      title: isRtl ? "المحفظة والفواتير" : "Wallet & Invoices",
+      desc: isRtl ? "راجع الفواتير وادفع الاشتراكات المعلقة من المحفظة." : "Review invoices and pay pending subscriptions.",
+      icon: Wallet,
+      action: () => router.push("/wallet"),
+      cta: isRtl ? "فتح المحفظة" : "Open wallet",
+    },
+  ];
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
-        <div className="flex flex-col items-center space-y-6 max-w-sm">
-          <div className="w-24 h-24 rounded-[2rem] bg-green-500/20 border border-green-500/30 flex items-center justify-center">
-            <CheckCircle className="w-12 h-12 text-green-400" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-black text-white">تم تجديد اشتراكك!</h1>
-            <p className="text-slate-400 text-sm font-medium">
-              مرحباً بك مجدداً. جاري تحويلك إلى لوحة التحكم...
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-green-400 text-sm font-bold">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            جاري التحويل...
-          </div>
+      <div className="min-h-[55vh] bg-slate-50 flex items-center justify-center" dir={isRtl ? "rtl" : "ltr"}>
+        <div className="flex items-center gap-3 rounded-3xl border border-slate-100 bg-white px-6 py-5 text-sm font-black text-slate-500 shadow-sm">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          {isRtl ? "جاري تحميل بيانات الاشتراك" : "Loading subscription details"}
         </div>
       </div>
     );
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-950 text-white">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/8 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/8 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-10 space-y-8">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all"
+    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/internal")}
+            className="h-11 rounded-2xl border-slate-200 bg-white px-4 text-xs font-black text-slate-600 hover:bg-slate-50"
           >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black text-white">تجديد الاشتراك</h1>
-            <p className="text-slate-400 text-sm font-medium">اختر الخطة المناسبة لك</p>
+            <ArrowRight className="h-4 w-4" />
+            {isRtl ? "العودة للإدارات" : "Back to internal"}
+          </Button>
+          <div className="inline-flex h-10 items-center gap-2 rounded-2xl bg-white px-4 text-[11px] font-black uppercase tracking-widest text-slate-400 shadow-sm ring-1 ring-slate-100">
+            <CreditCard className="h-4 w-4" />
+            {isRtl ? "إدارة الاشتراك" : "Subscription"}
           </div>
         </div>
 
-        {/* Expired notice */}
-        {currentStatus && !currentStatus.active && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center gap-3">
-            <Clock className="w-5 h-5 text-red-400 shrink-0" />
-            <p className="text-red-300 text-sm font-bold">
-              اشتراكك منتهٍ — قم بالتجديد الآن للعودة إلى الوصول الكامل
-            </p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Plans + Payment */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Plan selector */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-4">
-              <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">اختر الخطة</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {PLANS.map((plan) => (
-                  <button
-                    key={plan.id}
-                    onClick={() => setSelectedPlan(plan)}
-                    className={`relative p-5 rounded-2xl border-2 text-right transition-all ${
-                      selectedPlan.id === plan.id
-                        ? "border-blue-500 bg-blue-600/15"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
-                    }`}
-                  >
-                    {plan.badge && (
-                      <span className="absolute -top-2.5 left-3 px-2 py-0.5 bg-blue-500 rounded-full text-[10px] font-black">
-                        {plan.badge}
-                      </span>
-                    )}
-                    <p className="font-black text-white text-base">{plan.label}</p>
-                    <p className="text-slate-400 text-xs font-medium mt-1">{plan.description}</p>
-                    <p className="text-2xl font-black text-white mt-3">
-                      {plan.price.toLocaleString('ar-SA')}
-                      <span className="text-sm font-bold text-slate-400"> ر.س</span>
-                    </p>
-                  </button>
-                ))}
+        <section className="relative overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+          <div className="absolute -top-28 -left-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
+          <div className="absolute -bottom-28 -right-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
+          <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
+            <div className="space-y-5">
+              <div className="inline-flex h-9 items-center gap-2 rounded-full bg-slate-950 px-4 text-[11px] font-black text-white">
+                <ShieldCheck className="h-4 w-4" />
+                {isRtl ? "تجديد الاشتراك" : "Renew Subscription"}
               </div>
-            </div>
-
-            {/* Payment method */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-4">
-              <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">طريقة الدفع</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {PAYMENT_METHODS.map((method) => (
-                  <button
-                    key={method.id}
-                    onClick={() => setSelectedPayment(method.id)}
-                    className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-right ${
-                      selectedPayment === method.id
-                        ? "border-blue-500 bg-blue-600/15"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
-                    }`}
-                  >
-                    <span className="text-2xl">{method.icon}</span>
-                    <span className="font-bold text-sm text-white">{method.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Summary */}
-          <div className="space-y-4">
-            {/* Order summary */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
-              <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">ملخص الطلب</h2>
-
               <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-400 font-medium">الخطة</span>
-                  <span className="text-white font-bold">{selectedPlan.label}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-400 font-medium">المدة</span>
-                  <span className="text-white font-bold">{selectedPlan.months} شهر</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-400 font-medium">طريقة الدفع</span>
-                  <span className="text-white font-bold">
-                    {PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label}
-                  </span>
-                </div>
-                <div className="border-t border-white/10 pt-3 flex justify-between">
-                  <span className="text-white font-black">الإجمالي</span>
-                  <span className="text-blue-400 font-black text-lg">
-                    {selectedPlan.price.toLocaleString('ar-SA')} ر.س
-                  </span>
-                </div>
+                <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                  {statusCopy.title}
+                </h1>
+                <p className="max-w-2xl text-sm font-bold leading-7 text-slate-500">
+                  {statusCopy.desc}
+                </p>
               </div>
-
-              {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-                  <p className="text-red-400 text-xs font-bold text-center">{error}</p>
-                </div>
-              )}
-
-              <button
-                onClick={handleRenew}
-                disabled={isLoading}
-                className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-black text-sm tracking-wide transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
-              >
-                {isLoading ? (
-                  <><Loader2 className="w-5 h-5 animate-spin" /> جاري المعالجة...</>
-                ) : (
-                  <><CreditCard className="w-5 h-5" /> تجديد الاشتراك</>
-                )}
-              </button>
-
-              <button
-                onClick={() => router.push("/details")}
-                className="w-full h-10 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl font-bold text-xs transition-all border border-white/10"
-              >
-                الذهاب إلى الصفحة الرئيسية
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  type="button"
+                  onClick={() => router.push("/subscriptions/new")}
+                  className="h-12 rounded-2xl bg-slate-950 px-6 text-xs font-black text-white hover:bg-slate-800"
+                >
+                  <PackageCheck className="h-4 w-4" />
+                  {isRtl ? "اختر اشتراك" : "Choose subscription"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/wallet")}
+                  className="h-12 rounded-2xl border-slate-200 bg-white px-6 text-xs font-black text-slate-700 hover:bg-slate-50"
+                >
+                  <Wallet className="h-4 w-4" />
+                  {isRtl ? "المحفظة" : "Wallet"}
+                </Button>
+              </div>
             </div>
 
-            {/* Features */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-4 h-4 text-blue-400" />
-                <h2 className="text-sm font-black text-white">ما يشمله الاشتراك</h2>
+            <div className="rounded-[1.75rem] border border-slate-100 bg-slate-50 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    {isRtl ? "الحالة الحالية" : "Current Status"}
+                  </p>
+                  <p className="mt-2 text-xl font-black text-slate-950">
+                    {status?.active ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}
+                  </p>
+                </div>
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
+                  status?.active ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"
+                }`}>
+                  {status?.active ? <CheckCircle2 className="h-7 w-7" /> : <Clock className="h-7 w-7" />}
+                </div>
               </div>
-              <ul className="space-y-2">
-                {FEATURES.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-xs text-slate-300 font-medium">
-                    <CheckCircle className="w-3.5 h-3.5 text-green-400 shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+
+              <div className="mt-5 space-y-3 rounded-2xl bg-white p-4 text-sm font-bold text-slate-600 ring-1 ring-slate-100">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-400">{isRtl ? "الباقة" : "Package"}</span>
+                  <span className="text-slate-900">{currentSub?.managementPackage?.name || (isRtl ? "غير محدد" : "Not set")}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-400">{isRtl ? "النوع" : "Type"}</span>
+                  <span className="text-slate-900">{currentSub?.subscriptionType || "-"}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-slate-400">{isRtl ? "تاريخ الانتهاء" : "End Date"}</span>
+                  <span className="text-slate-900">{status?.noExpiry ? (isRtl ? "غير محدود" : "No expiry") : lastEndDate || "-"}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          {actionCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <button
+                key={card.id}
+                type="button"
+                onClick={card.action}
+                className="group rounded-[1.75rem] border border-slate-100 bg-white p-5 text-start shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="mb-5 flex items-center justify-between gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 ring-1 ring-slate-100 transition-colors group-hover:bg-slate-950 group-hover:text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <span className="text-[11px] font-black text-slate-400">{card.cta}</span>
+                </div>
+                <h2 className="text-base font-black text-slate-950">{card.title}</h2>
+                <p className="mt-2 text-xs font-bold leading-6 text-slate-500">{card.desc}</p>
+              </button>
+            );
+          })}
+        </section>
+
+        <section className="rounded-[1.75rem] border border-slate-100 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-800 ring-1 ring-slate-100">
+                <Building2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-950">
+                  {isRtl ? "تحتاج معاينة الإدارات قبل الاشتراك؟" : "Need to preview departments first?"}
+                </h3>
+                <p className="mt-1 text-xs font-bold text-slate-400">
+                  {isRtl ? "يمكنك مشاهدة الأقسام المتاحة والميزات من صفحة الاشتراكات." : "You can view departments and features from the subscription page."}
+                </p>
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/subscriptions/new")}
+              className="h-11 rounded-2xl border-slate-200 bg-white px-5 text-xs font-black text-slate-700 hover:bg-slate-50"
+            >
+              {isRtl ? "فتح صفحة الاشتراكات" : "Open subscriptions"}
+            </Button>
+          </div>
+        </section>
       </div>
     </div>
   );

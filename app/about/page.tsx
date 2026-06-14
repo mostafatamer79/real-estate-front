@@ -168,48 +168,7 @@ function AnimatedFrame({ reduceMotion }: { reduceMotion: boolean }) {
         className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 [will-change:transform,opacity]"
       />
 
-      <div className="relative flex h-full min-h-[480px] flex-col justify-between">
-        <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-slate-950/70 p-4">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/35">Control Layer</p>
-            <p className="mt-1 text-lg font-black text-white">منصة تشغيل عقاري</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
-            <Sparkles className="h-5 w-5 text-white/65" />
-          </div>
-        </div>
 
-        <div className="grid gap-3">
-          {departments.map((item, index) => (
-            <motion.div
-              key={item}
-              initial={{ x: reduceMotion ? 0 : index % 2 === 0 ? 18 : -18 }}
-              animate={{ x: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.7, delay: 0.2 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/65 px-4 py-3 [will-change:transform]"
-            >
-              <span className="text-sm font-black text-white/80">{item}</span>
-              <CheckCircle2 className="h-4 w-4 text-white/35" />
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/35">Live Workflow</p>
-          <div className="mt-4 grid grid-cols-4 gap-2">
-            {["طلب", "مراجعة", "فوترة", "إغلاق"].map((item, index) => (
-              <motion.div
-                key={item}
-                animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
-                transition={{ duration: 2.4, repeat: Infinity, delay: index * 0.18, ease: "easeInOut" }}
-                className="rounded-2xl border border-white/10 bg-slate-950/60 py-3 text-center text-[10px] font-black text-white/50 [will-change:transform]"
-              >
-                {item}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -632,21 +591,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-4">
-            {platformStats.map((item, index) => (
-              <motion.div
-                key={item.value}
-                initial={{ y: reduceMotion ? 0 : 18 }}
-                animate={{ y: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.55, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={reduceMotion ? undefined : { y: -5 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.035] p-5 [will-change:transform]"
-            >
-                <p className="text-3xl font-black text-white">{item.value}</p>
-                <p className="mt-3 text-[11px] font-bold leading-5 text-white/55">{item.label}</p>
-              </motion.div>
-            ))}
-          </div>
+ 
         </div>
 
         <AnimatedFrame reduceMotion={reduceMotion} />

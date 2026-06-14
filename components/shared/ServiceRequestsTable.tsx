@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 
@@ -27,6 +28,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const router = useRouter();
     const { t, language } = useLanguage();
     const { token } = useAuth();
+    const confirmDialog = useConfirmDialog();
     
     const [requests, setRequests] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -139,7 +141,13 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
     const handleDelete = async () => {
         if (!token || !selectedRequest) return;
-        if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+        const ok = await confirmDialog({
+            title: 'هل تريد حذف هذا الطلب؟',
+            confirmLabel: 'حذف',
+            cancelLabel: 'إلغاء',
+            destructive: true,
+        });
+        if (!ok) return;
         setIsDeleting(true);
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}`, {

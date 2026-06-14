@@ -19,6 +19,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 import MarketingCampaignModal from '@/components/marketing/MarketingCampaignModal';
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
 
@@ -35,6 +36,7 @@ interface EmailMarketing {
 
 export default function MarketingPage() {
   const { t } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const [campaigns, setCampaigns] = useState<EmailMarketing[]>([]);
   const [loading, setLoading] = useState(true);
   const [triggering, setTriggering] = useState(false);
@@ -60,7 +62,13 @@ export default function MarketingPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm(t('common.confirmDelete'))) return;
+    const ok = await confirmDialog({
+      title: t('common.confirmDelete'),
+      confirmLabel: 'حذف',
+      cancelLabel: 'إلغاء',
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await api.delete(`/marketing/email-marketing/${id}`);
       toast.success(t('common.success'));

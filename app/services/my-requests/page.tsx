@@ -26,8 +26,9 @@ import {
   Building2,
   Lock
 } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Header from '@/app/src/components/Header';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -37,6 +38,7 @@ export default function MyServiceRequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
   const { t, language } = useLanguage();
   const router = useRouter();
+  const confirmDialog = useConfirmDialog();
 
   useEffect(() => {
     fetchRequests();
@@ -77,7 +79,13 @@ export default function MyServiceRequestsPage() {
   };
 
   const handleAcceptOffer = async (requestId: string, deptSlug: string) => {
-    if (!confirm(language === 'ar' ? 'هل أنت متأكد من قبول هذا العرض؟' : 'Are you sure you want to accept this offer?')) return;
+    const ok = await confirmDialog({
+      title: language === 'ar' ? 'هل أنت متأكد من قبول هذا العرض؟' : 'Are you sure you want to accept this offer?',
+      description: language === 'ar' ? 'سيتم اعتماد العرض والانتقال إلى مرحلة التنفيذ.' : 'This offer will be approved and moved to execution.',
+      confirmLabel: language === 'ar' ? 'قبول العرض' : 'Accept offer',
+      cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+    });
+    if (!ok) return;
     
     try {
       const response = await serviceRequestApi.acceptDepartmentOffer(requestId, deptSlug);
@@ -110,7 +118,6 @@ export default function MyServiceRequestsPage() {
     return (
       <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Header />
-        <Toaster />
         <main className="max-w-5xl mx-auto px-6 pt-24 pb-12">
           <Button 
             variant="ghost" 
@@ -248,7 +255,6 @@ export default function MyServiceRequestsPage() {
   return (
     <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <Header />
-      <Toaster />
       
       <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">

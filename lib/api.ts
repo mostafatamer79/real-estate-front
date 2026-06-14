@@ -68,6 +68,21 @@ export type CustomerServiceFeedback = {
   updatedAt: string;
 };
 
+export type OfferReport = {
+  id: string;
+  reason: string;
+  message?: string | null;
+  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+  adminNote?: string | null;
+  offerId: string;
+  reporterId?: string | null;
+  handledById?: string | null;
+  offer?: any;
+  reporter?: any;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type InfoTab = {
   id: string;
   key: string;
@@ -221,6 +236,15 @@ export const offersApi = {
   // Increment view count
   incrementViews: (id: string): Promise<void> =>
     api.post(`/offers/${id}/view`),
+
+  report: (id: string, data: { reason: string; message?: string }): Promise<ApiResponse<OfferReport>> =>
+    api.post(`/offers/${id}/reports`, data),
+
+  getReports: (status?: string): Promise<ApiResponse<OfferReport[]>> =>
+    api.get('/offers/reports', { params: status && status !== 'all' ? { status } : undefined }),
+
+  updateReport: (id: string, data: { status?: string; adminNote?: string; stopOffer?: boolean }): Promise<ApiResponse<OfferReport>> =>
+    api.patch(`/offers/reports/${id}`, data),
 };
 
 export const customerServiceFaqApi = {
@@ -704,7 +728,7 @@ export const adminSubscriptionsApi = {
     api.put(`/subscriptions/${id}`, data),
 
   delete: (id: string): Promise<ApiResponse<void>> =>
-    api.delete(`/subscriptions/${id}`),
+    api.delete(`/subscriptions/${id}/hard`),
 };
 
 export const packagesApi = {

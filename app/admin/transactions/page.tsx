@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-hot-toast";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
 const transactionTypes = ["sale", "rent", "commission", "tax", "deposit", "withdrawal", "settlement", "expense"];
 const transactionStatuses = ["pending", "completed", "failed", "cancelled"];
@@ -49,11 +50,19 @@ const emptyForm = {
 
 export default function TransactionsPage() {
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const isRtl = language === "ar";
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string>>(emptyForm);
 
@@ -83,7 +92,6 @@ export default function TransactionsPage() {
 
   const filteredTransactions = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return transactions;
     return transactions.filter((tx) => {
       const haystack = [
         tx.id,
@@ -103,9 +111,19 @@ export default function TransactionsPage() {
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
-      return haystack.includes(query);
+      const createdAt = tx.createdAt || tx.transactionDate ? new Date(tx.createdAt || tx.transactionDate) : null;
+      const amount = Number(tx.amount || 0);
+      const matchesSearch = !query || haystack.includes(query);
+      const matchesType = typeFilter === "all" || tx.type === typeFilter;
+      const matchesStatus = statusFilter === "all" || tx.status === statusFilter;
+      const matchesPayment = paymentMethodFilter === "all" || (tx.paymentMethod || "") === paymentMethodFilter;
+      const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+      const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+      const matchesMin = !minAmount || amount >= Number(minAmount);
+      const matchesMax = !maxAmount || amount <= Number(maxAmount);
+      return matchesSearch && matchesType && matchesStatus && matchesPayment && matchesFrom && matchesTo && matchesMin && matchesMax;
     });
-  }, [search, transactions]);
+  }, [search, transactions, typeFilter, statusFilter, paymentMethodFilter, dateFrom, dateTo, minAmount, maxAmount]);
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
@@ -202,7 +220,14 @@ export default function TransactionsPage() {
   };
 
   const deleteTransaction = async (id: string) => {
-    if (!confirm(isRtl ? "هل تريد حذف هذه العملية؟" : "Delete this transaction?")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "هل تريد حذف هذه العملية؟" : "Delete this transaction?",
+      description: isRtl ? "سيتم حذف العملية نهائيًا من السجل المالي." : "This transaction will be permanently removed from the financial log.",
+      confirmLabel: isRtl ? "حذف" : "Delete",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await financialApi.deleteTransaction(id);
@@ -227,7 +252,8 @@ export default function TransactionsPage() {
             {label("admin.transactions.desc", "إنشاء وتعديل وحذف العمليات المالية", "Create, update and delete financial transactions")}
           </p>
         </div>
-        <div className="relative w-full md:w-80">
+        <div className="grid w-full gap-3 md:max-w-5xl md:grid-cols-4 xl:grid-cols-7">
+        <div className="relative md:col-span-2">
           <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
           <input
             type="text"
@@ -236,6 +262,27 @@ export default function TransactionsPage() {
             onChange={(event) => setSearch(event.target.value)}
             className={`h-12 w-full rounded-2xl border border-slate-200 bg-white px-11 text-sm font-bold outline-none focus:border-slate-950`}
           />
+        </div>
+        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+          <option value="all">{isRtl ? "كل الأنواع" : "All types"}</option>
+          {transactionTypes.map((type) => <option key={type} value={type}>{transactionTypeLabel(type)}</option>)}
+        </select>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+          <option value="all">{isRtl ? "كل الحالات" : "All statuses"}</option>
+          {transactionStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+        </select>
+        <select value={paymentMethodFilter} onChange={(e) => setPaymentMethodFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+          <option value="all">{isRtl ? "كل طرق الدفع" : "All payments"}</option>
+          {paymentMethods.filter(Boolean).map((method) => <option key={method} value={method}>{method}</option>)}
+          <option value="">{isRtl ? "غير محدد" : "None"}</option>
+        </select>
+        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
+        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
+        <input type="number" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder={isRtl ? "أقل مبلغ" : "Min"} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
+        <input type="number" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder={isRtl ? "أعلى مبلغ" : "Max"} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
+        <button type="button" onClick={() => { setSearch(""); setTypeFilter("all"); setStatusFilter("all"); setPaymentMethodFilter("all"); setDateFrom(""); setDateTo(""); setMinAmount(""); setMaxAmount(""); }} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-black">
+          {isRtl ? "مسح" : "Clear"}
+        </button>
         </div>
       </div>
 

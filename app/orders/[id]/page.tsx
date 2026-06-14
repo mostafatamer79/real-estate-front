@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ArrowRight, MapPin, Ruler, DollarSign, Calendar, FileText, CheckCircle2, Building2 } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function OrderDetailsPage() {
@@ -57,7 +57,6 @@ export default function OrderDetailsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <Toaster />
       <div className="max-w-4xl mx-auto">
         <Button 
             variant="ghost" 

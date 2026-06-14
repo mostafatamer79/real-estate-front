@@ -7,7 +7,7 @@ import {
   Camera, Megaphone, ClipboardList, 
   Sparkles, Info, LayoutDashboard
 } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
@@ -51,8 +51,6 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
 
     return (
         <div className={`${embedded ? '' : 'min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-            {!embedded && <Toaster position="top-center" />}
-            
             {/* Optimized Premium Header - GLASSMORPHISM */}
             {!embedded && (
             <section className="relative overflow-hidden mb-12 pb-12 border-b border-white/20 bg-white/50 backdrop-blur-3xl">

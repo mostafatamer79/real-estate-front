@@ -23,7 +23,7 @@ import { Broker, CommissionFormData } from './types'
 import BrokerModal from './BrokerModal'
 import CommissionRequestModal from './CommissionRequestModal'
 import { commissionApi } from '@/lib/api'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 interface CommissionFormProps {
     onClose: () => void;

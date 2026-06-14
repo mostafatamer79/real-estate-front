@@ -248,6 +248,8 @@ export interface CreateSubscriptionDto {
     unitId?: string;
     packageId?: string;
     departmentSlug?: string;
+    selectedDepartments?: string[];
+    employeeSeats?: number;
     subscriptionType: string;
     customPeriodMonths?: number;
     amount: number;
@@ -275,6 +277,8 @@ export interface Subscription {
     unitId?: string;
     packageId?: string;
     departmentSlug?: string;
+    selectedDepartments?: string[];
+    employeeSeats?: number;
     subscriptionType: string;
     customPeriodMonths?: number;
     amount: number;

@@ -16,7 +16,7 @@ import {
 import { offersApi, uploadFile, prepareOfferData } from "@/lib/api";
 import { useOffers } from "@/hooks/useOffers";
 import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 interface SidebarItem {
   id: string;
@@ -864,16 +864,6 @@ export default function BuildingManagement() {
 
   return (
     <>
-      <Toaster
-        toastOptions={{
-          duration: 4000,
-          position: "top-center",
-          style: {
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-            fontSize: "14px",
-          },
-        }}
-      />
 
       <div className="w-full min-h-screen bg-white flex" dir="rtl">
         {/* Fixed Sidebar */}

@@ -5,6 +5,7 @@ import { Calendar, CreditCard, Download, Edit2, ExternalLink, FileText, Loader2,
 import { useSearchParams } from "next/navigation";
 import api, { commissionApi, financialApi } from "@/lib/api";
 import { toast } from "sonner";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
 type WalletTab = "wallet" | "invoices" | "commissions" | "files" | "investments";
 
@@ -18,6 +19,7 @@ const emptyForms: Record<WalletTab, Record<string, string>> = {
 
 export default function AdminWalletPage() {
   const searchParams = useSearchParams();
+  const confirmDialog = useConfirmDialog();
   const [activeTab, setActiveTab] = useState<WalletTab>("wallet");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -247,7 +249,14 @@ export default function AdminWalletPage() {
   };
 
   const deleteRecord = async (item: any) => {
-    if (!confirm("هل تريد حذف هذا السجل؟")) return;
+    const ok = await confirmDialog({
+      title: "هل تريد حذف هذا السجل؟",
+      description: "سيتم حذف السجل أو الملف من القسم الحالي.",
+      confirmLabel: "حذف",
+      cancelLabel: "إلغاء",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       if (activeTab === "wallet") await financialApi.deleteTransaction(item.id);
       else if (activeTab === "invoices") await financialApi.deleteInvoice(item.id);

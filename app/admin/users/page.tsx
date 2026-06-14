@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { User, Role } from "@/types/user";
 import { 
@@ -31,11 +32,15 @@ import { Pagination } from "../../src/components/Pagination";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
 
 // ─── Department meta ───────────────────────────────────────────────────────────
 const DEPARTMENTS = [
   { value: 'marketing',  labelAr: 'إدارة التسويق',   labelEn: 'Marketing' },
   { value: 'properties', labelAr: 'إدارة الاملاك',   labelEn: 'Properties' },
+  { value: 'offers',     labelAr: 'إدارة العروض',    labelEn: 'Offers Management' },
+  { value: 'orders',     labelAr: 'إدارة الطلبات',   labelEn: 'Orders Management' },
   { value: 'finance',    labelAr: 'الإدارة المالية',  labelEn: 'Finance' },
   { value: 'legal',      labelAr: 'الإدارة القانونية', labelEn: 'Legal' },
   { value: 'employees',  labelAr: 'إدارة الموظفين',  labelEn: 'Employees' },
@@ -44,6 +49,8 @@ const DEPARTMENTS = [
 const DEPT_COLORS: Record<string, string> = {
   marketing:  'bg-slate-50 text-slate-600 border-slate-100',
   properties: 'bg-slate-50 text-slate-600 border-slate-100',
+  offers:     'bg-slate-50 text-slate-600 border-slate-100',
+  orders:     'bg-slate-50 text-slate-600 border-slate-100',
   finance:    'bg-slate-50 text-slate-600 border-slate-100',
   legal:      'bg-slate-50 text-slate-600 border-slate-100',
   employees:  'bg-slate-50 text-slate-600 border-slate-100',
@@ -51,6 +58,15 @@ const DEPT_COLORS: Record<string, string> = {
 
 const getDeptLabel = (dept: string) => DEPARTMENTS.find(d => d.value === dept)?.labelAr ?? dept;
 
+const DEPARTMENT_PREVIEW_MAP: Record<string, PreviewDepartmentKey> = {
+  properties: "properties",
+  offers: "offers",
+  orders: "orders",
+  marketing: "marketing",
+  legal: "legal",
+  finance: "finance",
+  employees: "employees",
+};
 
 function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () => void; onCreated: (u: User) => void; user?: User | null; managers?: User[] }) {
   const { language, t } = useLanguage();
@@ -69,6 +85,8 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [existingSubId, setExistingSubId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewDepartment, setPreviewDepartment] = useState<PreviewDepartmentKey>("properties");
 
   // Pre-load subscription info when editing an admin
   useEffect(() => {
@@ -141,7 +159,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           ? new Date(today.getFullYear() + 100, today.getMonth(), today.getDate()).toISOString().split('T')[0]
           : form.endDate;
 
-        const subPayload: any = {
+        const createSubPayload: any = {
           userId: res.data.id || user?.id,
           subscriptionType: 'سنوي',
           amount: 0,
@@ -152,14 +170,23 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
         };
 
         if (endDate) {
-          subPayload.endDate = endDate;
+          createSubPayload.endDate = endDate;
         }
 
         try {
           if (existingSubId) {
-            await api.put(`/subscriptions/${existingSubId}`, subPayload);
+            const updateSubPayload: any = {
+              userId: res.data.id || user?.id,
+              amount: 0,
+              status: 'نشط',
+              noExpiry: form.noExpiry,
+            };
+            if (endDate) {
+              updateSubPayload.endDate = endDate;
+            }
+            await api.put(`/subscriptions/${existingSubId}`, updateSubPayload);
           } else {
-            await api.post('/subscriptions', subPayload);
+            await api.post('/subscriptions', createSubPayload);
           }
         } catch (subErr) {
           console.error('Failed to save subscription', subErr);
@@ -180,7 +207,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   const iconFieldCls = (f: string) => `w-full h-11 bg-slate-50 rounded-xl pr-10 pl-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
         <button onClick={onClose} className="absolute left-6 top-6 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
@@ -260,18 +287,37 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           {(form.role === Role.ADMIN || form.role === Role.MANGER || form.role === 'employee') && (
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {DEPARTMENTS.map(dept => {
                   const isSelected = form.department.includes(dept.value);
                   return (
-                    <button key={dept.value} type="button" onClick={() => {
-                      setForm(f => {
-                        const newDepts = f.department.includes(dept.value) ? f.department.filter(d => d !== dept.value) : [...f.department, dept.value];
-                        return { ...f, department: newDepts };
-                      });
-                    }} className={`px-2 py-2 rounded-xl border text-[9px] font-bold transition-all ${isSelected ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-400 border-transparent hover:border-slate-200'}`}>
-                      {deptLabel(dept)}
-                    </button>
+                    <div key={dept.value} className={`flex items-center gap-1 rounded-xl border p-1 transition-all ${isSelected ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-500 border-transparent hover:border-slate-200'}`}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForm(f => {
+                            const newDepts = f.department.includes(dept.value) ? f.department.filter(d => d !== dept.value) : [...f.department, dept.value];
+                            return { ...f, department: newDepts };
+                          });
+                        }}
+                        className="min-w-0 flex-1 px-2 py-2 text-right text-[9px] font-black"
+                      >
+                        {deptLabel(dept)}
+                      </button>
+                      <button
+                        type="button"
+                        title={language === 'ar' ? 'معاينة الميزات' : 'Preview features'}
+                        onClick={() => {
+                          setPreviewDepartment(DEPARTMENT_PREVIEW_MAP[dept.value] || "properties");
+                          setPreviewOpen(true);
+                        }}
+                        className={`h-8 w-8 shrink-0 rounded-lg flex items-center justify-center transition-colors ${
+                          isSelected ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-slate-400 hover:text-slate-950'
+                        }`}
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -346,6 +392,11 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           </button>
         </form>
       </motion.div>
+      <DepartmentFeaturePreviewDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        initialDepartment={previewDepartment}
+      />
     </div>
   );
 }
@@ -354,11 +405,16 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function UsersPage() {
     const { t, language } = useLanguage();
+    const confirmDialog = useConfirmDialog();
+    const router = useRouter();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [roleFilter, setRoleFilter] = useState("all");
+    const [departmentFilter, setDepartmentFilter] = useState("all");
+    const [verificationFilter, setVerificationFilter] = useState("all");
 
     useEffect(() => { fetchUsers(); }, []);
 
@@ -390,7 +446,12 @@ export default function UsersPage() {
     const itemsPerPage = 10;
 
     const handleVerifyUser = async (userId: string, status: boolean) => {
-        if (!confirm(status ? t('admin.users.action.confirmVerify') : t('admin.users.action.confirmUnverify'))) return;
+        const ok = await confirmDialog({
+            title: status ? t('admin.users.action.confirmVerify') : t('admin.users.action.confirmUnverify'),
+            confirmLabel: language === 'ar' ? 'تأكيد' : 'Confirm',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+        });
+        if (!ok) return;
         try {
             const verifyStatus = status ? 'verified' : 'rejected'; 
             await api.put(`/user/${userId}/verify`, { status: verifyStatus });
@@ -398,12 +459,75 @@ export default function UsersPage() {
         } catch (error) { console.error(error); }
     };
 
+    const handleToggleUserActive = async (targetUser: User) => {
+        const nextActive = !targetUser.isActive;
+        const ok = await confirmDialog({
+            title: nextActive
+                ? (language === 'ar' ? 'تفعيل الحساب؟' : 'Activate account?')
+                : (language === 'ar' ? 'تقييد الحساب؟' : 'Restrict account?'),
+            description: nextActive
+                ? (language === 'ar' ? 'سيتم السماح للمستخدم بالدخول واستخدام الحساب.' : 'The user will be allowed to access the account.')
+                : (language === 'ar' ? 'سيتم منع المستخدم من استخدام الحساب حتى يتم تفعيله مرة أخرى.' : 'The user will be blocked until the account is activated again.'),
+            confirmLabel: nextActive ? (language === 'ar' ? 'تفعيل' : 'Activate') : (language === 'ar' ? 'تقييد' : 'Restrict'),
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+            destructive: !nextActive,
+        });
+        if (!ok) return;
+        try {
+            const res = await api.put(`/user/${targetUser.id}`, { isActive: nextActive });
+            const updated = res.data || { ...targetUser, isActive: nextActive };
+            setUsers(prev => prev.map(u => u.id === targetUser.id ? { ...u, ...updated, isActive: nextActive } : u));
+            toast.success(nextActive ? 'تم تفعيل الحساب' : 'تم تقييد الحساب');
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'تعذر تحديث حالة الحساب');
+        }
+    };
+
     const handleDeleteUser = async (userId: string) => {
-        if (!confirm(t('admin.users.action.confirmDelete'))) return;
+        const ok = await confirmDialog({
+            title: t('admin.users.action.confirmDelete'),
+            confirmLabel: language === 'ar' ? 'حذف' : 'Delete',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+            destructive: true,
+        });
+        if (!ok) return;
         try {
            await api.delete(`/user/${userId}`);
            setUsers(users.filter(u => u.id !== userId));
         } catch (error: any) { console.error(error); }
+    };
+
+    const handleImpersonateUser = async (targetUser: User) => {
+        const displayName = `${targetUser.firstName || ''} ${targetUser.lastName || ''}`.trim() || targetUser.email || targetUser.phone || 'هذا المستخدم';
+        const ok = await confirmDialog({
+            title: `هل تريد الدخول بحساب ${displayName}؟`,
+            description: language === 'ar' ? 'سيتم نقلك إلى جلسة هذا المستخدم حتى تعود لوضع الإدارة.' : 'You will switch into this user session until you return to admin mode.',
+            confirmLabel: language === 'ar' ? 'دخول' : 'Continue',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+        });
+        if (!ok) return;
+
+        try {
+            const adminSession = {
+                token: localStorage.getItem('token'),
+                refreshToken: localStorage.getItem('refreshToken'),
+                user: localStorage.getItem('user'),
+                returnTo: '/admin/users',
+                startedAt: new Date().toISOString(),
+            };
+
+            const res = await api.post(`/auth/impersonate/${targetUser.id}`);
+            localStorage.setItem('adminImpersonationSession', JSON.stringify(adminSession));
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('refreshToken', res.data.refreshToken);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+            localStorage.setItem('impersonatedByAdmin', JSON.stringify(res.data.impersonatedBy));
+            window.dispatchEvent(new Event('auth-change'));
+            toast.success('تم الدخول بحساب المستخدم');
+            router.push('/department-hub');
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'تعذر الدخول بحساب المستخدم');
+        }
     };
 
     const filteredUsers = users.filter(u => {
@@ -411,11 +535,17 @@ export default function UsersPage() {
         if (u.role === Role.ADMIN) return false;
         
         const searchLower = searchTerm.toLowerCase();
-        return (
+        const matchesSearch =
             `${u.firstName} ${u.lastName}`.toLowerCase().includes(searchLower) ||
             (u.email?.toLowerCase().includes(searchLower) ?? false) ||
-            (u.phone?.includes(searchTerm) ?? false)
-        );
+            (u.phone?.includes(searchTerm) ?? false);
+        const matchesRole = roleFilter === "all" || u.role === roleFilter;
+        const matchesDepartment = departmentFilter === "all" || (u.departments || []).map(String).includes(departmentFilter);
+        const matchesVerification =
+            verificationFilter === "all" ||
+            (verificationFilter === "verified" && u.isVerified) ||
+            (verificationFilter === "pending" && !u.isVerified);
+        return matchesSearch && matchesRole && matchesDepartment && matchesVerification;
     });
 
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
@@ -425,7 +555,7 @@ export default function UsersPage() {
     // Reset to first page when search changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm]);
+    }, [searchTerm, roleFilter, departmentFilter, verificationFilter]);
 
 
     if (loading) return (
@@ -482,8 +612,8 @@ export default function UsersPage() {
             </section>
 
             {/* Table Control Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-                <div className={`relative w-full md:w-96 group`}>
+            <div className="grid grid-cols-1 gap-3 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm md:grid-cols-5">
+                <div className={`relative w-full group md:col-span-2`}>
                     <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-950 transition-colors`} />
                     <input 
                         type="text"
@@ -493,10 +623,23 @@ export default function UsersPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                    <button className="flex-1 md:flex-none h-11 px-6 rounded-2xl bg-white border border-slate-100 hover:border-slate-950 transition-all font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                    <option value="all">كل الأدوار</option>
+                    {Object.values(Role).map((role) => <option key={role} value={role}>{t(`admin.trans.role.${role}`) || role}</option>)}
+                </select>
+                <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                    <option value="all">كل الإدارات</option>
+                    {DEPARTMENTS.map((dept) => <option key={dept.value} value={dept.value}>{language === 'ar' ? dept.labelAr : dept.labelEn}</option>)}
+                </select>
+                <select value={verificationFilter} onChange={(e) => setVerificationFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                    <option value="all">كل الحالات</option>
+                    <option value="verified">موثق</option>
+                    <option value="pending">بانتظار التوثيق</option>
+                </select>
+                <div className="flex gap-2 w-full">
+                    <button onClick={() => { setSearchTerm(""); setRoleFilter("all"); setDepartmentFilter("all"); setVerificationFilter("all"); }} className="flex-1 h-11 px-6 rounded-2xl bg-white border border-slate-100 hover:border-slate-950 transition-all font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
                         <Filter className="w-4 h-4" />
-                        {t('admin.users.filter')}
+                        مسح
                     </button>
                 </div>
             </div>
@@ -599,6 +742,7 @@ export default function UsersPage() {
                                         <div className="flex items-center justify-center gap-2">
                                             {!user.isVerified ? (
                                                 <button 
+                                                    type="button"
                                                     onClick={() => handleVerifyUser(user.id, true)}
                                                     className="h-9 px-4 rounded-xl bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm"
                                                 >
@@ -606,6 +750,7 @@ export default function UsersPage() {
                                                 </button>
                                             ) : (
                                                 <button 
+                                                    type="button"
                                                     onClick={() => handleVerifyUser(user.id, false)}
                                                     className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:text-slate-950 hover:bg-slate-200 transition-all"
                                                     title="تعليق"
@@ -613,6 +758,20 @@ export default function UsersPage() {
                                                     <XCircle className="w-4 h-4" />
                                                 </button>
                                             )}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => handleToggleUserActive(user)}
+                                                className={`h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border transition-all text-[10px] font-black whitespace-nowrap ${
+                                                    user.isActive
+                                                        ? 'border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                        : 'border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                }`}
+                                                title={user.isActive ? 'تقييد الحساب' : 'تفعيل الحساب'}
+                                            >
+                                                {user.isActive ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+                                                <span>{user.isActive ? 'تقييد الحساب' : 'تفعيل الحساب'}</span>
+                                            </button>
                                             
                                             <Link
                                                  href={`/admin/users/${user.id}`}
@@ -622,7 +781,18 @@ export default function UsersPage() {
                                                  <Eye className="w-4 h-4" />
                                              </Link>
 
+                                            <button
+                                                 type="button"
+                                                 onClick={() => handleImpersonateUser(user)}
+                                                 className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all text-[10px] font-black whitespace-nowrap"
+                                                 title="الدخول كالمستخدم"
+                                             >
+                                                 <UserIcon className="w-4 h-4" />
+                                                 <span>الدخول كالمستخدم</span>
+                                             </button>
+
                                             <button 
+                                                 type="button"
                                                  onClick={() => handleEditUser(user)}
                                                  className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-900 text-white hover:bg-slate-800 transition-all"
                                                  title="تعديل"
@@ -631,6 +801,7 @@ export default function UsersPage() {
                                              </button>
  
                                             <button 
+                                                type="button"
                                                 onClick={() => handleDeleteUser(user.id)}
                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-700 hover:bg-red-100 transition-all"
                                                 title="حذف"

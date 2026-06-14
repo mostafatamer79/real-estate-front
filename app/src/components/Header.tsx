@@ -214,13 +214,22 @@ export default function Header() {
                   </Link>
 
                   {user?.role === Role.ADMIN && (
-                    <Link
-                      href="/admin/dashboard"
-                      className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-medium text-sm transition-colors"
-                    >
-                        <LayoutDashboard className="w-4 h-4" />
-                        {t('home.controlPanel')}
-                    </Link>
+                    <>
+                      <Link
+                        href="/admin/dashboard"
+                        className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-medium text-sm transition-colors"
+                      >
+                          <LayoutDashboard className="w-4 h-4" />
+                          {t('home.controlPanel')}
+                      </Link>
+                      <Link
+                        href="/internal"
+                        className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium text-sm transition-colors"
+                      >
+                          <LayoutDashboard className="w-4 h-4" />
+                          {language === 'ar' ? "الإدارات" : 'Internal'}
+                      </Link>
+                    </>
                   )}
 
                   {user && user.departments && user.departments.length > 0 && user.role !== Role.ADMIN && (
@@ -323,14 +332,24 @@ export default function Header() {
                   </Link>
 
                   {user?.role === Role.ADMIN && (
-                    <Link
-                      href="/admin/dashboard"
-                      className="flex items-center gap-3 text-emerald-400 text-lg font-medium"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                        <LayoutDashboard className="w-5 h-5" />
-                        {t('home.controlPanel')}
-                    </Link>
+                    <>
+                      <Link
+                        href="/admin/dashboard"
+                        className="flex items-center gap-3 text-emerald-400 text-lg font-medium"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                          <LayoutDashboard className="w-5 h-5" />
+                          {t('home.controlPanel')}
+                      </Link>
+                      <Link
+                        href="/internal"
+                        className="flex items-center gap-3 text-blue-400 text-lg font-medium"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                          <LayoutDashboard className="w-5 h-5" />
+                          {language === 'ar' ? "الإدارات" : 'Internal'}
+                      </Link>
+                    </>
                   )}
 
                    {(user?.role === Role.ADMIN || user?.role === Role.MARKETING) && (

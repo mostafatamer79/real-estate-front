@@ -59,6 +59,12 @@ export default function ServiceRequestsPage() {
     const [invoiceMessage, setInvoiceMessage] = useState<{type:'success'|'error', text:string} | null>(null);
 
     const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [categoryFilter, setCategoryFilter] = useState("all");
+    const [departmentFilter, setDepartmentFilter] = useState("all");
+    const [decisionFilter, setDecisionFilter] = useState("all");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
     const [selectedRequest, setSelectedRequest] = useState<any>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [editingPrice, setEditingPrice] = useState<string>("");
@@ -154,11 +160,26 @@ export default function ServiceRequestsPage() {
         }
     };
 
-    const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => 
-        req.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        req.serviceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        req.phone?.includes(searchTerm)
-    );
+    const categories = Array.from(new Set((Array.isArray(requests) ? requests : []).map((req) => req.category).filter(Boolean)));
+    const departmentsList = Array.from(new Set((Array.isArray(requests) ? requests : []).map((req) => req.targetDepartment).filter(Boolean)));
+    const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => {
+        const query = searchTerm.trim().toLowerCase();
+        const createdAt = req.createdAt ? new Date(req.createdAt) : null;
+        const derivedStatus = req.clientDecision === 'accepted' ? 'accepted' : req.status;
+        const matchesSearch = !query ||
+            req.clientName?.toLowerCase().includes(query) ||
+            req.serviceType?.toLowerCase().includes(query) ||
+            req.city?.toLowerCase().includes(query) ||
+            req.district?.toLowerCase().includes(query) ||
+            req.phone?.includes(searchTerm);
+        const matchesStatus = statusFilter === "all" || derivedStatus === statusFilter || req.status === statusFilter;
+        const matchesCategory = categoryFilter === "all" || req.category === categoryFilter;
+        const matchesDepartment = departmentFilter === "all" || req.targetDepartment === departmentFilter;
+        const matchesDecision = decisionFilter === "all" || (req.clientDecision || "pending") === decisionFilter;
+        const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+        const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+        return matchesSearch && matchesStatus && matchesCategory && matchesDepartment && matchesDecision && matchesFrom && matchesTo;
+    });
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6">
@@ -182,8 +203,8 @@ export default function ServiceRequestsPage() {
                         className="space-y-6"
                     >
                         {/* List Actions */}
-                        <div className="flex flex-col md:flex-row gap-4 items-center justify-between px-4">
-                            <div className="relative w-full md:w-96 group">
+                        <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-4 xl:grid-cols-8">
+                            <div className="relative w-full group md:col-span-2">
                                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                                 <input 
                                     type="text"
@@ -193,8 +214,31 @@ export default function ServiceRequestsPage() {
                                     className="bg-white border border-slate-100 py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1.5rem]"
                                 />
                             </div>
+                            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                                <option value="all">كل الحالات</option>
+                                <option value="pending">Pending</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                                <option value="all">كل التصنيفات</option>
+                                {categories.map((category) => <option key={category} value={category}>{category}</option>)}
+                            </select>
+                            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                                <option value="all">كل الإدارات</option>
+                                {departmentsList.map((department) => <option key={department} value={department}>{t(`admin.trans.dept.${department}`) || department}</option>)}
+                            </select>
+                            <select value={decisionFilter} onChange={(e) => setDecisionFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                                <option value="all">قرار العميل</option>
+                                <option value="pending">Pending</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]" />
+                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]" />
                             <button 
-                                onClick={fetchRequests}
+                                onClick={() => { setSearchTerm(""); setStatusFilter("all"); setCategoryFilter("all"); setDepartmentFilter("all"); setDecisionFilter("all"); setDateFrom(""); setDateTo(""); }}
                                 className="p-3.5 rounded-2xl bg-white border border-slate-100 hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
                             >
                                 <Filter className="w-4 h-4" />

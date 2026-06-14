@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Search, 
   MapPin, 
@@ -22,10 +23,12 @@ import {
   Building2,
   DollarSign,
   Save,
-  Tag
+  Tag,
+  Flag
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { offersApi, usersApi } from "@/lib/api";
+import api, { offersApi, usersApi, type OfferReport } from "@/lib/api";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { Pagination } from "../../src/components/Pagination";
 import {
   Table,
@@ -36,6 +39,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -247,10 +252,19 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
 export default function AdminOffersPage() {
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [offers, setOffers] = useState<any[]>([]);
+  const [reports, setReports] = useState<OfferReport[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [reportStatusFilter, setReportStatusFilter] = useState("pending");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -270,9 +284,26 @@ export default function AdminOffersPage() {
     }
   };
 
+  const fetchReports = async () => {
+    try {
+      setReportsLoading(true);
+      const res = await offersApi.getReports(reportStatusFilter);
+      setReports(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error("Failed to fetch offer reports", error);
+      toast.error("فشل تحميل بلاغات العروض");
+    } finally {
+      setReportsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchOffers();
   }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [reportStatusFilter]);
 
   const handleUpdateStatus = async (id: string, status: string) => {
     try {
@@ -299,7 +330,13 @@ export default function AdminOffersPage() {
       ? (language === 'ar' ? 'هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure about permanent deletion? This cannot be undone.')
       : (language === 'ar' ? 'هل أنت متأكد من حذف هذا العرض؟' : 'Are you sure you want to delete this offer?');
     
-    if (!confirm(confirmMsg)) return;
+    const ok = await confirmDialog({
+      title: confirmMsg,
+      confirmLabel: language === "ar" ? "تأكيد" : "Confirm",
+      cancelLabel: language === "ar" ? "إلغاء" : "Cancel",
+      destructive: hard,
+    });
+    if (!ok) return;
 
     try {
       if (hard) {
@@ -314,18 +351,54 @@ export default function AdminOffersPage() {
     }
   };
 
-  const filteredOffers = offers.filter(offer => 
-    (statusFilter === "all" || offer.status === statusFilter) &&
-    (
+  const handleReportAction = async (reportId: string, action: 'reviewed' | 'dismissed' | 'stop') => {
+    const stopOffer = action === 'stop';
+    if (stopOffer) {
+      const ok = await confirmDialog({
+        title: "هل تريد إيقاف هذا العرض بسبب البلاغ؟",
+        description: "سيتم إيقاف العرض وإغلاق ظهوره في الواجهة العامة.",
+        confirmLabel: "إيقاف العرض",
+        cancelLabel: "إلغاء",
+        destructive: true,
+      });
+      if (!ok) return;
+    }
+
+    try {
+      await offersApi.updateReport(reportId, {
+        status: action === 'stop' ? 'resolved' : action,
+        stopOffer,
+      });
+      toast.success("تم تحديث البلاغ");
+      fetchReports();
+      if (stopOffer) fetchOffers();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "فشل تحديث البلاغ");
+    }
+  };
+
+  const propertyTypes = Array.from(new Set(offers.map((offer) => offer.propertyType).filter(Boolean)));
+  const filteredOffers = offers.filter(offer => {
+    const createdAt = offer.createdAt ? new Date(offer.createdAt) : null;
+    const matchesStatus = statusFilter === "all" || offer.status === statusFilter;
+    const matchesType = propertyTypeFilter === "all" || offer.propertyType === propertyTypeFilter;
+    const matchesActive =
+      activeFilter === "all" ||
+      (activeFilter === "visible" && offer.isActive) ||
+      (activeFilter === "hidden" && !offer.isActive);
+    const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+    const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+    const matchesSearch =
         offer.propertyType?.toLowerCase().includes(search.toLowerCase()) ||
         offer.city?.toLowerCase().includes(search.toLowerCase()) ||
         offer.neighborhood?.toLowerCase().includes(search.toLowerCase()) ||
         offer.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-        offer.id.includes(search)
-    )
-  );
+        offer.id.includes(search);
+    return matchesStatus && matchesType && matchesActive && matchesFrom && matchesTo && matchesSearch;
+  });
   const totalPages = Math.ceil(filteredOffers.length / itemsPerPage);
   const paginatedOffers = filteredOffers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
 
   useEffect(() => {
     setCurrentPage(1);
@@ -339,6 +412,28 @@ export default function AdminOffersPage() {
       case 'draft': return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200">مسودة</Badge>;
       case 'rejected': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">مرفوض</Badge>;
       case 'sold': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200">تم البيع</Badge>;
+      default: return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
+    }
+  };
+
+  const getReportReasonLabel = (reason: string) => {
+    const labels: Record<string, string> = {
+      spam: "إعلان مكرر أو بريد عشوائي",
+      fake: "معلومات غير صحيحة",
+      fraud: "احتيال أو محاولة نصب",
+      offensive: "محتوى مسيء أو غير لائق",
+      wrong_category: "تصنيف خاطئ",
+      other: "سبب آخر",
+    };
+    return labels[reason] || reason;
+  };
+
+  const getReportStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">جديد</Badge>;
+      case 'reviewed': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200">تمت المراجعة</Badge>;
+      case 'resolved': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200">تم الإجراء</Badge>;
+      case 'dismissed': return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200">مرفوض</Badge>;
       default: return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
     }
   };
@@ -363,7 +458,7 @@ export default function AdminOffersPage() {
           </p>
         </div>
         
-        <div className="flex flex-wrap gap-4">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-4 xl:grid-cols-7">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20"
@@ -371,7 +466,7 @@ export default function AdminOffersPage() {
             <Plus className="w-4 h-4" />
             إضافة عرض
           </button>
-          <div className="relative">
+          <div className="relative md:col-span-2">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               type="text" 
@@ -392,10 +487,24 @@ export default function AdminOffersPage() {
             <option value="draft">مسودة</option>
             <option value="sold">تم البيع</option>
           </select>
+          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+            <option value="all">كل الأنواع</option>
+            {propertyTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+          </select>
+          <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+            <option value="all">كل الظهور</option>
+            <option value="visible">ظاهر</option>
+            <option value="hidden">مخفي</option>
+          </select>
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
+          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setActiveFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
+            مسح
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          <div className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
@@ -408,6 +517,108 @@ export default function AdminOffersPage() {
             <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">بانتظار المراجعة</p>
             <p className="text-3xl font-black text-amber-600 tabular-nums">{offers.filter(o => o.status === 'draft').length}</p>
          </div>
+         <div className="p-6 bg-white border border-red-100 rounded-3xl shadow-sm">
+            <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">بلاغات العروض</p>
+            <p className="text-3xl font-black text-red-600 tabular-nums">{reports.length}</p>
+         </div>
+      </div>
+
+      <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
+              <Flag className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-slate-950">بلاغات العروض</h2>
+              <p className="text-xs font-bold text-slate-400">مراجعة البلاغات واتخاذ إجراء على العرض عند الحاجة</p>
+            </div>
+          </div>
+          <select
+            value={reportStatusFilter}
+            onChange={(e) => setReportStatusFilter(e.target.value)}
+            className="h-11 px-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm"
+          >
+            <option value="pending">بلاغات جديدة</option>
+            <option value="reviewed">تمت المراجعة</option>
+            <option value="resolved">تم الإجراء</option>
+            <option value="dismissed">مرفوضة</option>
+            <option value="all">كل البلاغات</option>
+          </select>
+        </div>
+
+        {reportsLoading ? (
+          <div className="py-10 flex justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+          </div>
+        ) : reports.length === 0 ? (
+          <div className="rounded-2xl bg-slate-50 py-10 text-center text-sm font-bold text-slate-400">
+            لا توجد بلاغات في هذه الحالة
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {reports.map((report) => (
+              <div key={report.id} className="rounded-3xl border border-slate-100 bg-slate-50/60 p-5 space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      {getReportStatusBadge(report.status)}
+                      <span className="text-[10px] font-black text-slate-400">{new Date(report.createdAt).toLocaleString('ar-SA')}</span>
+                    </div>
+                    <h3 className="text-sm font-black text-slate-950 truncate">
+                      {report.offer?.propertyType || "عرض عقاري"} - {report.offer?.city || "بدون مدينة"}
+                    </h3>
+                    <p className="text-xs font-bold text-slate-500 mt-1">
+                      السبب: {getReportReasonLabel(report.reason)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => window.open(`/offers/${report.offerId}`, '_blank')}
+                    className="h-9 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black hover:bg-slate-100"
+                  >
+                    عرض
+                  </button>
+                </div>
+
+                {report.message && (
+                  <div className="rounded-2xl bg-white border border-slate-100 p-3 text-sm font-bold text-slate-600 leading-relaxed">
+                    {report.message}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between gap-3 text-xs font-bold text-slate-500">
+                  <span>المبلغ: {report.reporter ? `${report.reporter.firstName || ''} ${report.reporter.lastName || ''}`.trim() || report.reporter.email || 'مستخدم' : 'مستخدم غير معروف'}</span>
+                  <span className="font-mono">#{report.id.slice(0, 8)}</span>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleReportAction(report.id, 'reviewed')}
+                    className="h-10 px-4 rounded-xl bg-blue-50 text-blue-700 text-[11px] font-black hover:bg-blue-100"
+                  >
+                    تمت المراجعة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleReportAction(report.id, 'stop')}
+                    className="h-10 px-4 rounded-xl bg-red-600 text-white text-[11px] font-black hover:bg-red-700"
+                  >
+                    إيقاف العرض
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleReportAction(report.id, 'dismissed')}
+                    className="h-10 px-4 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black hover:bg-slate-100"
+                  >
+                    رفض البلاغ
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl">

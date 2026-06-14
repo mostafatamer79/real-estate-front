@@ -33,6 +33,10 @@ export default function PurchaseRequestsPage() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const fetchRequests = async () => {
     try {
@@ -64,12 +68,22 @@ export default function PurchaseRequestsPage() {
     }
   };
 
-  const filteredRequests = requests.filter(req => 
-    req.offer?.propertyType?.toLowerCase().includes(search.toLowerCase()) ||
-    req.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-    req.user?.lastName?.toLowerCase().includes(search.toLowerCase()) ||
-    req.id.includes(search)
-  );
+  const propertyTypes = Array.from(new Set(requests.map((req) => req.offer?.propertyType).filter(Boolean)));
+  const filteredRequests = requests.filter(req => {
+    const query = search.trim().toLowerCase();
+    const createdAt = req.createdAt ? new Date(req.createdAt) : null;
+    const matchesSearch = !query ||
+      req.offer?.propertyType?.toLowerCase().includes(query) ||
+      req.offer?.city?.toLowerCase().includes(query) ||
+      req.user?.firstName?.toLowerCase().includes(query) ||
+      req.user?.lastName?.toLowerCase().includes(query) ||
+      req.id?.toLowerCase().includes(query);
+    const matchesStatus = statusFilter === "all" || req.status === statusFilter;
+    const matchesType = propertyTypeFilter === "all" || req.offer?.propertyType === propertyTypeFilter;
+    const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+    const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+    return matchesSearch && matchesStatus && matchesType && matchesFrom && matchesTo;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -91,7 +105,8 @@ export default function PurchaseRequestsPage() {
             {t('admin.purchase.desc') || "Manage property purchase requests"}
           </p>
         </div>
-        <div className="relative">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-5">
+        <div className="relative md:col-span-2">
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
              <input 
                 type="text" 
@@ -100,6 +115,23 @@ export default function PurchaseRequestsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
              />
+        </div>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+          <option value="all">كل الحالات</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="paid">Paid</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+          <option value="all">كل الأنواع</option>
+          {propertyTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+        </select>
+        <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-black">
+          مسح
+        </button>
+        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
+        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
         </div>
       </div>
 

@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { ConfirmDialogProvider } from "@/components/ui/confirm-dialog-provider";
 import Header from "./src/components/Header";
 import PageWrapper from "./src/components/PageWrapper";
+import AdminImpersonationReturn from "./src/components/AdminImpersonationReturn";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
-import { Toaster as SonnerToaster } from "sonner";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { fetchPublicSettings } from "@/lib/runtime-config";
@@ -59,17 +61,47 @@ export default function RootLayout({
         <SettingsProvider>
           <LanguageProvider>
             <NotificationProvider>
-              <TooltipProvider>
-                <div className="flex flex-col min-h-screen">
-                  <Header />
-                  <PageWrapper>
-                    {children}
-                  </PageWrapper>
-                </div>
-                <Toaster />
-                <SonnerToaster richColors />
-                <HotToaster position="top-center" />
-              </TooltipProvider>
+              <ConfirmDialogProvider>
+                <TooltipProvider>
+                  <div className="flex flex-col min-h-screen">
+                    <Header />
+                    <PageWrapper>
+                      {children}
+                    </PageWrapper>
+                    <AdminImpersonationReturn />
+                  </div>
+                  <Toaster />
+                  <SonnerToaster richColors position="top-center" />
+                  <HotToaster
+                    position="top-center"
+                    toastOptions={{
+                      duration: 4000,
+                      style: {
+                        borderRadius: "24px",
+                        background: "rgba(255,255,255,0.96)",
+                        color: "rgb(15 23 42)",
+                        border: "1px solid rgb(226 232 240)",
+                        boxShadow: "0 20px 60px rgba(15, 23, 42, 0.16)",
+                        backdropFilter: "blur(18px)",
+                        padding: "14px 16px",
+                        fontWeight: "700",
+                      },
+                      success: {
+                        iconTheme: {
+                          primary: "#10b981",
+                          secondary: "#ffffff",
+                        },
+                      },
+                      error: {
+                        iconTheme: {
+                          primary: "#ef4444",
+                          secondary: "#ffffff",
+                        },
+                      },
+                    }}
+                  />
+                </TooltipProvider>
+              </ConfirmDialogProvider>
             </NotificationProvider>
           </LanguageProvider>
         </SettingsProvider>

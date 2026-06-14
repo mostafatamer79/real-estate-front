@@ -221,7 +221,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Property Info Cards
     "cards.prevOperations": "العمليات السابقة",
-    "cards.dealsAds": "الصفقات و الاعلانات",
+    "cards.dealsAds": "الإعلانات",
     "cards.addOperation": "اضافة عملية",
     "cards.viewAll": "عرض الكل",
     "cards.details": "تفاصيل",
@@ -589,8 +589,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.unit.villa": "فيلا",
     "pm.unit.complex": "مجمع",
     "pm.unit.land": "أرض",
-    "cards.noOperations":"لا يوجد عمليات",
-    "cards.noAds":"لا يوجد اعلانات",
+    "cards.noOperations":"لا توجد عمليات حالياً",
+    "cards.noAds":"لا توجد إعلانات حالياً",
 
     "pm.unit.warehouse": "مستودع",
     "pm.field.facilitiesCount": "عدد الغرف / المرافق",
@@ -2116,6 +2116,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "sub.public.selectPackageFirst": "اختر الباقة أولاً",
     "sub.public.createdRedirect": "تم إنشاء الاشتراك. أكمل الدفع من المحفظة",
     "sub.dept.properties": "إدارة الأملاك",
+    "sub.dept.offers": "إدارة العروض",
+    "sub.dept.orders": "إدارة الطلبات",
     "sub.dept.marketing": "إدارة التسويق",
     "sub.dept.legal": "الإدارة القانونية",
     "sub.dept.finance": "الإدارة المالية",
@@ -2191,6 +2193,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.feat.tenant": "إدارة المستأجرين",
     "admin.feat.marketing": "التسويق والتأجير",
     "admin.dept.real_estate": "إدارة الأملاك",
+    "admin.dept.offers": "إدارة العروض",
+    "admin.dept.orders": "إدارة الطلبات",
     "admin.dept.marketing": "إدارة التسويق",
     "admin.dept.legal": "الإدارة القانونية",
     "admin.dept.finance": "الإدارة المالية",
@@ -2489,10 +2493,12 @@ export const translations: Record<Language, Record<string, string>> = {
 
      // Property Info Cards
     "cards.prevOperations": "Previous Operations",
-    "cards.dealsAds": "Deals & Ads",
+    "cards.dealsAds": "Ads",
     "cards.addOperation": "Add Operation",
     "cards.viewAll": "View All",
     "cards.details": "Details",
+    "cards.noOperations": "No previous operations found",
+    "cards.noAds": "No ads available yet",
 
     // Quick Actions
     "action.propertyManagement": "Property Management",
@@ -2652,6 +2658,8 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Administrations
     "admin.dept.real_estate": "Property Management",
+    "admin.dept.offers": "Offers Management",
+    "admin.dept.orders": "Orders Management",
     "admin.dept.marketing": "Marketing Dept",
     "admin.dept.legal": "Legal Dept",
     "admin.dept.finance": "Finance Dept",
@@ -4306,6 +4314,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "sub.public.selectPackageFirst": "Select a package first",
     "sub.public.createdRedirect": "Subscription created. Complete payment from the wallet",
     "sub.dept.properties": "Properties Department",
+    "sub.dept.offers": "Offers Management",
+    "sub.dept.orders": "Orders Management",
     "sub.dept.marketing": "Marketing Department",
     "sub.dept.legal": "Legal Department",
     "sub.dept.finance": "Finance Department",

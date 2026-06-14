@@ -16,9 +16,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from "@/context/LanguageContext";
 import { marketingApi, MarketingRequest, MarketingRequestType, MarketingRequestStatus } from '@/lib/marketing-service';
 import toast from 'react-hot-toast';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 
 export default function PhotographyFlow() {
     const { t, language } = useLanguage();
+    const confirmDialog = useConfirmDialog();
     const [formData, setFormData] = useState({
         propertyId: '',
         date: '',
@@ -74,7 +76,13 @@ export default function PhotographyFlow() {
     };
 
     const handleDeleteRequest = async (id: string) => {
-        if (!window.confirm(t('common.deleteConfirm'))) return;
+        const ok = await confirmDialog({
+            title: t('common.deleteConfirm'),
+            confirmLabel: language === 'ar' ? 'حذف' : 'Delete',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+            destructive: true,
+        });
+        if (!ok) return;
         try {
             await marketingApi.deleteRequest(id);
             toast.success(t('bm.request.success'));

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo, Suspense, useCallback } from "react";
-
 import {
   ShoppingBag,
   FileText,
@@ -60,12 +59,8 @@ import {
   Link as LinkIcon,
   Send,
   Loader2,
-  LogOut,
-  Menu,
-  X as CloseIcon,
-  Wallet,
+  CreditCard,
 } from "lucide-react";
-import { Pagination } from "@/app/src/components/Pagination";
 import {
   offersApi,
   ordersApi,
@@ -89,8 +84,9 @@ import OfferDetailsModal from "@/components/modals/offer-details-modal";
 import OfferAppointmentsModal from "@/components/modals/offer-appointments-modal";
 import { CreateOrderDto, Offer, Order, Property, TenantProfile, Lease, Payment, MaintenanceRequest, Booking } from "@/types/api";
 import { useOffers } from "@/hooks/useOffers";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@/types/user";
 import toast, { Toaster } from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -121,15 +117,11 @@ import { ar } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
 
 import { useLanguage } from "@/context/LanguageContext";
-import NotificationBell from "@/app/src/components/NotificationBell";
 import { LegalStatsCards } from "@/components/legal/LegalStatsCards";
 import { LegalDisputesTable } from "@/components/legal/LegalDisputesTable";
 import { ContractForm, DocumentationForm, LegalDisputeForm, OtherServicesForm } from "@/components/legal";
 import { PropertyPortfolio } from "@/components/properties/PropertyPortfolio";
 import { AddPropertyWizard } from "@/components/modals/AddPropertyWizard";
-import { useSectionGuard } from "@/hooks/useSectionGuard";
-import ComingSoonOverlay from "@/components/ComingSoonOverlay";
-import { Role } from "@/types/user";
 
 interface SidebarItem {
   id: string;
@@ -148,18 +140,18 @@ const CONTRACT_TYPES = ["contracts", "consultation", "مراجعة عقد"];
 const NOTARY_TYPES = ["notary", "توثيق", "التوثيق", "notarization"];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:     "bg-slate-100 text-slate-700",
-  assigned:    "bg-slate-100 text-slate-700",
-  in_progress: "bg-slate-100 text-slate-700",
-  completed:   "bg-slate-100 text-slate-700",
-  cancelled:   "bg-slate-100 text-slate-700",
+  pending:     "bg-amber-100 text-amber-700",
+  assigned:    "bg-blue-100 text-blue-700",
+  in_progress: "bg-violet-100 text-violet-700",
+  completed:   "bg-emerald-100 text-emerald-700",
+  cancelled:   "bg-rose-100 text-rose-700",
 };
 
 const getStatusColor = (status: string, t: any, invoiceStatus?: string) => {
   if (invoiceStatus) {
-    if (invoiceStatus === 'accepted') return "bg-slate-100 text-slate-700 border border-slate-200";
-    if (invoiceStatus === 'rejected') return "bg-slate-100 text-slate-700 border border-slate-200";
-    return "bg-slate-100 text-slate-700 border border-slate-200"; // Invoice Sent
+    if (invoiceStatus === 'accepted') return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+    if (invoiceStatus === 'rejected') return "bg-rose-100 text-rose-800 border border-rose-200";
+    return "bg-blue-100 text-blue-800 border border-blue-200"; // Invoice Sent
   }
 
   switch (status) {
@@ -177,7 +169,7 @@ const getStatusColor = (status: string, t: any, invoiceStatus?: string) => {
     case 'completed':
     case t('bm.status.completed'):
     case t('property.condition.renovated'): // repurposed
-      return "bg-slate-100 text-slate-700 border border-slate-200";
+      return "bg-green-100 text-green-800 border border-green-200";
     case 'cancelled':
     case t('bm.status.cancelled'):
       return "bg-red-100 text-red-800 border border-red-200";
@@ -394,33 +386,33 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
   );
 }
 
-function BuildingManagementContent({ embedded = false }: { embedded?: boolean }) {
-  const router = useRouter();  
+function BuildingManagementContent() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { user, token, logout } = useAuth();
+  const { user, token } = useAuth();
   const { t, language } = useLanguage();
+
+  // ─── Subscription guard state ───────────────────────────────────────────
+  const [subStatus, setSubStatus] = useState<{
+    active: boolean;
+    daysLeft: number;
+    noExpiry: boolean;
+    subscription?: any;
+  } | null>(null);
+
+  const isAdmin = user?.role === Role.ADMIN;
+
+  // Fetch subscription status on mount
   useEffect(() => {
-    // `/buildingmanagement` is admin-only. Non-admins should use `/internal/*`.
-    if (embedded) return;
     if (!user) return;
-
-    const section = searchParams.get('section') || 'dashboard';
-    if (user.role !== Role.ADMIN) {
-      // Finance section is internal-only.
-      if (section === 'finance' || section === 'financial') {
-        router.replace('/internal/finance?view=financial&section=financial');
-        return;
-      }
-      // Everything else routes to internal properties workspace.
-      router.replace('/internal/properties?view=properties&section=dashboard');
-      return;
-    }
-  }, [user, router]);
-
-  const { isOpen, message, isAdmin } = useSectionGuard('buildingmanagement');
-
-
-
+    api.get('/subscriptions/status')
+      .then(res => setSubStatus(res.data))
+      .catch(() => {
+        // On failure, assume active to avoid blocking the UI
+        setSubStatus({ active: true, daysLeft: 999, noExpiry: true });
+      });
+  }, [user?.id]);
 
   const disputeTypes = useMemo(() => [
     t('bm.type.prop'),
@@ -465,116 +457,64 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   }), [t]);
 
 
-  const sidebarItems: SidebarItem[] = useMemo(() => {
-    const allItems: SidebarItem[] = [
-      {
-        id: "dashboard",
-        label: language === 'ar' ? 'لوحة التحكم' : 'Dashboard',
-        icon: LayoutDashboard,
-      },
-      {
-        id: "offers",
-        label: t('pm.offers'),
-        icon: Briefcase,
-        image: "/icons/3rod.png"
-      },
-      {
-        id: "orders",
-        label: t('pm.orders'),
-        icon: FileText,
-        image: "/icons/orders.png"
-      },
-      {
-        id: "marketing",
-        label: t('pm.marketing'),
-        icon: Megaphone,
-        image: "/icons/marketing.png"
-      },
-      {
-        id: "properties",
-        label: t('pm.properties'), // Portfolio / Assets
-        icon: Building,
-        image: "/icons/3kar.png"
-      },
-      {
-        id: "finance",
-        label: t('pm.financial'), // Collection & Cashflow
-        icon: DollarSign,
-        image: "/icons/finacial.png"
-      },
-      {
-        id: "legal",
-        label: t('pm.legal'),
-        icon: Scale,
-        image: "/icons/kanon.png"
-      },
-      {
-        id: "users",
-        label: t('bm.users.title'),
-        icon: User,
-      },
-      {
-        id: "subscriptions",
-        label: t('bm.subscriptions.title'),
-        icon: Layers,
-        image: "/icons/a4trkat.png"
-      },
-    ];
+  // All available sidebar items
+  const allSidebarItems: SidebarItem[] = [
+    {
+      id: "offers",
+      label: t('pm.offers'),
+      icon: Briefcase,
+      image: "/icons/3rod.png"
+    },
+    {
+      id: "orders",
+      label: t('pm.orders'),
+      icon: FileText,
+      image: "/icons/orders.png"
+    },
+    {
+      id: "marketing",
+      label: t('pm.marketing'),
+      icon: Megaphone,
+      image: "/icons/marketing.png"
+    },
+    {
+      id: "properties",
+      label: t('pm.properties'),
+      icon: Building,
+      image: "/icons/3kar.png"
+    },
+    {
+      id: "financial",
+      label: t('pm.financial'),
+      icon: DollarSign,
+      image: "/icons/finacial.png"
+    },
+    {
+      id: "legal",
+      label: t('pm.legal'),
+      icon: Scale,
+      image: "/icons/kanon.png"
+    },
+    {
+      id: "users",
+      label: t('bm.users.title'),
+      icon: User,
+    },
+    {
+      id: "subscriptions",
+      label: t('pm.subscriptions'),
+      icon: Home,
+      image: "/icons/a4trkat.png"
+    },
+  ];
 
-    if (user?.role === 'admin') return allItems;
-
-    const roleAccess: Record<string, string[]> = {
-      viewer: ['dashboard'],
-      user: ['dashboard', 'orders', 'properties'],
-      owner: ['dashboard', 'properties', 'orders', 'finance'],
-      broker: ['dashboard', 'properties', 'orders'],
-      agent: ['dashboard', 'properties', 'orders'],
-      marketing: ['dashboard', 'marketing'],
-      marketing_admin: ['dashboard', 'marketing'],
-      finance: ['dashboard', 'finance'],
-      finance_admin: ['dashboard', 'finance'],
-      legal: ['dashboard', 'legal'],
-      legal_admin: ['dashboard', 'legal'],
-      manager: ['dashboard'],
-      employee: ['dashboard'], // Default access, expanded by departmentPermissions
-    };
-    const allowedByRole = new Set(roleAccess[user?.role as keyof typeof roleAccess] || []);
-    const departmentList = Array.isArray(user?.departments) ? user.departments.map((d: any) => String(d).toLowerCase()) : [];
-    const hasPropertiesAccess =
-      allowedByRole.has('properties') ||
-      departmentList.includes('properties') ||
-      user?.departmentPermissions?.properties === 'view' ||
-      user?.departmentPermissions?.properties === 'edit' ||
-      user?.departmentPermissions?.properties === true;
-    const hasEmployeesAccess =
-      allowedByRole.has('users') ||
-      departmentList.includes('employees') ||
-      user?.departmentPermissions?.employees === true;
-
-    return allItems.filter(item => {
-      // Always show dashboard
-      if (item.id === 'dashboard') return true;
-
-      if (item.id === 'offers' || item.id === 'orders') {
-        return hasPropertiesAccess || allowedByRole.has(item.id);
-      }
-
-      if (item.id === 'users') {
-        return hasEmployeesAccess;
-      }
-
-      if (allowedByRole.has(item.id)) return true;
-      
-      // Check if user has this department via departments array OR departmentPermissions object
-      const hasDept = user?.departments?.some((d: any) => d.toLowerCase() === item.id.toLowerCase());
-      const hasPerm = user?.departmentPermissions?.[item.id] && user.departmentPermissions[item.id] !== 'none';
-      
-      if (hasDept || hasPerm) return true;
-
-      // Hide others
-      return false;
-    });
-  }, [user, language, t]);
+  // ─── Subscription-aware sidebar filter ──────────────────────────────────
+  // Non-admin users with an inactive subscription only see "offers" (the first
+  // section) until they renew. Admins always see everything.
+  const subscriptionActive = isAdmin || !subStatus || subStatus.active;
+  const sidebarItems: SidebarItem[] = subscriptionActive
+    ? allSidebarItems
+    : allSidebarItems.filter(item => item.id === 'offers');
 
   // Add Back Button Handler
   const handleBack = () => {
@@ -583,33 +523,20 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   };
   const [selectedOrder, setSelectedOrder] = useState<any>(null); // For detail view
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedSection, setSelectedSection] = useState<string>("dashboard");
+  const [selectedSection, setSelectedSection] = useState<string>("offers");
   const [activeLegalTab, setActiveLegalTab] = useState<string>("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Handle Query Params
   useEffect(() => {
     const section = searchParams.get('section');
     const tab = searchParams.get('tab');
     if (section) {
-      const isAllowed = sidebarItems.some(item => item.id === section);
-      setSelectedSection(isAllowed ? section : "dashboard");
+      setSelectedSection(section);
     }
     if (tab && section === 'legal') {
       setActiveLegalTab(tab);
     }
-  }, [searchParams, sidebarItems]);
-
-  // Permission Guards
-  const propertiesPermission = user?.departmentPermissions?.properties || 'none';
-  const canManageProperties = user?.role === 'admin' || user?.role === 'manager' || propertiesPermission === 'manage';
-  const canEditProperties = canManageProperties || propertiesPermission === 'edit';
-
-  const employeesPermission = user?.departmentPermissions?.employees || 'none';
-  const canManageEmployees = user?.role === 'admin' || user?.role === 'manager' || employeesPermission === 'manage';
-
-  const financialPermission = user?.departmentPermissions?.finance || user?.departmentPermissions?.financial || 'none';
-  const hasFinancialAccess = user?.role === 'admin' || user?.role === 'manager' || financialPermission !== 'none';
+  }, [searchParams]);
 
   // User Management State
   const [users, setUsers] = useState<any[]>([]);
@@ -679,7 +606,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
 
   const [isFetchingUsers, setIsFetchingUsers] = useState(false);
-  const [activeUserTab, setActiveUserTab] = useState<"new" | "list">("list");
+  const [activeUserTab, setActiveUserTab] = useState<"new" | "list">("new");
   const [selectedServiceType, setSelectedServiceType] = useState<string>("disputes");
   const [legalSearchTerm, setLegalSearchTerm] = useState("");
 
@@ -689,14 +616,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   const [invoicePrice, setInvoicePrice] = useState("");
   const [isSendingInvoice, setIsSendingInvoice] = useState(false);
   const [invoiceMessage, setInvoiceMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-
-  // Pagination States
-  const [tenantsPage, setTenantsPage] = useState(1);
-  const [maintenancePage, setMaintenancePage] = useState(1);
-  const [servicesPage, setServicesPage] = useState(1);
-  const [ordersPage, setOrdersPage] = useState(1);
-  const [paymentsPage, setPaymentsPage] = useState(1);
-  const itemsPerPage = 10;
 
   // Service Request Creation Form State (under Legal)
   const [srActiveTab, setSrActiveTab] = useState<"create" | "view">("view");
@@ -725,7 +644,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   const [srSelectedRequest, setSrSelectedRequest] = useState<any>(null);
   const [srIsDetailsOpen, setSrIsDetailsOpen] = useState(false);
   const [srEditingPrice, setSrEditingPrice] = useState("");
-  const [srEditingDescription, setSrEditingDescription] = useState("");
   const [srEditingDepartment, setSrEditingDepartment] = useState("");
   const [srUserBookings, setSrUserBookings] = useState<any[]>([]);
   const [srUserInvoices, setSrUserInvoices] = useState<any[]>([]);
@@ -748,10 +666,10 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   const [legalDisputes, setLegalDisputes] = useState<LegalDispute[]>([]);
 
   // Fetch Functions
-  const fetchProperties = useCallback(async () => {
+  const fetchProperties = async () => {
     setLoadingProperties(true);
     try {
-      const res = await propertiesApi.findAll(user?.role === Role.ADMIN ? undefined : user?.id);
+      const res = await propertiesApi.findAll();
       setProperties(res.data);
     } catch (error) {
       console.error(error);
@@ -759,12 +677,12 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     } finally {
       setLoadingProperties(false);
     }
-  }, [user, t]);
+  };
 
-  const fetchTenants = useCallback(async () => {
+  const fetchTenants = async () => {
     setLoadingTenants(true);
     try {
-      const res = await propertiesApi.getTenants(user?.role === Role.ADMIN ? undefined : user?.id);
+      const res = await propertiesApi.getTenants();
       setTenants(res.data);
     } catch (error) {
       console.error(error);
@@ -772,15 +690,14 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     } finally {
       setLoadingTenants(false);
     }
-  }, [user, t]);
+  };
 
-  const fetchFinancials = useCallback(async () => {
+  const fetchFinancials = async () => {
     setLoadingFinancial(true);
     try {
-      const ownerId = user?.role === Role.ADMIN ? undefined : user?.id;
       const [leasesRes, paymentsRes] = await Promise.all([
-        propertiesApi.getLeases(ownerId),
-        propertiesApi.getPayments(ownerId)
+        propertiesApi.getLeases(),
+        propertiesApi.getPayments()
       ]);
       setLeases(leasesRes.data);
       setPayments(paymentsRes.data);
@@ -789,19 +706,19 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     } finally {
       setLoadingFinancial(false);
     }
-  }, [user]);
+  };
 
-  const fetchMaintenanceLogs = useCallback(async () => {
+  const fetchMaintenanceLogs = async () => {
     setLoadingMaintenance(true);
     try {
-      const res = await propertiesApi.getMaintenanceLogs(user?.role === Role.ADMIN ? undefined : user?.id);
+      const res = await propertiesApi.getMaintenanceLogs();
       setMaintenanceLogs(res.data);
     } catch (error) {
       console.error(error);
     } finally {
       setLoadingMaintenance(false);
     }
-  }, [user]);
+  };
 
   // Fetch subscriptions
   const fetchSubscriptions = async () => {
@@ -835,12 +752,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     }
     if (selectedSection === 'offers') {
       fetchIncomingBookings();
-    }
-    if (selectedSection === 'dashboard') {
-      fetchProperties();
-      fetchFinancials();
-      loadStats();
-      srFetchRequests();
     }
   }, [selectedSection]);
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -1329,13 +1240,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
           const contracts = (Array.isArray(contractsRes) ? contractsRes : (contractsRes.data || contractsRes.contracts || [])).map((c: any) => ({ ...c, type: t('bm.contracts.title'), date: c.createdAt }));
           const other = (Array.isArray(otherRes) ? otherRes : (otherRes.data || otherRes.otherServices || [])).map((o: any) => ({ ...o, type: t('pm.legal.stats.other'), date: o.createdAt }));
           
-          const srRequestsData = Array.isArray(srRes.data)
-            ? srRes.data
-            : Array.isArray((srRes.data as any)?.items)
-              ? (srRes.data as any).items
-              : Array.isArray((srRes.data as any)?.data)
-                ? (srRes.data as any).data
-                : [];
+          const srRequestsData = Array.isArray(srRes.data) ? srRes.data : [];
           const srLegal = srRequestsData
             .filter((req: any) => req.category === 'legal' || req.targetDepartment === 'legal')
             .map((req: any) => ({ ...req, type: req.serviceType || t('disputes.tab.service_requests'), date: req.createdAt }));
@@ -1367,7 +1272,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     setSelectedServiceRequest(request);
     setIsServiceRequestDetailsOpen(true);
     setSrEditingPrice(request.price?.toString() || "");
-    setSrEditingDescription(request.description || "");
     setSrEditingDepartment(request.targetDepartment || "real_estate");
     setInvoicePrice("");
     setInvoiceMessage(null);
@@ -1375,38 +1279,13 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     // Fetch related visits & invoices
     setSrIsLoadingRelated(true);
     try {
-      const userId = request.userId || request.clientId;
-      const isUuid =
-        typeof userId === "string" &&
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId);
-      if (!isUuid) {
-        setSrUserBookings([]);
-        setSrUserInvoices([]);
-        return;
-      }
-
-      // These endpoints can legitimately return 403 for staff without financial/booking access.
-      // Don't break the service-request details modal; just show the request without related panels.
-      const [bookingsRes, invsRes] = await Promise.allSettled([
-        bookingsApi.getUserBookings(userId),
-        financialApi.getUserInvoices(userId),
+      // Using existing bookingsApi and financialApi if available, or fetch
+      const [bookings, invs] = await Promise.all([
+        bookingsApi.getUserBookings(request.userId || request.clientId),
+        financialApi.getUserInvoices(request.userId || request.clientId),
       ]);
-
-      if (bookingsRes.status === "fulfilled") {
-        const bookings = bookingsRes.value as any;
-        setSrUserBookings(Array.isArray(bookings) ? bookings : bookings?.data || []);
-      } else {
-        console.warn("Bookings fetch failed:", bookingsRes.reason);
-        setSrUserBookings([]);
-      }
-
-      if (invsRes.status === "fulfilled") {
-        const invs = invsRes.value as any;
-        setSrUserInvoices(Array.isArray(invs) ? invs : invs?.data || []);
-      } else {
-        console.warn("Invoices fetch failed:", invsRes.reason);
-        setSrUserInvoices([]);
-      }
+      setSrUserBookings(Array.isArray(bookings) ? bookings : (bookings as any).data || []);
+      setSrUserInvoices(Array.isArray(invs) ? invs : (invs as any).data || []);
     } catch (error) {
       console.error("Error fetching related data:", error);
       setSrUserBookings([]);
@@ -1436,7 +1315,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     try {
       const res = await api.put(`/service-requests/${selectedServiceRequest.id}`, {
         price: parseFloat(srEditingPrice),
-        description: srEditingDescription,
         targetDepartment: srEditingDepartment
       });
       if (res.data) {
@@ -1483,48 +1361,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     }
   };
 
-  const handleAddDeptPrice = async () => {
-    if (!token || !selectedServiceRequest || !srDeptPrice) return;
-    setSrIsAddingDeptPrice(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedServiceRequest.id}/department-price`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ price: parseFloat(srDeptPrice), note: srDeptNote || undefined }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setSelectedServiceRequest(updated);
-        setAllServices(prev => prev.map(r => r.id === updated.id ? updated : r));
-        setSrDeptPrice('');
-        setSrDeptNote('');
-        toast.success('تم إضافة سعر القسم بنجاح');
-      } else {
-        toast.error('فشل إضافة سعر القسم');
-      }
-    } catch { toast.error('حدث خطأ'); }
-    finally { setSrIsAddingDeptPrice(false); }
-  };
-
-  const handleStartChat = async (requestId: string) => {
-    if (!token) return;
-    setSrIsStartingChat(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${requestId}/chat`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        window.location.href = `/chat?room=${data.chatRoomId}`;
-      } else {
-        toast.error('فشل فتح المحادثة');
-      }
-    } catch { toast.error('حدث خطأ'); }
-    finally { setSrIsStartingChat(false); }
-  };
-
-
   // ── Service Request Form Constants ──────────────────────────────────────────
   const srServiceOptions: Record<string, string[]> = {
     postPurchase: ["gas", "furniture", "insurance", "maintenance", "cleaning", "landscaping", "security"],
@@ -1546,16 +1382,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && typeof data === 'object' && Array.isArray(data.items)) {
-          setSrRequests(data.items);
-        } else if (Array.isArray(data)) {
-          setSrRequests(data);
-        } else {
-          setSrRequests([]);
-        }
-      }
+      if (res.ok) setSrRequests(await res.json());
     } catch (e) { console.error(e); }
     finally { setSrIsLoading(false); }
   };
@@ -1564,14 +1391,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     if (!userId || !token) return;
     setSrIsLoadingRelated(true);
     try {
-      const isUuid =
-        typeof userId === "string" &&
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId);
-      if (!isUuid) {
-        setSrUserBookings([]);
-        setSrUserInvoices([]);
-        return;
-      }
       const [bookingsRes, invoicesRes] = await Promise.all([
         bookingsApi.getUserBookings(userId),
         financialApi.getUserInvoices(userId),
@@ -1659,53 +1478,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
       }
     } catch { setSrInvoiceMessage({ type: 'error', text: t('legal.invoice.sendError') }); }
     finally { setSrIsSendingInvoice(false); }
-  };
-
-  const [srDeptPrice, setSrDeptPrice] = useState('');
-  const [srDeptNote, setSrDeptNote] = useState('');
-  const [srIsAddingDeptPrice, setSrIsAddingDeptPrice] = useState(false);
-
-  const srHandleAddDeptPrice = async () => {
-    if (!token || !srSelectedRequest || !srDeptPrice) return;
-    setSrIsAddingDeptPrice(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${srSelectedRequest.id}/department-price`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ price: parseFloat(srDeptPrice), note: srDeptNote || undefined }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setSrSelectedRequest(updated);
-        setSrRequests(prev => prev.map(r => r.id === updated.id ? updated : r));
-        setSrDeptPrice('');
-        setSrDeptNote('');
-        toast.success('تم إضافة سعر القسم بنجاح');
-      } else {
-        toast.error('فشل إضافة سعر القسم');
-      }
-    } catch { toast.error('حدث خطأ'); }
-    finally { setSrIsAddingDeptPrice(false); }
-  };
-
-  const [srIsStartingChat, setSrIsStartingChat] = useState(false);
-
-  const srHandleStartChat = async (requestId: string) => {
-    if (!token) return;
-    setSrIsStartingChat(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${requestId}/chat`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        window.location.href = `/chat?room=${data.chatRoomId}`;
-      } else {
-        toast.error('فشل فتح المحادثة');
-      }
-    } catch { toast.error('حدث خطأ'); }
-    finally { setSrIsStartingChat(false); }
   };
 
   // Auto-fetch when switching to view tab
@@ -1883,9 +1655,9 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
 
   const getStatusColor = (status: string, invoiceStatus?: string) => {
     if (invoiceStatus) {
-      if (invoiceStatus === 'accepted') return "bg-slate-100 text-slate-700 border border-slate-200";
-      if (invoiceStatus === 'rejected') return "bg-slate-100 text-slate-700 border border-slate-200";
-      return "bg-slate-100 text-slate-700 border border-slate-200"; // Invoice Sent
+      if (invoiceStatus === 'accepted') return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+      if (invoiceStatus === 'rejected') return "bg-rose-100 text-rose-800 border border-rose-200";
+      return "bg-blue-100 text-blue-800 border border-blue-200"; // Invoice Sent
     }
 
     switch (status) {
@@ -1903,7 +1675,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
       case 'completed':
       case t('bm.status.completed'):
       case t('property.condition.renovated'): // repurposed
-        return "bg-slate-100 text-slate-700 border border-slate-200";
+        return "bg-green-100 text-green-800 border border-green-200";
       case 'cancelled':
       case t('bm.status.cancelled'):
         return "bg-red-100 text-red-800 border border-red-200";
@@ -1969,9 +1741,9 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
             typeLabel: t('bm.form.newContract'), 
             descLabel: t('bm.form.descLabel'), 
             icon: FileText, 
-            colorClass: "bg-slate-100 text-slate-700",
-            borderColor: "border-slate-200",
-            bgClass: "bg-slate-50"
+            colorClass: "bg-green-100 text-green-600",
+            borderColor: "border-green-200",
+            bgClass: "bg-green-50"
           };
         case "new-documentation":
           return { 
@@ -2559,7 +2331,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
             {[
               { id: "portfolio", label: t('pm.tab.portfolio'), icon: Building },
               { id: "tenants", label: t('pm.tenants'), icon: Users },
-              ...(hasFinancialAccess ? [{ id: "financial", label: t('pm.financial.desc'), icon: DollarSign }] : []),
+              { id: "financial", label: t('pm.financial.desc'), icon: DollarSign },
               { id: "reports", label: t('pm.reports'), icon: BarChart3 },
               { id: "service-requests", label: t('disputes.tab.service_requests'), icon: LayoutDashboard }
             ].map((tab) => (
@@ -2606,9 +2378,9 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                <PropertyPortfolio
                   properties={properties}
                   loading={loadingProperties}
-                  onDelete={canManageProperties ? handleDeleteProperty : undefined}
+                  onDelete={handleDeleteProperty}
                   onView={(p) => { setSelectedProperty(p); setShowPropertyDetails(true); }}
-                  onCreate={canEditProperties ? () => setShowNewPropertyModal(true) : undefined}
+                  onCreate={() => setShowNewPropertyModal(true)}
                />
             )}
             {activePropertyTab === 'tenants' && renderTenants()}
@@ -2657,7 +2429,8 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
         setTenantIdFile(null);
         
         // Refresh list
-        fetchTenants();
+        const res = await propertiesApi.getTenants();
+        setTenants(res.data);
     } catch (error) {
         console.error(error);
         toast.error(t('bm.toast.error'));
@@ -2937,7 +2710,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                               if (!selectedProperty) return true;
                               return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
                           })
-                          .slice((tenantsPage - 1) * itemsPerPage, tenantsPage * itemsPerPage)
                           .map(tenant => (
                             <tr key={tenant.id} className="hover:bg-slate-50/30 transition-all group">
                                 <td className="p-6">
@@ -2982,19 +2754,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                     </tbody>
                 </table>
             </div>
-            <Pagination 
-                currentPage={tenantsPage}
-                totalPages={Math.ceil(tenants.filter(tenant => {
-                    if (!selectedProperty) return true;
-                    return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
-                }).length / itemsPerPage)}
-                onPageChange={setTenantsPage}
-                totalItems={tenants.filter(tenant => {
-                    if (!selectedProperty) return true;
-                    return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
-                }).length}
-                itemsLabel={t('pm.tenants')}
-            />
           </div>
         )}
     </div>
@@ -3107,7 +2866,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                            <tr key={log.id} className="hover:bg-slate-50/30 transition-all group">
                                                <td className="p-6">
                                                    <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                                                       log.status === 'completed' ? 'bg-white text-slate-700 border-slate-100 shadow-sm shadow-slate-50' :
+                                                       log.status === 'completed' ? 'bg-white text-green-600 border-green-100 shadow-sm shadow-green-50' :
                                                        log.status === 'in_progress' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200/50' :
                                                        'bg-white text-slate-400 border-slate-100 shadow-sm shadow-slate-50'
                                                    }`}>
@@ -3137,13 +2896,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                </tbody>
                            </table>
                       </div>
-                      <Pagination 
-                           currentPage={maintenancePage}
-                           totalPages={Math.ceil(maintenanceLogs.filter(log => !selectedProperty || log.propertyId === selectedProperty.id).length / itemsPerPage)}
-                           onPageChange={setMaintenancePage}
-                           totalItems={maintenanceLogs.filter(log => !selectedProperty || log.propertyId === selectedProperty.id).length}
-                           itemsLabel={t('pm.maintenance.log')}
-                       />
                   </div>
               )}
           </div>
@@ -3186,9 +2938,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                    {allServices.length === 0 && !loading.stats ? (
                        <p className="text-center text-gray-500 py-8">{t('bm.list.empty')}</p>
                    ) : (
-                       allServices
-                        .slice((servicesPage - 1) * itemsPerPage, servicesPage * itemsPerPage)
-                        .map((service, idx) => (
+                       allServices.map((service, idx) => (
                            <div key={idx} className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg hover:shadow-md transition-shadow bg-slate-50">
                                <div>
                                    <div className="flex items-center gap-2 mb-1">
@@ -3214,13 +2964,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                        ))
                    )}
                </div>
-               <Pagination 
-                   currentPage={servicesPage}
-                   totalPages={Math.ceil(allServices.length / itemsPerPage)}
-                   onPageChange={setServicesPage}
-                   totalItems={allServices.length}
-                   itemsLabel={t('bm.requests.all')}
-               />
           </div>
       </div>
   );
@@ -3327,12 +3070,12 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     financialAgreementType: "salary",
     financialAgreementValue: "",
     departmentPermissions: {
-      offers: "none",
-      orders: "none",
-      marketing: "none",
-      finance: "none",
-      properties: "none",
-      legal: "none",
+      offers: "view",
+      orders: "view",
+      marketing: "view",
+      financial: "view",
+      properties: "view",
+      legal: "view",
       employees: false
     },
     falLicenseNumber: "",
@@ -3359,8 +3102,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
 
     try {
       // Basic validation
-      const hasContact = Boolean((createUserForm.email || "").trim() || (createUserForm.phone || "").trim());
-      if (!createUserForm.firstName?.trim() || !createUserForm.lastName?.trim() || !createUserForm.nationalId?.trim() || !hasContact) {
+      if (!createUserForm.firstName || !createUserForm.lastName || !createUserForm.phone || !createUserForm.nationalId) {
         toast.error(t('bm.error.required'));
         setIsSubmitting(false);
         return;
@@ -3371,7 +3113,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
         financialAgreementValue: parseFloat(createUserForm.financialAgreementValue) || 0,
         // Role is strictly employee or collaborator for this form
         role: createUserForm.role, 
-        parentId: user?.id,
         isActive: true,
         isVerified: true
       };
@@ -3391,7 +3132,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
       }
 
       toast.success(t('bm.users.createSuccess'));
-      fetchUsers(); // Refresh the list
       setCreateUserForm({
         firstName: "",
         lastName: "",
@@ -3402,154 +3142,22 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
         financialAgreementType: "salary",
         financialAgreementValue: "",
         departmentPermissions: {
-          offers: "none",
-          orders: "none",
-          marketing: "none",
-          finance: "none",
-          properties: "none",
-          legal: "none",
+          offers: "view",
+          orders: "view",
+          marketing: "view",
+          financial: "view",
+          properties: "view",
+          legal: "view",
           employees: false
         },
         falLicenseNumber: "",
       });
     } catch (error: any) {
       console.error(error);
-      const errMsg = error.message || '';
-      if (errMsg.toLowerCase().includes('email already exists') || errMsg.toLowerCase().includes('phone already exists')) {
-        toast.error(t('bm.users.emailUsed') || 'This email/phone is already in use by another user. Please ask them to log in or contact the admin to verify.');
-      } else {
-        toast.error(errMsg || t('bm.users.createError'));
-      }
+      toast.error(error.message || t('bm.users.createError'));
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const renderDashboard = () => {
-    const totalRevenue = payments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-    const activeLeases = leases.length;
-    const pendingRequests = srRequests.length;
-
-    return (
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t('common.welcome')}, {user?.firstName}</h1>
-          <p className="text-slate-500 font-medium">{t('bm.dashboard.subtitle') || 'إليك ملخص سريع لأداء عقاراتك اليوم'}</p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-700">
-              <Building className="w-6 h-6" />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('pm.properties')}</p>
-            <p className="text-2xl font-black text-slate-900">{properties.length}</p>
-          </div>
-
-          <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-700">
-              <DollarSign className="w-6 h-6" />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('pm.financial.income')}</p>
-            <p className="text-2xl font-black text-slate-900">{totalRevenue.toLocaleString()} <span className="text-xs opacity-50">SAR</span></p>
-          </div>
-
-          <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-700">
-              <FileText className="w-6 h-6" />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('pm.tab.leases')}</p>
-            <p className="text-2xl font-black text-slate-900">{activeLeases}</p>
-          </div>
-
-          <div className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-700">
-              <Scale className="w-6 h-6" />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('bm.status.pending')}</p>
-            <p className="text-2xl font-black text-slate-900">{pendingRequests}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Service Requests */}
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-black text-slate-900">{t('bm.recent.title')}</h3>
-              <button onClick={() => setSelectedSection('legal')} className="text-[10px] font-black text-slate-600 uppercase tracking-widest hover:underline">{t('common.viewAll')}</button>
-            </div>
-            <div className="space-y-4">
-              {srRequests.slice(0, 4).map((req) => (
-                <div key={req.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 transition-all">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 shadow-sm">
-                      <User className="w-5 h-5 text-slate-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-slate-900">{req.clientName || req.firstParty?.name}</p>
-                      <p className="text-[10px] font-bold text-slate-400">{req.serviceType}</p>
-                    </div>
-                  </div>
-                  <span className={`text-[9px] font-black px-2 py-1 rounded-lg ${getStatusColor(req.status, req.invoiceStatus)}`}>
-                    {getServiceStatusLabel(req)}
-                  </span>
-                </div>
-              ))}
-              {srRequests.length === 0 && (
-                <div className="py-12 text-center text-slate-300 font-bold uppercase tracking-widest text-xs">لا توجد طلبات حديثة</div>
-              )}
-            </div>
-          </div>
-
-          {/* Quick Shortcuts */}
-          <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl">
-            <h3 className="text-lg font-black mb-6">{t('bm.quick.actions') || 'إجراءات سريعة'}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {canEditProperties && (
-                <button onClick={() => setSelectedSection('properties')} className="p-6 bg-white/5 hover:bg-white/10 rounded-[2rem] border border-white/10 transition-all text-start group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Plus className="w-5 h-5 text-slate-700" />
-                  </div>
-                  <p className="text-sm font-black">{t('bm.properties.add') || 'إضافة عقار'}</p>
-                  <p className="text-[10px] text-white/40 mt-1">توسيع محفظتك العقارية</p>
-                </button>
-              )}
-              
-              {canManageEmployees && (
-                <button onClick={() => setSelectedSection('users')} className="p-6 bg-white/5 hover:bg-white/10 rounded-[2rem] border border-white/10 transition-all text-start group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Users className="w-5 h-5 text-slate-700" />
-                  </div>
-                  <p className="text-sm font-black">{t('bm.users.newTitle') || 'إضافة موظف'}</p>
-                  <p className="text-[10px] text-white/40 mt-1">إدارة فريق العمل</p>
-                </button>
-              )}
-
-              {(user?.role === 'admin' || user?.departments?.some((d: any) => d.toLowerCase() === 'finance' || d.toLowerCase() === 'financial') || (user?.departmentPermissions?.finance && user.departmentPermissions.finance !== 'none') || (user?.departmentPermissions?.financial && user.departmentPermissions.financial !== 'none')) && (
-                <button onClick={() => setSelectedSection('finance')} className="p-6 bg-white/5 hover:bg-white/10 rounded-[2rem] border border-white/10 transition-all text-start group">
-                  <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <DollarSign className="w-5 h-5 text-slate-700" />
-                  </div>
-                  <p className="text-sm font-black">{t('pm.financial') || 'المالية'}</p>
-                  <p className="text-[10px] text-white/40 mt-1">متابعة التحصيل والإيرادات</p>
-                </button>
-              )}
-
-              {(user?.role === 'admin' || user?.departments?.some((d: any) => d.toLowerCase() === 'marketing') || (user?.departmentPermissions?.marketing && user.departmentPermissions.marketing !== 'none')) && (
-                <button onClick={() => setSelectedSection('marketing')} className="p-6 bg-white/5 hover:bg-white/10 rounded-[2rem] border border-white/10 transition-all text-start group">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Megaphone className="w-5 h-5 text-orange-400" />
-                  </div>
-                  <p className="text-sm font-black">{t('pm.marketing') || 'التسويق'}</p>
-                  <p className="text-[10px] text-white/40 mt-1">إدارة العروض والإعلانات</p>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   const renderUserManagement = () => (
@@ -3557,12 +3165,11 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
       <h1 className="text-lg font-bold text-gray-800 mb-4">{t('bm.title.users')}</h1>
       
       <Tabs value={activeUserTab} onValueChange={(v) => setActiveUserTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-        <TabsList className={`grid w-full mb-6 ${canManageEmployees ? 'grid-cols-2' : 'grid-cols-1'}`}>
-          {canManageEmployees && <TabsTrigger value="new">{t('bm.users.newTitle')}</TabsTrigger>}
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="new">{t('bm.users.newTitle')}</TabsTrigger>
           <TabsTrigger value="list">{t('bm.users.title')}</TabsTrigger>
         </TabsList>
 
-        {canManageEmployees && (
         <TabsContent value="new">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-slate-100 rounded-lg">
@@ -3608,16 +3215,16 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                   </div>
                 </div>
 
-               <div>
-                  <label className="block text-xs text-gray-700 mb-1">{t('bm.form.nationalId')} *</label>
-                  <input
-                    type="text"
-                    name="nationalId"
-                    value={createUserForm.nationalId}
-                    onChange={handleCreateUserChange}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 text-xs"
-                    required
-                  />
+                <div>
+                   <label className="block text-xs text-gray-700 mb-1">{t('bm.form.nationalId')} *</label>
+                   <input
+                     type="text"
+                     name="nationalId"
+                     value={createUserForm.nationalId}
+                     onChange={handleCreateUserChange}
+                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 text-xs"
+                     required
+                   />
                 </div>
               </div>
 
@@ -3629,55 +3236,39 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                       name="firstName"
                       value={createUserForm.firstName}
                       onChange={handleCreateUserChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 text-xs"
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 text-xs"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs text-gray-700 mb-1">{t('profile.nameLabel')} ({t('common.lastName')}) *</label>
+                    <label className="block text-gray-700 mb-2">{t('profile.nameLabel')} ({t('common.lastName')}) *</label>
                     <input
                       type="text"
                       name="lastName"
                       value={createUserForm.lastName}
                       onChange={handleCreateUserChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 text-xs"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-xs text-gray-700 mb-1">{t('bm.form.phone')}</label>
+                    <label className="block text-gray-700 mb-2">{t('bm.form.phone')} *</label>
                     <input
                       type="tel"
                       name="phone"
                       value={createUserForm.phone}
                       onChange={handleCreateUserChange}
                       placeholder="05xxxxxxxx"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 text-xs"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
+                      required
                     />
                   </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-                <div className="md:col-span-2">
-                  <label className="block text-xs text-gray-700 mb-1">{t('bm.offer.email') || 'البريد الإلكتروني'}</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={createUserForm.email}
-                    onChange={handleCreateUserChange}
-                    placeholder="example@domain.com"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 text-xs"
-                  />
-                  <p className="text-[10px] text-gray-400 mt-1">
-                    {t('bm.users.emailOrPhone') || 'يمكن إدخال البريد أو الجوال (أحدهما مطلوب)'}
-                  </p>
-                </div>
               </div>
             </div>
 
             {/* Financial Agreement Section */}
-            {hasFinancialAccess && (
             <div className="bg-slate-50 p-6 rounded-xl border border-gray-200">
               <h3 className="text-base font-semibold text-gray-800 mb-4">{t('bm.users.financial')}</h3>
               
@@ -3715,54 +3306,48 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                 </div>
               </div>
             </div>
-            )}
 
             {/* Permissions Section */}
             <div className="bg-slate-50 p-6 rounded-xl border border-gray-200">
                <h3 className="text-base font-semibold text-gray-800 mb-2">{t('bm.users.permissions')}</h3>
                <p className="text-gray-500 text-xs mb-6">{t('bm.users.permissions.desc')}</p>
 
-                <div className="space-y-4">
-                   {[
-                     { id: 'offers', label: t('bm.users.perm.offers') },
-                     { id: 'orders', label: t('bm.users.perm.orders') },
-                     { id: 'marketing', label: t('bm.users.perm.marketing') },
-                     { id: 'finance', label: t('bm.users.perm.financial') },
-                     { id: 'properties', label: t('bm.users.perm.properties') },
-                     { id: 'legal', label: t('bm.users.perm.legal') }
-	                   ].filter(dept => {
-	                      if (user?.role === 'admin') return true;
-	                      const hasDept = user?.departments?.some((d: any) => d.toLowerCase() === dept.id.toLowerCase() || (dept.id === 'finance' && d.toLowerCase() === 'financial'));
-	                      const hasPerm = (user?.departmentPermissions?.[dept.id] && user.departmentPermissions[dept.id] !== 'none') || (dept.id === 'finance' && user?.departmentPermissions?.financial && user.departmentPermissions.financial !== 'none');
-	                      return hasDept || hasPerm;
-	                   }).map((dept) => (
-                     <div key={dept.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white rounded-lg border border-gray-100">
-                        <div className="font-medium text-gray-800 mb-2 md:mb-0">{dept.label}</div>
-                        <div className="flex gap-2">
-                           <button 
-                             type="button"
-                             onClick={() => handlePermissionChange(dept.id, 'none')}
-                             className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'none' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'}`}
-                           >
-                              {t('common.disable') || 'تعطيل'}
-                           </button>
-                           <button 
-                             type="button"
-                             onClick={() => handlePermissionChange(dept.id, 'view')}
-                             className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'view' ? 'bg-slate-600 text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
-                           >
-                              {t('bm.perm.view') || 'عرض'}
-                           </button>
-                           <button 
-                             type="button"
-                             onClick={() => handlePermissionChange(dept.id, 'manage')}
-                             className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'manage' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
-                           >
-                              {t('bm.perm.full')}
-                           </button>
-                        </div>
-                     </div>
-                   ))}
+               <div className="space-y-4">
+                  {[
+                    { id: 'offers', label: t('bm.users.perm.offers') },
+                    { id: 'orders', label: t('bm.users.perm.orders') },
+                    { id: 'marketing', label: t('bm.users.perm.marketing') },
+                    { id: 'financial', label: t('bm.users.perm.financial') },
+                    { id: 'properties', label: t('bm.users.perm.properties') },
+                    { id: 'legal', label: t('bm.users.perm.legal') }
+                  ].map((dept) => (
+                    <div key={dept.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white rounded-lg border border-gray-100">
+                       <div className="font-medium text-gray-800 mb-2 md:mb-0">{dept.label}</div>
+                       <div className="flex gap-2">
+                          <button 
+                            type="button"
+                            onClick={() => handlePermissionChange(dept.id, 'none')}
+                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'none' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'}`}
+                          >
+                             {t('bm.perm.view')}
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => handlePermissionChange(dept.id, 'view')}
+                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'view' ? 'bg-slate-600 text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+                          >
+                             {t('bm.perm.edit')}
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => handlePermissionChange(dept.id, 'manage')}
+                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'manage' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                          >
+                             {t('bm.perm.full')}
+                          </button>
+                       </div>
+                    </div>
+                  ))}
 
                   {/* Employee Management Special Permission */}
                   <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-100">
@@ -3801,7 +3386,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
             </div>
           </form>
         </TabsContent>
-        )}
 
         <TabsContent value="list">
           <div className="space-y-4">
@@ -3813,46 +3397,39 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
             ) : users.length === 0 ? (
               <div className="text-center py-10 text-gray-500">{t('wallet.noData')}</div>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-gray-100">
-                <table className="w-full text-sm text-start">
-                  <thead className="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 text-gray-700 uppercase">
                     <tr>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('profile.nameLabel')}</th>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('bm.form.role')}</th>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('bm.form.phone')}</th>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('bm.form.email')}</th>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('bm.users.status')}</th>
-                      <th className="px-4 py-3 text-start whitespace-nowrap">{t('bm.users.lastSeen')}</th>
+                      <th className="px-3 py-2">{t('profile.nameLabel')}</th>
+                      <th className="px-3 py-2">{t('bm.form.role')}</th>
+                      <th className="px-3 py-2">{t('bm.form.phone')}</th>
+                      <th className="px-3 py-2">{t('bm.form.email')}</th>
+                      <th className="px-3 py-2">{t('bm.users.status')}</th>
+                      <th className="px-3 py-2">{t('bm.users.lastSeen')}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody>
                     {users.map((u: any) => (
-                      <tr key={u.id} className="bg-white hover:bg-slate-50/80 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="font-bold text-slate-900">{u.firstName} {u.lastName}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                            u.role === 'admin' ? 'bg-slate-900 text-white' : 
-                            'bg-slate-100 text-slate-600 ring-1 ring-slate-200'
+                      <tr key={u.id} className="bg-white border-b hover:bg-slate-50">
+                        <td className="px-3 py-2 font-medium text-gray-900">{u.firstName} {u.lastName}</td>
+                        <td className="px-3 py-2">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            u.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                            u.role === 'broker' ? 'bg-slate-100 text-slate-800' : 'bg-slate-100 text-gray-800'
                           }`}>
                             {t(`profile.role.${u.role}`) || u.role}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-slate-600 font-medium">{u.phone || '-'}</td>
-                        <td className="px-4 py-3 text-slate-600 font-medium">{u.email || '-'}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="relative flex h-2 w-2">
-                              {u.isOnline && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
-                              <span className={`relative inline-flex rounded-full h-2 w-2 ${u.isOnline ? 'bg-emerald-500' : 'bg-slate-300'}`}></span>
-                            </div>
-                            <span className={`text-[11px] font-bold ${u.isOnline ? 'text-emerald-600' : 'text-slate-500'}`}>
-                              {u.isOnline ? t('bm.users.online') : t('bm.users.offline')}
-                            </span>
+                        <td className="px-3 py-2">{u.phone}</td>
+                        <td className="px-3 py-2">{u.email || '-'}</td>
+                        <td className="px-3 py-2">
+                          <div className="flex items-center gap-1">
+                            <div className={`w-1.5 h-1.5 rounded-full ${u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></div>
+                            <span className="text-[10px]">{u.isOnline ? t('bm.users.online') : t('bm.users.offline')}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-[11px] font-medium text-slate-500">
+                        <td className="px-3 py-2 text-[10px] text-gray-500">
                           {u.lastSeen ? new Date(u.lastSeen).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -4259,21 +3836,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
 
                             <div className="space-y-3 pt-4 border-t border-slate-100">
                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')} (Admin)</label>
-                              <select
-                                value={srEditingDepartment}
-                                onChange={(e) => setSrEditingDepartment(e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
-                              >
-                                {[
-                                  { id: "real_estate", labelKey: "admin.trans.dept.real_estate" },
-                                  { id: "legal", labelKey: "admin.trans.dept.legal" },
-                                  { id: "marketing", labelKey: "admin.trans.dept.marketing" },
-                                  { id: "finance", labelKey: "admin.trans.dept.finance" },
-                                ].map((d) => (
-                                  <option key={d.id} value={d.id}>
-                                    {t(d.labelKey)}
-                                  </option>
-                                ))}
+                              <select value={srEditingDepartment} >
                               </select>
                             </div>
 
@@ -4299,8 +3862,8 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                   </div>
                                 )}
                                 {srSelectedRequest.metadata?.details && (
-                                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3">تفاصيل إضافية</p>
+                                  <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3">تفاصيل إضافية</p>
                                     {srSelectedRequest.description && <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</p><p className="text-xs font-medium text-slate-600 leading-relaxed">{srSelectedRequest.description}</p></div>}
                                   </div>
                                 )}
@@ -4314,99 +3877,70 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                               </div>
                             )}
 
-                            {/* ── Department Price Contributions ──────────── */}
-                            <div className="space-y-4 pt-4 border-t border-slate-100">
-                              <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">💰 أسعار الأقسام</label>
-                                <span className="text-sm font-black text-slate-900">
-                                  {t('admin.service_requests.price')}: <span className="text-slate-700">{srSelectedRequest.price?.toLocaleString('ar-SA')} ريال</span>
-                                </span>
-                              </div>
-
-                              {/* Existing dept price breakdown */}
-                              {srSelectedRequest.departmentPrices && Object.keys(srSelectedRequest.departmentPrices).length > 0 && (
-                                <div className="space-y-2">
-                                  {Object.entries(srSelectedRequest.departmentPrices).map(([dept, entry]: [string, any]) => (
-                                    <div key={dept} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                      <div>
-                                        <span className="text-xs font-black text-slate-700">{t(`admin.trans.dept.${dept}`) || dept}</span>
-                                        {entry.note && <p className="text-[10px] text-slate-400 mt-0.5">{entry.note}</p>}
-                                      </div>
-                                      <span className="text-sm font-black text-slate-900">{entry.price?.toLocaleString('ar-SA')} ريال</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-
-                              {/* Add my department's price — only for staff (not viewer/user) */}
-                              {user?.role !== 'viewer' && user?.role !== 'user' && !srSelectedRequest.invoiceSent && (
-                                <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                  <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">إضافة سعر قسمك</p>
-                                  <div className="flex gap-3">
-                                    <input
-                                      type="number"
-                                      value={srDeptPrice}
-                                      onChange={e => setSrDeptPrice(e.target.value)}
-                                      className="bg-white border border-slate-200 py-2.5 px-4 text-sm font-bold w-full outline-none focus:border-slate-500 rounded-xl transition-all"
-                                      placeholder="السعر (ريال)"
-                                      min="0"
-                                    />
-                                    <button
-                                      onClick={srHandleAddDeptPrice}
-                                      disabled={srIsAddingDeptPrice || !srDeptPrice}
-                                      className="bg-slate-950 text-white py-2.5 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap"
-                                    >
-                                      {srIsAddingDeptPrice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                      حفظ سعري
-                                    </button>
-                                  </div>
-                                  <input
-                                    type="text"
-                                    value={srDeptNote}
-                                    onChange={e => setSrDeptNote(e.target.value)}
-                                    className="bg-white border border-slate-200 py-2 px-4 text-xs font-bold w-full outline-none focus:border-slate-400 rounded-lg transition-all"
-                                    placeholder="ملاحظة (اختياري)"
-                                  />
-                                </div>
-                              )}
-
-                              {/* Send Invoice — admin/staff only */}
-                              {user?.role !== 'viewer' && user?.role !== 'user' && !srSelectedRequest.invoiceSent && (
-                                <div className="flex gap-3 pt-2">
-                                  <input type="number" value={srInvoicePrice} onChange={e => setSrInvoicePrice(e.target.value)} className="bg-slate-50 border border-slate-200 py-2.5 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all" placeholder="سعر الفاتورة النهائي (ريال)" min="0" />
-                                  <button onClick={srHandleSendInvoice} disabled={srIsSendingInvoice || !srInvoicePrice} className="bg-slate-900 text-white py-2.5 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap">
-                                    {srIsSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                                    {t('legal.invoice.sendBtn')}
+                            {/* Price & Save */}
+                            <div className="space-y-3 pt-4 border-t border-slate-100">
+                              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>
+                              <div className="flex gap-3">
+                                <input 
+                                  type="number" 
+                                  value={srEditingPrice} 
+                                  onChange={e => setSrEditingPrice(e.target.value)} 
+                                  className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all disabled:opacity-50" 
+                                  placeholder="0.00" 
+                                  disabled={srSelectedRequest.invoiceSent}
+                                />
+                                <div className="flex flex-col gap-2">
+                                  <button 
+                                    onClick={srHandleSave} 
+                                    disabled={srIsUpdatingPrice || srSelectedRequest.invoiceSent} 
+                                    className="bg-slate-900 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                                  >
+                                    <Save className="w-4 h-4" />{t('admin.service_requests.save_changes')}
                                   </button>
-                                </div>
-                              )}
-
-                              {srSelectedRequest.invoiceSent && (
-                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                  <span className="text-xs font-black text-slate-700">✓ {t('legal.invoice.sent')} — {srSelectedRequest.invoicePrice?.toLocaleString('ar-SA')} ريال</span>
-                                  {srSelectedRequest.clientDecision && srSelectedRequest.clientDecision !== 'pending' && (
-                                    <span className={`text-[10px] font-black px-3 py-1 rounded-full bg-slate-100 text-slate-700`}>
-                                      {srSelectedRequest.clientDecision === 'accepted' ? `✓ ${t('legal.decision.accepted')}` : `✗ ${t('legal.decision.rejected')}`}
-                                    </span>
+                                  {(!srSelectedRequest.adminAccepted && ['postPurchase','other'].includes(srSelectedRequest.category)) && (
+                                    <button onClick={async () => {
+                                      if (!token || !srSelectedRequest) return;
+                                      setSrIsAccepting(true);
+                                      try {
+                                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${srSelectedRequest.id}/accept`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+                                        if (res.ok) { srFetchRequests(); setSrIsDetailsOpen(false); }
+                                      } catch (e) { console.error(e); } finally { setSrIsAccepting(false); }
+                                    }} disabled={srIsAccepting} className="bg-slate-500 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-600 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap">
+                                      {srIsAccepting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                                      {t('admin.service_requests.accept_forward')}
+                                    </button>
                                   )}
                                 </div>
-                              )}
+                              </div>
                             </div>
 
-                            {/* ── Start Chat Button ──────────────────────────── */}
-                            <div className="pt-4 border-t border-slate-100">
-                              <button
-                                onClick={() => srHandleStartChat(srSelectedRequest.id)}
-                                disabled={srIsStartingChat}
-                                className="w-full bg-slate-950 text-white py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-[0.99] disabled:opacity-50"
-                              >
-                                {srIsStartingChat ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
-                                {srSelectedRequest.chatRoomId ? 'فتح المحادثة' : 'بدء محادثة حول هذا الطلب'}
-                              </button>
-                              <p className="text-center text-[9px] font-bold text-slate-400 mt-2 tracking-wider">
-                                المحادثة مرئية للعميل وجميع الأقسام المشاركة في التسعير
-                              </p>
-                            </div>
+                            {/* Legal Invoice Section */}
+                            {srSelectedRequest.category === 'legal' && (
+                              <div className="space-y-4 pt-4 border-t-2 border-black-100">
+                                <div className="flex items-center justify-between">
+                                  <label className="text-[10px] font-black text-black-600 uppercase tracking-widest">⚖️ {t('legal.invoice.sendBtn')}</label>
+                                  {srSelectedRequest.invoiceSent ? (
+                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">✓ {t('legal.invoice.sent')}</span>
+                                  ) : (
+                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">⏳ {t('legal.invoice.notSent')}</span>
+                                  )}
+                                </div>
+                                {srSelectedRequest.clientDecision && srSelectedRequest.clientDecision !== 'pending' && (
+                                  <div className={`p-3 rounded-xl text-[11px] font-black text-center ${srSelectedRequest.clientDecision === 'accepted' ? 'bg-slate-50 text-slate-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                                    {srSelectedRequest.clientDecision === 'accepted' ? `✓ ${t('legal.decision.accepted')}` : `✗ ${t('legal.decision.rejected')}`}
+                                  </div>
+                                )}
+                                {(!srSelectedRequest.invoiceSent) && (
+                                  <div className="flex gap-3">
+                                    <input type="number" value={srInvoicePrice} onChange={e => setSrInvoicePrice(e.target.value)} className="bg-blue-50 border border-blue-200 py-3 px-4 text-sm font-bold w-full outline-none focus:border-blue-500 rounded-xl transition-all" placeholder={t('legal.invoice.price')} min="0" />
+                                    <button onClick={srHandleSendInvoice} disabled={srIsSendingInvoice || !srInvoicePrice} className="bg-blue-600 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap">
+                                      {srIsSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                                      {t('legal.invoice.sendBtn')}
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
 
                             <div className="pt-2 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                               <Calendar className="w-3.5 h-3.5" />
@@ -4429,7 +3963,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                       <Clock className="w-4 h-4 text-slate-400" />
                                       {b.visitDate ? new Date(b.visitDate).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Pending Schedule'}
                                     </div>
-                                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-700">{b.status}</span>
+                                    <span className={`text-xs font-bold px-2 py-1 rounded-md ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : b.status === 'cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>{b.status}</span>
                                   </div>
                                 ))}
                               </div>
@@ -4451,7 +3985,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                     </div>
                                     <div className="text-right">
                                       <p className="font-black text-slate-900">{inv.amount} SAR</p>
-                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">{inv.status}</span>
+                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{inv.status}</span>
                                     </div>
                                   </div>
                                 ))}
@@ -4553,9 +4087,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
     setIsFetchingUsers(true);
     try {
       const res = await usersApi.findAll();
-      // Filter for sub-users if not admin
-      const filtered = user?.role === 'admin' ? res.data : res.data.filter((u: any) => u.parentId === user?.id);
-      setUsers(filtered);
+      setUsers(res.data);
     } catch (error) {
       console.error(error);
       toast.error(t('bm.toast.errorLoad'));
@@ -4565,34 +4097,34 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   };
 
   useEffect(() => {
-    if ((activeLegalTab === 'users' || selectedSection === 'users') && activeUserTab === 'list') {
+    if (activeLegalTab === 'users' && activeUserTab === 'list') {
       fetchUsers();
     }
-  }, [activeLegalTab, selectedSection, activeUserTab]);
+  }, [activeLegalTab, activeUserTab]);
 
   useEffect(() => {
     if (selectedSection === 'properties' && activePropertyTab === 'portfolio') {
       fetchProperties();
     }
-  }, [selectedSection, activePropertyTab, fetchProperties]);
+  }, [selectedSection, activePropertyTab]);
 
   useEffect(() => {
     if (selectedSection === 'properties' && activePropertyTab === 'tenants') {
       fetchTenants();
     }
-  }, [selectedSection, activePropertyTab, fetchTenants]);
+  }, [selectedSection, activePropertyTab]);
 
   useEffect(() => {
      if (selectedSection === 'properties' && activePropertyTab === 'financial') {
         fetchFinancials();
      }
-  }, [selectedSection, activePropertyTab, fetchFinancials]);
+  }, [selectedSection, activePropertyTab]);
 
   useEffect(() => {
      if (selectedSection === 'properties' && activePropertyTab === 'reports') {
         fetchMaintenanceLogs();
      }
-  }, [selectedSection, activePropertyTab, fetchMaintenanceLogs]);
+  }, [selectedSection, activePropertyTab]);
 
   const handleCreateMaintenanceLog = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -4790,7 +4322,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                     <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{t('common.loading')}</p>
                  </div>
              ) : activeFinancialSubTab === 'payments' ? (
-                <>
                 <div className="overflow-x-auto">
                     <table className="w-full text-start">
                         <thead className="bg-slate-50/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
@@ -4815,7 +4346,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                             ) : (
                                 payments
                                 .filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id)
-                                .slice((paymentsPage - 1) * itemsPerPage, paymentsPage * itemsPerPage)
                                 .map(payment => (
                                     <tr key={payment.id} className="hover:bg-slate-50/30 transition-all group">
                                         <td className="p-6 font-black text-slate-900 text-sm">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
@@ -4846,14 +4376,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                         </tbody>
                     </table>
                 </div>
-                <Pagination 
-                    currentPage={paymentsPage}
-                    totalPages={Math.ceil(payments.filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id).length / itemsPerPage)}
-                    onPageChange={setPaymentsPage}
-                    totalItems={payments.filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id).length}
-                    itemsLabel={t('pm.cashflow.schedule')}
-                />
-                </>
              ) : (
                  <div className="p-32 text-center flex flex-col items-center gap-6 animate-in zoom-in duration-500">
                      <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center shadow-inner">
@@ -5057,9 +4579,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
-                                {filteredOrders
-                                    .slice((ordersPage - 1) * itemsPerPage, ordersPage * itemsPerPage)
-                                    .map(order => (
+                                {filteredOrders.map(order => (
                                     <div 
                                         key={order.id} 
                                         className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 cursor-pointer group"
@@ -5150,13 +4670,6 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                         </div>
                                     </div>
                                 ))}
-                                <Pagination 
-                                    currentPage={ordersPage}
-                                    totalPages={Math.ceil(filteredOrders.length / itemsPerPage)}
-                                    onPageChange={setOrdersPage}
-                                    totalItems={filteredOrders.length}
-                                    itemsLabel={t('pm.orders')}
-                                />
                             </div>
                         )}
                     </div>
@@ -5646,7 +5159,7 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                                     {offer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                                 </span>
                                 {incomingBookings.filter(b => b.offerId === offer.id).length > 0 && (
-                                    <span className="absolute top-2 left-2 bg-slate-950 text-white px-2 py-1 rounded text-[10px] font-bold shadow-sm flex items-center gap-1">
+                                    <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold shadow-sm flex items-center gap-1">
                                         <Calendar className="w-3 h-3" />
                                         {incomingBookings.filter(b => b.offerId === offer.id).length}
                                     </span>
@@ -5751,20 +5264,17 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                    <Button className="bg-slate-600 hover:bg-slate-700 text-white" onClick={confirmOfferLocation}>
                        {t('common.save')}
                    </Button>
-                </div>
+               </div>
            </div>
         </div>
     );
   };
 
   const renderMainContent = () => {
-    if (selectedSection === "dashboard") {
-      return renderDashboard();
-    }
     if (selectedSection === "orders") {
       return renderOrdersSection();
     }
-    if (selectedSection === "finance") {
+    if (selectedSection === "financial") {
       return <FinancialPage />;
     }
     if (selectedSection === "marketing") {
@@ -6116,113 +5626,74 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
      return renderOffersSection();
   };
 
-  const closeSidebarOnMobile = () => {
-    if (typeof window === "undefined") return;
-    if (window.innerWidth < 1024) setIsSidebarOpen(false);
-  };
-
-  const departmentSwitchItems = [
-    { id: "marketing", label: "إدارة التسويق", labelEn: "MARKETING DEPT.", icon: Megaphone, href: "/internal/marketing?view=dashboard" },
-    { id: "finance", label: "الإدارة المالية", labelEn: "FINANCE DEPT.", icon: Wallet, href: "/internal/finance?view=dashboard" },
-    { id: "legal", label: "الإدارة القانونية", labelEn: "LEGAL DEPT.", icon: Scale, href: "/internal/legal?view=dashboard" },
-    { id: "employees", label: "إدارة الموظفين", labelEn: "EMPLOYEES DEPT.", icon: User, href: "/internal/employees?view=dashboard" },
-  ].filter((item) => sidebarItems.some((sidebarItem) => sidebarItem.id === item.id));
-
-  const primaryNavItems = [
-    { id: "dashboard", label: "الإحصاءات", icon: LayoutDashboard, onClick: () => setSelectedSection("dashboard") },
-    { id: "chat", label: "الدردشة", icon: MessageSquare, onClick: () => router.push("/chat") },
-    { id: "requests", label: "طلبات الخدمات", icon: MessageSquare, onClick: () => router.push("/internal/properties?view=requests") },
-  ];
-
-  const propertyNavItems = [
-    { id: "properties", label: "إدارة المباني", icon: Building2, onClick: () => setSelectedSection("properties") },
-    { id: "offers", label: "العروض", icon: Building2, onClick: () => setSelectedSection("offers") },
-    { id: "orders", label: "الطلبات", icon: Building2, onClick: () => setSelectedSection("orders") },
-  ];
-
-  const activeHeaderLabel =
-    primaryNavItems.find((item) => item.id === selectedSection)?.label ||
-    propertyNavItems.find((item) => item.id === selectedSection)?.label ||
-    "إدارة المباني";
-
-  if (!isOpen) {
-    return <ComingSoonOverlay sectionName={t('action.propertyManagement') || 'إدارة العقارات'} message={message} isAdmin={isAdmin} />;
-  }
-
-  if (!embedded) {
+  // ─── Subscription guard: block access if inactive ─────────────────────
+  const isRenewSubscriptionPage = pathname === '/internal/renew-subscription';
+  if (!isAdmin && subStatus && !subStatus.active && !isRenewSubscriptionPage) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-600" />
-      </div>
-    );
-  }
-
-  if (embedded) {
-    return (
-      <>
-        <AddPropertyWizard
-          isOpen={showNewPropertyModal}
-          onClose={() => setShowNewPropertyModal(false)}
-          onSubmit={async (data) => {
-            setIsCreatingProperty(true);
-            try {
-              await propertiesApi.create(data);
-              toast.success(t('bm.toast.successProp'));
-              setShowNewPropertyModal(false);
-              fetchProperties();
-            } catch (error) {
-              console.error(error);
-              toast.error(t('bm.toast.errorProp'));
-            } finally {
-              setIsCreatingProperty(false);
-            }
-          }}
-          loading={isCreatingProperty}
-        />
-        {showNewTenantModal && renderNewTenantModal()}
-
-        <div className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          {renderMainContent()}
-        </div>
-
-        <PropertyDetailsModal
-          isOpen={showPropertyDetails}
-          onClose={() => setShowPropertyDetails(false)}
-          property={selectedProperty}
-          onUpdate={fetchProperties}
-        />
-        <OrderDetailsModal
-          isOpen={isOrderModalOpen}
-          onClose={() => setIsOrderModalOpen(false)}
-          orderId={selectedOrder?.id || null}
-        />
-        <TenantDetailsModal
-          isOpen={showTenantDetails}
-          onClose={() => setShowTenantDetails(false)}
-          tenant={selectedTenant}
-          leases={leases}
-          payments={payments}
-        />
-        {renderNewMaintenanceModal()}
-        {renderOfferMapModal()}
-      </>
+      <Dialog open={true} onOpenChange={() => {}}>
+        <DialogContent className="max-w-lg">
+          <div className="px-6 pt-6 pb-5">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-slate-950">
+                {language === 'ar' ? 'انتهى اشتراكك' : 'Subscription inactive'}
+              </DialogTitle>
+              <DialogDescription>
+                {language === 'ar'
+                  ? 'لا يمكن الوصول إلى الخدمات قبل تفعيل الاشتراك. اختر باقة جاهزة أو اشتراكًا مخصصًا.'
+                  : 'You need an active subscription to continue. Choose a package or create a custom subscription.'}
+              </DialogDescription>
+            </DialogHeader>
+            {subStatus.subscription && (
+              <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-600">
+                {language === 'ar'
+                  ? `آخر اشتراك انتهى في: ${new Date(subStatus.subscription.endDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}`
+                  : `Last subscription ended on: ${new Date(subStatus.subscription.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`}
+              </div>
+            )}
+          </div>
+          <DialogFooter className="px-6 pb-6 pt-0 flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 rounded-2xl border-slate-200 px-5 font-bold"
+              onClick={() => router.push('/subscriptions/new')}
+            >
+              <CreditCard className="h-4 w-4 mr-2" />
+              {language === 'ar' ? 'اشتراك مخصص' : 'Custom subscription'}
+            </Button>
+            <Button
+              type="button"
+              className="h-11 rounded-2xl px-5 font-bold"
+              onClick={() => router.push('/internal/renew-subscription')}
+            >
+              {language === 'ar' ? 'تجديد الاشتراك' : 'Renew subscription'}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-11 rounded-2xl px-5 font-bold text-slate-500"
+              onClick={() => router.push('/details')}
+            >
+              {language === 'ar' ? 'العودة للرئيسية' : 'Back to home'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 
   return (
     <>
-      {!embedded && (
-        <Toaster
-          toastOptions={{
-            duration: 4000,
-            position: "top-center",
-            style: {
-              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              fontSize: "14px",
-            },
-          }}
-        />
-      )}
+      <Toaster
+        toastOptions={{
+          duration: 4000,
+          position: "top-center",
+          style: {
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            fontSize: "14px",
+          },
+        }}
+      />
 
       <AddPropertyWizard
         isOpen={showNewPropertyModal}
@@ -6244,186 +5715,162 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
         loading={isCreatingProperty}
       />
       {showNewTenantModal && renderNewTenantModal()}
-      <div className="flex h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed top-4 right-4 z-50 p-2 bg-slate-900 text-white rounded-lg lg:hidden shadow-sm shadow-black/20"
+
+
+
+
+      <div className="flex h-screen overflow-hidden bg-slate-50/50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        {/* Fixed Sidebar - PREMIUM GLASSMORPHISM */}
+        <motion.div 
+          initial={{ x: language === 'ar' ? 100 : -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+          className="fixed top-0 right-0 h-screen w-72 lg:w-80 p-6 z-20"
         >
-          {isSidebarOpen ? <CloseIcon className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-
-        {isSidebarOpen && (
-          <button
-            aria-label="Close sidebar"
-            className="fixed inset-0 z-30 bg-black/30 lg:hidden"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-
-        <aside
-          className={`${isSidebarOpen ? "w-64" : "w-20"} fixed right-0 lg:static inset-y-0 z-40 bg-slate-950 text-white transition-all duration-300 ease-in-out flex flex-col shadow-xl shadow-black/20 lg:shadow-none`}
-        >
-          <div className="p-5 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center flex-shrink-0 shadow-lg">
-                <Building2 className="w-5 h-5 text-white" />
-              </div>
-              {isSidebarOpen && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                  <p className="font-black text-sm tracking-tight leading-tight">إدارة الاملاك</p>
-                  <p className="text-white/30 text-[9px] font-black uppercase tracking-widest">PROPERTIES DEPT.</p>
-                </motion.div>
-              )}
-            </div>
-          </div>
-
-          {isSidebarOpen && departmentSwitchItems.length > 0 && (
-            <div className="px-3 py-4 border-b border-white/5 space-y-2">
-              <p className="px-3 text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">تبديل الإدارة</p>
-              <div className="grid grid-cols-1 gap-3">
-                {departmentSwitchItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => router.push(item.href)}
-                      className="relative w-full overflow-hidden rounded-[2.25rem] transition-all duration-200 group shadow-[0_10px_26px_rgba(15,23,42,0.16)] ring-1 bg-white ring-slate-200 hover:shadow-[0_12px_30px_rgba(15,23,42,0.18)]"
-                    >
-                      <div className="pointer-events-none absolute inset-0 rounded-[2.25rem] ring-1 ring-black/5" />
-                      <div className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center">
-                        <ArrowRight className={`w-6 h-6 text-slate-300 ${language === 'ar' ? 'rotate-180' : ''}`} />
-                      </div>
-                      <div className="flex items-center justify-between gap-4 px-6 py-6 pr-24 pl-24">
-                        <div className="min-w-0 text-right">
-                          <div className="text-[15px] font-black text-slate-700 truncate">{item.label}</div>
-                          <div className="text-[11px] font-bold text-slate-400 mt-1 truncate">{item.labelEn}</div>
-                        </div>
-                      </div>
-                      <div className="absolute right-5 top-1/2 -translate-y-1/2 w-20 h-20 rounded-[1.75rem] bg-slate-50 border border-slate-200 shadow-[0_10px_20px_rgba(15,23,42,0.10)] flex items-center justify-center">
-                        <Icon className="w-9 h-9 text-slate-900" />
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-            {primaryNavItems.map((item) => {
-              const isActive = selectedSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    item.onClick();
-                    if (item.id !== "dashboard") closeSidebarOnMobile();
-                  }}
-                  className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150 group border-r-2 ${
-                    isActive
-                      ? "bg-white/10 text-white border-white/70"
-                      : "text-white/70 hover:text-white hover:bg-white/5 border-transparent hover:border-white/30"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
-                    isActive ? "bg-white text-slate-950 border-white/20" : "bg-white/5 border-white/10 group-hover:bg-white/10"
-                  }`}>
-                    <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-white/80"}`} />
-                  </div>
-                  {isSidebarOpen && <span className="text-[12px] font-black tracking-tight">{item.label}</span>}
-                </button>
-              );
-            })}
-
-            <div className="my-4 h-px bg-white/5" />
-
-            {propertyNavItems.map((item) => {
-              const isActive = selectedSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    item.onClick();
-                    closeSidebarOnMobile();
-                  }}
-                  className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150 group border-r-2 ${
-                    isActive
-                      ? "bg-white/10 text-white border-white/70"
-                      : "text-white/70 hover:text-white hover:bg-white/5 border-transparent hover:border-white/30"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
-                    isActive ? "bg-white text-slate-950 border-white/20" : "bg-white/5 border-white/10 group-hover:bg-white/10"
-                  }`}>
-                    <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-white/80"}`} />
-                  </div>
-                  {isSidebarOpen && <span className="text-[12px] font-black tracking-tight">{item.label}</span>}
-                </button>
-              );
-            })}
-          </nav>
-
-          <div className="p-4 border-t border-white/5 space-y-2">
-            <button
-              onClick={logout}
-              className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-white/70 hover:text-white hover:bg-red-500/10 transition-colors border-r-2 border-transparent hover:border-red-300/60 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
-                <LogOut className="w-4 h-4 text-white/80 group-hover:rotate-12 transition-transform" />
-              </div>
-              {isSidebarOpen && <span className="text-[12px] font-black tracking-tight">تسجيل الخروج</span>}
-            </button>
-          </div>
-        </aside>
-
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 shrink-0">
-            <div className="flex items-center gap-3">
-              <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-slate-100 transition-colors">
-                <Menu className="w-4 h-4 text-slate-400" />
-              </button>
-              <div className="h-4 w-px bg-slate-200" />
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
-                  <Building2 className="w-4 h-4 text-slate-700 shrink-0" />
-                  <span className="text-[12px] font-black text-slate-900 truncate">إدارة الاملاك</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">DEPT</span>
+          <div className="bg-white/90 backdrop-blur-3xl p-6 h-full rounded-[2rem] border border-white/50 shadow-2xl flex flex-col gap-6">
+            <div className="space-y-6">
+              <motion.button 
+                whileHover={{ x: language === 'ar' ? -5 : 5 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleBack}
+                className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors bg-slate-50/50 px-5 py-3 rounded-2xl w-full border border-slate-100/50"
+              >
+                <div className={`transform ${language === 'en' ? 'rotate-180' : ''}`}>
+                   <ArrowRight className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
                 </div>
-                <div className="hidden sm:flex items-center h-9 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black">
-                  {activeHeaderLabel}
+                <span className="font-bold text-[11px] uppercase tracking-widest">{t('wallet.backToHome')}</span>
+              </motion.button>
+              <div className="px-2">
+                <h1 className="text-xl font-black text-slate-900 tracking-tighter mb-1">{t('bm.sidebar.title')}</h1>
+                <div className="w-8 h-1 bg-slate-900 rounded-full" />
+              </div>
+            </div>
+
+            <nav className="flex flex-col gap-4 flex-1 overflow-y-auto pr-1 hide-scrollbar">
+              {sidebarItems.map((item, index) => (
+                <motion.button
+                  key={item.id}
+                  initial={{ opacity: 0, x: language === 'ar' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + (index * 0.1) }}
+                  whileHover={{ x: language === 'ar' ? -8 : 8 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                        setSelectedSection(item.id);
+                        if (item.id === "legal") {
+                          setActiveLegalTab("dashboard");
+                        }
+                  }}
+                  className={`
+                    group relative p-3 lg:p-4 bg-white border rounded-[1.5rem] 
+                    transition-all duration-700 flex items-center gap-3 lg:gap-4 text-start
+                    ${selectedSection === item.id 
+                      ? 'border-slate-900 bg-slate-50 shadow-xl shadow-slate-200/50 ring-2 ring-slate-900/5' 
+                      : 'border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-lg'}
+                  `}
+                >
+                  {/* Icon Container - MORE COMPACT */}
+                  <div className={`
+                    w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center rounded-[1rem] shadow-lg transition-all duration-700
+                    ${selectedSection === item.id 
+                      ? 'bg-slate-900 scale-105 rotate-3 shadow-slate-900/40' 
+                      : 'bg-slate-100 group-hover:bg-slate-200 group-hover:scale-105 group-hover:-rotate-2'}
+                  `}>
+                    {item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt={item.label} 
+                          className={`
+                            h-6 w-6 lg:h-7 lg:w-7 object-contain transition-all duration-700
+                            ${selectedSection === item.id ? 'brightness-0 invert' : 'brightness-0'}
+                          `} 
+                        />
+                    ) : (
+                        <item.icon className={`h-6 w-6 lg:h-7 lg:w-7 transition-all duration-700 ${selectedSection === item.id ? 'text-white' : 'text-slate-900'}`} />
+                    )}
+                  </div>
+                  
+                  {/* Text Content */}
+                  <div className="flex-1 space-y-1 text-start">
+                    <h3 className={`font-black text-xs lg:text-xs tracking-tight transition-colors duration-500 ${selectedSection === item.id ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'}`}>{item.label}</h3>
+                    {selectedSection === item.id && (
+                        <motion.p 
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-[10px] text-slate-400 font-bold leading-tight"
+                        >
+                          {item?.id === 'users' ? 'إدارة الموظفين والمناديب' : t('common.active')}
+                        </motion.p>
+                    )}
+                  </div>
+
+                  {/* Active Indicator Line */}
+                  {selectedSection === item.id && (
+                    <motion.div 
+                      layoutId="active-indicator"
+                      className="absolute right-0 w-2 h-16 bg-slate-900 rounded-l-full"
+                    />
+                  )}
+                  <ArrowRight className={`w-6 h-6 transition-all duration-500 ${selectedSection === item.id ? 'text-slate-900 translate-x-1' : 'text-slate-200 group-hover:text-slate-400'} ${language === 'ar' ? 'rotate-180 group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
+                </motion.button>
+              ))}
+            </nav>
+
+            {/* Sidebar Footer: Subscription badge for non-admins */}
+            {!isAdmin && subStatus && (
+              <div className={`mt-2 rounded-2xl border px-4 py-3 flex items-center gap-3 transition-all ${
+                subStatus.noExpiry
+                  ? 'bg-slate-50 border-slate-100'
+                  : subStatus.daysLeft <= 7
+                  ? 'bg-red-50 border-red-200 animate-pulse'
+                  : 'bg-slate-50 border-slate-100'
+              }`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">
+                    {language === 'ar' ? 'الاشتراك' : 'Subscription'}
+                  </p>
+                  <p className={`text-[11px] font-black truncate ${
+                    subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'text-red-600' : 'text-slate-700'
+                  }`}>
+                    {subStatus.noExpiry
+                      ? (language === 'ar' ? 'غير محدود' : 'Open-ended')
+                      : subStatus.daysLeft <= 0
+                      ? (language === 'ar' ? 'منتهي' : 'Expired')
+                      : language === 'ar'
+                      ? `${subStatus.daysLeft} يوم متبقي`
+                      : `${subStatus.daysLeft} days left`}
+                  </p>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <NotificationBell />
-              <div className="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center text-white text-[10px] font-black">
-                {user?.firstName?.[0]}
-              </div>
-            </div>
-          </header>
-
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-[1600px] mx-auto py-8 px-6 lg:px-8">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selectedSection}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -30 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full max-w-7xl mx-auto"
-                >
-                  <div className="mt-8">
-                    {renderMainContent()}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+            )}
           </div>
-        </main>
+        </motion.div>
+
+        {/* Main Workspace - Adjusted for sidebar */}
+        <div className="flex-1 mr-96 lg:mr-[28rem] relative overflow-hidden">
+          <main className="h-full overflow-y-auto overflow-x-hidden p-8 lg:p-12">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedSection}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full max-w-7xl mx-auto"
+              >
+       
+                <div className="mt-8">
+                  {renderMainContent()}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
 
       {/* Modals moved to top level */}
@@ -6501,19 +5948,9 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                         {t("bm.users.status")}
                       <select
                         value={selectedServiceRequest.status}
-                        onChange={(e) => handleUpdateSrStatus(e.target.value)}
                         className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
                       >
-                        {[
-                          { id: "pending", labelKey: "bm.status.pending" },
-                          { id: "in_progress", labelKey: "bm.status.inProgress" },
-                          { id: "completed", labelKey: "bm.status.completed" },
-                          { id: "rejected", labelKey: "bm.status.rejected" },
-                        ].map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {t(s.labelKey)}
-                          </option>
-                        ))}
+                       
                       </select>
                     </div>
                     <div className="space-y-2">
@@ -6522,19 +5959,9 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                       </label>
                       <select
                         value={srEditingDepartment}
-                        onChange={(e) => setSrEditingDepartment(e.target.value)}
                         className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
                       >
-                        {[
-                          { id: "real_estate", labelKey: "admin.trans.dept.real_estate" },
-                          { id: "legal", labelKey: "admin.trans.dept.legal" },
-                          { id: "marketing", labelKey: "admin.trans.dept.marketing" },
-                          { id: "finance", labelKey: "admin.trans.dept.finance" },
-                        ].map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {t(d.labelKey)}
-                          </option>
-                        ))}
+                      
                       </select>
                     </div>
                   </div>
@@ -6576,134 +6003,96 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
                       </div>
                     )}
 
-                   {/* Price, Description & Save */}
-                   <div className="space-y-4 pt-4 border-t border-slate-100">
-                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</label>
-                       <Textarea
-                         value={srEditingDescription}
-                         onChange={(e) => setSrEditingDescription(e.target.value)}
-                         className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-medium w-full outline-none focus:border-slate-900 rounded-xl transition-all min-h-[100px]"
-                         placeholder={t("admin.service_requests.description_placeholder")}
-                       />
-                     </div>
-                     
-                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.price")}</label>
-                       <div className="flex gap-3">
-                         <input
-                           type="number"
-                           value={srEditingPrice}
-                           onChange={(e) => setSrEditingPrice(e.target.value)}
-                           className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
-                           placeholder="0.00"
-                         />
-                         <button
-                           onClick={handleSaveSrChanges}
-                           disabled={srIsUpdatingPrice}
-                           className="bg-slate-900 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
-                         >
-                           <Save className="w-4 h-4" />
-                           {t("admin.service_requests.save_changes")}
-                         </button>
-                       </div>
-                     </div>
-                   </div>
-
-                  {/* ── Department Price Contributions ──────────── */}
-                  <div className="space-y-4 pt-4 border-t border-slate-100 text-start">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">💰 أسعار الأقسام</label>
-                      <span className="text-sm font-black text-slate-900">
-                        {t('admin.service_requests.price')}: <span className="text-emerald-600">{selectedServiceRequest.price?.toLocaleString('ar-SA')} ريال</span>
-                      </span>
+                  {selectedServiceRequest.description && (
+                    <div className="space-y-1 pt-2 border-t border-slate-100">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</p>
+                      <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl">{selectedServiceRequest.description}</p>
                     </div>
+                  )}
 
-                    {/* Existing dept price breakdown */}
-                    {selectedServiceRequest.departmentPrices && Object.keys(selectedServiceRequest.departmentPrices).length > 0 && (
-                      <div className="space-y-2">
-                        {Object.entries(selectedServiceRequest.departmentPrices).map(([dept, entry]: [string, any]) => (
-                          <div key={dept} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <div>
-                              <span className="text-xs font-black text-slate-700">{t(`admin.trans.dept.${dept}`) || dept}</span>
-                              {entry.note && <p className="text-[10px] text-slate-400 mt-0.5">{entry.note}</p>}
-                            </div>
-                            <span className="text-sm font-black text-slate-900">{entry.price?.toLocaleString('ar-SA')} ريال</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Add my department's price — only for staff (not viewer/user) */}
-                    {user?.role !== 'viewer' && user?.role !== 'user' && !selectedServiceRequest.invoiceSent && (
-                      <div className="space-y-3 p-4 bg-blue-50/60 rounded-2xl border border-blue-100">
-                        <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">إضافة سعر قسمك</p>
-                        <div className="flex gap-3">
-                          <input
-                            type="number"
-                            value={srDeptPrice}
-                            onChange={e => setSrDeptPrice(e.target.value)}
-                            className="bg-white border border-blue-200 py-2.5 px-4 text-sm font-bold w-full outline-none focus:border-blue-500 rounded-xl transition-all"
-                            placeholder="السعر (ريال)"
-                            min="0"
-                          />
-                          <button
-                            onClick={handleAddDeptPrice}
-                            disabled={srIsAddingDeptPrice || !srDeptPrice}
-                            className="bg-blue-600 text-white py-2.5 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap"
-                          >
-                            {srIsAddingDeptPrice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                            حفظ سعري
-                          </button>
-                        </div>
-                        <input
-                          type="text"
-                          value={srDeptNote}
-                          onChange={e => setSrDeptNote(e.target.value)}
-                          className="bg-white border border-slate-100 py-2 px-4 text-xs font-bold w-full outline-none focus:border-slate-400 rounded-lg transition-all"
-                          placeholder="ملاحظة (اختياري)"
-                        />
-                      </div>
-                    )}
-
-                    {/* Send Invoice — admin/staff only */}
-                    {user?.role !== 'viewer' && user?.role !== 'user' && !selectedServiceRequest.invoiceSent && (
-                      <div className="flex gap-3 pt-2">
-                        <input type="number" value={invoicePrice} onChange={e => setInvoicePrice(e.target.value)} className="bg-slate-50 border border-slate-200 py-2.5 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all" placeholder="سعر الفاتورة النهائي (ريال)" min="0" />
-                        <button onClick={legalHandleSendInvoice} disabled={isSendingInvoice || !invoicePrice} className="bg-slate-900 text-white py-2.5 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg active:scale-95 disabled:opacity-50 whitespace-nowrap">
-                          {isSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                          {t('legal.invoice.sendBtn')}
-                        </button>
-                      </div>
-                    )}
-
-                    {selectedServiceRequest.invoiceSent && (
-                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-xs font-black text-slate-700">✓ {t('legal.invoice.sent')} — {selectedServiceRequest.invoicePrice?.toLocaleString('ar-SA')} ريال</span>
-                        {selectedServiceRequest.clientDecision && selectedServiceRequest.clientDecision !== 'pending' && (
-                          <span className={`text-[10px] font-black px-3 py-1 rounded-full ${selectedServiceRequest.clientDecision === 'accepted' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'}`}>
-                            {selectedServiceRequest.clientDecision === 'accepted' ? `✓ ${t('legal.decision.accepted')}` : `✗ ${t('legal.decision.rejected')}`}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                  {/* Price & Save */}
+                  <div className="space-y-3 pt-4 border-t border-slate-100">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.price")}</label>
+                    <div className="flex gap-3">
+                      <input
+                        type="number"
+                        value={srEditingPrice}
+                        onChange={(e) => setSrEditingPrice(e.target.value)}
+                        className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                        placeholder="0.00"
+                      />
+                      <button
+                        onClick={handleSaveSrChanges}
+                        disabled={srIsUpdatingPrice}
+                        className="bg-slate-900 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                      >
+                        <Save className="w-4 h-4" />
+                        {t("admin.service_requests.save_changes")}
+                      </button>
+                    </div>
                   </div>
 
-                  {/* ── Start Chat Button ──────────────────────────── */}
-                  <div className="pt-4 border-t border-slate-100 text-center">
-                    <button
-                      onClick={() => handleStartChat(selectedServiceRequest.id)}
-                      disabled={srIsStartingChat}
-                      className="w-full bg-gradient-to-r from-slate-900 to-slate-700 text-white py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest hover:from-slate-800 hover:to-slate-600 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-[0.99] disabled:opacity-50"
-                    >
-                      {srIsStartingChat ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
-                      {selectedServiceRequest.chatRoomId ? 'فتح المحادثة' : 'بدء محادثة حول هذا الطلب'}
-                    </button>
-                    <p className="text-center text-[9px] font-bold text-slate-400 mt-2 tracking-wider">
-                      المحادثة مرئية للعميل وجميع الأقسام المشاركة في التسعير
-                    </p>
-                  </div>
+                  {/* Legal Invoice Section */}
+                  {selectedServiceRequest.category === "legal" && (
+                    <div className="space-y-4 pt-4 border-t-2 border-blue-100">
+                       <div className="flex items-center justify-between">
+                         <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">⚖️ {t("legal.invoice.sendBtn")}</label>
+                         {selectedServiceRequest.invoiceSent ? (
+                           <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full">✓ {t("legal.invoice.sent")}</span>
+                         ) : (
+                           <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">⏳ {t("legal.invoice.notSent")}</span>
+                         )}
+                       </div>
 
+                       {selectedServiceRequest.clientDecision && selectedServiceRequest.clientDecision !== "pending" && (
+                         <div className="space-y-3">
+                           <div className={`p-4 rounded-2xl text-xs font-black flex items-center justify-between ${
+                             selectedServiceRequest.clientDecision === "accepted" ? "bg-slate-50 text-slate-700 border border-slate-100" : "bg-slate-50 text-slate-700 border border-slate-100"
+                           }`}>
+                             <div className="flex items-center gap-2">
+                               {selectedServiceRequest.clientDecision === "accepted" ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                               <span>{selectedServiceRequest.clientDecision === "accepted" ? t("legal.decision.accepted") : t("legal.decision.rejected")}</span>
+                             </div>
+                             {selectedServiceRequest.clientDecision === "accepted" && (
+                               <div className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${selectedServiceRequest.paymentStatus === "paid" ? "bg-slate-500 text-white border-emerald-600" : "bg-rose-500 text-white border-rose-600"}`}>
+                                 <Receipt className="w-3 h-3" />
+                                 <span className="text-[10px] uppercase">{selectedServiceRequest.paymentStatus === "paid" ? t("legal.status.paid") : t("legal.status.unpaid")}</span>
+                               </div>
+                             )}
+                           </div>
+
+                           {selectedServiceRequest.clientDecision === "accepted" && selectedServiceRequest.paymentStatus !== "paid" && (
+                             <Button
+                               onClick={async () => {
+                                 try {
+                                   const res = await api.put(`/service-requests/${selectedServiceRequest.id}/mark-paid`);
+                                   if (res.data) {
+                                     toast.success(t("legal.action.markPaidSuccess"));
+                                     setSelectedServiceRequest(res.data);
+                                     loadAllServices();
+                                   }
+                                 } catch (err) { toast.error(t("legal.action.markPaidError")); }
+                               }}
+                               className="w-full h-11 bg-slate-600 text-white hover:bg-slate-700 rounded-xl font-black text-xs gap-2 shadow-lg shadow-slate-100"
+                             >
+                               <CheckCircle2 className="w-4 h-4" />
+                                     {t("legal.action.markPaid")}
+                             </Button>
+                           )}
+                         </div>
+                       )}
+
+                       {!selectedServiceRequest.invoiceSent && (
+                         <div className="flex gap-3">
+                           <input type="number" value={invoicePrice} onChange={(e) => setInvoicePrice(e.target.value)} placeholder={t("legal.invoice.price")} className="bg-blue-50 border border-blue-200 py-3 px-4 text-sm font-bold w-full outline-none focus:border-blue-500 rounded-xl transition-all" />
+                           <button onClick={legalHandleSendInvoice} disabled={isSendingInvoice || !invoicePrice} className="bg-blue-600 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap">
+                             {isSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                             {t("legal.invoice.sendBtn")}
+                           </button>
+                         </div>
+                       )}
+                    </div>
+                  )}
 
                   <div className="pt-2 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                     <Calendar className="w-3.5 h-3.5" />
@@ -6774,14 +6163,14 @@ function BuildingManagementContent({ embedded = false }: { embedded?: boolean })
   );
 }
 
-export default function BuildingManagement({ embedded = false }: { embedded?: boolean } = {}) {
+export default function BuildingManagement() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-slate-600" />
       </div>
     }>
-      <BuildingManagementContent embedded={embedded} />
+      <BuildingManagementContent />
     </Suspense>
   );
 } 

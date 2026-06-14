@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, CreditCard, Loader2, Shield, Wallet } from "lucide-react";
+import { CheckCircle2, CreditCard, Eye, Loader2, Shield, Wallet } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { subscriptionsApi } from "@/lib/api";
+import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
 
-type DeptSlug = "properties" | "finance" | "employees";
+type DeptSlug = "properties" | "offers" | "orders" | "finance" | "employees";
 
 interface ManagementPackage {
   id: string;
@@ -36,14 +37,26 @@ interface SubscriptionRecord {
 
 const DEPT_TO_PACKAGE_ADMIN: Record<DeptSlug, string> = {
   properties: "admin.dept.real_estate",
+  offers: "admin.dept.offers",
+  orders: "admin.dept.orders",
   finance: "admin.dept.finance",
   employees: "admin.dept.hr",
 };
 
 const DEPT_LABELS: Record<DeptSlug, string> = {
   properties: "إدارة الاشتراكات",
+  offers: "اشتراكات إدارة العروض",
+  orders: "اشتراكات إدارة الطلبات",
   finance: "اشتراكات الإدارة المالية",
   employees: "اشتراكات إدارة الموظفين",
+};
+
+const DEPT_TO_PREVIEW: Record<DeptSlug, PreviewDepartmentKey> = {
+  properties: "properties",
+  offers: "offers",
+  orders: "orders",
+  finance: "finance",
+  employees: "employees",
 };
 
 export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: DeptSlug }) {
@@ -52,6 +65,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState({
     packageId: "",
     subscriptionType: "شهري",
@@ -135,15 +149,25 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
               {DEPT_LABELS[deptSlug]}
             </div>
             <h1 className="text-2xl font-black text-slate-950">الباقات المتاحة</h1>
-            <p className="text-sm font-bold text-slate-500">اختر باقة الإدارة ثم أكمل الدفع من المحفظة.</p>
+            <p className="text-sm font-bold text-slate-500">اختر باقة الإدارة ثم أكمل الدفع من المحفظة، ويمكنك استعراض خصائص القسم بدون إنشاء أي بيانات.</p>
           </div>
-          <button
-            onClick={() => router.push("/wallet")}
-            className="h-11 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors text-sm font-black flex items-center gap-2"
-          >
-            <Wallet className="w-4 h-4" />
-            المحفظة
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              className="h-11 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors text-sm font-black flex items-center gap-2"
+            >
+              <Eye className="w-4 h-4" />
+              معاينة القسم
+            </button>
+            <button
+              onClick={() => router.push("/wallet")}
+              className="h-11 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors text-sm font-black flex items-center gap-2"
+            >
+              <Wallet className="w-4 h-4" />
+              المحفظة
+            </button>
+          </div>
         </div>
       </div>
 
@@ -287,6 +311,12 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
           </div>
         )}
       </div>
+
+      <DepartmentFeaturePreviewDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        initialDepartment={DEPT_TO_PREVIEW[deptSlug]}
+      />
     </div>
   );
 }

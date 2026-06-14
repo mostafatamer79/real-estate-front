@@ -152,12 +152,16 @@ export default function DepartmentDashboard() {
     const canAccessDept = parsed.role === 'admin' || 
                          departments.includes(dept) || 
                          (isFinance && departments.includes('financial')) ||
+                         (dept === 'properties' && (departments.includes('offers') || departments.includes('orders'))) ||
                          (perm && perm !== 'none') ||
                          (permAlias && permAlias !== 'none') ||
+                         (dept === 'properties' && parsed.departmentPermissions?.offers && parsed.departmentPermissions.offers !== 'none') ||
+                         (dept === 'properties' && parsed.departmentPermissions?.orders && parsed.departmentPermissions.orders !== 'none') ||
                          (isFinance && parsed.departmentPermissions?.financial && parsed.departmentPermissions.financial !== 'none');
     
     if (!canAccessDept) {
-      const fallback = departments[0] || 'properties';
+      const firstDepartment = departments[0] || 'properties';
+      const fallback = firstDepartment === 'offers' || firstDepartment === 'orders' ? 'properties' : firstDepartment;
       router.replace(`/internal/${fallback}`);
       return;
     }
@@ -203,9 +207,6 @@ export default function DepartmentDashboard() {
     return <ComingSoonOverlay sectionName={config?.nameAr || "الإدارة الداخلية"} message={settings.moduleMessages?.[dept] || ''} isAdmin={isAdmin} />;
   }
 
-
-
-
   if (!isOpen) {
     return <ComingSoonOverlay sectionName={config?.nameAr || "الإدارة الداخلية"} message={message} isAdmin={isAdmin} />;
   }
@@ -216,9 +217,29 @@ export default function DepartmentDashboard() {
     </div>
   );
 
+  // Internal department workspaces use the full building management surface for
+  // the shared operational modules so the sidebar, nested nav, and transitions
+  // stay identical across /buildingmanagement and /internal.
+  if (dept === 'finance') {
+    const financialTabMap: Record<string, string> = {
+      financial: 'dashboard',
+      dashboard: 'dashboard',
+      transactions: 'transactions',
+      payments: 'payments',
+      expenses: 'expenses',
+      reports: 'reports',
+      settlements: 'settlements',
+      service_requests: 'service_requests',
+    };
+    const financeTab = financialTabMap[searchParams.get('section') || 'financial'] || 'dashboard';
+    return <FinancialPage embedded initialTab={financeTab} />;
+  }
+
+  if (['properties', 'marketing', 'legal', 'employees'].includes(dept)) {
+    return <BuildingManagementPage />;
+  }
+
   if (view !== 'dashboard') {
-    // For department workspaces, reuse the buildingmanagement page inside the internal shell.
-    // It reads `section` from the current URL (searchParams), so keep `section=...` in /internal/<dept>.
     if (view === 'properties' || view === 'employees' || view === 'marketing' || view === 'financial' || view === 'legal') {
       if (view === 'financial') {
         const status = settings.moduleFlags?.finance || 'enabled';
@@ -243,7 +264,6 @@ export default function DepartmentDashboard() {
         return <FinancialPage embedded initialTab={financeTab} />;
       }
 
-      // Module gating (soon/disabled)
       const section = searchParams.get('section') || '';
       const viewToModule: Record<string, string> = {
         properties: section === 'offers' ? 'offers' : section === 'orders' ? 'orders' : 'properties',
@@ -260,7 +280,7 @@ export default function DepartmentDashboard() {
       if (status === 'soon' && !(isAdmin && isPreview)) {
         return <ComingSoonOverlay sectionName={config?.nameAr || "الإدارة الداخلية"} message={settings.moduleMessages?.[moduleKey] || ''} isAdmin={isAdmin} />;
       }
-      return <BuildingManagementPage embedded />;
+      return <BuildingManagementPage />;
     }
     if (view === 'requests') {
       const status = settings.moduleFlags?.service_requests || 'enabled';
@@ -569,7 +589,7 @@ export default function DepartmentDashboard() {
         </div>
       </motion.div>
 
-      {/* Department workspaces live in /buildingmanagement; keep this page for overview + requests only. */}
+      {/* Department workspaces live in /buildingmanagement and /financial inside the internal shell. */}
     </div>
   );
 }

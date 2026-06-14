@@ -33,6 +33,11 @@ export default function VisitRequestsPage() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [visitTypeFilter, setVisitTypeFilter] = useState("all");
+  const [assignmentFilter, setAssignmentFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const fetchRequests = async () => {
     try {
@@ -64,12 +69,25 @@ export default function VisitRequestsPage() {
     }
   };
 
-  const filteredRequests = requests.filter(req => 
-    req.offer?.propertyType?.toLowerCase().includes(search.toLowerCase()) ||
-    req.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-    req.user?.lastName?.toLowerCase().includes(search.toLowerCase()) ||
-    req.id.includes(search)
-  );
+  const filteredRequests = requests.filter(req => {
+    const query = search.trim().toLowerCase();
+    const createdAt = req.createdAt ? new Date(req.createdAt) : null;
+    const matchesSearch = !query ||
+      req.offer?.propertyType?.toLowerCase().includes(query) ||
+      req.offer?.city?.toLowerCase().includes(query) ||
+      req.user?.firstName?.toLowerCase().includes(query) ||
+      req.user?.lastName?.toLowerCase().includes(query) ||
+      req.id?.toLowerCase().includes(query);
+    const matchesStatus = statusFilter === "all" || req.status === statusFilter;
+    const matchesVisitType = visitTypeFilter === "all" || req.visitType === visitTypeFilter;
+    const matchesAssignment =
+      assignmentFilter === "all" ||
+      (assignmentFilter === "assigned" && Boolean(req.agent)) ||
+      (assignmentFilter === "unassigned" && !req.agent);
+    const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+    const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+    return matchesSearch && matchesStatus && matchesVisitType && matchesAssignment && matchesFrom && matchesTo;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -91,7 +109,8 @@ export default function VisitRequestsPage() {
             {t('admin.visits.desc') || "Manage property visit requests"}
           </p>
         </div>
-        <div className="relative">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-6">
+        <div className="relative md:col-span-2">
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
              <input 
                 type="text" 
@@ -100,6 +119,29 @@ export default function VisitRequestsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
              />
+        </div>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+          <option value="all">كل الحالات</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="completed">Completed</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select value={visitTypeFilter} onChange={(e) => setVisitTypeFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+          <option value="all">كل الزيارات</option>
+          <option value="agent">Agent</option>
+          <option value="self">Self</option>
+        </select>
+        <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+          <option value="all">كل التعيينات</option>
+          <option value="assigned">Assigned</option>
+          <option value="unassigned">Unassigned</option>
+        </select>
+        <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setVisitTypeFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-black">
+          مسح
+        </button>
+        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
+        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
         </div>
       </div>
 

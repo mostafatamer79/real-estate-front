@@ -16,12 +16,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical, Send, Mail } from "lucide-react";
 
 type TabKey = "faqs" | "feedback";
 
 export default function AdminCustomerServicePage() {
   const { language, t } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const isRtl = language === "ar";
 
   const [tab, setTab] = useState<TabKey>("faqs");
@@ -285,11 +287,13 @@ export default function AdminCustomerServicePage() {
   };
 
   const resetDefaults = async () => {
-    const ok = window.confirm(
-      isRtl
+    const ok = await confirmDialog({
+      title: isRtl
         ? "سيتم استبدال التصنيفات والأسئلة بالافتراضي. متابعة؟"
         : "This will replace categories and FAQs with defaults. Continue?",
-    );
+      confirmLabel: isRtl ? "متابعة" : "Continue",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+    });
     if (!ok) return;
     await customerServiceFaqApi.resetDefaults();
     await loadCategories();

@@ -14,10 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, ArrowRight, PlusCircle, List, MapPin, Ruler, DollarSign, Calendar } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
   const propertyTypes = [
     { value: "شقة", label: "property.type.apartment" },
@@ -53,6 +54,7 @@ import ComingSoonOverlay from "@/components/ComingSoonOverlay";
   export default function CreateOrderPage() {
     const router = useRouter();
     const { t, language } = useLanguage();
+    const confirmDialog = useConfirmDialog();
     const { isOpen, message, isAdmin } = useSectionGuard('orders');
 
 
@@ -178,7 +180,11 @@ import ComingSoonOverlay from "@/components/ComingSoonOverlay";
         setLoadingMyOrders(true);
         const response = await ordersApi.findMyOrders();
         setMyOrders(response.data);
-      } catch (error) {
+      } catch (error: any) {
+        if (error?.response?.status === 403) {
+          setMyOrders([]);
+          return;
+        }
         console.error("Error fetching my orders:", error);
         toast.error("Failed to load your orders");
       } finally {
@@ -188,7 +194,13 @@ import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 
     const handleDeleteOrder = async (id: string) => {
-        if(!confirm(t('common.confirmDelete'))) return;
+        const ok = await confirmDialog({
+            title: t('common.confirmDelete'),
+            confirmLabel: language === 'ar' ? 'حذف' : 'Delete',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+            destructive: true,
+        });
+        if (!ok) return;
 
         try {
             await ordersApi.delete(id);
@@ -205,7 +217,6 @@ import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
   return (
       <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <Toaster />
         <div className="max-w-3xl mx-auto">
           <Button 
             variant="ghost" 

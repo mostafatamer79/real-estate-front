@@ -11,6 +11,7 @@ import { propertiesApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
 import { Loader2, Plus, Trash2, Home, Building, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
 interface PropertyDetailsModalProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ interface PropertyDetailsModalProps {
 export default function PropertyDetailsModal({ isOpen, onClose, property, onUpdate }: PropertyDetailsModalProps) {
     const { t } = useLanguage();
     const { toast } = useToast();
+    const confirmDialog = useConfirmDialog();
     const [activeTab, setActiveTab] = useState("units");
     const [units, setUnits] = useState<Unit[]>([]);
     const [loadingUnits, setLoadingUnits] = useState(false);
@@ -96,7 +98,13 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
     };
 
     const handleDeleteUnit = async (id: string) => {
-        if(!confirm(t('common.deleteConfirm'))) return;
+        const ok = await confirmDialog({
+            title: t('common.deleteConfirm'),
+            confirmLabel: 'حذف',
+            cancelLabel: 'إلغاء',
+            destructive: true,
+        });
+        if (!ok) return;
         try {
             await propertiesApi.updateUnit(id, { propertyId: property?.id }); // Fallback as delete might not exist, but let's assume we want to remove linkage or we need a real delete endpoint
              // propertiesApi.deleteUnit(id) // If I added it.. I didn't add deleteUnit yet.

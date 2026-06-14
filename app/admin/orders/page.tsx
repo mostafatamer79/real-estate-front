@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Search, 
   MapPin, 
@@ -30,7 +31,8 @@ import {
   Play
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { ordersApi, usersApi, adminApi } from "@/lib/api";
+import api, { ordersApi, usersApi, adminApi } from "@/lib/api";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import {
   Table,
   TableBody,
@@ -50,6 +52,7 @@ import {
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -536,11 +539,17 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 // --- Main Page ---
 
 export default function OrdersPage() {
+  const router = useRouter();
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [assignmentFilter, setAssignmentFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showAssign, setShowAssign] = useState(false);
@@ -565,7 +574,14 @@ export default function OrdersPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذا الطلب؟")) return;
+    const ok = await confirmDialog({
+      title: "هل أنت متأكد من حذف هذا الطلب؟",
+      description: "سيتم حذف الطلب من لوحة الإدارة.",
+      confirmLabel: "حذف الطلب",
+      cancelLabel: "إلغاء",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
         await ordersApi.delete(id);
         toast.success("تم الحذف بنجاح");
@@ -585,22 +601,32 @@ export default function OrdersPage() {
     }
   };
 
-  const filteredOrders = orders.filter(o => 
-    (statusFilter === "all" || o.status === statusFilter) &&
-    (
+  const propertyTypes = Array.from(new Set(orders.map((order) => order.propertyType).filter(Boolean)));
+  const filteredOrders = orders.filter(o => {
+    const createdAt = o.createdAt ? new Date(o.createdAt) : null;
+    const matchesStatus = statusFilter === "all" || o.status === statusFilter;
+    const matchesType = propertyTypeFilter === "all" || o.propertyType === propertyTypeFilter;
+    const matchesAssignment =
+      assignmentFilter === "all" ||
+      (assignmentFilter === "assigned" && Boolean(o.assignedToId || o.assignedTo)) ||
+      (assignmentFilter === "unassigned" && !(o.assignedToId || o.assignedTo));
+    const matchesFrom = !dateFrom || (createdAt && createdAt >= new Date(dateFrom));
+    const matchesTo = !dateTo || (createdAt && createdAt <= new Date(`${dateTo}T23:59:59`));
+    const matchesSearch =
         o.propertyType?.toLowerCase().includes(search.toLowerCase()) ||
         o.city?.toLowerCase().includes(search.toLowerCase()) ||
         o.neighborhood?.toLowerCase().includes(search.toLowerCase()) ||
         o.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-        o.clientName?.toLowerCase().includes(search.toLowerCase())
-    )
-  );
+        o.clientName?.toLowerCase().includes(search.toLowerCase());
+    return matchesStatus && matchesType && matchesAssignment && matchesFrom && matchesTo && matchesSearch;
+  });
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, propertyTypeFilter, assignmentFilter, dateFrom, dateTo]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -652,12 +678,12 @@ export default function OrdersPage() {
 
       {/* Filters & Table */}
       <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="relative w-full md:w-96">
+        <div className="p-6 border-b border-slate-50 grid grid-cols-1 gap-3 md:grid-cols-4 xl:grid-cols-7">
+            <div className="relative w-full md:col-span-2">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-white border-slate-100 focus:border-slate-950" />
             </div>
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-3 w-full md:col-span-2">
                 <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl">
                     {['all', 'pending', 'in_progress', 'completed'].map(s => (
                         <button key={s} onClick={() => setStatusFilter(s)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${statusFilter === s ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -666,6 +692,20 @@ export default function OrdersPage() {
                     ))}
                 </div>
             </div>
+            <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold">
+              <option value="all">كل الأنواع</option>
+              {propertyTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+            </select>
+            <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold">
+              <option value="all">كل التعيينات</option>
+              <option value="assigned">معين</option>
+              <option value="unassigned">غير معين</option>
+            </select>
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
+            <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-black">
+              مسح
+            </button>
         </div>
 
         <div className="overflow-x-auto">

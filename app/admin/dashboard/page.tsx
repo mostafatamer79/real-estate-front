@@ -122,23 +122,6 @@ export default function AdminDashboard() {
         </h1>
       </header>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
-        <div className="flex gap-2 overflow-x-auto">
-          {dashboardNavigation.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex min-w-fit items-center justify-center gap-2 rounded-xl px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all hover:bg-slate-950 hover:text-white"
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-      </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, index) => (

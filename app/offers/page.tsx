@@ -209,7 +209,11 @@ export default function OffersPage() {
       setLoadingBookings(true);
       const res = await bookingsApi.findIncoming();
       setIncomingBookings(res.data);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.response?.status === 403) {
+        setIncomingBookings([]);
+        return;
+      }
       console.error("Failed to fetch incoming bookings:", err);
     } finally {
       setLoadingBookings(false);
@@ -221,7 +225,11 @@ export default function OffersPage() {
       setLoadingBookings(true);
       const res = await bookingsApi.findAll();
       setMyBookings(res.data);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.response?.status === 403) {
+        setMyBookings([]);
+        return;
+      }
       console.error("Failed to fetch my bookings:", err);
     } finally {
       setLoadingBookings(false);

@@ -7,6 +7,9 @@ import { ArrowRight, Ban, BriefcaseBusiness, Calendar, CheckCircle, CreditCard, 
 import { toast } from "sonner";
 import api, { adminSubscriptionsApi, financialApi, usersApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const formatDate = (value: any, locale: string) => {
   if (!value) return "—";
@@ -19,6 +22,7 @@ export default function AdminUserDetailsPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const isRtl = language === "ar";
   const locale = isRtl ? "ar-SA" : "en-US";
 
@@ -44,6 +48,14 @@ export default function AdminUserDetailsPage() {
   const [invoiceForm, setInvoiceForm] = useState({ amount: "", description: "", status: "unpaid", documentUrl: "" });
   const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null);
   const [commissionEdits, setCommissionEdits] = useState<Record<string, { status: string; finalCommissionAmount: string; notes: string; attachmentUrl: string }>>({});
+  const [showSubModal, setShowSubModal] = useState(false);
+  const [subModalConfig, setSubModalConfig] = useState({
+    type: "yearly",
+    customMonths: 12,
+    notes: "",
+  });
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
   const loadUser = async () => {
     setLoading(true);
@@ -152,7 +164,13 @@ export default function AdminUserDetailsPage() {
   };
 
   const deleteInvoice = async (id: string) => {
-    if (!confirm(isRtl ? "حذف هذه الفاتورة؟" : "Delete this invoice?")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "حذف هذه الفاتورة؟" : "Delete this invoice?",
+      confirmLabel: isRtl ? "حذف" : "Delete",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await financialApi.deleteInvoice(id);
@@ -204,7 +222,13 @@ export default function AdminUserDetailsPage() {
   };
 
   const deleteCommission = async (id: string) => {
-    if (!confirm(isRtl ? "حذف هذه العمولة؟" : "Delete this commission?")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "حذف هذه العمولة؟" : "Delete this commission?",
+      confirmLabel: isRtl ? "حذف" : "Delete",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await financialApi.deleteCommission(id);
@@ -218,7 +242,13 @@ export default function AdminUserDetailsPage() {
   };
 
   const removeFile = async (file: any) => {
-    if (!confirm(isRtl ? "إزالة هذا المستند من السجل؟" : "Remove this document from the record?")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "إزالة هذا المستند من السجل؟" : "Remove this document from the record?",
+      confirmLabel: isRtl ? "إزالة" : "Remove",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       if (file.type === "invoice") {
@@ -260,6 +290,18 @@ export default function AdminUserDetailsPage() {
 
   const updateUserActive = async (isActive: boolean) => {
     if (!user) return;
+    const ok = await confirmDialog({
+      title: isActive
+        ? (isRtl ? "تفعيل الحساب؟" : "Activate account?")
+        : (isRtl ? "تقييد الحساب؟" : "Restrict account?"),
+      description: isActive
+        ? (isRtl ? "سيعود المستخدم إلى وضعه الطبيعي وسيتمكن من الدخول." : "The user will regain access to the platform.")
+        : (isRtl ? "سيتم تقييد دخول المستخدم إلى المنصة." : "The user will be restricted from accessing the platform."),
+      confirmLabel: isActive ? (isRtl ? "تفعيل" : "Activate") : (isRtl ? "تقييد" : "Restrict"),
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: !isActive,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await api.put(`/user/${user.id}`, { isActive });
@@ -274,7 +316,13 @@ export default function AdminUserDetailsPage() {
 
   const deleteUser = async () => {
     if (!user) return;
-    if (!confirm(isRtl ? "هل تريد حذف هذا الحساب؟ الحذف الحالي نهائي في الخادم." : "Delete this account? Current backend delete is permanent.")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "هل تريد حذف هذا الحساب؟ الحذف الحالي نهائي في الخادم." : "Delete this account? Current backend delete is permanent.",
+      confirmLabel: isRtl ? "حذف الحساب" : "Delete account",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await api.delete(`/user/${user.id}`);
@@ -287,44 +335,79 @@ export default function AdminUserDetailsPage() {
     }
   };
 
+  const openSubscriptionModal = () => {
+    setSubModalConfig({
+      type: currentSubscription?.noExpiry ? "unlimited" : "yearly",
+      customMonths: 12,
+      notes: "",
+    });
+    setShowSubModal(true);
+  };
+
   const createFreeSubscription = async () => {
-    if (!user) return;
-    setSaving(true);
-    try {
-      await adminSubscriptionsApi.create({
-        userId: user.id,
-        subscriptionType: "مخصص",
-        amount: 0,
-        startDate: new Date().toISOString().split("T")[0],
-        paymentMethod: "نقدي",
-        status: "نشط",
-        noExpiry: true,
-        notes: "اشتراك مجاني من لوحة الإدارة",
-      });
-      toast.success(isRtl ? "تم منح اشتراك مجاني" : "Free subscription granted");
-      await loadUser();
-    } catch {
-      toast.error(isRtl ? "تعذر إنشاء الاشتراك" : "Failed to create subscription");
-    } finally {
-      setSaving(false);
-    }
+    openSubscriptionModal();
   };
 
   const extendSubscription = async () => {
-    if (!currentSubscription?.id) return createFreeSubscription();
+    openSubscriptionModal();
+  };
+
+  const handleSaveSubscription = async () => {
+    if (!user) return;
     setSaving(true);
+    const { type, customMonths, notes } = subModalConfig;
+    
     try {
-      const base = currentSubscription.endDate ? new Date(currentSubscription.endDate) : new Date();
-      base.setFullYear(base.getFullYear() + 1);
-      await adminSubscriptionsApi.update(currentSubscription.id, {
-        endDate: base.toISOString().split("T")[0],
-        status: "نشط",
-        noExpiry: false,
-      });
-      toast.success(isRtl ? "تم تمديد الاشتراك" : "Subscription extended");
+      if (!currentSubscription?.id) {
+        // Create new subscription
+        await adminSubscriptionsApi.create({
+          userId: user.id,
+          subscriptionType: type === "unlimited" ? "مخصص" : (type === "yearly" ? "سنوي" : (type === "monthly" ? "شهري" : "مخصص")),
+          amount: 0,
+          startDate: new Date().toISOString().split("T")[0],
+          paymentMethod: "نقدي",
+          status: "نشط",
+          noExpiry: type === "unlimited",
+          customPeriodMonths: type === "custom" ? customMonths : (type === "unlimited" ? 12 : undefined),
+          notes: notes || (isRtl ? "تفعيل اشتراك من لوحة الإدارة" : "Subscription activated from admin panel"),
+        });
+        toast.success(isRtl ? "تم تفعيل الاشتراك بنجاح" : "Subscription activated successfully");
+      } else {
+        // Extend / Update existing subscription
+        if (type === "unlimited") {
+          await adminSubscriptionsApi.update(currentSubscription.id, {
+            status: "نشط",
+            noExpiry: true,
+            notes: notes || (isRtl ? "تعديل الاشتراك لغير محدود" : "Subscription updated to unlimited"),
+          });
+        } else {
+          // Calculate base date to extend from
+          const base = currentSubscription.endDate ? new Date(currentSubscription.endDate) : new Date();
+          // If the subscription is already expired, extend from today
+          const startDate = base < new Date() ? new Date() : base;
+          const newEndDate = new Date(startDate);
+          
+          if (type === "yearly") {
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+          } else if (type === "monthly") {
+            newEndDate.setMonth(newEndDate.getMonth() + 1);
+          } else if (type === "custom") {
+            newEndDate.setMonth(newEndDate.getMonth() + customMonths);
+          }
+          
+          await adminSubscriptionsApi.update(currentSubscription.id, {
+            endDate: newEndDate.toISOString().split("T")[0],
+            status: "نشط",
+            noExpiry: false,
+            notes: notes || (isRtl ? "تمديد الاشتراك من لوحة الإدارة" : "Subscription extended from admin panel"),
+          });
+        }
+        toast.success(isRtl ? "تم تحديث الاشتراك بنجاح" : "Subscription updated successfully");
+      }
+      setShowSubModal(false);
       await loadUser();
     } catch {
-      toast.error(isRtl ? "تعذر تمديد الاشتراك" : "Failed to extend subscription");
+      toast.error(isRtl ? "تعذر حفظ الاشتراك" : "Failed to save subscription");
     } finally {
       setSaving(false);
     }
@@ -332,10 +415,17 @@ export default function AdminUserDetailsPage() {
 
   const cancelSubscription = async () => {
     if (!currentSubscription?.id) return;
+    setCancelReason("");
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!currentSubscription?.id) return;
     setSaving(true);
     try {
-      await adminSubscriptionsApi.cancel(currentSubscription.id, "إلغاء من صفحة المستخدم");
+      await adminSubscriptionsApi.cancel(currentSubscription.id, cancelReason || "إلغاء من صفحة المستخدم");
       toast.success(isRtl ? "تم إلغاء الاشتراك" : "Subscription cancelled");
+      setShowCancelModal(false);
       await loadUser();
     } catch {
       toast.error(isRtl ? "تعذر إلغاء الاشتراك" : "Failed to cancel subscription");
@@ -379,15 +469,20 @@ export default function AdminUserDetailsPage() {
           <p className="text-xs font-bold text-slate-400">{user.email || user.phone || user.id}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button disabled={saving} onClick={() => updateUserActive(false)} className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[10px] font-black uppercase tracking-widest text-slate-700">
-            <Ban className="h-4 w-4" />
-            {isRtl ? "تقييد الحساب" : "Restrict"}
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => updateUserActive(user.isActive === false)}
+            className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest disabled:opacity-60 ${
+              user.isActive === false
+                ? "bg-slate-950 text-white"
+                : "border border-slate-200 bg-white text-slate-700"
+            }`}
+          >
+            {user.isActive === false ? <CheckCircle className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+            {user.isActive === false ? (isRtl ? "تفعيل الحساب" : "Activate") : (isRtl ? "تقييد الحساب" : "Restrict")}
           </button>
-          <button disabled={saving} onClick={() => updateUserActive(true)} className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white">
-            <CheckCircle className="h-4 w-4" />
-            {isRtl ? "تفعيل الحساب" : "Activate"}
-          </button>
-          <button disabled={saving} onClick={deleteUser} className="inline-flex h-11 items-center gap-2 rounded-xl bg-red-50 px-4 text-[10px] font-black uppercase tracking-widest text-red-600">
+          <button type="button" disabled={saving} onClick={deleteUser} className="inline-flex h-11 items-center gap-2 rounded-xl bg-red-50 px-4 text-[10px] font-black uppercase tracking-widest text-red-600">
             <Trash2 className="h-4 w-4" />
             {isRtl ? "حذف" : "Delete"}
           </button>
@@ -841,6 +936,140 @@ export default function AdminUserDetailsPage() {
           {!orders.length && !bookings.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات" : "No requests"}</div>}
         </div>
       </section>
+
+      {/* Subscription Duration Selector Modal */}
+      <Dialog open={showSubModal} onOpenChange={setShowSubModal}>
+        <DialogContent className="max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black text-slate-950">
+              {isRtl ? "إدارة الاشتراك" : "Manage Subscription"}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 font-bold text-xs mt-1">
+              {isRtl ? "تحديد مدة تفعيل الاشتراك أو تمديده للمستخدم" : "Specify the duration to activate or extend subscription for the user"}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 my-4">
+            {/* Subscription Type Selector */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                {isRtl ? "نوع المدة" : "Duration Type"}
+              </label>
+              <select
+                value={subModalConfig.type}
+                onChange={(e) => setSubModalConfig(prev => ({ ...prev, type: e.target.value }))}
+                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all cursor-pointer"
+              >
+                <option value="yearly">{isRtl ? "سنوي (1 سنة)" : "Yearly (1 Year)"}</option>
+                <option value="monthly">{isRtl ? "شهري (1 شهر)" : "Monthly (1 Month)"}</option>
+                <option value="custom">{isRtl ? "مخصص بالشهور" : "Custom in Months"}</option>
+                <option value="unlimited">{isRtl ? "غير محدود (بدون انتهاء)" : "Unlimited (No expiry)"}</option>
+              </select>
+            </div>
+
+            {/* Custom Period Input */}
+            {subModalConfig.type === "custom" && (
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                  {isRtl ? "عدد الأشهر" : "Number of Months"}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="120"
+                  value={subModalConfig.customMonths}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    setSubModalConfig(prev => ({ ...prev, customMonths: Math.max(1, val) }));
+                  }}
+                  className="w-full h-11 bg-slate-50 border border-slate-100 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                />
+              </div>
+            )}
+
+            {/* Notes */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                {isRtl ? "ملاحظات" : "Notes"}
+              </label>
+              <textarea
+                value={subModalConfig.notes}
+                onChange={(e) => setSubModalConfig(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder={isRtl ? "سبب التفعيل/التمديد..." : "Reason for activation/extension..."}
+                className="w-full h-20 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowSubModal(false)}
+              className="h-11 rounded-2xl font-bold border-slate-200 px-5"
+            >
+              {isRtl ? "إلغاء" : "Cancel"}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSaveSubscription}
+              disabled={saving}
+              className="h-11 rounded-2xl font-black bg-slate-950 text-white hover:bg-black px-6"
+            >
+              {saving ? (isRtl ? "جاري الحفظ..." : "Saving...") : (isRtl ? "حفظ التغييرات" : "Save Changes")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Subscription Cancellation Modal */}
+      <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
+        <DialogContent className="max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black text-slate-950">
+              {isRtl ? "إلغاء الاشتراك" : "Cancel Subscription"}
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 font-bold text-xs mt-1">
+              {isRtl
+                ? "هل أنت متأكد من إلغاء هذا الاشتراك؟ لن يتمكن المستخدم من استخدام الميزات المدفوعة."
+                : "Are you sure you want to cancel this subscription? The user will lose access to paid features."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 my-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                {isRtl ? "سبب الإلغاء:" : "Cancellation Reason:"}
+              </label>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder={isRtl ? "اكتب سبب إلغاء الاشتراك هنا..." : "Type the cancellation reason here..."}
+                className="w-full h-24 bg-slate-50 border border-slate-100 focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowCancelModal(false)}
+              className="h-11 rounded-2xl font-bold border-slate-200 px-5"
+            >
+              {isRtl ? "تراجع" : "Go Back"}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmCancel}
+              disabled={saving}
+              className="h-11 rounded-2xl font-black bg-red-600 text-white hover:bg-red-700 px-6"
+            >
+              {saving ? (isRtl ? "جاري الإلغاء..." : "Cancelling...") : (isRtl ? "إلغاء الاشتراك" : "Cancel Subscription")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

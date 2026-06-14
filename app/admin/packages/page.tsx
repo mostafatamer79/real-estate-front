@@ -8,6 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
 interface ManagementPackage {
   id: string;
@@ -17,25 +18,46 @@ interface ManagementPackage {
   discount: number;
   description: string;
   administrations: string[];
+  departmentPrices?: Record<string, { monthly: number; yearly: number }>;
+  employeeSeatMonthlyPrice?: number;
+  employeeSeatYearlyPrice?: number;
   isActive: boolean;
 }
 
 const AVAILABLE_ADMINISTRATIONS = [
   "admin.dept.real_estate", // Real Estate Management
+  "admin.dept.offers",      // Offers Management
+  "admin.dept.orders",      // Orders Management
   "admin.dept.marketing",   // Marketing Management
   "admin.dept.legal",       // Legal Management
   "admin.dept.finance",     // Financial Management
   "admin.dept.hr"           // HR Management
 ];
 
+const isEmployeeAdministration = (administration: string) => administration === "admin.dept.hr";
+
+const emptyDepartmentPrices = () => AVAILABLE_ADMINISTRATIONS.reduce((acc, administration) => {
+  acc[administration] = { monthly: 0, yearly: 0 };
+  return acc;
+}, {} as Record<string, { monthly: number; yearly: number }>);
+
+const emptyGlobalPricing = () => ({
+  departmentPrices: emptyDepartmentPrices(),
+  employeeSeatMonthlyPrice: 0,
+  employeeSeatYearlyPrice: 0,
+});
+
 export default function AdminPackagesPage() {
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const router = useRouter();
   const isRtl = language === "ar";
   const [packages, setPackages] = useState<ManagementPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<ManagementPackage | null>(null);
+  const [activeTab, setActiveTab] = useState<"packages" | "pricing">("packages");
+  const [globalPricing, setGlobalPricing] = useState(emptyGlobalPricing());
 
   // Form State
   const [formData, setFormData] = useState({
@@ -45,6 +67,9 @@ export default function AdminPackagesPage() {
     discount: "0",
     description: "",
     administrations: [] as string[],
+    departmentPrices: emptyDepartmentPrices(),
+    employeeSeatMonthlyPrice: "",
+    employeeSeatYearlyPrice: "",
     isActive: true
   });
 
@@ -55,7 +80,17 @@ export default function AdminPackagesPage() {
   const fetchPackages = async () => {
     try {
       const response = await api.get('/management-packages');
-      setPackages(response.data);
+      const nextPackages = response.data || [];
+      setPackages(nextPackages);
+      const pricingResponse = await api.get('/subscriptions/department-pricing');
+      setGlobalPricing({
+        ...emptyGlobalPricing(),
+        ...(pricingResponse.data || {}),
+        departmentPrices: {
+          ...emptyDepartmentPrices(),
+          ...(pricingResponse.data?.departmentPrices || {}),
+        },
+      });
     } catch (error) {
       console.error("Error fetching packages:", error);
       toast.error(t('admin.packages.loadError'));
@@ -74,6 +109,9 @@ export default function AdminPackagesPage() {
         discount: pkg.discount.toString(),
         description: pkg.description || "",
         administrations: pkg.administrations || [],
+        departmentPrices: { ...emptyDepartmentPrices(), ...(pkg.departmentPrices || {}) },
+        employeeSeatMonthlyPrice: pkg.employeeSeatMonthlyPrice?.toString() || "",
+        employeeSeatYearlyPrice: pkg.employeeSeatYearlyPrice?.toString() || "",
         isActive: pkg.isActive
       });
     } else {
@@ -85,6 +123,9 @@ export default function AdminPackagesPage() {
         discount: "0",
         description: "",
         administrations: [],
+        departmentPrices: emptyDepartmentPrices(),
+        employeeSeatMonthlyPrice: "",
+        employeeSeatYearlyPrice: "",
         isActive: true
       });
     }
@@ -95,7 +136,10 @@ export default function AdminPackagesPage() {
     e.preventDefault();
     try {
       const payload = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        administrations: formData.administrations,
+        isActive: formData.isActive,
         yearlyPrice: parseFloat(formData.yearlyPrice),
         monthlyPrice: parseFloat(formData.monthlyPrice),
         discount: parseFloat(formData.discount),
@@ -117,7 +161,13 @@ export default function AdminPackagesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('admin.packages.confirmDelete'))) return;
+    const ok = await confirmDialog({
+      title: t('admin.packages.confirmDelete'),
+      confirmLabel: language === 'ar' ? 'حذف' : 'Delete',
+      cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await api.delete(`/management-packages/${id}`);
       toast.success(t('admin.packages.deleteSuccess'));
@@ -137,6 +187,54 @@ export default function AdminPackagesPage() {
         return { ...prev, administrations: [...prev.administrations, admin] };
       }
     });
+  };
+
+  const updateDepartmentPrice = (administration: string, period: "monthly" | "yearly", value: string) => {
+    setGlobalPricing(prev => ({
+      ...prev,
+        departmentPrices: {
+          ...emptyDepartmentPrices(),
+        ...prev.departmentPrices,
+          [administration]: {
+          ...(prev.departmentPrices[administration] || { monthly: 0, yearly: 0 }),
+            [period]: Number(value || 0),
+          },
+        },
+    }));
+  };
+
+  const updateEmployeeSeatPrice = (period: "monthly" | "yearly", value: string) => {
+    setGlobalPricing(prev => ({
+      ...prev,
+      employeeSeatMonthlyPrice: period === "monthly" ? Number(value || 0) : prev.employeeSeatMonthlyPrice,
+      employeeSeatYearlyPrice: period === "yearly" ? Number(value || 0) : prev.employeeSeatYearlyPrice,
+    }));
+  };
+
+  const handleSaveDepartmentPricing = async () => {
+    try {
+      const departmentPrices = AVAILABLE_ADMINISTRATIONS.reduce((acc, administration) => {
+        const prices = {
+          ...(globalPricing.departmentPrices[administration] || { monthly: 0, yearly: 0 }),
+        };
+        acc[administration] = {
+          monthly: Number(prices.monthly || 0),
+          yearly: Number(prices.yearly || 0),
+        };
+        return acc;
+      }, {} as Record<string, { monthly: number; yearly: number }>);
+
+      await api.put('/subscriptions/department-pricing', {
+        departmentPrices,
+        employeeSeatMonthlyPrice: Number(globalPricing.employeeSeatMonthlyPrice || 0),
+        employeeSeatYearlyPrice: Number(globalPricing.employeeSeatYearlyPrice || 0),
+      });
+      toast.success(isRtl ? "تم تحديث أسعار الإدارات" : "Department pricing updated");
+      fetchPackages();
+    } catch (error) {
+      console.error("Error saving department pricing:", error);
+      toast.error(isRtl ? "فشل تحديث أسعار الإدارات" : "Failed to update department pricing");
+    }
   };
 
   return (
@@ -175,11 +273,32 @@ export default function AdminPackagesPage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-white p-1 shadow-sm">
+        <button
+          type="button"
+          onClick={() => setActiveTab("packages")}
+          className={`h-12 rounded-xl text-sm font-black transition-colors ${
+            activeTab === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          {isRtl ? "الباقات" : "Packages"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("pricing")}
+          className={`h-12 rounded-xl text-sm font-black transition-colors ${
+            activeTab === "pricing" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          {isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}
+        </button>
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-slate-900" />
         </div>
-      ) : (
+      ) : activeTab === "packages" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg) => (
             <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -233,6 +352,89 @@ export default function AdminPackagesPage() {
               </div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="mb-6">
+            <div>
+              <h2 className="text-xl font-black text-slate-950">{isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}</h2>
+              <p className="mt-1 text-sm font-bold text-slate-400">
+                {isRtl ? "هذه الأسعار عامة للاشتراك المخصص وليست مرتبطة بأي باقة." : "These prices are global for custom subscriptions and are not linked to any package."}
+              </p>
+            </div>
+          </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {AVAILABLE_ADMINISTRATIONS.map((admin) => (
+                  <div key={admin} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="mb-3 text-sm font-black text-slate-950">{t(admin)}</div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري" : "Monthly"}</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={globalPricing.departmentPrices?.[admin]?.monthly || ""}
+                          onChange={(e) => updateDepartmentPrice(admin, "monthly", e.target.value)}
+                          className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "سنوي" : "Yearly"}</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={globalPricing.departmentPrices?.[admin]?.yearly || ""}
+                          onChange={(e) => updateDepartmentPrice(admin, "yearly", e.target.value)}
+                          className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div className="mb-3 text-sm font-black text-slate-950">{isRtl ? "سعر كل موظف" : "Employee Seat Price"}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري لكل موظف" : "Monthly per employee"}</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={globalPricing.employeeSeatMonthlyPrice || ""}
+                        onChange={(e) => updateEmployeeSeatPrice("monthly", e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "سنوي لكل موظف" : "Yearly per employee"}</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={globalPricing.employeeSeatYearlyPrice || ""}
+                        onChange={(e) => updateEmployeeSeatPrice("yearly", e.target.value)}
+                        className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveDepartmentPricing}
+                  className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-black"
+                >
+                  {isRtl ? "حفظ أسعار الإدارات" : "Save Department Pricing"}
+                </button>
+              </div>
+            </div>
         </div>
       )}
 

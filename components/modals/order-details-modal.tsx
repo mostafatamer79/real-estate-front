@@ -15,7 +15,7 @@ import { ordersApi } from '@/lib/api';
 import { chatApi } from '@/lib/chat';
 import { Order } from '@/types/api';
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
@@ -29,10 +29,12 @@ interface OrderDetailsModalProps {
 export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDetailsModalProps) {
     const { t, language } = useLanguage();
     const router = useRouter();
+    const pathname = usePathname();
     const { user: currentUser } = useAuth();
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(false);
     const [isChatLoading, setIsChatLoading] = useState(false);
+    const chatBasePath = pathname?.startsWith('/internal') ? '/internal/chat' : '/chat';
 
     const locale = language === 'ar' ? ar : enUS;
 
@@ -83,7 +85,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
             });
 
             if (room && room.id) {
-                router.push(`/chat/${room.id}`);
+                router.push(`${chatBasePath}/${room.id}`);
             } else {
                 throw new Error('Failed to create chat room');
             }

@@ -863,6 +863,19 @@ function TextTab({
     searchTerm, setSearchTerm, textOverrides, setTextOverrides, language,
     selectedCategory, setSelectedCategory
 }: TextTabProps & { selectedCategory: string, setSelectedCategory: (v: string) => void }) {
+    const pageCategoryGroups = [
+        {
+            title: 'أقسام الصفحات',
+            subtitle: 'اختر نطاق النصوص المطلوب تعديلها',
+            items: TRANSLATION_CATEGORIES,
+        },
+        {
+            title: 'ترتيب لوحة التحكم',
+            subtitle: 'نصوص لوحة التحكم حسب ترتيب القائمة',
+            items: ADMIN_TEXT_SECTIONS,
+        },
+    ];
+
     const visibleTranslationKeys = React.useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();
         const category = [...TRANSLATION_CATEGORIES, ...ADMIN_TEXT_SECTIONS].find(c => c.id === selectedCategory);
@@ -914,33 +927,53 @@ function TextTab({
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
                 <div className="lg:col-span-1 space-y-6">
                     {/* Category Selector */}
-                    <div className="bg-slate-50 rounded-[2rem] p-4 border border-slate-100 space-y-1">
-                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-4">أقسام الصفحات</h4>
-                        {TRANSLATION_CATEGORIES.map(cat => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setSelectedCategory(cat.id)}
-                                className={`w-full text-right px-4 py-3 rounded-2xl text-[11px] font-black transition-all ${selectedCategory === cat.id ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' : 'text-slate-500 hover:bg-white hover:text-slate-900'}`}
-                            >
-                                {cat.label}
-                            </button>
+                    <div className="bg-slate-50 rounded-[2rem] p-4 border border-slate-100 space-y-5">
+                        {pageCategoryGroups.map((group) => (
+                            <div key={group.title} className="space-y-3">
+                                <div className="px-2">
+                                    <h4 className="text-[11px] font-black text-slate-950">{group.title}</h4>
+                                    <p className="mt-1 text-[9px] font-bold text-slate-400">{group.subtitle}</p>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {group.items.map(cat => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setSelectedCategory(cat.id)}
+                                            className={`min-h-8 rounded-xl px-3 py-2 text-[10px] font-black transition-all ${
+                                                selectedCategory === cat.id
+                                                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                                    : 'bg-white text-slate-500 border border-slate-100 hover:border-slate-300 hover:text-slate-900'
+                                            }`}
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </div>
 
-                    {selectedCategory === 'admin_all' && (
-                        <div className="bg-white rounded-[2rem] p-4 border border-slate-100 space-y-1">
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-4">ترتيب لوحة التحكم</h4>
+                    <div className="bg-white rounded-[2rem] p-4 border border-slate-100 space-y-4">
+                        <div className="px-2">
+                            <h4 className="text-[11px] font-black text-slate-950">اختصارات لوحة التحكم</h4>
+                            <p className="mt-1 text-[9px] font-bold text-slate-400">تبويبات صغيرة للوصول السريع</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
                             {ADMIN_TEXT_SECTIONS.map(section => (
                                 <button
                                     key={section.id}
                                     onClick={() => setSelectedCategory(section.id)}
-                                    className="w-full text-right px-4 py-2.5 rounded-2xl text-[11px] font-black text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-900"
+                                    className={`text-right px-3 py-2.5 rounded-xl text-[10px] font-black transition-all ${
+                                        selectedCategory === section.id
+                                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                                    }`}
                                 >
                                     {section.label}
                                 </button>
                             ))}
                         </div>
-                    )}
+                    </div>
 
                     <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 space-y-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">عناصر الهوية والرسائل العامة</h4>

@@ -32,9 +32,13 @@ import { useSettings } from "@/context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function AdminServicesManagementPage() {
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const { settings, saveSettings, isLoading, refetch } = useSettings();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,6 +53,7 @@ export default function AdminServicesManagementPage() {
   // Local state for flags and prices to allow editing before saving
   const [localModuleFlags, setLocalModuleFlags] = useState<Record<string, 'enabled' | 'soon' | 'disabled'>>({});
   const [localServicePrices, setLocalServicePrices] = useState<Record<string, string>>({});
+
 
   useEffect(() => {
     if (settings) {
@@ -153,6 +158,8 @@ export default function AdminServicesManagementPage() {
     loadRequests();
   }, []);
 
+
+
   const handleToggleModule = (categoryId: string, status: 'enabled' | 'soon' | 'disabled') => {
     const key = `services_${categoryId}`;
     setLocalModuleFlags(prev => ({ ...prev, [key]: status }));
@@ -226,7 +233,14 @@ export default function AdminServicesManagementPage() {
   };
 
   const deleteRequest = async (requestId: string) => {
-    if (!confirm("حذف طلب الخدمة؟")) return;
+    const ok = await confirmDialog({
+      title: "حذف طلب الخدمة؟",
+      description: "سيتم حذف هذا الطلب من القائمة الحالية.",
+      confirmLabel: "حذف الطلب",
+      cancelLabel: "إلغاء",
+      destructive: true,
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await api.delete(`/service-requests/${requestId}`);
@@ -297,6 +311,7 @@ export default function AdminServicesManagementPage() {
 
   const requestTotalPages = Math.max(1, Math.ceil(filteredServiceRequests.length / requestPageSize));
   const visibleServiceRequests = filteredServiceRequests.slice((requestPage - 1) * requestPageSize, requestPage * requestPageSize);
+
 
   useEffect(() => {
     setRequestPage(1);

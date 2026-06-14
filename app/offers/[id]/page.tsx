@@ -107,6 +107,8 @@ interface ExtendedOffer extends ApiOffer {
   threeDVideos?: string[];
   checkImage?: string;
   views?: number;
+  clientName?: string;
+  clientPhone?: string;
 }
 
 export default function OfferDetailsPage() {
@@ -125,6 +127,7 @@ export default function OfferDetailsPage() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [views, setViews] = useState(0);
@@ -237,8 +240,10 @@ export default function OfferDetailsPage() {
 
     try {
       setReportLoading(true);
-      // Here you would call your API to report the offer
-      // await reportOffer(offerId, reportReason);
+      await offersApi.report(offerId, {
+        reason: reportReason,
+        message: reportDetails,
+      });
 
       toast({
         title: t('offer.reported'),
@@ -246,6 +251,7 @@ export default function OfferDetailsPage() {
       });
 
       setReportReason("");
+      setReportDetails("");
       setIsReportModalOpen(false);
     } catch (error) {
       console.error("Error reporting offer:", error);
@@ -607,10 +613,23 @@ export default function OfferDetailsPage() {
   const renderPropertyDetails = () => {
     if (!offer) return null;
 
+    const highlights = [
+      { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: DollarSign },
+      { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: Ruler },
+      { key: 'type', label: t('offer.type'), value: offer.propertyType, icon: Building },
+      { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
+    ];
+
+    const tabs = [
+      { id: 'details', label: language === 'ar' ? 'التفاصيل' : 'Details' },
+      { id: 'features', label: language === 'ar' ? 'المزايا' : 'Features' },
+      { id: 'media', label: language === 'ar' ? 'الوسائط' : 'Media' },
+      { id: 'advertiser', label: language === 'ar' ? 'المعلن' : 'Advertiser' },
+    ];
+
     return (
       <div className="space-y-6">
-        {/* Project Name/Title */}
-        <Card>
+        <Card className="overflow-hidden border-slate-100 shadow-sm">
           <CardHeader>
             <CardTitle className="text-2xl">
               {offer.propertyType} في {offer.city}
@@ -622,223 +641,282 @@ export default function OfferDetailsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <DollarSign className="w-5 h-5 text-slate-500" />
-                  <span className="text-lg font-bold text-gray-800">
-                    {formatPrice(offer.price)}
-                  </span>
+              {highlights.map((item) => (
+                <div key={item.key} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-5 text-center">
+                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm">
+                    <item.icon className="w-5 h-5 text-slate-600" />
+                  </div>
+                  <div className="text-lg font-black text-slate-900 break-words">{item.value}</div>
+                  <p className="mt-1 text-xs font-bold text-slate-500">{item.label}</p>
                 </div>
-                <p className="text-sm text-gray-600">{t('offer.price')}</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Ruler className="w-5 h-5 text-slate-500" />
-                  <span className="text-lg font-bold text-gray-800">
-                    {offer.area} {t('chat.areaUnit')}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">{t('offer.area')}</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Building className="w-5 h-5 text-slate-500" />
-                  <span className="text-lg font-bold text-gray-800">
-                    {offer.propertyType}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">{t('offer.type')}</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <MapPin className="w-5 h-5 text-slate-500" />
-                  <span className="text-lg font-bold text-gray-800">
-                    {offer.city}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">{t('offer.city')}</p>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Detailed Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('offer.details')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Building className="w-5 h-5" />
-                    {t('offer.basic')}
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.condition')}</span>
-                      <Badge className={getConditionColor(offer.propertyCondition || "")}>
-                        {offer.propertyCondition || t('offer.undefined')}
-                      </Badge>
+        <div className="rounded-[1.75rem] border border-slate-100 bg-white p-2 shadow-sm">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`h-11 rounded-2xl text-sm font-black transition-colors ${
+                  activeTab === tab.id ? 'bg-slate-950 text-white' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {activeTab === 'details' && (
+          <Card className="border-slate-100 shadow-sm">
+            <CardHeader>
+              <CardTitle>{t('offer.details')}</CardTitle>
+              <CardDescription>
+                {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <Building className="w-5 h-5" />
+                      {t('offer.basic')}
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.condition')}</span>
+                        <Badge className={getConditionColor(offer.propertyCondition || "")}>
+                          {offer.propertyCondition || t('offer.undefined')}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.age')}</span>
+                        <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.deed')}</span>
+                        <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.direction')}</span>
+                        <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
+                      </div>
+                      {(offer.length || offer.width) && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
+                          <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
+                        </div>
+                      )}
+                      {offer.dealType && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
+                          <span className="font-semibold">{offer.dealType}</span>
+                        </div>
+                      )}
+                      {offer.mainCategory && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
+                          <span className="font-semibold">{offer.mainCategory}</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.age')}</span>
-                      <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.deed')}</span>
-                      <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.direction')}</span>
-                      <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <MapPin className="w-5 h-5" />
+                      {t('offer.location')}
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.neighborhood')}</span>
+                        <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
+                      </div>
+                      {offer.streetWidth && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.streetWidth')}</span>
+                          <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
+                        </div>
+                      )}
+                      {offer.locationUrl && (
+                        <div className="flex justify-between items-center gap-4">
+                          <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
+                          <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
+                            {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <MapPin className="w-5 h-5" />
-                    {t('offer.location')}
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.neighborhood')}</span>
-                      <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <DoorOpen className="w-5 h-5" />
+                      {t('offer.facilities')}
+                    </h3>
+                    <div className="space-y-2">
+                      {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
+                      {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
+                      {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
+                      {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
+                      {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
+                      {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
+                      {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
                     </div>
-                    {offer.streetWidth && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.streetWidth')}</span>
-                        <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <Award className="w-5 h-5" />
+                      {t('offer.features')}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
+                      {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
+                      {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
+                      {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
+                      {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
+                      {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
+                    </div>
+                    {offer.furnitureStatus && (
+                      <div className="mt-3 pt-3 border-t">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.furniture')}</span>
+                          <span className="font-semibold">{offer.furnitureStatus}</span>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
 
-              {/* Right Column */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <DoorOpen className="w-5 h-5" />
-                    {t('offer.facilities')}
-                  </h3>
-                  <div className="space-y-2">
-                    {offer.rooms && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500 flex items-center gap-2">
-                          <Bed className="w-4 h-4" />
-                          {t('offer.rooms')}
-                        </span>
-                        <span className="font-semibold">{offer.rooms}</span>
+        {activeTab === 'features' && (
+          <Card className="border-slate-100 shadow-sm">
+            <CardHeader>
+              <CardTitle>{language === 'ar' ? 'المزايا السريعة' : 'Quick features'}</CardTitle>
+              <CardDescription>{language === 'ar' ? 'بطاقات سريعة لأهم عناصر هذا العرض.' : 'Quick cards for the most important offer attributes.'}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { label: t('offer.rooms'), value: offer.rooms || '-', icon: Bed },
+                  { label: t('offer.baths'), value: offer.bathrooms || '-', icon: Bath },
+                  { label: t('offer.living'), value: offer.livingRooms || '-', icon: Sofa },
+                  { label: t('offer.kitchens'), value: offer.kitchens || '-', icon: UtensilsCrossed },
+                  { label: t('offer.floors'), value: offer.floors || '-', icon: Layers },
+                  { label: language === 'ar' ? 'عدد الشقق' : 'Apartments', value: offer.apartments || '-', icon: Building },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm">
+                        <item.icon className="w-5 h-5 text-slate-600" />
                       </div>
-                    )}
-                    {offer.bathrooms && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500 flex items-center gap-2">
-                          <BathIcon className="w-4 h-4" />
-                          {t('offer.baths')}
-                        </span>
-                        <span className="font-semibold">{offer.bathrooms}</span>
-                      </div>
-                    )}
-                    {offer.livingRooms && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500 flex items-center gap-2">
-                          <Sofa className="w-4 h-4" />
-                          {t('offer.living')}
-                        </span>
-                        <span className="font-semibold">{offer.livingRooms}</span>
-                      </div>
-                    )}
-                    {offer.kitchens && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500 flex items-center gap-2">
-                          <UtensilsCrossed className="w-4 h-4" />
-                          {t('offer.kitchens')}
-                        </span>
-                        <span className="font-semibold">{offer.kitchens}</span>
-                      </div>
-                    )}
-                    {offer.floors && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500 flex items-center gap-2">
-                          <Layers className="w-4 h-4" />
-                          {t('offer.floors')}
-                        </span>
-                        <span className="font-semibold">{offer.floors}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Award className="w-5 h-5" />
-                    {t('offer.features')}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {offer.hasElevator && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.elevator')}</span>
-                      </div>
-                    )}
-                    {offer.hasGarage && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.garage')}</span>
-                      </div>
-                    )}
-                    {offer.hasPool && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.pool')}</span>
-                      </div>
-                    )}
-                    {offer.hasMaidRoom && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.maid')}</span>
-                      </div>
-                    )}
-                    {offer.hasRoof && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.roof')}</span>
-                      </div>
-                    )}
-                    {offer.hasExternalAnnex && (
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">{t('offer.annex')}</span>
-                      </div>
-                    )}
-                  </div>
-                  {offer.furnitureStatus && (
-                    <div className="mt-3 pt-3 border-t">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.furniture')}</span>
-                        <span className="font-semibold">{offer.furnitureStatus}</span>
+                      <div>
+                        <div className="text-xs font-bold text-slate-400">{item.label}</div>
+                        <div className="text-lg font-black text-slate-900">{item.value}</div>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'media' && (
+          <Card className="border-slate-100 shadow-sm">
+            <CardHeader>
+              <CardTitle>{language === 'ar' ? 'الملفات والوسائط' : 'Media and documents'}</CardTitle>
+              <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {(offer.threeDVideos?.length || offer.video3d) && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <Video className="w-5 h-5" />
+                    {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
+                  </h3>
+                  <div className="space-y-2">
+                    {offer.video3d && (
+                      <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <span className="text-sm font-medium">3D Video</span>
+                        <Download className="w-4 h-4" />
+                      </a>
+                    )}
+                    {(offer.threeDVideos || []).map((video, index) => (
+                      <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
+                        <Download className="w-4 h-4" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {offer.propertyDocuments?.length ? (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
+                  </h3>
+                  <div className="space-y-2">
+                    {offer.propertyDocuments.map((doc, index) => (
+                      <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
+                        <Download className="w-4 h-4" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {offer.checkImage && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <Camera className="w-5 h-5" />
+                    {language === 'ar' ? 'صورة الشيك' : 'Check image'}
+                  </h3>
+                  <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
+                    <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
+                    <Download className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
+              {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
+                  {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'advertiser' && (
+          <div className="space-y-6">
+            {renderSellerInfo()}
+          </div>
+        )}
       </div>
     );
   };
 
   const renderSellerInfo = () => {
-    if (!offer?.user) return null;
+    if (!offer?.user && !offer?.clientName && !offer?.clientPhone) return null;
 
     const seller = offer.user;
-    const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || seller.email?.split('@')[0] || "معلن";
+    const sellerName = seller
+      ? `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || seller.email?.split('@')[0] || "معلن"
+      : offer.clientName || (language === 'ar' ? 'المعلن' : 'Advertiser');
     const userIsSeller = isUserSeller();
 
     return (
@@ -852,7 +930,7 @@ export default function OfferDetailsPage() {
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center">
-              {seller.profileImage ? (
+              {seller?.profileImage ? (
                 <Image
                   src={seller.profileImage}
                   alt={sellerName}
@@ -867,34 +945,47 @@ export default function OfferDetailsPage() {
             <div>
               <h3 className="font-semibold text-gray-800">{sellerName}</h3>
               <div className="flex items-center gap-2">
-                <span className="text-gray-600 text-sm">{t(`profile.role.${seller.role?.toLowerCase()}`) || seller.role}</span>
-                {seller.isVerified && (
+                <span className="text-gray-600 text-sm">
+                  {seller?.role ? (t(`profile.role.${seller.role?.toLowerCase()}`) || seller.role) : (language === 'ar' ? 'معلن' : 'Advertiser')}
+                </span>
+                {seller?.isVerified && (
                   <BadgeCheck className="w-4 h-4 text-green-500" />
                 )}
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600">
-                {t('offer.memberSince')}: {formatDate(seller.createdAt)}
-              </span>
+          {seller?.createdAt && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-600">
+                  {t('offer.memberSince')}: {formatDate(seller.createdAt)}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
 
           <Separator />
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600 text-sm">{t('offer.status')}</span>
-              <Badge variant={seller.isVerified ? "default" : "secondary"}>
-                {seller.isVerified ? t('offer.verifiedUser') : t('offer.underReview')}
-              </Badge>
-            </div>
+            {seller && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600 text-sm">{t('offer.status')}</span>
+                <Badge variant={seller.isVerified ? "default" : "secondary"}>
+                  {seller.isVerified ? t('offer.verifiedUser') : t('offer.underReview')}
+                </Badge>
+              </div>
+            )}
 
-            {seller.role === 'AGENT' && (
+            {offer.clientPhone && (
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <Phone className="w-4 h-4" />
+                <span>{offer.clientPhone}</span>
+              </div>
+            )}
+
+            {seller?.role === 'AGENT' && (
               <div className="flex items-center gap-2 text-sm text-blue-600">
                 <ShieldCheck className="w-4 h-4" />
                 <span>{t('offer.agent')}</span>
@@ -902,7 +993,7 @@ export default function OfferDetailsPage() {
             )}
           </div>
 
-          {!isOwner && user && !userIsSeller && (
+          {!isOwner && user && !userIsSeller && seller && (
             <>
               <Separator />
               <div className="space-y-3">
@@ -929,14 +1020,20 @@ export default function OfferDetailsPage() {
 
                 <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
                   <div className="w-full [&>button]:w-full [&>button]:justify-center [&>button]:bg-slate-700 [&>button]:py-2.5 [&>button]:font-medium [&>button]:hover:bg-slate-800">
-                    <ChatButton
-                      offerId={offer.id}
-                      offerTitle={`${offer.propertyType} في ${offer.city}`}
-                      sellerId={offer.user.id}
-                      sellerName={`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || "المعلن"}
-                      userId={user.id}
-                      userName={user.name || user.username || user.email}
-                    />
+                    {offer.user ? (
+                      <ChatButton
+                        offerId={offer.id}
+                        offerTitle={`${offer.propertyType} في ${offer.city}`}
+                        sellerId={offer.user.id}
+                        sellerName={`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || "المعلن"}
+                        userId={user.id}
+                        userName={user.name || user.username || user.email}
+                      />
+                    ) : (
+                      <div className="rounded-lg bg-white px-4 py-3 text-center text-sm font-medium text-slate-500">
+                        {language === 'ar' ? 'بيانات المعلن غير متوفرة لبدء المحادثة' : 'Advertiser data is not available for chat'}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1338,8 +1435,8 @@ export default function OfferDetailsPage() {
                 <Label>الرجاء توضيح السبب</Label>
                 <Textarea
                   placeholder="اذكر سبب الإبلاغ بالتفصيل..."
-                  value={reportReason}
-                  onChange={(e) => setReportReason(e.target.value)}
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
                   rows={3}
                 />
               </div>

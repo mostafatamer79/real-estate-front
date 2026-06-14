@@ -12,20 +12,31 @@ interface PropertyDistributionChartProps {
 }
 
 export default function PropertyDistributionChart({ data }: PropertyDistributionChartProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  const defaultData = [
-    { name: t('chart.residential'), value: 40, color: 'bg-indigo-400',   hex: '#818cf8' },
-    { name: t('chart.commercial'),  value: 25, color: 'bg-slate-400',    hex: '#94a3b8' },
-    { name: t('chart.office'),      value: 20, color: 'bg-gray-400',     hex: '#9ca3af' },
-    { name: t('chart.other'),       value: 15, color: 'bg-slate-600',    hex: '#475569' },
-  ];
-
-  const chartData = (data && data.length > 0)
-    ? data.map((d, i) => ({ ...d, hex: ['#818cf8','#94a3b8','#9ca3af','#475569'][i % 4] }))
-    : defaultData;
+  const chartData = (data || [])
+    .map((d, i) => ({ ...d, value: Number(d.value) || 0, hex: ['#818cf8','#94a3b8','#9ca3af','#475569'][i % 4] }))
+    .filter((d) => d.value > 0);
 
   const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
+  if (totalValue <= 0) {
+    return (
+      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
+        <div className="flex flex-col mb-6">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            {t('chart.property_dist_title')}
+          </p>
+          <p className="mt-2 text-2xl font-black text-slate-100">
+            {language === 'ar' ? 'لا توجد بيانات' : 'No data'}
+          </p>
+        </div>
+        <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-700/60 bg-slate-950/30 px-6 text-center text-sm font-semibold text-slate-500">
+          {language === 'ar' ? 'سيتم عرض التوزيع عند إضافة أملاك فعلية.' : 'The distribution will appear when real properties are available.'}
+        </div>
+      </div>
+    );
+  }
+
   const circumference = 2 * Math.PI * 42; // r=42
 
   // Build segments
@@ -118,7 +129,7 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
         </div>
 
         <p className="text-center text-xs text-slate-600 mt-5">
-          {t('chart.total_properties', { count: 234 })}
+          {t('chart.total_properties', { count: totalValue })}
         </p>
       </div>
     </div>

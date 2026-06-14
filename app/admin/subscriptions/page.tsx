@@ -28,7 +28,8 @@ import {
   Save
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { adminSubscriptionsApi, usersApi, packagesApi } from "@/lib/api";
+import api, { adminSubscriptionsApi, usersApi, packagesApi } from "@/lib/api";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import {
   Table,
   TableBody,
@@ -57,35 +58,69 @@ const normalizeStatus = (status: string) => {
   return status;
 };
 
-function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+const ADMINISTRATIONS = [
+  "admin.dept.real_estate",
+  "admin.dept.offers",
+  "admin.dept.orders",
+  "admin.dept.marketing",
+  "admin.dept.legal",
+  "admin.dept.finance",
+  "admin.dept.hr",
+];
+const emptyGlobalPricing = () => ({
+  departmentPrices: ADMINISTRATIONS.reduce((acc, department) => {
+    acc[department] = { monthly: 0, yearly: 0 };
+    return acc;
+  }, {} as Record<string, { monthly: number; yearly: number }>),
+  employeeSeatMonthlyPrice: 0,
+  employeeSeatYearlyPrice: 0,
+});
+
+function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose: () => void; onSuccess: () => void; subscription?: any | null }) {
   const { language, t } = useLanguage();
+  const isEdit = Boolean(subscription?.id);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [packages, setPackages] = useState<any[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [loadingData, setLoadingData] = useState(true);
+  const [planMode, setPlanMode] = useState<"package" | "custom">("package");
+  const [globalPricing, setGlobalPricing] = useState(emptyGlobalPricing());
 
   const [form, setForm] = useState({
-    userId: "",
-    packageId: "",
-    subscriptionType: "سنوي", // Default to Arabic enum as per backend entity
-    amount: 0,
-    startDate: new Date().toISOString().split('T')[0],
-    paymentMethod: "بطاقة ائتمان", // Default to Arabic enum
-    status: "نشط", // Default to Arabic enum
-    noExpiry: false,
-    notes: ""
+    userId: subscription?.userId || "",
+    packageId: subscription?.packageId || subscription?.managementPackage?.id || "",
+    subscriptionType: subscription?.subscriptionType || "سنوي", // Default to Arabic enum as per backend entity
+    customPeriodMonths: Number(subscription?.customPeriodMonths || 1),
+    amount: Number(subscription?.amount || 0),
+    selectedDepartments: (subscription?.selectedDepartments || []) as string[],
+    employeeSeats: Number(subscription?.employeeSeats || 0),
+    startDate: subscription?.startDate ? new Date(subscription.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    endDate: subscription?.endDate ? new Date(subscription.endDate).toISOString().split('T')[0] : "",
+    paymentMethod: subscription?.paymentMethod || "بطاقة ائتمان", // Default to Arabic enum
+    status: subscription?.status || "نشط", // Default to Arabic enum
+    noExpiry: Boolean(subscription?.noExpiry),
+    notes: subscription?.notes || ""
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [uRes, pRes] = await Promise.all([
+        const [uRes, pRes, pricingRes] = await Promise.all([
           usersApi.findAll(),
-          packagesApi.findAll()
+          packagesApi.findAll(),
+          api.get('/subscriptions/department-pricing'),
         ]);
         setUsers(uRes.data || []);
         setPackages(pRes.data || []);
+        setGlobalPricing({
+          ...emptyGlobalPricing(),
+          ...(pricingRes.data || {}),
+          departmentPrices: {
+            ...emptyGlobalPricing().departmentPrices,
+            ...(pricingRes.data?.departmentPrices || {}),
+          },
+        });
       } catch (err) {
         toast.error("خطأ في تحميل البيانات");
       } finally {
@@ -101,14 +136,83 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
     u.phone?.includes(userSearch)
   ).slice(0, 5);
 
+  const selectedPackage = packages.find((p) => p.id === form.packageId);
+  const isEmployeeSelected = form.selectedDepartments.includes("admin.dept.hr");
+  const priceKey = form.subscriptionType === "سنوي" ? "yearly" : "monthly";
+  const departmentLabel = (department: string) => t(department) || department;
+  const employeeSeatPrice = form.subscriptionType === "سنوي"
+    ? Number(globalPricing.employeeSeatYearlyPrice || 0)
+    : Number(globalPricing.employeeSeatMonthlyPrice || 0);
+  const departmentPrice = (department: string) => Number(globalPricing.departmentPrices?.[department]?.[priceKey] || 0);
+  const selectedDepartmentPricing = form.selectedDepartments.map((department) => ({
+    department,
+    label: departmentLabel(department),
+    price: departmentPrice(department),
+  }));
+  const employeeSeatTotal = isEmployeeSelected ? form.employeeSeats * employeeSeatPrice : 0;
+
+  const calculatePackageAmount = (
+    pkg: any,
+    subscriptionType: string,
+    departments: string[],
+    seats: number,
+    mode: "package" | "custom",
+  ) => {
+    const key = subscriptionType === "سنوي" ? "yearly" : "monthly";
+    if (mode === "custom") {
+      let basePrice = departments.reduce((total, department) => {
+        return total + Number(globalPricing.departmentPrices?.[department]?.[key] || 0);
+      }, 0);
+      if (departments.includes("admin.dept.hr")) {
+        basePrice += seats * Number(key === "yearly" ? globalPricing.employeeSeatYearlyPrice || 0 : globalPricing.employeeSeatMonthlyPrice || 0);
+      }
+      return basePrice;
+    }
+
+    if (!pkg) return 0;
+    const basePrice = subscriptionType === "سنوي" ? Number(pkg.yearlyPrice || 0) : Number(pkg.monthlyPrice || 0);
+    return basePrice * (1 - Number(pkg.discount || 0) / 100);
+  };
+
+  const updatePackageAmount = (next: Partial<typeof form>) => {
+    setForm((current) => {
+      const merged = { ...current, ...next };
+      const pkg = packages.find((p) => p.id === merged.packageId);
+      return {
+        ...merged,
+        amount: calculatePackageAmount(pkg, merged.subscriptionType, merged.selectedDepartments, merged.employeeSeats, planMode),
+      };
+    });
+  };
+
+  const switchPlanMode = (mode: "package" | "custom") => {
+    setPlanMode(mode);
+    setForm((current) => ({
+      ...current,
+      packageId: "",
+      selectedDepartments: [],
+      employeeSeats: 0,
+      amount: 0,
+      notes: mode === "custom" && !current.notes ? "اشتراك مخصص" : current.notes,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.userId) return toast.error("يرجى اختيار المستخدم");
-    if (!form.packageId) return toast.error("يرجى اختيار الباقة");
+    if (planMode === "package" && !form.packageId) return toast.error("يرجى اختيار الباقة");
+    if (planMode === "custom" && form.selectedDepartments.length === 0) return toast.error("يرجى اختيار إدارة واحدة على الأقل");
+    if (planMode === "custom" && isEmployeeSelected && form.employeeSeats < 1) return toast.error("يرجى تحديد عدد الموظفين");
 
     setLoading(true);
     try {
-      await adminSubscriptionsApi.create(form);
+      await adminSubscriptionsApi.create({
+        ...form,
+        customPeriodMonths: form.subscriptionType === "مخصص" ? Math.max(1, Number(form.customPeriodMonths || 1)) : undefined,
+        packageId: planMode === "package" ? form.packageId : undefined,
+        selectedDepartments: planMode === "custom" ? form.selectedDepartments : undefined,
+        employeeSeats: planMode === "custom" && isEmployeeSelected ? form.employeeSeats : 0,
+      });
       toast.success("تم إنشاء الاشتراك بنجاح");
       onSuccess();
       onClose();
@@ -119,12 +223,37 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
     }
   };
 
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscription?.id) return;
+    setLoading(true);
+    try {
+      await adminSubscriptionsApi.update(subscription.id, {
+        subscriptionType: form.subscriptionType,
+        customPeriodMonths: form.subscriptionType === "مخصص" ? Math.max(1, Number(form.customPeriodMonths || 1)) : undefined,
+        amount: form.amount,
+        startDate: form.startDate,
+        endDate: form.noExpiry ? undefined : form.endDate,
+        status: form.status,
+        noExpiry: form.noExpiry,
+        notes: form.notes,
+      });
+      toast.success(language === 'ar' ? "تم تعديل مدة الاشتراك" : "Subscription duration updated");
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || (language === 'ar' ? "فشل تعديل الاشتراك" : "Failed to update subscription"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl relative">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl relative">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -132,13 +261,34 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
             <Plus className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-950">إنشاء اشتراك جديد</h2>
-            <p className="text-xs text-slate-400 font-bold">تخصيص باقة لمستخدم بشكل يدوي</p>
+            <h2 className="text-xl font-black text-slate-950">{isEdit ? "تعديل مدة الاشتراك" : "إنشاء اشتراك جديد"}</h2>
+            <p className="text-xs text-slate-400 font-bold">{isEdit ? "تحديث تاريخ الانتهاء وحالة الاشتراك" : "تخصيص باقة لمستخدم بشكل يدوي"}</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={isEdit ? handleEditSubmit : handleSubmit} className="space-y-6">
+          {!isEdit && <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-50 p-1">
+            <button
+              type="button"
+              onClick={() => switchPlanMode("package")}
+              className={`h-11 rounded-xl text-xs font-black transition-colors ${
+                planMode === "package" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-white"
+              }`}
+            >
+              باقة جاهزة
+            </button>
+            <button
+              type="button"
+              onClick={() => switchPlanMode("custom")}
+              className={`h-11 rounded-xl text-xs font-black transition-colors ${
+                planMode === "custom" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-white"
+              }`}
+            >
+              اشتراك مخصص
+            </button>
+          </div>}
+
+          {!isEdit && <div className="grid grid-cols-2 gap-6">
             {/* User Selection */}
             <div className="space-y-1 relative">
               <label className={labelCls}>المستخدم (بحث)</label>
@@ -167,22 +317,30 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
             </div>
 
             {/* Package Selection */}
-            <div className="space-y-1">
-              <label className={labelCls}>الباقة</label>
-              <select value={form.packageId} onChange={e => {
-                const pkg = packages.find(p => p.id === e.target.value);
-                setForm(f => ({...f, packageId: e.target.value, amount: pkg ? (f.subscriptionType === 'سنوي' ? pkg.yearlyPrice : pkg.monthlyPrice) : 0}));
-              }} className={inputCls}>
-                <option value="">اختر باقة...</option>
-                {packages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
-            </div>
-          </div>
+            {planMode === "package" ? (
+              <div className="space-y-1">
+                <label className={labelCls}>الباقة</label>
+                <select value={form.packageId} onChange={e => {
+                  updatePackageAmount({ packageId: e.target.value, selectedDepartments: [], employeeSeats: 0 });
+                }} className={inputCls}>
+                  <option value="">اختر باقة...</option>
+                  {packages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className={labelCls}>نوع الاشتراك</label>
+                <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
+                  اشتراك مخصص بالإدارات
+                </div>
+              </div>
+            )}
+          </div>}
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className={labelCls}>نوع الاشتراك</label>
-              <select value={form.subscriptionType} onChange={e => setForm(f => ({...f, subscriptionType: e.target.value}))} className={inputCls}>
+              <select value={form.subscriptionType} onChange={e => updatePackageAmount({ subscriptionType: e.target.value })} className={inputCls}>
                 <option value="سنوي">سنوي</option>
                 <option value="شهري">شهري</option>
                 <option value="مخصص">مخصص</option>
@@ -193,6 +351,130 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
               <input type="date" value={form.startDate} onChange={e => setForm(f => ({...f, startDate: e.target.value}))} className={inputCls} />
             </div>
           </div>
+
+          {form.subscriptionType === "مخصص" && (
+            <div className="space-y-1">
+              <label className={labelCls}>مدة الاشتراك المخصص بالأشهر</label>
+              <input
+                type="number"
+                min={1}
+                value={form.customPeriodMonths}
+                onChange={e => setForm(f => ({...f, customPeriodMonths: Math.max(1, Number(e.target.value || 1))}))}
+                className={inputCls}
+              />
+            </div>
+          )}
+
+          {!form.noExpiry && (
+            <div className="space-y-1">
+              <label className={labelCls}>تاريخ الانتهاء</label>
+              <input type="date" value={form.endDate} onChange={e => setForm(f => ({...f, endDate: e.target.value}))} className={inputCls} />
+            </div>
+          )}
+
+          {planMode === "package" && selectedPackage && (
+            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-black text-slate-950">{selectedPackage.name}</div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {(selectedPackage.administrations || []).map((department: string) => (
+                      <span key={department} className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-slate-500">
+                        {departmentLabel(department)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-black text-slate-400">{form.subscriptionType}</div>
+                  <div className="text-lg font-black text-slate-950">{Number(form.amount || 0).toFixed(2)} ر.س</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {planMode === "custom" && (
+            <div className="space-y-3">
+              <label className={labelCls}>الإدارات وأسعارها</label>
+              <div className="grid grid-cols-1 gap-2">
+                {ADMINISTRATIONS.map((department: string) => {
+                  const checked = form.selectedDepartments.includes(department);
+                  return (
+                    <button
+                      key={department}
+                      type="button"
+                      onClick={() => {
+                        const nextDepartments = checked
+                          ? form.selectedDepartments.filter((item) => item !== department)
+                          : [...form.selectedDepartments, department];
+                        updatePackageAmount({
+                          selectedDepartments: nextDepartments,
+                          employeeSeats: department === "admin.dept.hr" && checked ? 0 : form.employeeSeats,
+                        });
+                      }}
+                      className={`rounded-2xl border px-4 py-3 text-right transition-colors ${
+                        checked ? "border-slate-950 bg-slate-50" : "border-slate-100 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-xs font-black text-slate-800">{departmentLabel(department)}</span>
+                        <span className="text-[11px] font-black text-slate-400">{departmentPrice(department).toFixed(2)} ر.س / {form.subscriptionType}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {planMode === "custom" && isEmployeeSelected && (
+            <div className="space-y-1">
+              <label className={labelCls}>عدد الموظفين</label>
+              <input
+                type="number"
+                min={1}
+                value={form.employeeSeats || ""}
+                onChange={e => updatePackageAmount({ employeeSeats: Math.max(0, Number(e.target.value || 0)) })}
+                className={inputCls}
+                placeholder="0"
+              />
+              <p className="text-[10px] font-bold text-slate-400">سعر الموظف: {employeeSeatPrice.toFixed(2)} ر.س</p>
+            </div>
+          )}
+
+          {planMode === "custom" && (
+            <div className="space-y-2 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <span>تفصيل الأسعار</span>
+                <span>{form.subscriptionType}</span>
+              </div>
+              {selectedDepartmentPricing.length === 0 ? (
+                <div className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-slate-400">
+                  اختر إدارة لعرض السعر
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {selectedDepartmentPricing.map((item) => (
+                    <div key={item.department} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
+                      <span className="text-xs font-black text-slate-700">{item.label}</span>
+                      <span className="text-xs font-black text-slate-950">{item.price.toFixed(2)} ر.س</span>
+                    </div>
+                  ))}
+                  {isEmployeeSelected && (
+                    <div className="rounded-xl bg-slate-950 px-3 py-2 text-white">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black">الموظفون</span>
+                        <span className="text-xs font-black">{employeeSeatTotal.toFixed(2)} ر.س</span>
+                      </div>
+                      <div className="mt-1 text-[10px] font-bold text-white/60">
+                        {form.employeeSeats || 0} × {employeeSeatPrice.toFixed(2)} ر.س لكل موظف
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
@@ -225,7 +507,7 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
 
           <button type="submit" disabled={loading} className="w-full h-12 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            حفظ وإنشاء الاشتراك
+            {isEdit ? "حفظ تعديل المدة" : "حفظ وإنشاء الاشتراك"}
           </button>
         </form>
       </motion.div>
@@ -235,11 +517,17 @@ function CreateSubscriptionModal({ onClose, onSuccess }: { onClose: () => void; 
 
 export default function AdminSubscriptionsPage() {
   const { t, language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const [loading, setLoading] = useState(true);
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState("all");
+  const [packageFilter, setPackageFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSubscription, setEditingSubscription] = useState<any | null>(null);
 
   const fetchSubscriptions = async () => {
     try {
@@ -284,7 +572,14 @@ export default function AdminSubscriptionsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(language === 'ar' ? "هل أنت متأكد من حذف هذا الاشتراك نهائياً؟" : "Are you sure you want to permanently delete this subscription?")) return;
+    const ok = await confirmDialog({
+      title: language === 'ar' ? "هل أنت متأكد من حذف هذا الاشتراك نهائياً؟" : "Are you sure you want to permanently delete this subscription?",
+      description: language === 'ar' ? "سيتم حذف الاشتراك نهائيًا ولا يمكن استعادته." : "This subscription will be permanently deleted.",
+      confirmLabel: language === 'ar' ? "حذف نهائي" : "Delete",
+      cancelLabel: language === 'ar' ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await adminSubscriptionsApi.delete(id);
       toast.success("تم حذف الاشتراك");
@@ -294,15 +589,42 @@ export default function AdminSubscriptionsPage() {
     }
   };
 
+  const openEditDuration = (subscription: any) => {
+    if (normalizeStatus(subscription.status) === 'cancelled') {
+      toast.error(language === 'ar' ? "لا يمكن تعديل اشتراك ملغي" : "Cancelled subscriptions cannot be edited");
+      return;
+    }
+    setEditingSubscription(subscription);
+    setIsModalOpen(true);
+  };
+
   const filteredSubscriptions = subscriptions.filter(sub => {
     const normStatus = normalizeStatus(sub.status);
-    return (statusFilter === "all" || normStatus === statusFilter) &&
-    (
-        `${sub.user?.firstName} ${sub.user?.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-        sub.managementPackage?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        sub.id.includes(search)
-    );
+    const query = search.trim().toLowerCase();
+    const startDate = sub.startDate ? new Date(sub.startDate) : null;
+    const matchesSearch = !query ||
+      `${sub.user?.firstName} ${sub.user?.lastName}`.toLowerCase().includes(query) ||
+      sub.user?.email?.toLowerCase().includes(query) ||
+      sub.managementPackage?.name?.toLowerCase().includes(query) ||
+      sub.id?.toLowerCase().includes(query);
+    const matchesStatus = statusFilter === "all" || normStatus === statusFilter;
+    const matchesType = subscriptionTypeFilter === "all" || sub.subscriptionType === subscriptionTypeFilter;
+    const matchesPackage = packageFilter === "all" || sub.packageId === packageFilter || sub.managementPackage?.id === packageFilter;
+    const matchesFrom = !dateFrom || (startDate && startDate >= new Date(dateFrom));
+    const matchesTo = !dateTo || (startDate && startDate <= new Date(`${dateTo}T23:59:59`));
+    return matchesSearch && matchesStatus && matchesType && matchesPackage && matchesFrom && matchesTo;
   });
+  const packageOptions = Array.from(
+    new Map<string, string>(
+      subscriptions
+        .map((sub): [string, string] | null => {
+          const id = sub.packageId || sub.managementPackage?.id;
+          if (!id) return null;
+          return [String(id), sub.managementPackage?.name || String(id)];
+        })
+        .filter((entry): entry is [string, string] => Boolean(entry))
+    ).entries()
+  );
 
   const getStatusBadge = (status: string) => {
     const normStatus = normalizeStatus(status);
@@ -318,7 +640,13 @@ export default function AdminSubscriptionsPage() {
   return (
     <div className="space-y-8 p-6 lg:p-8">
       <AnimatePresence>
-        {isModalOpen && <CreateSubscriptionModal onClose={() => setIsModalOpen(false)} onSuccess={fetchSubscriptions} />}
+        {isModalOpen && (
+          <CreateSubscriptionModal
+            subscription={editingSubscription}
+            onClose={() => { setIsModalOpen(false); setEditingSubscription(null); }}
+            onSuccess={fetchSubscriptions}
+          />
+        )}
       </AnimatePresence>
 
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -335,7 +663,7 @@ export default function AdminSubscriptionsPage() {
           </p>
         </div>
         
-        <div className="flex flex-wrap gap-4">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-4 xl:grid-cols-7">
           <Link
             href="/admin/packages"
             className="h-12 px-6 bg-white text-slate-950 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:border-slate-950 transition-all shadow-sm"
@@ -344,13 +672,13 @@ export default function AdminSubscriptionsPage() {
             إدارة الباقات
           </Link>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => { setEditingSubscription(null); setIsModalOpen(true); }}
             className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20"
           >
             <Plus className="w-4 h-4" />
             إضافة اشتراك
           </button>
-          <div className="relative">
+          <div className="relative md:col-span-2">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               type="text" 
@@ -371,6 +699,21 @@ export default function AdminSubscriptionsPage() {
             <option value="expired">منتهي</option>
             <option value="cancelled">ملغي</option>
           </select>
+          <select value={subscriptionTypeFilter} onChange={(e) => setSubscriptionTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+            <option value="all">كل الأنواع</option>
+            <option value="شهري">شهري</option>
+            <option value="سنوي">سنوي</option>
+            <option value="مخصص">مخصص</option>
+          </select>
+          <select value={packageFilter} onChange={(e) => setPackageFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+            <option value="all">كل الباقات</option>
+            {packageOptions.map(([id, name]) => <option key={id as string} value={id as string}>{name || id}</option>)}
+          </select>
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
+          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setSubscriptionTypeFilter("all"); setPackageFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
+            مسح
+          </button>
         </div>
       </header>
 
@@ -479,7 +822,10 @@ export default function AdminSubscriptionsPage() {
                             </DropdownMenuItem>
                           )}
                           
-                          <DropdownMenuItem className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer">
+                          <DropdownMenuItem
+                            onClick={() => openEditDuration(sub)}
+                            className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
+                          >
                             <RefreshCw className="w-4 h-4" /> تعديل المدة
                           </DropdownMenuItem>
                           

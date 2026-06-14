@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { GripVertical, Plus, RefreshCcw, Trash2, Pencil, ChevronUp, ChevronDown, Scale } from "lucide-react";
 
 type ConfirmState =
@@ -20,6 +21,7 @@ export default function AdminInfoContentPage() {
   const { language } = useLanguage();
   const isRtl = language === "ar";
   const { t } = useLanguage();
+  const confirmDialog = useConfirmDialog();
 
   const [tabs, setTabs] = useState<InfoTab[]>([]);
   const [blocks, setBlocks] = useState<InfoBlock[]>([]);
@@ -155,9 +157,11 @@ export default function AdminInfoContentPage() {
   };
 
   const resetDefaults = async () => {
-    const ok = window.confirm(
-      isRtl ? "سيتم استبدال المحتوى بالافتراضي. متابعة؟" : "This will replace content with defaults. Continue?",
-    );
+    const ok = await confirmDialog({
+      title: isRtl ? "سيتم استبدال المحتوى بالافتراضي. متابعة؟" : "This will replace content with defaults. Continue?",
+      confirmLabel: isRtl ? "متابعة" : "Continue",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+    });
     if (!ok) return;
     await infoContentApi.resetDefaults();
     await loadAll();

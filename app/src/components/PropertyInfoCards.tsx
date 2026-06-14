@@ -38,6 +38,31 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
     }
   };
 
+  const getActivityText = (activity: any) => {
+    const title = String(activity?.title || '');
+    const description = String(activity?.description || '');
+    const userName = description.replace(/\s*joined the system\.?$/i, '').trim();
+
+    if (title.toLowerCase() === 'new user joined') {
+      return {
+        title: language === 'ar' ? 'انضم مستخدم جديد' : 'New User Joined',
+        description: language === 'ar'
+          ? `${userName || 'مستخدم'} انضم إلى النظام`
+          : description || `${userName || 'User'} joined the system`,
+      };
+    }
+
+    return {
+      title: title || description || t('cards.prevOperations'),
+      description,
+    };
+  };
+
+  const getActivityDate = (activity: any) => {
+    const value = activity?.timestamp || activity?.createdAt || activity?.updatedAt;
+    return value ? new Date(value).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US') : '';
+  };
+
   return (
     <>
       <motion.div
@@ -112,20 +137,23 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
 
             <CardContent className="relative z-10">
               <div className="space-y-3">
-                {operations.slice(0, 2).map((op, i) => (
-                  <div
-                    key={i}
-                    className="
-                      p-4 rounded-xl
-                      bg-slate-700/25 hover:bg-slate-700/45
-                      border border-slate-700/40 hover:border-slate-600/50
-                      transition-all duration-200
-                    "
-                  >
-                    <p className="font-semibold text-sm mb-1 text-slate-200">{op.title || op.description}</p>
-                    <p className="text-slate-400 text-xs">{op.description || ""}</p>
-                  </div>
-                ))}
+                {operations.slice(0, 2).map((op, i) => {
+                  const activityText = getActivityText(op);
+                  return (
+                    <div
+                      key={op.id || i}
+                      className="
+                        p-4 rounded-xl
+                        bg-slate-700/25 hover:bg-slate-700/45
+                        border border-slate-700/40 hover:border-slate-600/50
+                        transition-all duration-200
+                      "
+                    >
+                      <p className="font-semibold text-sm mb-1 text-slate-200">{activityText.title}</p>
+                      <p className="text-slate-400 text-xs">{activityText.description}</p>
+                    </div>
+                  );
+                })}
                 {operations.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-10 px-4 bg-slate-900/30 border border-slate-700/40 rounded-2xl border-dashed">
                     <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3">
@@ -239,7 +267,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                     "
                   >
                     <p className="font-semibold text-sm mb-1 text-slate-200">{ad.subject || ad.title || t('cards.ads.featured')}</p>
-                    <p className="text-slate-400 text-xs">{ad.category || ad.description || t('cards.ads.special')}</p>
+                    <p className="text-slate-400 text-xs line-clamp-1">{ad.content || ad.description || ad.category || t('cards.ads.special')}</p>
                   </div>
                 ))}
                 {marketingRequests.length === 0 && (
@@ -328,17 +356,20 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">{t('cards.details')}</h3>
                     <div className="grid gap-3">
-                      {operations.length > 0 ? operations.map((op, i) => (
-                        <div key={i} className="p-5 rounded-2xl bg-slate-700/30 border border-slate-700/40 hover:border-slate-600/50 hover:bg-slate-700/50 transition-all">
-                          <div className="flex justify-between items-start mb-2">
-                            <p className="font-bold text-slate-100 text-base">{op.title || op.description}</p>
-                            <span className="text-[10px] font-bold uppercase text-slate-500 bg-slate-700/60 border border-slate-600/40 px-2.5 py-1 rounded-full">
-                              {op.timestamp ? new Date(op.timestamp).toLocaleDateString() : ""}
-                            </span>
+                      {operations.length > 0 ? operations.map((op, i) => {
+                        const activityText = getActivityText(op);
+                        return (
+                          <div key={op.id || i} className="p-5 rounded-2xl bg-slate-700/30 border border-slate-700/40 hover:border-slate-600/50 hover:bg-slate-700/50 transition-all">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="font-bold text-slate-100 text-base">{activityText.title}</p>
+                              <span className="text-[10px] font-bold uppercase text-slate-500 bg-slate-700/60 border border-slate-600/40 px-2.5 py-1 rounded-full">
+                                {getActivityDate(op)}
+                              </span>
+                            </div>
+                            <p className="text-slate-400 text-sm">{activityText.description}</p>
                           </div>
-                          <p className="text-slate-400 text-sm">{op.description || ""}</p>
-                        </div>
-                      )) : (
+                        );
+                      }) : (
                         <div className="text-center text-slate-500 py-8">{t('cards.noOperations')}</div>
                       )}
                     </div>
@@ -352,12 +383,12 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                       {marketingRequests.length > 0 ? marketingRequests.map((ad, i) => (
                         <div key={i} className="p-5 rounded-2xl bg-slate-700/30 border border-slate-700/40 hover:border-slate-600/50 hover:bg-slate-700/50 transition-all">
                           <div className="flex justify-between items-start mb-2">
-                            <p className="font-bold text-slate-100 text-base">{ad.title}</p>
+                            <p className="font-bold text-slate-100 text-base">{ad.subject || ad.title || (language === 'ar' ? 'إعلان مميز' : 'Featured Ad')}</p>
                             <span className="text-[10px] font-bold uppercase text-slate-500 bg-slate-700/60 border border-slate-600/40 px-2.5 py-1 rounded-full">
                               {ad.createdAt ? new Date(ad.createdAt).toLocaleDateString() : ""}
                             </span>
                           </div>
-                          <p className="text-slate-400 text-sm">{ad.description}</p>
+                          <p className="text-slate-400 text-sm">{ad.content || ad.description || ''}</p>
                         </div>
                       )) : (
                         <div className="text-center text-slate-500 py-8">{t('cards.noAds')}</div>

@@ -8,11 +8,37 @@ interface PriceTrendChartProps {
 }
 
 export default function PriceTrendChart({
-  data = [1200, 1250, 1180, 1300, 1280, 1350, 1320, 1400, 1380, 1450],
+  data = [],
   labels,
   color = '#818cf8',
 }: PriceTrendChartProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const hasData = data.some((value) => Number(value) > 0);
+
+  if (!hasData) {
+    return (
+      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              {t('chart.monthly_trend')}
+            </p>
+            <p className="mt-2 text-2xl font-black text-slate-100">
+              {language === 'ar' ? 'لا توجد بيانات' : 'No data'}
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
+            <span className="w-3 h-0.5 rounded bg-indigo-400 inline-block" />
+            SAR / m²
+          </div>
+        </div>
+        <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-700/60 bg-slate-950/30 px-6 text-center text-sm font-semibold text-slate-500">
+          {language === 'ar' ? 'سيتم عرض الرسم عند توفر عمليات مالية فعلية.' : 'The chart will appear when real financial transactions are available.'}
+        </div>
+      </div>
+    );
+  }
+
   const maxValue = Math.max(...data);
   const minValue = Math.min(...data);
   const range = maxValue - minValue || 1;

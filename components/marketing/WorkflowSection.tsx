@@ -13,9 +13,11 @@ import { useLanguage } from "@/context/LanguageContext";
 import { marketingApi, MarketingRequest, MarketingRequestStatus } from '@/lib/marketing-service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import toast from 'react-hot-toast';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 
 export default function WorkflowSection() {
     const { t, language } = useLanguage();
+    const confirmDialog = useConfirmDialog();
     const [requests, setRequests] = useState<MarketingRequest[]>([]);
     const [filteredRequests, setFilteredRequests] = useState<MarketingRequest[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +48,13 @@ export default function WorkflowSection() {
     }, [statusFilter, requests]);
 
     const handleDeleteRequest = async (requestId: string) => {
-        if (!window.confirm(t('common.deleteConfirm'))) return;
+        const ok = await confirmDialog({
+            title: t('common.deleteConfirm'),
+            confirmLabel: language === 'ar' ? 'حذف' : 'Delete',
+            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+            destructive: true,
+        });
+        if (!ok) return;
         try {
             await marketingApi.deleteRequest(requestId);
             toast.success(t('orders.deleteSuccess'));

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { propertiesApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
 import { Pagination } from "../../src/components/Pagination";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
 type ManagementTab = "properties" | "tenants" | "leases" | "payments" | "maintenance";
 
@@ -21,6 +22,7 @@ const emptyForms: Record<ManagementTab, Record<string, string>> = {
 
 export default function AdminPropertiesManagementPage() {
   const { language } = useLanguage();
+  const confirmDialog = useConfirmDialog();
   const searchParams = useSearchParams();
   const isRtl = language === "ar";
   const [loading, setLoading] = useState(true);
@@ -225,7 +227,14 @@ export default function AdminPropertiesManagementPage() {
   };
 
   const deleteRecord = async (id: string) => {
-    if (!confirm(isRtl ? "هل تريد حذف هذا السجل؟" : "Delete this record?")) return;
+    const ok = await confirmDialog({
+      title: isRtl ? "هل تريد حذف هذا السجل؟" : "Delete this record?",
+      description: isRtl ? "سيتم حذف السجل من هذه الإدارة." : "This record will be deleted from the current section.",
+      confirmLabel: isRtl ? "حذف" : "Delete",
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       if (activeTab === "properties") await propertiesApi.delete(id);
       else if (activeTab === "tenants") await propertiesApi.deleteTenant(id);

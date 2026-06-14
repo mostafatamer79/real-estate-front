@@ -25,6 +25,8 @@ export enum Role {
 export enum Department {
   MARKETING = 'marketing',
   PROPERTIES = 'properties',
+  OFFERS = 'offers',
+  ORDERS = 'orders',
   FINANCE = 'finance',
   LEGAL = 'legal',
   EMPLOYEES = 'employees',
