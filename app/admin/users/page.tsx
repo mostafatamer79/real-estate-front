@@ -26,7 +26,8 @@ import {
   Save,
   AlertCircle,
   Clock,
-  Calendar
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 import { Pagination } from "../../src/components/Pagination";
 import { motion, AnimatePresence } from "framer-motion";
@@ -429,6 +430,28 @@ export default function UsersPage() {
             setLoading(false);
         }
     };
+    const isRtl = language === "ar";
+    const handleOpenChat = async (targetUserId: string) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ targetUserId }),
+            });
+            const data = await res.json();
+            if (data.id) {
+                router.push(`/chat/${data.id}`);
+            } else {
+                toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(isRtl ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+        }
+    };
 
     const handleCreated = (newUser: User) => {
         if (editingUser) setUsers(prev => prev.map(u => u.id === newUser.id ? newUser : u));
@@ -758,6 +781,15 @@ export default function UsersPage() {
                                                     <XCircle className="w-4 h-4" />
                                                 </button>
                                             )}
+
+                                            <button
+                                                  type="button"
+                                                  onClick={() => handleOpenChat(user.id)}
+                                                  className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all"
+                                                  title={language === 'ar' ? "مراسلة العميل" : "Message Client"}
+                                             >
+                                                 <MessageSquare className="w-4 h-4" />
+                                             </button>
 
                                             <button
                                                 type="button"

@@ -66,6 +66,7 @@ export type CustomerServiceFeedback = {
   status: 'new' | 'replied' | 'customer_replied' | 'resolved';
   createdAt: string;
   updatedAt: string;
+  resolvedUser?: any;
 };
 
 export type OfferReport = {

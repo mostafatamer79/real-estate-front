@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   Search, 
@@ -12,7 +13,8 @@ import {
   DollarSign, 
   FileText,
   Eye,
-  Filter
+  Filter,
+  MessageSquare
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { adminApi } from "@/lib/api";
@@ -30,6 +32,31 @@ import { toast } from "react-hot-toast";
 
 export default function PurchaseRequestsPage() {
   const { t, language } = useLanguage();
+  const router = useRouter();
+  const isRtl = language === "ar";
+
+  const handleOpenChat = async (targetUserId: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ targetUserId }),
+      });
+      const data = await res.json();
+      if (data.id) {
+        router.push(`/chat/${data.id}`);
+      } else {
+        toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(isRtl ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+    }
+  };
+
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -201,6 +228,11 @@ export default function PurchaseRequestsPage() {
                              {req.status === 'accepted' && (
                                  <Button size="sm" variant="outline" className="h-8 text-xs font-bold" onClick={() => handleStatusUpdate(req.id, 'paid')}>
                                      Mark Paid
+                                 </Button>
+                             )}
+                             {(req.user?.id || req.userId) && (
+                                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-500 hover:bg-slate-100" onClick={() => handleOpenChat(req.user?.id || req.userId)} title={isRtl ? "مراسلة العميل" : "Message Client"}>
+                                     <MessageSquare className="w-4 h-4" />
                                  </Button>
                              )}
                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-400 hover:bg-slate-100">

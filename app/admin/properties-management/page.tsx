@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Building2, Calendar, CreditCard, Edit2, FileText, Loader2, MapPin, Plus, Save, Search, Trash2, User, Wrench, X } from "lucide-react";
+import { Building2, Calendar, CreditCard, Edit2, FileText, Loader2, MapPin, Plus, Save, Search, Trash2, User, Wrench, X, Eye, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { propertiesApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
 import { Pagination } from "../../src/components/Pagination";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { AddPropertyWizard } from "@/components/modals/AddPropertyWizard";
 
 type ManagementTab = "properties" | "tenants" | "leases" | "payments" | "maintenance";
 
@@ -24,7 +25,30 @@ export default function AdminPropertiesManagementPage() {
   const { language } = useLanguage();
   const confirmDialog = useConfirmDialog();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const isRtl = language === "ar";
+
+  const handleOpenChat = async (targetUserId: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ targetUserId }),
+      });
+      const data = await res.json();
+      if (data.id) {
+        router.push(`/chat/${data.id}`);
+      } else {
+        toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(isRtl ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [properties, setProperties] = useState<any[]>([]);
   const [tenants, setTenants] = useState<any[]>([]);
@@ -36,6 +60,8 @@ export default function AdminPropertiesManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [viewingRecord, setViewingRecord] = useState<any | null>(null);
   const [form, setForm] = useState<Record<string, string>>(emptyForms.properties);
   const itemsPerPage = 10;
   const propertyTabs = [
@@ -188,6 +214,12 @@ export default function AdminPropertiesManagementPage() {
     return payload;
   };
 
+  const handleCloseFormModal = () => {
+    setIsCreateOpen(false);
+    setEditingId(null);
+    setForm(emptyForms[activeTab]);
+  };
+
   const saveRecord = async () => {
     setSaving(true);
     try {
@@ -204,8 +236,7 @@ export default function AdminPropertiesManagementPage() {
         editingId ? await propertiesApi.updateMaintenanceLog(editingId, payload as any) : await propertiesApi.createMaintenanceLog(payload as any);
       }
       toast.success(editingId ? (isRtl ? "تم التعديل" : "Updated") : (isRtl ? "تمت الإضافة" : "Created"));
-      setEditingId(null);
-      setForm(emptyForms[activeTab]);
+      handleCloseFormModal();
       await fetchProperties();
     } catch {
       toast.error(isRtl ? "تعذر حفظ السجل" : "Save failed");
@@ -264,14 +295,27 @@ export default function AdminPropertiesManagementPage() {
           </p>
         </div>
 
-        <div className="relative w-full md:w-80">
-          <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={isRtl ? "بحث في الأملاك..." : "Search properties..."}
-            className={`h-12 w-full rounded-2xl border border-slate-100 bg-white px-11 text-sm font-bold outline-none focus:border-slate-900`}
-          />
+        <div className="flex w-full flex-col sm:flex-row gap-3 md:w-auto">
+          <div className="relative w-full sm:w-80">
+            <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={isRtl ? "بحث في الأملاك..." : "Search properties..."}
+              className={`h-12 w-full rounded-2xl border border-slate-100 bg-white px-11 text-sm font-bold outline-none focus:border-slate-900`}
+            />
+          </div>
+          <button
+            onClick={() => {
+              setEditingId(null);
+              setForm(emptyForms[activeTab]);
+              setIsCreateOpen(true);
+            }}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            {isRtl ? "إضافة جديد" : "Add New"}
+          </button>
         </div>
       </header>
 
@@ -311,63 +355,6 @@ export default function AdminPropertiesManagementPage() {
               </Link>
             );
           })}
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
-            {editingId ? <Edit2 className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-            {editingId ? (isRtl ? "تعديل سجل" : "Edit record") : (isRtl ? "إضافة سجل" : "Create record")}
-          </h2>
-          {editingId && (
-            <button
-              onClick={() => { setEditingId(null); setForm(emptyForms[activeTab]); }}
-              className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500"
-            >
-              <X className="h-4 w-4" />
-              {isRtl ? "إلغاء التعديل" : "Cancel edit"}
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {formFields.map(([key, label, type]) => {
-            const typeString = String(type);
-            if (typeString.startsWith("select:")) {
-              const options = typeString.replace("select:", "").split(",");
-              return (
-                <label key={key} className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
-                  <select
-                    value={form[String(key)] || ""}
-                    onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
-                    className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950"
-                  >
-                    {options.map((option) => <option key={option} value={option}>{option}</option>)}
-                  </select>
-                </label>
-              );
-            }
-            return (
-              <label key={key} className="space-y-1.5">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
-                <input
-                  type={typeString}
-                  value={form[String(key)] || ""}
-                  onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
-                  className="h-11 w-full rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950"
-                />
-              </label>
-            );
-          })}
-          <button
-            onClick={saveRecord}
-            disabled={saving}
-            className="mt-auto inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50"
-          >
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {editingId ? (isRtl ? "حفظ التعديل" : "Save") : (isRtl ? "إضافة" : "Create")}
-          </button>
         </div>
       </section>
 
@@ -443,6 +430,14 @@ export default function AdminPropertiesManagementPage() {
                       <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
+                        onClick={() => setViewingRecord(property)}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
+                      >
+                        <Eye className="h-4 w-4" />
+                        {isRtl ? "عرض" : "View"}
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => startEdit(property)}
                         className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
                       >
@@ -473,6 +468,248 @@ export default function AdminPropertiesManagementPage() {
           itemsLabel={isRtl ? "ملك" : "properties"}
         />
       </section>
+
+      {viewingRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">
+                  {isRtl ? "تفاصيل السجل" : "Record Details"}
+                </h3>
+                <p className="font-mono text-xs text-slate-400 mt-1">ID: {viewingRecord.id}</p>
+              </div>
+              <button
+                onClick={() => setViewingRecord(null)}
+                className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="max-h-[70vh] overflow-y-auto px-8 py-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {formFields.map(([key, label]) => {
+                  const val = viewingRecord[String(key)];
+                  return (
+                    <div key={key} className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                      <p className="text-sm font-bold text-slate-800">
+                        {val === true ? (isRtl ? "نعم" : "Yes") : val === false ? (isRtl ? "لا" : "No") : val || "—"}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Additional fields not in formFields, like dates & relationship objects */}
+              <div className="border-t border-slate-100 pt-4 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {viewingRecord.createdAt && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {isRtl ? "تاريخ الإنشاء" : "Created At"}
+                    </span>
+                    <p className="text-sm font-bold text-slate-800">
+                      {new Date(viewingRecord.createdAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}
+                    </p>
+                  </div>
+                )}
+                {viewingRecord.updatedAt && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {isRtl ? "تاريخ التحديث" : "Updated At"}
+                    </span>
+                    <p className="text-sm font-bold text-slate-800">
+                      {new Date(viewingRecord.updatedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}
+                    </p>
+                  </div>
+                )}
+                {viewingRecord.owner && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between sm:col-span-2">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        {isRtl ? "بيانات المالك" : "Owner Details"}
+                      </span>
+                      <p className="text-sm font-bold text-slate-800">
+                        {viewingRecord.owner.firstName} {viewingRecord.owner.lastName} ({viewingRecord.owner.email || "—"} / {viewingRecord.owner.phone || "—"})
+                      </p>
+                    </div>
+                    {viewingRecord.owner.id && (
+                      <button
+                        onClick={() => handleOpenChat(viewingRecord.owner.id)}
+                        className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {isRtl ? "فتح الشات" : "Open Chat"}
+                      </button>
+                    )}
+                  </div>
+                )}
+                {viewingRecord.tenant && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between sm:col-span-2">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        {isRtl ? "بيانات المستأجر" : "Tenant Details"}
+                      </span>
+                      <p className="text-sm font-bold text-slate-800">
+                        {viewingRecord.tenant.fullName} ({viewingRecord.tenant.email || "—"} / {viewingRecord.tenant.phoneNumber || "—"})
+                      </p>
+                    </div>
+                    {viewingRecord.tenant.userId && (
+                      <button
+                        onClick={() => handleOpenChat(viewingRecord.tenant.userId)}
+                        className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {isRtl ? "فتح الشات" : "Open Chat"}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {viewingRecord.unit && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1 sm:col-span-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {isRtl ? "بيانات الوحدة" : "Unit Details"}
+                    </span>
+                    <p className="text-sm font-bold text-slate-800">
+                      {viewingRecord.unit.unitNumber || viewingRecord.unit.name} ({viewingRecord.unit.type || "—"} - {viewingRecord.unit.area ? `${viewingRecord.unit.area} م²` : ""})
+                    </p>
+                  </div>
+                )}
+                {viewingRecord.property && (
+                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1 sm:col-span-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {isRtl ? "بيانات العقار" : "Property Details"}
+                    </span>
+                    <p className="text-sm font-bold text-slate-800">
+                      {viewingRecord.property.name} ({viewingRecord.property.type || "—"})
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-5 flex justify-end">
+              <button
+                onClick={() => setViewingRecord(null)}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 transition-colors"
+              >
+                {isRtl ? "إغلاق" : "Close"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Standard Create/Edit Form Modal */}
+      {(isCreateOpen || editingId !== null) && (activeTab !== "properties" || editingId !== null) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">
+                  {editingId 
+                    ? (isRtl ? "تعديل سجل" : "Edit Record") 
+                    : (isRtl ? "إضافة سجل جديد" : "Add New Record")
+                  }
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isRtl ? "أدخل البيانات المطلوبة بالأسفل" : "Fill in the required information below"}
+                </p>
+              </div>
+              <button
+                onClick={handleCloseFormModal}
+                className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {formFields.map(([key, label, type]) => {
+                  const typeString = String(type);
+                  if (typeString.startsWith("select:")) {
+                    const options = typeString.replace("select:", "").split(",");
+                    return (
+                      <div key={key} className="space-y-1.5">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                        <select
+                          value={form[String(key)] || ""}
+                          onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
+                          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
+                        >
+                          {options.map((option) => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={key} className="space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                      <input
+                        type={typeString}
+                        value={form[String(key)] || ""}
+                        onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-5 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={handleCloseFormModal}
+                className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                {isRtl ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={saveRecord}
+                disabled={saving}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50 hover:bg-slate-800 transition-colors"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {editingId ? (isRtl ? "حفظ التعديل" : "Save") : (isRtl ? "إضافة" : "Create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Property Wizard Modal for Creating Properties */}
+      {isCreateOpen && activeTab === "properties" && editingId === null && (
+        <AddPropertyWizard
+          isOpen={isCreateOpen}
+          onClose={handleCloseFormModal}
+          onSubmit={async (data) => {
+            setSaving(true);
+            try {
+              await propertiesApi.create(data);
+              toast.success(isRtl ? "تم إضافة العقار بنجاح" : "Property added successfully");
+              handleCloseFormModal();
+              await fetchProperties();
+            } catch (error) {
+              console.error(error);
+              toast.error(isRtl ? "تعذر إضافة العقار" : "Failed to add property");
+            } finally {
+              setSaving(false);
+            }
+          }}
+          loading={saving}
+        />
+      )}
     </div>
   );
 }

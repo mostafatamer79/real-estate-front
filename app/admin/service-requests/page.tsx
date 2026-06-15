@@ -7,10 +7,13 @@ import {
   Send, Briefcase,
   Calendar,
   ExternalLink,
-  Search, Filter, Receipt, Clock
+  Search, Filter, Receipt, Clock,
+  MessageSquare
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
@@ -47,6 +50,30 @@ const STATUS_STYLES: Record<string, string> = {
 export default function ServiceRequestsPage() {
     const { t, language } = useLanguage();
     const { token } = useAuth();
+    const router = useRouter();
+    const isRtl = language === 'ar';
+
+    const handleOpenChat = async (targetUserId: string) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ targetUserId }),
+            });
+            const data = await res.json();
+            if (data.id) {
+                router.push(`/chat/${data.id}`);
+            } else {
+                toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(isRtl ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+        }
+    };
     
 
     // List View State
@@ -374,14 +401,25 @@ export default function ServiceRequestsPage() {
                                 </TabsList>
 
                                 <TabsContent value="details" className="space-y-6">
-                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-                                        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-slate-900 shadow-sm">
-                                            <User className="w-6 h-6" />
+                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-slate-900 shadow-sm">
+                                                <User className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-black text-slate-900">{selectedRequest.clientName}</p>
+                                                <p className="text-xs font-bold text-slate-400">{selectedRequest.phone}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-black text-slate-900">{selectedRequest.clientName}</p>
-                                            <p className="text-xs font-bold text-slate-400">{selectedRequest.phone}</p>
-                                        </div>
+                                        {selectedRequest.userId && (
+                                            <button
+                                                onClick={() => handleOpenChat(selectedRequest.userId)}
+                                                className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                                            >
+                                                <MessageSquare className="h-4 w-4" />
+                                                {isRtl ? "فتح الشات" : "Open Chat"}
+                                            </button>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">

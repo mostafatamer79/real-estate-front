@@ -547,6 +547,7 @@ export default function OrdersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [publisherFilter, setPublisherFilter] = useState("all");
   const [assignmentFilter, setAssignmentFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -555,7 +556,30 @@ export default function OrdersPage() {
   const [showAssign, setShowAssign] = useState(false);
   const [assigningOrder, setAssigningOrder] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const itemsPerPage = 10;
+
+  const handleOpenChat = async (targetUserId: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ targetUserId }),
+      });
+      const data = await res.json();
+      if (data.id) {
+        router.push(`/chat/${data.id}`);
+      } else {
+        toast.error(language === "ar" ? "فشل فتح المحادثة" : "Failed to open chat");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(language === "ar" ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -571,6 +595,14 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders();
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try {
+          setCurrentUser(JSON.parse(stored));
+        } catch (e) {}
+      }
+    }
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -601,11 +633,24 @@ export default function OrdersPage() {
     }
   };
 
-  const propertyTypes = Array.from(new Set(orders.map((order) => order.propertyType).filter(Boolean)));
+  const isResidential = (type: string) => {
+    const resTypes = ["فيلا", "شقة", "أرض", "عمارة", "أرض سكنية", "قصر", "بيت شعبي"];
+    return resTypes.includes(type);
+  };
+
+  const isCommercial = (type: string) => {
+    const commTypes = ["محل", "مكتب", "فندق", "برج", "مصنع", "مستودع", "محل تجاري", "تجاري"];
+    return commTypes.includes(type);
+  };
+
   const filteredOrders = orders.filter(o => {
     const createdAt = o.createdAt ? new Date(o.createdAt) : null;
     const matchesStatus = statusFilter === "all" || o.status === statusFilter;
-    const matchesType = propertyTypeFilter === "all" || o.propertyType === propertyTypeFilter;
+    const matchesType = propertyTypeFilter === "all" || 
+      (propertyTypeFilter === "residential" && isResidential(o.propertyType)) ||
+      (propertyTypeFilter === "commercial" && isCommercial(o.propertyType));
+    const matchesPublisher = publisherFilter === "all" || 
+      (currentUser && (o.userId === currentUser.id || o.assignedToId === currentUser.id));
     const matchesAssignment =
       assignmentFilter === "all" ||
       (assignmentFilter === "assigned" && Boolean(o.assignedToId || o.assignedTo)) ||
@@ -618,7 +663,7 @@ export default function OrdersPage() {
         o.neighborhood?.toLowerCase().includes(search.toLowerCase()) ||
         o.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
         o.clientName?.toLowerCase().includes(search.toLowerCase());
-    return matchesStatus && matchesType && matchesAssignment && matchesFrom && matchesTo && matchesSearch;
+    return matchesStatus && matchesType && matchesAssignment && matchesFrom && matchesTo && matchesSearch && matchesPublisher;
   });
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -626,7 +671,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, statusFilter, propertyTypeFilter, assignmentFilter, dateFrom, dateTo]);
+  }, [search, statusFilter, propertyTypeFilter, publisherFilter, assignmentFilter, dateFrom, dateTo]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -692,18 +737,23 @@ export default function OrdersPage() {
                     ))}
                 </div>
             </div>
-            <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold">
-              <option value="all">كل الأنواع</option>
-              {propertyTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+            <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
+              <option value="all">الكل (سكني/تجاري)</option>
+              <option value="residential">سكني</option>
+              <option value="commercial">تجاري</option>
             </select>
-            <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold">
+            <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
+              <option value="all">كل الطلبات</option>
+              <option value="my_orders">طلباتي فقط</option>
+            </select>
+            <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
               <option value="all">كل التعيينات</option>
               <option value="assigned">معين</option>
               <option value="unassigned">غير معين</option>
             </select>
             <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
             <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
-            <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-black">
+            <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-black">
               مسح
             </button>
         </div>
@@ -804,6 +854,14 @@ export default function OrdersPage() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border-slate-100">
+                                        {(order.user?.id || order.userId) && (
+                                            <DropdownMenuItem onClick={() => handleOpenChat(order.user?.id || order.userId)} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
+                                                <MessageSquare className="w-4 h-4" /> مراسلة العميل
+                                            </DropdownMenuItem>
+                                        )}
+                                        <DropdownMenuItem onClick={() => window.open(`/orders/${order.id}`, '_blank')} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
+                                            <Eye className="w-4 h-4" /> معاينة الطلب
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => { setSelectedOrder(order); setShowCreate(true); }} className="rounded-xl font-bold py-3 text-slate-700 gap-3">
                                             <Edit2 className="w-4 h-4" /> تعديل الطلب
                                         </DropdownMenuItem>

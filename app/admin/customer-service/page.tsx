@@ -17,14 +17,39 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
-import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical, Send, Mail } from "lucide-react";
+import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical, Send, Mail, MessageSquare } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type TabKey = "faqs" | "feedback";
 
 export default function AdminCustomerServicePage() {
   const { language, t } = useLanguage();
   const confirmDialog = useConfirmDialog();
+  const router = useRouter();
   const isRtl = language === "ar";
+
+  const handleOpenChat = async (targetUserId: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/direct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ targetUserId }),
+      });
+      const data = await res.json();
+      if (data.id) {
+        router.push(`/chat/${data.id}`);
+      } else {
+        toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(isRtl ? "حدث خطأ أثناء فتح المحادثة" : "Error opening chat");
+    }
+  };
 
   const [tab, setTab] = useState<TabKey>("faqs");
 
@@ -704,6 +729,18 @@ export default function AdminCustomerServicePage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
+                        {m.resolvedUser?.id && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="h-9 rounded-xl gap-2 font-bold border-slate-200 text-slate-800 hover:bg-slate-100"
+                            onClick={() => handleOpenChat(m.resolvedUser.id)}
+                            title={isRtl ? "مراسلة العميل" : "Message Client"}
+                          >
+                            <MessageSquare className="w-4 h-4 text-slate-600" />
+                            {isRtl ? "مراسلة" : "Message"}
+                          </Button>
+                        )}
                         {m.status !== "resolved" && (
                           <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={() => updateFeedbackStatus(m.id, "resolved")} title={isRtl ? "وضع تم الحل" : "Mark resolved"}>
                             <CheckCircle2 className="w-4 h-4" />

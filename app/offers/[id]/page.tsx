@@ -134,6 +134,43 @@ export default function OfferDetailsPage() {
 
   const [isOwner, setIsOwner] = useState(false);
   
+  const handleBack = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('user');
+      let isAdmin = false;
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.role === 'admin' || parsed.role === 'super_admin') {
+            isAdmin = true;
+          }
+        } catch (e) {}
+      }
+
+      if (document.referrer) {
+        if (document.referrer.includes("/admin/offers")) {
+          router.push("/admin/offers");
+          return;
+        }
+        if (document.referrer.includes("/admin/orders")) {
+          router.push("/admin/orders");
+          return;
+        }
+        if (document.referrer.includes("/admin") && isAdmin) {
+          router.push("/admin/offers");
+          return;
+        }
+        router.back();
+      } else {
+        if (isAdmin) {
+          router.push("/admin/offers");
+        } else {
+          router.push("/offers");
+        }
+      }
+    }
+  };
+
   // Chat state
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatRoomId, setChatRoomId] = useState<string | null>(null);
@@ -1199,7 +1236,7 @@ export default function OfferDetailsPage() {
               </div>
 
               <Button
-                onClick={() => router.back()}
+                onClick={handleBack}
                 className="flex items-center gap-2"
               >
                 <ArrowRight className="w-5 h-5" />

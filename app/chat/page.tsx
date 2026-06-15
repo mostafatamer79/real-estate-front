@@ -162,11 +162,17 @@ export default function NormalChatPage() {
           </div>
         </div>
         <button 
-          onClick={() => router.back()}
+          onClick={() => {
+            if (typeof window !== "undefined" && window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/");
+            }
+          }}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-950 transition-colors text-sm font-black"
         >
           <span>الرجوع</span>
-          <ArrowRight className="w-5 h-5 rotate-180" />
+          <ArrowRight className="w-5 h-5" />
         </button>
       </div>
 

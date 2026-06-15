@@ -13,7 +13,8 @@ import {
   AlertCircle,
   Clock,
   Send,
-  MessageSquare
+  MessageSquare,
+  Megaphone
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
@@ -22,6 +23,7 @@ import { toast } from 'react-hot-toast';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 import MarketingCampaignModal from '@/components/marketing/MarketingCampaignModal';
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
+import MarketingPageInternal from '@/app/marketing/page';
 
 interface EmailMarketing {
   id: string;
@@ -42,7 +44,7 @@ export default function MarketingPage() {
   const [triggering, setTriggering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<EmailMarketing | null>(null);
-  const [activeTab, setActiveTab] = useState<'requests' | 'campaigns'>('requests');
+  const [activeTab, setActiveTab] = useState<'requests' | 'campaigns' | 'internal'>('requests');
 
   useEffect(() => {
     fetchCampaigns();
@@ -163,6 +165,16 @@ export default function MarketingPage() {
           <Mail className="w-4 h-4" />
           الحملات البريدية
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('internal')}
+          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
+            activeTab === 'internal' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Megaphone className="w-4 h-4" />
+          خدمات التسويق
+        </button>
       </div>
 
       {activeTab === 'requests' && (
@@ -171,6 +183,10 @@ export default function MarketingPage() {
           subtitle="استقبال طلبات العملاء، تسعيرها، إرسال الفاتورة، تغيير الحالة، والرد من الشات"
           department="marketing"
         />
+      )}
+
+      {activeTab === 'internal' && (
+        <MarketingPageInternal embedded />
       )}
 
       {activeTab === 'campaigns' && (

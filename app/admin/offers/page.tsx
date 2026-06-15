@@ -57,6 +57,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
   const [users, setUsers] = useState<any[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const [form, setForm] = useState({
     userId: "",
@@ -70,13 +71,26 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
     propertyAge: "جديد",
     direction: "شمال",
     deedType: "صك إلكتروني",
-    propertyCondition: "ممتاز",
+    propertyCondition: "جديد",
     status: "published",
-    dealType: "بيع"
+    dealType: "بيع",
+    additionalNotes: ""
   });
 
   useEffect(() => {
     usersApi.findAll().then(res => setUsers(res.data || [])).finally(() => setLoadingUsers(false));
+    
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setCurrentUser(parsed);
+          setForm(f => ({ ...f, userId: parsed.id }));
+          setUserSearch(`${parsed.firstName} ${parsed.lastName}`);
+        } catch (e) {}
+      }
+    }
   }, []);
 
   const filteredUsers = users.filter(u => 
@@ -86,13 +100,17 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (!form.userId) return toast.error("يرجى اختيار المعلن"); // Allow anonymous
     if (!form.neighborhood) return toast.error("يرجى إدخال الحي");
+    if (!form.city) return toast.error("يرجى إدخال المدينة");
+    if (form.price <= 0) return toast.error("يرجى إدخال سعر صحيح");
+    if (form.area <= 0) return toast.error("يرجى إدخال مساحة صحيحة");
 
     setLoading(true);
     try {
       const payload: any = { ...form };
-      if (!payload.userId) delete payload.userId; // avoid backend UUID validation on empty string
+      if (!payload.userId) {
+        delete payload.userId;
+      }
       await offersApi.create(payload);
       toast.success("تم إنشاء العرض بنجاح");
       onSuccess();
@@ -123,124 +141,257 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-             {/* User Selection */}
-             <div className="space-y-1 relative">
-              <label className={labelCls}>المعلن (اختياري)</label>
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  value={userSearch} 
-                  onChange={e => { setUserSearch(e.target.value); if(form.userId) setForm(f => ({...f, userId: ""})) }} 
-                  className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
-                  placeholder="ابحث بالاسم أو اترك فارغاً للمجهول..." 
-                />
-              </div>
-              {userSearch && !form.userId && (
-                <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
-                  {filteredUsers.length > 0 ? filteredUsers.map(u => (
-                    <button key={u.id} type="button" onClick={() => { setForm(f => ({...f, userId: u.id, clientName: "", clientPhone: ""})); setUserSearch(`${u.firstName} ${u.lastName}`); }} className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
-                        <span className="text-[10px] text-slate-400 font-bold">{u.email}</span>
-                      </div>
-                      <CheckCircle className={`w-4 h-4 ${form.userId === u.id ? 'text-emerald-500' : 'text-slate-100'}`} />
+          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1 relative">
+                <label className={labelCls}>المعلن (اختياري)</label>
+                <div className="relative">
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input 
+                    value={userSearch} 
+                    onChange={e => { 
+                      setUserSearch(e.target.value); 
+                      if(form.userId) setForm(f => ({...f, userId: ""})) 
+                    }} 
+                    className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
+                    placeholder="ابحث بالاسم أو اترك فارغاً للمجهول..." 
+                  />
+                  {form.userId && (
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setForm(f => ({ ...f, userId: "" }));
+                        setUserSearch("");
+                      }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-md"
+                    >
+                      إلغاء
                     </button>
-                  )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+                  )}
+                </div>
+                {userSearch && !form.userId && (
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                    {filteredUsers.length > 0 ? filteredUsers.map(u => (
+                      <button 
+                        key={u.id} 
+                        type="button" 
+                        onClick={() => { 
+                          setForm(f => ({...f, userId: u.id, clientName: "", clientPhone: ""})); 
+                          setUserSearch(`${u.firstName} ${u.lastName}`); 
+                        }} 
+                        className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0"
+                      >
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
+                          <span className="text-[10px] text-slate-400 font-bold">{u.email || u.phone}</span>
+                        </div>
+                        <CheckCircle className="w-4 h-4 text-slate-200" />
+                      </button>
+                    )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+                  </div>
+                )}
+              </div>
+
+              {!form.userId ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className={labelCls}>اسم العميل</label>
+                    <input 
+                      value={form.clientName} 
+                      onChange={e => setForm(f => ({...f, clientName: e.target.value}))} 
+                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      placeholder="اسم العميل..." 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className={labelCls}>هاتف العميل</label>
+                    <input 
+                      value={form.clientPhone} 
+                      onChange={e => setForm(f => ({...f, clientPhone: e.target.value}))} 
+                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      placeholder="05xxxxxxxx" 
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center bg-emerald-50/50 border border-emerald-100/50 rounded-2xl p-3 h-11 mt-6">
+                  <span className="text-[11px] font-bold text-emerald-700">✓ سيتم نشر هذا العرض باسم المستخدم المحدد أعلاه.</span>
                 </div>
               )}
             </div>
-            {!form.userId ? (
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className={labelCls}>اسم العميل</label>
-                  <input value={form.clientName} onChange={e => setForm(f => ({...f, clientName: e.target.value}))} className={inputCls} placeholder="اسم العميل..." />
-                </div>
-                <div className="space-y-1">
-                  <label className={labelCls}>هاتف العميل</label>
-                  <input value={form.clientPhone} onChange={e => setForm(f => ({...f, clientPhone: e.target.value}))} className={inputCls} placeholder="05xxxxxxxx" />
-                </div>
-              </div>
-            ) : (
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار</h3>
+            
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>نوع العقار</label>
-                <select value={form.propertyType} onChange={e => setForm(f => ({...f, propertyType: e.target.value}))} className={inputCls}>
+                <select 
+                  value={form.propertyType} 
+                  onChange={e => setForm(f => ({...f, propertyType: e.target.value}))} 
+                  className={inputCls}
+                >
                   <option value="فيلا">فيلا</option>
                   <option value="شقة">شقة</option>
                   <option value="أرض">أرض</option>
                   <option value="عمارة">عمارة</option>
                   <option value="محل">محل</option>
+                  <option value="قصر">قصر</option>
+                  <option value="بيت شعبي">بيت شعبي</option>
+                  <option value="مكتب">مكتب</option>
+                  <option value="محل تجاري">محل تجاري</option>
+                  <option value="فندق">فندق</option>
+                  <option value="برج">برج</option>
+                  <option value="مصنع">مصنع</option>
+                  <option value="مستودع">مستودع</option>
                 </select>
               </div>
-            )}
-          </div>
 
-          {form.userId && (
-            <div className="grid grid-cols-1">
               <div className="space-y-1">
-                <label className={labelCls}>نوع العقار</label>
-                <select value={form.propertyType} onChange={e => setForm(f => ({...f, propertyType: e.target.value}))} className={inputCls}>
-                  <option value="فيلا">فيلا</option>
-                  <option value="شقة">شقة</option>
-                  <option value="أرض">أرض</option>
-                  <option value="عمارة">عمارة</option>
-                  <option value="محل">محل</option>
+                <label className={labelCls}>نوع الصفقة</label>
+                <select 
+                  value={form.dealType} 
+                  onChange={e => setForm(f => ({...f, dealType: e.target.value}))} 
+                  className={inputCls}
+                >
+                  <option value="بيع">بيع</option>
+                  <option value="إيجار">إيجار</option>
                 </select>
               </div>
             </div>
-          )}
-          {/* Always show rest of fields */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <label className={labelCls}>المدينة</label>
-              <input value={form.city} onChange={e => setForm(f => ({...f, city: e.target.value}))} className={inputCls} />
-            </div>
-            <div className="space-y-1">
-              <label className={labelCls}>الحي</label>
-              <input value={form.neighborhood} onChange={e => setForm(f => ({...f, neighborhood: e.target.value}))} className={inputCls} />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-3 gap-6">
-            <div className="space-y-1">
-              <label className={labelCls}>المساحة</label>
-              <div className="relative">
-                <input type="number" value={form.area} onChange={e => setForm(f => ({...f, area: parseFloat(e.target.value)}))} className={inputCls} />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300">م²</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>المدينة</label>
+                <input 
+                  value={form.city} 
+                  onChange={e => setForm(f => ({...f, city: e.target.value}))} 
+                  className={inputCls} 
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelCls}>الحي</label>
+                <input 
+                  value={form.neighborhood} 
+                  onChange={e => setForm(f => ({...f, neighborhood: e.target.value}))} 
+                  className={inputCls} 
+                />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className={labelCls}>السعر</label>
-              <div className="relative">
-                <input type="number" value={form.price} onChange={e => setForm(f => ({...f, price: parseFloat(e.target.value)}))} className={inputCls} />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300">ر.س</span>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>المساحة (م²)</label>
+                <input 
+                  type="number" 
+                  value={form.area || ''} 
+                  onChange={e => setForm(f => ({...f, area: parseFloat(e.target.value) || 0}))} 
+                  className={inputCls} 
+                  placeholder="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelCls}>السعر (ر.س)</label>
+                <input 
+                  type="number" 
+                  value={form.price || ''} 
+                  onChange={e => setForm(f => ({...f, price: parseFloat(e.target.value) || 0}))} 
+                  className={inputCls} 
+                  placeholder="0"
+                />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className={labelCls}>نوع الصفقة</label>
-              <select value={form.dealType} onChange={e => setForm(f => ({...f, dealType: e.target.value}))} className={inputCls}>
-                <option value="بيع">بيع</option>
-                <option value="إيجار">إيجار</option>
-              </select>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>عمر العقار</label>
+                <input 
+                  value={form.propertyAge} 
+                  onChange={e => setForm(f => ({...f, propertyAge: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="مثال: جديد، سنتين..." 
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className={labelCls}>الاتجاه</label>
+                <select 
+                  value={form.direction} 
+                  onChange={e => setForm(f => ({...f, direction: e.target.value}))} 
+                  className={inputCls}
+                >
+                  <option value="شمال">شمال</option>
+                  <option value="جنوب">جنوب</option>
+                  <option value="شرق">شرق</option>
+                  <option value="غرب">غرب</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>نوع الصك</label>
+                <select 
+                  value={form.deedType} 
+                  onChange={e => setForm(f => ({...f, deedType: e.target.value}))} 
+                  className={inputCls}
+                >
+                  <option value="صك إلكتروني">صك إلكتروني</option>
+                  <option value="صك ورقي">صك ورقي</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className={labelCls}>حالة العقار</label>
+                <select 
+                  value={form.propertyCondition} 
+                  onChange={e => setForm(f => ({...f, propertyCondition: e.target.value}))} 
+                  className={inputCls}
+                >
+                  <option value="جديد">جديد</option>
+                  <option value="مستعمل">مستعمل</option>
+                  <option value="مجدد">مجدد</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>ملاحظات إضافية</label>
+                <textarea 
+                  value={form.additionalNotes} 
+                  onChange={e => setForm(f => ({...f, additionalNotes: e.target.value}))} 
+                  className="w-full min-h-24 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
+                  placeholder="أدخل أي ملاحظات إضافية عن العقار..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>حالة العرض</label>
+                <select 
+                  value={form.status} 
+                  onChange={e => setForm(f => ({...f, status: e.target.value}))} 
+                  className={inputCls}
+                >
+                  <option value="published">منشور</option>
+                  <option value="draft">مسودة</option>
+                  <option value="sold">تم البيع</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <label className={labelCls}>عمر العقار</label>
-              <input value={form.propertyAge} onChange={e => setForm(f => ({...f, propertyAge: e.target.value}))} className={inputCls} placeholder="مثال: جديد، 5 سنوات..." />
-            </div>
-            <div className="space-y-1">
-              <label className={labelCls}>الحالة</label>
-              <select value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))} className={inputCls}>
-                <option value="published">منشور</option>
-                <option value="draft">مسودة</option>
-                <option value="sold">تم البيع</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} className="w-full h-12 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20">
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="w-full h-12 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20"
+          >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             نشر العرض الآن
           </button>
@@ -249,6 +400,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
     </div>
   );
 }
+
 
 export default function AdminOffersPage() {
   const { t, language } = useLanguage();
@@ -261,12 +413,14 @@ export default function AdminOffersPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [publisherFilter, setPublisherFilter] = useState("all");
   const [activeFilter, setActiveFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [reportStatusFilter, setReportStatusFilter] = useState("pending");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const itemsPerPage = 10;
 
   const fetchOffers = async () => {
@@ -299,6 +453,14 @@ export default function AdminOffersPage() {
 
   useEffect(() => {
     fetchOffers();
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try {
+          setCurrentUser(JSON.parse(stored));
+        } catch (e) {}
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -377,11 +539,24 @@ export default function AdminOffersPage() {
     }
   };
 
-  const propertyTypes = Array.from(new Set(offers.map((offer) => offer.propertyType).filter(Boolean)));
+  const isResidential = (type: string) => {
+    const resTypes = ["فيلا", "شقة", "أرض", "عمارة", "أرض سكنية", "قصر", "بيت شعبي"];
+    return resTypes.includes(type);
+  };
+
+  const isCommercial = (type: string) => {
+    const commTypes = ["محل", "مكتب", "فندق", "برج", "مصنع", "مستودع", "محل تجاري", "تجاري"];
+    return commTypes.includes(type);
+  };
+
   const filteredOffers = offers.filter(offer => {
     const createdAt = offer.createdAt ? new Date(offer.createdAt) : null;
     const matchesStatus = statusFilter === "all" || offer.status === statusFilter;
-    const matchesType = propertyTypeFilter === "all" || offer.propertyType === propertyTypeFilter;
+    const matchesType = propertyTypeFilter === "all" || 
+      (propertyTypeFilter === "residential" && isResidential(offer.propertyType)) ||
+      (propertyTypeFilter === "commercial" && isCommercial(offer.propertyType));
+    const matchesPublisher = publisherFilter === "all" || 
+      (currentUser && (offer.userId === currentUser.id || offer.user?.id === currentUser.id));
     const matchesActive =
       activeFilter === "all" ||
       (activeFilter === "visible" && offer.isActive) ||
@@ -394,7 +569,7 @@ export default function AdminOffersPage() {
         offer.neighborhood?.toLowerCase().includes(search.toLowerCase()) ||
         offer.user?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
         offer.id.includes(search);
-    return matchesStatus && matchesType && matchesActive && matchesFrom && matchesTo && matchesSearch;
+    return matchesStatus && matchesType && matchesActive && matchesFrom && matchesTo && matchesSearch && matchesPublisher;
   });
   const totalPages = Math.ceil(filteredOffers.length / itemsPerPage);
   const paginatedOffers = filteredOffers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -402,7 +577,7 @@ export default function AdminOffersPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, propertyTypeFilter, publisherFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -487,9 +662,14 @@ export default function AdminOffersPage() {
             <option value="draft">مسودة</option>
             <option value="sold">تم البيع</option>
           </select>
-          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
-            <option value="all">كل الأنواع</option>
-            {propertyTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+            <option value="all">الكل (سكني/تجاري)</option>
+            <option value="residential">سكني</option>
+            <option value="commercial">تجاري</option>
+          </select>
+          <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+            <option value="all">كل المعلنين</option>
+            <option value="my_offers">العروض التي نشرتها</option>
           </select>
           <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
             <option value="all">كل الظهور</option>
@@ -498,7 +678,7 @@ export default function AdminOffersPage() {
           </select>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
           <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
-          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setActiveFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
+          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setActiveFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
             مسح
           </button>
         </div>
