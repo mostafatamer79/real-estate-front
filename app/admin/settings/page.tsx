@@ -6,7 +6,8 @@ import {
     Settings2, Save, Palette, Type, DollarSign, ShieldAlert,
     ArrowRight, Loader2, History, X, ShieldCheck, Sparkles,
     ChevronDown, Moon, Sun, Search, RefreshCw, Smartphone,
-    LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon
+    LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon,
+    ChevronLeft, ChevronRight, Globe, Languages
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -126,7 +127,7 @@ function SettingsPageInner() {
     const [servicePrices, setServicePrices] = useState<Record<string, string>>({});
     const [textOverrides, setTextOverrides] = useState<Record<string, string>>({});
     const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-    const [selectedTranslationCategory, setSelectedTranslationCategory] = useState('admin_all');
+
 
     // Local settings sync
     const [localSettings, setLocalSettings] = useState<any>(null);
@@ -235,16 +236,31 @@ function SettingsPageInner() {
                 </button>
             </header>
 
-            <nav className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-3xl w-fit">
+            <nav className="grid w-full grid-cols-2 gap-3 rounded-[2rem] border border-slate-200/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
                 {[
                     { id: 'pricing', label: t('admin.settings.tab.pricing'), icon: DollarSign },
                     { id: 'appearance', label: t('admin.settings.tab.appearance'), icon: Palette },
                     { id: 'text', label: t('admin.settings.tab.text'), icon: Type },
                     { id: 'site_control', label: t('admin.settings.tab.control'), icon: ShieldAlert },
                 ].map((tab) => (
-                    <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
-                        <tab.icon className="w-4 h-4" />
-                        {tab.label}
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`group relative flex min-h-[74px] items-center justify-center gap-3 overflow-hidden rounded-[1.75rem] border px-5 py-4 text-sm font-black transition-all md:min-w-[180px] ${
+                            activeTab === tab.id
+                                ? 'border-white bg-white text-slate-950 shadow-[0_10px_30px_rgba(15,23,42,0.10)]'
+                                : 'border-transparent bg-white/35 text-slate-400 hover:border-white/70 hover:bg-white/75 hover:text-slate-700'
+                        }`}
+                    >
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
+                            activeTab === tab.id ? 'bg-slate-950 text-white' : 'bg-white text-slate-500 group-hover:bg-slate-100'
+                        }`}>
+                            <tab.icon className="h-5 w-5" />
+                        </div>
+                        <span className="text-base font-black tracking-tight">{tab.label}</span>
+                        {activeTab === tab.id && (
+                            <div className="absolute inset-x-6 bottom-0 h-1 rounded-full bg-[linear-gradient(90deg,#0f172a_0%,#64748b_100%)]" />
+                        )}
                     </button>
                 ))}
             </nav>
@@ -294,8 +310,6 @@ function SettingsPageInner() {
                             searchTerm={searchTerm} setSearchTerm={setSearchTerm}
                             textOverrides={textOverrides} setTextOverrides={setTextOverrides}
                             language={language}
-                            selectedCategory={selectedTranslationCategory}
-                            setSelectedCategory={setSelectedTranslationCategory}
                         />
                     )}
                     {activeTab === 'site_control' && (
@@ -860,123 +874,379 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
 
 function TextTab({
     localSettings, updateSettings, t,
-    searchTerm, setSearchTerm, textOverrides, setTextOverrides, language,
-    selectedCategory, setSelectedCategory
-}: TextTabProps & { selectedCategory: string, setSelectedCategory: (v: string) => void }) {
-    const pageCategoryGroups = [
-        {
-            title: 'أقسام الصفحات',
-            subtitle: 'اختر نطاق النصوص المطلوب تعديلها',
-            items: TRANSLATION_CATEGORIES,
-        },
-        {
-            title: 'ترتيب لوحة التحكم',
-            subtitle: 'نصوص لوحة التحكم حسب ترتيب القائمة',
-            items: ADMIN_TEXT_SECTIONS,
-        },
+    searchTerm, setSearchTerm, textOverrides, setTextOverrides, language
+}: TextTabProps) {
+    const [selectedCategory, setSelectedCategory] = useState<'admin' | 'public'>('admin');
+    const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
+    const [selectedKeyGroup, setSelectedKeyGroup] = useState<string>('all');
+    const [expandedSubcategory, setExpandedSubcategory] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const pageSize = 15;
+
+    // Reset page on filter changes
+    useEffect(() => {
+        setPage(1);
+    }, [selectedCategory, selectedSubcategory, selectedKeyGroup, searchTerm]);
+
+    useEffect(() => {
+        setSelectedKeyGroup('all');
+        setExpandedSubcategory(null);
+    }, [selectedCategory, selectedSubcategory, searchTerm]);
+
+    const CATEGORIES = [
+        { id: 'admin' as const, label: 'لوحة التحكم (الإدارة)', icon: LayoutGrid },
+        { id: 'public' as const, label: 'الموقع العام (العملاء)', icon: Smartphone }
     ];
 
-    const visibleTranslationKeys = React.useMemo(() => {
-        const normalizedSearch = searchTerm.trim().toLowerCase();
-        const category = [...TRANSLATION_CATEGORIES, ...ADMIN_TEXT_SECTIONS].find(c => c.id === selectedCategory);
-        const allKeys = Array.from(new Set([
+    const SUBCATEGORIES: Record<'admin' | 'public', { id: string; label: string }[]> = {
+        admin: [
+            { id: 'all', label: 'الكل' },
+            { id: 'nav', label: 'القائمة الجانبية' },
+            { id: 'dashboard', label: 'الرئيسية والملخص' },
+            { id: 'users', label: 'المستخدمين' },
+            { id: 'offers', label: 'العروض' },
+            { id: 'orders', label: 'الطلبات' },
+            { id: 'transactions', label: 'العمليات' },
+            { id: 'packages', label: 'الباقات والاشتراكات' },
+            { id: 'settings', label: 'إعدادات النظام' },
+            { id: 'marketing', label: 'التسويق البريدي' },
+            { id: 'legal', label: 'القانونية' },
+            { id: 'services', label: 'الخدمات والتسعير' },
+            { id: 'info_content', label: 'المحتوى القانوني' },
+        ],
+        public: [
+            { id: 'all', label: 'الكل' },
+            { id: 'header', label: 'الهوية وأعلى الصفحة' },
+            { id: 'footer', label: 'أسفل الصفحة (الروابط)' },
+            { id: 'home', label: 'الصفحة الرئيسية' },
+            { id: 'auth', label: 'الدخول والتحقق OTP' },
+            { id: 'property', label: 'تفاصيل العقارات' },
+            { id: 'wallet', label: 'المحفظة والفواتير' },
+            { id: 'chat', label: 'الدردشة والرسائل' },
+            { id: 'common', label: 'العامة والمنوعات' },
+        ]
+    };
+
+    const getTranslationKeyCategory = React.useCallback((key: string): { category: 'admin' | 'public'; subcategory: string } => {
+        if (key.startsWith('admin.') || key.startsWith('offers.') || key.startsWith('offer.') || key.startsWith('orders.')) {
+            if (key.startsWith('admin.nav.')) return { category: 'admin', subcategory: 'nav' };
+            if (key.startsWith('admin.dashboard.') || key.startsWith('admin.stats.') || key.startsWith('admin.scan.') || key.startsWith('admin.activity.')) return { category: 'admin', subcategory: 'dashboard' };
+            if (key.startsWith('admin.users.')) return { category: 'admin', subcategory: 'users' };
+            if (key.startsWith('admin.offers.') || key.startsWith('admin.nav.offers') || key.startsWith('offers.') || key.startsWith('offer.')) return { category: 'admin', subcategory: 'offers' };
+            if (key.startsWith('admin.orders.') || key.startsWith('admin.nav.orders_mgmt') || key.startsWith('orders.')) return { category: 'admin', subcategory: 'orders' };
+            if (key.startsWith('admin.trans.')) return { category: 'admin', subcategory: 'transactions' };
+            if (key.startsWith('admin.packages.')) return { category: 'admin', subcategory: 'packages' };
+            if (key.startsWith('admin.settings.')) return { category: 'admin', subcategory: 'settings' };
+            if (key.startsWith('admin.marketing.') || key.startsWith('marketing.')) return { category: 'admin', subcategory: 'marketing' };
+            if (key.startsWith('admin.legal.')) return { category: 'admin', subcategory: 'legal' };
+            if (key.startsWith('admin.services_mgmt.') || key.startsWith('admin.service_requests.') || key.startsWith('service.')) return { category: 'admin', subcategory: 'services' };
+            if (key.startsWith('admin.info_content.')) return { category: 'admin', subcategory: 'info_content' };
+            return { category: 'admin', subcategory: 'dashboard' };
+        } else {
+            if (key.startsWith('header.')) return { category: 'public', subcategory: 'header' };
+            if (key.startsWith('footer.')) return { category: 'public', subcategory: 'footer' };
+            if (key.startsWith('home.')) return { category: 'public', subcategory: 'home' };
+            if (key.startsWith('otp.') || key.startsWith('auth.') || key.startsWith('login.')) return { category: 'public', subcategory: 'auth' };
+            if (key.startsWith('pm.') || key.startsWith('details.') || key.startsWith('cards.') || key.startsWith('bm.')) return { category: 'public', subcategory: 'property' };
+            if (key.startsWith('wallet.')) return { category: 'public', subcategory: 'wallet' };
+            if (key.startsWith('chat.')) return { category: 'public', subcategory: 'chat' };
+            return { category: 'public', subcategory: 'common' };
+        }
+    }, []);
+
+    const allKeys = React.useMemo(() => {
+        return Array.from(new Set([
             ...Object.keys(translations.ar),
             ...Object.keys(translations.en),
         ]));
+    }, []);
 
+    const subcategoryLabelMap = React.useMemo(() => {
+        const map: Record<string, string> = {};
+        Object.values(SUBCATEGORIES).flat().forEach((item) => {
+            map[item.id] = item.label;
+        });
+        return map;
+    }, []);
+
+    const getKeyGroup = React.useCallback((key: string, subcategory: string) => {
+        const parts = key.split('.');
+        const raw = selectedCategory === 'admin'
+            ? (key.startsWith('admin.') ? (parts[2] || parts[1] || subcategory) : (parts[1] || subcategory))
+            : (parts[1] || parts[0] || subcategory);
+        return raw.replace(/_/g, ' ');
+    }, [selectedCategory]);
+
+    // Count of keys per subcategory to display in badges
+    const subcategoryCounts = React.useMemo(() => {
+        const counts: Record<string, number> = {};
+        allKeys.forEach((key) => {
+            const { category, subcategory } = getTranslationKeyCategory(key);
+            if (category === selectedCategory) {
+                counts[subcategory] = (counts[subcategory] || 0) + 1;
+                counts['all'] = (counts['all'] || 0) + 1;
+            }
+        });
+        return counts;
+    }, [allKeys, selectedCategory, getTranslationKeyCategory]);
+
+    const categoryScopedKeys = React.useMemo(() => {
+        const normalizedSearch = searchTerm.trim().toLowerCase();
         return allKeys
             .filter((key) => {
+                const { category, subcategory } = getTranslationKeyCategory(key);
+                if (category !== selectedCategory) return false;
+
                 const arValue = translations.ar[key as keyof typeof translations.ar] || "";
                 const enValue = translations.en[key as keyof typeof translations.en] || "";
+                
                 const matchesSearch = !normalizedSearch
                     || key.toLowerCase().includes(normalizedSearch)
                     || arValue.toLowerCase().includes(normalizedSearch)
                     || enValue.toLowerCase().includes(normalizedSearch);
 
-                if (!matchesSearch) return false;
-                if (selectedCategory === 'all') return true;
-                if (selectedCategory === 'admin_all') return isAdminPanelTextKey(key);
-                if (!category) return true;
-
-                return category.prefixes.some((prefix) => matchesTranslationPrefix(key, prefix));
+                return matchesSearch;
             })
             .sort((a, b) => {
-                const adminA = getAdminTextRank(a);
-                const adminB = getAdminTextRank(b);
-                if (adminA !== adminB) return adminA - adminB;
+                const aMeta = getTranslationKeyCategory(a);
+                const bMeta = getTranslationKeyCategory(b);
+                if (aMeta.subcategory !== bMeta.subcategory) {
+                    return (subcategoryLabelMap[aMeta.subcategory] || aMeta.subcategory).localeCompare(subcategoryLabelMap[bMeta.subcategory] || bMeta.subcategory, 'ar');
+                }
+                const aGroup = getKeyGroup(a, aMeta.subcategory);
+                const bGroup = getKeyGroup(b, bMeta.subcategory);
+                if (aGroup !== bGroup) return aGroup.localeCompare(bGroup, 'ar');
                 return a.localeCompare(b);
             });
-    }, [searchTerm, selectedCategory]);
+    }, [allKeys, searchTerm, selectedCategory, getTranslationKeyCategory, subcategoryLabelMap, getKeyGroup]);
+
+    const subcategoryGroupMap = React.useMemo(() => {
+        const map: Record<string, Array<{ id: string; label: string; count: number }>> = {};
+        const buckets = new Map<string, Map<string, number>>();
+        categoryScopedKeys.forEach((key) => {
+            const meta = getTranslationKeyCategory(key);
+            if (meta.subcategory === 'all') return;
+            const group = getKeyGroup(key, meta.subcategory);
+            if (!buckets.has(meta.subcategory)) buckets.set(meta.subcategory, new Map());
+            const groupMap = buckets.get(meta.subcategory)!;
+            groupMap.set(group, (groupMap.get(group) || 0) + 1);
+        });
+
+        buckets.forEach((groupMap, subcategory) => {
+            map[subcategory] = Array.from(groupMap.entries())
+                .map(([label, count]) => ({ id: label, label, count }))
+                .filter((group) => group.count > 1)
+                .sort((a, b) => a.label.localeCompare(b.label, 'ar'));
+        });
+        return map;
+    }, [categoryScopedKeys, getKeyGroup, getTranslationKeyCategory]);
+
+    const visibleTranslationKeys = React.useMemo(() => {
+        return categoryScopedKeys.filter((key) => {
+            const { subcategory } = getTranslationKeyCategory(key);
+            if (selectedSubcategory !== 'all' && subcategory !== selectedSubcategory) return false;
+            return true;
+        });
+    }, [categoryScopedKeys, getTranslationKeyCategory, selectedSubcategory]);
+
+    const keyGroupTabs = React.useMemo(() => {
+        if (selectedSubcategory === 'all') {
+            return [{ id: 'all', label: 'الكل', count: visibleTranslationKeys.length }];
+        }
+        const map = new Map<string, number>();
+        visibleTranslationKeys.forEach((key) => {
+            const meta = getTranslationKeyCategory(key);
+            const group = getKeyGroup(key, meta.subcategory);
+            map.set(group, (map.get(group) || 0) + 1);
+        });
+        return [{ id: 'all', label: 'الكل', count: visibleTranslationKeys.length }, ...Array.from(map.entries()).map(([label, count]) => ({
+            id: label,
+            label,
+            count,
+        }))];
+    }, [visibleTranslationKeys, getTranslationKeyCategory, getKeyGroup, selectedSubcategory]);
+
+    const groupedVisibleTranslationKeys = React.useMemo(() => {
+        if (selectedKeyGroup === 'all') return visibleTranslationKeys;
+        return visibleTranslationKeys.filter((key) => {
+            const meta = getTranslationKeyCategory(key);
+            return getKeyGroup(key, meta.subcategory) === selectedKeyGroup;
+        });
+    }, [visibleTranslationKeys, selectedKeyGroup, getTranslationKeyCategory, getKeyGroup]);
+
+    const paginatedKeys = React.useMemo(() => {
+        const start = (page - 1) * pageSize;
+        return groupedVisibleTranslationKeys.slice(start, start + pageSize);
+    }, [groupedVisibleTranslationKeys, page]);
+
+    const totalPages = Math.ceil(groupedVisibleTranslationKeys.length / pageSize);
+
+    // Total modified count
+    const modifiedCount = React.useMemo(() => {
+        let count = 0;
+        allKeys.forEach((key) => {
+            if (textOverrides['ar_' + key] !== undefined || textOverrides['en_' + key] !== undefined) {
+                count++;
+            }
+        });
+        return count;
+    }, [allKeys, textOverrides]);
 
     return (
         <div className="p-8 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-50 pb-6">
+            {/* Header section with Stats */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-6">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-slate-900 rounded-2xl text-white"><Type className="w-6 h-6" /></div>
+                    <div className="p-3 bg-slate-900 rounded-2xl text-white">
+                        <Languages className="w-6 h-6" />
+                    </div>
                     <div>
-                        <h3 className="text-xl font-black">نصوص النظام</h3>
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">تعديل المسميات والرسائل في التطبيق</p>
+                        <h3 className="text-xl font-black">إدارة النصوص والترجمات</h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">
+                            تعديل المسميات والرسائل في التطبيق ولوحة التحكم
+                        </p>
                     </div>
                 </div>
-                <div className="relative w-full md:w-80">
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900" placeholder="ابحث عن نص..." />
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    {modifiedCount > 0 && (
+                        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 text-amber-700 text-xs font-black">
+                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            لديك {modifiedCount} نص معدّل لم يتم حفظه بعد
+                        </div>
+                    )}
+                    <div className="relative w-full sm:w-80">
+                        <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 transition-all"
+                            placeholder="ابحث عن نص..."
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-                <div className="lg:col-span-1 space-y-6">
-                    {/* Category Selector */}
-                    <div className="bg-slate-50 rounded-[2rem] p-4 border border-slate-100 space-y-5">
-                        {pageCategoryGroups.map((group) => (
-                            <div key={group.title} className="space-y-3">
-                                <div className="px-2">
-                                    <h4 className="text-[11px] font-black text-slate-950">{group.title}</h4>
-                                    <p className="mt-1 text-[9px] font-bold text-slate-400">{group.subtitle}</p>
+            {/* Category selection bar */}
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {CATEGORIES.map((cat) => {
+                    const Icon = cat.icon;
+                    const isActive = selectedCategory === cat.id;
+                    return (
+                        <button
+                            key={cat.id}
+                            onClick={() => {
+                                setSelectedCategory(cat.id);
+                                setSelectedSubcategory('all');
+                            }}
+                            className={`rounded-[1.75rem] border p-5 text-right transition-all ${
+                                isActive
+                                    ? 'border-slate-900 bg-slate-900 text-white shadow-2xl shadow-slate-900/20'
+                                    : 'border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_100%)] text-slate-500 hover:border-slate-300 hover:text-slate-950'
+                            }`}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isActive ? 'bg-white/10 text-white' : 'bg-slate-100 text-slate-700'}`}>
+                                    <Icon className="w-5 h-5" />
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {group.items.map(cat => (
-                                        <button
-                                            key={cat.id}
-                                            onClick={() => setSelectedCategory(cat.id)}
-                                            className={`min-h-8 rounded-xl px-3 py-2 text-[10px] font-black transition-all ${
-                                                selectedCategory === cat.id
-                                                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                                    : 'bg-white text-slate-500 border border-slate-100 hover:border-slate-300 hover:text-slate-900'
-                                            }`}
-                                        >
-                                            {cat.label}
-                                        </button>
-                                    ))}
+                                <div>
+                                    <p className="text-base font-black">{cat.label}</p>
+                                    <p className={`mt-1 text-[11px] font-bold ${isActive ? 'text-slate-200' : 'text-slate-400'}`}>
+                                        {isActive ? `${visibleTranslationKeys.length} نص مطابق` : 'قسم رئيسي'}
+                                    </p>
                                 </div>
                             </div>
-                        ))}
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* Subcategory selectors and Main panel */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-1 space-y-4">
+                    <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2rem] p-4 space-y-2 shadow-sm">
+                        <div className="rounded-[1.5rem] bg-slate-950 p-4 text-white mb-3">
+                            <h4 className="text-[11px] font-black">الفئة الفرعية</h4>
+                            <p className="mt-1 text-[10px] font-bold text-slate-300">المستوى الثاني داخل القسم الرئيسي</p>
+                        </div>
+                        <div className="flex flex-col gap-2 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+                            {SUBCATEGORIES[selectedCategory].map((sub) => {
+                                const count = subcategoryCounts[sub.id] || 0;
+                                const isActive = selectedSubcategory === sub.id;
+                                const isExpanded = expandedSubcategory === sub.id;
+                                const nestedGroups = subcategoryGroupMap[sub.id] || [];
+                                if (sub.id !== 'all' && count === 0) return null;
+                                return (
+                                    <div key={sub.id} className={`rounded-[1.25rem] border transition-all ${
+                                        isActive || isExpanded ? 'border-slate-300 bg-white shadow-sm' : 'border-slate-100 bg-white'
+                                    }`}>
+                                        <button
+                                            onClick={() => {
+                                                setSelectedSubcategory(sub.id);
+                                                if (sub.id === 'all') {
+                                                    setSelectedKeyGroup('all');
+                                                    setExpandedSubcategory(null);
+                                                    return;
+                                                }
+                                                setExpandedSubcategory((prev) => prev === sub.id ? null : sub.id);
+                                                setSelectedKeyGroup('all');
+                                            }}
+                                            className={`w-full flex items-center justify-between text-right px-4 py-3 text-xs font-black transition-all ${
+                                                isActive
+                                                    ? 'text-slate-950'
+                                                    : 'text-slate-500 hover:text-slate-900'
+                                            }`}
+                                        >
+                                            <div>
+                                                <p>{sub.label}</p>
+                                                <p className={`mt-1 text-[10px] font-bold ${isActive ? 'text-slate-500' : 'text-slate-400'}`}>
+                                                    {sub.id === 'all' ? 'كل النتائج' : 'اضغط للتمدد'}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                                                    isActive ? 'bg-slate-100 text-slate-700' : 'bg-slate-100 text-slate-500'
+                                                }`}>
+                                                    {count}
+                                                </span>
+                                                {sub.id !== 'all' && (
+                                                    <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180 text-slate-900' : 'text-slate-400'}`} />
+                                                )}
+                                            </div>
+                                        </button>
+                                        {sub.id !== 'all' && isExpanded && nestedGroups.length > 0 && (
+                                            <div className="border-t border-slate-100 px-3 py-3 space-y-2">
+                                                <div className="px-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Sub Sub Tab</div>
+                                                {nestedGroups.map((group) => (
+                                                    <button
+                                                        key={`${sub.id}-${group.id}`}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedSubcategory(sub.id);
+                                                            setSelectedKeyGroup(group.id);
+                                                        }}
+                                                        className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-[11px] font-black transition-all ${
+                                                            isActive && selectedKeyGroup === group.id
+                                                                ? 'bg-slate-900 text-white'
+                                                                : 'bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                                        }`}
+                                                    >
+                                                        <span>{group.label}</span>
+                                                        <span>{group.count}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
 
-                    <div className="bg-white rounded-[2rem] p-4 border border-slate-100 space-y-4">
-                        <div className="px-2">
-                            <h4 className="text-[11px] font-black text-slate-950">اختصارات لوحة التحكم</h4>
-                            <p className="mt-1 text-[9px] font-bold text-slate-400">تبويبات صغيرة للوصول السريع</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                            {ADMIN_TEXT_SECTIONS.map(section => (
-                                <button
-                                    key={section.id}
-                                    onClick={() => setSelectedCategory(section.id)}
-                                    className={`text-right px-3 py-2.5 rounded-xl text-[10px] font-black transition-all ${
-                                        selectedCategory === section.id
-                                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900'
-                                    }`}
-                                >
-                                    {section.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 space-y-6">
-                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">عناصر الهوية والرسائل العامة</h4>
+                    {/* General Settings Card */}
+                    <div className="bg-slate-50 border border-slate-100 rounded-[2rem] p-5 space-y-5">
+                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">نصوص الموقع العامة</h4>
                         <div className="space-y-4">
                             {[
                                 { key: 'coming_soon_global', label: 'رسالة "قريباً" الشاملة' },
@@ -984,13 +1254,13 @@ function TextTab({
                                 { key: 'action_register', label: 'نص زر التسجيل' },
                                 { key: 'contact_support_desc', label: 'وصف خدمة العملاء' }
                             ].map(item => (
-                                <div key={item.key} className="space-y-2">
+                                <div key={item.key} className="space-y-1.5">
                                     <label className="text-[10px] font-black text-slate-500 px-1">{item.label}</label>
                                     <input
                                         type="text"
                                         value={(localSettings.texts || {})[item.key] || ''}
                                         onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), [item.key]: e.target.value } })}
-                                        className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 text-[11px] font-black outline-none focus:ring-2 focus:ring-slate-900/5 transition-all"
+                                        className="w-full bg-white border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:ring-2 focus:ring-slate-900/5 transition-all"
                                     />
                                 </div>
                             ))}
@@ -998,49 +1268,121 @@ function TextTab({
                     </div>
                 </div>
 
-                <div className="lg:col-span-3 space-y-4">
-                    <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden">
-                        <div className="max-h-[800px] overflow-y-auto pr-2 custom-scrollbar p-8 space-y-6">
-                            {visibleTranslationKeys.map((key) => (
-                                <div key={key} className="p-8 bg-slate-50/50 rounded-[2rem] border border-slate-100/50 transition-all hover:border-slate-900/20 group">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-2 h-2 rounded-full bg-slate-900/20" />
-                                            {selectedCategory.startsWith('admin') && (
-                                                <span className="text-[10px] font-black text-slate-500 bg-white border border-slate-100 rounded-full px-3 py-1">{getAdminTextSectionLabel(key)}</span>
+                {/* Main Inputs Display */}
+                <div className="lg:col-span-3 space-y-6">
+                    <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2.5rem] overflow-hidden p-6 md:p-8 space-y-6 shadow-sm">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-white">
+                                {selectedCategory === 'admin' ? 'الإدارة' : 'الموقع العام'}
+                            </span>
+                            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-bold text-slate-500">
+                                {selectedSubcategory === 'all' ? 'كل الفئات الفرعية' : (subcategoryLabelMap[selectedSubcategory] || selectedSubcategory)}
+                            </span>
+                        {selectedSubcategory !== 'all' && (
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-500">
+                                {selectedKeyGroup === 'all' ? 'كل المجموعات المرتبطة' : selectedKeyGroup}
+                            </span>
+                        )}
+                    </div>
+                        {paginatedKeys.length === 0 ? (
+                            <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-8">
+                                <Languages className="w-12 h-12 text-slate-300 mb-4 stroke-[1.5]" />
+                                <h4 className="text-base font-black text-slate-700">لم يتم العثور على أي نصوص</h4>
+                                <p className="text-slate-400 text-xs mt-1">جرب تغيير كلمة البحث أو اختيار تصنيف فرعي آخر</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-6">
+                                {paginatedKeys.map((key) => (
+                                    <div key={key} className="p-6 md:p-8 bg-white rounded-[2rem] border border-slate-200 transition-all hover:border-slate-900/20 group shadow-sm">
+                                        <div className="flex items-center justify-between mb-5">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-600">
+                                                    {subcategoryLabelMap[getTranslationKeyCategory(key).subcategory] || getTranslationKeyCategory(key).subcategory}
+                                                </span>
+                                                <span className="rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-500">
+                                                    {getKeyGroup(key, getTranslationKeyCategory(key).subcategory)}
+                                                </span>
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono select-all">
+                                                    {key}
+                                                </span>
+                                            </div>
+                                            {(textOverrides['ar_' + key] !== undefined || textOverrides['en_' + key] !== undefined) && (
+                                                <button
+                                                    onClick={() => {
+                                                        const n = { ...textOverrides };
+                                                        delete n['ar_' + key];
+                                                        delete n['en_' + key];
+                                                        setTextOverrides(n);
+                                                    }}
+                                                    className="p-2 text-slate-300 hover:text-red-500 rounded-xl hover:bg-red-50/50 transition-all flex items-center gap-1.5 text-[10px] font-black"
+                                                    title="استعادة النص الافتراضي"
+                                                >
+                                                    <RefreshCw className="w-3.5 h-3.5" />
+                                                    <span>افتراضي</span>
+                                                </button>
                                             )}
-                                            <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest font-mono">{key}</span>
                                         </div>
-                                        <button
-                                            onClick={() => { const n = { ...textOverrides }; delete n['ar_' + key]; delete n['en_' + key]; setTextOverrides(n); }}
-                                            className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 transition-all"
-                                        >
-                                            <RefreshCw className="w-4 h-4" />
-                                        </button>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div className="space-y-1.5">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase">العربية</label>
+                                                    {(textOverrides['ar_' + key] !== undefined) && (
+                                                        <span className="text-[9px] font-black text-amber-500 bg-amber-50 rounded-full px-2 py-0.5">معدل</span>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : (translations.ar[key as keyof typeof translations.ar] || "")}
+                                                    onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
+                                                    className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-slate-100 transition-all"
+                                                />
+                                            </div>
+                                            <div dir="ltr" className="space-y-1.5">
+                                                <div className="flex justify-between items-center px-1">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase">English</label>
+                                                    {(textOverrides['en_' + key] !== undefined) && (
+                                                        <span className="text-[9px] font-black text-amber-500 bg-amber-50 rounded-full px-2 py-0.5">Modified</span>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")}
+                                                    onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))}
+                                                    className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-slate-100 transition-all text-left"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase px-1">العربية</label>
-                                            <input
-                                                type="text"
-                                                value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : (translations.ar[key as keyof typeof translations.ar] || "")}
-                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
-                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all"
-                                            />
-                                        </div>
-                                        <div dir="ltr" className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase px-1">English</label>
-                                            <input
-                                                type="text"
-                                                value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")}
-                                                onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))}
-                                                className="w-full bg-white border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl transition-all"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-100 text-slate-500 text-xs font-black hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                    <span>السابق</span>
+                                </button>
+
+                                <span className="text-xs font-black text-slate-500">
+                                    صفحة {page} من {totalPages} (عرض {groupedVisibleTranslationKeys.length} نصوص)
+                                </span>
+
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-100 text-slate-500 text-xs font-black hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                                >
+                                    <span>التالي</span>
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -1048,228 +1390,12 @@ function TextTab({
     );
 }
 
-function SiteControlTabLegacy({ localSettings, updateSettings, t }: TabProps) {
-    return (
-        <div className="p-8 space-y-12">
-            <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
-                <div className="p-3 bg-slate-900 rounded-2xl text-white"><ShieldAlert className="w-6 h-6" /></div>
-                <div>
-                    <h3 className="text-xl font-black">التحكم بالموقع</h3>
-                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">إدارة توفر الأقسام وتنبيهات القريب</p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-8">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2"><LayoutGrid className="w-3 h-3" /> توفر الأقسام</h4>
-                    <div className="space-y-4">
-                        {[
-                            { id: 'wallet', label: 'المحفظة المالية (واجهة المستخدم)' },
-                            { id: 'orders', label: 'إدارة الطلبات (واجهة المستخدم)' },
-                            { id: 'offers', label: 'العروض العقارية (واجهة المستخدم)' },
-                            { id: 'services', label: 'الخدمات (واجهة المستخدم)' },
-                            { id: 'buildingmanagement', label: 'إدارة الأملاك (واجهة المستخدم)' },
-                            { id: 'marketing', label: 'التسويق (واجهة المستخدم)' },
-                            { id: 'scan_map', label: 'المسح والمخططات' },
-                            { id: 'subscriptions', label: 'الباقات والاشتراكات (واجهة المستخدم)' },
-                            { id: 'financial', label: 'التقارير المالية (واجهة المستخدم)' },
-                            { id: 'disputes', label: 'المنازعات والقانونية (واجهة المستخدم)' },
-                            { id: 'customerservice', label: 'مركز العناية بالعملاء' },
-                            { id: 'internal', label: 'الإدارة الداخلية (الواجهة)' },
-                            { id: 'map', label: 'خريطة الموقع (الرئيسية)' },
-                            { id: 'details', label: 'صفحة التفاصيل (الرئيسية)' },
-                        ].map(section => {
-                            const sectionKey = section.id;
-                            return (
-                            <div key={section.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm font-bold">{section.label}</span>
-                                    <div className="flex items-center gap-4">
-                                        <span className={`text-[9px] font-black uppercase ${(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                                            {(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'متاح' : 'قريباً'}
-                                        </span>
-                                        <button
-                                            onClick={() => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [sectionKey]: (localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'closed' : 'open' } })}
-                                            className={`w-12 h-6 rounded-full relative transition-all ${(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                        >
-                                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${(localSettings.sectionFlags || {})[sectionKey] === 'open' ? 'left-7' : 'left-1'}`} />
-                                        </button>
-                                    </div>
-                                </div>
-                                {(localSettings.sectionFlags || {})[sectionKey] === 'closed' && (
-                                    <div className="space-y-1.5 pt-2 border-t border-slate-100 animate-in fade-in slide-in-from-top-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase">رسالة "قريباً"</label>
-                                        <input
-                                            type="text"
-                                            value={(localSettings.sectionMessages || {})[sectionKey] || ""}
-                                            onChange={(e) => updateSettings({ sectionMessages: { ...(localSettings.sectionMessages || {}), [sectionKey]: e.target.value } })}
-                                            className="w-full bg-white border border-slate-100 rounded-xl py-2 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                            placeholder="مثال: الخدمة ستتوفر قريباً..."
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        )})}
-                    </div>
-
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mt-12"><ShieldQuestion className="w-3 h-3" /> التبويبات (تمكين/قريباً/إزالة)</h4>
-                    <div className="space-y-4">
-                        {[
-                            { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)' },
-                            { id: 'chat', label: 'الدردشة' },
-                            { id: 'service_requests', label: 'طلبات الخدمات' },
-                            { id: 'marketing', label: 'إدارة التسويق' },
-                            { id: 'properties', label: 'إدارة الأملاك' },
-                            { id: 'finance', label: 'الإدارة المالية' },
-                            { id: 'legal', label: 'الإدارة القانونية' },
-                            { id: 'employees', label: 'إدارة الموظفين' },
-                            { id: 'offers', label: 'العروض' },
-                            { id: 'orders', label: 'الطلبات' },
-                            { id: 'subscriptions', label: 'الباقات والاشتراكات' },
-                            { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء' },
-                            { id: 'services_legal', label: 'الخدمات: القانونية' },
-                            { id: 'services_construction', label: 'الخدمات: البناء والمقاولات' },
-                            { id: 'services_marketing', label: 'الخدمات: التسويق' },
-                            { id: 'services_other', label: 'الخدمات: أخرى' },
-                            { id: 'legal_disputes', label: 'القانوني: المنازعات العقارية' },
-                            { id: 'legal_contracts', label: 'القانوني: العقود' },
-                            { id: 'legal_documentation', label: 'القانوني: التوثيق' },
-                            { id: 'legal_other', label: 'القانوني: أخرى' },
-                        ].map((m) => {
-                            const status: 'enabled' | 'soon' | 'disabled' = (localSettings.moduleFlags || {})[m.id] || 'enabled';
-                            const setStatus = (nextStatus: 'enabled' | 'soon' | 'disabled') => {
-                                updateSettings({
-                                    moduleFlags: { ...(localSettings.moduleFlags || {}), [m.id]: nextStatus },
-                                });
-                            };
-                            return (
-                                <div key={m.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
-                                    <div className="flex items-center justify-between gap-4">
-                                        <span className="text-sm font-bold">{m.label}</span>
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => setStatus('enabled')}
-                                                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-colors ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}
-                                            >
-                                                متاح
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setStatus('soon')}
-                                                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-colors ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}
-                                                style={
-                                                    status === 'soon'
-                                                        ? {
-                                                              backgroundColor: 'var(--soon-badge-bg, #ffffff)',
-                                                              color: 'var(--soon-badge-text, #000000)',
-                                                              borderColor: 'var(--soon-badge-bg, #ffffff)',
-                                                          }
-                                                        : undefined
-                                                }
-                                            >
-                                                قريباً
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setStatus('disabled')}
-                                                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-colors ${status === 'disabled' ? 'bg-slate-200 text-slate-700 border-slate-200' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}
-                                            >
-                                                إزالة
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {status === 'soon' && (
-                                        <div className="space-y-1.5 pt-2 border-t border-slate-100 animate-in fade-in slide-in-from-top-1">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase">رسالة "قريباً"</label>
-                                            <input
-                                                type="text"
-                                                value={(localSettings.moduleMessages || {})[m.id] || ""}
-                                                onChange={(e) =>
-                                                    updateSettings({
-                                                        moduleMessages: { ...(localSettings.moduleMessages || {}), [m.id]: e.target.value },
-                                                    })
-                                                }
-                                                className="w-full bg-white border border-slate-100 rounded-xl py-2 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                                placeholder="مثال: قريباً..."
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                <div className="space-y-8">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2"><Smartphone className="w-3 h-3" /> طرق تسجيل الدخول</h4>
-                    <div className="space-y-4">
-                        {[
-                            { id: 'phone', label: 'الجوال' },
-                            { id: 'email', label: 'البريد الإلكتروني' }
-                        ].map(method => {
-                            const methodKey = `${method.id}Enabled` as keyof typeof localSettings.loginConfig;
-                            return (
-                            <div key={method.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
-                                <span className="text-sm font-bold">{method.label}</span>
-                                <button
-                                    onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
-                                    className={`w-12 h-6 rounded-full relative transition-all ${localSettings.loginConfig[methodKey] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                >
-                                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.loginConfig[methodKey] ? 'left-7' : 'left-1'}`} />
-                                </button>
-                            </div>
-                        )})}
-                        <div className="space-y-2 pt-2">
-                             <label className="text-[10px] font-black text-slate-400 uppercase">شارة تسجيل دخول الهاتف</label>
-                             <input
-                                 type="text"
-                                 value={localSettings.loginConfig.phoneLabel || ""}
-                                 onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
-                                 className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                 placeholder="مثال: قريباً..."
-                             />
-                        </div>
-                    </div>
-
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mt-12"><Zap className="w-3 h-3" /> ظهور عناصر الواجهة</h4>
-                    <div className="grid grid-cols-1 gap-4">
-                        {[
-                            { id: 'show_map_section', label: 'قسم الخريطة' },
-                            { id: 'show_stats_cards', label: 'بطاقات الإحصائيات' },
-                            { id: 'show_charts_section', label: 'الرسوم البيانية' },
-                            { id: 'show_quick_actions', label: 'الإجراءات السريعة' },
-                            { id: 'show_quickaction_buildingmgmt', label: 'أيقونة إدارة الأملاك' },
-                            { id: 'show_quickaction_wallet', label: 'أيقونة المحفظة' },
-                            { id: 'show_quickaction_services', label: 'أيقونة الخدمات' },
-                            { id: 'show_quickaction_offers', label: 'أيقونة العروض' },
-                            { id: 'show_quickaction_orders', label: 'أيقونة الطلبات' },
-                        ].map(flag => (
-                            <div key={flag.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
-                                <span className="text-sm font-bold">{flag.label}</span>
-                                <button
-                                    onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [flag.id]: !localSettings.uiFlags[flag.id] } })}
-                                    className={`w-12 h-6 rounded-full relative transition-all ${localSettings.uiFlags[flag.id] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                >
-                                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.uiFlags[flag.id] ? 'left-7' : 'left-1'}`} />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
 
 function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
+    const [selectedSub, setSelectedSub] = useState<string>('all');
     const [query, setQuery] = useState('');
-    const [open, setOpen] = useState<{ sections: boolean; modules: boolean; login: boolean; ui: boolean }>({
-        sections: true,
-        modules: true,
-        login: false,
-        ui: false,
-    });
+    const [selectedSectionGroup, setSelectedSectionGroup] = useState<string>('all');
+    const [selectedModuleGroup, setSelectedModuleGroup] = useState<string>('all');
 
     const filterByQuery = <T extends { id: string; label: string }>(items: T[]) => {
         const q = query.trim().toLowerCase();
@@ -1277,36 +1403,20 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         return items.filter((x) => `${x.label} ${x.id}`.toLowerCase().includes(q));
     };
 
-    const SectionHeader = ({ id, title, icon: Icon, count }: { id: keyof typeof open; title: string; icon: any; count?: number }) => (
-        <button
-            type="button"
-            onClick={() => setOpen((p) => ({ ...p, [id]: !p[id] }))}
-            className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors"
-        >
-            <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-900">
-                    <Icon className="w-4 h-4" />
-                </div>
-                <div className="text-right">
-                    <p className="text-sm font-black text-slate-950">{title}</p>
-                    {typeof count === 'number' && (
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{count} عنصر</p>
-                    )}
-                </div>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${open[id] ? 'rotate-180' : ''}`} />
-        </button>
-    );
+
 
     const SectionRow = ({ id, label }: { id: string; label: string }) => {
         const v = (localSettings.sectionFlags || {})[id] === 'open' ? 'open' : 'closed';
         const setV = (next: 'open' | 'closed') => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [id]: next } });
         return (
-            <div className="rounded-2xl border border-slate-100 bg-white">
-                <div className="px-4 py-3 flex items-center justify-between gap-4">
-                    <div className="min-w-0">
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+                <div className="px-4 py-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${v === 'open' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-700'}`}>
+                            {v === 'open' ? 'ظاهر الآن' : 'قريباً'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         <button type="button" onClick={() => setV('open')} className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${v === 'open' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}>متاح</button>
@@ -1352,11 +1462,16 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const status: 'enabled' | 'soon' | 'disabled' = (localSettings.moduleFlags || {})[id] || 'enabled';
         const setStatus = (next: 'enabled' | 'soon' | 'disabled') => updateSettings({ moduleFlags: { ...(localSettings.moduleFlags || {}), [id]: next } });
         return (
-            <div className="rounded-2xl border border-slate-100 bg-white">
-                <div className="px-4 py-3 flex items-center justify-between gap-4">
-                    <div className="min-w-0">
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+                <div className="px-4 py-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${
+                            status === 'enabled' ? 'bg-emerald-50 text-emerald-600' : status === 'soon' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'
+                        }`}>
+                            {status === 'enabled' ? 'مفعل' : status === 'soon' ? 'قريباً' : 'مخفي'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}>متاح</button>
@@ -1404,11 +1519,16 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const setStatus = (next: 'enabled' | 'soon' | 'hidden') =>
             updateSettings({ detailsPartFlags: { ...(localSettings.detailsPartFlags || {}), [id]: next } });
         return (
-            <div className="rounded-2xl border border-slate-100 bg-white">
-                <div className="px-4 py-3 flex items-center justify-between gap-4">
-                    <div className="min-w-0">
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+                <div className="px-4 py-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{`details:${id}`}</p>
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${
+                            status === 'enabled' ? 'bg-emerald-50 text-emerald-600' : status === 'soon' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'
+                        }`}>
+                            {status === 'enabled' ? 'مفعل' : status === 'soon' ? 'قريباً' : 'مخفي'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         <button
@@ -1476,55 +1596,55 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     };
 
     const sections = filterByQuery([
-        { id: 'wallet', label: 'المحفظة المالية (واجهة المستخدم)' },
-        { id: 'orders', label: 'إدارة الطلبات (واجهة المستخدم)' },
-        { id: 'offers', label: 'العروض العقارية (واجهة المستخدم)' },
-        { id: 'services', label: 'الخدمات (واجهة المستخدم)' },
-        { id: 'buildingmanagement', label: 'إدارة الأملاك (واجهة المستخدم)' },
-        { id: 'marketing', label: 'التسويق (واجهة المستخدم)' },
-        { id: 'scan_map', label: 'المسح والمخططات' },
-        { id: 'subscriptions', label: 'الباقات والاشتراكات (واجهة المستخدم)' },
-        { id: 'financial', label: 'التقارير المالية (واجهة المستخدم)' },
-        { id: 'disputes', label: 'المنازعات والقانونية (واجهة المستخدم)' },
-        { id: 'customerservice', label: 'مركز العناية بالعملاء' },
-        { id: 'internal', label: 'الإدارة الداخلية (الواجهة)' },
-        { id: 'map', label: 'خريطة الموقع (الرئيسية)' },
-        { id: 'details', label: 'صفحة التفاصيل (الرئيسية)' },
+        { id: 'wallet', label: 'المحفظة المالية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
+        { id: 'orders', label: 'إدارة الطلبات (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
+        { id: 'offers', label: 'العروض العقارية (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
+        { id: 'services', label: 'الخدمات (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
+        { id: 'buildingmanagement', label: 'إدارة الأملاك (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
+        { id: 'marketing', label: 'التسويق (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
+        { id: 'scan_map', label: 'المسح والمخططات', group: 'الخدمات المتخصصة' },
+        { id: 'subscriptions', label: 'الباقات والاشتراكات (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
+        { id: 'financial', label: 'التقارير المالية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
+        { id: 'disputes', label: 'المنازعات والقانونية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
+        { id: 'customerservice', label: 'مركز العناية بالعملاء', group: 'الخدمات والمعاملات' },
+        { id: 'internal', label: 'الإدارة الداخلية (الواجهة)', group: 'الرئيسية والتنقل' },
+        { id: 'map', label: 'خريطة الموقع (الرئيسية)', group: 'الرئيسية والتنقل' },
+        { id: 'details', label: 'صفحة التفاصيل (الرئيسية)', group: 'الرئيسية والتنقل' },
     ]);
 
     const modules = filterByQuery([
-        { id: 'dashboard', label: 'لوح التحكم' },
-        { id: 'users', label: 'المستخدمين' },
-        { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)' },
-        { id: 'map_control', label: 'الخريطة' },
-        { id: 'operations', label: 'الإحصائيات والعمليات' },
-        { id: 'trends', label: 'التحليلات والاتجاهات' },
-        { id: 'customer_service', label: 'خدمة العملاء' },
-        { id: 'settings', label: 'الإعدادات والتحكم' },
-        { id: 'chat', label: 'الدردشة' },
-        { id: 'service_requests', label: 'طلبات الخدمات' },
-        { id: 'marketing', label: 'إدارة التسويق' },
-        { id: 'properties', label: 'إدارة الأملاك' },
-        { id: 'finance', label: 'الإدارة المالية' },
-        { id: 'legal', label: 'الإدارة القانونية' },
-        { id: 'employees', label: 'إدارة الموظفين' },
-        { id: 'offers', label: 'العروض' },
-        { id: 'orders', label: 'الطلبات' },
-        { id: 'subscriptions', label: 'الباقات والاشتراكات' },
-        { id: 'wallet', label: 'المحفظة' },
-        { id: 'wallet_invoices', label: 'المحفظة: الفواتير' },
-        { id: 'wallet_commissions', label: 'المحفظة: العمولات' },
-        { id: 'wallet_files', label: 'المحفظة: الملفات والمستندات' },
-        { id: 'wallet_investments', label: 'المحفظة: الاستثمارات' },
-        { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء' },
-        { id: 'services_legal', label: 'الخدمات: القانونية' },
-        { id: 'services_construction', label: 'الخدمات: البناء والمقاولات' },
-        { id: 'services_marketing', label: 'الخدمات: التسويق' },
-        { id: 'services_other', label: 'الخدمات: أخرى' },
-        { id: 'legal_disputes', label: 'القانوني: المنازعات العقارية' },
-        { id: 'legal_contracts', label: 'القانوني: العقود' },
-        { id: 'legal_documentation', label: 'القانوني: التوثيق' },
-        { id: 'legal_other', label: 'القانوني: أخرى' },
+        { id: 'dashboard', label: 'لوح التحكم', group: 'الأساسيات' },
+        { id: 'users', label: 'المستخدمين', group: 'الأساسيات' },
+        { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)', group: 'التشغيل اليومي' },
+        { id: 'map_control', label: 'الخريطة', group: 'التشغيل اليومي' },
+        { id: 'operations', label: 'الإحصائيات والعمليات', group: 'التشغيل اليومي' },
+        { id: 'trends', label: 'التحليلات والاتجاهات', group: 'التشغيل اليومي' },
+        { id: 'customer_service', label: 'خدمة العملاء', group: 'الأساسيات' },
+        { id: 'settings', label: 'الإعدادات والتحكم', group: 'الأساسيات' },
+        { id: 'chat', label: 'الدردشة', group: 'الأساسيات' },
+        { id: 'service_requests', label: 'طلبات الخدمات', group: 'التشغيل اليومي' },
+        { id: 'marketing', label: 'إدارة التسويق', group: 'الإدارات المتخصصة' },
+        { id: 'properties', label: 'إدارة الأملاك', group: 'الإدارات المتخصصة' },
+        { id: 'finance', label: 'الإدارة المالية', group: 'الإدارات المتخصصة' },
+        { id: 'legal', label: 'الإدارة القانونية', group: 'الإدارات المتخصصة' },
+        { id: 'employees', label: 'إدارة الموظفين', group: 'الأساسيات' },
+        { id: 'offers', label: 'العروض', group: 'التشغيل اليومي' },
+        { id: 'orders', label: 'الطلبات', group: 'التشغيل اليومي' },
+        { id: 'subscriptions', label: 'الباقات والاشتراكات', group: 'الإدارات المتخصصة' },
+        { id: 'wallet', label: 'المحفظة', group: 'الإدارات المتخصصة' },
+        { id: 'wallet_invoices', label: 'المحفظة: الفواتير', group: 'تفريعات متقدمة' },
+        { id: 'wallet_commissions', label: 'المحفظة: العمولات', group: 'تفريعات متقدمة' },
+        { id: 'wallet_files', label: 'المحفظة: الملفات والمستندات', group: 'تفريعات متقدمة' },
+        { id: 'wallet_investments', label: 'المحفظة: الاستثمارات', group: 'تفريعات متقدمة' },
+        { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء', group: 'تفريعات متقدمة' },
+        { id: 'services_legal', label: 'الخدمات: القانونية', group: 'تفريعات متقدمة' },
+        { id: 'services_construction', label: 'الخدمات: البناء والمقاولات', group: 'تفريعات متقدمة' },
+        { id: 'services_marketing', label: 'الخدمات: التسويق', group: 'تفريعات متقدمة' },
+        { id: 'services_other', label: 'الخدمات: أخرى', group: 'تفريعات متقدمة' },
+        { id: 'legal_disputes', label: 'القانوني: المنازعات العقارية', group: 'تفريعات متقدمة' },
+        { id: 'legal_contracts', label: 'القانوني: العقود', group: 'تفريعات متقدمة' },
+        { id: 'legal_documentation', label: 'القانوني: التوثيق', group: 'تفريعات متقدمة' },
+        { id: 'legal_other', label: 'القانوني: أخرى', group: 'تفريعات متقدمة' },
     ]);
 
     const uiFlags = filterByQuery([
@@ -1546,110 +1666,334 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         { id: 'quick_actions', label: 'الوصول السريع (التفاصيل)' },
     ]);
 
+    const subcategories = [
+        { id: 'all',     label: 'عرض الكل',                  icon: LayoutGrid,    count: sections.length + modules.length + uiFlags.length + detailsParts.length + 2 },
+        { id: 'sections', label: 'أقسام الموقع (المستخدم)',   icon: Globe,         count: sections.length },
+        { id: 'modules',  label: 'تبويبات لوحة التحكم',       icon: ShieldQuestion, count: modules.length },
+        { id: 'login',    label: 'طرق تسجيل الدخول',          icon: Smartphone,    count: 2 },
+        { id: 'ui',       label: 'عناصر الواجهة',              icon: Zap,           count: uiFlags.length },
+        { id: 'details',  label: 'أقسام صفحة التفاصيل',        icon: Type,          count: detailsParts.length },
+    ];
+
+    const showSection  = selectedSub === 'all' || selectedSub === 'sections';
+    const showModules  = selectedSub === 'all' || selectedSub === 'modules';
+    const showLogin    = selectedSub === 'all' || selectedSub === 'login';
+    const showUi       = selectedSub === 'all' || selectedSub === 'ui';
+    const showDetails  = selectedSub === 'all' || selectedSub === 'details';
+    const groupItems = <T extends { group?: string }>(items: T[]) => Object.entries(items.reduce((acc, item) => {
+        const key = item.group || 'عام';
+        acc[key] = acc[key] || [];
+        acc[key].push(item);
+        return acc;
+    }, {} as Record<string, T[]>));
+
+    const sectionGroups = groupItems(sections);
+    const moduleGroups = groupItems(modules);
+
+    useEffect(() => {
+        setSelectedSectionGroup('all');
+        setSelectedModuleGroup('all');
+    }, [query, selectedSub]);
+
     return (
-        <div className="p-8 space-y-8">
-            <div className="flex items-center gap-4">
-                <div className="p-3 bg-slate-900 rounded-2xl text-white"><ShieldAlert className="w-6 h-6" /></div>
-                <div className="flex-1">
-                    <h3 className="text-xl font-black">التحكم بالموقع</h3>
-                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">ابحث ثم عدل الحالة</p>
+        <div className="p-8 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-slate-900 rounded-2xl text-white">
+                        <ShieldAlert className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black">التحكم والوصول</h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">
+                            تفعيل وتعطيل أقسام الموقع وميزات لوحة التحكم
+                        </p>
+                    </div>
+                </div>
+                <div className="relative w-full md:w-80">
+                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 transition-all"
+                        placeholder="ابحث (العروض، الطلبات...)"
+                    />
+                    {query && (
+                        <button type="button" onClick={() => setQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg hover:bg-slate-200 flex items-center justify-center transition-colors">
+                            <X className="w-3.5 h-3.5 text-slate-400" />
+                        </button>
+                    )}
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3">
-                <Search className="w-4 h-4 text-slate-400" />
-                <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full bg-transparent outline-none text-sm font-bold text-slate-900 placeholder:text-slate-400"
-                    placeholder="ابحث عن (العروض، الطلبات، التوثيق...)"
-                />
-                {query && (
-                    <button type="button" onClick={() => setQuery('')} className="w-8 h-8 rounded-xl hover:bg-white flex items-center justify-center">
-                        <X className="w-4 h-4 text-slate-400" />
-                    </button>
-                )}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                    <SectionHeader id="sections" title="الأقسام (واجهة المستخدم)" icon={LayoutGrid} count={sections.length} />
-                    {open.sections && <div className="space-y-3">{sections.map((s) => <SectionRow key={s.id} id={s.id} label={s.label} />)}</div>}
-                </div>
-
-                <div className="space-y-3">
-                    <SectionHeader id="modules" title="التبويبات (داخل الإدارة)" icon={ShieldQuestion} count={modules.length} />
-                    {open.modules && <div className="space-y-3">{modules.map((m) => <ModuleRow key={m.id} id={m.id} label={m.label} />)}</div>}
-                </div>
-
-                <div className="space-y-3">
-                    <SectionHeader id="login" title="طرق تسجيل الدخول" icon={Smartphone} />
-                    {open.login && (
-                        <div className="space-y-3">
-                            {[
-                                { id: 'phone', label: 'الجوال' },
-                                { id: 'email', label: 'البريد الإلكتروني' },
-                            ].map((method) => {
-                                const methodKey = `${method.id}Enabled` as keyof typeof localSettings.loginConfig;
-                                return (
-                                    <div key={method.id} className="rounded-2xl border border-slate-100 bg-white px-4 py-3 flex items-center justify-between">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Subcategory Sidebar */}
+                <div className="lg:col-span-1">
+                    <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2rem] p-4 space-y-1.5 sticky top-4 shadow-sm">
+                        <div className="rounded-[1.5rem] bg-slate-950 p-4 text-white mb-3">
+                            <h4 className="text-[11px] font-black">الفئات الرئيسية</h4>
+                            <p className="mt-1 text-[10px] font-bold text-slate-300">ترتيب هرمي: قسم رئيسي ثم مجموعة فرعية ثم العناصر</p>
+                        </div>
+                        {subcategories.map((sub) => {
+                            const Icon = sub.icon;
+                            const isActive = selectedSub === sub.id;
+                            return (
+                                <button
+                                    key={sub.id}
+                                    onClick={() => setSelectedSub(sub.id)}
+                                    className={`w-full flex items-center justify-between text-right px-4 py-3 rounded-[1.25rem] text-xs font-black transition-all border ${
+                                        isActive
+                                            ? 'bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                            : 'bg-white hover:bg-slate-50 text-slate-500 border-slate-100 hover:text-slate-900 hover:border-slate-200'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-2.5">
+                                        <Icon className="w-3.5 h-3.5 shrink-0" />
                                         <div>
-                                            <p className="text-sm font-bold text-slate-950">{method.label}</p>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{String(methodKey)}</p>
+                                            <p>{sub.label}</p>
+                                            <p className={`mt-1 text-[10px] font-bold ${isActive ? 'text-slate-200' : 'text-slate-400'}`}>عرض المجموعة</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
-                                            className={`w-12 h-6 rounded-full relative transition-all ${localSettings.loginConfig[methodKey] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                        >
-                                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.loginConfig[methodKey] ? 'left-7' : 'left-1'}`} />
-                                        </button>
                                     </div>
-                                );
-                            })}
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                                        {sub.count}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                            <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">شارة تسجيل دخول الهاتف</label>
-                                <input
-                                    type="text"
-                                    value={localSettings.loginConfig.phoneLabel || ""}
-                                    onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
-                                    className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                    placeholder="مثال: قريباً..."
-                                />
+                {/* Main content */}
+                <div className="lg:col-span-3 space-y-8">
+
+                    {/* User-facing Sections */}
+                    {showSection && sections.length > 0 && (
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <Globe className="w-4 h-4 text-slate-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-950">أقسام الموقع (العملاء)</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">{sections.length} قسم — تحكم في الظهور للمستخدمين</p>
+                                </div>
+                            </div>
+                            <div className="space-y-5">
+                                {sectionGroups.length > 1 && (
+                                    <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4">
+                                        <div className="mb-3">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Sub Sub Tabs</p>
+                                            <p className="mt-1 text-xs font-bold text-slate-600">المجموعات المرتبطة داخل أقسام الموقع</p>
+                                        </div>
+                                        <div className="flex gap-2 overflow-x-auto pb-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedSectionGroup('all')}
+                                                className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
+                                                    selectedSectionGroup === 'all' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                }`}
+                                            >
+                                                الكل ({sections.length})
+                                            </button>
+                                            {sectionGroups.map(([group, items]) => (
+                                                <button
+                                                    key={group}
+                                                    type="button"
+                                                    onClick={() => setSelectedSectionGroup(group)}
+                                                    className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
+                                                        selectedSectionGroup === group ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                    }`}
+                                                >
+                                                    {group} ({items.length})
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {sectionGroups.filter(([group]) => selectedSectionGroup === 'all' || selectedSectionGroup === group).map(([group, items]) => (
+                                    <div key={group} className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
+                                        <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
+                                            <div>
+                                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">فئة فرعية</p>
+                                                <h5 className="mt-1 text-sm font-black text-slate-900">{group}</h5>
+                                            </div>
+                                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-500">{items.length}</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {items.map((s) => <SectionRow key={s.id} id={s.id} label={s.label} />)}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}
-                </div>
 
-                <div className="space-y-3">
-                    <SectionHeader id="ui" title="عناصر الواجهة" icon={Zap} count={uiFlags.length + detailsParts.length} />
-                    {open.ui && (
+                    {/* Admin Modules */}
+                    {showModules && modules.length > 0 && (
                         <div className="space-y-3">
-                            {uiFlags.map((flag) => (
-                                <div key={flag.id} className="rounded-2xl border border-slate-100 bg-white px-4 py-3 flex items-center justify-between">
-                                    <div className="min-w-0">
-                                        <p className="text-sm font-bold text-slate-950 truncate">{flag.label}</p>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{flag.id}</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [flag.id]: !localSettings.uiFlags[flag.id] } })}
-                                        className={`w-12 h-6 rounded-full relative transition-all ${localSettings.uiFlags[flag.id] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                    >
-                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.uiFlags[flag.id] ? 'left-7' : 'left-1'}`} />
-                                    </button>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <ShieldQuestion className="w-4 h-4 text-slate-600" />
                                 </div>
-                            ))}
-
-                            <div className="pt-2 border-t border-slate-200">
-                                <div className="text-xs font-black text-slate-600 mb-2">أقسام صفحة التفاصيل</div>
-                                <div className="space-y-3">
-                                    {detailsParts.map((p) => (
-                                        <DetailsPartRow key={p.id} id={p.id} label={p.label} />
-                                    ))}
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-950">تبويبات لوحة التحكم</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">{modules.length} وحدة — تحكم في ظهورها داخل الإدارة</p>
                                 </div>
                             </div>
+                            <div className="space-y-5">
+                                {moduleGroups.length > 1 && (
+                                    <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4">
+                                        <div className="mb-3">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Sub Sub Tabs</p>
+                                            <p className="mt-1 text-xs font-bold text-slate-600">المجموعات المرتبطة داخل تبويبات لوحة التحكم</p>
+                                        </div>
+                                        <div className="flex gap-2 overflow-x-auto pb-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedModuleGroup('all')}
+                                                className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
+                                                    selectedModuleGroup === 'all' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                }`}
+                                            >
+                                                الكل ({modules.length})
+                                            </button>
+                                            {moduleGroups.map(([group, items]) => (
+                                                <button
+                                                    key={group}
+                                                    type="button"
+                                                    onClick={() => setSelectedModuleGroup(group)}
+                                                    className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
+                                                        selectedModuleGroup === group ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
+                                                    }`}
+                                                >
+                                                    {group} ({items.length})
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {moduleGroups.filter(([group]) => selectedModuleGroup === 'all' || selectedModuleGroup === group).map(([group, items]) => (
+                                    <div key={group} className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
+                                        <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
+                                            <div>
+                                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">فئة فرعية</p>
+                                                <h5 className="mt-1 text-sm font-black text-slate-900">{group}</h5>
+                                            </div>
+                                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-500">{items.length}</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {items.map((m) => <ModuleRow key={m.id} id={m.id} label={m.label} />)}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Login Methods */}
+                    {showLogin && (
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <Smartphone className="w-4 h-4 text-slate-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-950">طرق تسجيل الدخول</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">تفعيل / تعطيل قنوات الدخول المتاحة</p>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                {[
+                                    { id: 'phone', label: 'رقم الجوال' },
+                                    { id: 'email', label: 'البريد الإلكتروني' },
+                                ].map((method) => {
+                                    const methodKey = `${method.id}Enabled` as keyof typeof localSettings.loginConfig;
+                                    return (
+                                        <div key={method.id} className="rounded-2xl border border-slate-100 bg-white p-5 flex items-center justify-between shadow-sm hover:border-slate-900/10 transition-all">
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-950">{method.label}</p>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{String(methodKey)}</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
+                                                className={`w-12 h-6 rounded-full relative transition-all ${localSettings.loginConfig[methodKey] ? 'bg-slate-900' : 'bg-slate-200'}`}
+                                            >
+                                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.loginConfig[methodKey] ? 'left-7' : 'left-1'}`} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                                <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:border-slate-900/10 transition-all">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">شارة زر تسجيل دخول الهاتف</label>
+                                    <input
+                                        type="text"
+                                        value={localSettings.loginConfig.phoneLabel || ""}
+                                        onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
+                                        className="mt-3 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all"
+                                        placeholder="مثال: تسجيل الدخول بالهاتف"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* UI Flags */}
+                    {showUi && uiFlags.length > 0 && (
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <Zap className="w-4 h-4 text-slate-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-950">عناصر الواجهة العامة</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">إظهار أو إخفاء عناصر الصفحة الرئيسية</p>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                {uiFlags.map((flag) => (
+                                    <div key={flag.id} className="rounded-2xl border border-slate-100 bg-white p-5 flex items-center justify-between shadow-sm hover:border-slate-900/10 transition-all">
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold text-slate-950 truncate">{flag.label}</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{flag.id}</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [flag.id]: !localSettings.uiFlags[flag.id] } })}
+                                            className={`w-12 h-6 rounded-full relative transition-all shrink-0 ${localSettings.uiFlags[flag.id] ? 'bg-slate-900' : 'bg-slate-200'}`}
+                                        >
+                                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.uiFlags[flag.id] ? 'left-7' : 'left-1'}`} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Details Page Parts */}
+                    {showDetails && detailsParts.length > 0 && (
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <Type className="w-4 h-4 text-slate-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-950">أقسام صفحة التفاصيل</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">تحكم في مكونات صفحة تفاصيل العقار</p>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                {detailsParts.map((p) => <DetailsPartRow key={p.id} id={p.id} label={p.label} />)}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Empty state */}
+                    {sections.length === 0 && modules.length === 0 && uiFlags.length === 0 && detailsParts.length === 0 && (
+                        <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-8">
+                            <ShieldCheck className="w-12 h-12 text-slate-300 mb-4 stroke-[1.5]" />
+                            <h4 className="text-base font-black text-slate-700">لا توجد نتائج</h4>
+                            <p className="text-slate-400 text-xs mt-1">جرب تغيير كلمة البحث</p>
                         </div>
                     )}
                 </div>

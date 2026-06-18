@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Mail, 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  Play, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Mail,
+  Plus,
+  Trash2,
+  Edit2,
+  Play,
+  CheckCircle,
+  XCircle,
   RefreshCcw,
   AlertCircle,
   Clock,
@@ -129,8 +129,8 @@ export default function MarketingPage() {
             {triggering ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {t('admin.marketing.action.trigger')}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => {
               setEditingCampaign(null);
               setIsModalOpen(true);
@@ -145,16 +145,7 @@ export default function MarketingPage() {
       </div>
 
       <div className="flex gap-2 rounded-2xl bg-slate-100 p-1.5 w-fit">
-        <button
-          type="button"
-          onClick={() => setActiveTab('requests')}
-          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-            activeTab === 'requests' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
-          }`}
-        >
-          <MessageSquare className="w-4 h-4" />
-          طلبات التسويق
-        </button>
+
         <button
           type="button"
           onClick={() => setActiveTab('campaigns')}
@@ -221,7 +212,7 @@ export default function MarketingPage() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {campaigns.map((campaign) => (
-                  <motion.tr 
+                  <motion.tr
                     key={campaign.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -253,11 +244,11 @@ export default function MarketingPage() {
                       </span>
                     </td>
                     <td className="px-8 py-5">
-                      <button 
+                      <button
                         onClick={() => handleToggleStatus(campaign)}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                          campaign.isActive 
-                            ? 'bg-slate-100 text-slate-700 border border-slate-200' 
+                          campaign.isActive
+                            ? 'bg-slate-100 text-slate-700 border border-slate-200'
                             : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
                       >
@@ -272,7 +263,7 @@ export default function MarketingPage() {
                     </td>
                     <td className="px-8 py-5 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingCampaign(campaign);
                             setIsModalOpen(true);
@@ -281,7 +272,7 @@ export default function MarketingPage() {
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(campaign.id)}
                           className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                         >
@@ -298,7 +289,7 @@ export default function MarketingPage() {
       </div>
       )}
 
-      <MarketingCampaignModal 
+      <MarketingCampaignModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

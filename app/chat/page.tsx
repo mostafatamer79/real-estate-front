@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MessageCircle, Search, User, Clock, CheckCheck, ArrowRight, Sparkles } from "lucide-react";
+import { MessageCircle, Search, User, Clock, CheckCheck, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { chatApi } from "@/lib/chat";
 import { motion } from "framer-motion";
@@ -32,7 +32,7 @@ interface ChatRoom {
 
 export default function NormalChatPage() {
   const router = useRouter();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -149,50 +149,60 @@ export default function NormalChatPage() {
     );
   }
 
+  const unreadTotal = chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
+
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4" dir="rtl">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-xl shadow-slate-900/20">
-            <MessageCircle className="w-6 h-6" />
+    <div className="min-h-screen bg-slate-50 px-4 py-6" dir="rtl">
+      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white">
+              <MessageCircle className="h-7 w-7" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-slate-950">محادثاتي</h1>
+              <p className="mt-1 text-sm font-bold text-slate-500">متابعة المحادثات والردود من مكان واحد.</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">محادثاتي</h1>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">تواصل مع المعلنين</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+              <p className="text-2xl font-black tabular-nums text-slate-950">{chats.length.toLocaleString("ar-SA")}</p>
+              <p className="text-[10px] font-black text-slate-400">محادثة</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+              <p className="text-2xl font-black tabular-nums text-slate-950">{unreadTotal.toLocaleString("ar-SA")}</p>
+              <p className="text-[10px] font-black text-slate-400">غير مقروءة</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/details")}
+              className="inline-flex h-12 items-center gap-2 rounded-xl bg-slate-950 px-5 text-xs font-black text-white transition-all hover:bg-black"
+            >
+              <span>العودة</span>
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
-        <button 
-          onClick={() => {
-            if (typeof window !== "undefined" && window.history.length > 1) {
-              router.back();
-            } else {
-              router.push("/");
-            }
-          }}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-950 transition-colors text-sm font-black"
-        >
-          <span>الرجوع</span>
-          <ArrowRight className="w-5 h-5" />
-        </button>
       </div>
 
-      <div className="relative mb-6">
-        <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+      <div className="relative">
+        <Search className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
         <input 
           type="text"
-          placeholder="البحث في المحادثات..."
+          placeholder="ابحث باسم العميل، البريد، أو اسم المحادثة..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pr-12 pl-4 py-4 bg-white border border-slate-200 rounded-[1.25rem] focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all shadow-sm"
+          className="h-14 w-full rounded-xl border border-slate-200 bg-white pr-14 pl-4 text-sm font-bold shadow-sm outline-none transition-all focus:border-slate-950"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-3">
         {filteredChats.length === 0 ? (
-          <div className="bg-white rounded-[2rem] border border-slate-200 p-12 text-center">
-            <MessageCircle className="w-16 h-16 text-slate-100 mx-auto mb-4" />
-            <h3 className="text-lg font-black text-slate-700">لا توجد رسائل</h3>
-            <p className="text-sm text-slate-400 mt-1">ابدأ بالتواصل مع المعلنين حول العقارات</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-14 text-center shadow-sm">
+            <MessageCircle className="mx-auto mb-4 h-16 w-16 text-slate-200" />
+            <h3 className="text-lg font-black text-slate-800">لا توجد محادثات مطابقة</h3>
+            <p className="mt-1 text-sm font-bold text-slate-400">جرّب بحثًا آخر أو ابدأ محادثة من صفحة العرض أو الطلب.</p>
           </div>
         ) : (
           filteredChats.map((chat) => (
@@ -200,14 +210,16 @@ export default function NormalChatPage() {
               key={chat.id}
               whileHover={{ y: -2, scale: 1.01 }}
               onClick={() => router.push(`/chat/${chat.id}`)}
-              className="group flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-[1.5rem] cursor-pointer hover:shadow-xl hover:shadow-slate-200/50 transition-all"
+              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-white p-5 transition-all hover:border-slate-950 hover:shadow-sm ${
+                chat.unreadCount > 0 ? "border-slate-950" : "border-slate-200"
+              }`}
             >
               <div className="relative shrink-0">
-                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-slate-950 transition-colors">
-                  <User className="w-7 h-7 text-slate-400 group-hover:text-white transition-colors" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 transition-colors group-hover:bg-slate-950">
+                  <User className="h-7 w-7 text-slate-400 transition-colors group-hover:text-white" />
                 </div>
                 {chat.unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-slate-950 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg">
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white shadow-lg">
                     {chat.unreadCount}
                   </span>
                 )}
@@ -218,8 +230,8 @@ export default function NormalChatPage() {
                     {chat.otherParticipant ? getFullName(chat.otherParticipant.firstName, chat.otherParticipant.lastName) : chat.name}
                   </h4>
                   {chat.lastMessage && (
-                    <span className="text-[10px] font-black text-slate-400 flex items-center gap-1 uppercase tracking-widest">
-                      <Clock className="w-3 h-3" />
+                    <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <Clock className="h-3 w-3" />
                       {formatTime(chat.lastMessage.createdAt)}
                     </span>
                   )}
@@ -229,15 +241,16 @@ export default function NormalChatPage() {
                     {chat.lastMessage ? chat.lastMessage.content : "ابدأ محادثة جديدة"}
                   </p>
                   {chat.unreadCount > 0 ? (
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
                   ) : (
-                    <CheckCheck className="w-4 h-4 text-slate-300" />
+                    <CheckCheck className="h-4 w-4 text-slate-300" />
                   )}
                 </div>
               </div>
             </motion.div>
           ))
         )}
+      </div>
       </div>
     </div>
   );

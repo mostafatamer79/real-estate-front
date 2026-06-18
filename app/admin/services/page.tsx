@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { 
-  Wrench, 
-  Search, 
+import {
+  Wrench,
+  Search,
   Filter,
-  Settings2, 
-  Palette, 
-  LayoutGrid, 
-  ShieldAlert, 
+  Settings2,
+  Palette,
+  LayoutGrid,
+  ShieldAlert,
   Zap,
   ShoppingBag,
   Scale,
@@ -25,13 +25,18 @@ import {
   Loader2,
   Save,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Plus,
+  X,
+  User,
+  UserCheck,
+  Check
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import api from "@/lib/api";
+import api, { usersApi } from "@/lib/api";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -43,13 +48,18 @@ export default function AdminServicesManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [saving, setSaving] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
+  const [savePopupOpen, setSavePopupOpen] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [priceSearchTerm, setPriceSearchTerm] = useState("");
   const [requests, setRequests] = useState<any[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestPage, setRequestPage] = useState(1);
+  const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability">("requests");
   const [requestDrafts, setRequestDrafts] = useState<Record<string, { status: string; price: string; targetDepartment: string; description: string }>>({});
   const [invoiceDrafts, setInvoiceDrafts] = useState<Record<string, string>>({});
-  
+
   // Local state for flags and prices to allow editing before saving
   const [localModuleFlags, setLocalModuleFlags] = useState<Record<string, 'enabled' | 'soon' | 'disabled'>>({});
   const [localServicePrices, setLocalServicePrices] = useState<Record<string, string>>({});
@@ -139,6 +149,13 @@ export default function AdminServicesManagementPage() {
   const visibleServiceCategories = isLegalServicesPage ? legalServiceCategories : nonLegalServiceCategories;
 
   const requestPageSize = 8;
+  const filteredPricingServices = activeCategoryServices.filter((service) =>
+    service.toLowerCase().includes(priceSearchTerm.trim().toLowerCase())
+  );
+  const pricedServicesCount = activeCategoryServices.filter((service) => {
+    const key = makeServicePriceKey(activeServiceCategory, service);
+    return Number(localServicePrices[key] || 0) > 0;
+  }).length;
 
   const loadRequests = async () => {
     setLoadingRequests(true);
@@ -185,6 +202,7 @@ export default function AdminServicesManagementPage() {
 
       if (ok) {
         toast.success("تم حفظ إعدادات الخدمات بنجاح");
+        setSavePopupOpen(true);
         await refetch();
       }
     } catch (error) {
@@ -286,14 +304,18 @@ export default function AdminServicesManagementPage() {
 
   const requestMatchesActiveCategory = (request: any) => {
     const category = request.category;
+    const targetDepartment = request.targetDepartment;
     const serviceText = `${request.serviceType || ""} ${request.description || ""}`.toLowerCase();
-    if (activeServiceCategory === "legal") return category === "legal";
-    if (activeServiceCategory === "legal_disputes") return category === "legal" && /(منازعة|نزاع|نزاعات|dispute)/i.test(serviceText);
-    if (activeServiceCategory === "legal_contracts") return category === "legal" && /(عقد|العقود|contracts|contract)/i.test(serviceText);
-    if (activeServiceCategory === "legal_documentation") return category === "legal" && /(توثيق|documentation|deed)/i.test(serviceText);
+    if (activeServiceCategory === "legal") return category === "legal" || targetDepartment === "legal";
+    if (activeServiceCategory === "legal_disputes") return (category === "legal" || targetDepartment === "legal") && /(منازعة|نزاع|نزاعات|dispute)/i.test(serviceText);
+    if (activeServiceCategory === "legal_contracts") return (category === "legal" || targetDepartment === "legal") && /(عقد|العقود|contracts|contract)/i.test(serviceText);
+    if (activeServiceCategory === "legal_documentation") return (category === "legal" || targetDepartment === "legal") && /(توثيق|documentation|deed)/i.test(serviceText);
     if (activeServiceCategory === "legal_other") {
-      return category === "legal" && !/(منازعة|نزاع|نزاعات|dispute|عقد|العقود|contracts|contract|توثيق|documentation|deed)/i.test(serviceText);
+      return (category === "legal" || targetDepartment === "legal") && !/(منازعة|نزاع|نزاعات|dispute|عقد|العقود|contracts|contract|توثيق|documentation|deed)/i.test(serviceText);
     }
+    if (activeServiceCategory === "marketing") return category === "marketing" || targetDepartment === "marketing";
+    if (activeServiceCategory === "postPurchase") return category === "postPurchase" || category === "post_purchase";
+    if (activeServiceCategory === "construction") return category === "construction" || targetDepartment === "construction";
     return category === activeServiceCategory;
   };
 
@@ -339,9 +361,9 @@ export default function AdminServicesManagementPage() {
             التحكم في ظهور الخدمات للعملاء، ضبط الأسعار، وتعديل حالات التوفر
           </p>
         </div>
-        
+
         <button 
-          onClick={handleSave}
+          onClick={() => setConfirmSaveOpen(true)}
           disabled={saving}
           className="bg-slate-950 text-white px-8 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-2xl shadow-slate-950/20 disabled:opacity-50"
         >
@@ -350,30 +372,42 @@ export default function AdminServicesManagementPage() {
         </button>
       </header>
 
-      <nav className="rounded-[2rem] border border-slate-100 bg-white p-2 shadow-sm">
-        <div className="flex gap-2 overflow-x-auto">
-          {serviceNavigationTabs.map((tab) => {
-            const Icon = tab.icon;
-            const active = activeServiceCategory === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => router.push(`/admin/services?type=${tab.type}`)}
-                className={`flex min-w-fit items-center justify-center gap-2 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${
-                  active ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        {[
+          { id: "requests", label: "الطلبات", desc: "عرض كامل، رد على العميل، تسعير الطلب وإرسال الفاتورة", icon: FileText, count: filteredServiceRequests.length },
+          { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: DollarSign, count: activeCategoryServices.length },
+          { id: "availability", label: "تفعيل الخدمات", desc: "تشغيل أو تعطيل ظهور الخدمات للعملاء", icon: Settings2, count: visibleServiceCategories.length },
+        ].map((panel) => {
+          const Icon = panel.icon;
+          const active = activePanel === panel.id;
+          return (
+            <button
+              key={panel.id}
+              type="button"
+              onClick={() => setActivePanel(panel.id as "requests" | "pricing" | "availability")}
+              className={`rounded-2xl border p-5 text-right transition-all ${
+                active ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "border-slate-100 bg-white text-slate-600 hover:border-slate-300"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-white/10 text-white" : "bg-slate-50 text-slate-400"}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className={`rounded-full px-3 py-1 text-xs font-black ${active ? "bg-white text-slate-950" : "bg-slate-50 text-slate-500"}`}>
+                  {panel.count}
+                </span>
+              </div>
+              <p className="mt-4 text-sm font-black">{panel.label}</p>
+              <p className={`mt-1 text-[11px] font-bold leading-5 ${active ? "text-white/60" : "text-slate-400"}`}>{panel.desc}</p>
+            </button>
+          );
+        })}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 space-y-8">
+        <div className={`lg:col-span-2 space-y-8 ${activePanel !== "availability" ? "hidden" : ""}`}>
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <LayoutGrid className="w-5 h-5 text-slate-400" />
             <h2 className="text-lg font-black text-slate-900">أقسام الخدمات وتوفرها</h2>
@@ -395,13 +429,13 @@ export default function AdminServicesManagementPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button 
+                    <button
                       onClick={() => handleToggleModule(cat.id, 'enabled')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
                     >
                       نشط
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleToggleModule(cat.id, 'soon')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
                       style={
@@ -416,7 +450,7 @@ export default function AdminServicesManagementPage() {
                     >
                       قريباً
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleToggleModule(cat.id, 'disabled')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
                     >
@@ -429,61 +463,130 @@ export default function AdminServicesManagementPage() {
           </div>
         </div>
 
-        <div className="space-y-8">
-           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-            <DollarSign className="w-5 h-5 text-slate-400" />
-            <h2 className="text-lg font-black text-slate-900">تسعير {activeCategoryConfig.label}</h2>
-          </div>
+        <div className={`lg:col-span-3 space-y-6 ${activePanel !== "pricing" ? "hidden" : ""}`}>
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                  <DollarSign className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black tracking-tight text-slate-950">تسعير {activeCategoryConfig.label}</h2>
+                  <p className="mt-1 text-sm font-bold text-slate-500">حدد سعر كل خدمة كما سيظهر في الطلبات الجديدة والفواتير.</p>
+                </div>
+              </div>
 
-          <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-6">
-            <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-4 rounded-2xl border border-amber-100">
-              <AlertTriangle className="w-5 h-5 shrink-0" />
-              <p className="text-[10px] font-bold leading-relaxed">تغيير الأسعار هنا سيؤثر فوراً على جميع الطلبات الجديدة في المنصة.</p>
-            </div>
-
-            <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              {activeCategoryServices.map((service) => {
-                const key = makeServicePriceKey(activeServiceCategory, service);
-                return (
-                <div key={key} className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">{service}</label>
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      value={localServicePrices[key] || ""} 
-                      onChange={(e) => handlePriceChange(key, e.target.value)}
-                      className="w-full bg-white border border-slate-100 rounded-2xl py-3 px-5 text-sm font-bold outline-none focus:border-slate-950 transition-all pr-12"
-                      placeholder="0.00"
-                    />
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase">ر.س</span>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
+                  <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length.toLocaleString("ar-SA")}</p>
+                  <p className="text-[10px] font-black text-slate-400">خدمة</p>
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
+                  <p className="text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount.toLocaleString("ar-SA")}</p>
+                  <p className="text-[10px] font-black text-slate-400">مسعرة</p>
+                </div>
+                <div className="col-span-2 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-right sm:col-span-1">
+                  <div className="flex items-start gap-2 text-amber-700">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <p className="text-[11px] font-bold leading-5">تغيير السعر يؤثر على الطلبات الجديدة فقط.</p>
                   </div>
                 </div>
-              )})}
+              </div>
             </div>
 
-            <p className="text-[9px] font-black text-slate-400 text-center uppercase tracking-[0.2em] pt-4">كل خدمة في هذا القسم لها سعر مستقل ويحفظ في إعدادات الباكند</p>
+            <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 md:flex-row md:items-center md:justify-between">
+              <div className="relative w-full md:max-w-md">
+                <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  value={priceSearchTerm}
+                  onChange={(event) => setPriceSearchTerm(event.target.value)}
+                  placeholder="ابحث عن خدمة لتعديل سعرها..."
+                  className="h-12 w-full rounded-2xl border border-slate-100 bg-slate-50 pr-11 pl-4 text-sm font-bold outline-none transition-all focus:border-slate-950 focus:bg-white"
+                />
+              </div>
+              <button
+                onClick={() => setConfirmSaveOpen(true)}
+                disabled={saving}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-black disabled:opacity-50"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                حفظ الأسعار
+              </button>
+            </div>
           </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {filteredPricingServices.map((service, index) => {
+              const key = makeServicePriceKey(activeServiceCategory, service);
+              const value = localServicePrices[key] || "";
+              const hasPrice = Number(value || 0) > 0;
+              return (
+                <div key={key} className="rounded-[1.75rem] border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <span className="mb-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-400">
+                        خدمة {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{service}</h3>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-400"}`}>
+                      {hasPrice ? "مسعر" : "بدون سعر"}
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-2">
+                    <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2">
+                      <input
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={(event) => handlePriceChange(key, event.target.value)}
+                        className="h-10 min-w-0 flex-1 bg-transparent text-lg font-black tabular-nums text-slate-950 outline-none placeholder:text-slate-300"
+                        placeholder="0.00"
+                      />
+                      <span className="rounded-lg bg-slate-950 px-3 py-2 text-[10px] font-black text-white">ر.س</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredPricingServices.length === 0 && (
+            <div className="rounded-[2rem] border border-dashed border-slate-200 bg-white p-12 text-center">
+              <p className="text-sm font-black text-slate-400">لا توجد خدمة مطابقة للبحث</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <section className="space-y-6 border-t border-slate-100 pt-10">
+      <section className={`space-y-6 border-t border-slate-100 pt-10 ${activePanel !== "requests" ? "hidden" : ""}`}>
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white">
               <Wrench className="h-3 w-3" />
               إدارة طلبات الخدمات
             </div>
-            <h2 className="text-2xl font-black tracking-tight text-slate-950">الخدمات داخل لوحة الإدارة</h2>
-            <p className="text-sm font-medium text-slate-500">تصفح طلبات العملاء حسب نوع الخدمة، عدل الحالة والسعر، أرسل الفاتورة، افتح الشات أو احذف الطلب.</p>
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">طلبات {activeCategoryConfig.label}</h2>
+            <p className="text-sm font-medium text-slate-500">كل طلبات هذا القسم في مكان واحد: تعديل الحالة، تسعير الطلب، إرسال الفاتورة، والرد على العميل.</p>
           </div>
-          <button
-            onClick={loadRequests}
-            disabled={loadingRequests}
-            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[10px] font-black uppercase tracking-widest text-slate-600"
-          >
-            {loadingRequests ? <Loader2 className="h-4 w-4 animate-spin" /> : <Filter className="h-4 w-4" />}
-            تحديث
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black transition-all"
+            >
+              <Plus className="h-4 w-4" />
+              إضافة طلب خدمة
+            </button>
+            <button
+              onClick={loadRequests}
+              disabled={loadingRequests}
+              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[10px] font-black uppercase tracking-widest text-slate-600"
+            >
+              {loadingRequests ? <Loader2 className="h-4 w-4 animate-spin" /> : <Filter className="h-4 w-4" />}
+              تحديث
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-end">
@@ -540,11 +643,11 @@ export default function AdminServicesManagementPage() {
                             onChange={(event) => updateRequestDraft(request, "status", event.target.value)}
                             className="h-10 w-36 rounded-xl border border-slate-100 bg-white px-3 text-xs font-black outline-none"
                           >
-                            <option value="pending">pending</option>
-                            <option value="assigned">assigned</option>
-                            <option value="in_progress">in_progress</option>
-                            <option value="completed">completed</option>
-                            <option value="cancelled">cancelled</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="assigned">تم التعيين</option>
+                            <option value="in_progress">قيد المعالجة</option>
+                            <option value="completed">مكتمل</option>
+                            <option value="cancelled">ملغي</option>
                           </select>
                         </td>
                         <td className="px-5 py-4">
@@ -611,7 +714,7 @@ export default function AdminServicesManagementPage() {
                               className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-100 bg-white px-3 text-[9px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-50"
                             >
                               <ExternalLink className="h-3.5 w-3.5" />
-                              شات
+                              رد على العميل
                             </button>
                             <button
                               disabled={saving}
@@ -658,6 +761,445 @@ export default function AdminServicesManagementPage() {
           </div>
         </div>
       </section>
+
+      {showCreateModal && (
+        <CreateServiceRequestModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={loadRequests}
+        />
+      )}
+
+      <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
+        <DialogContent className="max-w-md rounded-[2rem] border border-slate-100 bg-white p-0 shadow-2xl" dir="rtl">
+          <div className="p-7">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+              <AlertTriangle className="h-7 w-7" />
+            </div>
+            <DialogHeader className="space-y-2 text-right">
+              <DialogTitle className="text-xl font-black text-slate-950">تأكيد حفظ التغييرات</DialogTitle>
+              <DialogDescription className="text-sm font-bold leading-6 text-slate-500">
+                سيتم حفظ أسعار وإعدادات الخدمات الحالية. الأسعار الجديدة ستؤثر على الطلبات الجديدة في المنصة.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div className="flex items-center justify-between text-sm font-black text-slate-700">
+                <span>{activeCategoryConfig.label}</span>
+                <span>{pricedServicesCount.toLocaleString("ar-SA")} خدمة مسعرة</span>
+              </div>
+            </div>
+            <DialogFooter className="mt-6 grid grid-cols-2 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setConfirmSaveOpen(false)}
+                className="h-12 rounded-2xl border-slate-200 text-xs font-black text-slate-600"
+              >
+                إلغاء
+              </Button>
+              <Button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  setConfirmSaveOpen(false);
+                  await handleSave();
+                }}
+                className="h-12 rounded-2xl bg-slate-950 text-xs font-black text-white hover:bg-black disabled:opacity-50"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "تأكيد الحفظ"}
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={savePopupOpen} onOpenChange={setSavePopupOpen}>
+        <DialogContent className="max-w-md rounded-[2rem] border border-slate-100 bg-white p-0 shadow-2xl" dir="rtl">
+          <div className="p-7 text-center">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <CheckCircle className="h-8 w-8" />
+            </div>
+            <DialogHeader className="space-y-2 text-center">
+              <DialogTitle className="text-xl font-black text-slate-950">تم حفظ التغييرات</DialogTitle>
+              <DialogDescription className="text-sm font-bold leading-6 text-slate-500">
+                تم تحديث إعدادات الخدمات والأسعار بنجاح. ستظهر الأسعار الجديدة على الطلبات الجديدة في المنصة.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div className="flex items-center justify-between text-sm font-black text-slate-700">
+                <span>{activeCategoryConfig.label}</span>
+                <span>{pricedServicesCount.toLocaleString("ar-SA")} خدمة مسعرة</span>
+              </div>
+            </div>
+            <DialogFooter className="mt-6">
+              <Button
+                type="button"
+                onClick={() => setSavePopupOpen(false)}
+                className="h-12 w-full rounded-2xl bg-slate-950 text-xs font-black text-white hover:bg-black"
+              >
+                تم
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+interface CreateServiceRequestModalProps {
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [userSearch, setUserSearch] = useState("");
+  const [clientMode, setClientMode] = useState<"registered" | "anonymous">("anonymous");
+
+  const modalServiceTypes: Record<string, string[]> = {
+    postPurchase: ["الغاز", "نقل وتركيب الأثاث", "التأمين على المنزل", "الصيانة (سباكة / كهرباء)", "خدمة التنظيف", "تنسيق حدائق", "أنظمة أمنية", "أخرى"],
+    legal: ["المنازعات العقارية", "العقود", "التوثيق", "استشارة قانونية", "نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "عقد بيع", "عقد إيجار", "عقد الانتفاع العقاري", "عقد الهبة العقاري", "عقد الرهن العقاري", "عقد الاستثمار العقاري", "مراجعة العقود", "توثيق صك الملكية", "توثيق مستندات البيع", "توثيق بيانات الأطراف", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
+    construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
+    marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية (وسائل التواصل الاجتماعي)", "حملة إعلانية (إعلانات طرق/تقليدية)", "أخرى"],
+    other: ["التقييم العقاري", "المسح الهندسي", "أخرى"],
+  };
+
+  const [form, setForm] = useState({
+    category: "postPurchase",
+    serviceType: "الغاز",
+    clientName: "",
+    phone: "",
+    city: "الرياض",
+    district: "",
+    quantity: 1,
+    price: 0,
+    description: "",
+    status: "pending",
+    userId: "",
+  });
+
+  useEffect(() => {
+    usersApi.findAll()
+      .then((res) => setUsers(res.data || []))
+      .catch((err) => console.error("Error loading users:", err))
+      .finally(() => setLoadingUsers(false));
+  }, []);
+
+  const handleCategoryChange = (category: string) => {
+    const types = modalServiceTypes[category] || [];
+    setForm((f) => ({
+      ...f,
+      category,
+      serviceType: types[0] || "",
+    }));
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const term = userSearch.toLowerCase();
+    if (!term) return true;
+    const name = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
+    const phone = (u.phone || "").toLowerCase();
+    const email = (u.email || "").toLowerCase();
+    return name.includes(term) || phone.includes(term) || email.includes(term);
+  }).slice(0, 5);
+
+  const selectRegisteredUser = (u: any) => {
+    setForm((f) => ({
+      ...f,
+      userId: u.id,
+      clientName: `${u.firstName || ""} ${u.lastName || ""}`.trim(),
+      phone: u.phone || u.email || "",
+    }));
+    setUserSearch(`${u.firstName || ""} ${u.lastName || ""}`.trim());
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.clientName.trim()) {
+      toast.error("الرجاء إدخال اسم العميل");
+      return;
+    }
+    if (!form.phone.trim()) {
+      toast.error("الرجاء إدخال رقم الجوال");
+      return;
+    }
+    if (!form.district.trim()) {
+      toast.error("الرجاء إدخال الحي");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        ...form,
+        quantity: Number(form.quantity) || 1,
+        price: Number(form.price) || 0,
+        userId: form.userId || undefined,
+      };
+
+      await api.post("/service-requests", payload);
+      toast.success("تم إنشاء طلب الخدمة بنجاح");
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "فشل إنشاء طلب الخدمة");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const pillBtn = (active: boolean) =>
+    `h-10 px-4 rounded-2xl text-xs font-black transition-all border ${
+      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
+    }`;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+      >
+        <button
+          onClick={onClose}
+          className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white">
+            <Plus className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-950">إضافة طلب خدمة جديد</h2>
+            <p className="text-xs text-slate-400 font-bold">إنشاء طلب خدمة وتعيين العميل والتفاصيل المطلوبة</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6 text-right" dir="rtl">
+          {/* Client Selection Section */}
+          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
+                <p className="text-[11px] font-bold text-slate-400 mt-1">
+                  اختر عميلاً مسجلاً أو أدخل بيانات عميل مجهول.
+                </p>
+              </div>
+              <div className="flex p-1 bg-white rounded-2xl border border-slate-100 w-fit">
+                <button
+                  type="button"
+                  className={pillBtn(clientMode === "registered")}
+                  onClick={() => setClientMode("registered")}
+                >
+                  عميل مسجل
+                </button>
+                <button
+                  type="button"
+                  className={pillBtn(clientMode === "anonymous")}
+                  onClick={() => {
+                    setClientMode("anonymous");
+                    setForm((f) => ({ ...f, userId: "", clientName: "", phone: "" }));
+                    setUserSearch("");
+                  }}
+                >
+                  عميل مجهول
+                </button>
+              </div>
+            </div>
+
+            {clientMode === "registered" ? (
+              <div className="space-y-2">
+                <label className={labelCls}>ابحث عن المستخدم</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="ابحث بالاسم، البريد الإلكتروني أو الجوال..."
+                    value={userSearch}
+                    onChange={(e) => {
+                      setUserSearch(e.target.value);
+                      if (form.userId) {
+                        setForm((f) => ({ ...f, userId: "", clientName: "", phone: "" }));
+                      }
+                    }}
+                    className={inputCls}
+                  />
+                  {loadingUsers && (
+                    <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-slate-400" />
+                  )}
+                  {userSearch && !form.userId && filteredUsers.length > 0 && (
+                    <div className="absolute right-0 left-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto p-2">
+                      {filteredUsers.map((u) => (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => selectRegisteredUser(u)}
+                          className="w-full text-right p-3 hover:bg-slate-50 rounded-xl transition-all flex items-center justify-between group"
+                        >
+                          <div>
+                            <div className="text-sm font-black text-slate-800">
+                              {u.firstName || ""} {u.lastName || ""}
+                            </div>
+                            <div className="text-[11px] font-bold text-slate-400 mt-1">
+                              {u.phone || u.email || "لا يوجد اتصال"}
+                            </div>
+                          </div>
+                          <UserCheck className="w-4 h-4 text-slate-300 group-hover:text-slate-950 transition-colors" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelCls}>اسم العميل المجهول</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.clientName}
+                    onChange={(e) => setForm({ ...form, clientName: e.target.value })}
+                    className={inputCls}
+                    placeholder="مثال: محمد أحمد"
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>هاتف العميل</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className={inputCls}
+                    placeholder="05xxxxxxxx"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Service Classification & Type */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>تصنيف الخدمة</label>
+              <select
+                value={form.category}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+              >
+                <option value="postPurchase">خدمات ما بعد الشراء</option>
+                <option value="legal">الخدمات القانونية</option>
+                <option value="construction">البناء والمقاولات</option>
+                <option value="marketing">خدمات التسويق</option>
+                <option value="other">أخرى</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>نوع الخدمة</label>
+              <select
+                value={form.serviceType}
+                onChange={(e) => setForm({ ...form, serviceType: e.target.value })}
+                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+              >
+                {(modalServiceTypes[form.category] || []).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Location Details & Price & Quantity */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className={labelCls}>المدينة</label>
+              <input
+                type="text"
+                required
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>الحي</label>
+              <input
+                type="text"
+                required
+                value={form.district}
+                onChange={(e) => setForm({ ...form, district: e.target.value })}
+                className={inputCls}
+                placeholder="اسم الحي"
+              />
+            </div>
+            <div>
+              <label className={labelCls}>الكمية</label>
+              <input
+                type="number"
+                min="1"
+                required
+                value={form.quantity}
+                onChange={(e) => setForm({ ...form, quantity: parseInt(e.target.value) || 1 })}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>السعر التقريبي (ر.س)</label>
+              <input
+                type="number"
+                min="0"
+                value={form.price || ""}
+                onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
+                className={inputCls}
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className={labelCls}>وصف وتفاصيل الطلب</label>
+            <textarea
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="w-full h-28 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
+              placeholder="اكتب هنا أي تفاصيل أو ملاحظات إضافية حول الخدمة المطلوبة..."
+            />
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex gap-4 pt-4 border-t border-slate-100">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-slate-950 hover:bg-black text-white h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Check className="w-4 h-4" />
+              )}
+              إنشاء الطلب
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 border border-slate-200 hover:bg-slate-50 text-slate-600 h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+            >
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   );
 }

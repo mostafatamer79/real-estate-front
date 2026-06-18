@@ -1,7 +1,7 @@
 // app/offers/[id]/page.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -16,6 +16,7 @@ import {
   Car,
   Layers,
   MessageCircle,
+  MessageSquare,
   Share2,
   Phone,
   Mail,
@@ -50,11 +51,14 @@ import {
   Twitter,
   PhoneCall,
   BadgeCheck,
-  Star as StarIcon
+  Star as StarIcon,
+  CheckCheck,
+  Send
 } from "lucide-react";
 import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer } from "@/types/api";
 import { chatApi } from "@/lib/chat";
+import { io } from "socket.io-client";
 import ChatButton from "@/components/chat/chat-button";
 import SimpleChatModal from "@/components/chat/chat-modal";
 import VisitRequestModal from "@/components/modals/visit-request-modal";
@@ -111,6 +115,270 @@ interface ExtendedOffer extends ApiOffer {
   clientPhone?: string;
 }
 
+function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUser: any }) {
+  const { language, t } = useLanguage();
+  const router = useRouter();
+  const isRtl = language === "ar";
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [socket, setSocket] = useState<any>(null);
+  const [isOnline, setIsOnline] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // If the offer doesn't have a registered user, default sellerId to the System Admin ID
+  const sellerId = offer.user?.id || "b61df4bb-85fc-456b-8366-494610d03820";
+
+  useEffect(() => {
+    if (!currentUser || !sellerId) {
+      setLoading(false);
+      return;
+    }
+
+    // A seller cannot chat with themselves
+    if (currentUser.id === sellerId) {
+      setLoading(false);
+      return;
+    }
+
+    const initChat = async () => {
+      try {
+        const title = `${offer.propertyType} في ${offer.city}`;
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/offer`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            offerId: offer.id,
+            sellerId,
+            offerTitle: title,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create chat room');
+        }
+
+        const room = await response.json();
+        setRoomId(room.id);
+        
+        // Fetch messages
+        const msgs = await chatApi.getRoomMessages(room.id);
+        setMessages(msgs);
+        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+
+        // Setup socket
+        const token = localStorage.getItem('token');
+        const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3030';
+        const socketUrl = wsUrl.replace(/^ws/, 'http');
+
+        const socketIo = io(`${socketUrl}/chat`, {
+          auth: { token, userId: currentUser.id },
+          transports: ['websocket', 'polling']
+        });
+
+        socketIo.on('connect', () => {
+          socketIo.emit('joinRoom', { roomId: room.id });
+          socketIo.emit('checkUserStatus', { userId: sellerId });
+        });
+
+        socketIo.on('receiveMessage', (data) => {
+          const msg = data.message || data.data || data;
+          if (msg) {
+            setMessages(prev => {
+              if (prev.some(m => m.id === msg.id)) return prev;
+              return [...prev, msg];
+            });
+            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+            
+            // Mark read if incoming from other
+            const senderId = msg.sender?.id || msg.senderId;
+            if (senderId === sellerId) {
+              chatApi.markRoomAsRead(room.id).catch(err => console.error('Failed to mark read:', err));
+            }
+          }
+        });
+
+        socketIo.on('userStatus', (data) => {
+          if (data.userId === sellerId) {
+            setIsOnline(data.status === 'online');
+          }
+        });
+
+        setSocket(socketIo);
+      } catch (err) {
+        console.error("Failed to initialize offer chat room:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initChat();
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [offer.id, sellerId, currentUser]);
+
+  const sendMessage = async () => {
+    if (!message.trim() || !socket || !roomId) return;
+    try {
+      socket.emit('sendMessage', { roomId, senderId: currentUser.id, content: message });
+      setMessage("");
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const formatTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return "الآن";
+    }
+  };
+
+  if (!currentUser) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-2 shadow-sm">
+        <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
+        <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
+      </div>
+    );
+  }
+
+  // A seller looking at their own offer doesn't chat with themselves
+  if (currentUser.id === sellerId) {
+    return (
+      <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 text-center space-y-2">
+        <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-bounce" />
+        <p className="text-xs font-black text-slate-500">
+          {isRtl 
+            ? "هذا هو عرضك الخاص. يمكنك متابعة الرسائل والطلبات الواردة في صفحة المحادثات." 
+            : "This is your own offer. You can follow incoming chats on the chats page."}
+        </p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  const otherName = offer.user
+    ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || 'المعلن'
+    : 'الدعم الفني للوساطة';
+
+  return (
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden flex flex-col h-[400px]">
+      {/* Header */}
+      <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs uppercase">
+              {otherName.charAt(0)}
+            </div>
+            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
+          </div>
+          <div>
+            <h4 className="font-bold text-xs text-slate-900">{otherName}</h4>
+            <p className="text-[9px] font-black text-slate-400 mt-0.5">
+              {isOnline ? 'متصل الآن' : 'غير متصل'}
+            </p>
+          </div>
+        </div>
+        {roomId && (
+          <button
+            onClick={() => router.push(`/chat/${roomId}`)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
+            title="الانتقال إلى صفحة المحادثة الكاملة"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>المحادثة الكاملة</span>
+          </button>
+        )}
+      </div>
+
+      {/* Messages list */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/20">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-40">
+            <MessageSquare className="w-8 h-8 text-slate-400" />
+            <p className="text-[11px] font-bold">ابدأ المحادثة الآن بخصوص هذا العرض</p>
+          </div>
+        ) : (
+          messages.map((msg, index) => {
+            const isOwn = msg.sender?.id === currentUser.id || msg.senderId === currentUser.id;
+            return (
+              <div
+                key={msg.id || index}
+                className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className="flex flex-col gap-0.5 max-w-[85%]">
+                  <div
+                    className={`px-3 py-2 rounded-2xl shadow-sm text-xs ${
+                      isOwn
+                        ? 'bg-slate-900 text-white rounded-br-none'
+                        : 'bg-white border border-slate-100 text-slate-900 rounded-bl-none'
+                    }`}
+                  >
+                    <p className="font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                  </div>
+                  <div className={`flex items-center gap-1 px-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                    <span className="text-[8px] font-bold text-slate-400">
+                      {formatTime(msg.createdAt)}
+                    </span>
+                    {isOwn && <CheckCheck className="w-2.5 h-2.5 text-slate-300" />}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input section */}
+      <div className="p-3 border-t border-slate-100 bg-white">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="اكتب رسالتك هنا..."
+            className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!message.trim()}
+            className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
+          >
+            <Send className="w-3.5 h-3.5 -rotate-45 ml-0.5 mb-0.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function OfferDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -129,7 +397,6 @@ export default function OfferDetailsPage() {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
   const [reportLoading, setReportLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("details");
   const [views, setViews] = useState(0);
 
   const [isOwner, setIsOwner] = useState(false);
@@ -657,13 +924,6 @@ export default function OfferDetailsPage() {
       { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
     ];
 
-    const tabs = [
-      { id: 'details', label: language === 'ar' ? 'التفاصيل' : 'Details' },
-      { id: 'features', label: language === 'ar' ? 'المزايا' : 'Features' },
-      { id: 'media', label: language === 'ar' ? 'الوسائط' : 'Media' },
-      { id: 'advertiser', label: language === 'ar' ? 'المعلن' : 'Advertiser' },
-    ];
-
     return (
       <div className="space-y-6">
         <Card className="overflow-hidden border-slate-100 shadow-sm">
@@ -691,258 +951,198 @@ export default function OfferDetailsPage() {
           </CardContent>
         </Card>
 
-        <div className="rounded-[1.75rem] border border-slate-100 bg-white p-2 shadow-sm">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`h-11 rounded-2xl text-sm font-black transition-colors ${
-                  activeTab === tab.id ? 'bg-slate-950 text-white' : 'text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {activeTab === 'details' && (
-          <Card className="border-slate-100 shadow-sm">
-            <CardHeader>
-              <CardTitle>{t('offer.details')}</CardTitle>
-              <CardDescription>
-                {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <Building className="w-5 h-5" />
-                      {t('offer.basic')}
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.condition')}</span>
-                        <Badge className={getConditionColor(offer.propertyCondition || "")}>
-                          {offer.propertyCondition || t('offer.undefined')}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.age')}</span>
-                        <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.deed')}</span>
-                        <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.direction')}</span>
-                        <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
-                      </div>
-                      {(offer.length || offer.width) && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
-                          <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
-                        </div>
-                      )}
-                      {offer.dealType && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
-                          <span className="font-semibold">{offer.dealType}</span>
-                        </div>
-                      )}
-                      {offer.mainCategory && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
-                          <span className="font-semibold">{offer.mainCategory}</span>
-                        </div>
-                      )}
+        <Card className="border-slate-100 shadow-sm">
+          <CardHeader>
+            <CardTitle>{t('offer.details')}</CardTitle>
+            <CardDescription>
+              {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    {t('offer.basic')}
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{t('offer.condition')}</span>
+                      <Badge className={getConditionColor(offer.propertyCondition || "")}>
+                        {offer.propertyCondition || t('offer.undefined')}
+                      </Badge>
                     </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <MapPin className="w-5 h-5" />
-                      {t('offer.location')}
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.neighborhood')}</span>
-                        <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
-                      </div>
-                      {offer.streetWidth && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.streetWidth')}</span>
-                          <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
-                        </div>
-                      )}
-                      {offer.locationUrl && (
-                        <div className="flex justify-between items-center gap-4">
-                          <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
-                          <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
-                            {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
-                          </a>
-                        </div>
-                      )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{t('offer.age')}</span>
+                      <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
                     </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{t('offer.deed')}</span>
+                      <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{t('offer.direction')}</span>
+                      <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
+                    </div>
+                    {(offer.length || offer.width) && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
+                        <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
+                      </div>
+                    )}
+                    {offer.dealType && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
+                        <span className="font-semibold">{offer.dealType}</span>
+                      </div>
+                    )}
+                    {offer.mainCategory && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
+                        <span className="font-semibold">{offer.mainCategory}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <DoorOpen className="w-5 h-5" />
-                      {t('offer.facilities')}
-                    </h3>
-                    <div className="space-y-2">
-                      {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
-                      {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
-                      {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
-                      {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
-                      {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
-                      {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
-                      {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <MapPin className="w-5 h-5" />
+                    {t('offer.location')}
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{t('offer.neighborhood')}</span>
+                      <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
                     </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <Award className="w-5 h-5" />
-                      {t('offer.features')}
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
-                      {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
-                      {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
-                      {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
-                      {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
-                      {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
-                    </div>
-                    {offer.furnitureStatus && (
-                      <div className="mt-3 pt-3 border-t">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.furniture')}</span>
-                          <span className="font-semibold">{offer.furnitureStatus}</span>
-                        </div>
+                    {offer.streetWidth && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.streetWidth')}</span>
+                        <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
+                      </div>
+                    )}
+                    {offer.locationUrl && (
+                      <div className="flex justify-between items-center gap-4">
+                        <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
+                        <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
+                          {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
+                        </a>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {activeTab === 'features' && (
-          <Card className="border-slate-100 shadow-sm">
-            <CardHeader>
-              <CardTitle>{language === 'ar' ? 'المزايا السريعة' : 'Quick features'}</CardTitle>
-              <CardDescription>{language === 'ar' ? 'بطاقات سريعة لأهم عناصر هذا العرض.' : 'Quick cards for the most important offer attributes.'}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  { label: t('offer.rooms'), value: offer.rooms || '-', icon: Bed },
-                  { label: t('offer.baths'), value: offer.bathrooms || '-', icon: Bath },
-                  { label: t('offer.living'), value: offer.livingRooms || '-', icon: Sofa },
-                  { label: t('offer.kitchens'), value: offer.kitchens || '-', icon: UtensilsCrossed },
-                  { label: t('offer.floors'), value: offer.floors || '-', icon: Layers },
-                  { label: language === 'ar' ? 'عدد الشقق' : 'Apartments', value: offer.apartments || '-', icon: Building },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm">
-                        <item.icon className="w-5 h-5 text-slate-600" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-400">{item.label}</div>
-                        <div className="text-lg font-black text-slate-900">{item.value}</div>
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <DoorOpen className="w-5 h-5" />
+                    {t('offer.facilities')}
+                  </h3>
+                  <div className="space-y-2">
+                    {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
+                    {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
+                    {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
+                    {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
+                    {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
+                    {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
+                    {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <Award className="w-5 h-5" />
+                    {t('offer.features')}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
+                    {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
+                    {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
+                    {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
+                    {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
+                    {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
+                  </div>
+                  {offer.furnitureStatus && (
+                    <div className="mt-3 pt-3 border-t">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">{t('offer.furniture')}</span>
+                        <span className="font-semibold">{offer.furnitureStatus}</span>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          </CardContent>
+        </Card>
 
-        {activeTab === 'media' && (
-          <Card className="border-slate-100 shadow-sm">
-            <CardHeader>
-              <CardTitle>{language === 'ar' ? 'الملفات والوسائط' : 'Media and documents'}</CardTitle>
-              <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              {(offer.threeDVideos?.length || offer.video3d) && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <Video className="w-5 h-5" />
-                    {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
-                  </h3>
-                  <div className="space-y-2">
-                    {offer.video3d && (
-                      <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                        <span className="text-sm font-medium">3D Video</span>
-                        <Download className="w-4 h-4" />
-                      </a>
-                    )}
-                    {(offer.threeDVideos || []).map((video, index) => (
-                      <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                        <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
-                        <Download className="w-4 h-4" />
-                      </a>
-                    ))}
-                  </div>
+        <Card className="border-slate-100 shadow-sm">
+          <CardHeader>
+            <CardTitle>{language === 'ar' ? 'الملفات والوسائط' : 'Media and documents'}</CardTitle>
+            <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {(offer.threeDVideos?.length || offer.video3d) && (
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <Video className="w-5 h-5" />
+                  {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
+                </h3>
+                <div className="space-y-2">
+                  {offer.video3d && (
+                    <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                      <span className="text-sm font-medium">3D Video</span>
+                      <Download className="w-4 h-4" />
+                    </a>
+                  )}
+                  {(offer.threeDVideos || []).map((video, index) => (
+                    <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                      <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
+                      <Download className="w-4 h-4" />
+                    </a>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              {offer.propertyDocuments?.length ? (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
-                    {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
-                  </h3>
-                  <div className="space-y-2">
-                    {offer.propertyDocuments.map((doc, index) => (
-                      <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                        <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
-                        <Download className="w-4 h-4" />
-                      </a>
-                    ))}
-                  </div>
+            {offer.propertyDocuments?.length ? (
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
+                </h3>
+                <div className="space-y-2">
+                  {offer.propertyDocuments.map((doc, index) => (
+                    <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                      <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
+                      <Download className="w-4 h-4" />
+                    </a>
+                  ))}
                 </div>
-              ) : null}
+              </div>
+            ) : null}
 
-              {offer.checkImage && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <Camera className="w-5 h-5" />
-                    {language === 'ar' ? 'صورة الشيك' : 'Check image'}
-                  </h3>
-                  <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
-                    <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
-                    <Download className="w-4 h-4" />
-                  </a>
-                </div>
-              )}
-              {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
-                  {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {activeTab === 'advertiser' && (
-          <div className="space-y-6">
-            {renderSellerInfo()}
-          </div>
-        )}
+            {offer.checkImage && (
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <Camera className="w-5 h-5" />
+                  {language === 'ar' ? 'صورة الشيك' : 'Check image'}
+                </h3>
+                <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
+                  <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
+                  <Download className="w-4 h-4" />
+                </a>
+              </div>
+            )}
+            {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
+                {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     );
   };
@@ -1329,6 +1529,9 @@ export default function OfferDetailsPage() {
 
               </CardContent>
             </Card>
+
+            {/* Direct Chat Module */}
+            <OfferChatBox offer={offer} currentUser={user} />
           </div>
         </div>
       </div>

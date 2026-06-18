@@ -1,9 +1,8 @@
 "use client";
 import { io } from "socket.io-client";
-import { useLanguage } from "@/context/LanguageContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { ArrowRight, Send, User, Clock, CheckCheck, MessageSquare } from "lucide-react";
+import { ArrowRight, Send, CheckCheck, MessageSquare, Wifi, WifiOff } from "lucide-react";
 import { chatApi } from "@/lib/chat";
 import api from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,7 +11,6 @@ export default function NormalChatRoomPage() {
   const params = useParams();
   const router = useRouter();
   const roomId = params.roomId as string;
-  const { t, language } = useLanguage();
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
@@ -191,6 +189,31 @@ export default function NormalChatRoomPage() {
     return `${first} ${last}`.trim() || 'مستخدم';
   };
 
+  const handleReturn = () => {
+    if (typeof window === "undefined") {
+      router.push("/chat");
+      return;
+    }
+
+    const referrer = document.referrer;
+    if (referrer) {
+      try {
+        const previousUrl = new URL(referrer);
+        const isSameOrigin = previousUrl.origin === window.location.origin;
+        const isDifferentPage = previousUrl.pathname !== window.location.pathname;
+        const isOutsideChat = !previousUrl.pathname.startsWith("/chat");
+        if (isSameOrigin && isDifferentPage && isOutsideChat) {
+          router.back();
+          return;
+        }
+      } catch {
+        // Fall back below when referrer is not a valid URL.
+      }
+    }
+
+    router.push("/chat");
+  };
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -205,42 +228,52 @@ export default function NormalChatRoomPage() {
     : roomDetails?.name || 'محادثة';
 
   return (
-    <div className="max-w-4xl mx-auto py-6 px-4" dir="rtl">
-      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden flex flex-col h-[80vh]">
+    <div className="min-h-screen bg-slate-50 px-4 py-5" dir="rtl">
+      <div className="mx-auto flex h-[calc(100vh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-md">
+        <div className="border-b border-slate-200 bg-white px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.push('/chat')}
-              className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-950 transition-all"
+              onClick={handleReturn}
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-all hover:bg-slate-950 hover:text-white"
+              aria-label="العودة"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-11 h-11 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-700 font-black">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-white">
                   {otherParticipantName.charAt(0)}
                 </div>
-                <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
+                <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${isOnline ? 'bg-emerald-500' : 'bg-slate-300'}`} />
               </div>
               <div>
-                <h1 className="font-black text-slate-900 leading-tight">{otherParticipantName}</h1>
-                <p className={`text-[10px] font-black uppercase tracking-widest mt-0.5 ${isOnline ? 'text-green-600' : 'text-slate-400'}`}>
+                <h1 className="text-lg font-black leading-tight text-slate-950">{otherParticipantName}</h1>
+                <p className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${isOnline ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {isOnline ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
                   {isOnline ? 'متصل الآن' : 'غير متصل'}
                 </p>
               </div>
             </div>
           </div>
+          <div className="hidden rounded-full bg-slate-100 px-4 py-2 text-[10px] font-black text-slate-500 md:block">
+            Enter للإرسال · Shift+Enter لسطر جديد
+          </div>
+          </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30 scrollbar-hide">
+        <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 p-5 scrollbar-hide md:p-7">
           <AnimatePresence initial={false}>
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center space-y-2 opacity-40">
-                <MessageSquare className="w-12 h-12" />
-                <p className="text-sm font-bold">لا توجد رسائل سابقة</p>
+              <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-slate-300">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm">
+                  <MessageSquare className="h-10 w-10" />
+                </div>
+                <p className="text-sm font-black text-slate-400">لا توجد رسائل سابقة</p>
+                <p className="max-w-xs text-xs font-bold text-slate-300">ابدأ المحادثة برسالة واضحة حتى يسهل متابعة الطلب.</p>
               </div>
             ) : (
               messages.map((msg, index) => {
@@ -252,21 +285,21 @@ export default function NormalChatRoomPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`flex flex-col gap-1 max-w-[80%]`}>
+                    <div className="flex max-w-[84%] flex-col gap-1 md:max-w-[70%]">
                       <div
-                        className={`px-4 py-2.5 rounded-2xl shadow-sm ${
+                        className={`px-4 py-3 shadow-sm ${
                           isOwn
-                            ? 'bg-slate-900 text-white rounded-br-none'
-                            : 'bg-white border border-slate-100 text-slate-900 rounded-bl-none'
+                            ? 'rounded-2xl rounded-br-md bg-slate-950 text-white'
+                            : 'rounded-2xl rounded-bl-md border border-slate-200 bg-white text-slate-900'
                         }`}
                       >
                         <p className="text-[13px] font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                       </div>
                       <div className={`flex items-center gap-1.5 px-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                        <span className="text-[9px] font-black text-slate-400 uppercase">
+                        <span className="text-[9px] font-black uppercase text-slate-400">
                           {formatTime(msg.createdAt)}
                         </span>
-                        {isOwn && <CheckCheck className="w-3 h-3 text-slate-300" />}
+                        {isOwn && <CheckCheck className="h-3 w-3 text-slate-300" />}
                       </div>
                     </div>
                   </motion.div>
@@ -278,28 +311,27 @@ export default function NormalChatRoomPage() {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-slate-100 bg-white">
-          <div className="flex items-end gap-2">
+        <div className="border-t border-slate-200 bg-white p-4">
+          <div className="flex items-end gap-3">
             <div className="flex-1">
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="اكتب رسالة..."
-                className="w-full bg-slate-50 border border-slate-100 rounded-[1rem] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-950 transition-all resize-none min-h-[50px] max-h-[150px]"
+                className="max-h-[150px] min-h-[52px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition-all focus:border-slate-950"
                 rows={1}
               />
             </div>
             <button
               onClick={sendMessage}
               disabled={!message.trim()}
-              className="w-12 h-12 bg-slate-900 text-white rounded-[1rem] flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shadow-lg shadow-slate-900/20"
+              className="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-slate-950 text-white transition-all hover:bg-black active:scale-95 disabled:scale-100 disabled:opacity-30"
             >
-              <Send className="w-5 h-5 -rotate-45 ml-1 mb-1" />
+              <Send className="mb-1 ml-1 h-5 w-5 -rotate-45" />
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

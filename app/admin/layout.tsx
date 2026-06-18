@@ -121,17 +121,17 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'offers', href: '/admin/offers', icon: FileText, label: isRtl ? 'إدارة العروض' : 'Offers Management' },
         { id: 'orders', href: '/admin/orders', icon: ShoppingBag, label: isRtl ? 'إدارة الطلبات' : 'Orders Management' },
         { id: 'marketing', href: '/admin/marketing', icon: Megaphone, label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
-        { id: 'finance', href: '/admin/transactions', icon: Receipt, label: isRtl ? 'الإدارة المالية' : 'Financial Management' },
         { id: 'properties-management', href: '/admin/properties-management', icon: Building2, label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
         { id: 'legal', href: '/admin/legal', icon: Scale, label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
       ]
     },
     {
-      title: isRtl ? 'المحفظة' : 'Wallet',
+      title: isRtl ? 'الإدارة المالية' : 'Financial Management',
       items: [
-        { id: 'wallet-main', href: '/admin/wallet', icon: Wallet, label: isRtl ? 'المحفظة' : 'Wallet' },
+        { id: 'finance-main', href: '/admin/wallet', icon: Receipt, label: isRtl ? 'الفواتير' : 'Finance Overview' },
+        { id: 'finance-transactions', href: '/admin/transactions', icon: Wallet, label: isRtl ? 'العمليات المالية' : 'Transactions' },
         { id: 'invoices', href: '/admin/wallet?tab=invoices', icon: FileText, label: isRtl ? 'الفواتير' : 'Invoices' },
-        { id: 'commissions', href: '/admin/wallet?tab=commissions', icon: Percent, label: isRtl ? 'العمولات' : 'Commissions' },
+        { id: 'commissions', href: '/admin/wallet?tab=commissions', icon: Percent, label: isRtl ? 'العقود والعمولات' : 'Contracts & Commissions' },
         { id: 'files', href: '/admin/wallet?tab=files', icon: CreditCard, label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
         { id: 'investments', href: '/admin/wallet?tab=investments', icon: TrendingUp, label: isRtl ? 'الاستثمارات' : 'Investments' },
       ]
@@ -146,13 +146,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'other-services', href: '/admin/services?type=other', icon: Wrench, label: isRtl ? 'أخرى' : 'Other' },
       ]
     },
-    {
-      title: isRtl ? 'ادارة العقارات' : 'Property Management',
-      items: [
-        { id: 'prop-offers', href: '/admin/offers', icon: FileText, label: isRtl ? 'العروض' : 'Offers' },
-        { id: 'prop-orders', href: '/admin/orders', icon: ShoppingBag, label: isRtl ? 'الطلبات' : 'Orders' },
-      ]
-    },
+
 
   ];
 // ...existing code...
@@ -246,6 +240,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                     );
 
                     const hrefToSection: Record<string, string> = {
+                      '/admin/wallet': 'financial',
                       '/admin/transactions': 'financial',
                       '/admin/marketing': 'marketing',
                       '/admin/services': 'services',
@@ -256,6 +251,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                     };
 
                     const hrefToModule: Record<string, string> = {
+                      '/admin/wallet': 'finance',
                       '/admin/transactions': 'finance',
                       '/admin/marketing': 'marketing',
                       '/admin/services': 'service_requests',

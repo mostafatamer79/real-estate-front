@@ -114,11 +114,11 @@ export default function Header() {
       '/wallet',
       '/department-hub',
       '/login',
-      '/internal',
-      '/offers',
-      '/orders'
+      '/internal'
     ];
-    return hiddenPatterns.some(pattern => pathname.startsWith(pattern));
+    if (hiddenPatterns.some(pattern => pathname.startsWith(pattern))) return true;
+    if (pathname === '/offers' || pathname === '/orders') return true;
+    return false;
   }, [pathname]);
 
   // Hide header only if explicitly requested by overlay OR on special routes

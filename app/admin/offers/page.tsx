@@ -59,23 +59,51 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const [form, setForm] = useState({
+  const [images, setImages] = useState<File[]>([]);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const [form, setForm] = useState<any>({
     userId: "",
     clientName: "",
     clientPhone: "",
+    mainCategory: "residential",
     propertyType: "فيلا",
+    dealType: "بيع",
     price: 0,
     area: 1,
+    length: "",
+    width: "",
+    streetWidth: "",
     city: "الرياض",
     neighborhood: "",
     propertyAge: "جديد",
     direction: "شمال",
     deedType: "صك إلكتروني",
     propertyCondition: "جديد",
+    rooms: 0,
+    bathrooms: 0,
+    livingRooms: 0,
+    kitchens: 0,
+    floors: 0,
+    apartments: 0,
+    hasMaidRoom: false,
+    hasRoof: false,
+    hasExternalAnnex: false,
+    buildingArea: 0,
+    hasGarage: false,
+    hasPool: false,
+    hasElevator: false,
+    furnitureStatus: "unfurnished",
+    locationUrl: "",
+    address: "",
     status: "published",
-    dealType: "بيع",
     additionalNotes: ""
   });
+
+  const propertyTypeOptions: Record<string, string[]> = {
+    residential: ["فيلا", "شقة", "قصر", "أرض", "بيت شعبي", "أرض سكنية"],
+    commercial: ["محل", "مكتب", "عمارة", "مستودع", "محل تجاري", "برج", "مصنع", "فندق", "تجاري"]
+  };
 
   useEffect(() => {
     usersApi.findAll().then(res => setUsers(res.data || [])).finally(() => setLoadingUsers(false));
@@ -86,12 +114,20 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         try {
           const parsed = JSON.parse(stored);
           setCurrentUser(parsed);
-          setForm(f => ({ ...f, userId: parsed.id }));
+          setForm((f: any) => ({ ...f, userId: parsed.id }));
           setUserSearch(`${parsed.firstName} ${parsed.lastName}`);
         } catch (e) {}
       }
     }
   }, []);
+
+  const handleCategoryChange = (cat: "residential" | "commercial") => {
+    setForm((f: any) => ({
+      ...f,
+      mainCategory: cat,
+      propertyType: cat === "residential" ? "فيلا" : "عمارة"
+    }));
+  };
 
   const filteredUsers = users.filter(u => 
     `${u.firstName} ${u.lastName}`.toLowerCase().includes(userSearch.toLowerCase()) ||
@@ -111,7 +147,34 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
       if (!payload.userId) {
         delete payload.userId;
       }
-      await offersApi.create(payload);
+      
+      // Parse numeric/boolean properties to match NestJS expectations
+      payload.price = parseFloat(payload.price) || 0;
+      payload.area = parseFloat(payload.area) || 0;
+      payload.length = payload.length ? parseFloat(payload.length) : undefined;
+      payload.width = payload.width ? parseFloat(payload.width) : undefined;
+      payload.streetWidth = payload.streetWidth ? parseFloat(payload.streetWidth) : undefined;
+      payload.rooms = payload.rooms ? parseInt(payload.rooms) : undefined;
+      payload.bathrooms = payload.bathrooms ? parseInt(payload.bathrooms) : undefined;
+      payload.livingRooms = payload.livingRooms ? parseInt(payload.livingRooms) : undefined;
+      payload.kitchens = payload.kitchens ? parseInt(payload.kitchens) : undefined;
+      payload.floors = payload.floors ? parseInt(payload.floors) : undefined;
+      payload.apartments = payload.apartments ? parseInt(payload.apartments) : undefined;
+      payload.buildingArea = payload.buildingArea ? parseFloat(payload.buildingArea) : undefined;
+
+      const res = await offersApi.create(payload);
+      const offerId = res.data.id;
+
+      // Upload media if present
+      if (images.length > 0) {
+        await offersApi.uploadMedia(offerId, images);
+      }
+      
+      // Upload 3D video if present
+      if (videoFile) {
+        await offersApi.upload3DVideos(offerId, [videoFile]);
+      }
+
       toast.success("تم إنشاء العرض بنجاح");
       onSuccess();
       onClose();
@@ -125,9 +188,12 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
   const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
+  // Check if detailed specifications should be shown based on property type
+  const showDetailedFields = ["فيلا", "شقة", "قصر", "عمارة", "مكتب"].includes(form.propertyType);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-4xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -153,7 +219,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     value={userSearch} 
                     onChange={e => { 
                       setUserSearch(e.target.value); 
-                      if(form.userId) setForm(f => ({...f, userId: ""})) 
+                      if(form.userId) setForm((f: any) => ({...f, userId: ""})) 
                     }} 
                     className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
                     placeholder="ابحث بالاسم أو اترك فارغاً للمجهول..." 
@@ -162,7 +228,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     <button 
                       type="button" 
                       onClick={() => {
-                        setForm(f => ({ ...f, userId: "" }));
+                        setForm((f: any) => ({ ...f, userId: "" }));
                         setUserSearch("");
                       }}
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-md"
@@ -178,7 +244,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                         key={u.id} 
                         type="button" 
                         onClick={() => { 
-                          setForm(f => ({...f, userId: u.id, clientName: "", clientPhone: ""})); 
+                          setForm((f: any) => ({...f, userId: u.id, clientName: "", clientPhone: ""})); 
                           setUserSearch(`${u.firstName} ${u.lastName}`); 
                         }} 
                         className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0"
@@ -200,7 +266,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     <label className={labelCls}>اسم العميل</label>
                     <input 
                       value={form.clientName} 
-                      onChange={e => setForm(f => ({...f, clientName: e.target.value}))} 
+                      onChange={e => setForm((f: any) => ({...f, clientName: e.target.value}))} 
                       className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="اسم العميل..." 
                     />
@@ -209,7 +275,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     <label className={labelCls}>هاتف العميل</label>
                     <input 
                       value={form.clientPhone} 
-                      onChange={e => setForm(f => ({...f, clientPhone: e.target.value}))} 
+                      onChange={e => setForm((f: any) => ({...f, clientPhone: e.target.value}))} 
                       className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="05xxxxxxxx" 
                     />
@@ -224,29 +290,47 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار</h3>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>تصنيف العقار</label>
+                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl h-11 items-center">
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryChange("residential")}
+                    className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
+                      form.mainCategory === "residential"
+                        ? "bg-white text-slate-950 shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    سكني
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryChange("commercial")}
+                    className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
+                      form.mainCategory === "commercial"
+                        ? "bg-white text-slate-950 shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    تجاري
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-1">
                 <label className={labelCls}>نوع العقار</label>
                 <select 
                   value={form.propertyType} 
-                  onChange={e => setForm(f => ({...f, propertyType: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, propertyType: e.target.value}))} 
                   className={inputCls}
                 >
-                  <option value="فيلا">فيلا</option>
-                  <option value="شقة">شقة</option>
-                  <option value="أرض">أرض</option>
-                  <option value="عمارة">عمارة</option>
-                  <option value="محل">محل</option>
-                  <option value="قصر">قصر</option>
-                  <option value="بيت شعبي">بيت شعبي</option>
-                  <option value="مكتب">مكتب</option>
-                  <option value="محل تجاري">محل تجاري</option>
-                  <option value="فندق">فندق</option>
-                  <option value="برج">برج</option>
-                  <option value="مصنع">مصنع</option>
-                  <option value="مستودع">مستودع</option>
+                  {propertyTypeOptions[form.mainCategory].map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
               </div>
 
@@ -254,7 +338,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                 <label className={labelCls}>نوع الصفقة</label>
                 <select 
                   value={form.dealType} 
-                  onChange={e => setForm(f => ({...f, dealType: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, dealType: e.target.value}))} 
                   className={inputCls}
                 >
                   <option value="بيع">بيع</option>
@@ -263,12 +347,12 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input 
                   value={form.city} 
-                  onChange={e => setForm(f => ({...f, city: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, city: e.target.value}))} 
                   className={inputCls} 
                 />
               </div>
@@ -276,67 +360,108 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                 <label className={labelCls}>الحي</label>
                 <input 
                   value={form.neighborhood} 
-                  onChange={e => setForm(f => ({...f, neighborhood: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, neighborhood: e.target.value}))} 
                   className={inputCls} 
+                />
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <label className={labelCls}>العنوان الكامل</label>
+                <input 
+                  value={form.address} 
+                  onChange={e => setForm((f: any) => ({...f, address: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="مثال: شارع العليا العام، حي الورود..."
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المساحة (م²)</label>
                 <input 
                   type="number" 
                   value={form.area || ''} 
-                  onChange={e => setForm(f => ({...f, area: parseFloat(e.target.value) || 0}))} 
+                  onChange={e => setForm((f: any) => ({...f, area: parseFloat(e.target.value) || 0}))} 
                   className={inputCls} 
                   placeholder="0"
                 />
               </div>
+              <div className="space-y-1">
+                <label className={labelCls}>الطول (م)</label>
+                <input 
+                  type="number" 
+                  value={form.length} 
+                  onChange={e => setForm((f: any) => ({...f, length: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="اختياري"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelCls}>العرض (م)</label>
+                <input 
+                  type="number" 
+                  value={form.width} 
+                  onChange={e => setForm((f: any) => ({...f, width: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="اختياري"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelCls}>عرض الشارع (م)</label>
+                <input 
+                  type="number" 
+                  value={form.streetWidth} 
+                  onChange={e => setForm((f: any) => ({...f, streetWidth: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="اختياري"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>السعر (ر.س)</label>
                 <input 
                   type="number" 
                   value={form.price || ''} 
-                  onChange={e => setForm(f => ({...f, price: parseFloat(e.target.value) || 0}))} 
+                  onChange={e => setForm((f: any) => ({...f, price: parseFloat(e.target.value) || 0}))} 
                   className={inputCls} 
                   placeholder="0"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>عمر العقار</label>
                 <input 
                   value={form.propertyAge} 
-                  onChange={e => setForm(f => ({...f, propertyAge: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, propertyAge: e.target.value}))} 
                   className={inputCls} 
                   placeholder="مثال: جديد، سنتين..." 
                 />
               </div>
-
               <div className="space-y-1">
                 <label className={labelCls}>الاتجاه</label>
                 <select 
                   value={form.direction} 
-                  onChange={e => setForm(f => ({...f, direction: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, direction: e.target.value}))} 
                   className={inputCls}
                 >
                   <option value="شمال">شمال</option>
                   <option value="جنوب">جنوب</option>
                   <option value="شرق">شرق</option>
                   <option value="غرب">غرب</option>
+                  <option value="شمال شرق">شمال شرق</option>
+                  <option value="شمال غرب">شمال غرب</option>
+                  <option value="جنوب شرق">جنوب شرق</option>
+                  <option value="جنوب غرب">جنوب غرب</option>
+                  <option value="3 شوارع">3 شوارع</option>
+                  <option value="4 شوارع">4 شوارع</option>
                 </select>
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>نوع الصك</label>
                 <select 
                   value={form.deedType} 
-                  onChange={e => setForm(f => ({...f, deedType: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, deedType: e.target.value}))} 
                   className={inputCls}
                 >
                   <option value="صك إلكتروني">صك إلكتروني</option>
@@ -344,12 +469,14 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <option value="أخرى">أخرى</option>
                 </select>
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>حالة العقار</label>
                 <select 
                   value={form.propertyCondition} 
-                  onChange={e => setForm(f => ({...f, propertyCondition: e.target.value}))} 
+                  onChange={e => setForm((f: any) => ({...f, propertyCondition: e.target.value}))} 
                   className={inputCls}
                 >
                   <option value="جديد">جديد</option>
@@ -357,42 +484,254 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <option value="مجدد">مجدد</option>
                 </select>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-1">
-                <label className={labelCls}>ملاحظات إضافية</label>
-                <textarea 
-                  value={form.additionalNotes} 
-                  onChange={e => setForm(f => ({...f, additionalNotes: e.target.value}))} 
-                  className="w-full min-h-24 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
-                  placeholder="أدخل أي ملاحظات إضافية عن العقار..."
+              <div className="space-y-1 md:col-span-2">
+                <label className={labelCls}>رابط الموقع الجغرافي (خرائط Google)</label>
+                <input 
+                  value={form.locationUrl} 
+                  onChange={e => setForm((f: any) => ({...f, locationUrl: e.target.value}))} 
+                  className={inputCls} 
+                  placeholder="https://maps.google.com/..."
                 />
               </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-1">
-                <label className={labelCls}>حالة العرض</label>
-                <select 
-                  value={form.status} 
-                  onChange={e => setForm(f => ({...f, status: e.target.value}))} 
-                  className={inputCls}
-                >
-                  <option value="published">منشور</option>
-                  <option value="draft">مسودة</option>
-                  <option value="sold">تم البيع</option>
-                </select>
+          {/* Detailed Property specifications (shown only when applicable) */}
+          {showDetailedFields && (
+            <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <label className={labelCls}>عدد الغرف</label>
+                  <input
+                    type="number"
+                    value={form.rooms || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, rooms: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>عدد دورات المياه</label>
+                  <input
+                    type="number"
+                    value={form.bathrooms || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, bathrooms: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>غرف المعيشة (المجالس)</label>
+                  <input
+                    type="number"
+                    value={form.livingRooms || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, livingRooms: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>المطابخ</label>
+                  <input
+                    type="number"
+                    value={form.kitchens || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, kitchens: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
               </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <label className={labelCls}>عدد الأدوار</label>
+                  <input
+                    type="number"
+                    value={form.floors || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, floors: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>عدد الشقق</label>
+                  <input
+                    type="number"
+                    value={form.apartments || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, apartments: parseInt(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>مساحة البناء (م²)</label>
+                  <input
+                    type="number"
+                    value={form.buildingArea || ''}
+                    onChange={e => setForm((f: any) => ({ ...f, buildingArea: parseFloat(e.target.value) || 0 }))}
+                    className={inputCls}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={labelCls}>حالة الأثاث</label>
+                  <select
+                    value={form.furnitureStatus}
+                    onChange={e => setForm((f: any) => ({ ...f, furnitureStatus: e.target.value }))}
+                    className={inputCls}
+                  >
+                    <option value="unfurnished">غير مفروش</option>
+                    <option value="furnished">مفروش</option>
+                    <option value="semi-furnished">نصف مفروش</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Checkboxes for features */}
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasMaidRoom}
+                    onChange={e => setForm((f: any) => ({ ...f, hasMaidRoom: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
+                </label>
+
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasRoof}
+                    onChange={e => setForm((f: any) => ({ ...f, hasRoof: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">روف / سطح</span>
+                </label>
+
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasExternalAnnex}
+                    onChange={e => setForm((f: any) => ({ ...f, hasExternalAnnex: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">ملحق خارجي</span>
+                </label>
+
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasGarage}
+                    onChange={e => setForm((f: any) => ({ ...f, hasGarage: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">كراج سيارة</span>
+                </label>
+
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasPool}
+                    onChange={e => setForm((f: any) => ({ ...f, hasPool: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">مسبح</span>
+                </label>
+
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.hasElevator}
+                    onChange={e => setForm((f: any) => ({ ...f, hasElevator: e.target.checked }))}
+                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                  />
+                  <span className="text-xs font-bold text-slate-700">مصعد</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* Media upload section */}
+          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className={labelCls}>صور العقار</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setImages(Array.from(e.target.files));
+                    }
+                  }}
+                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                />
+                {images.length > 0 && (
+                  <p className="text-[10px] text-emerald-600 font-bold mt-1">
+                    تم اختيار {images.length} صور
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label className={labelCls}>فيديو ثلاثي الأبعاد (3D Video)</label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setVideoFile(e.target.files[0]);
+                    }
+                  }}
+                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                />
+                {videoFile && (
+                  <p className="text-[10px] text-emerald-600 font-bold mt-1">
+                    تم اختيار الفيديو: {videoFile.name}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className={labelCls}>حالة العرض</label>
+              <select 
+                value={form.status} 
+                onChange={e => setForm((f: any) => ({...f, status: e.target.value}))} 
+                className={inputCls}
+              >
+                <option value="published">منشور</option>
+                <option value="draft">مسودة</option>
+                <option value="sold">تم البيع</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className={labelCls}>ملاحظات إضافية</label>
+              <textarea 
+                value={form.additionalNotes} 
+                onChange={e => setForm((f: any) => ({...f, additionalNotes: e.target.value}))} 
+                className="w-full h-11 min-h-[44px] bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all resize-none"
+                placeholder="أدخل أي ملاحظات إضافية عن العقار..."
+              />
             </div>
           </div>
 
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full h-12 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20"
+            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             نشر العرض الآن
           </button>
         </form>

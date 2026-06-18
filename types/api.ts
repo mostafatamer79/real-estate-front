@@ -107,10 +107,27 @@ export interface Order extends CreateOrderDto {
   id: string;
   createdAt: string;
   updatedAt: string;
+  userId?: string;
+  assignedToId?: string;
   user?: {
     id: string;
     firstName: string;
+    lastName?: string;
     email: string;
+    phone?: string;
+    role?: string;
+    profileImage?: string;
+    isVerified?: boolean;
+    isActive?: boolean;
+    city?: string;
+  };
+  assignedTo?: {
+    id: string;
+    firstName: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    profileImage?: string;
   };
 }
 
