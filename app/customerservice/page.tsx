@@ -6,7 +6,7 @@ import {
   HelpCircle, ChevronDown, Send,
   User, ExternalLink, X, Building2, Sparkles,
   ChevronLeft, ArrowRight, ShieldCheck, Headphones,
-  Search, Home, BadgeDollarSign, Tag, CheckCircle2, AlertCircle
+  Search, Home, BadgeDollarSign, Tag, CheckCircle2, AlertCircle, MessageSquare
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
@@ -146,20 +146,22 @@ export default function CustomerService() {
   const faqSections = useMemo(() => {
     if (!faqs || faqs.length === 0) return faqData;
     // Build using categories table first (ordered), then append uncategorized.
-    const itemsByCat = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number }>>();
-    const uncategorized: Array<{ id: string; question: string; answer: string; sortOrder: number; category: string }> = [];
+    const itemsByCat = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number; color?: string | null; fontSize?: string | null }>>();
+    const uncategorized: Array<{ id: string; question: string; answer: string; sortOrder: number; category: string; color?: string | null; fontSize?: string | null }> = [];
 
     for (const item of faqs) {
       const question = language === "ar" ? item.questionAr : item.questionEn;
       const answer = language === "ar" ? item.answerAr : item.answerEn;
       const sortOrder = item.sortOrder ?? 0;
+      const color = item.color;
+      const fontSize = item.fontSize;
       if (item.categoryId) {
         const arr = itemsByCat.get(item.categoryId) || [];
-        arr.push({ id: item.id, question, answer, sortOrder });
+        arr.push({ id: item.id, question, answer, sortOrder, color, fontSize });
         itemsByCat.set(item.categoryId, arr);
       } else {
         const category = language === "ar" ? (item.categoryAr || "أخرى") : (item.categoryEn || "Other");
-        uncategorized.push({ id: item.id, question, answer, sortOrder, category });
+        uncategorized.push({ id: item.id, question, answer, sortOrder, category, color, fontSize });
       }
     }
 
@@ -169,7 +171,7 @@ export default function CustomerService() {
     }
     uncategorized.sort((a, b) => a.sortOrder - b.sortOrder);
 
-    const sections: Array<{ category: string; items: Array<{ id: string; question: string; answer: string }> }> = [];
+    const sections: Array<{ category: string; items: Array<{ id: string; question: string; answer: string; color?: string | null; fontSize?: string | null }> }> = [];
 
     const orderedCats = (faqCategories || []).slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     for (const cat of orderedCats) {
@@ -177,21 +179,21 @@ export default function CustomerService() {
       if (arr.length === 0) continue;
       sections.push({
         category: language === "ar" ? cat.nameAr : cat.nameEn,
-        items: arr.map(({ id, question, answer }) => ({ id, question, answer })),
+        items: arr.map(({ id, question, answer, color, fontSize }) => ({ id, question, answer, color, fontSize })),
       });
     }
 
     // Group uncategorized by their category string (fallback legacy)
     if (uncategorized.length > 0) {
-      const map = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number }>>();
+      const map = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number; color?: string | null; fontSize?: string | null }>>();
       for (const u of uncategorized) {
         const arr = map.get(u.category) || [];
-        arr.push({ id: u.id, question: u.question, answer: u.answer, sortOrder: u.sortOrder });
+        arr.push({ id: u.id, question: u.question, answer: u.answer, sortOrder: u.sortOrder, color: u.color, fontSize: u.fontSize });
         map.set(u.category, arr);
       }
       for (const [cat, arr] of map.entries()) {
         arr.sort((a, b) => a.sortOrder - b.sortOrder);
-        sections.push({ category: cat, items: arr.map(({ id, question, answer }) => ({ id, question, answer })) });
+        sections.push({ category: cat, items: arr.map(({ id, question, answer, color, fontSize }) => ({ id, question, answer, color, fontSize })) });
       }
     }
 
@@ -264,7 +266,14 @@ export default function CustomerService() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div 
+      className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" 
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+      style={{
+        backgroundColor: settings.csBg || undefined,
+        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined
+      }}
+    >
       <AnimatePresence>
         {submitNotice && (
           <motion.div
@@ -275,7 +284,7 @@ export default function CustomerService() {
           >
             <div className={`flex items-start gap-3 rounded-2xl border bg-white p-4 shadow-2xl shadow-slate-200/70 ${
               submitNotice.type === "success" ? "border-emerald-100" : "border-red-100"
-            }`}>
+            }`} style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
                 submitNotice.type === "success" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
               }`}>
@@ -300,7 +309,7 @@ export default function CustomerService() {
       </AnimatePresence>
 
       {/* Premium Header Container */}
-      <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden">
+      <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
           <div className="max-w-7xl mx-auto relative z-10">
               <button
                 type="button"
@@ -343,41 +352,67 @@ export default function CustomerService() {
 
       <div className="max-w-7xl mx-auto px-6">
           {/* Contact Channels Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {[
-              settings.contactPhone?.trim()
-                ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone }
-                : null,
-              { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: settings.contactEmail },
-              { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
-            ].filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => {
-              const Icon = item.icon;
-              return (
-                <motion.a
-                  key={item.id}
-                  whileHover={{ y: -5 }}
-                  href={item.href}
-                  className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
-                >
-                  <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
-                      <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-sm font-black text-slate-900 mb-1">{item.title}</h3>
-                  <p className="text-xs text-slate-400 font-bold font-mono" dir="ltr">{item.val}</p>
-                </motion.a>
-              );
-            })}
-          </div>
+          {settings.uiFlags?.show_cs_channels !== false && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {[
+                settings.contactPhone?.trim()
+                  ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone }
+                  : null,
+                { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: settings.contactEmail },
+                { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
+              ].filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <motion.a
+                    key={item.id}
+                    whileHover={{ y: -5 }}
+                    href={item.href}
+                    className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
+                    style={{ backgroundColor: settings.csCardBg || undefined }}
+                  >
+                    <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
+                        <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-sm font-black text-slate-900 mb-1">{item.title}</h3>
+                    <p className="text-xs text-slate-400 font-bold font-mono" dir="ltr">{item.val}</p>
+                  </motion.a>
+                );
+              })}
+            </div>
+          )}
+
+          {!isAuthenticated && (
+            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
+              <div className="w-14 h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+                <MessageSquare className="w-6 h-6 text-slate-700" />
+              </div>
+              <h2 className="text-sm font-black text-slate-900 mb-1">
+                {language === "ar" ? "عرض رسائلك واستفساراتك" : "View your messages & inquiries"}
+              </h2>
+              <p className="text-xs text-slate-400 font-bold max-w-sm mb-5">
+                {language === "ar" 
+                  ? "يرجى تسجيل الدخول لمتابعة الردود ومراسلة الدعم الفني بشكل مباشر." 
+                  : "Please log in to track replies and message customer support directly."}
+              </p>
+              <Button
+                type="button"
+                className="h-11 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest px-6"
+                onClick={() => router.push(`/login?redirect=/customerservice`)}
+              >
+                {language === "ar" ? "تسجيل الدخول" : "Log In"}
+              </Button>
+            </section>
+          )}
 
           {isAuthenticated && (
-            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm" style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h2 className="text-lg font-black text-slate-900">
-                    {language === "ar" ? "تذاكري" : "My tickets"}
+                  <h2 className="text-lg font-black text-slate-900" style={{ color: settings.csTextColor || undefined, fontFamily: settings.csFontFamily || undefined }}>
+                    {language === "ar" ? "الرسائل والاستفسارات" : "Messages & Inquiries"}
                   </h2>
                   <p className="mt-1 text-xs font-bold text-slate-400">
-                    {language === "ar" ? "تابع ردود خدمة العملاء ورد على التذاكر المفتوحة" : "Track customer service replies and respond to open tickets"}
+                    {language === "ar" ? "تابع رسائلك واستفساراتك مع خدمة العملاء والردود عليها" : "Track your messages and inquiries with customer service"}
                   </p>
                 </div>
                 <Button
@@ -392,41 +427,64 @@ export default function CustomerService() {
               </div>
 
               {tickets.length === 0 ? (
-                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300">
-                  {language === "ar" ? "لا توجد تذاكر بعد" : "No tickets yet"}
+                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300" style={{ backgroundColor: settings.csBg || undefined }}>
+                  {language === "ar" ? "لا توجد رسائل بعد" : "No messages yet"}
                 </div>
               ) : (
                 <div className="space-y-4">
                   {tickets.map((ticket) => (
-                    <div key={ticket.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div 
+                      key={ticket.id} 
+                      className="rounded-2xl border border-slate-100 p-4" 
+                      style={{ 
+                        backgroundColor: settings.csBg || undefined,
+                        color: settings.csTextColor || undefined,
+                        fontFamily: settings.csFontFamily || undefined
+                      }}
+                    >
                       <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-sm font-black text-slate-950">#{ticket.id.slice(0, 8)}</span>
-                            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                            <span className="text-sm font-black opacity-90">#{ticket.id.slice(0, 8)}</span>
+                            <span className="rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-600">
                               {ticketStatusLabel(ticket.status)}
                             </span>
                           </div>
-                          <p className="mt-1 text-[10px] font-black text-slate-400">
+                          <p className="mt-1 text-[10px] font-black opacity-50">
                             {new Date(ticket.createdAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
                           </p>
                         </div>
                       </div>
 
                       <div className="space-y-3">
-                        <div className="rounded-xl bg-white p-4">
-                          <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <div className="rounded-xl p-4 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
+                          <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
                             {language === "ar" ? "استفسارك" : "Your message"}
                           </div>
-                          <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.question}</p>
+                          <p 
+                            className="whitespace-pre-wrap font-bold leading-7"
+                            style={{
+                              color: settings.csTextColor || undefined,
+                              fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined
+                            }}
+                          >
+                            {ticket.question}
+                          </p>
                         </div>
 
                         {ticket.adminReply && (
-                          <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
+                          <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4">
                             <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
                               {language === "ar" ? "رد الإدارة" : "Admin reply"}
                             </div>
-                            <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.adminReply}</p>
+                            <p 
+                              className="whitespace-pre-wrap font-bold leading-7 text-slate-800"
+                              style={{
+                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined
+                              }}
+                            >
+                              {ticket.adminReply}
+                            </p>
                             {ticket.adminRepliedAt && (
                               <p className="mt-2 text-[10px] font-black text-blue-500">
                                 {new Date(ticket.adminRepliedAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
@@ -436,19 +494,31 @@ export default function CustomerService() {
                         )}
 
                         {ticket.userReply && (
-                          <div className="rounded-xl bg-white p-4">
-                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          <div className="rounded-xl p-4 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
                               {language === "ar" ? "ردك الأخير" : "Your last reply"}
                             </div>
-                            <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{ticket.userReply}</p>
+                            <p 
+                              className="whitespace-pre-wrap font-bold leading-7"
+                              style={{
+                                color: settings.csTextColor || undefined,
+                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined
+                              }}
+                            >
+                              {ticket.userReply}
+                            </p>
                           </div>
                         )}
 
-                        <div className="rounded-xl bg-white p-3">
+                        <div className="rounded-xl p-3 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
                           <Textarea
                             value={ticketReplyDrafts[ticket.id] || ""}
                             onChange={(event) => setTicketReplyDrafts((current) => ({ ...current, [ticket.id]: event.target.value }))}
-                            className="min-h-24 rounded-xl border-slate-100 bg-slate-50 text-sm font-bold"
+                            className="min-h-24 rounded-xl border-slate-100 bg-white/80 text-sm font-bold"
+                            style={{
+                              color: settings.csTextColor || undefined,
+                              fontFamily: settings.csFontFamily || undefined
+                            }}
                             placeholder={language === "ar" ? "اكتب ردك على التذكرة..." : "Write your reply..."}
                           />
                           <div className="mt-3 flex justify-end">
@@ -471,189 +541,289 @@ export default function CustomerService() {
             </section>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className={`grid grid-cols-1 ${settings.uiFlags?.show_cs_form !== false && settings.uiFlags?.show_cs_faq !== false ? 'lg:grid-cols-2' : ''} gap-12`}>
               {/* Contact Form */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="space-y-6"
-              >
-                <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
-                      <MessageCircle className="w-4 h-4" />
-                    </div>
-                    {t('cs.service')}
-                </h2>
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.name')}</Label>
-                        <div className="relative group">
-                            <Input
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="h-12 rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 px-4 transition-all text-sm font-bold placeholder:text-slate-300"
-                                placeholder={t('cs.name')}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">طريقة التواصل المفضلة</Label>
-                        <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-                            <button
-                                type="button"
-                                onClick={() => setContactMethod("email")}
-                                className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
-                                    contactMethod === "email"
-                                    ? "bg-slate-900 text-white shadow-sm"
-                                    : "text-slate-400 hover:text-slate-600"
-                                }`}
-                            >
-                                <Mail className="w-3.5 h-3.5" />
-                                البريد
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setContactMethod("phone")}
-                                className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all ${
-                                    contactMethod === "phone"
-                                    ? "bg-slate-900 text-white shadow-sm"
-                                    : "text-slate-400 hover:text-slate-600"
-                                }`}
-                            >
-                                <Phone className="w-3.5 h-3.5" />
-                                الجوال
-                            </button>
-                        </div>
-                    </div>
-
-                    {contactMethod === "email" ? (
-                        <div className="space-y-3">
-                            <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.email')}</Label>
-                            <Input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold text-indigo-600"
-                                placeholder="name@example.com"
-                                dir="ltr"
-                            />
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            <Label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.phone')}</Label>
-                            <Input
-                                type="tel"
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold text-indigo-600"
-                                placeholder="05xxxxxxxx"
-                                dir="ltr"
-                            />
-                        </div>
-                    )}
-
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('cs.placeholder.inquiry')}</Label>
-                        <div className="relative">
-                          <Textarea
-                              value={question}
-                              onChange={handleQuestionChange}
-                              className="min-h-[120px] rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 p-4 transition-all text-sm font-bold resize-none"
-                          />
-                          <div className="absolute bottom-3 left-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">
-                              {charCount}/{MAX_CHARACTERS}
+              {settings.uiFlags?.show_cs_form !== false && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="space-y-6"
+                >
+                  <h2 
+                    className="text-lg font-black flex items-center gap-3"
+                    style={{
+                      color: settings.csTextColor || undefined,
+                      fontFamily: settings.csFontFamily || undefined,
+                    }}
+                  >
+                      <div 
+                        className="p-2 rounded-xl text-white shadow-sm"
+                        style={{
+                          backgroundColor: settings.csTextColor || '#0f172a',
+                        }}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </div>
+                      {t('cs.service')}
+                  </h2>
+                  <form 
+                    onSubmit={handleSubmit} 
+                    className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6" 
+                    style={{ 
+                      backgroundColor: settings.csCardBg || undefined,
+                      color: settings.csTextColor || undefined,
+                      fontFamily: settings.csFontFamily || undefined,
+                    }}
+                  >
+                      <div className="space-y-2">
+                          <Label 
+                            className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
+                            style={{ color: settings.csTextColor || undefined }}
+                          >
+                            {t('cs.name')}
+                          </Label>
+                          <div className="relative group">
+                              <Input
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
+                                  className="h-12 rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 px-4 transition-all font-bold placeholder:text-slate-300"
+                                  style={{
+                                    color: settings.csTextColor || undefined,
+                                    fontFamily: settings.csFontFamily || undefined,
+                                    fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                  }}
+                                  placeholder={t('cs.name')}
+                              />
                           </div>
-                        </div>
-                    </div>
+                      </div>
 
-                    <Button
-                        type="submit"
-                        disabled={!question.trim() || !name.trim() || (contactMethod === "email" ? !email.trim() : !phoneNumber.trim()) || charCount > MAX_CHARACTERS}
-                        className="w-full h-12 bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all active:scale-[0.98] gap-2"
-                    >
-                        {t('cs.submit')}
-                        <Send className="w-3.5 h-3.5 ml-2" />
-                    </Button>
-                </form>
-              </motion.div>
+                      <div className="space-y-2">
+                          <Label 
+                            className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
+                            style={{ color: settings.csTextColor || undefined }}
+                          >
+                            طريقة التواصل المفضلة
+                          </Label>
+                          <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                              <button
+                                  type="button"
+                                  onClick={() => setContactMethod("email")}
+                                  className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all`}
+                                  style={{
+                                      fontFamily: settings.csFontFamily || undefined,
+                                      backgroundColor: contactMethod === "email" ? (settings.csTextColor || '#0f172a') : 'transparent',
+                                      color: contactMethod === "email" ? (settings.csBg || '#ffffff') : undefined,
+                                  }}
+                              >
+                                  <Mail className="w-3.5 h-3.5" />
+                                  البريد
+                              </button>
+                              <button
+                                  type="button"
+                                  onClick={() => setContactMethod("phone")}
+                                  className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all`}
+                                  style={{
+                                      fontFamily: settings.csFontFamily || undefined,
+                                      backgroundColor: contactMethod === "phone" ? (settings.csTextColor || '#0f172a') : 'transparent',
+                                      color: contactMethod === "phone" ? (settings.csBg || '#ffffff') : undefined,
+                                  }}
+                              >
+                                  <Phone className="w-3.5 h-3.5" />
+                                  الجوال
+                              </button>
+                          </div>
+                      </div>
+
+                      {contactMethod === "email" ? (
+                          <div className="space-y-3">
+                              <Label 
+                                className="text-xs font-black uppercase tracking-widest px-1 opacity-60"
+                                style={{ color: settings.csTextColor || undefined }}
+                              >
+                                {t('cs.email')}
+                              </Label>
+                              <Input
+                                  type="email"
+                                  value={email}
+                                  onChange={(e) => setEmail(e.target.value)}
+                                  className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
+                                  style={{
+                                    color: settings.csTextColor || undefined,
+                                    fontFamily: settings.csFontFamily || undefined,
+                                    fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                  }}
+                                  placeholder="name@example.com"
+                                  dir="ltr"
+                              />
+                          </div>
+                      ) : (
+                          <div className="space-y-3">
+                              <Label 
+                                className="text-xs font-black uppercase tracking-widest px-1 opacity-60"
+                                style={{ color: settings.csTextColor || undefined }}
+                              >
+                                {t('cs.phone')}
+                              </Label>
+                              <Input
+                                  type="tel"
+                                  value={phoneNumber}
+                                  onChange={(e) => setPhoneNumber(e.target.value)}
+                                  className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
+                                  style={{
+                                    color: settings.csTextColor || undefined,
+                                    fontFamily: settings.csFontFamily || undefined,
+                                    fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                  }}
+                                  placeholder="05xxxxxxxx"
+                                  dir="ltr"
+                              />
+                          </div>
+                      )}
+
+                      <div className="space-y-2">
+                          <Label 
+                            className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
+                            style={{ color: settings.csTextColor || undefined }}
+                          >
+                            {t('cs.placeholder.inquiry')}
+                          </Label>
+                          <div className="relative">
+                            <Textarea
+                                value={question}
+                                onChange={handleQuestionChange}
+                                className="min-h-[120px] rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 p-4 transition-all font-bold resize-none"
+                                style={{
+                                  color: settings.csTextColor || undefined,
+                                  fontFamily: settings.csFontFamily || undefined,
+                                  fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                }}
+                            />
+                            <div className="absolute bottom-3 left-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                                {charCount}/{MAX_CHARACTERS}
+                             </div>
+                          </div>
+                      </div>
+
+                      <Button
+                          type="submit"
+                          disabled={!question.trim() || !name.trim() || (contactMethod === "email" ? !email.trim() : !phoneNumber.trim()) || charCount > MAX_CHARACTERS}
+                          className="w-full h-12 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all active:scale-[0.98] gap-2"
+                          style={{
+                            backgroundColor: settings.csTextColor || '#0f172a',
+                            color: settings.csBg || '#ffffff',
+                            fontFamily: settings.csFontFamily || undefined,
+                          }}
+                      >
+                          {t('cs.submit')}
+                          <Send className="w-3.5 h-3.5 ml-2" />
+                      </Button>
+                  </form>
+                </motion.div>
+              )}
 
               {/* FAQ Section */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="space-y-6"
-              >
-                  <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
-                        <HelpCircle className="w-4 h-4" />
-                      </div>
-                      {language === "ar" ? "الأسئلة المتكررة" : "FAQs"}
-                    </h2>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest"
-                      onClick={refreshFaqs}
-                      disabled={faqsLoading}
-                    >
-                      {language === "ar" ? "تحديث" : "Refresh"}
-                    </Button>
-                  </div>
-                <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8">
-                  {faqsError && (
-                    <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
-                      {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}
+              {settings.uiFlags?.show_cs_faq !== false && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="space-y-6"
+                >
+                    <div className="flex items-center justify-between gap-4">
+                      <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
+                          <HelpCircle className="w-4 h-4" />
+                        </div>
+                        {language === "ar" ? "الأسئلة المتكررة" : "FAQs"}
+                      </h2>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                        onClick={refreshFaqs}
+                        disabled={faqsLoading}
+                      >
+                        {language === "ar" ? "تحديث" : "Refresh"}
+                      </Button>
                     </div>
-                  )}
-                  <Accordion type="multiple" className="w-full space-y-6">
-                    {faqSections.map((section, idx) => {
-                      const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
-                      return (
-                        <AccordionItem
-                          key={idx}
-                          value={`section-${idx}`}
-                          className="border-none glass bg-white/50 rounded-[2.5rem] px-6 md:px-8 transition-all hover:bg-white"
-                        >
-                          <AccordionTrigger className="text-slate-600 font-black hover:no-underline text-right py-6 group">
-                            <span className="flex items-center gap-3 flex-1 text-right ">
-                              <CategoryIcon className="w-4 h-4" />
-                              {section.category}
-                            </span>
-                            <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
-                              <ChevronDown className="h-4 w-4" />
-                            </span>
-                          </AccordionTrigger>
-                          <AccordionContent className="pb-6">
-                            <Accordion type="single" collapsible className="w-full space-y-4">
-                              {section.items.map((item: any, itemIdx: number) => (
-                                <AccordionItem
-                                  key={itemIdx}
-                                  value={`item-${idx}-${itemIdx}`}
-                                  className="border-none glass bg-white/40 rounded-3xl px-6 transition-all hover:bg-white"
-                                >
-                                  <AccordionTrigger className="text-slate-900 font-bold hover:no-underline text-right py-6 group">
-                                    <span className="flex-1 text-right">{item.question}</span>
-                                    <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
-                                      <ChevronDown className="h-4 h-4" />
-                                    </span>
-                                  </AccordionTrigger>
-                                  <AccordionContent className="text-slate-500 font-medium leading-[1.8] text-right pb-6">
-                                    {item.answer}
-                                  </AccordionContent>
-                                </AccordionItem>
-                              ))}
-                            </Accordion>
-                          </AccordionContent>
-                        </AccordionItem>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </motion.div>
+                  <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
+                    {faqsError && (
+                      <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                        {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}
+                      </div>
+                    )}
+                    <Accordion type="multiple" className="w-full space-y-6">
+                      {faqSections.map((section, idx) => {
+                        const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
+                        return (
+                          <AccordionItem
+                            key={idx}
+                            value={`section-${idx}`}
+                            className="border-none glass bg-white/50 rounded-[2.5rem] px-6 md:px-8 transition-all hover:bg-white"
+                            style={{ backgroundColor: settings.csCardBg || undefined }}
+                          >
+                            <AccordionTrigger 
+                              className="font-black hover:no-underline text-right py-6 group"
+                              style={{
+                                color: settings.csTextColor || undefined,
+                                fontFamily: settings.csFontFamily || undefined,
+                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) + 1}px` : undefined
+                              }}
+                            >
+                              <span className="flex items-center gap-3 flex-1 text-right ">
+                                <CategoryIcon className="w-4 h-4" />
+                                {section.category}
+                              </span>
+                              <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                                <ChevronDown className="h-4 w-4" />
+                              </span>
+                            </AccordionTrigger>
+                            <AccordionContent className="pb-6">
+                              <Accordion type="single" collapsible className="w-full space-y-4">
+                                {section.items.map((item: any, itemIdx: number) => (
+                                  <AccordionItem
+                                    key={itemIdx}
+                                    value={`item-${idx}-${itemIdx}`}
+                                    className="border-none glass bg-white/40 rounded-3xl px-6 transition-all hover:bg-white"
+                                    style={{
+                                      backgroundColor: settings.csBg || undefined,
+                                      color: item.color || settings.csTextColor || undefined,
+                                      fontFamily: settings.csFontFamily || undefined,
+                                    }}
+                                  >
+                                    <AccordionTrigger 
+                                      className="font-bold hover:no-underline text-right py-6 group"
+                                      style={{
+                                        color: item.color || settings.csTextColor || undefined,
+                                        fontSize: item.fontSize ? `${item.fontSize}px` : (settings.csFontSize ? `${settings.csFontSize}px` : undefined),
+                                      }}
+                                    >
+                                      <span className="flex-1 text-right">{item.question}</span>
+                                      <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                                        <ChevronDown className="h-4 h-4" />
+                                      </span>
+                                    </AccordionTrigger>
+                                    <AccordionContent 
+                                      className="font-medium leading-[1.8] text-right pb-6 opacity-90"
+                                      style={{
+                                        color: item.color || settings.csTextColor || undefined,
+                                        fontSize: item.fontSize ? `${parseInt(item.fontSize) - 2}px` : (settings.csFontSize ? `${parseInt(settings.csFontSize) - 2}px` : undefined),
+                                      }}
+                                    >
+                                      {item.answer}
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                ))}
+                              </Accordion>
+                            </AccordionContent>
+                          </AccordionItem>
+                        );
+                      })}
+                    </Accordion>
+                  </div>
+                </motion.div>
+              )}
           </div>
       </div>
 

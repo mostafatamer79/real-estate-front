@@ -30,8 +30,16 @@ export default function SignIn({ onClose }: SignInProps) {
   const { t, language } = useLanguage();
   const { settings } = useSettings();
   const loginConfig = settings.loginConfig;
-  const phoneLoginEnabled = false;
+  const phoneLoginEnabled = true;
   const effectivePhoneEnabled = loginConfig.phoneEnabled && phoneLoginEnabled;
+
+  useEffect(() => {
+    if (loginConfig && !loginConfig.emailEnabled && effectivePhoneEnabled) {
+      setIsPhoneMode(true);
+    } else if (loginConfig && loginConfig.emailEnabled && !effectivePhoneEnabled) {
+      setIsPhoneMode(false);
+    }
+  }, [loginConfig, effectivePhoneEnabled]);
 
   useEffect(() => {
     // Hide global header and disable scrolling when login overlay is active
@@ -136,7 +144,9 @@ export default function SignIn({ onClose }: SignInProps) {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative">
+        <div 
+          className="bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative"
+        >
             {onClose && (
               <button
                 onClick={onClose}
@@ -148,13 +158,7 @@ export default function SignIn({ onClose }: SignInProps) {
             )}
 
             <div className="text-center mb-10">
-               <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-6 group hover:scale-110 transition-transform">
-                  {isPhoneMode ? (
-                    <Smartphone className="w-8 h-8 text-white" />
-                  ) : (
-                    <Mail className="w-8 h-8 text-white" />
-                  )}
-                </div>
+       
                 <h1 className="text-2xl font-bold mb-2">
                   {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
                 </h1>

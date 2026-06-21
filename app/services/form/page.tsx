@@ -38,15 +38,15 @@ const serviceOptions: Record<ServiceType, string[]> = {
   other: ["التقييم العقاري", "المسح الهندسي",  "أخرى"],
 };
 
-// Navbar-matching input style: bg-slate-950/white/10 system
-const inputClass = "w-full h-13 bg-slate-950 border border-white/10 hover:border-white/20 focus:border-white/30 rounded-2xl px-5 text-white text-sm font-bold placeholder:text-white/20 focus:outline-none transition-all duration-200";
-const labelClass = "text-[9px] font-black text-white/30 uppercase tracking-[0.22em] mb-2 block";
+// Premium white background inputs
+const inputClass = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
+const labelClass = "text-[9px] font-black text-slate-500 uppercase tracking-[0.22em] mb-2 block";
 
 const sectionDivider = (label: string) => (
   <div className="flex items-center gap-4 py-1">
-    <div className="h-px flex-1 bg-white/[0.06]" />
-    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">{label}</span>
-    <div className="h-px flex-1 bg-white/[0.06]" />
+    <div className="h-px flex-1 bg-slate-200" />
+    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">{label}</span>
+    <div className="h-px flex-1 bg-slate-200" />
   </div>
 );
 
@@ -189,9 +189,7 @@ function ServiceFormContent() {
   };
 
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white flex flex-col font-sans overflow-x-hidden selection:bg-white/10" dir="rtl">
-      {/* Same radial as navbar-matching pages */}
-      <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% -5%, rgba(255,255,255,0.04) 0%, transparent 60%)" }} />
+    <section className="w-full min-h-screen bg-white text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-slate-200" dir="rtl">
 
       {/* Back nav */}
       <motion.div
@@ -201,9 +199,9 @@ function ServiceFormContent() {
       >
         <button
           onClick={() => router.push("/services")}
-          className="group flex items-center gap-3 text-white/40 hover:text-white/70 transition-colors text-[10px] font-black uppercase tracking-[0.25em]"
+          className="group flex items-center gap-3 text-slate-500 hover:text-slate-950 transition-colors text-[10px] font-black uppercase tracking-[0.25em]"
         >
-          <div className="w-8 h-8 rounded-full border border-white/10 group-hover:border-white/20 flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-full border border-slate-200 group-hover:border-slate-400 flex items-center justify-center transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" />
           </div>
           العودة للخدمات
@@ -213,9 +211,9 @@ function ServiceFormContent() {
       {/* Hero */}
       <div className="relative z-10 max-w-3xl mx-auto w-full px-6 pt-12 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-white mb-4">{config.title}</h1>
-          <p className="text-white/35 text-sm max-w-md leading-relaxed">{config.description}</p>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
+          <p className="text-slate-600 text-sm max-w-md leading-relaxed">{config.description}</p>
         </motion.div>
       </div>
 
@@ -233,10 +231,9 @@ function ServiceFormContent() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative bg-white/[0.02] border border-white/10 rounded-[2.5rem] p-8 sm:p-12 overflow-hidden"
+            className="relative bg-white border border-slate-200 rounded-[2.5rem] p-8 sm:p-12 overflow-hidden shadow-sm"
           >
-            {/* Top shimmer — same as navbar bottom border */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             <div className="relative space-y-7">
               {/* Personal Info */}
@@ -271,9 +268,9 @@ function ServiceFormContent() {
                     <label className={labelClass}>نوع الخدمة التسويقية</label>
                     <div className="relative">
                       <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
-                        {serviceOptions.marketing.map((s, i) => <option key={i} value={s} className="bg-slate-950">{s}</option>)}
+                        {serviceOptions.marketing.map((s, i) => <option key={i} value={s} className="bg-white text-slate-900">{s}</option>)}
                       </select>
-                      <ChevronLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 -rotate-90 text-white/20 pointer-events-none" />
+                      <ChevronLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 -rotate-90 text-slate-400 pointer-events-none" />
                     </div>
                   </motion.div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -285,7 +282,7 @@ function ServiceFormContent() {
                       <motion.div key={f.field} variants={itemVariants} className="space-y-2">
                         <label className={labelClass}>{f.label}</label>
                         <div className="relative">
-                          <f.icon className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+                          <f.icon className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                           <input type={f.type} className={inputClass + " pr-10"} style={{ height: "3.25rem" }} value={(formData as any)[f.field]} onChange={(e) => handleInputChange(f.field, e.target.value)} placeholder={f.placeholder} dir="ltr" />
                         </div>
                       </motion.div>
@@ -298,8 +295,8 @@ function ServiceFormContent() {
                     <label className={labelClass}>نوع الخدمة المطلوبة</label>
                     <div className="relative">
                       <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
-                        <option value="" disabled className="bg-slate-950">اختر من القائمة...</option>
-                        {serviceOptions[serviceType].map((s, i) => <option key={i} value={s} className="bg-slate-950">{s}</option>)}
+                        <option value="" disabled className="bg-white text-slate-400">اختر من القائمة...</option>
+                        {serviceOptions[serviceType].map((s, i) => <option key={i} value={s} className="bg-white text-slate-900">{s}</option>)}
                       </select>
                       </div>
                   </motion.div>
@@ -337,8 +334,8 @@ function ServiceFormContent() {
                                 onClick={() => handleInputChange("visitPhotographyType", opt.id)}
                                 className={`flex items-center justify-center p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
                                     formData.visitPhotographyType === opt.id 
-                                    ? "bg-white text-slate-950 border-white" 
-                                    : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                                    ? "bg-slate-950 text-white border-slate-950" 
+                                    : "bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400"
                                 }`}
                             >
                                 <span className="font-black text-sm">{opt.label}</span>
@@ -368,28 +365,28 @@ function ServiceFormContent() {
                     key={formData.service}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3"
+                    className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3"
                   >
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white/30">سعر الخدمة التقديري</span>
-                      <span className="text-xl font-black text-white">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">سعر الخدمة التقديري</span>
+                      <span className="text-xl font-black text-slate-950">
                         {price !== null
                           ? qty > 1
-                            ? <>{(price * qty).toLocaleString('ar-SA')} <span className="text-xs text-white/40">ريال ({qty} × {price.toLocaleString('ar-SA')})</span></>
-                            : <>{price.toLocaleString('ar-SA')} <span className="text-xs text-white/40">ريال</span></>
-                          : <span className="text-sm text-white/50">يحدد بعد المراجعة</span>
+                            ? <>{(price * qty).toLocaleString('ar-SA')} <span className="text-xs text-slate-500">ريال ({qty} × {price.toLocaleString('ar-SA')})</span></>
+                            : <>{price.toLocaleString('ar-SA')} <span className="text-xs text-slate-500">ريال</span></>
+                          : <span className="text-sm text-slate-500">يحدد بعد المراجعة</span>
                         }
                       </span>
                     </div>
                     {price !== null && settings.taxPercentage > 0 && (
-                      <div className="flex justify-between items-center border-t border-white/[0.06] pt-3">
-                        <span className="text-[9px] font-black text-white/20 uppercase">شامل ضريبة {settings.taxPercentage}%</span>
-                        <span className="text-sm font-black text-white/50">
+                      <div className="flex justify-between items-center border-t border-slate-200 pt-3">
+                        <span className="text-[9px] font-black text-slate-400 uppercase">شامل ضريبة {settings.taxPercentage}%</span>
+                        <span className="text-sm font-black text-slate-600">
                           {((price * qty) * (1 + settings.taxPercentage / 100)).toLocaleString('ar-SA')} ريال
                         </span>
                       </div>
                     )}
-                    <p className="text-[9px] font-bold text-white/20 leading-relaxed uppercase tracking-wider">
+                    <p className="text-[9px] font-bold text-slate-400 leading-relaxed uppercase tracking-wider">
                       * سيتم تحديد السعر النهائي بدقة من قبل الفريق المختص بعد مراجعة الطلب.
                     </p>
                   </motion.div>
@@ -402,15 +399,15 @@ function ServiceFormContent() {
                   onClick={() => handleInputChange("termsAccepted", !formData.termsAccepted)}
                   className={`flex items-center gap-4 p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${
                     formData.termsAccepted
-                      ? "bg-white text-slate-950 border-white"
-                      : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                      ? "bg-slate-100 text-slate-950 border-slate-300"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400"
                   }`}
                 >
-                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${formData.termsAccepted ? "border-slate-950 bg-slate-950" : "border-white/20"}`}>
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${formData.termsAccepted ? "border-slate-950 bg-slate-950" : "border-slate-300"}`}>
                     <CheckCircle2 className={`w-3.5 h-3.5 transition-opacity ${formData.termsAccepted ? "text-white opacity-100" : "opacity-0"}`} />
                   </div>
                   <div>
-                    <p className={`text-[10px] font-medium mt-0.5 ${formData.termsAccepted ? "text-slate-700" : "text-white/30"}`}>
+                    <p className={`text-[10px] font-medium mt-0.5 ${formData.termsAccepted ? "text-slate-700" : "text-slate-600"}`}>
                       أوافق على{' '}
                       <a
                         href="/info?tab=usage"
@@ -418,7 +415,7 @@ function ServiceFormContent() {
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className={`underline underline-offset-2 decoration-dotted hover:decoration-solid transition-all duration-150 ${
-                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-white/30 hover:text-white/50"
+                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-slate-600 hover:text-slate-950"
                         }`}
                       >
                         سياسة الاستخدام
@@ -430,7 +427,7 @@ function ServiceFormContent() {
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className={`underline underline-offset-2 decoration-dotted hover:decoration-solid transition-all duration-150 ${
-                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-white/30 hover:text-white/50"
+                          formData.termsAccepted ? "text-slate-700 hover:opacity-80" : "text-slate-600 hover:text-slate-950"
                         }`}
                       >
                         الشروط والأحكام
@@ -449,8 +446,8 @@ function ServiceFormContent() {
                   onClick={handleSubmit}
                   className={`w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
                     isFormValid && !isSubmitting
-                      ? "bg-white text-slate-950 hover:bg-white/90 shadow-[0_0_40px_rgba(255,255,255,0.06)]"
-                      : "bg-white/[0.03] text-white/20 cursor-not-allowed border border-white/[0.06]"
+                      ? "bg-slate-950 text-white hover:bg-slate-800 shadow-sm"
+                      : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                   }`}
                 >
                   <div className="flex items-center justify-center gap-3">
@@ -460,7 +457,7 @@ function ServiceFormContent() {
                     }
                   </div>
                 </motion.button>
-                <p className="text-center text-[9px] font-bold text-white/20 tracking-widest uppercase">
+                <p className="text-center text-[9px] font-bold text-slate-400 tracking-widest uppercase">
                   سيتم الرد على طلبكم خلال 24 ساعة عمل
                 </p>
               </motion.div>
@@ -475,9 +472,9 @@ function ServiceFormContent() {
 export default function ServiceForm() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 text-white/20 animate-spin" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-12 h-12 rounded-2xl border border-slate-200 flex items-center justify-center">
+          <Loader2 className="w-5 h-5 text-slate-400 animate-spin" />
         </div>
       </div>
     }>

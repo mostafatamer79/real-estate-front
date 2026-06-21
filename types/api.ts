@@ -162,6 +162,36 @@ export interface CreatePropertyDto {
     purchasePrice?: number;
     ownerId?: string;
     units?: CreateUnitDto[];
+    mainCategory?: string;
+    propertyType?: string;
+    dealType?: string;
+    price?: number;
+    area?: number;
+    length?: number;
+    width?: number;
+    streetWidth?: number;
+    city?: string;
+    neighborhood?: string;
+    propertyAge?: string;
+    direction?: string;
+    deedType?: string;
+    propertyCondition?: string;
+    rooms?: number;
+    bathrooms?: number;
+    livingRooms?: number;
+    kitchens?: number;
+    floors?: number;
+    apartments?: number;
+    hasMaidRoom?: boolean;
+    hasRoof?: boolean;
+    hasExternalAnnex?: boolean;
+    buildingArea?: number;
+    hasGarage?: boolean;
+    hasPool?: boolean;
+    hasElevator?: boolean;
+    furnitureStatus?: string;
+    additionalNotes?: string;
+    isActive?: boolean;
 }
 
 export interface Property extends CreatePropertyDto {

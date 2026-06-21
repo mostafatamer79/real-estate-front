@@ -141,63 +141,67 @@ export default function QuickActions() {
         {/* Subtle ambient glow */}
         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/2 via-transparent to-slate-500/2 pointer-events-none" />
 
-        {actions.map((action) => (
-          <Tooltip key={action.id}>
-            <TooltipTrigger asChild>
-              <motion.button
-                variants={item}
-                whileHover={{ scale: 1.12, y: -8 }}
-                whileTap={{ scale: 0.92 }}
-                onClick={() => {
-                  const flagKey = action.id === 'requests' ? 'orders' : action.id;
-                  if (settings.sectionFlags[flagKey] === 'closed') return;
+        {actions.map((action) => {
+          return (
+            <Tooltip key={action.id}>
+              <TooltipTrigger asChild>
+                <motion.button
+                  variants={item}
+                  whileHover={{ scale: 1.12, y: -8 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={() => {
+                    const flagKey = action.id === 'requests' ? 'orders' : action.id;
+                    if (settings.sectionFlags[flagKey] === 'closed') return;
 
-                  if (action.id === "services")           router.push("/services");
-                  else if (action.id === "wallet")        router.push("/wallet");
-                  else if (action.id === "subscriptions") router.push("/subscriptions/new");
-                  else if (action.id === "offers")        router.push("/offers");
-                  else if (action.id === "requests")      router.push("/orders");
-                  else if (action.id === "buildingmanagement") router.push("/buildingmanagement");
-                  else if (action.id === "scan_map")      router.push("/scan-map");
-                }}
-                className={`
-                  group relative
-                  w-16 h-16 md:w-24 md:h-24
-                  rounded-2xl md:rounded-3xl
-                  bg-gradient-to-br from-slate-700/60 to-slate-800/80
-                  border border-slate-700/50
-                  ${action.accentColor}
-                  flex items-center justify-center
-                  shadow-[0_2px_12px_rgba(0,0,0,0.3)]
-                  ${action.glowColor}
-                  transition-all duration-300
-                  ${settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
-                `}
-              >
-                {/* Inner shimmer */}
-                <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-transparent via-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    if (action.id === "services")           router.push("/services");
+                    else if (action.id === "wallet")        router.push("/wallet");
+                    else if (action.id === "subscriptions") router.push("/subscriptions/new");
+                    else if (action.id === "offers")        router.push("/offers");
+                    else if (action.id === "requests")      router.push("/orders");
+                    else if (action.id === "buildingmanagement") router.push("/buildingmanagement");
+                    else if (action.id === "scan_map")      router.push("/scan-map");
+                  }}
+                  className={`
+                    group relative
+                    w-16 h-16 md:w-24 md:h-24
+                    rounded-2xl md:rounded-3xl
+                    bg-gradient-to-br from-slate-700/60 to-slate-800/80
+                    border border-slate-700/50
+                    ${action.accentColor}
+                    flex items-center justify-center
+                    shadow-[0_2px_12px_rgba(0,0,0,0.3)]
+                    ${action.glowColor}
+                    transition-all duration-300
+                    ${settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
+                  `}
+                >
+                  {/* Inner shimmer */}
+                  <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-transparent via-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Optimized Soon Badge */}
-                {settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' && (
-                  <SoonBadge className="absolute -top-1.5 -right-1.5 z-20 px-2 py-0.5 rounded-lg shadow-xl shadow-black/40">
-                    {t('common.soon') || 'قريباً'}
-                  </SoonBadge>
-                )}
+                  {/* Optimized Soon Badge */}
+                  {settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' && (
+                    <SoonBadge className="absolute -top-1.5 -right-1.5 z-20 px-2 py-0.5 rounded-lg shadow-xl shadow-black/40">
+                      {t('common.soon') || 'قريباً'}
+                    </SoonBadge>
+                  )}
 
-                {/* Icon */}
-                <div className="relative z-10 p-2 md:p-3">
-                  {action.icon}
-                </div>
+                  {/* Icon */}
+                  <div className="relative z-10 p-2 md:p-3 flex items-center justify-center w-14 h-14 md:w-20 md:h-20">
+                    <div className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center [&_img]:!h-full [&_img]:!w-full [&_img]:max-h-full [&_img]:max-w-full [&_svg]:!h-full [&_svg]:!w-full [&_svg]:max-h-full [&_svg]:max-w-full">
+                      {action.icon}
+                    </div>
+                  </div>
 
-                {/* Hover dot indicator */}
-                <div className="absolute -bottom-1 w-1 h-1 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </motion.button>
-            </TooltipTrigger>
-            <TooltipContent className="bg-slate-900 border-slate-700 text-slate-200 font-bold px-3 py-2 rounded-xl shadow-2xl">
-              {action.title}
-            </TooltipContent>
-          </Tooltip>
-        ))}
+                  {/* Hover dot indicator */}
+                  <div className="absolute -bottom-1 w-1 h-1 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                </motion.button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-slate-900 border-slate-700 text-slate-200 font-bold px-3 py-2 rounded-xl shadow-2xl">
+                {action.title}
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
       </div>
 
     </motion.div>

@@ -27,7 +27,9 @@ import {
   AlertCircle,
   Clock,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Pagination } from "../../src/components/Pagination";
 import { motion, AnimatePresence } from "framer-motion";
@@ -79,32 +81,12 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
     role: user?.role || 'employee',
     department: (user?.departments as string[]) || [],
     parentId: user?.parentId || '',
-    noExpiry: false,
-    endDate: '',
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [existingSubId, setExistingSubId] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewDepartment, setPreviewDepartment] = useState<PreviewDepartmentKey>("properties");
-
-  // Pre-load subscription info when editing an admin
-  useEffect(() => {
-    if (user?.id && (user?.role === Role.ADMIN || user?.role === Role.MANGER)) {
-      api.get(`/subscriptions/status?userId=${user.id}`).then(res => {
-        const sub = res.data?.subscription;
-        if (sub) {
-          setExistingSubId(sub.id);
-          setForm(f => ({
-            ...f,
-            noExpiry: sub.noExpiry || false,
-            endDate: sub.endDate ? sub.endDate.split('T')[0] : '',
-          }));
-        }
-      }).catch(() => {});
-    }
-  }, [user?.id, user?.role]);
 
   // Specialist roles auto-department
   useEffect(() => {
@@ -122,7 +104,6 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   if (!form.email && !form.phone) fieldErrors.email = 'يجب إدخال البريد أو الجوال';
   if (form.email && !emailRegex.test(form.email)) fieldErrors.email = 'صيغة البريد الإلكتروني غير صحيحة';
   if (form.phone && !phoneRegex.test(form.phone)) fieldErrors.phone = 'الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام';
-  if (form.role === 'employee' && !form.parentId) fieldErrors.parentId = 'يجب اختيار المدير';
   if (form.role === 'employee' && form.department.length === 0) fieldErrors.department = 'يجب اختيار الإدارة';
 
   const isValid = Object.keys(fieldErrors).length === 0;
@@ -151,47 +132,6 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
         res = await api.put(`/user/${user.id}`, payload);
       } else {
         res = await api.post('/user', payload);
-      }
-
-      // Create or update subscription for admin/manager role
-      if (form.role === Role.ADMIN || form.role === Role.MANGER) {
-        const today = new Date();
-        const endDate = form.noExpiry
-          ? new Date(today.getFullYear() + 100, today.getMonth(), today.getDate()).toISOString().split('T')[0]
-          : form.endDate;
-
-        const createSubPayload: any = {
-          userId: res.data.id || user?.id,
-          subscriptionType: 'سنوي',
-          amount: 0,
-          startDate: today.toISOString().split('T')[0],
-          paymentMethod: 'نقدي',
-          status: 'نشط',
-          noExpiry: form.noExpiry,
-        };
-
-        if (endDate) {
-          createSubPayload.endDate = endDate;
-        }
-
-        try {
-          if (existingSubId) {
-            const updateSubPayload: any = {
-              userId: res.data.id || user?.id,
-              amount: 0,
-              status: 'نشط',
-              noExpiry: form.noExpiry,
-            };
-            if (endDate) {
-              updateSubPayload.endDate = endDate;
-            }
-            await api.put(`/subscriptions/${existingSubId}`, updateSubPayload);
-          } else {
-            await api.post('/subscriptions', createSubPayload);
-          }
-        } catch (subErr) {
-          console.error('Failed to save subscription', subErr);
-        }
       }
 
       onCreated(res.data);
@@ -285,7 +225,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
             )}
           </div>
 
-          {(form.role === Role.ADMIN || form.role === Role.MANGER || form.role === 'employee') && (
+          {form.role !== Role.USER && (
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -328,54 +268,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
             </div>
           )}
 
-          {(form.role === Role.ADMIN || form.role === Role.MANGER) && (
-            <div className="p-5 rounded-[2rem] bg-slate-50 border border-slate-100 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">صلاحية الاشتراك</p>
-                  <p className="text-xs font-bold text-slate-950">
-                    {existingSubId ? 'تعديل مدة الاشتراك الحالي' : 'إعدادات مدة الوصول للمنصة'}
-                  </p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-slate-400" />
-                </div>
-              </div>
 
-              <div className="flex items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-slate-100">
-                <span className="text-xs font-bold text-slate-700">اشتراك غير محدود (لا ينتهي)</span>
-                <button 
-                  type="button"
-                  onClick={() => setForm(f => ({ ...f, noExpiry: !f.noExpiry }))}
-                  className={`w-12 h-6 rounded-full p-1 transition-all ${form.noExpiry ? 'bg-slate-950' : 'bg-slate-200'}`}
-                >
-                  <div className={`w-4 h-4 bg-white rounded-full transition-all ${form.noExpiry ? 'translate-x-6' : 'translate-x-0'}`} />
-                </button>
-              </div>
-
-              {!form.noExpiry && (
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">تاريخ انتهاء الاشتراك</label>
-                  <div className="relative">
-                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-                    <input 
-                      type="date" 
-                      value={form.endDate} 
-                      onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
-                      className={iconFieldCls('endDate')}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {existingSubId && (
-                <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-xl border border-blue-100">
-                  <CheckCircle className="w-4 h-4 text-blue-500 shrink-0" />
-                  <p className="text-[10px] font-bold text-blue-700">سيتم تحديث الاشتراك الحالي بالتعديلات الجديدة</p>
-                </div>
-              )}
-            </div>
-          )}
 
           {['legal', 'finance', 'marketing'].includes(form.role) && (
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
@@ -580,6 +473,96 @@ export default function UsersPage() {
         setCurrentPage(1);
     }, [searchTerm, roleFilter, departmentFilter, verificationFilter]);
 
+    const tableContainerRef = React.useRef<HTMLDivElement>(null);
+    const [showLeftScroll, setShowLeftScroll] = useState(false);
+    const [showRightScroll, setShowRightScroll] = useState(false);
+
+    const checkScroll = () => {
+        if (tableContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
+            const isScrollable = scrollWidth > clientWidth;
+            if (!isScrollable) {
+                setShowLeftScroll(false);
+                setShowRightScroll(false);
+                return;
+            }
+
+            const isRtl = language === 'ar';
+            if (isRtl) {
+                const maxScroll = scrollWidth - clientWidth;
+                const absScrollLeft = Math.abs(scrollLeft);
+                setShowRightScroll(absScrollLeft > 10);
+                setShowLeftScroll(absScrollLeft < maxScroll - 10);
+            } else {
+                setShowLeftScroll(scrollLeft > 10);
+                setShowRightScroll(scrollLeft < (scrollWidth - clientWidth) - 10);
+            }
+        }
+    };
+
+    const scrollTable = (direction: 'left' | 'right') => {
+        if (tableContainerRef.current) {
+            const amount = 300;
+            const scrollValue = direction === 'left' ? -amount : amount;
+            tableContainerRef.current.scrollBy({
+                left: scrollValue,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    useEffect(() => {
+        const el = tableContainerRef.current;
+        if (el) {
+            el.addEventListener('scroll', checkScroll);
+            window.addEventListener('resize', checkScroll);
+            checkScroll();
+            const timer = setTimeout(checkScroll, 500);
+            return () => {
+                el.removeEventListener('scroll', checkScroll);
+                window.removeEventListener('resize', checkScroll);
+                clearTimeout(timer);
+            };
+        }
+    }, [users, filteredUsers, language]);
+
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeftState, setScrollLeftState] = useState(0);
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (
+            target.closest('button') || 
+            target.closest('a') || 
+            target.closest('select') || 
+            target.closest('input')
+        ) {
+            return;
+        }
+
+        if (!tableContainerRef.current) return;
+        setIsDragging(true);
+        setStartX(e.pageX - tableContainerRef.current.offsetLeft);
+        setScrollLeftState(tableContainerRef.current.scrollLeft);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDragging || !tableContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - tableContainerRef.current.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        tableContainerRef.current.scrollLeft = scrollLeftState - walk;
+    };
+
 
     if (loading) return (
         <div className="space-y-8 animate-pulse">
@@ -624,13 +607,7 @@ export default function UsersPage() {
                         <p className="text-xl font-black text-slate-950 tabular-nums">{users.length}</p>
                     </div>
                     {/* Create user button */}
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="h-12 px-5 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20 hover:shadow-slate-950/30"
-                    >
-                        <Plus className="w-4 h-4" />
-                        إضافة مستخدم
-                    </button>
+
                 </div>
             </section>
 
@@ -669,7 +646,43 @@ export default function UsersPage() {
 
             {/* Users Table */}
             <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
-                <div className="overflow-x-auto hide-scrollbar">
+                <div className="relative group/table">
+                    {/* Left scroll button */}
+                    {showLeftScroll && (
+                        <button
+                            type="button"
+                            onClick={() => scrollTable('left')}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            title={language === 'ar' ? 'تمرير لليسار' : 'Scroll Left'}
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                    )}
+
+                    {/* Right scroll button */}
+                    {showRightScroll && (
+                        <button
+                            type="button"
+                            onClick={() => scrollTable('right')}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            title={language === 'ar' ? 'تمرير لليمين' : 'Scroll Right'}
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    )}
+
+                    <div 
+                        ref={tableContainerRef} 
+                        className={`overflow-x-auto pb-3 ${
+                            (showLeftScroll || showRightScroll) 
+                                ? (isDragging ? 'cursor-grabbing select-none' : 'cursor-grab') 
+                                : ''
+                        }`}
+                        onMouseDown={handleMouseDown}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseUp={handleMouseUp}
+                        onMouseMove={handleMouseMove}
+                    >
                     <table className="w-full text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-50">
@@ -847,16 +860,17 @@ export default function UsersPage() {
                         </tbody>
                     </table>
                 </div>
-
-                {/* Pagination */}
-                <Pagination 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    totalItems={filteredUsers.length}
-                    itemsLabel={t('admin.users.total')}
-                />
             </div>
+
+            {/* Pagination */}
+            <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredUsers.length}
+                itemsLabel={t('admin.users.total')}
+            />
+        </div>
         </div>
         </div>
     );

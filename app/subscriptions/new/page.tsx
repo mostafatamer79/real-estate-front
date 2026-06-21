@@ -256,36 +256,15 @@ export default function NewSubscriptionPage() {
   return (
     <div className="min-h-screen bg-slate-50 p-6" dir="rtl">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="rounded-[2rem] bg-slate-950 text-white p-8 border border-slate-800 shadow-2xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-black">
-                <Shield className="w-4 h-4" />
-                {t("sub.public.badge")}
-              </div>
-              <h1 className="text-3xl font-black">{t("sub.public.heroTitle")}</h1>
-              <p className="text-sm text-white/70 font-bold max-w-3xl">
-                {t("sub.public.heroDesc")}
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="h-12 px-5 rounded-2xl bg-white/10 text-white font-black text-sm hover:bg-white/15 transition-colors flex items-center justify-center gap-2 border border-white/15"
-              >
-                <ArrowRight className="w-4 h-4" />
-                رجوع
-              </button>
-              <button
-                onClick={() => router.push("/wallet")}
-                className="h-12 px-5 rounded-2xl bg-white text-slate-950 font-black text-sm hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
-              >
-                <CreditCard className="w-4 h-4" />
-                {t("action.wallet")}
-              </button>
-            </div>
-          </div>
+        <div className="flex justify-start">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-2 bg-white hover:bg-slate-100 border border-slate-200/80 hover:border-slate-300 text-slate-800 px-5 py-2.5 rounded-2xl font-black text-xs transition-all duration-200 shadow-sm active:scale-95"
+          >
+            <ArrowRight className="w-4 h-4" />
+            {t("common.back") || "رجوع"}
+          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 rounded-[1.5rem] border border-slate-100 bg-white p-2 shadow-sm">

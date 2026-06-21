@@ -57,6 +57,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
+        style={{
+          backgroundImage: "url('/cover.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+          backgroundRepeat: "repeat"
+        }}
       >
         <SettingsProvider>
           <LanguageProvider>

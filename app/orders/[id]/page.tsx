@@ -60,8 +60,8 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isClient = currentUser?.id === order.userId;
-  const otherId = isClient ? order.assignedToId : order.userId;
-  const otherUser = isClient ? (order as any).assignedTo : (order as any).user;
+  const otherId = isClient ? (order.assignedToId || 'admin') : order.userId;
+  const otherUser = isClient ? ((order as any).assignedTo || { firstName: isRtl ? 'الإدارة' : 'Administration', lastName: '', role: 'admin' }) : (order as any).user;
 
   useEffect(() => {
     if (!currentUser || !otherId) {

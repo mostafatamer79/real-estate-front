@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
 import {
   customerServiceFaqApi,
   customerServiceFeedbackApi,
@@ -25,6 +26,7 @@ type TabKey = "faqs" | "feedback";
 
 export default function AdminCustomerServicePage() {
   const { language, t } = useLanguage();
+  const { settings } = useSettings();
   const confirmDialog = useConfirmDialog();
   const router = useRouter();
   const isRtl = language === "ar";
@@ -78,6 +80,8 @@ export default function AdminCustomerServicePage() {
     questionEn: "",
     answerEn: "",
     sortOrder: 0,
+    color: "",
+    fontSize: "",
   });
   const [savingFaq, setSavingFaq] = useState(false);
 
@@ -175,7 +179,15 @@ export default function AdminCustomerServicePage() {
 
   const resetFaqForm = () => {
     setEditingFaqId(null);
-    setFaqForm({ questionAr: "", answerAr: "", questionEn: "", answerEn: "", sortOrder: 0 });
+    setFaqForm({ 
+      questionAr: "", 
+      answerAr: "", 
+      questionEn: "", 
+      answerEn: "", 
+      sortOrder: 0,
+      color: "",
+      fontSize: "",
+    });
   };
 
   const nextSortOrder = (items: Array<{ sortOrder?: number | null }>) => {
@@ -228,6 +240,8 @@ export default function AdminCustomerServicePage() {
       questionEn: faq.questionEn,
       answerEn: faq.answerEn,
       sortOrder: faq.sortOrder ?? 0,
+      color: faq.color ?? "",
+      fontSize: faq.fontSize ?? "",
     });
   };
 
@@ -235,15 +249,17 @@ export default function AdminCustomerServicePage() {
     if (!selectedCategoryId) return;
     setSavingFaq(true);
     try {
+      const payload = {
+        ...faqForm,
+        categoryId: selectedCategoryId,
+        color: faqForm.color.trim() || null,
+        fontSize: faqForm.fontSize.trim() || null,
+      };
       if (editingFaqId) {
-        await customerServiceFaqApi.update(editingFaqId, {
-          ...faqForm,
-          categoryId: selectedCategoryId,
-        } as any);
+        await customerServiceFaqApi.update(editingFaqId, payload as any);
       } else {
         await customerServiceFaqApi.create({
-          ...faqForm,
-          categoryId: selectedCategoryId,
+          ...payload,
           sortOrder: nextFaqSortOrderForCategory(selectedCategoryId),
           // backend will fill categoryAr/categoryEn from categoryId
           categoryAr: "",
@@ -353,29 +369,82 @@ export default function AdminCustomerServicePage() {
   };
 
   return (
-    <div className="p-6 lg:p-8 space-y-8" dir={isRtl ? "rtl" : "ltr"}>
+    <div 
+      className="p-6 lg:p-8 min-h-screen space-y-8" 
+      dir={isRtl ? "rtl" : "ltr"}
+      style={{
+        backgroundColor: settings.csBg || undefined,
+        color: settings.csTextColor || undefined,
+        fontFamily: settings.csFontFamily || undefined,
+      }}
+    >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
+          <div 
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-white text-[9px] font-black uppercase tracking-widest"
+            style={{
+              backgroundColor: settings.csTextColor || '#0f172a',
+              color: settings.csBg || '#ffffff',
+            }}
+          >
             <MessageCircleQuestion className="w-3 h-3" />
             {t("admin.customer_service.title") || (isRtl ? "خدمة العملاء" : "Customer Service")}
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-950">
+          <h1 
+            className="text-2xl font-black tracking-tight"
+            style={{
+              color: settings.csTextColor || undefined,
+              fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) + 8}px` : undefined,
+            }}
+          >
             {t("admin.customer_service.subtitle") || (isRtl ? "إدارة التصنيفات والأسئلة والرسائل" : "Manage Categories, FAQs & Feedback")}
           </h1>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button type="button" variant={tab === "faqs" ? "default" : "outline"} className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={() => setTab("faqs")}>
+          <Button 
+            type="button" 
+            variant={tab === "faqs" ? "default" : "outline"} 
+            className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+            onClick={() => setTab("faqs")}
+            style={{
+              backgroundColor: tab === "faqs" ? (settings.csTextColor || undefined) : undefined,
+              color: tab === "faqs" ? (settings.csBg || undefined) : undefined,
+              fontFamily: settings.csFontFamily || undefined,
+            }}
+          >
             {t("admin.customer_service.tabs.faqs") || (isRtl ? "الأسئلة" : "FAQs")}
           </Button>
-          <Button type="button" variant={tab === "feedback" ? "default" : "outline"} className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={() => setTab("feedback")}>
+          <Button 
+            type="button" 
+            variant={tab === "feedback" ? "default" : "outline"} 
+            className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+            onClick={() => setTab("feedback")}
+            style={{
+              backgroundColor: tab === "feedback" ? (settings.csTextColor || undefined) : undefined,
+              color: tab === "feedback" ? (settings.csBg || undefined) : undefined,
+              fontFamily: settings.csFontFamily || undefined,
+            }}
+          >
             {t("admin.customer_service.tabs.feedback") || (isRtl ? "الرسائل" : "Feedback")}
           </Button>
-          <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={resetDefaults}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+            onClick={resetDefaults}
+            style={{
+              fontFamily: settings.csFontFamily || undefined,
+            }}
+          >
             {t("admin.customer_service.loadDefaults") || (isRtl ? "تحميل الافتراضي" : "Load defaults")}
           </Button>
-          <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={() => { loadCategories(); loadFaqs(); loadFeedback(); }}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="h-9 rounded-xl" 
+            onClick={() => { loadCategories(); loadFaqs(); loadFeedback(); }}
+          >
             <RefreshCcw className="w-4 h-4" />
           </Button>
         </div>
@@ -384,40 +453,78 @@ export default function AdminCustomerServicePage() {
       {tab === "faqs" && (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Categories */}
-          <Card className="xl:col-span-1 border-slate-200">
+          <Card 
+            className="xl:col-span-1 border-slate-200"
+            style={{
+              backgroundColor: settings.csCardBg || undefined,
+              color: settings.csTextColor || undefined,
+            }}
+          >
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between gap-2">
-                <div className="font-black text-slate-950">{t("admin.customer_service.categories") || (isRtl ? "التصنيفات" : "Categories")}</div>
+                <div className="font-black text-slate-950" style={{ color: settings.csTextColor || undefined }}>{t("admin.customer_service.categories") || (isRtl ? "التصنيفات" : "Categories")}</div>
                 <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={loadCategories} disabled={loadingCategories}>
                   <RefreshCcw className={`w-4 h-4 ${loadingCategories ? "animate-spin" : ""}`} />
                 </Button>
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-black text-slate-600">
+                <div className="text-xs font-black text-slate-600" style={{ color: settings.csTextColor || undefined }}>
                   {editingCategoryId ? (t("admin.customer_service.editCategory") || (isRtl ? "تعديل تصنيف" : "Edit category")) : (t("admin.customer_service.addCategory") || (isRtl ? "إضافة تصنيف" : "Add category"))}
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-black text-slate-500">Name (AR)</Label>
-                    <Input value={categoryForm.nameAr} onChange={(e) => setCategoryForm((p) => ({ ...p, nameAr: e.target.value }))} />
+                    <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (AR)</Label>
+                    <Input 
+                      value={categoryForm.nameAr} 
+                      onChange={(e) => setCategoryForm((p) => ({ ...p, nameAr: e.target.value }))}
+                      style={{
+                        color: settings.csTextColor || undefined,
+                        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                        fontFamily: settings.csFontFamily || undefined,
+                        backgroundColor: settings.csBg || undefined,
+                      }}
+                    />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-black text-slate-500">Name (EN)</Label>
-                    <Input value={categoryForm.nameEn} onChange={(e) => setCategoryForm((p) => ({ ...p, nameEn: e.target.value }))} dir="ltr" />
+                    <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (EN)</Label>
+                    <Input 
+                      value={categoryForm.nameEn} 
+                      onChange={(e) => setCategoryForm((p) => ({ ...p, nameEn: e.target.value }))} 
+                      dir="ltr"
+                      style={{
+                        color: settings.csTextColor || undefined,
+                        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                        fontFamily: settings.csFontFamily || undefined,
+                        backgroundColor: settings.csBg || undefined,
+                      }}
+                    />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     type="button"
-                    className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest"
+                    className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-white"
                     onClick={submitCategory}
                     disabled={savingCategory || !categoryForm.nameAr.trim() || !categoryForm.nameEn.trim()}
+                    style={{
+                      backgroundColor: settings.csTextColor || '#0f172a',
+                      color: settings.csBg || '#ffffff',
+                      fontFamily: settings.csFontFamily || undefined,
+                    }}
                   >
                     {savingCategory ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingCategoryId ? (t("common.update") || (isRtl ? "تحديث" : "Update")) : (t("common.add") || (isRtl ? "إضافة" : "Add"))}
                     {!savingCategory && !editingCategoryId && <FolderPlus className="w-4 h-4 ml-2" />}
                   </Button>
-                  <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={resetCategoryForm}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+                    onClick={resetCategoryForm}
+                    style={{
+                      fontFamily: settings.csFontFamily || undefined,
+                    }}
+                  >
                     {t("common.clear") || (isRtl ? "تفريغ" : "Clear")}
                   </Button>
                 </div>
@@ -431,7 +538,14 @@ export default function AdminCustomerServicePage() {
                     {categories.map((c, idx) => {
                       const active = c.id === selectedCategoryId;
                       return (
-                        <div key={c.id} className={`rounded-xl border ${active ? "border-slate-900 bg-slate-50" : "border-slate-200 bg-white"} p-3`}>
+                        <div 
+                          key={c.id} 
+                          className={`rounded-xl border p-3`}
+                          style={{
+                            borderColor: active ? (settings.csTextColor || '#0f172a') : '#e2e8f0',
+                            backgroundColor: active ? (settings.csBg || '#f8fafc') : '#ffffff',
+                          }}
+                        >
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                             <div
                               className="flex-1 min-w-0 flex items-start gap-2"
@@ -453,7 +567,16 @@ export default function AdminCustomerServicePage() {
                               </div>
                               <button type="button" className="flex-1 text-left" onClick={() => setSelectedCategoryId(c.id)}>
                                 <div className="flex items-center gap-2">
-                                  <div className="text-sm font-black text-slate-950">{isRtl ? c.nameAr : c.nameEn}</div>
+                                  <div 
+                                    className="text-sm font-black"
+                                    style={{
+                                      color: settings.csTextColor || undefined,
+                                      fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                      fontFamily: settings.csFontFamily || undefined,
+                                    }}
+                                  >
+                                    {isRtl ? c.nameAr : c.nameEn}
+                                  </div>
                                   <span className="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
                                     #{idx + 1}
                                   </span>
@@ -467,7 +590,7 @@ export default function AdminCustomerServicePage() {
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="h-9 rounded-xl"
+                                className="h-9 w-9 p-0 rounded-xl"
                                 onClick={async () => {
                                   const idx = categories.findIndex((x) => x.id === c.id);
                                   const next = moveInArray(categories, idx, idx - 1);
@@ -480,7 +603,7 @@ export default function AdminCustomerServicePage() {
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="h-9 rounded-xl"
+                                className="h-9 w-9 p-0 rounded-xl"
                                 onClick={async () => {
                                   const idx = categories.findIndex((x) => x.id === c.id);
                                   const next = moveInArray(categories, idx, idx + 1);
@@ -490,16 +613,16 @@ export default function AdminCustomerServicePage() {
                               >
                                 <ChevronDown className="w-4 h-4" />
                               </Button>
-                              <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={() => startAddFaqForCategory(c.id)} title={isRtl ? "إضافة سؤال" : "Add question"}>
+                              <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startAddFaqForCategory(c.id)} title={isRtl ? "إضافة سؤال" : "Add question"}>
                                 <Plus className="w-4 h-4" />
                               </Button>
-                              <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={() => startEditCategory(c)} title={isRtl ? "تعديل" : "Edit"}>
+                              <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startEditCategory(c)} title={isRtl ? "تعديل" : "Edit"}>
                                 <Pencil className="w-4 h-4" />
                               </Button>
                               <Button
                                 type="button"
                                 variant="destructive"
-                                className="h-9 rounded-xl"
+                                className="h-9 w-9 p-0 rounded-xl"
                                 onClick={() =>
                                   setConfirm({
                                     type: "deleteCategory",
@@ -524,10 +647,16 @@ export default function AdminCustomerServicePage() {
           </Card>
 
           {/* FAQs */}
-          <Card className="xl:col-span-2 border-slate-200">
+          <Card 
+            className="xl:col-span-2 border-slate-200"
+            style={{
+              backgroundColor: settings.csCardBg || undefined,
+              color: settings.csTextColor || undefined,
+            }}
+          >
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between gap-2">
-                <div className="font-black text-slate-950">
+                <div className="font-black text-slate-950" style={{ color: settings.csTextColor || undefined }}>
                   {isRtl ? "أسئلة التصنيف" : "Category FAQs"}{" "}
                   {selectedCategory ? <span className="text-slate-400 text-sm">{isRtl ? selectedCategory.nameAr : selectedCategory.nameEn}</span> : null}
                 </div>
@@ -542,29 +671,113 @@ export default function AdminCustomerServicePage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Form */}
                   <div className="space-y-3">
-                    <div className="text-xs font-black text-slate-600">
+                    <div className="text-xs font-black text-slate-600" style={{ color: settings.csTextColor || undefined }}>
                       {editingFaqId ? (t("admin.customer_service.editQuestion") || (isRtl ? "تعديل سؤال" : "Edit question")) : (t("admin.customer_service.addQuestion") || (isRtl ? "إضافة سؤال" : "Add question"))}
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500">Question (AR)</Label>
-                      <Textarea value={faqForm.questionAr} onChange={(e) => setFaqForm((p) => ({ ...p, questionAr: e.target.value }))} className="min-h-[90px]" />
+                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (AR)</Label>
+                      <Textarea 
+                        value={faqForm.questionAr} 
+                        onChange={(e) => setFaqForm((p) => ({ ...p, questionAr: e.target.value }))} 
+                        className="min-h-[90px]" 
+                        style={{
+                          color: settings.csTextColor || undefined,
+                          fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                          fontFamily: settings.csFontFamily || undefined,
+                          backgroundColor: settings.csBg || undefined,
+                        }}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500">Answer (AR)</Label>
-                      <Textarea value={faqForm.answerAr} onChange={(e) => setFaqForm((p) => ({ ...p, answerAr: e.target.value }))} className="min-h-[120px]" />
+                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (AR)</Label>
+                      <Textarea 
+                        value={faqForm.answerAr} 
+                        onChange={(e) => setFaqForm((p) => ({ ...p, answerAr: e.target.value }))} 
+                        className="min-h-[120px]" 
+                        style={{
+                          color: settings.csTextColor || undefined,
+                          fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                          fontFamily: settings.csFontFamily || undefined,
+                          backgroundColor: settings.csBg || undefined,
+                        }}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500">Question (EN)</Label>
-                      <Textarea value={faqForm.questionEn} onChange={(e) => setFaqForm((p) => ({ ...p, questionEn: e.target.value }))} className="min-h-[90px]" dir="ltr" />
+                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (EN)</Label>
+                      <Textarea 
+                        value={faqForm.questionEn} 
+                        onChange={(e) => setFaqForm((p) => ({ ...p, questionEn: e.target.value }))} 
+                        className="min-h-[90px]" 
+                        dir="ltr" 
+                        style={{
+                          color: settings.csTextColor || undefined,
+                          fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                          fontFamily: settings.csFontFamily || undefined,
+                          backgroundColor: settings.csBg || undefined,
+                        }}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500">Answer (EN)</Label>
-                      <Textarea value={faqForm.answerEn} onChange={(e) => setFaqForm((p) => ({ ...p, answerEn: e.target.value }))} className="min-h-[120px]" dir="ltr" />
+                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (EN)</Label>
+                      <Textarea 
+                        value={faqForm.answerEn} 
+                        onChange={(e) => setFaqForm((p) => ({ ...p, answerEn: e.target.value }))} 
+                        className="min-h-[120px]" 
+                        dir="ltr" 
+                        style={{
+                          color: settings.csTextColor || undefined,
+                          fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                          fontFamily: settings.csFontFamily || undefined,
+                          backgroundColor: settings.csBg || undefined,
+                        }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 my-2">
+                      <div className="space-y-2">
+                        <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>
+                          {isRtl ? "لون السؤال (اختياري)" : "Question Color (Optional)"}
+                        </Label>
+                        <div className="flex gap-2 items-center">
+                          <input 
+                            type="color" 
+                            value={faqForm.color || "#000000"} 
+                            onChange={(e) => setFaqForm((p) => ({ ...p, color: e.target.value }))}
+                            className="w-8 h-8 rounded border cursor-pointer shrink-0"
+                          />
+                          <Input 
+                            type="text"
+                            placeholder="#000000"
+                            value={faqForm.color || ""}
+                            onChange={(e) => setFaqForm((p) => ({ ...p, color: e.target.value }))}
+                            className="h-9 text-xs"
+                            style={{
+                              color: settings.csTextColor || undefined,
+                              backgroundColor: settings.csBg || undefined,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>
+                          {isRtl ? "حجم الخط بالبكسل (اختياري)" : "Font Size in px (Optional)"}
+                        </Label>
+                        <Input 
+                          type="number"
+                          placeholder="e.g. 16"
+                          value={faqForm.fontSize || ""}
+                          onChange={(e) => setFaqForm((p) => ({ ...p, fontSize: e.target.value }))}
+                          className="h-9 text-xs"
+                          style={{
+                            color: settings.csTextColor || undefined,
+                            backgroundColor: settings.csBg || undefined,
+                          }}
+                        />
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
-                        className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest"
+                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-white"
                         onClick={submitFaq}
                         disabled={
                           savingFaq ||
@@ -573,11 +786,24 @@ export default function AdminCustomerServicePage() {
                           !faqForm.questionEn.trim() ||
                           !faqForm.answerEn.trim()
                         }
+                        style={{
+                          backgroundColor: settings.csTextColor || '#0f172a',
+                          color: settings.csBg || '#ffffff',
+                          fontFamily: settings.csFontFamily || undefined,
+                        }}
                       >
                         {savingFaq ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingFaqId ? (t("common.update") || (isRtl ? "تحديث" : "Update")) : (t("common.add") || (isRtl ? "إضافة" : "Add"))}
                         {!savingFaq && !editingFaqId && <Plus className="w-4 h-4 ml-2" />}
                       </Button>
-                      <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" onClick={resetFaqForm}>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+                        onClick={resetFaqForm}
+                        style={{
+                          fontFamily: settings.csFontFamily || undefined,
+                        }}
+                      >
                         {t("common.clear") || (isRtl ? "تفريغ" : "Clear")}
                       </Button>
                     </div>
@@ -595,7 +821,12 @@ export default function AdminCustomerServicePage() {
                         {selectedFaqs.map((q, idx) => (
                           <div
                             key={q.id}
-                            className="p-4 bg-white"
+                            className="p-4 rounded-xl border border-slate-100"
+                            style={{
+                              backgroundColor: settings.csBg || undefined,
+                              color: q.color || settings.csTextColor || undefined,
+                              fontFamily: settings.csFontFamily || undefined,
+                            }}
                             draggable
                             onDragStart={() => setDragFaqId(q.id)}
                             onDragOver={(e) => e.preventDefault()}
@@ -613,16 +844,32 @@ export default function AdminCustomerServicePage() {
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start gap-2">
-                                  <div className="mt-0.5 text-slate-300 cursor-grab active:cursor-grabbing">
+                                  <div className="mt-0.5 opacity-40 cursor-grab active:cursor-grabbing">
                                     <GripVertical className="w-4 h-4" />
                                   </div>
-                                  <div className="text-slate-950 font-bold text-sm flex-1">{isRtl ? q.questionAr : q.questionEn}</div>
+                                  <div 
+                                    className="font-bold flex-1"
+                                    style={{
+                                      color: q.color || settings.csTextColor || undefined,
+                                      fontSize: q.fontSize ? `${q.fontSize}px` : (settings.csFontSize ? `${settings.csFontSize}px` : undefined),
+                                    }}
+                                  >
+                                    {isRtl ? q.questionAr : q.questionEn}
+                                  </div>
                                   <span className="shrink-0 text-[10px] font-black text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
                                     #{idx + 1}
                                   </span>
                                 </div>
-                                <div className="text-slate-500 text-sm mt-1 line-clamp-2">{isRtl ? q.answerAr : q.answerEn}</div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-2">
+                                <div 
+                                  className="mt-1 line-clamp-2 opacity-80"
+                                  style={{
+                                    color: q.color || settings.csTextColor || undefined,
+                                    fontSize: q.fontSize ? `${parseInt(q.fontSize) - 2}px` : (settings.csFontSize ? `${parseInt(settings.csFontSize) - 2}px` : undefined),
+                                  }}
+                                >
+                                  {isRtl ? q.answerAr : q.answerEn}
+                                </div>
+                                <div className="text-[10px] font-black opacity-50 uppercase tracking-widest mt-2">
                                   {isRtl ? "اسحب أو استخدم الأسهم لإعادة الترتيب" : "Drag or use arrows to reorder"}
                                 </div>
                               </div>
@@ -630,7 +877,7 @@ export default function AdminCustomerServicePage() {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="h-9 rounded-xl"
+                                  className="h-9 w-9 p-0 rounded-xl"
                                   onClick={async () => {
                                     if (!selectedCategoryId) return;
                                     const idx = selectedFaqs.findIndex((x) => x.id === q.id);
@@ -644,7 +891,7 @@ export default function AdminCustomerServicePage() {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="h-9 rounded-xl"
+                                  className="h-9 w-9 p-0 rounded-xl"
                                   onClick={async () => {
                                     if (!selectedCategoryId) return;
                                     const idx = selectedFaqs.findIndex((x) => x.id === q.id);
@@ -655,13 +902,13 @@ export default function AdminCustomerServicePage() {
                                 >
                                   <ChevronDown className="w-4 h-4" />
                                 </Button>
-                                <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={() => startEditFaq(q)} title={isRtl ? "تعديل" : "Edit"}>
+                                <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startEditFaq(q)} title={isRtl ? "تعديل" : "Edit"}>
                                   <Pencil className="w-4 h-4" />
                                 </Button>
                                 <Button
                                   type="button"
                                   variant="destructive"
-                                  className="h-9 rounded-xl"
+                                  className="h-9 w-9 p-0 rounded-xl"
                                   onClick={() =>
                                     setConfirm({
                                       type: "deleteFaq",
@@ -689,10 +936,16 @@ export default function AdminCustomerServicePage() {
       )}
 
       {tab === "feedback" && (
-        <Card className="border-slate-200">
+        <Card 
+          className="border-slate-200"
+          style={{
+            backgroundColor: settings.csCardBg || undefined,
+            color: settings.csTextColor || undefined,
+          }}
+        >
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="text-slate-950 font-black">{t("admin.customer_service.customerFeedback") || (isRtl ? "رسائل العملاء" : "Customer Feedback")}</div>
+              <div className="font-black" style={{ color: settings.csTextColor || undefined }}>{t("admin.customer_service.customerFeedback") || (isRtl ? "رسائل العملاء" : "Customer Feedback")}</div>
               <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={loadFeedback} disabled={loadingFeedback}>
                 <RefreshCcw className={`w-4 h-4 ${loadingFeedback ? "animate-spin" : ""}`} />
               </Button>
@@ -703,26 +956,34 @@ export default function AdminCustomerServicePage() {
             ) : (
               <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden">
                 {feedback.map((m) => (
-                  <div key={m.id} className="p-4 flex flex-col gap-3 bg-white">
+                  <div 
+                    key={m.id} 
+                    className="p-4 flex flex-col gap-3 rounded-xl border border-slate-100"
+                    style={{
+                      backgroundColor: settings.csBg || undefined,
+                      color: settings.csTextColor || undefined,
+                      fontFamily: settings.csFontFamily || undefined,
+                    }}
+                  >
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
                       <div className="space-y-1">
-                        <div className="text-slate-950 font-black">
+                        <div className="font-black" style={{ color: settings.csTextColor || undefined }}>
                           {m.name}{" "}
                           <span className={`text-[10px] font-black uppercase tracking-widest ml-2 ${statusClass(m.status)}`}>
                             {statusLabel(m.status)}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-medium">
+                        <div className="flex flex-wrap items-center gap-2 text-xs opacity-75 font-medium">
                           {m.contactMethod === "email" ? `${m.email || ""}` : `${m.phoneNumber || ""}`}
                           {m.email && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black text-blue-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50/60 px-2 py-0.5 text-[10px] font-black text-blue-700">
                               <Mail className="h-3 w-3" />
                               {isRtl ? "يرسل بريد مع الرد" : "Email on reply"}
                             </span>
                           )}
                         </div>
                         {m.pagePath && (
-                          <div className="text-[11px] text-slate-400 font-bold">
+                          <div className="text-[11px] opacity-60 font-bold">
                             {isRtl ? "المسار:" : "Path:"} {m.pagePath}
                           </div>
                         )}
@@ -765,26 +1026,48 @@ export default function AdminCustomerServicePage() {
                       </div>
                     </div>
 
-                    <div className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{m.question}</div>
+                    <div 
+                      className="leading-relaxed whitespace-pre-wrap opacity-95"
+                      style={{
+                        color: settings.csTextColor || undefined,
+                        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                      }}
+                    >
+                      {m.question}
+                    </div>
                     {m.adminReply && (
-                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
                           {isRtl ? "رد الإدارة" : "Admin reply"}
                         </div>
-                        <div className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{m.adminReply}</div>
+                        <div 
+                          className="whitespace-pre-wrap font-bold leading-7 text-slate-800"
+                          style={{
+                            fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined,
+                          }}
+                        >
+                          {m.adminReply}
+                        </div>
                         {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-blue-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
                     {m.userReply && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/40 p-4">
+                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
                           {isRtl ? "رد العميل" : "Customer reply"}
                         </div>
-                        <div className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-800">{m.userReply}</div>
-                        {m.userRepliedAt && <div className="mt-2 text-[10px] font-black text-slate-400">{new Date(m.userRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
+                        <div 
+                          className="whitespace-pre-wrap font-bold leading-7 text-slate-800"
+                          style={{
+                            fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined,
+                          }}
+                        >
+                          {m.userReply}
+                        </div>
+                        {m.userRepliedAt && <div className="mt-2 text-[10px] font-black opacity-45">{new Date(m.userRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
+                    <div className="rounded-2xl border border-slate-100 bg-white/40 p-3">
                       <Label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-500">
                         {isRtl ? "اكتب رد الإدارة" : "Admin reply"}
                       </Label>

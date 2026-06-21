@@ -49,7 +49,6 @@ export function AddPropertyWizard({
   const [showMap, setShowMap] = useState(false);
   const [mapCoordinates, setMapCoordinates] = useState<[number, number] | null>(null);
 
-  // Main Form State
   const [propertyData, setPropertyData] = useState<CreatePropertyDto>({
     name: "",
     type: "building",
@@ -57,7 +56,36 @@ export function AddPropertyWizard({
     locationUrl: "",
     constructionDate: "",
     purchasePrice: 0,
-    units: []
+    units: [],
+    mainCategory: "residential",
+    propertyType: "فيلا",
+    dealType: "بيع",
+    price: 0,
+    area: 0,
+    length: 0,
+    width: 0,
+    streetWidth: 0,
+    city: "الرياض",
+    neighborhood: "",
+    propertyAge: "جديد",
+    direction: "شمال",
+    deedType: "صك إلكتروني",
+    propertyCondition: "جديد",
+    rooms: 0,
+    bathrooms: 0,
+    livingRooms: 0,
+    kitchens: 0,
+    floors: 0,
+    apartments: 0,
+    hasMaidRoom: false,
+    hasRoof: false,
+    hasExternalAnnex: false,
+    buildingArea: 0,
+    hasGarage: false,
+    hasPool: false,
+    hasElevator: false,
+    furnitureStatus: "unfurnished",
+    additionalNotes: "",
   });
 
   // Helper to update units
@@ -346,6 +374,417 @@ export function AddPropertyWizard({
                                                         />
                                                         <Calendar className="absolute start-3 top-4 w-4 h-4 text-gray-500" />
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                     </Card>
+
+                                     {/* Offer Alignment Details Card */}
+                                     <Card className="bg-white border-gray-200 shadow-sm md:col-span-2">
+                                        <CardContent className="p-6 space-y-6">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                                                    <LayoutDashboard className="w-5 h-5" />
+                                                </div>
+                                                <h4 className="text-lg font-bold text-gray-900">
+                                                    {isRtl ? "مواصفات وبيانات العرض العقاري" : "Offer Specifications & Details"}
+                                                </h4>
+                                            </div>
+                                            
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "القسم الرئيسي" : "Main Category"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={propertyData.mainCategory} 
+                                                        onValueChange={v => setPropertyData({...propertyData, mainCategory: v})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="residential">{isRtl ? "سكني" : "Residential"}</SelectItem>
+                                                            <SelectItem value="commercial">{isRtl ? "تجاري" : "Commercial"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "نوع العقار" : "Property Type"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.propertyType}
+                                                        onChange={e => setPropertyData({...propertyData, propertyType: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                        placeholder={isRtl ? "مثال: فيلا، شقة" : "e.g., Villa, Apartment"}
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "نوع الصفقة" : "Deal Type"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={propertyData.dealType} 
+                                                        onValueChange={v => setPropertyData({...propertyData, dealType: v})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="بيع">{isRtl ? "بيع" : "Sale"}</SelectItem>
+                                                            <SelectItem value="إيجار">{isRtl ? "إيجار" : "Rent"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "السعر" : "Price"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.price || ""}
+                                                        onChange={e => setPropertyData({...propertyData, price: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "المساحة (م²)" : "Area (sqm)"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.area || ""}
+                                                        onChange={e => setPropertyData({...propertyData, area: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الطول" : "Length"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.length || ""}
+                                                        onChange={e => setPropertyData({...propertyData, length: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "العرض" : "Width"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.width || ""}
+                                                        onChange={e => setPropertyData({...propertyData, width: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "عرض الشارع" : "Street Width"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.streetWidth || ""}
+                                                        onChange={e => setPropertyData({...propertyData, streetWidth: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "المدينة" : "City"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.city}
+                                                        onChange={e => setPropertyData({...propertyData, city: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الحي" : "Neighborhood"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.neighborhood}
+                                                        onChange={e => setPropertyData({...propertyData, neighborhood: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "عمر العقار" : "Property Age"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.propertyAge}
+                                                        onChange={e => setPropertyData({...propertyData, propertyAge: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الواجهة" : "Direction"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.direction}
+                                                        onChange={e => setPropertyData({...propertyData, direction: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "نوع الصك" : "Deed Type"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.deedType}
+                                                        onChange={e => setPropertyData({...propertyData, deedType: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "حالة العقار" : "Property Condition"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.propertyCondition}
+                                                        onChange={e => setPropertyData({...propertyData, propertyCondition: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الغرف" : "Rooms"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.rooms || ""}
+                                                        onChange={e => setPropertyData({...propertyData, rooms: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "دورات المياه" : "Bathrooms"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.bathrooms || ""}
+                                                        onChange={e => setPropertyData({...propertyData, bathrooms: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الصالات" : "Living Rooms"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.livingRooms || ""}
+                                                        onChange={e => setPropertyData({...propertyData, livingRooms: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "المطابخ" : "Kitchens"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.kitchens || ""}
+                                                        onChange={e => setPropertyData({...propertyData, kitchens: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الأدوار" : "Floors"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.floors || ""}
+                                                        onChange={e => setPropertyData({...propertyData, floors: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "الشقق" : "Apartments"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.apartments || ""}
+                                                        onChange={e => setPropertyData({...propertyData, apartments: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "مسطح البناء" : "Building Area"}
+                                                    </Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={propertyData.buildingArea || ""}
+                                                        onChange={e => setPropertyData({...propertyData, buildingArea: Number(e.target.value)})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "غرفة عاملة" : "Maid Room"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasMaidRoom)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasMaidRoom: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "سطح" : "Roof"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasRoof)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasRoof: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "ملحق خارجي" : "External Annex"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasExternalAnnex)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasExternalAnnex: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "كراج" : "Garage"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasGarage)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasGarage: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "مسبح" : "Pool"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasPool)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasPool: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "مصعد" : "Elevator"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={String(propertyData.hasElevator)} 
+                                                        onValueChange={v => setPropertyData({...propertyData, hasElevator: v === "true"})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="true">{isRtl ? "نعم" : "Yes"}</SelectItem>
+                                                            <SelectItem value="false">{isRtl ? "لا" : "No"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "حالة الأثاث" : "Furniture Status"}
+                                                    </Label>
+                                                    <Select 
+                                                        value={propertyData.furnitureStatus} 
+                                                        onValueChange={v => setPropertyData({...propertyData, furnitureStatus: v})}
+                                                    >
+                                                        <SelectTrigger className="bg-white border-gray-300 h-12 font-medium text-gray-900">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-white border-gray-200 shadow-lg">
+                                                            <SelectItem value="furnished">{isRtl ? "مفروش" : "Furnished"}</SelectItem>
+                                                            <SelectItem value="unfurnished">{isRtl ? "غير مفروش" : "Unfurnished"}</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="space-y-2 md:col-span-3">
+                                                    <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
+                                                        {isRtl ? "ملاحظات إضافية" : "Additional Notes"}
+                                                    </Label>
+                                                    <Input 
+                                                        value={propertyData.additionalNotes}
+                                                        onChange={e => setPropertyData({...propertyData, additionalNotes: e.target.value})}
+                                                        className="bg-white border-gray-300 h-12 font-medium text-gray-900"
+                                                    />
                                                 </div>
                                             </div>
                                         </CardContent>

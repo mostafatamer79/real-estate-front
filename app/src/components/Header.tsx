@@ -17,8 +17,7 @@ import {
   X,
   Bell,
   MessageSquare,
-  Building2,
-  Briefcase
+  Building2
 } from 'lucide-react';
 import { useNotifications } from "@/context/NotificationContext";
 import { Role } from "@/types/user";
@@ -185,7 +184,14 @@ export default function Header() {
                     className="text-white/70 hover:text-white transition-colors relative"
                     title={t('chat.title')}
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <MessageSquare 
+                      className="w-5 h-5" 
+                      style={{
+                        color: settings?.headerChatColor || undefined,
+                        width: settings?.headerChatSize ? `${settings.headerChatSize}px` : undefined,
+                        height: settings?.headerChatSize ? `${settings.headerChatSize}px` : undefined,
+                      }}
+                    />
                     {unreadChatCount > 0 && (
                       <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white shadow-lg ring-2 ring-slate-950 animate-bounce animate-once">
                         {unreadChatCount}
@@ -198,7 +204,13 @@ export default function Header() {
                     className="text-white/70 hover:text-white transition-colors relative"
                     title={t('header.myRequests')}
                   >
-                    <Briefcase className="w-5 h-5" />
+                    <Image
+                      src="/icons/2.png"
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 object-contain brightness-0 invert"
+                    />
                   </Link>
 
                   <div className="h-6 w-px bg-white/10 mx-2"></div>
@@ -207,8 +219,21 @@ export default function Header() {
                     href="/profile"
                     className="flex items-center gap-2 text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 transition-all"
                   >
-                    <User className="w-4 h-4" />
-                    <span className="text-sm">
+                    <User 
+                      className="w-4 h-4" 
+                      style={{
+                        color: settings?.headerProfileColor || undefined,
+                        width: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
+                        height: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
+                      }}
+                    />
+                    <span 
+                      className="text-sm"
+                      style={{
+                        color: settings?.headerProfileColor || undefined,
+                        fontSize: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
+                      }}
+                    >
                       {user.firstName || user.email?.split('@')[0]}
                     </span>
                   </Link>
@@ -327,7 +352,13 @@ export default function Header() {
                     className="flex items-center gap-3 text-white text-lg font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Briefcase className="w-5 h-5" />
+                    <Image
+                      src="/icons/2.png"
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 object-contain brightness-0 invert"
+                    />
                     {t('header.myRequests')}
                   </Link>
 

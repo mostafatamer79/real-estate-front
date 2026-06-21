@@ -2296,16 +2296,64 @@ function BuildingManagementContent() {
     </div>
   );}; // End of renderNewLegalServiceForm
 
-  const handleDeleteProperty = async (id: string) => {
-    if (!window.confirm(t('common.deleteConfirm'))) return;
+  const handleTogglePropertyActive = async (id: string, nextStatus: boolean) => {
     try {
-        await propertiesApi.delete(id);
-        toast.success(t('bm.request.success'));
-        fetchProperties(); // Use the fetch function if available or refresh list
-        if (selectedProperty?.id === id) setSelectedProperty(null);
+        await propertiesApi.update(id, { isActive: nextStatus });
+        toast.success(t('bm.request.success') || "Updated successfully");
+        fetchProperties(); // Refresh properties list
     } catch (error) {
         console.error(error);
-        toast.error(t('bm.toast.error'));
+        toast.error(t('bm.toast.error') || "Update failed");
+    }
+  };
+
+  const handleExportPropertyToOffer = async (property: any) => {
+    try {
+      const payload: any = {
+        mainCategory: property.mainCategory || "residential",
+        propertyType: property.propertyType || "فيلا",
+        dealType: property.dealType || "بيع",
+        price: Number(property.price || property.purchasePrice || 0),
+        area: Number(property.area || 1),
+        length: property.length ? Number(property.length) : undefined,
+        width: property.width ? Number(property.width) : undefined,
+        streetWidth: property.streetWidth ? Number(property.streetWidth) : undefined,
+        city: property.city || "الرياض",
+        neighborhood: property.neighborhood || "",
+        propertyAge: property.propertyAge || "جديد",
+        direction: property.direction || "شمال",
+        deedType: property.deedType || "صك إلكتروني",
+        propertyCondition: property.propertyCondition || "جديد",
+        rooms: property.rooms ? Number(property.rooms) : undefined,
+        bathrooms: property.bathrooms ? Number(property.bathrooms) : undefined,
+        livingRooms: property.livingRooms ? Number(property.livingRooms) : undefined,
+        kitchens: property.kitchens ? Number(property.kitchens) : undefined,
+        floors: property.floors ? Number(property.floors) : undefined,
+        apartments: property.apartments ? Number(property.apartments) : undefined,
+        hasMaidRoom: property.hasMaidRoom === "true" || property.hasMaidRoom === true,
+        hasRoof: property.hasRoof === "true" || property.hasRoof === true,
+        hasExternalAnnex: property.hasExternalAnnex === "true" || property.hasExternalAnnex === true,
+        buildingArea: property.buildingArea ? Number(property.buildingArea) : undefined,
+        hasGarage: property.hasGarage === "true" || property.hasGarage === true,
+        hasPool: property.hasPool === "true" || property.hasPool === true,
+        hasElevator: property.hasElevator === "true" || property.hasElevator === true,
+        furnitureStatus: property.furnitureStatus || "unfurnished",
+        locationUrl: property.locationUrl || "",
+        additionalNotes: property.additionalNotes || `تم التصدير من إدارة الأملاك: ${property.name}`,
+        mediaFiles: property.mediaFiles || [],
+        propertyDocuments: property.propertyDocuments || [],
+        threeDVideos: property.threeDVideos || [],
+        video3d: property.video3d || "",
+        checkImage: property.checkImage || "",
+        status: "published",
+        isActive: true,
+      };
+
+      await offersApi.create(payload);
+      toast.success(t("pm.success.exportOffer") || (language === "ar" ? "تم التصدير كعرض بنجاح" : "Exported as offer successfully"));
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || (language === "ar" ? "فشل التصدير كعرض" : "Failed to export as offer"));
     }
   };
 
@@ -2378,9 +2426,10 @@ function BuildingManagementContent() {
                <PropertyPortfolio
                   properties={properties}
                   loading={loadingProperties}
-                  onDelete={handleDeleteProperty}
+                  onToggleActive={handleTogglePropertyActive}
                   onView={(p) => { setSelectedProperty(p); setShowPropertyDetails(true); }}
                   onCreate={() => setShowNewPropertyModal(true)}
+                  onExportOffer={handleExportPropertyToOffer}
                />
             )}
             {activePropertyTab === 'tenants' && renderTenants()}
@@ -5773,21 +5822,10 @@ function BuildingManagementContent() {
                   <div className={`
                     w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center rounded-[1rem] shadow-lg transition-all duration-700
                     ${selectedSection === item.id 
-                      ? 'bg-slate-900 scale-105 rotate-3 shadow-slate-900/40' 
-                      : 'bg-slate-100 group-hover:bg-slate-200 group-hover:scale-105 group-hover:-rotate-2'}
+                      ? 'bg-slate-950 text-white scale-105 rotate-3 shadow-slate-950/20' 
+                      : 'bg-slate-50 text-slate-700 group-hover:bg-slate-100 group-hover:scale-105 group-hover:-rotate-2'}
                   `}>
-                    {item.image ? (
-                        <img 
-                          src={item.image} 
-                          alt={item.label} 
-                          className={`
-                            h-6 w-6 lg:h-7 lg:w-7 object-contain transition-all duration-700
-                            ${selectedSection === item.id ? 'brightness-0 invert' : 'brightness-0'}
-                          `} 
-                        />
-                    ) : (
-                        <item.icon className={`h-6 w-6 lg:h-7 lg:w-7 transition-all duration-700 ${selectedSection === item.id ? 'text-white' : 'text-slate-900'}`} />
-                    )}
+                    <item.icon className="h-6 w-6 lg:h-7 lg:w-7 transition-all duration-700" />
                   </div>
                   
                   {/* Text Content */}

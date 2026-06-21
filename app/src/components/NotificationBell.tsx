@@ -5,6 +5,7 @@ import { Bell, X, Check, CheckCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSettings } from '@/context/SettingsContext';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
@@ -24,6 +25,7 @@ export default function NotificationBell({
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, loading } = useNotifications();
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -136,13 +138,19 @@ export default function NotificationBell({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`relative p-2 text-gray-300 hover:text-white transition-colors ${buttonClassName || ''}`}
         aria-label={t('notification.bell')}
       >
-        <Bell className="h-6 w-6" />
+        <Bell 
+          className="h-6 w-6" 
+          style={{
+            color: settings?.headerNotificationColor || undefined,
+            width: settings?.headerNotificationSize ? `${settings.headerNotificationSize}px` : undefined,
+            height: settings?.headerNotificationSize ? `${settings.headerNotificationSize}px` : undefined,
+          }}
+        />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>

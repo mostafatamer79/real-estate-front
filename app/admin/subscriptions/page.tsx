@@ -76,6 +76,25 @@ const emptyGlobalPricing = () => ({
   employeeSeatYearlyPrice: 0,
 });
 
+const DEPARTMENTS = [
+  { value: 'marketing',  labelAr: 'إدارة التسويق',   labelEn: 'Marketing' },
+  { value: 'properties', labelAr: 'إدارة الاملاك',   labelEn: 'Properties' },
+  { value: 'offers',     labelAr: 'إدارة العروض',    labelEn: 'Offers Management' },
+  { value: 'orders',     labelAr: 'إدارة الطلبات',   labelEn: 'Orders Management' },
+  { value: 'finance',    labelAr: 'الإدارة المالية',  labelEn: 'Finance' },
+  { value: 'legal',      labelAr: 'الإدارة القانونية', labelEn: 'Legal' },
+  { value: 'employees',  labelAr: 'إدارة الموظفين',  labelEn: 'Employees' },
+];
+
+const ROLES = [
+  { value: 'employee', labelAr: 'موظف', labelEn: 'Employee' },
+  { value: 'manager', labelAr: 'مدير', labelEn: 'Manager' },
+  { value: 'legal', labelAr: 'قانوني', labelEn: 'Legal' },
+  { value: 'finance', labelAr: 'مالي', labelEn: 'Finance' },
+  { value: 'marketing', labelAr: 'تسويق', labelEn: 'Marketing' },
+  { value: 'viewer', labelAr: 'قارئ', labelEn: 'Viewer' },
+];
+
 function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose: () => void; onSuccess: () => void; subscription?: any | null }) {
   const { language, t } = useLanguage();
   const isEdit = Boolean(subscription?.id);
@@ -102,6 +121,103 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
     noExpiry: Boolean(subscription?.noExpiry),
     notes: subscription?.notes || ""
   });
+
+  const [createUserMode, setCreateUserMode] = useState(false);
+  const [newUserForm, setNewUserForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    role: "employee",
+    department: [] as string[],
+    parentId: "",
+  });
+
+  const [managerAllowedDepartments, setManagerAllowedDepartments] = useState<string[] | null>(null);
+
+  // Auto-assign department when role changes for new user
+  useEffect(() => {
+    if (newUserForm.role === 'legal') setNewUserForm(f => ({ ...f, department: ['legal'], parentId: '' }));
+    else if (newUserForm.role === 'finance') setNewUserForm(f => ({ ...f, department: ['finance'], parentId: '' }));
+    else if (newUserForm.role === 'marketing') setNewUserForm(f => ({ ...f, department: ['marketing'], parentId: '' }));
+    else if (newUserForm.role === 'employee' && newUserForm.department.length === 0) setNewUserForm(f => ({ ...f, department: ['employees'] }));
+    else if (newUserForm.role !== 'employee') setNewUserForm(f => ({ ...f, parentId: '' }));
+
+    if (newUserForm.role !== 'employee') {
+      setManagerAllowedDepartments(null);
+    }
+  }, [newUserForm.role]);
+
+  // Whenever managerAllowedDepartments changes, prune invalid departments
+  useEffect(() => {
+    if (managerAllowedDepartments !== null) {
+      setNewUserForm(f => {
+        const pruned = f.department.filter(d => managerAllowedDepartments.includes(d));
+        return { ...f, department: pruned };
+      });
+    }
+  }, [managerAllowedDepartments]);
+
+  const handleParentIdChange = (parentId: string) => {
+    setNewUserForm(f => ({ ...f, parentId }));
+    
+    if (!parentId) {
+      setManagerAllowedDepartments(null);
+      return;
+    }
+
+    const mgr = users.find(u => u.id === parentId);
+    if (mgr && Array.isArray(mgr.departments)) {
+      setManagerAllowedDepartments(mgr.departments);
+    }
+
+    api.get(`/subscriptions/status?userId=${parentId}`)
+      .then(res => {
+        const sub = res.data?.subscription;
+        if (sub) {
+          const packageDepts = Array.isArray(sub.managementPackage?.administrations)
+            ? sub.managementPackage.administrations
+            : [];
+          const selectedDepts = Array.isArray(sub.selectedDepartments) && sub.selectedDepartments.length > 0
+            ? sub.selectedDepartments
+            : packageDepts;
+          
+          const administrationToDepartment: Record<string, string> = {
+            'admin.dept.real_estate': 'properties',
+            'properties': 'properties',
+            'admin.dept.offers': 'offers',
+            'offers': 'offers',
+            'admin.dept.orders': 'orders',
+            'orders': 'orders',
+            'admin.dept.marketing': 'marketing',
+            'marketing': 'marketing',
+            'admin.dept.legal': 'legal',
+            'legal': 'legal',
+            'admin.dept.finance': 'finance',
+            'finance': 'finance',
+            'financial': 'finance',
+            'admin.dept.hr': 'employees',
+            'employees': 'employees',
+          };
+
+          const activeDepts = selectedDepts.map((k: string) => administrationToDepartment[k]).filter(Boolean);
+          setManagerAllowedDepartments(activeDepts);
+        } else {
+          if (mgr && Array.isArray(mgr.departments)) {
+            setManagerAllowedDepartments(mgr.departments);
+          } else {
+            setManagerAllowedDepartments([]);
+          }
+        }
+      })
+      .catch(() => {
+        if (mgr && Array.isArray(mgr.departments)) {
+          setManagerAllowedDepartments(mgr.departments);
+        } else {
+          setManagerAllowedDepartments([]);
+        }
+      });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,17 +313,64 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
     }));
   };
 
+  const managers = users.filter(u => u.role === 'manager' || u.role === 'admin');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.userId) return toast.error("يرجى اختيار المستخدم");
-    if (planMode === "package" && !form.packageId) return toast.error("يرجى اختيار الباقة");
-    if (planMode === "custom" && form.selectedDepartments.length === 0) return toast.error("يرجى اختيار إدارة واحدة على الأقل");
-    if (planMode === "custom" && isEmployeeSelected && form.employeeSeats < 1) return toast.error("يرجى تحديد عدد الموظفين");
+    
+    let targetUserId = form.userId;
+
+    if (!isEdit && createUserMode) {
+      if (!newUserForm.firstName.trim()) return toast.error("الاسم الأول مطلوب");
+      if (!newUserForm.email && !newUserForm.phone) return toast.error("يجب إدخال البريد الإلكتروني أو رقم الجوال");
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^05\d{8}$/;
+      if (newUserForm.email && !emailRegex.test(newUserForm.email)) return toast.error("صيغة البريد الإلكتروني غير صحيحة");
+      if (newUserForm.phone && !phoneRegex.test(newUserForm.phone)) return toast.error("رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام");
+      if (newUserForm.role === 'employee' && newUserForm.department.length === 0) return toast.error("يجب اختيار إدارة واحدة على الأقل للموظف");
+
+      setLoading(true);
+      try {
+        const userPayload: any = {
+          firstName: newUserForm.firstName,
+          lastName: newUserForm.lastName,
+          role: newUserForm.role,
+          departments: newUserForm.department,
+          parentId: newUserForm.role === 'employee' ? newUserForm.parentId || undefined : undefined,
+        };
+        if (newUserForm.email) userPayload.email = newUserForm.email;
+        if (newUserForm.phone) userPayload.phone = newUserForm.phone;
+
+        const userRes = await api.post('/user', userPayload);
+        targetUserId = userRes.data.id;
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message || "فشل في إنشاء المستخدم الجديد");
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (!targetUserId) return toast.error("يرجى اختيار المستخدم");
+    }
+
+    if (planMode === "package" && !form.packageId) {
+      setLoading(false);
+      return toast.error("يرجى اختيار الباقة");
+    }
+    if (planMode === "custom" && form.selectedDepartments.length === 0) {
+      setLoading(false);
+      return toast.error("يرجى اختيار إدارة واحدة على الأقل");
+    }
+    if (planMode === "custom" && isEmployeeSelected && form.employeeSeats < 1) {
+      setLoading(false);
+      return toast.error("يرجى تحديد عدد الموظفين");
+    }
 
     setLoading(true);
     try {
       await adminSubscriptionsApi.create({
         ...form,
+        userId: targetUserId,
         customPeriodMonths: form.subscriptionType === "مخصص" ? Math.max(1, Number(form.customPeriodMonths || 1)) : undefined,
         packageId: planMode === "package" ? form.packageId : undefined,
         selectedDepartments: planMode === "custom" ? form.selectedDepartments : undefined,
@@ -251,6 +414,10 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
   const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
+  const visibleDepartments = managerAllowedDepartments !== null
+    ? DEPARTMENTS.filter(d => managerAllowedDepartments.includes(d.value))
+    : DEPARTMENTS;
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl relative">
@@ -267,75 +434,299 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
         </div>
 
         <form onSubmit={isEdit ? handleEditSubmit : handleSubmit} className="space-y-6">
-          {!isEdit && <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-50 p-1">
-            <button
-              type="button"
-              onClick={() => switchPlanMode("package")}
-              className={`h-11 rounded-xl text-xs font-black transition-colors ${
-                planMode === "package" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-white"
-              }`}
-            >
-              باقة جاهزة
-            </button>
-            <button
-              type="button"
-              onClick={() => switchPlanMode("custom")}
-              className={`h-11 rounded-xl text-xs font-black transition-colors ${
-                planMode === "custom" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-white"
-              }`}
-            >
-              اشتراك مخصص
-            </button>
-          </div>}
-
-          {!isEdit && <div className="grid grid-cols-2 gap-6">
-            {/* User Selection */}
-            <div className="space-y-1 relative">
-              <label className={labelCls}>المستخدم (بحث)</label>
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  value={userSearch} 
-                  onChange={e => { setUserSearch(e.target.value); if(form.userId) setForm(f => ({...f, userId: ""})) }} 
-                  className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
-                  placeholder="ابحث بالاسم أو البريد الإلكتروني..." 
-                />
-              </div>
-              {userSearch && !form.userId && (
-                <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
-                  {filteredUsers.length > 0 ? filteredUsers.map(u => (
-                    <button key={u.id} type="button" onClick={() => { setForm(f => ({...f, userId: u.id})); setUserSearch(`${u.firstName} ${u.lastName}`); }} className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
-                        <span className="text-[10px] text-slate-400 font-bold">{u.email}</span>
-                      </div>
-                      <CheckCircle className={`w-4 h-4 ${form.userId === u.id ? 'text-emerald-500' : 'text-slate-100'}`} />
-                    </button>
-                  )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+          {!isEdit && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="text-xs font-black text-slate-950">المستخدم المستهدف</h3>
+                  <p className="text-[10px] text-slate-400 font-bold">اختر مستخدماً حالياً أو سجل مستخدماً جديداً</p>
                 </div>
+                <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setCreateUserMode(false)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
+                      !createUserMode ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                    }`}
+                  >
+                    مستخدم حالي
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCreateUserMode(true)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
+                      createUserMode ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                    }`}
+                  >
+                    إنشاء مستخدم جديد
+                  </button>
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {!createUserMode ? (
+                  <motion.div
+                    key="existing-user"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="grid grid-cols-2 gap-6"
+                  >
+                    {/* User Selection */}
+                    <div className="space-y-1 relative col-span-2 sm:col-span-1">
+                      <label className={labelCls}>المستخدم (بحث)</label>
+                      <div className="relative">
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input 
+                          value={userSearch} 
+                          onChange={e => { setUserSearch(e.target.value); if(form.userId) setForm(f => ({...f, userId: ""})) }} 
+                          className={inputCls} 
+                          placeholder="ابحث بالاسم أو البريد الإلكتروني..." 
+                        />
+                      </div>
+                      {userSearch && !form.userId && (
+                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
+                          {filteredUsers.length > 0 ? filteredUsers.map(u => (
+                            <button key={u.id} type="button" onClick={() => { setForm(f => ({...f, userId: u.id})); setUserSearch(`${u.firstName} ${u.lastName}`); }} className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0">
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
+                                <span className="text-[10px] text-slate-400 font-bold">{u.email}</span>
+                              </div>
+                              <CheckCircle className={`w-4 h-4 ${form.userId === u.id ? 'text-emerald-500' : 'text-slate-100'}`} />
+                            </button>
+                          )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Package Selection */}
+                    {planMode === "package" ? (
+                      <div className="space-y-1 col-span-2 sm:col-span-1">
+                        <label className={labelCls}>الباقة</label>
+                        <select value={form.packageId} onChange={e => {
+                          updatePackageAmount({ packageId: e.target.value, selectedDepartments: [], employeeSeats: 0 });
+                        }} className={inputCls}>
+                          <option value="">اختر باقة...</option>
+                          {packages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="space-y-1 col-span-2 sm:col-span-1">
+                        <label className={labelCls}>نوع الاشتراك</label>
+                        <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
+                          اشتراك مخصص بالإدارات
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="new-user"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.15 }}
+                    className="space-y-4 p-5 rounded-[2rem] bg-slate-50 border border-slate-100/80"
+                  >
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className={labelCls}>الاسم الأول</label>
+                        <input
+                          type="text"
+                          value={newUserForm.firstName}
+                          onChange={e => setNewUserForm(f => ({ ...f, firstName: e.target.value }))}
+                          className={inputCls}
+                          placeholder="الاسم الأول"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={labelCls}>الاسم الأخير</label>
+                        <input
+                          type="text"
+                          value={newUserForm.lastName}
+                          onChange={e => setNewUserForm(f => ({ ...f, lastName: e.target.value }))}
+                          className={inputCls}
+                          placeholder="الاسم الأخير"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className={labelCls}>البريد الإلكتروني</label>
+                        <input
+                          type="email"
+                          value={newUserForm.email}
+                          onChange={e => setNewUserForm(f => ({ ...f, email: e.target.value }))}
+                          className={inputCls}
+                          placeholder="example@mail.com"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={labelCls}>رقم الجوال</label>
+                        <input
+                          type="text"
+                          value={newUserForm.phone}
+                          onChange={e => setNewUserForm(f => ({ ...f, phone: e.target.value }))}
+                          className={inputCls}
+                          placeholder="05xxxxxxxx"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className={labelCls}>الصلاحية / الدور</label>
+                        <select
+                          value={newUserForm.role}
+                          onChange={e => setNewUserForm(f => ({ ...f, role: e.target.value }))}
+                          className={inputCls}
+                        >
+                          {ROLES.map(r => (
+                            <option key={r.value} value={r.value}>
+                              {language === 'ar' ? r.labelAr : r.labelEn}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {newUserForm.role === 'employee' && (
+                        <div className="space-y-1">
+                          <label className={labelCls}>المدير المسؤول (اختياري)</label>
+                          <select
+                            value={newUserForm.parentId}
+                            onChange={e => handleParentIdChange(e.target.value)}
+                            className={inputCls}
+                          >
+                            <option value="">بدون مدير مسؤول (إداري مستقل)...</option>
+                            {managers.map(m => (
+                              <option key={m.id} value={m.id}>
+                                {m.firstName} {m.lastName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+
+                    {newUserForm.role === 'employee' && (
+                      <div className="space-y-2">
+                        <label className={labelCls}>الإدارة</label>
+                        {managerAllowedDepartments !== null && managerAllowedDepartments.length === 0 ? (
+                          <div className="p-4 rounded-xl bg-amber-50 border border-amber-100/70 flex items-start gap-2.5">
+                            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                            <div className="text-right">
+                              <p className="text-[10px] font-black text-amber-800 leading-snug">
+                                {language === 'ar' 
+                                  ? "المدير المختار لا يملك اشتراكاً فعالاً في أي إدارة." 
+                                  : "The selected manager does not have an active subscription."}
+                              </p>
+                              <p className="text-[9px] font-bold text-amber-600 mt-0.5">
+                                {language === 'ar'
+                                  ? "يرجى تفعيل اشتراك المدير المسؤول أولاً لتتمكن من تعيين موظفين لديه."
+                                  : "Please activate this manager's subscription first to assign employees."}
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            {visibleDepartments.map(dept => {
+                              const isSelected = newUserForm.department.includes(dept.value);
+                              return (
+                                <button
+                                  key={dept.value}
+                                  type="button"
+                                  onClick={() => {
+                                    setNewUserForm(f => {
+                                      const newDepts = f.department.includes(dept.value)
+                                        ? f.department.filter(d => d !== dept.value)
+                                        : [...f.department, dept.value];
+                                      return { ...f, department: newDepts };
+                                    });
+                                  }}
+                                  className={`flex items-center justify-between gap-2 rounded-xl border p-2.5 text-right text-[10px] font-black transition-all ${
+                                    isSelected
+                                      ? 'bg-slate-950 text-white border-slate-950 shadow-sm'
+                                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400'
+                                  }`}
+                                >
+                                  <span>{language === 'ar' ? dept.labelAr : dept.labelEn}</span>
+                                  {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white shrink-0" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {!isEdit && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="text-xs font-black text-slate-950">تفاصيل خطة الاشتراك</h3>
+                  <p className="text-[10px] text-slate-400 font-bold">حدد نوع وهيكل خطة الاشتراك</p>
+                </div>
+                <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                  <button
+                    type="button"
+                    onClick={() => switchPlanMode("package")}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
+                      planMode === "package" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                    }`}
+                  >
+                    باقة جاهزة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchPlanMode("custom")}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
+                      planMode === "custom" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                    }`}
+                  >
+                    اشتراك مخصص
+                  </button>
+                </div>
+              </div>
+
+              {createUserMode && (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={planMode}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {planMode === "package" ? (
+                      <div className="space-y-1">
+                        <label className={labelCls}>الباقة</label>
+                        <select value={form.packageId} onChange={e => {
+                          updatePackageAmount({ packageId: e.target.value, selectedDepartments: [], employeeSeats: 0 });
+                        }} className={inputCls}>
+                          <option value="">اختر باقة...</option>
+                          {packages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <label className={labelCls}>نوع الاشتراك</label>
+                        <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
+                          اشتراك مخصص بالإدارات
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               )}
             </div>
-
-            {/* Package Selection */}
-            {planMode === "package" ? (
-              <div className="space-y-1">
-                <label className={labelCls}>الباقة</label>
-                <select value={form.packageId} onChange={e => {
-                  updatePackageAmount({ packageId: e.target.value, selectedDepartments: [], employeeSeats: 0 });
-                }} className={inputCls}>
-                  <option value="">اختر باقة...</option>
-                  {packages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <label className={labelCls}>نوع الاشتراك</label>
-                <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
-                  اشتراك مخصص بالإدارات
-                </div>
-              </div>
-            )}
-          </div>}
+          )}
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
@@ -649,7 +1040,7 @@ export default function AdminSubscriptionsPage() {
         )}
       </AnimatePresence>
 
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <CreditCard className="w-3 h-3" />
@@ -663,56 +1054,20 @@ export default function AdminSubscriptionsPage() {
           </p>
         </div>
         
-        <div className="grid w-full gap-3 md:w-auto md:grid-cols-4 xl:grid-cols-7">
+        <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
           <Link
             href="/admin/packages"
-            className="h-12 px-6 bg-white text-slate-950 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:border-slate-950 transition-all shadow-sm"
+            className="h-12 px-6 bg-white text-slate-950 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:border-slate-950 transition-all shadow-sm flex-1 md:flex-initial"
           >
             <Package className="w-4 h-4" />
             إدارة الباقات
           </Link>
           <button 
             onClick={() => { setEditingSubscription(null); setIsModalOpen(true); }}
-            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20"
+            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20 flex-1 md:flex-initial"
           >
             <Plus className="w-4 h-4" />
             إضافة اشتراك
-          </button>
-          <div className="relative md:col-span-2">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="بحث باسم المشترك أو الباقة..." 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pr-10 pl-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64 text-sm font-bold shadow-sm"
-            />
-          </div>
-          <select 
-            value={statusFilter} 
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm"
-          >
-            <option value="all">كل الحالات</option>
-            <option value="active">نشط</option>
-            <option value="pending">معلق</option>
-            <option value="expired">منتهي</option>
-            <option value="cancelled">ملغي</option>
-          </select>
-          <select value={subscriptionTypeFilter} onChange={(e) => setSubscriptionTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
-            <option value="all">كل الأنواع</option>
-            <option value="شهري">شهري</option>
-            <option value="سنوي">سنوي</option>
-            <option value="مخصص">مخصص</option>
-          </select>
-          <select value={packageFilter} onChange={(e) => setPackageFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
-            <option value="all">كل الباقات</option>
-            {packageOptions.map(([id, name]) => <option key={id as string} value={id as string}>{name || id}</option>)}
-          </select>
-          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
-          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
-          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setSubscriptionTypeFilter("all"); setPackageFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
-            مسح
           </button>
         </div>
       </header>
@@ -738,6 +1093,87 @@ export default function AdminSubscriptionsPage() {
               <p className={`text-2xl font-black ${card.color}`}>{card.val}</p>
            </motion.div>
          ))}
+      </div>
+
+      {/* Table Control/Filter Bar */}
+      <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+          {/* Search */}
+          <div className="relative col-span-1 sm:col-span-2">
+            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="بحث باسم المشترك أو الباقة..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-11 pr-10 pl-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+            />
+          </div>
+
+          {/* Status */}
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+          >
+            <option value="all">كل الحالات</option>
+            <option value="active">نشط</option>
+            <option value="pending">معلق</option>
+            <option value="expired">منتهي</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+
+          {/* Type */}
+          <select 
+            value={subscriptionTypeFilter} 
+            onChange={(e) => setSubscriptionTypeFilter(e.target.value)}
+            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+          >
+            <option value="all">كل الأنواع</option>
+            <option value="شهري">شهري</option>
+            <option value="سنوي">سنوي</option>
+            <option value="مخصص">مخصص</option>
+          </select>
+
+          {/* Package */}
+          <select 
+            value={packageFilter} 
+            onChange={(e) => setPackageFilter(e.target.value)}
+            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm animate-none"
+          >
+            <option value="all">كل الباقات</option>
+            {packageOptions.map(([id, name]) => <option key={id as string} value={id as string}>{name || id}</option>)}
+          </select>
+
+          {/* Date From */}
+          <div className="relative">
+            <input 
+              type="date" 
+              value={dateFrom} 
+              onChange={(e) => setDateFrom(e.target.value)} 
+              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
+            />
+          </div>
+
+          {/* Date To */}
+          <div className="relative">
+            <input 
+              type="date" 
+              value={dateTo} 
+              onChange={(e) => setDateTo(e.target.value)} 
+              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
+            />
+          </div>
+
+          {/* Clear button */}
+          <button 
+            type="button" 
+            onClick={() => { setSearch(""); setStatusFilter("all"); setSubscriptionTypeFilter("all"); setPackageFilter("all"); setDateFrom(""); setDateTo(""); }} 
+            className="h-11 px-6 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-slate-950 hover:border-slate-950 text-xs font-black transition-all shadow-sm flex items-center justify-center gap-1 col-span-full sm:col-span-1"
+          >
+            مسح الفلاتر
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl">

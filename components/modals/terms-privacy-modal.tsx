@@ -127,9 +127,22 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
           )}
         </div>
 
-        {/* Content Area */}
-        <div className="p-8 pb-10 max-h-[70vh] overflow-y-auto w-full custom-scrollbar relative bg-white">
-          <AnimatePresence mode="wait">
+        {/* Wrapper for Fixed Background */}
+        <div 
+          className="relative w-full overflow-hidden"
+          style={{
+            backgroundImage: "url('/cover.jpeg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          {/* Subtle overlay to guarantee readability of text */}
+          <div className="absolute inset-0 bg-white/20 pointer-events-none z-0" />
+          
+          {/* Scrollable Content Area */}
+          <div className="p-8 pb-10 max-h-[70vh] overflow-y-auto w-full custom-scrollbar relative z-10 bg-transparent">
+            <AnimatePresence mode="wait">
             {activeTab === "terms" && (
               <motion.div
                 key="terms"
@@ -357,6 +370,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
 
         {/* Footer */}

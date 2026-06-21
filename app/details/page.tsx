@@ -197,9 +197,7 @@ export default function HomePage() {
                 flex items-center justify-center gap-4 group cursor-pointer overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
-              <MapIcon className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
               {t('home.scan')}
-              <Zap className="w-4 h-4 text-emerald-500/70 group-hover:text-emerald-400 group-hover:animate-pulse" />
             </motion.button>
           </div>
         )
@@ -259,21 +257,70 @@ export default function HomePage() {
         <ComingSoonInline sectionName={language === 'ar' ? 'الإعلانات' : 'Ads'} message={settings.detailsPartMessages?.ads} />
       ) : marketingRequests.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {marketingRequests.slice(0, 6).map((request: any, index: number) => (
-            <div key={request.id || index} className="rounded-2xl border border-slate-800/70 bg-slate-900/80 p-5 text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-black truncate">{request.title || request.subject || request.name || (language === 'ar' ? 'طلب إعلان' : 'Ad request')}</p>
-                <span className="rounded-full bg-slate-800 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  {request.scheduleMode === 'date_range'
-                    ? `${request.startDate ? new Date(request.startDate).toLocaleDateString() : ''} - ${request.endDate ? new Date(request.endDate).toLocaleDateString() : ''}`
-                    : (language === 'ar' ? 'يدوي' : 'Manual')}
-                </span>
+          {marketingRequests.slice(0, 6).map((request: any, index: number) => {
+            const isOffer = request.category === 'offers';
+            const priceVal = request.price ? Number(request.price) : 0;
+            const areaVal = request.area ? Number(request.area) : 0;
+            const imageUrl = request.mediaFiles && request.mediaFiles.length > 0 ? request.mediaFiles[0] : null;
+
+            return (
+              <div key={request.id || index} className="rounded-3xl border border-slate-800/70 bg-slate-900/80 overflow-hidden text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.35)] flex flex-col hover:border-slate-700/80 transition-all duration-300">
+                {imageUrl && (
+                  <div className="h-40 w-full relative overflow-hidden bg-slate-950">
+                    <img src={imageUrl} alt={request.subject || request.title} className="w-full h-full object-cover" />
+                    <div className="absolute top-3 right-3 rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-200">
+                      {request.dealType || (language === 'ar' ? 'عرض' : 'Offer')}
+                    </div>
+                  </div>
+                )}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-black truncate">{request.title || request.subject || request.name || (language === 'ar' ? 'طلب إعلان' : 'Ad request')}</p>
+                      <span className="rounded-full bg-slate-800 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0">
+                        {request.scheduleMode === 'date_range'
+                          ? `${request.startDate ? new Date(request.startDate).toLocaleDateString() : ''} - ${request.endDate ? new Date(request.endDate).toLocaleDateString() : ''}`
+                          : (language === 'ar' ? 'يدوي' : 'Manual')}
+                      </span>
+                    </div>
+
+                    {isOffer && (priceVal > 0 || areaVal > 0 || request.city || request.neighborhood) && (
+                      <div className="grid grid-cols-2 gap-3 mt-3 bg-slate-950/40 p-3 rounded-xl border border-slate-800/50 text-[11px] font-bold text-slate-300 text-right" dir="rtl">
+                        {priceVal > 0 && (
+                          <div>
+                            <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'السعر' : 'Price'}</span>
+                            <span className="text-indigo-400 font-black">{priceVal.toLocaleString()} {language === 'ar' ? 'ريال' : 'SAR'}</span>
+                          </div>
+                        )}
+                        {areaVal > 0 && (
+                          <div>
+                            <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'المساحة' : 'Area'}</span>
+                            <span>{areaVal} {language === 'ar' ? 'م²' : 'm²'}</span>
+                          </div>
+                        )}
+                        {request.propertyType && (
+                          <div>
+                            <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'النوع' : 'Type'}</span>
+                            <span>{request.propertyType}</span>
+                          </div>
+                        )}
+                        {(request.city || request.neighborhood) && (
+                          <div>
+                            <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'الموقع' : 'Location'}</span>
+                            <span className="truncate block">{request.neighborhood ? `${request.neighborhood}، ` : ''}{request.city || ''}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <p className="mt-3 text-xs leading-6 text-slate-400 line-clamp-3">
+                      {request.description || request.content || request.message || request.notes || ''}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="mt-3 text-xs leading-6 text-slate-400 line-clamp-3">
-                {request.description || request.message || request.notes || ''}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="rounded-3xl border border-dashed border-slate-800 bg-slate-950/60 p-10 text-center text-slate-400">
@@ -318,34 +365,85 @@ export default function HomePage() {
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
           className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
 
-          {/* Header */}
-          <motion.div variants={itemVariants} className="mb-14 space-y-5">
-
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
-              {t('details.header.title')}{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-indigo-300 to-slate-400">
-                {t('details.header.highlight')}
-              </span>
-            </h1>
-            <div className="flex items-start gap-4 group">
-               <div className="w-1.5 self-stretch bg-gradient-to-b from-indigo-500 to-indigo-700 rounded-full opacity-40 group-hover:opacity-100 transition-opacity duration-300 mt-1.5" />
-               <p className="text-slate-400 font-medium w-full max-w-none text-base md:text-lg leading-tight tracking-tighter">
-                 {t('details.header.desc')}
-               </p>
-            </div>
-          </motion.div>
+  
 
           <div className="space-y-10">
             {orderedSections.map((sectionId) => {
               const section = sectionCards[sectionId];
               if (!section || detailsPartStatus(sectionId as any) === 'hidden') return null;
+
+              const sectionStylesMap: Record<string, {
+                iconColorKey: string;
+                iconSizeKey: string;
+                titleColorKey: string;
+                titleSizeKey: string;
+              }> = {
+                map: {
+                  iconColorKey: 'mapIconColor',
+                  iconSizeKey: 'mapIconSize',
+                  titleColorKey: 'mapTitleColor',
+                  titleSizeKey: 'mapTitleSize',
+                },
+                stats: {
+                  iconColorKey: 'statsIconColor',
+                  iconSizeKey: 'statsIconSize',
+                  titleColorKey: 'statsTitleColor',
+                  titleSizeKey: 'statsTitleSize',
+                },
+                charts: {
+                  iconColorKey: 'chartsIconColor',
+                  iconSizeKey: 'chartsIconSize',
+                  titleColorKey: 'chartsTitleColor',
+                  titleSizeKey: 'chartsTitleSize',
+                },
+                ads: {
+                  iconColorKey: 'adsIconColor',
+                  iconSizeKey: 'adsIconSize',
+                  titleColorKey: 'adsTitleColor',
+                  titleSizeKey: 'adsTitleSize',
+                },
+                previous_logs: {
+                  iconColorKey: 'statsIconColor',
+                  iconSizeKey: 'statsIconSize',
+                  titleColorKey: 'statsTitleColor',
+                  titleSizeKey: 'statsTitleSize',
+                }
+              };
+
+              const styles = sectionStylesMap[sectionId];
+              const customIconColor = styles ? (settings as any)[styles.iconColorKey] : undefined;
+              const customIconSize = styles && (settings as any)[styles.iconSizeKey] ? Number((settings as any)[styles.iconSizeKey]) : undefined;
+              const customTitleColor = styles ? (settings as any)[styles.titleColorKey] : undefined;
+              const customTitleSize = styles && (settings as any)[styles.titleSizeKey] ? Number((settings as any)[styles.titleSizeKey]) : undefined;
+
               return (
                 <motion.div key={section.id} variants={itemVariants} className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-700/60 text-slate-400">
-                      <section.icon className="w-4 h-4" />
+                    <div 
+                      className="p-2 rounded-lg bg-slate-900 border border-slate-700/60 text-slate-400 flex items-center justify-center"
+                      style={{
+                        color: customIconColor || undefined,
+                        width: customIconSize ? `${customIconSize + 16}px` : undefined,
+                        height: customIconSize ? `${customIconSize + 16}px` : undefined,
+                      }}
+                    >
+                      <section.icon 
+                        style={{
+                          color: customIconColor || undefined,
+                          width: customIconSize ? `${customIconSize}px` : undefined,
+                          height: customIconSize ? `${customIconSize}px` : undefined,
+                        }} 
+                      />
                     </div>
-                    <h2 className="text-base font-bold text-slate-300 tracking-tight">{section.title}</h2>
+                    <h2 
+                      className="text-base font-bold text-slate-300 tracking-tight"
+                      style={{
+                        color: customTitleColor || undefined,
+                        fontSize: customTitleSize ? `${customTitleSize}px` : undefined,
+                      }}
+                    >
+                      {section.title}
+                    </h2>
                   </div>
                   {section.content}
                 </motion.div>

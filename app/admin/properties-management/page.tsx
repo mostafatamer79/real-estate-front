@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Building2, Calendar, CreditCard, Edit2, FileText, Loader2, MapPin, Plus, Save, Search, Trash2, User, Wrench, X, Eye, MessageSquare } from "lucide-react";
+import { Building2, Calendar, CreditCard, Edit2, FileText, Loader2, MapPin, Plus, Save, Search, User, Wrench, X, Eye, MessageSquare, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { propertiesApi } from "@/lib/api";
+import { propertiesApi, offersApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
 import { Pagination } from "../../src/components/Pagination";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
@@ -14,7 +14,44 @@ import { AddPropertyWizard } from "@/components/modals/AddPropertyWizard";
 type ManagementTab = "properties" | "tenants" | "leases" | "payments" | "maintenance";
 
 const emptyForms: Record<ManagementTab, Record<string, string>> = {
-  properties: { name: "", deedNumber: "", type: "building", locationUrl: "", constructionDate: "", purchasePrice: "", ownerId: "" },
+  properties: {
+    name: "",
+    deedNumber: "",
+    type: "building",
+    locationUrl: "",
+    constructionDate: "",
+    purchasePrice: "",
+    ownerId: "",
+    propertyType: "فيلا",
+    length: "",
+    width: "",
+    area: "",
+    propertyAge: "جديد",
+    direction: "شمال",
+    price: "",
+    city: "الرياض",
+    neighborhood: "",
+    streetWidth: "",
+    deedType: "صك إلكتروني",
+    propertyCondition: "جديد",
+    rooms: "",
+    bathrooms: "",
+    livingRooms: "",
+    kitchens: "",
+    floors: "",
+    apartments: "",
+    hasMaidRoom: "false",
+    hasRoof: "false",
+    hasExternalAnnex: "false",
+    buildingArea: "",
+    hasGarage: "false",
+    hasPool: "false",
+    hasElevator: "false",
+    furnitureStatus: "unfurnished",
+    additionalNotes: "",
+    dealType: "بيع",
+    mainCategory: "residential",
+  },
   tenants: { fullName: "", idNumber: "", phoneNumber: "", email: "", employer: "", type: "individual", preferredPaymentDay: "", userId: "" },
   leases: { unitId: "", tenantId: "", startDate: "", endDate: "", annualRent: "", paymentFrequency: "annual", securityDeposit: "", securityDepositStatus: "held", deductionReason: "" },
   payments: { leaseId: "", dueDate: "", amount: "", status: "pending" },
@@ -22,7 +59,7 @@ const emptyForms: Record<ManagementTab, Record<string, string>> = {
 };
 
 export default function AdminPropertiesManagementPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const confirmDialog = useConfirmDialog();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -164,6 +201,35 @@ export default function AdminPropertiesManagementPage() {
       ["locationUrl", isRtl ? "رابط الموقع" : "Location URL", "text"],
       ["constructionDate", isRtl ? "تاريخ البناء" : "Construction date", "date"],
       ["purchasePrice", isRtl ? "سعر الشراء" : "Purchase price", "number"],
+      ["mainCategory", isRtl ? "القسم الرئيسي" : "Main category", "select:residential,commercial"],
+      ["propertyType", isRtl ? "نوع العقار" : "Property type", "text"],
+      ["dealType", isRtl ? "نوع الصفقة" : "Deal type", "select:بيع,إيجار"],
+      ["price", isRtl ? "السعر" : "Price", "number"],
+      ["area", isRtl ? "المساحة" : "Area", "number"],
+      ["length", isRtl ? "الطول" : "Length", "number"],
+      ["width", isRtl ? "العرض" : "Width", "number"],
+      ["streetWidth", isRtl ? "عرض الشارع" : "Street width", "number"],
+      ["city", isRtl ? "المدينة" : "City", "text"],
+      ["neighborhood", isRtl ? "الحي" : "Neighborhood", "text"],
+      ["propertyAge", isRtl ? "عمر العقار" : "Property age", "text"],
+      ["direction", isRtl ? "الواجهة" : "Direction", "text"],
+      ["deedType", isRtl ? "نوع الصك" : "Deed type", "text"],
+      ["propertyCondition", isRtl ? "حالة العقار" : "Property condition", "text"],
+      ["rooms", isRtl ? "عدد الغرف" : "Rooms", "number"],
+      ["bathrooms", isRtl ? "عدد دورات المياه" : "Bathrooms", "number"],
+      ["livingRooms", isRtl ? "عدد الصالات" : "Living rooms", "number"],
+      ["kitchens", isRtl ? "عدد المطابخ" : "Kitchens", "number"],
+      ["floors", isRtl ? "عدد الأدوار" : "Floors", "number"],
+      ["apartments", isRtl ? "عدد الشقق" : "Apartments", "number"],
+      ["hasMaidRoom", isRtl ? "غرفة عاملة" : "Maid room", "select:true,false"],
+      ["hasRoof", isRtl ? "سطح" : "Roof", "select:true,false"],
+      ["hasExternalAnnex", isRtl ? "ملحق خارجي" : "External annex", "select:true,false"],
+      ["buildingArea", isRtl ? "مسطح البناء" : "Building area", "number"],
+      ["hasGarage", isRtl ? "كراج" : "Garage", "select:true,false"],
+      ["hasPool", isRtl ? "مسبح" : "Pool", "select:true,false"],
+      ["hasElevator", isRtl ? "مصعد" : "Elevator", "select:true,false"],
+      ["furnitureStatus", isRtl ? "حالة الأثاث" : "Furniture status", "select:furnished,unfurnished"],
+      ["additionalNotes", isRtl ? "ملاحظات إضافية" : "Additional notes", "text"],
     ];
     if (activeTab === "tenants") return [
       ["fullName", isRtl ? "اسم المستأجر" : "Tenant name", "text"],
@@ -205,11 +271,24 @@ export default function AdminPropertiesManagementPage() {
   }, [activeTab, isRtl]);
 
   const normalizePayload = () => {
-    const numericKeys = new Set(["purchasePrice", "preferredPaymentDay", "annualRent", "securityDeposit", "amount", "cost"]);
+    const numericKeys = new Set([
+      "purchasePrice", "preferredPaymentDay", "annualRent", "securityDeposit", "amount", "cost",
+      "length", "width", "area", "price", "streetWidth", "rooms", "bathrooms", "livingRooms",
+      "kitchens", "floors", "apartments", "buildingArea", "views"
+    ]);
+    const booleanKeys = new Set([
+      "hasMaidRoom", "hasRoof", "hasExternalAnnex", "hasGarage", "hasPool", "hasElevator", "isActive"
+    ]);
     const payload: Record<string, any> = {};
     Object.entries(form).forEach(([key, value]) => {
       if (value === "") return;
-      payload[key] = numericKeys.has(key) ? Number(value) : value;
+      if (numericKeys.has(key)) {
+        payload[key] = Number(value);
+      } else if (booleanKeys.has(key)) {
+        payload[key] = String(value) === "true";
+      } else {
+        payload[key] = value;
+      }
     });
     return payload;
   };
@@ -245,6 +324,56 @@ export default function AdminPropertiesManagementPage() {
     }
   };
 
+  const handleExportToOffers = async (property: any) => {
+    try {
+      const payload: any = {
+        mainCategory: property.mainCategory || "residential",
+        propertyType: property.propertyType || "فيلا",
+        dealType: property.dealType || "بيع",
+        price: Number(property.price || property.purchasePrice || 0),
+        area: Number(property.area || 1),
+        length: property.length ? Number(property.length) : undefined,
+        width: property.width ? Number(property.width) : undefined,
+        streetWidth: property.streetWidth ? Number(property.streetWidth) : undefined,
+        city: property.city || "الرياض",
+        neighborhood: property.neighborhood || "",
+        propertyAge: property.propertyAge || "جديد",
+        direction: property.direction || "شمال",
+        deedType: property.deedType || "صك إلكتروني",
+        propertyCondition: property.propertyCondition || "جديد",
+        rooms: property.rooms ? Number(property.rooms) : undefined,
+        bathrooms: property.bathrooms ? Number(property.bathrooms) : undefined,
+        livingRooms: property.livingRooms ? Number(property.livingRooms) : undefined,
+        kitchens: property.kitchens ? Number(property.kitchens) : undefined,
+        floors: property.floors ? Number(property.floors) : undefined,
+        apartments: property.apartments ? Number(property.apartments) : undefined,
+        hasMaidRoom: property.hasMaidRoom === "true" || property.hasMaidRoom === true,
+        hasRoof: property.hasRoof === "true" || property.hasRoof === true,
+        hasExternalAnnex: property.hasExternalAnnex === "true" || property.hasExternalAnnex === true,
+        buildingArea: property.buildingArea ? Number(property.buildingArea) : undefined,
+        hasGarage: property.hasGarage === "true" || property.hasGarage === true,
+        hasPool: property.hasPool === "true" || property.hasPool === true,
+        hasElevator: property.hasElevator === "true" || property.hasElevator === true,
+        furnitureStatus: property.furnitureStatus || "unfurnished",
+        locationUrl: property.locationUrl || "",
+        additionalNotes: property.additionalNotes || `تم التصدير من إدارة الأملاك: ${property.name}`,
+        mediaFiles: property.mediaFiles || [],
+        propertyDocuments: property.propertyDocuments || [],
+        threeDVideos: property.threeDVideos || [],
+        video3d: property.video3d || "",
+        checkImage: property.checkImage || "",
+        status: "published",
+        isActive: true,
+      };
+
+      await offersApi.create(payload);
+      toast.success(t("pm.success.exportOffer"));
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || (isRtl ? "فشل التصدير كعرض" : "Failed to export as offer"));
+    }
+  };
+
   const startEdit = (record: any) => {
     const next = { ...emptyForms[activeTab] };
     Object.keys(next).forEach((key) => {
@@ -255,6 +384,17 @@ export default function AdminPropertiesManagementPage() {
     });
     setEditingId(record.id);
     setForm(next);
+  };
+
+  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    try {
+      await propertiesApi.update(id, { isActive: !currentStatus });
+      toast.success(isRtl ? "تم تحديث حالة النشاط بنجاح" : "Activity status updated successfully");
+      await fetchProperties();
+    } catch (error) {
+      console.error(error);
+      toast.error(isRtl ? "فشل تحديث حالة النشاط" : "Failed to update activity status");
+    }
   };
 
   const deleteRecord = async (id: string) => {
@@ -314,7 +454,7 @@ export default function AdminPropertiesManagementPage() {
             className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            {isRtl ? "إضافة جديد" : "Add New"}
+            {isRtl ? "تحديث" : "Add New"}
           </button>
         </div>
       </header>
@@ -421,10 +561,34 @@ export default function AdminPropertiesManagementPage() {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-2 text-xs font-black text-slate-700">
-                        <Calendar className="h-4 w-4 text-slate-300" />
-                        {property.status || property.paymentStatus || property.createdAt?.slice?.(0, 10) || "—"}
-                      </div>
+                      {isPropertyRow ? (
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleActive(property.id, property.isActive);
+                            }}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                              property.isActive ? "bg-slate-900" : "bg-slate-200"
+                            }`}
+                          >
+                            <span
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                property.isActive ? (isRtl ? "-translate-x-5" : "translate-x-5") : "translate-x-0"
+                              }`}
+                            />
+                          </button>
+                          <span className="text-xs font-bold text-slate-600">
+                            {property.isActive ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xs font-black text-slate-700">
+                          <Calendar className="h-4 w-4 text-slate-300" />
+                          {property.status || property.paymentStatus || property.createdAt?.slice?.(0, 10) || "—"}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex flex-wrap gap-2">
@@ -442,16 +606,18 @@ export default function AdminPropertiesManagementPage() {
                         className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
                       >
                         <Edit2 className="h-4 w-4" />
-                        {isRtl ? "تعديل" : "Edit"}
+                        {isRtl ? "تحديث" : "Update"}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => deleteRecord(property.id)}
-                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-red-50 px-3 text-[10px] font-black uppercase tracking-widest text-red-600 hover:bg-red-100"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        {isRtl ? "حذف" : "Delete"}
-                      </button>
+                      {isPropertyRow && (
+                        <button
+                          type="button"
+                          onClick={() => handleExportToOffers(property)}
+                          className="inline-flex h-10 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50/50 px-3 text-[10px] font-black uppercase tracking-widest text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300"
+                        >
+                          <Share2 className="h-4 w-4" />
+                          {t("pm.action.exportOffer")}
+                        </button>
+                      )}
                       </div>
                     </td>
                   </tr>

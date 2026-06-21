@@ -537,6 +537,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.field.unitsCount": "عدد الوحدات",
     "pm.field.occupancy": "نسبة الإشغال",
     "pm.field.purchasePrice": "قيمة الاستحواذ الرأسمالي",
+    "pm.action.exportOffer": "تصدير كعرض",
+    "pm.success.exportOffer": "تم تصدير العقار كعرض بنجاح",
     "pm.selected":"المختارة",
     "pm.unit.number":"رقم الوحدة",
     "common.clear":"مسح",
@@ -2969,6 +2971,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "pm.field.unitsCount": "Units Count",
     "pm.field.occupancy": "Occupancy Rate",
     "pm.field.purchasePrice": "Purchase Price / Startup Cost",
+    "pm.action.exportOffer": "Export as Offer",
+    "pm.success.exportOffer": "Property exported as offer successfully",
 
     // Unit Fields
     "pm.field.unitNumber": "Unit Number",

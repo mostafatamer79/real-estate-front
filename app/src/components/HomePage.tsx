@@ -27,22 +27,38 @@ export default function HomePage() {
       } else {
         router.push('/details');
       }
-    } else {
+    } else if (!showSignIn) {
+      const duration = settings.splashDuration ? (Number(settings.splashDuration) * 1000) : 3000;
       const timer = setTimeout(() => {
         setShowSignIn(true);
-      }, 10000);
+      }, duration);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [settings.splashDuration, showSignIn]);
 
   return (
-    <section className='w-full h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden' dir="rtl">
+    <section 
+      className='w-full h-screen flex flex-col items-center justify-center relative overflow-hidden' 
+      dir="rtl"
+      style={{ 
+        backgroundImage: "url('/cover.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
+      {/* Dark overlay to match splash theme and keep text readable */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0" 
+        style={{ backgroundColor: settings.splashBg ? `${settings.splashBg}33` : 'rgba(11, 15, 25, 0.2)' }} 
+      />
+
       {/* background radial glow */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
+      <div className="absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
 
       {/* Splash — shown while not logged in and sign-in not yet shown */}
       {!isLoggedIn && !showSignIn && (
-        <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700">
+        <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700 relative z-10">
           {isLoading ? (
             <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
           ) : (
@@ -50,9 +66,9 @@ export default function HomePage() {
               src={settings.logoWhiteUrl || '/icons/white.png'}
               alt={settings.appName}
               width={480}
-              height={(settings.logoHeight || 40) * 3}
+              height={Number(settings.splashLogoHeight || 120)}
               className="object-contain w-auto"
-              style={{ height: `${(settings.logoHeight || 40) * 3}px` }}
+              style={{ height: `${settings.splashLogoHeight || 120}px` }}
               priority
             />
           )}

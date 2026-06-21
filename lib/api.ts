@@ -36,6 +36,8 @@ export type CustomerServiceFaq = {
   questionEn: string;
   answerEn: string;
   sortOrder: number;
+  color?: string | null;
+  fontSize?: string | null;
   createdAt: string;
   updatedAt: string;
 };

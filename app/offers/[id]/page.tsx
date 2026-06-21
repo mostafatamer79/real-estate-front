@@ -66,6 +66,7 @@ import PurchaseModal from "@/components/modals/PurchaseModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -841,9 +842,9 @@ export default function OfferDetailsPage() {
 
     if (images.length === 0) {
       return (
-        <div className="relative w-full h-[400px] bg-slate-100 rounded-lg flex flex-col items-center justify-center">
-          <Camera className="w-16 h-16 text-gray-400 mb-4" />
-          <p className="text-gray-500">{t('offer.noImages')}</p>
+        <div className="relative w-full h-[300px] md:h-[480px] bg-slate-100 rounded-[2.5rem] border border-slate-100 flex flex-col items-center justify-center overflow-hidden shadow-sm">
+          <Camera className="w-16 h-16 text-slate-300 mb-4 animate-pulse" />
+          <p className="text-slate-400 font-bold">{t('offer.noImages')}</p>
         </div>
       );
     }
@@ -852,51 +853,55 @@ export default function OfferDetailsPage() {
 
     return (
       <div className="space-y-4">
-        {/* Main Image */}
-        <div className="relative w-full h-[400px] bg-slate-100 rounded-lg overflow-hidden">
+        {/* Main Image Slider */}
+        <div className="relative w-full h-[320px] md:h-[500px] bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg group border border-slate-100">
           <Image
             src={currentImage}
             alt={`${t('offer.imageAlt')} ${currentImageIndex + 1}`}
             fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            sizes="(max-width: 1200px) 100vw, 1200px"
+            priority
           />
+          
+          {/* Subtle Bottom Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
           {/* Navigation buttons */}
           {images.length > 1 && (
             <>
               <button
                 onClick={() => setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={() => setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-6 h-6" />
               </button>
             </>
           )}
 
-          {/* Image counter */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+          {/* Floating Image counter / tag */}
+          <div className="absolute bottom-6 left-6 bg-slate-950/80 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-black border border-white/10 shadow-lg tracking-wider">
             {currentImageIndex + 1} / {images.length}
           </div>
         </div>
 
-        {/* Thumbnails */}
+        {/* Thumbnails list */}
         {images.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
             {images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 ${
+                className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 active:scale-95 shadow-sm ${
                   currentImageIndex === index
-                    ? 'border-gray-700'
-                    : 'border-transparent'
+                    ? 'border-slate-950 scale-100 ring-2 ring-slate-900/10'
+                    : 'border-transparent opacity-70 hover:opacity-100'
                 }`}
               >
                 <Image
@@ -951,198 +956,214 @@ export default function OfferDetailsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-100 shadow-sm">
-          <CardHeader>
-            <CardTitle>{t('offer.details')}</CardTitle>
-            <CardDescription>
-              {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Building className="w-5 h-5" />
-                    {t('offer.basic')}
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.condition')}</span>
-                      <Badge className={getConditionColor(offer.propertyCondition || "")}>
-                        {offer.propertyCondition || t('offer.undefined')}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.age')}</span>
-                      <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.deed')}</span>
-                      <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.direction')}</span>
-                      <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
-                    </div>
-                    {(offer.length || offer.width) && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
-                        <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
+        {/* Tabbed view for Details and Attachments */}
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-slate-100/80 p-1 rounded-2xl">
+            <TabsTrigger value="details" className="rounded-xl text-sm font-black transition-all">
+              {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
+            </TabsTrigger>
+            <TabsTrigger value="media" className="rounded-xl text-sm font-black transition-all">
+              {language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="details" className="space-y-6 outline-none focus:outline-none">
+            <Card className="border-slate-100 shadow-sm">
+              <CardHeader>
+                <CardTitle>{t('offer.details')}</CardTitle>
+                <CardDescription>
+                  {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <Building className="w-5 h-5" />
+                        {t('offer.basic')}
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.condition')}</span>
+                          <Badge className={getConditionColor(offer.propertyCondition || "")}>
+                            {offer.propertyCondition || t('offer.undefined')}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.age')}</span>
+                          <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.deed')}</span>
+                          <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.direction')}</span>
+                          <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
+                        </div>
+                        {(offer.length || offer.width) && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
+                            <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
+                          </div>
+                        )}
+                        {offer.dealType && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
+                            <span className="font-semibold">{offer.dealType}</span>
+                          </div>
+                        )}
+                        {offer.mainCategory && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
+                            <span className="font-semibold">{offer.mainCategory}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {offer.dealType && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
-                        <span className="font-semibold">{offer.dealType}</span>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <MapPin className="w-5 h-5" />
+                        {t('offer.location')}
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">{t('offer.neighborhood')}</span>
+                          <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
+                        </div>
+                        {offer.streetWidth && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{t('offer.streetWidth')}</span>
+                            <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
+                          </div>
+                        )}
+                        {offer.locationUrl && (
+                          <div className="flex justify-between items-center gap-4">
+                            <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
+                            <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
+                              {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
+                            </a>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {offer.mainCategory && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
-                        <span className="font-semibold">{offer.mainCategory}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <DoorOpen className="w-5 h-5" />
+                        {t('offer.facilities')}
+                      </h3>
+                      <div className="space-y-2">
+                        {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
+                        {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
+                        {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
+                        {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
+                        {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
+                        {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
+                        {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
                       </div>
-                    )}
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <Award className="w-5 h-5" />
+                        {t('offer.features')}
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
+                        {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
+                        {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
+                        {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
+                        {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
+                        {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
+                      </div>
+                      {offer.furnitureStatus && (
+                        <div className="mt-3 pt-3 border-t">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">{t('offer.furniture')}</span>
+                            <span className="font-semibold">{offer.furnitureStatus}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <MapPin className="w-5 h-5" />
-                    {t('offer.location')}
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{t('offer.neighborhood')}</span>
-                      <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
-                    </div>
-                    {offer.streetWidth && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.streetWidth')}</span>
-                        <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
-                      </div>
-                    )}
-                    {offer.locationUrl && (
-                      <div className="flex justify-between items-center gap-4">
-                        <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
-                        <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
-                          {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
+          <TabsContent value="media" className="outline-none focus:outline-none">
+            <Card className="border-slate-100 shadow-sm">
+              <CardHeader>
+                <CardTitle>{language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}</CardTitle>
+                <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {(offer.threeDVideos?.length || offer.video3d) && (
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                      <Video className="w-5 h-5" />
+                      {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
+                    </h3>
+                    <div className="space-y-2">
+                      {offer.video3d && (
+                        <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                          <span className="text-sm font-medium">3D Video</span>
+                          <Download className="w-4 h-4" />
                         </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <DoorOpen className="w-5 h-5" />
-                    {t('offer.facilities')}
-                  </h3>
-                  <div className="space-y-2">
-                    {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
-                    {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
-                    {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
-                    {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
-                    {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
-                    {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
-                    {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Award className="w-5 h-5" />
-                    {t('offer.features')}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
-                    {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
-                    {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
-                    {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
-                    {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
-                    {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
-                  </div>
-                  {offer.furnitureStatus && (
-                    <div className="mt-3 pt-3 border-t">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">{t('offer.furniture')}</span>
-                        <span className="font-semibold">{offer.furnitureStatus}</span>
-                      </div>
+                      )}
+                      {(offer.threeDVideos || []).map((video, index) => (
+                        <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                          <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
+                          <Download className="w-4 h-4" />
+                        </a>
+                      ))}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                )}
 
-        <Card className="border-slate-100 shadow-sm">
-          <CardHeader>
-            <CardTitle>{language === 'ar' ? 'الملفات والوسائط' : 'Media and documents'}</CardTitle>
-            <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {(offer.threeDVideos?.length || offer.video3d) && (
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <Video className="w-5 h-5" />
-                  {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
-                </h3>
-                <div className="space-y-2">
-                  {offer.video3d && (
-                    <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                      <span className="text-sm font-medium">3D Video</span>
+                {offer.propertyDocuments?.length ? (
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                      <FileText className="w-5 h-5" />
+                      {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
+                    </h3>
+                    <div className="space-y-2">
+                      {offer.propertyDocuments.map((doc, index) => (
+                        <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                          <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
+                          <Download className="w-4 h-4" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {offer.checkImage && (
+                  <div className="space-y-3">
+                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                      <Camera className="w-5 h-5" />
+                      {language === 'ar' ? 'صورة الشيك' : 'Check image'}
+                    </h3>
+                    <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
+                      <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
                       <Download className="w-4 h-4" />
                     </a>
-                  )}
-                  {(offer.threeDVideos || []).map((video, index) => (
-                    <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                      <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
-                      <Download className="w-4 h-4" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {offer.propertyDocuments?.length ? (
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
-                </h3>
-                <div className="space-y-2">
-                  {offer.propertyDocuments.map((doc, index) => (
-                    <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
-                      <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
-                      <Download className="w-4 h-4" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            {offer.checkImage && (
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <Camera className="w-5 h-5" />
-                  {language === 'ar' ? 'صورة الشيك' : 'Check image'}
-                </h3>
-                <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
-                  <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
-                  <Download className="w-4 h-4" />
-                </a>
-              </div>
-            )}
-            {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
-                {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </div>
+                )}
+                {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
+                    {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     );
   };
@@ -1446,19 +1467,14 @@ export default function OfferDetailsPage() {
           </div>
         </div>
 
+        {/* Property Images at the Top */}
+        <div className="mb-6 md:mb-8">
+          {renderImages()}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Property Images */}
-            <Card>
-              <CardHeader>
-                <CardTitle>صور العقار</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {renderImages()}
-              </CardContent>
-            </Card>
-
             {/* Property Details */}
             {renderPropertyDetails()}
           </div>

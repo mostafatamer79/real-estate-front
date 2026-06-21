@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Building, Plus, Trash2, Search, MapPin, Ruler, Bed, Bath, Home } from "lucide-react";
+import { Building, Plus, Trash2, Search, MapPin, Ruler, Bed, Bath, Home, Share2, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,17 +11,19 @@ import { Property } from "@/types/api";
 interface PropertyPortfolioProps {
   properties: Property[];
   loading: boolean;
-  onDelete?: (id: string) => void;
+  onToggleActive?: (id: string, isActive: boolean) => void;
   onView: (property: Property) => void;
   onCreate?: () => void;
+  onExportOffer?: (property: Property) => void;
 }
 
 export function PropertyPortfolio({
   properties,
   loading,
-  onDelete,
+  onToggleActive,
   onView,
-  onCreate
+  onCreate,
+  onExportOffer
 }: PropertyPortfolioProps) {
   const { t, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
@@ -105,14 +107,28 @@ export function PropertyPortfolio({
                             <span className="px-3 py-1 bg-slate-50 text-[10px] font-black uppercase tracking-wider rounded-lg text-slate-600 border border-slate-100 group-hover:border-slate-200 group-hover:bg-white transition-colors">
                                 {t(`property.type.${property.type}`) || property.type}
                             </span>
-                             {onDelete && (
+                              {onExportOffer && (
+                              <button 
+                                 className="w-8 h-8 flex items-center justify-center bg-white border border-gray-100 rounded-lg shadow-sm hover:bg-indigo-50 hover:border-indigo-100 hover:text-indigo-600 transition-all opacity-40 group-hover:opacity-100" 
+                                 title={t("pm.action.exportOffer")}
+                                 onClick={(e) => { e.stopPropagation(); onExportOffer(property); }}
+                             >
+                                 <Share2 className="w-4 h-4" />
+                             </button>
+                             )}
+                             {onToggleActive && (
                              <button 
-                                className="w-8 h-8 flex items-center justify-center bg-white border border-gray-100 rounded-lg shadow-sm hover:bg-red-50 hover:border-red-100 hover:text-red-600 transition-all opacity-40 group-hover:opacity-100" 
-                                onClick={(e) => { e.stopPropagation(); onDelete(property.id); }}
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                            )}
+                                className={`w-8 h-8 flex items-center justify-center bg-white border rounded-lg shadow-sm transition-all opacity-40 group-hover:opacity-100 ${
+                                  property.isActive 
+                                    ? 'hover:bg-slate-50 hover:border-slate-200 hover:text-slate-900 border-gray-100 text-slate-900' 
+                                    : 'hover:bg-amber-50 hover:border-amber-100 hover:text-amber-600 border-gray-100 text-slate-300'
+                                }`}
+                                title={property.isActive ? (language === 'ar' ? 'تعطيل العقار' : 'Deactivate Property') : (language === 'ar' ? 'تفعيل العقار' : 'Activate Property')}
+                                onClick={(e) => { e.stopPropagation(); onToggleActive(property.id, !property.isActive); }}
+                             >
+                                {property.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                             </button>
+                             )}
                         </div>
                      </div>
                      

@@ -32,6 +32,63 @@ export interface GlobalSettings {
     reportCoverUrl: string;
     logoHeight: number;
 
+    // Custom Page Style Properties
+    splashBg?: string;
+    splashLogoHeight?: string;
+    splashDuration?: string;
+    loginBg?: string;
+    loginCardBg?: string;
+    loginFontSize?: string;
+    csBg?: string;
+    csCardBg?: string;
+    csTextColor?: string;
+    csFontSize?: string;
+    csFontFamily?: string;
+    csEnabled?: boolean;
+    headerNotificationColor?: string;
+    headerNotificationSize?: string;
+    headerChatColor?: string;
+    headerChatSize?: string;
+    headerProfileColor?: string;
+    headerProfileSize?: string;
+    mapIconColor?: string;
+    mapIconSize?: string;
+    mapTitleColor?: string;
+    mapTitleSize?: string;
+    scanIconColor?: string;
+    scanIconSize?: string;
+    statsIconColor?: string;
+    statsIconSize?: string;
+    statsTitleColor?: string;
+    statsTitleSize?: string;
+    adsIconColor?: string;
+    adsIconSize?: string;
+    adsTitleColor?: string;
+    adsTitleSize?: string;
+    chartsIconColor?: string;
+    chartsIconSize?: string;
+    chartsTitleColor?: string;
+    chartsTitleSize?: string;
+    aboutIconColor?: string;
+    aboutIconSize?: string;
+    aboutTitleColor?: string;
+    aboutTitleSize?: string;
+    supportIconColor?: string;
+    supportIconSize?: string;
+    supportTitleColor?: string;
+    supportTitleSize?: string;
+    contactIconColor?: string;
+    contactIconSize?: string;
+    contactTitleColor?: string;
+    contactTitleSize?: string;
+    quickActionsIconColor?: string;
+    quickActionsIconSize?: string;
+    quickActionsTitleColor?: string;
+    quickActionsTitleSize?: string;
+    quickActionBg?: string;
+    quickActionRadius?: string;
+    quickActionFontSize?: string;
+
     // Pricing
     appointmentPrice: number;
     purchaseFeePercentage: number;
@@ -107,6 +164,61 @@ const defaultSettings: GlobalSettings = {
     logoBlackUrl: "/icons/black.png",
     reportCoverUrl: "",
     logoHeight: 40,
+
+    // Custom Page Style Default Values
+    splashBg: "#0b0f19",
+    splashLogoHeight: "120",
+    splashDuration: "3",
+    loginBg: "#0b0f19",
+    loginCardBg: "rgba(255,255,255,0.05)",
+    loginFontSize: "15",
+    csBg: "#f8fafc",
+    csCardBg: "#ffffff",
+    csFontSize: "15",
+    headerNotificationColor: "#94a3b8",
+    headerNotificationSize: "24",
+    headerChatColor: "#94a3b8",
+    headerChatSize: "24",
+    headerProfileColor: "#cbd5e1",
+    headerProfileSize: "14",
+    mapIconColor: "#94a3b8",
+    mapIconSize: "16",
+    mapTitleColor: "#cbd5e1",
+    mapTitleSize: "16",
+    scanIconColor: "#cbd5e1",
+    scanIconSize: "16",
+    statsIconColor: "#94a3b8",
+    statsIconSize: "16",
+    statsTitleColor: "#cbd5e1",
+    statsTitleSize: "16",
+    adsIconColor: "#94a3b8",
+    adsIconSize: "16",
+    adsTitleColor: "#cbd5e1",
+    adsTitleSize: "16",
+    chartsIconColor: "#94a3b8",
+    chartsIconSize: "16",
+    chartsTitleColor: "#cbd5e1",
+    chartsTitleSize: "16",
+    aboutIconColor: "#94a3b8",
+    aboutIconSize: "16",
+    aboutTitleColor: "#cbd5e1",
+    aboutTitleSize: "16",
+    supportIconColor: "#94a3b8",
+    supportIconSize: "16",
+    supportTitleColor: "#cbd5e1",
+    supportTitleSize: "16",
+    contactIconColor: "#94a3b8",
+    contactIconSize: "16",
+    contactTitleColor: "#cbd5e1",
+    contactTitleSize: "16",
+    quickActionsIconColor: "#94a3b8",
+    quickActionsIconSize: "40",
+    quickActionsTitleColor: "#cbd5e1",
+    quickActionsTitleSize: "16",
+    quickActionBg: "rgba(51, 65, 85, 0.6)",
+    quickActionRadius: "24",
+    quickActionFontSize: "14",
+
     appointmentPrice: 0,
     purchaseFeePercentage: 2.5,
     taxPercentage: 15,
@@ -132,6 +244,9 @@ const defaultSettings: GlobalSettings = {
         show_quickaction_offers: true,
         show_quickaction_orders: true,
         show_admin_stats: true,
+        show_cs_faq: true,
+        show_cs_channels: true,
+        show_cs_form: true,
     },
     detailsPartFlags: {},
     detailsPartMessages: {},
@@ -303,13 +418,69 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 "logoBlackUrl",
                 "reportCoverUrl",
                 "logoHeight",
+
+                // Custom dynamic styling keys
+                "splashBg",
+                "splashLogoHeight",
+                "splashDuration",
+                "loginBg",
+                "loginCardBg",
+                "loginFontSize",
+                "csBg",
+                "csCardBg",
+                "csFontSize",
+                "headerNotificationColor",
+                "headerNotificationSize",
+                "headerChatColor",
+                "headerChatSize",
+                "headerProfileColor",
+                "headerProfileSize",
+                "mapIconColor",
+                "mapIconSize",
+                "mapTitleColor",
+                "mapTitleSize",
+                "scanIconColor",
+                "scanIconSize",
+                "statsIconColor",
+                "statsIconSize",
+                "statsTitleColor",
+                "statsTitleSize",
+                "adsIconColor",
+                "adsIconSize",
+                "adsTitleColor",
+                "adsTitleSize",
+                "chartsIconColor",
+                "chartsIconSize",
+                "chartsTitleColor",
+                "chartsTitleSize",
+                "aboutIconColor",
+                "aboutIconSize",
+                "aboutTitleColor",
+                "aboutTitleSize",
+                "supportIconColor",
+                "supportIconSize",
+                "supportTitleColor",
+                "supportTitleSize",
+                "contactIconColor",
+                "contactIconSize",
+                "contactTitleColor",
+                "contactTitleSize",
+                "quickActionsIconColor",
+                "quickActionsIconSize",
+                "quickActionsTitleColor",
+                "quickActionsTitleSize",
+                "quickActionBg",
+                "quickActionRadius",
+                "quickActionFontSize",
             ];
             themeKeys.forEach((key) => {
-                entries.push({
-                    key: `theme_${key}`,
-                    value: String((current as any)[key]),
-                    description: `Setting: ${key}`,
-                });
+                if ((current as any)[key] !== undefined) {
+                    entries.push({
+                        key: `theme_${key}`,
+                        value: String((current as any)[key]),
+                        description: `Setting: ${key}`,
+                    });
+                }
             });
 
             // Pricing

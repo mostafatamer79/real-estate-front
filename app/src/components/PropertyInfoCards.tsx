@@ -126,7 +126,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                   group-hover:shadow-[0_2px_12px_rgba(99,102,241,0.25)]
                   transition-all duration-300
                 ">
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-5 w-5 text-slate-400" />
                 </div>
                 <CardTitle className="text-base font-bold tracking-tight text-slate-100 group-hover:text-white transition-colors">
                   {t('cards.prevOperations')}
@@ -246,7 +246,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                   group-hover:shadow-[0_2px_12px_rgba(16,185,129,0.2)]
                   transition-all duration-300
                 ">
-                  <Megaphone className="h-5 w-5" />
+                  <Megaphone className="h-5 w-5 text-slate-400" />
                 </div>
                 <CardTitle className="text-base font-bold tracking-tight text-slate-100 group-hover:text-white transition-colors">
                   {t('cards.dealsAds')}
