@@ -7,12 +7,12 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Package, 
-  MessageSquare, 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  Package,
+  MessageSquare,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
   ChevronRight,
   ArrowRight,
   User,
@@ -60,7 +60,7 @@ export default function MyServiceRequestsPage() {
 
   const handleSelfChat = async (requestId: string) => {
     try {
-      const response = await serviceRequestApi.getOrCreateSelfChat(requestId); 
+      const response = await serviceRequestApi.getOrCreateSelfChat(requestId);
       router.push(`/chat?roomId=${response.data.chatRoomId}`);
     } catch (error) {
       console.error('Error starting chat:', error);
@@ -86,12 +86,12 @@ export default function MyServiceRequestsPage() {
       cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
     });
     if (!ok) return;
-    
+
     try {
       const response = await serviceRequestApi.acceptDepartmentOffer(requestId, deptSlug);
       toast.success(language === 'ar' ? 'تم قبول العرض بنجاح' : 'Offer accepted successfully');
       setSelectedRequest(response.data);
-      fetchRequests(); 
+      fetchRequests();
     } catch (error) {
       console.error('Error accepting offer:', error);
       toast.error(t('common.error'));
@@ -116,11 +116,11 @@ export default function MyServiceRequestsPage() {
   if (selectedRequest) {
     const acceptedOffer = selectedRequest.metadata?.acceptedOffer;
     return (
-      <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="min-h-screen bg-slate-100" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Header />
         <main className="max-w-5xl mx-auto px-6 pt-24 pb-12">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
             onClick={() => setSelectedRequest(null)}
           >
@@ -146,7 +146,7 @@ export default function MyServiceRequestsPage() {
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   {getStatusBadge(selectedRequest.status)}
-                  <Button 
+                  <Button
                     variant="outline"
                     className="border-blue-200 text-blue-600 hover:bg-blue-50 gap-2 rounded-xl"
                     onClick={() => handleSelfChat(selectedRequest.id)}
@@ -186,7 +186,7 @@ export default function MyServiceRequestsPage() {
                     <DollarSign className="w-5 h-5 text-emerald-500" />
                     {language === 'ar' ? 'عروض الأسعار المتاحة' : 'Available Pricing Offers'}
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 gap-4">
                     {Object.entries(selectedRequest.departmentPrices || {}).map(([dept, data]) => {
                       const isAccepted = acceptedOffer?.dept === dept;
@@ -209,9 +209,9 @@ export default function MyServiceRequestsPage() {
                               {data.price} <span className="text-sm font-medium text-slate-500">{t('chat.currency')}</span>
                             </div>
                             <div className="flex gap-2">
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
+                              <Button
+                                variant="outline"
+                                size="sm"
                                 className="h-9 px-4 gap-2 rounded-lg hover:bg-slate-100 text-blue-600 border-blue-100"
                                 onClick={() => handleStaffChat(selectedRequest.id, data.addedBy)}
                               >
@@ -219,8 +219,8 @@ export default function MyServiceRequestsPage() {
                                 {language === 'ar' ? 'مراسلة العارض' : 'Chat Offerer'}
                               </Button>
                               {!isAccepted && !acceptedOffer && (
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   className="h-9 px-4 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm"
                                   onClick={() => handleAcceptOffer(selectedRequest.id, dept)}
                                 >
@@ -253,10 +253,19 @@ export default function MyServiceRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-white" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <Header />
-      
+
       <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
+        <Button
+          variant="ghost"
+          className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+          {language === 'ar' ? 'العودة للخدمات' : 'Back to Services'}
+        </Button>
+
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div>
             <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
@@ -267,7 +276,7 @@ export default function MyServiceRequestsPage() {
               {language === 'ar' ? 'إدارة ومتابعة طلبات الخدمات الخاصة بك في مكان واحد' : 'Manage and track your service requests in one place'}
             </p>
           </div>
-          <Button 
+          <Button
             onClick={() => router.push('/services')}
             className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 h-12 rounded-xl shadow-lg shadow-blue-200 text-lg font-bold"
           >
@@ -302,8 +311,8 @@ export default function MyServiceRequestsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {requests.map((request) => (
-              <div 
-                key={request.id} 
+              <div
+                key={request.id}
                 className="group bg-white rounded-3xl border border-slate-200 p-6 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-100 transition-all cursor-pointer relative overflow-hidden"
                 onClick={() => setSelectedRequest(request)}
               >

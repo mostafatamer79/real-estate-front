@@ -56,9 +56,9 @@ export default function Services() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
           onClick={() => router.push("/details")}
-          className="group flex items-center gap-2 text-white/50 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-widest mb-6 sm:mb-8"
+          className="group flex items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest mb-6 sm:mb-8"
         >
-          <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center transition-all duration-200">
+          <div className="w-6 h-6 rounded-full bg-white/[0.02] border border-white/[0.06] group-hover:bg-white/[0.05] flex items-center justify-center transition-all duration-200">
             <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
           </div>
           {t("common.back")}
@@ -112,12 +112,12 @@ export default function Services() {
                 if (disabled) return;
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  router.push(`/services/form?type=${card.id}`);
+                  router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${card.id}`);
                 }
               }}
               onClick={() => {
                 if (disabled) return;
-                router.push(`/services/form?type=${card.id}`);
+                router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${card.id}`);
               }}
               className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-white/[0.02] border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[140px] sm:min-h-[160px] overflow-hidden transition-all duration-300 ${
                 disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-white/20 hover:-translate-y-0.5'

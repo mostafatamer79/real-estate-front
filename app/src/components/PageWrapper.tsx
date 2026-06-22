@@ -32,6 +32,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         pathname?.startsWith('/department-hub') || 
         pathname?.startsWith('/admin') || 
         pathname?.startsWith('/internal') || 
+        pathname?.startsWith('/services') || 
         pathname?.startsWith('/offers') || 
         pathname?.startsWith('/orders') || 
         pathname === '/login';

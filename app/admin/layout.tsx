@@ -112,6 +112,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'operations', href: '/admin/operations', icon: BarChart3, label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },
         { id: 'trends', href: '/admin/trends', icon: LineChart, label: isRtl ? ' تحليلات والاتجاهات' : 'Analytics & Trends' },
         { id: 'customer-service', href: '/admin/customer-service', icon: Headphones, label: isRtl ? ' خدمة العملاء' : 'Customer Service' },
+        { id: 'chat', href: '/internal/chat', icon: MessageSquare, label: isRtl ? 'الرسائل والمحادثات' : 'Messages & Chats' },
         { id: 'settings', href: '/admin/settings', icon: Settings, label: isRtl ? 'الإعدادات والتحكم' : 'Settings & Control' },
       ]
     },

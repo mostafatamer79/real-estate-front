@@ -40,6 +40,12 @@ export const chatApi = {
     return response.data;
   },
 
+  // Create or get direct chat room
+  async getOrCreateDirectRoom(targetUserId: string) {
+    const response = await api.post('/chat/rooms/direct', { targetUserId });
+    return response.data;
+  },
+
   // Mark room as read
   async markRoomAsRead(roomId: string) {
     const response = await api.post(`/chat/rooms/${roomId}/read`);

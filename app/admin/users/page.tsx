@@ -336,7 +336,7 @@ export default function UsersPage() {
             });
             const data = await res.json();
             if (data.id) {
-                router.push(`/chat/${data.id}`);
+                router.push(`/internal/chat/${data.id}`);
             } else {
                 toast.error(isRtl ? "فشل فتح المحادثة" : "Failed to open chat");
             }

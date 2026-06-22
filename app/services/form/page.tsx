@@ -65,6 +65,7 @@ function ServiceFormContent() {
   const { user, token, isAuthenticated } = useAuth();
   const { settings } = useSettings();
   const serviceType = (searchParams.get("type") || "postPurchase") as ServiceType;
+  const legalCategory = searchParams.get("category");
   const config = serviceConfig[serviceType];
 
   const moduleKey = `services_${serviceType}`;
@@ -81,6 +82,11 @@ function ServiceFormContent() {
   // "Soon" modules are visible as disabled; direct navigation is blocked unless admin explicitly previews.
   if (status === 'soon' && !(isAdmin && isPreview)) {
     return <ComingSoonOverlay sectionName={config?.title || "الخدمات"} message={msg} isAdmin={isAdmin} />;
+  }
+
+  if (serviceType === "legal" && !legalCategory) {
+    router.replace("/services/legal");
+    return null;
   }
 
   // Look up price from global settings
@@ -189,7 +195,9 @@ function ServiceFormContent() {
   };
 
   return (
-    <section className="w-full min-h-screen bg-white text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-slate-200" dir="rtl">
+
+
+    <section className="w-full min-h-screen bg-slate-45 text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-slate-200" dir="rtl">
 
       {/* Back nav */}
       <motion.div
@@ -221,7 +229,7 @@ function ServiceFormContent() {
         {/* Legal Flow */}
         {serviceType === "legal" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
-            <LegalRequestFlow />
+            <LegalRequestFlow initialCategory={legalCategory} onBackToSelection={() => router.push("/services/legal")} />
           </motion.div>
         )}
 
@@ -307,13 +315,13 @@ function ServiceFormContent() {
                   {formData.service === "أخرى" && (
                     <motion.div variants={itemVariants} className="space-y-2 md:col-span-2 animate-in slide-in-from-top-2 duration-300">
                       <label className={labelClass}>اكتب نوع الخدمة المطلوبة</label>
-                      <input 
-                        type="text" 
-                        className={inputClass} 
-                        style={{ height: "3.25rem" }} 
-                        value={formData.otherService} 
-                        onChange={(e) => handleInputChange("otherService", e.target.value)} 
-                        placeholder="ما هي الخدمة التي تحتاجها؟" 
+                      <input
+                        type="text"
+                        className={inputClass}
+                        style={{ height: "3.25rem" }}
+                        value={formData.otherService}
+                        onChange={(e) => handleInputChange("otherService", e.target.value)}
+                        placeholder="ما هي الخدمة التي تحتاجها؟"
                       />
                     </motion.div>
                   )}
@@ -329,12 +337,12 @@ function ServiceFormContent() {
                             { id: 'video', label: 'فيديو' },
                             { id: 'live', label: 'لايف' }
                         ].map((opt) => (
-                            <div 
+                            <div
                                 key={opt.id}
                                 onClick={() => handleInputChange("visitPhotographyType", opt.id)}
                                 className={`flex items-center justify-center p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
-                                    formData.visitPhotographyType === opt.id 
-                                    ? "bg-slate-950 text-white border-slate-950" 
+                                    formData.visitPhotographyType === opt.id
+                                    ? "bg-slate-950 text-white border-slate-950"
                                     : "bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400"
                                 }`}
                             >
@@ -361,7 +369,7 @@ function ServiceFormContent() {
                 const price = getServicePrice(formData.service);
                 const qty = parseInt(formData.quantity || "1") || 1;
                 return (
-                  <motion.div 
+                  <motion.div
                     key={formData.service}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}

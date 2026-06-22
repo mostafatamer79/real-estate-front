@@ -9,7 +9,7 @@ import {
     LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon,
     ChevronLeft, ChevronRight, Globe, Languages,
     Bell, FileText, Mail, Share2, LifeBuoy, KeyRound,
-    Volume2, Plus, Trash2, Eye, BookOpen, Play, UserCheck, Info, Sliders
+    Plus, Trash2, Eye, BookOpen, Play, UserCheck, Info, Sliders
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -919,215 +919,326 @@ function TextTab({
     // Group definition for structured editing
     const STRUCTURED_SECTIONS = [
         {
-            id: 'portal',
-            title: 'بوابة الدخول والتحقق',
+            id: 'entry_portal',
+            title: '١- بوابة الدخول',
             icon: KeyRound,
             subcategories: [
                 {
                     id: 'welcome_screen',
-                    title: 'الواجهة الأولى (التشغيلية)',
+                    title: 'الواجهة الأولى',
                     icon: Play,
                     keys: ['project.name', 'header.welcome'],
                     controls: [
-                        { key: 'welcomeBg', label: 'لون الخلفية', type: 'color', default: '#0f172a' },
+                        { key: 'welcomeBg', label: 'درجة اللون', type: 'color', default: '#0f172a' },
                         { key: 'welcomeColor', label: 'لون النص', type: 'color', default: '#ffffff' },
-                        { key: 'welcomeLogoSize', label: 'حجم الشعار (بكسل)', type: 'range', min: 40, max: 200, default: '100px' },
-                        { key: 'welcomeLogoDuration', label: 'مدة الظهور (ثواني)', type: 'range', min: 1, max: 10, default: '3s' }
+                        { key: 'welcomeLogoSize', label: 'حجم اللوقو', type: 'range', min: 40, max: 220, default: '100px' },
+                        { key: 'welcomeLogoDuration', label: 'مدة ظهور اللوقو واختفائه', type: 'range', min: 1, max: 10, default: '3s' }
                     ]
                 },
                 {
                     id: 'login_screen',
-                    title: 'تسجيل الدخول والتحقق OTP',
+                    title: 'تسجيل الدخول',
                     icon: ShieldCheck,
-                    keys: ['header.login', 'action_login', 'action_register', 'auth.login_title', 'otp.title'],
+                    keys: ['header.login', 'auth.login_title', 'otp.title', 'chat.email', 'profile.mobile', 'profile.email'],
                     controls: [
-                        { key: 'loginBg', label: 'لون خلفية المربع', type: 'color', default: '#ffffff' },
-                        { key: 'loginColor', label: 'لون النص الرئيسي', type: 'color', default: '#0f172a' },
-                        { key: 'loginFontSize', label: 'حجم خط النصوص', type: 'select', options: ['12px', '14px', '15px', '16px', '18px'], default: '15px' },
-                        { key: 'loginEmailEnabled', label: 'تفعيل الدخول بالبريد الإلكتروني', type: 'toggle', default: true },
-                        { key: 'loginPhoneEnabled', label: 'تفعيل الدخول برقم الهاتف', type: 'toggle', default: false }
+                        { key: 'loginBg', label: 'لون الخلفية', type: 'color', default: '#ffffff' },
+                        { key: 'loginColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'loginFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '15px', '16px', '18px'], default: '15px' },
+                        { key: 'loginEmailEnabled', label: 'إظهار البريد الإلكتروني', type: 'toggle', default: true },
+                        { key: 'loginPhoneEnabled', label: 'إظهار رقم الجوال', type: 'toggle', default: false }
                     ]
-                }
-            ]
-        },
-        {
-            id: 'support',
-            title: 'خدمة العملاء',
-            icon: LifeBuoy,
-            subcategories: [
+                },
                 {
                     id: 'customer_service',
-                    title: 'تفاصيل خدمة العملاء والدعم',
+                    title: 'خدمة العملاء',
                     icon: LifeBuoy,
-                    keys: ['header.customerService', 'footer.support', 'contact_support_desc'],
+                    keys: ['header.customerService', 'footer.support', 'footer.contact_us', 'footer.contact', 'footer.newsletter'],
                     controls: [
-                        { key: 'csBg', label: 'لون خلفية الدعم', type: 'color', default: '#f8fafc' },
-                        { key: 'csTextColor', label: 'لون نص الدعم', type: 'color', default: '#0f172a' },
-                        { key: 'csFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px'], default: '14px' },
+                        { key: 'csBg', label: 'لون الخلفية', type: 'color', default: '#f8fafc' },
+                        { key: 'csTextColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'csFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
                         { key: 'csFontFamily', label: 'نوع الخط', type: 'select', options: ['system-ui', 'Arial', 'Tahoma', "'Noto Sans Arabic'"], default: 'system-ui' },
-                        { key: 'csEnabled', label: 'تمكين قسم خدمة العملاء', type: 'toggle', default: true }
+                        { key: 'csEnabled', label: 'إظهار القسم', type: 'toggle', default: true }
                     ]
                 }
             ]
         },
         {
             id: 'top_bar',
-            title: 'الشريط العلوي للموقع',
+            title: '٢- الشريط العلوي',
             icon: LayoutGrid,
             subcategories: [
                 {
                     id: 'notifications',
-                    title: 'الإشعارات والتنبيهات',
+                    title: 'الإشعارات',
                     icon: Bell,
-                    keys: ['admin.nav.notifications', 'admin.notifications.title'],
+                    keys: ['notification.empty', 'chat.refresh', 'chat.noResults'],
                     controls: [
-                        { key: 'navBellColor', label: 'لون جرس الإشعارات', type: 'color', default: '#64748b' },
-                        { key: 'navBadgeBg', label: 'لون خلفية عدد الإشعارات', type: 'color', default: '#ef4444' },
-                        { key: 'navBadgeText', label: 'لون رقم عدد الإشعارات', type: 'color', default: '#ffffff' },
-                        { key: 'notificationsEnabled', label: 'تمكين الإشعارات المباشرة', type: 'toggle', default: true }
+                        { key: 'headerNotificationColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
+                        { key: 'headerNotificationSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
+                        { key: 'navBadgeBg', label: 'لون شارة العدد', type: 'color', default: '#ef4444' },
+                        { key: 'navBadgeText', label: 'لون رقم الشارة', type: 'color', default: '#ffffff' }
                     ]
                 },
                 {
-                    id: 'sounds',
-                    title: 'الصوت والتحذيرات',
-                    icon: Volume2,
-                    keys: ['admin.warning.sound_error', 'admin.warning.sound_success'],
+                    id: 'chat_center',
+                    title: 'المحادثات',
+                    icon: Mail,
+                    keys: ['chat.title', 'chat.search', 'chat.startNew', 'chat.typeMessage', 'internal.chat.centerTitle', 'internal.chat.centerSubtitle'],
                     controls: [
-                        { key: 'alertVolume', label: 'مستوى صوت التنبيهات', type: 'range', min: 0, max: 100, default: '50' },
-                        { key: 'soundEffectsEnabled', label: 'تمكين المؤثرات الصوتية', type: 'toggle', default: true },
-                        { key: 'warningSoundType', label: 'نغمة التحذير', type: 'select', options: ['default', 'beep', 'soft', 'none'], default: 'default' }
+                        { key: 'headerChatColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
+                        { key: 'headerChatSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
+                        { key: 'chatTitleSize', label: 'حجم عناوين المحادثات', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'chatTextSize', label: 'حجم النصوص الداخلية', type: 'select', options: ['11px', '12px', '14px', '16px'], default: '12px' }
                     ]
                 },
                 {
-                    id: 'languages',
-                    title: 'اللغات والاختصارات',
-                    icon: Globe,
-                    keys: ['admin.nav.language', 'language.active_label'],
-                    controls: [
-                        { key: 'defaultLanguage', label: 'اللغة الافتراضية للنظام', type: 'select', options: ['ar', 'en'], default: 'ar' },
-                        { key: 'showLanguageSwitcher', label: 'إظهار مبدل اللغات في الأعلى', type: 'toggle', default: true }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'admin_dashboard_group',
-            title: 'لوحة التحكم للمدير',
-            icon: Settings2,
-            subcategories: [
-                {
-                    id: 'sidebar',
-                    title: 'القائمة الجانبية',
-                    icon: LayoutGrid,
-                    keys: ['admin.nav.brand', 'admin.identity.badge', 'admin.nav.dashboard', 'admin.nav.users', 'admin.nav.settings'],
-                    controls: [
-                        { key: 'sidebarWidth', label: 'عرض القائمة (بكسل)', type: 'range', min: 220, max: 320, default: '260px' },
-                        { key: 'sidebarBg', label: 'لون الخلفية', type: 'color', default: '#0f172a' },
-                        { key: 'sidebarActiveBg', label: 'لون العنصر النشط', type: 'color', default: '#1e293b' },
-                        { key: 'sidebarTextSize', label: 'حجم خط العناصر', type: 'select', options: ['12px', '13px', '14px', '15px'], default: '13px' }
-                    ]
-                },
-                {
-                    id: 'system_settings',
-                    title: 'إعدادات النظام والتحكم',
-                    icon: Settings2,
-                    keys: ['admin.nav.settings', 'admin.services_mgmt.title'],
-                    controls: [
-                        { key: 'settingsPrimaryColor', label: 'اللون الرئيسي للأزرار والتحديد', type: 'color', default: '#0f172a' },
-                        { key: 'settingsHeadingSize', label: 'حجم العناوين الرئيسية', type: 'select', options: ['18px', '20px', '24px'], default: '20px' }
-                    ]
-                },
-                {
-                    id: 'users_mgmt',
-                    title: 'إدارة المستخدمين والتحقق',
+                    id: 'user_page',
+                    title: 'صفحة المستخدم',
                     icon: UserCheck,
-                    keys: ['admin.nav.users', 'admin.identity.manager'],
+                    keys: ['profile.title', 'profile.accountInfo', 'profile.save', 'profile.email', 'profile.mobile', 'internal.profile.title'],
                     controls: [
-                        { key: 'verifiedBadgeColor', label: 'لون شارة التحقق الأخضر', type: 'color', default: '#10b981' },
-                        { key: 'userRoleLabelSize', label: 'حجم خط شارة الدور', type: 'select', options: ['10px', '11px', '12px'], default: '10px' }
+                        { key: 'headerProfileColor', label: 'لون الأيقونة والنص', type: 'color', default: '#cbd5e1' },
+                        { key: 'headerProfileSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 32, default: '14' },
+                        { key: 'profileTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' },
+                        { key: 'profileTextSize', label: 'حجم النصوص', type: 'select', options: ['12px', '14px', '16px'], default: '14px' }
                     ]
                 }
             ]
         },
         {
-            id: 'stats_dashboards',
-            title: 'الرئيسية ولوحات العرض',
+            id: 'home_page',
+            title: '٣- الصفحة الرئيسية',
             icon: Sparkles,
             subcategories: [
                 {
-                    id: 'subscribers_dashboard',
-                    title: 'لوحة عرض المشتركين والعملاء',
-                    icon: UserCheck,
-                    keys: ['admin.nav.subscriptions', 'admin.nav.transactions'],
+                    id: 'home_map',
+                    title: 'الخريطة التفاعلية',
+                    icon: Globe,
+                    keys: ['details.map.title', 'home.scan', 'home.scanDesc'],
                     controls: [
-                        { key: 'subscribersCardBg', label: 'لون خلفية كرت المشتركين', type: 'color', default: '#ffffff' },
-                        { key: 'subscribersTextSize', label: 'حجم الخط في الجدول', type: 'select', options: ['11px', '12px', '13px'], default: '12px' }
+                        { key: 'mapIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'mapIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'mapTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'mapTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
                     ]
                 },
                 {
-                    id: 'property_dashboard',
-                    title: 'لوحة عرض العقارات والمعلنين',
-                    icon: ImageIcon,
-                    keys: ['admin.nav.offers', 'admin.offers.title'],
-                    controls: [
-                        { key: 'propertyCardBg', label: 'لون كرت العرض', type: 'color', default: '#ffffff' },
-                        { key: 'propertyPriceColor', label: 'لون نص سعر العقار', type: 'color', default: '#0f172a' }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'contracts_finance',
-            title: 'عقود وحسابات مالية',
-            icon: DollarSign,
-            subcategories: [
-                {
-                    id: 'property_cards',
-                    title: 'بطاقات العقارات والتفاصيل',
+                    id: 'home_stats',
+                    title: 'إحصائيات العمليات',
                     icon: FileText,
-                    keys: ['bm.prop.age', 'bm.order.price', 'bm.order.city', 'bm.order.neighborhood'],
+                    keys: ['home.controlPanel', 'details.header.title', 'details.header.highlight'],
                     controls: [
-                        { key: 'cardRadiusVal', label: 'استدارة بطاقة العقار', type: 'range', min: 8, max: 32, default: '24px' },
-                        { key: 'cardBorderColor', label: 'لون إطار البطاقة', type: 'color', default: '#e2e8f0' },
-                        { key: 'badgeSoonBg', label: 'خلفية شارة "قريباً"', type: 'color', default: '#ffffff' },
-                        { key: 'badgeSoonText', label: 'لون نص شارة "قريباً"', type: 'color', default: '#000000' }
+                        { key: 'statsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'statsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'statsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'statsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
                     ]
                 },
                 {
-                    id: 'wallet_finance',
-                    title: 'المحفظة والعمليات والاشتراكات',
-                    icon: DollarSign,
-                    keys: ['admin.nav.wallet', 'wallet.invoices.title', 'wallet.commission.title'],
+                    id: 'home_ads',
+                    title: 'الإعلانات',
+                    icon: ImageIcon,
+                    keys: ['offers.title', 'offers.allOffers', 'offers.details', 'footer.offers'],
                     controls: [
-                        { key: 'walletCardBg', label: 'خلفية كرت المحفظة', type: 'color', default: '#0f172a' },
-                        { key: 'walletBalanceColor', label: 'لون الرقم المالي للمحفظة', type: 'color', default: '#10b981' }
+                        { key: 'adsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'adsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'adsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'adsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                    ]
+                },
+                {
+                    id: 'home_analytics',
+                    title: 'التحليلات والاتجاهات',
+                    icon: Zap,
+                    keys: ['details.charts.title', 'scan.footer.update', 'scan.footer.found'],
+                    controls: [
+                        { key: 'chartsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'chartsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'chartsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'chartsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                    ]
+                },
+                {
+                    id: 'home_about',
+                    title: 'عن المنصة',
+                    icon: Info,
+                    keys: ['footer.brand_desc', 'footer.rights', 'project.name'],
+                    controls: [
+                        { key: 'aboutIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'aboutIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'aboutTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'aboutTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                    ]
+                },
+                {
+                    id: 'home_support',
+                    title: 'المساعدة والدعم',
+                    icon: LifeBuoy,
+                    keys: ['footer.support', 'footer.newsletter', 'footer.systems_ok'],
+                    controls: [
+                        { key: 'supportIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'supportIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'supportTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'supportTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                    ]
+                },
+                {
+                    id: 'home_contact',
+                    title: 'اتصل بنا',
+                    icon: Mail,
+                    keys: ['footer.contact', 'footer.contact_us', 'footer.address', 'footer.newsletter', 'footer.systems_ok'],
+                    controls: [
+                        { key: 'contactIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'contactIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                        { key: 'contactTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'contactTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
                     ]
                 }
             ]
         },
         {
-            id: 'legal_builder',
-            title: 'القانونية وبناء المنصة',
+            id: 'real_estate_departments',
+            title: '٤- الإدارات العقارية',
             icon: BookOpen,
             subcategories: [
                 {
-                    id: 'privacy_terms',
-                    title: 'سياسة الخصوصية والشروط',
-                    icon: BookOpen,
-                    keys: ['admin.nav.legal', 'footer.terms', 'footer.usage', 'footer.permits'],
+                    id: 'dept_property',
+                    title: 'إدارة الأملاك',
+                    icon: LayoutGrid,
+                    keys: ['header.property_management', 'footer.management', 'pm.orders', 'pm.offers'],
                     controls: [
-                        { key: 'legalHeadingColor', label: 'لون عناوين البنود', type: 'color', default: '#0f172a' },
-                        { key: 'legalContentSize', label: 'حجم خط بنود الشروط', type: 'select', options: ['13px', '14px', '15px', '16px'], default: '14px' }
+                        { key: 'deptPropertyColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'deptPropertySize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'deptPropertyIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'deptPropertyIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
                     ]
                 },
                 {
-                    id: 'footer_builder',
-                    title: 'الفوتر وبناء الروابط',
-                    icon: LayoutGrid,
-                    keys: ['footer.rights', 'footer.brand_desc', 'footer.address', 'footer.quick_links'],
+                    id: 'dept_marketing',
+                    title: 'إدارة التسويق',
+                    icon: Share2,
+                    keys: ['header.marketing_management', 'marketing.header.badge', 'marketing.header.desc', 'marketing.tab.requests'],
                     controls: [
-                        { key: 'footerBgColor', label: 'لون خلفية الفوتر', type: 'color', default: '#f8fafc' },
-                        { key: 'footerTextColor', label: 'لون نصوص الفوتر', type: 'color', default: '#64748b' }
+                        { key: 'deptMarketingColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'deptMarketingSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'deptMarketingIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'deptMarketingIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'dept_legal',
+                    title: 'الإدارة القانونية',
+                    icon: ShieldQuestion,
+                    keys: ['header.legal_management', 'footer.terms', 'footer.usage', 'footer.permits'],
+                    controls: [
+                        { key: 'deptLegalColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'deptLegalSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'deptLegalIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'deptLegalIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'dept_finance',
+                    title: 'الإدارة المالية',
+                    icon: DollarSign,
+                    keys: ['header.financial_management', 'wallet.invoices.title', 'wallet.commission.title', 'wallet.balance.label'],
+                    controls: [
+                        { key: 'deptFinanceColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'deptFinanceSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'deptFinanceIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'deptFinanceIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'dept_subscriptions',
+                    title: 'الاشتراكات والباقات',
+                    icon: BookOpen,
+                    keys: ['sub.public.quickAction', 'sub.tab.list', 'pm.subscriptions', 'internal.nav.subscriptions'],
+                    controls: [
+                        { key: 'deptSubscriptionsColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                        { key: 'deptSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'deptSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'deptSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 'quick_access',
+            title: '٥- الوصول السريع',
+            icon: Smartphone,
+            subcategories: [
+                {
+                    id: 'quick_access_main',
+                    title: 'الوصول السريع',
+                    icon: Zap,
+                    keys: ['details.quickActions.title', 'footer.quick_links'],
+                    controls: [
+                        { key: 'quickActionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickActionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 20, max: 72, default: '40' },
+                        { key: 'quickActionsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                        { key: 'quickActionsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                    ]
+                },
+                {
+                    id: 'quick_subscriptions',
+                    title: 'الاشتراكات',
+                    icon: BookOpen,
+                    keys: ['sub.public.quickAction', 'pm.subscriptions', 'internal.nav.subscriptions'],
+                    controls: [
+                        { key: 'quickSubscriptionsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                        { key: 'quickSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'quickSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'quick_wallet',
+                    title: 'المحفظة',
+                    icon: DollarSign,
+                    keys: ['wallet.wallet', 'wallet.invoices', 'wallet.commission', 'wallet.files', 'wallet.invest'],
+                    controls: [
+                        { key: 'quickWalletColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                        { key: 'quickWalletSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'quickWalletIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickWalletIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'quick_services',
+                    title: 'الخدمات الإدارية',
+                    icon: Settings2,
+                    keys: ['services.title', 'services.platformServices', 'services.legal', 'services.marketing', 'services.construction', 'services.postPurchase'],
+                    controls: [
+                        { key: 'quickServicesColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                        { key: 'quickServicesSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'quickServicesIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickServicesIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'quick_offers',
+                    title: 'العروض',
+                    icon: ImageIcon,
+                    keys: ['action.offers', 'offers.title', 'offers.allOffers', 'offers.myOffers'],
+                    controls: [
+                        { key: 'quickOffersColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                        { key: 'quickOffersSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'quickOffersIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickOffersIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                    ]
+                },
+                {
+                    id: 'quick_requests',
+                    title: 'الطلبات',
+                    icon: FileText,
+                    keys: ['action.requests', 'orders.title', 'orders.myOrders', 'header.myRequests', 'chat.myRequests'],
+                    controls: [
+                        { key: 'quickRequestsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                        { key: 'quickRequestsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                        { key: 'quickRequestsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                        { key: 'quickRequestsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
                     ]
                 }
             ]

@@ -22,7 +22,7 @@ import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCirc
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-type TabKey = "faqs" | "feedback";
+type TabKey = "faqs" | "feedback" | "chat";
 
 export default function AdminCustomerServicePage() {
   const { language, t } = useLanguage();
@@ -426,7 +426,18 @@ export default function AdminCustomerServicePage() {
               fontFamily: settings.csFontFamily || undefined,
             }}
           >
-            {t("admin.customer_service.tabs.feedback") || (isRtl ? "الرسائل" : "Feedback")}
+            {t("admin.customer_service.tabs.feedback") || (isRtl ? "الاستفسارات" : "Inquiries")}
+          </Button>
+          <Button 
+            type="button" 
+            variant="outline"
+            className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+            onClick={() => router.push("/internal/chat")}
+            style={{
+              fontFamily: settings.csFontFamily || undefined,
+            }}
+          >
+            {isRtl ? "الرسائل والمحادثات" : "Messages & Chats"}
           </Button>
           <Button 
             type="button" 

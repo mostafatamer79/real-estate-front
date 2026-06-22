@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useSettings } from '@/context/SettingsContext';
 
 export default function HomePage() {
-  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignIn, setShowSignIn] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const { settings, isLoading } = useSettings();
@@ -28,23 +28,19 @@ export default function HomePage() {
         router.push('/details');
       }
     } else if (!showSignIn) {
-      const duration = settings.splashDuration ? (Number(settings.splashDuration) * 1000) : 3000;
-      const timer = setTimeout(() => {
-        setShowSignIn(true);
-      }, duration);
-      return () => clearTimeout(timer);
+      setShowSignIn(true);
     }
-  }, [settings.splashDuration, showSignIn]);
+  }, [showSignIn, router]);
 
   return (
     <section 
       className='w-full h-screen flex flex-col items-center justify-center relative overflow-hidden' 
       dir="rtl"
       style={{ 
-        backgroundImage: "url('/cover.jpeg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat"
+        // backgroundImage: "url('/cover.jpeg')",
+        // backgroundSize: "cover",
+        // backgroundPosition: "center",
+        // backgroundRepeat: "no-repeat"
       }}
     >
       {/* Dark overlay to match splash theme and keep text readable */}

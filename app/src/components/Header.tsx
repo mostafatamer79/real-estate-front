@@ -113,7 +113,8 @@ export default function Header() {
       '/wallet',
       '/department-hub',
       '/login',
-      '/internal'
+      '/internal',
+      '/services'
     ];
     if (hiddenPatterns.some(pattern => pathname.startsWith(pattern))) return true;
     if (pathname === '/offers' || pathname === '/orders') return true;

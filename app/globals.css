@@ -272,3 +272,25 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(105vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--max-opacity, 0.08);
+  }
+  90% {
+    opacity: var(--max-opacity, 0.08);
+  }
+  100% {
+    transform: translateY(-15vh) translateX(var(--drift, 50px)) rotate(var(--rotate, 360deg));
+    opacity: 0;
+  }
+}
+
+.animate-float-particle {
+  animation: floatParticle var(--duration, 30s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}

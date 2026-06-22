@@ -28,30 +28,30 @@ const initialContractPartyState = {
 };
 
 // ─── Shared style tokens — navbar palette ───────────────────────────────────
-const INP = "w-full h-12 bg-slate-950 border border-white/10 hover:border-white/20 focus:border-white/30 rounded-xl px-4 text-white text-sm font-medium placeholder:text-white/20 focus:outline-none transition-all duration-200";
-const LBL = "text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1.5 block";
-const CARD = "bg-white/[0.02] border border-white/[0.07] rounded-2xl p-5 space-y-4";
+const INP = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
+const LBL = "text-[9px] font-black text-slate-500 uppercase tracking-[0.22em] mb-2 block";
+const CARD = "bg-white border border-slate-200 rounded-[2rem] p-6 space-y-4 shadow-sm";
 
 const SectionDivider = ({ label }: { label: string }) => (
   <div className="flex items-center gap-4 py-1">
-    <div className="h-px flex-1 bg-white/[0.06]" />
-    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">{label}</span>
-    <div className="h-px flex-1 bg-white/[0.06]" />
+    <div className="h-px flex-1 bg-slate-200" />
+    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">{label}</span>
+    <div className="h-px flex-1 bg-slate-200" />
   </div>
 );
 
 const UploadRow = ({ label, sub }: { label: string; sub?: string }) => (
-  <div className="flex items-center justify-between p-4 bg-slate-950 border border-white/[0.07] rounded-xl">
+  <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
     <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-        <Upload className="w-4 h-4 text-white/30" />
+      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+        <Upload className="w-4 h-4 text-slate-500" />
       </div>
       <div>
-        <p className="text-xs font-bold text-white/70">{label}</p>
-        {sub && <p className="text-[9px] text-white/25 mt-0.5">{sub}</p>}
+        <p className="text-xs font-bold text-slate-900">{label}</p>
+        {sub && <p className="text-[9px] text-slate-400 mt-0.5">{sub}</p>}
       </div>
     </div>
-    <button className="h-8 px-3 bg-white/5 border border-white/10 hover:border-white/20 rounded-lg text-[10px] font-black text-white/50 hover:text-white/80 transition-all flex items-center gap-1.5">
+    <button className="h-8 px-3 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-[10px] font-black text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
       <Upload className="w-3 h-3" />
       رفع
     </button>
@@ -59,18 +59,32 @@ const UploadRow = ({ label, sub }: { label: string; sub?: string }) => (
 );
 
 const DropZone = ({ label, sub }: { label: string; sub?: string }) => (
-  <div className="p-7 border border-dashed border-white/10 hover:border-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer group">
-    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors">
-      <Upload className="w-5 h-5 text-white/25 group-hover:text-white/50 transition-colors" />
+  <div className="p-7 border border-dashed border-slate-200 hover:border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer group">
+    <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center group-hover:border-slate-300 transition-colors">
+      <Upload className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
     </div>
     <div className="text-center">
-      <p className="text-xs font-bold text-white/50 group-hover:text-white/70 transition-colors">{label}</p>
-      {sub && <p className="text-[9px] text-white/20 mt-0.5">{sub}</p>}
+      <p className="text-xs font-bold text-slate-600 group-hover:text-slate-900 transition-colors">{label}</p>
+      {sub && <p className="text-[9px] text-slate-400 mt-0.5">{sub}</p>}
     </div>
   </div>
 );
 
-export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { onSuccessRedirect?: string }) {
+type LegalRequestFlowProps = {
+  onSuccessRedirect?: string;
+  initialCategory?: string | null;
+  selectionOnly?: boolean;
+  onCategorySelect?: (category: string) => void;
+  onBackToSelection?: () => void;
+};
+
+export default function LegalRequestFlow({
+  onSuccessRedirect = "/wallet",
+  initialCategory = null,
+  selectionOnly = false,
+  onCategorySelect,
+  onBackToSelection,
+}: LegalRequestFlowProps) {
   const router = useRouter();
   const { user, token, isAuthenticated } = useAuth();
   const { settings } = useSettings();
@@ -83,7 +97,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
   const moduleMessage = (k: string) => (settings.moduleMessages as any)?.[k] || '';
   const isAdmin = (user as any)?.role === 'admin';
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [disputeData, setDisputeData] = useState({
@@ -145,9 +159,9 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                       contractData.type === "أخرى" ? `عقد - ${contractData.otherType}` : `عقد - ${contractData.type}`;
         finalData = contractData;
       } else if (selectedCategory === "documentation") { serviceType = "توثيق"; finalData = documentationData; }
-      else { 
-        serviceType = otherData.type === "أخرى" ? `خدمة قانونية - ${otherData.customType}` : `خدمة قانونية - ${otherData.type}`; 
-        finalData = otherData; 
+      else {
+        serviceType = otherData.type === "أخرى" ? `خدمة قانونية - ${otherData.customType}` : `خدمة قانونية - ${otherData.type}`;
+        finalData = otherData;
       }
 
       const requestData = {
@@ -157,25 +171,25 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
         city: user?.city || finalData.party1?.city || "",
         district: user?.district || finalData.party1?.district || "",
         quantity: 1,
-        description: selectedCategory === "disputes" ? 
+        description: selectedCategory === "disputes" ?
                      `[${disputeData.disputeType === 'اخرى' ? disputeData.otherDisputeType : disputeData.disputeType}]\n${disputeData.description}` :
-                     selectedCategory === "contracts" ? 
+                     selectedCategory === "contracts" ?
                      (contractData.type === "مراجعة العقود" ? "طلب مراجعة عقد" : `[${serviceType}]\n${contractData.details.services}`) :
-                     selectedCategory === "other" ? 
-                     (otherData.type === "استشارات قانونية" ? `[استشارة] ${otherData.topic}` : 
+                     selectedCategory === "other" ?
+                     (otherData.type === "استشارات قانونية" ? `[استشارة] ${otherData.topic}` :
                       otherData.type === "تقارير قانونية" ? `[تقرير] ${otherData.name} - ${otherData.propertyType}` :
-                      `[طلب مخصص] ${otherData.customType}\n${otherData.details}`) : 
+                      `[طلب مخصص] ${otherData.customType}\n${otherData.details}`) :
                      "طلب توثيق عقاري",
         firstParty: finalData.party1 || null,
         secondParty: finalData.party2 || null,
-        metadata: { 
+        metadata: {
           ...finalData.metadata,
-          type: finalData.type, 
-          otherType: finalData.otherType, 
-          topic: finalData.topic, 
-          details: finalData.details, 
-          saleAmount: finalData.saleAmount, 
-          deedInfo: finalData.deedInfo, 
+          type: finalData.type,
+          otherType: finalData.otherType,
+          topic: finalData.topic,
+          details: finalData.details,
+          saleAmount: finalData.saleAmount,
+          deedInfo: finalData.deedInfo,
           applicantRole: finalData.applicantRole,
           disputeType: disputeData.disputeType,
           otherDisputeType: disputeData.otherDisputeType,
@@ -221,8 +235,8 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
   // ─── Disputes Form ──────────────────────────────────────────────────────────
   const renderDisputesForm = () => {
     const disputeTypes = [
-      "نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", 
-      "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", 
+      "نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري",
+      "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير",
       "قضايا التركات العقارية", "اخرى"
     ];
 
@@ -259,9 +273,9 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                     value={(disputeData as any)[p.key].side}
                     onChange={(e) => setDisputeData({ ...disputeData, [p.key]: { ...(disputeData as any)[p.key], side: e.target.value } })}
                   >
-                    <option value="seller" className="bg-slate-950">بائع</option>
-                    <option value="buyer" className="bg-slate-950">مشتري</option>
-                    <option value="broker" className="bg-slate-950">وسيط</option>
+                    <option value="seller" className="bg-white text-slate-900">بائع</option>
+                    <option value="buyer" className="bg-white text-slate-900">مشتري</option>
+                    <option value="broker" className="bg-white text-slate-900">وسيط</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
@@ -284,23 +298,23 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className={LBL}>اختر نوع النزاع</label>
-              <select 
+              <select
                 className={INP + " appearance-none cursor-pointer"}
                 value={disputeData.disputeType}
                 onChange={(e) => setDisputeData({ ...disputeData, disputeType: e.target.value })}
               >
-                <option value="" className="bg-slate-950">اختر...</option>
-                {disputeTypes.map(t => <option key={t} value={t} className="bg-slate-950">{t}</option>)}
+                <option value="" className="bg-white text-slate-900">اختر...</option>
+                {disputeTypes.map(t => <option key={t} value={t} className="bg-white text-slate-900">{t}</option>)}
               </select>
             </div>
             {disputeData.disputeType === "اخرى" && (
               <div className="space-y-1.5 animate-in zoom-in-95 duration-200">
                 <label className={LBL}>اكتب نوع النزاع</label>
-                <input 
-                  className={INP} 
-                  value={disputeData.otherDisputeType} 
-                  onChange={(e) => setDisputeData({ ...disputeData, otherDisputeType: e.target.value })} 
-                  placeholder="نوع النزاع..." 
+                <input
+                  className={INP}
+                  value={disputeData.otherDisputeType}
+                  onChange={(e) => setDisputeData({ ...disputeData, otherDisputeType: e.target.value })}
+                  placeholder="نوع النزاع..."
                 />
               </div>
             )}
@@ -337,7 +351,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
           <div className="space-y-1.5">
             <label className={LBL}>نوع العقد</label>
             <select className={INP + " appearance-none cursor-pointer"} value={contractData.type} onChange={(e) => setContractData({ ...contractData, type: e.target.value })}>
-              {types.map(t => <option key={t} value={t} className="bg-slate-950">{t}</option>)}
+              {types.map(t => <option key={t} value={t} className="bg-white text-slate-900">{t}</option>)}
             </select>
           </div>
           {contractData.type === "أخرى" && (
@@ -370,12 +384,12 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                     <div className="space-y-1.5 md:col-span-2">
                       <label className={LBL}>الهوية / الإقامة / السجل التجاري *</label>
                       <div className="flex gap-2">
-                        <select 
-                          className="w-40 h-12 bg-slate-950 border border-white/10 rounded-xl px-2 text-[10px] font-bold text-white/60 focus:outline-none focus:border-white/25 hover:border-white/20 transition-all appearance-none" 
-                          value={(contractData as any)[p.key].idType} 
+                        <select
+                          className="w-40 h-13 bg-white border border-slate-200 rounded-2xl px-4 text-xs font-bold text-slate-700 text-slate-900 focus:outline-none focus:border-slate-400 hover:border-slate-300 transition-all appearance-none"
+                          value={(contractData as any)[p.key].idType}
                           onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], idType: e.target.value } })}
                         >
-                          {idTypes.map(it => <option key={it.id} value={it.id} className="bg-slate-950">{it.label}</option>)}
+                          {idTypes.map(it => <option key={it.id} value={it.id} className="bg-white text-slate-900">{it.label}</option>)}
                         </select>
                         <input className={INP} value={(contractData as any)[p.key].idNumber} onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], idNumber: e.target.value } })} placeholder="أدخل الأرقام" />
                       </div>
@@ -405,7 +419,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 
                   {/* Agent */}
                   <div className="space-y-4 pt-4 border-t border-white/[0.05]">
-                    <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">بيانات الوكيل</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">بيانات الوكيل</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className={LBL}>اسم الوكيل</label>
@@ -418,7 +432,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                     </div>
                     <div className="space-y-2">
                         <label className={LBL}>مرفق الوكالة</label>
-                        <button className="w-full h-11 bg-slate-950 border border-dashed border-white/10 hover:border-white/20 rounded-xl flex items-center justify-center gap-2 text-[10px] font-bold text-white/30 hover:text-white/60 transition-all">
+                        <button className="w-full h-13 bg-white border border-dashed border-slate-300 hover:border-slate-400 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                         <Upload className="w-4 h-4" />
                         ارفاق الوكالة (صورة أو PDF)
                         </button>
@@ -470,8 +484,8 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                 onClick={() => setContractData({ ...contractData, applicantRole: role.id })}
                 className={`h-12 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
                   contractData.applicantRole === role.id
-                    ? "bg-white text-slate-950 border-white"
-                    : "bg-white/[0.02] border-white/10 text-white/40 hover:border-white/20 hover:text-white/60"
+                    ? "bg-slate-950 text-white border-slate-950"
+                    : "bg-white shadow-sm border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {role.label}
@@ -489,7 +503,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[{ key: "party1", title: "الطرف الأول" }, { key: "party2", title: "الطرف الثاني" }].map((p) => (
           <div key={p.key} className={CARD}>
-            <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">{p.title}</p>
+            <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">{p.title}</p>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <label className={LBL}>الاسم بالكامل</label>
@@ -508,12 +522,12 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
       {/* Deed Info */}
       <div className={CARD + " space-y-4"}>
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-white/30" />
+          <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+            <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
           </div>
-          <p className="text-xs font-black text-white/70">صك الملكية</p>
+          <p className="text-xs font-black text-slate-900">صك الملكية</p>
         </div>
-        <p className="text-[10px] text-white/30 leading-relaxed bg-white/[0.03] p-3 rounded-xl border border-white/5">
+        <p className="text-[10px] text-slate-500 leading-relaxed bg-white/[0.03] p-3 rounded-xl border border-white/5">
           الأصل المحدث والصادر من وزارة العدل، ويكون خالياً من أي موانع تمنع الإفراغ، مثل الرهن أو الحجز.
         </p>
         <UploadRow label="ارفاق صك الملكية" sub="PDF أو صورة واضحة (يقبل كذا صيغة)" />
@@ -524,7 +538,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
             <label className={LBL}>مبلغ البيع</label>
             <div className="relative">
                 <input className={INP + " pl-12"} value={documentationData.saleAmount} onChange={(e) => setDocumentationData({ ...documentationData, saleAmount: e.target.value })} placeholder="0.00" dir="ltr" />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-white/25">ر.س</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">ر.س</span>
             </div>
         </div>
       </div>
@@ -554,10 +568,10 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                 key={t.id}
                 type="button"
                 onClick={() => setOtherData({ ...otherData, type: t.label })}
-                className={`h-11 rounded-xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+                className={`h-13 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
                   otherData.type === t.label
-                    ? "bg-white text-slate-950 border-white"
-                    : "bg-white/[0.02] border-white/10 text-white/40 hover:border-white/20 hover:text-white/60"
+                    ? "bg-slate-950 text-white border-slate-950"
+                    : "bg-white shadow-sm border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {t.label}
@@ -571,15 +585,15 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
             {otherData.type === "أخرى" && (
                 <div className="space-y-1.5 md:col-span-2 animate-in slide-in-from-top-2 duration-300">
                     <label className={LBL}>نوع الخدمة المخصص</label>
-                    <input 
-                        className={INP} 
-                        value={(otherData as any).customType || ""} 
-                        onChange={(e) => setOtherData({ ...otherData, customType: e.target.value } as any)} 
-                        placeholder="ما هي الخدمة القانونية التي تحتاجها؟" 
+                    <input
+                        className={INP}
+                        value={(otherData as any).customType || ""}
+                        onChange={(e) => setOtherData({ ...otherData, customType: e.target.value } as any)}
+                        placeholder="ما هي الخدمة القانونية التي تحتاجها؟"
                     />
                 </div>
             )}
-            
+
             <div className="space-y-1.5">
               <label className={LBL}>الاسم بالكامل</label>
               <input className={INP} value={otherData.name} onChange={(e) => setOtherData({ ...otherData, name: e.target.value })} placeholder="أدخل اسمك" />
@@ -611,17 +625,17 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
                   <input className={INP} value={otherData.listingNumber} onChange={(e) => setOtherData({ ...otherData, listingNumber: e.target.value })} placeholder="رقم العرض إن وجد" />
                 </div>
                 <div className="md:col-span-2 pt-2">
-                    <p className="text-[10px] text-white/30 italic mb-2">يصدر في خانة التقارير وضع العقار القانوني</p>
+                    <p className="text-[10px] text-slate-500 italic mb-2">يصدر في خانة التقارير وضع العقار القانوني</p>
                 </div>
               </>
             ) : (
                 <div className="space-y-1.5 md:col-span-2">
                     <label className={LBL}>تفاصيل وطلبات إضافية</label>
-                    <textarea 
-                        className={INP + " h-28 py-4 resize-none"} 
-                        value={otherData.details} 
-                        onChange={(e) => setOtherData({ ...otherData, details: e.target.value })} 
-                        placeholder="اشرح لنا حاجتك بالتفصيل..." 
+                    <textarea
+                        className={INP + " h-28 py-4 resize-none"}
+                        value={otherData.details}
+                        onChange={(e) => setOtherData({ ...otherData, details: e.target.value })}
+                        placeholder="اشرح لنا حاجتك بالتفصيل..."
                     />
                 </div>
             )}
@@ -641,7 +655,7 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	    <div className="w-full" dir="rtl">
 	      {!selectedCategory ? (
 	        /* Category Selection Grid */
-	        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+	        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 	          {legalCategories.map((cat) => {
 	            const moduleKey =
 	              cat.id === 'documentation' ? 'legal_documentation' :
@@ -669,7 +683,8 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	                  }
 	                  if (e.key === "Enter" || e.key === " ") {
 	                    e.preventDefault();
-	                    setSelectedCategory(cat.id);
+                    if (onCategorySelect) onCategorySelect(cat.id);
+                    else setSelectedCategory(cat.id);
 	                  }
 	                }}
 	                onClick={() => {
@@ -678,25 +693,31 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	                    toast.error(msg);
 	                    return;
 	                  }
-	                  setSelectedCategory(cat.id);
+                  if (onCategorySelect) onCategorySelect(cat.id);
+                  else setSelectedCategory(cat.id);
 	                }}
-	                className={`group relative rounded-[2rem] p-7 text-right flex flex-col gap-4 transition-all duration-300 overflow-hidden border ${
+	                className={`group relative rounded-2xl p-4 sm:p-5 text-right flex flex-col justify-between min-h-[140px] sm:min-h-[160px] transition-all duration-300 overflow-hidden border ${
 	                  disabled
-	                    ? 'bg-white/[0.01] border-white/[0.06] opacity-55 cursor-not-allowed'
-	                    : 'bg-white/[0.02] border-white/10 hover:border-white/20 cursor-pointer'
+	                    ? 'opacity-60 cursor-not-allowed bg-white/[0.02] border-white/[0.08]'
+	                    : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 cursor-pointer hover:-translate-y-0.5'
 	                }`}
 	              >
+	                <motion.div
+	                  variants={{ hovered: { opacity: 1 }, initial: { opacity: 0 } }}
+	                  transition={{ duration: 0.3 }}
+	                  className="absolute inset-0 bg-white/[0.03] pointer-events-none"
+	                />
 	                {/* Stronger "not available" sheen for soon/disabled so it doesn't look normal even for admin */}
 	                {disabled && (
-	                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-transparent" />
+	                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent" />
 	                )}
 	                <motion.div
 	                  variants={{ hovered: { opacity: 1 }, initial: { opacity: 0 } }}
-	                  className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+	                  className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
 	                />
-	                <div className="flex items-start justify-between gap-4">
-	                  <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 group-hover:border-white/20 flex items-center justify-center transition-colors">
-	                    <cat.icon className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors" />
+	                <div className="relative z-10 flex items-start justify-between gap-4">
+	                  <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+	                    <cat.icon className="w-4 h-4 text-white/50 group-hover:text-white/90 transition-colors duration-200" />
 	                  </div>
 	                  {isSoon && (
 	                    <span className="text-[9px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full uppercase tracking-widest">
@@ -704,9 +725,9 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	                    </span>
 	                  )}
 	                </div>
-	                <div>
-	                  <p className="font-black text-white/80 group-hover:text-white transition-colors">{cat.title}</p>
-	                  <p className="text-[10px] font-medium text-white/30 mt-1 leading-relaxed">{cat.desc}</p>
+	                <div className="relative z-10 mt-auto pt-4">
+	                  <p className="text-base sm:text-lg font-bold text-white/80 group-hover:text-white transition-colors duration-200">{cat.title}</p>
+	                  <p className="text-[10px] font-medium text-white/40 mt-1 leading-relaxed">{cat.desc}</p>
 	                </div>
 
 	                {/* Admin-only explicit preview so "soon" doesn't behave like normal click */}
@@ -716,9 +737,10 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	                      type="button"
 	                      onClick={(e) => {
 	                        e.stopPropagation();
-	                        setSelectedCategory(cat.id);
+                        if (onCategorySelect) onCategorySelect(cat.id);
+                        else setSelectedCategory(cat.id);
 	                      }}
-	                      className="h-9 px-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 text-[10px] font-black text-white/60 hover:text-white/90 transition-all inline-flex items-center gap-2"
+	                      className="h-9 px-3 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-600 text-[10px] font-black text-slate-500 hover:text-slate-300 transition-all inline-flex items-center gap-2"
 	                    >
 	                      <Info className="w-4 h-4" />
 	                      معاينة كمسؤول
@@ -729,21 +751,21 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
 	            );
 	          })}
 	        </div>
-	      ) : (
+      ) : !selectionOnly && (
         /* Selected Category Form */
         <div className="space-y-8">
           {/* Back button */}
           <button
-            onClick={() => setSelectedCategory(null)}
-            className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-white/30 hover:text-white/70 transition-colors"
+            onClick={() => onBackToSelection ? onBackToSelection() : setSelectedCategory(null)}
+            className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5 rotate-180" />
             العودة لاختيار التصنيف
           </button>
 
           {/* Form card */}
-          <div className="bg-white/[0.02] border border-white/10 rounded-[2.5rem] p-8 relative overflow-hidden">
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="bg-white shadow-sm border border-slate-200 rounded-[2.5rem] p-8 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             {selectedCategory === "disputes"      && renderDisputesForm()}
             {selectedCategory === "contracts"     && renderContractsForm()}
@@ -754,15 +776,15 @@ export default function LegalRequestFlow({ onSuccessRedirect = "/wallet" }: { on
           {/* Action Buttons */}
           <div className="flex gap-4">
             <button
-              onClick={() => setSelectedCategory(null)}
-              className="flex-1 h-14 rounded-2xl border border-white/10 hover:border-white/20 text-white/40 hover:text-white/60 text-xs font-black uppercase tracking-widest transition-all"
+              onClick={() => onBackToSelection ? onBackToSelection() : setSelectedCategory(null)}
+              className="flex-1 h-14 rounded-2xl border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-900 text-xs font-black uppercase tracking-widest transition-all"
             >
               إلغاء
             </button>
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex-[2] h-14 bg-white text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.06)] hover:bg-white/90 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-[2] h-14 bg-slate-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
