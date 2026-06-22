@@ -75,6 +75,7 @@ export default function CustomerService() {
   const [faqsError, setFaqsError] = useState<string | null>(null);
   const [tickets, setTickets] = useState<CustomerServiceFeedback[]>([]);
   const [ticketsLoading, setTicketsLoading] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<CustomerServiceFeedback | null>(null);
   const [ticketReplyDrafts, setTicketReplyDrafts] = useState<Record<string, string>>({});
   const [replyingTicketId, setReplyingTicketId] = useState<string | null>(null);
   const [submitNotice, setSubmitNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -257,6 +258,13 @@ export default function CustomerService() {
     return language === "ar" ? "جديد" : "new";
   };
 
+  const ticketStatusStyle = (status: CustomerServiceFeedback["status"]) => {
+    if (status === "resolved") return "bg-emerald-50 text-emerald-700 border-emerald-100";
+    if (status === "replied") return "bg-blue-50 text-blue-700 border-blue-100";
+    if (status === "customer_replied") return "bg-indigo-50 text-indigo-700 border-indigo-100";
+    return "bg-amber-50 text-amber-700 border-amber-100";
+  };
+
   if (!isOpen) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
@@ -426,120 +434,122 @@ export default function CustomerService() {
                 </Button>
               </div>
 
-              {tickets.length === 0 ? (
+              {ticketsLoading ? (
+                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
+                  {language === "ar" ? "جار تحميل التذاكر..." : "Loading tickets..."}
+                </div>
+              ) : tickets.length === 0 ? (
                 <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300" style={{ backgroundColor: settings.csBg || undefined }}>
                   {language === "ar" ? "لا توجد رسائل بعد" : "No messages yet"}
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                   {tickets.map((ticket) => (
-                    <div 
+                    <button
+                      type="button"
                       key={ticket.id} 
-                      className="rounded-2xl border border-slate-100 p-4" 
+                      onClick={() => setSelectedTicket(ticket)}
+                      className="group rounded-2xl border border-slate-100 p-5 text-start transition-all hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/40" 
                       style={{ 
                         backgroundColor: settings.csBg || undefined,
                         color: settings.csTextColor || undefined,
                         fontFamily: settings.csFontFamily || undefined
                       }}
                     >
-                      <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-sm font-black opacity-90">#{ticket.id.slice(0, 8)}</span>
-                            <span className="rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-600">
-                              {ticketStatusLabel(ticket.status)}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-[10px] font-black opacity-50">
-                            {new Date(ticket.createdAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
-                          </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-black text-slate-900">#{ticket.id.slice(0, 8)}</p>
+                          <p className="mt-1 line-clamp-2 text-sm font-bold leading-6 text-slate-500">{ticket.question}</p>
                         </div>
+                        <MessageSquare className="h-5 w-5 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" />
                       </div>
-
-                      <div className="space-y-3">
-                        <div className="rounded-xl p-4 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
-                          <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
-                            {language === "ar" ? "استفسارك" : "Your message"}
-                          </div>
-                          <p 
-                            className="whitespace-pre-wrap font-bold leading-7"
-                            style={{
-                              color: settings.csTextColor || undefined,
-                              fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined
-                            }}
-                          >
-                            {ticket.question}
-                          </p>
-                        </div>
-
-                        {ticket.adminReply && (
-                          <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4">
-                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
-                              {language === "ar" ? "رد الإدارة" : "Admin reply"}
-                            </div>
-                            <p 
-                              className="whitespace-pre-wrap font-bold leading-7 text-slate-800"
-                              style={{
-                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined
-                              }}
-                            >
-                              {ticket.adminReply}
-                            </p>
-                            {ticket.adminRepliedAt && (
-                              <p className="mt-2 text-[10px] font-black text-blue-500">
-                                {new Date(ticket.adminRepliedAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
-                              </p>
-                            )}
-                          </div>
-                        )}
-
-                        {ticket.userReply && (
-                          <div className="rounded-xl p-4 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
-                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
-                              {language === "ar" ? "ردك الأخير" : "Your last reply"}
-                            </div>
-                            <p 
-                              className="whitespace-pre-wrap font-bold leading-7"
-                              style={{
-                                color: settings.csTextColor || undefined,
-                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) - 1}px` : undefined
-                              }}
-                            >
-                              {ticket.userReply}
-                            </p>
-                          </div>
-                        )}
-
-                        <div className="rounded-xl p-3 bg-white/40" style={{ backgroundColor: settings.csCardBg || undefined }}>
-                          <Textarea
-                            value={ticketReplyDrafts[ticket.id] || ""}
-                            onChange={(event) => setTicketReplyDrafts((current) => ({ ...current, [ticket.id]: event.target.value }))}
-                            className="min-h-24 rounded-xl border-slate-100 bg-white/80 text-sm font-bold"
-                            style={{
-                              color: settings.csTextColor || undefined,
-                              fontFamily: settings.csFontFamily || undefined
-                            }}
-                            placeholder={language === "ar" ? "اكتب ردك على التذكرة..." : "Write your reply..."}
-                          />
-                          <div className="mt-3 flex justify-end">
-                            <Button
-                              type="button"
-                              disabled={replyingTicketId === ticket.id || !(ticketReplyDrafts[ticket.id] || "").trim()}
-                              onClick={() => submitTicketReply(ticket.id)}
-                              className="h-10 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black"
-                            >
-                              {replyingTicketId === ticket.id ? (language === "ar" ? "جار الإرسال" : "Sending") : (language === "ar" ? "إرسال الرد" : "Send reply")}
-                              <Send className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
+                      <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                        <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${ticketStatusStyle(ticket.status)}`}>
+                          {ticketStatusLabel(ticket.status)}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400">
+                          {new Date(ticket.updatedAt || ticket.createdAt).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US")}
+                        </span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
             </section>
           )}
+
+          <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
+            <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-[2rem] p-0">
+              {selectedTicket && (
+                <>
+                  <DialogHeader className="border-b border-slate-100 p-6 text-start">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <DialogTitle className="text-lg font-black text-slate-950">
+                          {language === "ar" ? "تذكرة الدعم" : "Support ticket"} #{selectedTicket.id.slice(0, 8)}
+                        </DialogTitle>
+                        <DialogDescription className="mt-1 text-xs font-bold text-slate-400">
+                          {new Date(selectedTicket.createdAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
+                        </DialogDescription>
+                      </div>
+                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${ticketStatusStyle(selectedTicket.status)}`}>
+                        {ticketStatusLabel(selectedTicket.status)}
+                      </span>
+                    </div>
+                  </DialogHeader>
+
+                  <div className="space-y-4 p-6">
+                    <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-slate-100 p-4">
+                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "أنت" : "You"}</p>
+                      <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.question}</p>
+                    </div>
+                    {selectedTicket.adminReply && (
+                      <div className="ms-auto max-w-[88%] rounded-2xl rounded-tl-sm bg-blue-50 p-4">
+                        <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-600">{language === "ar" ? "خدمة العملاء" : "Customer service"}</p>
+                        <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.adminReply}</p>
+                        {selectedTicket.adminRepliedAt && <p className="mt-2 text-[10px] font-bold text-blue-400">{new Date(selectedTicket.adminRepliedAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}</p>}
+                      </div>
+                    )}
+                    {selectedTicket.userReply && (
+                      <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-slate-100 p-4">
+                        <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "ردك الأخير" : "Your latest reply"}</p>
+                        <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.userReply}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedTicket.status !== "resolved" && (
+                    <DialogFooter className="border-t border-slate-100 p-6">
+                      <div className="w-full rounded-2xl bg-slate-50 p-3">
+                        <Textarea
+                          value={ticketReplyDrafts[selectedTicket.id] || ""}
+                          onChange={(event) => setTicketReplyDrafts((current) => ({ ...current, [selectedTicket.id]: event.target.value }))}
+                          className="min-h-24 rounded-xl border-slate-200 bg-white text-sm font-bold"
+                          placeholder={language === "ar" ? "اكتب رسالة لخدمة العملاء..." : "Write a message to customer service..."}
+                        />
+                        <div className="mt-3 flex justify-end">
+                          <Button
+                            type="button"
+                            disabled={replyingTicketId === selectedTicket.id || !(ticketReplyDrafts[selectedTicket.id] || "").trim()}
+                            onClick={async () => {
+                              await submitTicketReply(selectedTicket.id);
+                              const refreshed = (await customerServiceFeedbackApi.listMine()).data;
+                              setTickets(refreshed);
+                              setSelectedTicket(refreshed.find((ticket) => ticket.id === selectedTicket.id) || null);
+                            }}
+                            className="h-10 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black"
+                          >
+                            {replyingTicketId === selectedTicket.id ? (language === "ar" ? "جار الإرسال" : "Sending") : (language === "ar" ? "إرسال الرسالة" : "Send message")}
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogFooter>
+                  )}
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
 
           <div className={`grid grid-cols-1 ${settings.uiFlags?.show_cs_form !== false && settings.uiFlags?.show_cs_faq !== false ? 'lg:grid-cols-2' : ''} gap-12`}>
               {/* Contact Form */}
