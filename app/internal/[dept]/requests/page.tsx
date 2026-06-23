@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 import SimpleChatModal from "@/components/chat/chat-modal";
 
@@ -241,7 +242,7 @@ function RequestCard({
                             </span>
                             <div>
                               <p className="font-bold text-slate-900">
-                                {DEPT_LABELS[off.deptKey] || off.deptKey}: <span className="font-black text-emerald-600">{off.price} ر.س</span>
+                                {DEPT_LABELS[off.deptKey] || off.deptKey}: <span className="font-black text-emerald-600"><SaudiRiyalAmount amount={off.price} locale="ar-SA" iconClassName="h-3 w-3 text-emerald-600" /></span>
                               </p>
                               {off.note && (
                                 <p className="text-slate-400 mt-0.5">الملاحظة: {off.note}</p>
@@ -261,7 +262,7 @@ function RequestCard({
                 <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end bg-slate-50 p-4 border border-slate-100 rounded-2xl">
                   <div className="flex-1 space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      {existingOffer ? "سعر العرض المقدم للمكتب (مغلق ومقفل)" : "سعر العرض الجديد (ريال)"}
+                      {existingOffer ? "سعر العرض المقدم للمكتب (مغلق ومقفل)" : "سعر العرض الجديد"}
                     </p>
                     <input
                       value={offerPrice}
@@ -320,7 +321,7 @@ function RequestCard({
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">السعر</p>
-                  <p className="text-sm font-bold text-slate-700">{request.price} ر.س</p>
+                  <p className="text-sm font-bold text-slate-700"><SaudiRiyalAmount amount={request.price} locale="ar-SA" /></p>
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">رقم الطلب</p>

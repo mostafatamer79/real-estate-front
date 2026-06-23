@@ -18,6 +18,7 @@ import Footer from "../src/components/Footer";
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { motion } from "framer-motion";
 import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
 import {
@@ -289,7 +290,7 @@ export default function HomePage() {
                         {priceVal > 0 && (
                           <div>
                             <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span className="text-indigo-400 font-black">{priceVal.toLocaleString()} {language === 'ar' ? 'ريال' : 'SAR'}</span>
+                            <span className="text-indigo-400 font-black"><SaudiRiyalAmount amount={priceVal} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
                           </div>
                         )}
                         {areaVal > 0 && (

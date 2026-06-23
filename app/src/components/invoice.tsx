@@ -12,6 +12,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Download, Printer, X, CheckCircle, XCircle, FileText, Calendar, User, Phone, MapPin, Hash, DollarSign, Loader2 } from 'lucide-react'
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal'
 
 // Define ServiceRequest type
 interface ServiceRequest {
@@ -310,8 +311,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                             <TableRow>
                                                 <TableCell className='text-right font-medium'>{invoiceData.service.type}</TableCell>
                                                 <TableCell className='text-right'>{invoiceData.service.quantity}</TableCell>
-                                                <TableCell className='text-right'>{invoiceData.service.price.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
-                                                <TableCell className='text-right'>{invoiceData.fees.servicePrice.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
+                                                <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.service.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
+                                                <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.fees.servicePrice} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
                                             </TableRow>
 
                                             {/* VAT Row */}
@@ -319,7 +320,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                 <TableCell colSpan={3} className='text-right font-medium'>
                                                     {t('invoice.vat')}
                                                 </TableCell>
-                                                <TableCell className='text-right'>{invoiceData.fees.vat.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
+                                                <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.fees.vat} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
                                             </TableRow>
 
                                             {/* Commission if applicable */}
@@ -328,7 +329,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                     <TableCell colSpan={3} className='text-right font-medium'>
                                                         {t('invoice.serviceCommission')}
                                                     </TableCell>
-                                                    <TableCell className='text-right'>{invoiceData.fees.commission.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
+                                                    <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.fees.commission} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
                                                 </TableRow>
                                             )}
 
@@ -337,7 +338,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                 <TableCell colSpan={3} className='text-right font-medium'>
                                                     {t('invoice.siteCommission')}
                                                 </TableCell>
-                                                <TableCell className='text-right'>{invoiceData.fees.siteCommission.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
+                                                <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.fees.siteCommission} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
                                             </TableRow>
 
                                             {/* Documentation fee if applicable */}
@@ -346,7 +347,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                     <TableCell colSpan={3} className='text-right font-medium'>
                                                         {t('invoice.docFee')}
                                                     </TableCell>
-                                                    <TableCell className='text-right'>{invoiceData.fees.documentationFee.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}</TableCell>
+                                                    <TableCell className='text-right'><SaudiRiyalAmount amount={invoiceData.fees.documentationFee} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></TableCell>
                                                 </TableRow>
                                             )}
 
@@ -356,7 +357,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                     {t('invoice.finalTotal')}
                                                 </TableCell>
                                                 <TableCell className='text-right text-blue-800 text-lg'>
-                                                    {totalAmount.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {t('chat.currency')}
+                                                    <SaudiRiyalAmount amount={totalAmount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                                                 </TableCell>
                                             </TableRow>
                                         </TableBody>

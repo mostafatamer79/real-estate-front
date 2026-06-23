@@ -24,6 +24,7 @@ import InvoiceModal from '@/app/src/components/invoice'
 import { apiClient } from '@/lib/client'
 import toast from 'react-hot-toast'
 import PaymentMethodsModal from '@/components/Payment/PaymentMethodsModal'
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from '@/components/ui/saudi-riyal'
 
 // Define extended Invoice interface to include all necessary fields
 interface ExtendedInvoice extends Invoice {
@@ -222,7 +223,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     <h2 className='text-6xl font-black text-white tracking-tighter'>
                                         {Number(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </h2>
-                                    <span className='text-xl text-slate-400 font-bold'>{t('wallet.balance.currency')}</span>
+                                    <SaudiRiyalSymbol className='text-slate-400' iconClassName='h-5 w-5' />
                                 </div>
                             </div>
                             
@@ -261,7 +262,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                         <TableCell className='font-bold text-slate-700 py-4'>{invoice.invoice}</TableCell>
                                         <TableCell className='font-medium text-slate-600 py-4'>{invoice.service}</TableCell>
                                         <TableCell className='text-slate-500 py-4'>{invoice.date}</TableCell>
-                                        <TableCell className='font-black text-slate-900 py-4'>{invoice.amount} {t('wallet.balance.currency')}</TableCell>
+                                        <TableCell className='font-black text-slate-900 py-4'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
                                         <TableCell className="py-4 text-center">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                                                 invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
@@ -370,7 +371,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     className="h-16 text-2xl font-black rounded-2xl border-2 border-slate-100 focus:border-slate-900 transition-all pl-12"
                                     placeholder="0.00"
                                 />
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{t('wallet.balance.currency')}</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                         </div>
 
@@ -416,7 +417,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">{t('wallet.balance.availableForWithdraw') || 'الرصيد القابل للسحب'}</p>
                             <div className="flex items-baseline gap-2">
                                 <h3 className="text-4xl font-black">{Number(balance).toLocaleString()}</h3>
-                                <span className="text-sm font-bold text-slate-400">{t('wallet.balance.currency')}</span>
+                                <SaudiRiyalSymbol className="text-slate-400" iconClassName="h-3.5 w-3.5" />
                             </div>
                         </div>
 
@@ -430,7 +431,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     className="h-16 text-2xl font-black rounded-2xl border-2 border-slate-100 focus:border-slate-900 transition-all pl-12"
                                     placeholder="0.00"
                                 />
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{t('wallet.balance.currency')}</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                             <p className="text-[10px] text-slate-400 mt-2 font-bold">* قد تستغرق عملية التحويل 24-48 ساعة عمل</p>
                         </div>

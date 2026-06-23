@@ -108,6 +108,8 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'dashboard', href: '/admin/dashboard', icon: LayoutDashboard, label: isRtl ? ' لوح التحكم' : 'Dashboard' },
         { id: 'users', href: '/admin/users', icon: Users, label: isRtl ? ' المستخدمين' : 'Users' },
         { id: 'subscriptions', href: '/admin/subscriptions', icon: CreditCard, label: isRtl ? ' الاشتراكات' : 'Subscriptions' },
+        { id: 'finance-transactions', href: '/admin/transactions', icon: Wallet, label: isRtl ? 'العمليات المالية' : 'Transactions' },
+
         { id: 'map-control', href: '/admin/map-control', icon: MapPinned, label: isRtl ? ' الخريطة' : 'Map' },
         { id: 'operations', href: '/admin/operations', icon: BarChart3, label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },
         { id: 'trends', href: '/admin/trends', icon: LineChart, label: isRtl ? ' تحليلات والاتجاهات' : 'Analytics & Trends' },
@@ -130,7 +132,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       title: isRtl ? 'الإدارة المالية' : 'Financial Management',
       items: [
         { id: 'finance-main', href: '/admin/wallet', icon: Receipt, label: isRtl ? 'الفواتير' : 'Finance Overview' },
-        { id: 'finance-transactions', href: '/admin/transactions', icon: Wallet, label: isRtl ? 'العمليات المالية' : 'Transactions' },
         { id: 'invoices', href: '/admin/wallet?tab=invoices', icon: FileText, label: isRtl ? 'الفواتير' : 'Invoices' },
         { id: 'commissions', href: '/admin/wallet?tab=commissions', icon: Percent, label: isRtl ? 'العقود والعمولات' : 'Contracts & Commissions' },
         { id: 'files', href: '/admin/wallet?tab=files', icon: CreditCard, label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
@@ -252,12 +253,24 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                     };
 
                     const hrefToModule: Record<string, string> = {
-                      '/admin/wallet': 'finance',
+                      '/admin/dashboard': 'dashboard',
+                      '/admin/users': 'users',
+                      '/admin/subscriptions': 'subscriptions',
                       '/admin/transactions': 'finance',
+                      '/admin/map-control': 'map_control',
+                      '/admin/operations': 'operations',
+                      '/admin/trends': 'trends',
+                      '/admin/customer-service': 'customer_service',
+                      '/internal/chat': 'chat',
+                      '/admin/settings': 'settings',
+                      '/admin/offers': 'offers',
+                      '/admin/orders': 'orders',
                       '/admin/marketing': 'marketing',
+                      '/admin/properties-management': 'properties',
+                      '/admin/legal': 'legal',
+                      '/admin/wallet': 'wallet',
                       '/admin/services': 'service_requests',
                       '/admin/service-requests': 'service_requests',
-                      '/admin/legal': 'legal',
                       '/admin/packages': 'subscriptions',
                     };
 

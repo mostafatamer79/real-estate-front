@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FileText, Download } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 export default function ReportsManager() {
     const [reportType, setReportType] = useState('monthly');
@@ -83,7 +84,7 @@ export default function ReportsManager() {
                     <CardContent className="space-y-4">
                         <div className="p-4 bg-slate-50 rounded-lg mb-4">
                             <p className="text-sm text-blue-800 font-bold mb-1">الرصيد الضريبي المستحق (تقديري)</p>
-                            <p className="text-2xl font-bold text-blue-900">0.00 ريال</p>
+                            <p className="text-2xl font-bold text-blue-900"><SaudiRiyalAmount amount={0} locale="ar-SA" /></p>
                             <p className="text-xs text-blue-600 mt-1">يتم احتسابه بناءً على العمليات المسجلة</p>
                         </div>
                         <Button className="w-full justify-start" variant="outline" onClick={() => handleExport('pdf')}>

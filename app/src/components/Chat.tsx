@@ -4,6 +4,7 @@ import { X, Send, MoreVertical, Calendar, CreditCard, DollarSign } from "lucide-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import StripePaymentModal from "@/components/Payment/StripePaymentModal";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 interface Message {
   id: string;
@@ -213,7 +214,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                           </div>
                           <div className="text-sm">
                               <p>{t('chat.date')}: {new Date(message.metadata?.date || '').toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</p>
-                              <p>{t('chat.price')}: {message.metadata?.price?.toLocaleString()} {t('chat.currency')}</p>
+                              <p>{t('chat.price')}: <SaudiRiyalAmount amount={message.metadata?.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                           </div>
                           <Button size="sm" className="w-full mt-2 bg-slate-600 hover:bg-slate-700">{t('chat.acceptBooking')}</Button>
                       </div>
@@ -224,7 +225,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                              <span>{t('chat.paymentRequest')}</span>
                           </div>
                           <div className="text-sm">
-                              <p className="font-bold text-lg">{message.metadata?.price?.toLocaleString()} {t('chat.currency')}</p>
+                              <p className="font-bold text-lg"><SaudiRiyalAmount amount={message.metadata?.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                               <p className="text-gray-500 text-xs">{t('chat.downPayment')}</p>
                           </div>
                           <Button 
@@ -296,4 +297,3 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
     </>
   );
 }
-

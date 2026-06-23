@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { CreatePropertyDto, CreateUnitDto, CreateLeaseDto, CreateTenantDto, CreatePaymentDto, MaintenanceRequest } from "@/types/api";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 // Dynamic import for Map to avoid SSR issues
 const Map = dynamic(() => import('@/app/src/components/Map'), { 
@@ -1060,11 +1061,11 @@ export function AddPropertyWizard({
                                             <div className="space-y-4">
                                                 <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
                                                     <span className="text-sm font-medium text-gray-600">{t('pm.roi.purchasePrice')}</span>
-                                                    <span className="font-bold text-gray-900">{t('chat.currency')} {(propertyData.purchasePrice || 0).toLocaleString()}</span>
+                                                    <span className="font-bold text-gray-900"><SaudiRiyalAmount amount={propertyData.purchasePrice || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
                                                 </div>
                                                 <div className="flex justify-between items-center p-3 bg-green-50 rounded-xl text-green-700">
                                                     <span className="text-sm font-medium">{t('pm.roi.expectedIncome')}</span>
-                                                    <span className="font-bold">{t('chat.currency')} 0</span>
+                                                    <span className="font-bold"><SaudiRiyalAmount amount={0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
                                                 </div>
                                             </div>
                                         </CardContent>

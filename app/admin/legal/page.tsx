@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { financialApi, bookingsApi } from "@/lib/api";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import {
   Dialog,
   DialogContent,
@@ -1015,7 +1016,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-black text-slate-900">{inv.amount} SAR</p>
+                            <p className="font-black text-slate-900"><SaudiRiyalAmount amount={inv.amount} locale="ar-SA" /></p>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                               inv.status === "paid" ? "bg-slate-100 text-slate-700" : "bg-slate-100 text-slate-700"
                             }`}>

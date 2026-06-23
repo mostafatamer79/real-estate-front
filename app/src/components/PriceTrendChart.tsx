@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { SaudiRiyalSymbol } from '@/components/ui/saudi-riyal';
 
 interface PriceTrendChartProps {
   data?: number[];
@@ -29,7 +30,7 @@ export default function PriceTrendChart({
           </div>
           <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
             <span className="w-3 h-0.5 rounded bg-indigo-400 inline-block" />
-            SAR / m²
+            <SaudiRiyalSymbol iconClassName="h-3 w-3" /> / m²
           </div>
         </div>
         <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-700/60 bg-slate-950/30 px-6 text-center text-sm font-semibold text-slate-500">
@@ -84,7 +85,7 @@ export default function PriceTrendChart({
         {/* Mini legend */}
         <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
           <span className="w-3 h-0.5 rounded bg-indigo-400 inline-block" />
-          SAR / m²
+          <SaudiRiyalSymbol iconClassName="h-3 w-3" /> / m²
         </div>
       </div>
 

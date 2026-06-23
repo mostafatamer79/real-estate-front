@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 
 interface ServiceRequestsTableProps {
   title?: string;
@@ -390,7 +391,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                             }}
                                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900"
                                                         />
-                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">ريال</span>
+                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
                                                     </div>
                                                     
                                                     <button 
@@ -427,7 +428,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="font-bold text-slate-900">
-                                                        {selectedRequest.price || selectedRequest.invoicePrice || 0} ريال 
+                                                        <SaudiRiyalAmount amount={selectedRequest.price || selectedRequest.invoicePrice || 0} locale="ar-SA" />
                                                     </span>
                                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                                         {selectedRequest.paymentStatus === 'PAID' ? 'تم الدفع' : selectedRequest.invoiceSent ? 'بانتظار الدفع' : 'قيد المراجعة'}
@@ -500,7 +501,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                     <span>تاريخ الطلب: {format(new Date(selectedRequest.createdAt), 'dd MMMM yyyy', { locale: ar })}</span>
                                 </div>
                                 <div className="font-black text-slate-900 text-lg">
-                                    {selectedRequest.price} <span className="text-[10px] text-slate-400 uppercase tracking-widest">ريال</span>
+                                    <SaudiRiyalAmount amount={selectedRequest.price} locale="ar-SA" iconClassName="h-3 w-3 text-slate-400" />
                                 </div>
                              </div>
                         </div>

@@ -14,6 +14,7 @@ import {
   Sofa, Tag, Hash, BedDouble, Warehouse, CheckCheck, MessageSquare, Send
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   pending:     { label: "قيد الانتظار", color: "text-amber-700",  bg: "bg-amber-50 border-amber-200" },
@@ -411,7 +412,7 @@ export default function OrderDetailsPage() {
                 <InfoRow label="المدينة"       value={order.city}          icon={MapPin} />
                 <InfoRow label="الحي"          value={order.neighborhood}  icon={MapPin} />
                 <InfoRow label="المساحة المطلوب" value={order.area ? `${Number(order.area).toLocaleString()} م²` : undefined} icon={Ruler} />
-                <InfoRow label="السعر المطلوب" value={order.price ? `${Number(order.price).toLocaleString()} ريال` : undefined} icon={Tag} />
+                <InfoRow label="السعر المطلوب" value={order.price ? <SaudiRiyalAmount amount={Number(order.price)} locale="ar-SA" /> : undefined} icon={Tag} />
                 <InfoRow label="عمر العقار"   value={order.propertyAge}   icon={Clock} />
                 <InfoRow label="نوع الصك"     value={DEED_MAP[order.deedType] || order.deedType} icon={FileText} />
                 <InfoRow label="نوع الصفقة"   value={order.orderType === "buy" ? "شراء" : "إيجار"} icon={Tag} />

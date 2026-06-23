@@ -9,6 +9,7 @@ import { useSectionGuard } from "@/hooks/useSectionGuard";
 import { useLanguage } from "@/context/LanguageContext";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 
 interface ManagementPackage {
   id: string;
@@ -353,8 +354,8 @@ export default function NewSubscriptionPage() {
                           <div className="min-w-0 flex-1">
                             <div className="text-sm font-black text-slate-950">{t(administrationLabels[department] || department)}</div>
                             <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-slate-600">شهري {monthly.toFixed(2)} ر.س</span>
-                              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-slate-600">سنوي {yearly.toFixed(2)} ر.س</span>
+                              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-slate-600">شهري <SaudiRiyalAmount amount={monthly} locale="ar-SA" iconClassName="h-3 w-3" /></span>
+                              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-black text-slate-600">سنوي <SaudiRiyalAmount amount={yearly} locale="ar-SA" iconClassName="h-3 w-3" /></span>
                             </div>
                             <button
                               type="button"
@@ -377,8 +378,8 @@ export default function NewSubscriptionPage() {
                 <div className="rounded-3xl border border-slate-100 p-5">
                   <div className="text-sm font-black text-slate-950">سعر كل موظف في إدارة الموظفين</div>
                   <div className="mt-3 grid grid-cols-2 gap-3 text-xs font-black text-slate-600">
-                    <div className="rounded-2xl bg-slate-50 p-3">شهري {Number(globalPricing.employeeSeatMonthlyPrice || 0).toFixed(2)} ر.س</div>
-                    <div className="rounded-2xl bg-slate-50 p-3">سنوي {Number(globalPricing.employeeSeatYearlyPrice || 0).toFixed(2)} ر.س</div>
+                    <div className="rounded-2xl bg-slate-50 p-3">شهري <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatMonthlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
+                    <div className="rounded-2xl bg-slate-50 p-3">سنوي <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatYearlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
                   </div>
                 </div>
               </div>
@@ -429,7 +430,7 @@ export default function NewSubscriptionPage() {
 
                       <div className="flex items-end gap-2 mb-3">
                         <div className="text-3xl font-black text-slate-950">{finalPrice.toFixed(2)}</div>
-                        <div className="text-sm font-bold text-slate-500 pb-1">ر.س</div>
+                        <div className="text-sm font-bold text-slate-500 pb-1"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></div>
                         {Number(pkg.discount || 0) > 0 && (
                           <div className="text-xs font-black text-emerald-600 pb-1">{t("sub.public.discount")} {Number(pkg.discount)}%</div>
                         )}
@@ -510,7 +511,7 @@ export default function NewSubscriptionPage() {
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-sm font-black text-slate-800">{t(administrationLabels[department] || department)}</span>
                           <span className="text-xs font-black text-slate-500">
-                            {getCurrentDepartmentPrice(department).toFixed(2)} ر.س
+                            <SaudiRiyalAmount amount={getCurrentDepartmentPrice(department)} locale="ar-SA" iconClassName="h-3 w-3" />
                           </span>
                         </div>
                       </button>
@@ -532,7 +533,7 @@ export default function NewSubscriptionPage() {
                   placeholder="0"
                 />
                 <div className="text-xs font-bold text-slate-400">
-                  سعر كل موظف: {getCurrentEmployeeSeatPrice().toFixed(2)} ر.س
+                  سعر كل موظف: <SaudiRiyalAmount amount={getCurrentEmployeeSeatPrice()} locale="ar-SA" iconClassName="h-3 w-3" />
                 </div>
               </div>
             )}
@@ -573,17 +574,17 @@ export default function NewSubscriptionPage() {
                       {selectedDepartmentPricing.map((item) => (
                         <div key={item.department} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
                           <span className="text-xs font-black text-slate-700">{item.label}</span>
-                          <span className="text-xs font-black text-slate-950">{item.price.toFixed(2)} ر.س</span>
+                          <span className="text-xs font-black text-slate-950"><SaudiRiyalAmount amount={item.price} locale="ar-SA" iconClassName="h-3 w-3" /></span>
                         </div>
                       ))}
                       {isEmployeeDepartmentSelected && (
                         <div className="rounded-xl bg-slate-950 px-3 py-2 text-white">
                           <div className="flex items-center justify-between gap-3">
                             <span className="text-xs font-black">الموظفون</span>
-                            <span className="text-xs font-black">{employeeSeatTotal.toFixed(2)} ر.س</span>
+                            <span className="text-xs font-black"><SaudiRiyalAmount amount={employeeSeatTotal} locale="ar-SA" iconClassName="h-3 w-3 text-white" /></span>
                           </div>
                           <div className="mt-1 text-[11px] font-bold text-white/60">
-                            {employeeSeats || 0} × {getCurrentEmployeeSeatPrice().toFixed(2)} ر.س لكل موظف
+                            {employeeSeats || 0} × <SaudiRiyalAmount amount={getCurrentEmployeeSeatPrice()} locale="ar-SA" iconClassName="h-3 w-3 text-white/60" /> لكل موظف
                           </div>
                         </div>
                       )}
@@ -593,7 +594,7 @@ export default function NewSubscriptionPage() {
               )}
               <div className="pt-2 border-t border-slate-200">
                 <div className="text-xs font-black text-slate-500">{t("sub.public.total")}</div>
-                <div className="text-3xl font-black text-slate-950">{computedAmount.toFixed(2)} ر.س</div>
+                <div className="text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
                 <div className="text-xs font-bold text-slate-400 mt-2">{t("sub.public.afterPayment")}</div>
               </div>
             </div>
@@ -621,7 +622,7 @@ export default function NewSubscriptionPage() {
                   <div>
                     <div className="text-sm font-black text-slate-950">{sub.managementPackage?.name || "باقة اشتراك"}</div>
                     <div className="text-xs text-slate-500 font-bold mt-1">
-                      {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • {sub.amount} ر.س
+                      {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • <SaudiRiyalAmount amount={Number(sub.amount || 0)} locale="ar-SA" iconClassName="h-3 w-3" />
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

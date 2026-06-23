@@ -186,16 +186,15 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
-      <header className="space-y-2">
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
-          <Activity className="h-3.5 w-3.5" />
+      <header className="space-y-1">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">
+          <Activity className="h-3 w-3" />
           {isRtl ? "الرئيسية" : "Home"}
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-slate-950">
+        <h1 className="text-2xl font-black tracking-tight text-slate-950">
           {isRtl ? "لوح التحكم" : "Admin Dashboard"}
         </h1>
       </header>
-
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, index) => (
@@ -205,27 +204,27 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Link href={stat.href} className="block rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
-                <stat.icon className="h-5 w-5" />
+            <Link href={stat.href} className="block rounded-2xl border border-slate-100 bg-white p-4.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
+              <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+                <stat.icon className="h-4.5 w-4.5" />
               </div>
               <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
-              <p className="text-3xl font-black tabular-nums text-slate-950">{stat.value}</p>
+              <p className="text-2xl font-black tabular-nums text-slate-950">{stat.value}</p>
             </Link>
           </motion.div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-lg font-black text-slate-950">{isRtl ? "طلبات المنصة" : "Platform requests"}</h2>
-            <p className="text-xs font-bold text-slate-400">
+            <h2 className="text-base font-black text-slate-950">{isRtl ? "طلبات المنصة" : "Platform requests"}</h2>
+            <p className="text-[11px] font-bold text-slate-400">
               {isRtl ? "كل طلبات الخدمات والإدارات في مكان واحد. اضغط على الرقم أو الكرت للانتقال للصفحة." : "All service and department requests in one place. Click any card to open its page."}
             </p>
           </div>
-          <div className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">
-            {isRtl ? "الإجمالي" : "Total"}: {serviceRequests.length.toLocaleString(isRtl ? "ar-SA" : "en-US")}
+          <div className="rounded-full bg-slate-950 px-3.5 py-1.5 text-[11px] font-black text-white">
+            {isRtl ? "الإجمالي" : "Total"}: {serviceRequests.length.toLocaleString("en-US")}
           </div>
         </div>
 
@@ -239,26 +238,26 @@ export default function AdminDashboard() {
             >
               <Link
                 href={bucket.href}
-                className={`group block h-full rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                className={`group block h-full rounded-xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
                   bucket.value > 0
                     ? "border-slate-200 bg-slate-950 text-white shadow-sm"
                     : "border-slate-100 bg-slate-50/60 text-slate-500"
                 }`}
               >
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bucket.value > 0 ? "bg-white/10 text-white" : "bg-white text-slate-400"}`}>
-                    <bucket.icon className="h-5 w-5" />
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bucket.value > 0 ? "bg-white/10 text-white" : "bg-white text-slate-400"}`}>
+                    <bucket.icon className="h-4.5 w-4.5" />
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-[10px] font-black ${bucket.value > 0 ? "bg-white text-slate-950" : "bg-white text-slate-400"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${bucket.value > 0 ? "bg-white text-slate-950" : "bg-white text-slate-400"}`}>
                     {bucket.value > 0 ? (isRtl ? "يحتاج متابعة" : "Needs review") : (isRtl ? "لا يوجد" : "Clear")}
                   </span>
                 </div>
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <p className={`text-sm font-black ${bucket.value > 0 ? "text-white" : "text-slate-700"}`}>{bucket.label}</p>
-                    <p className={`mt-1 line-clamp-2 text-[11px] font-bold leading-5 ${bucket.value > 0 ? "text-white/60" : "text-slate-400"}`}>{bucket.description}</p>
+                    <p className={`text-xs font-black ${bucket.value > 0 ? "text-white" : "text-slate-700"}`}>{bucket.label}</p>
+                    <p className={`mt-1 line-clamp-2 text-[10px] font-bold leading-4 ${bucket.value > 0 ? "text-white/60" : "text-slate-400"}`}>{bucket.description}</p>
                   </div>
-                  <p className="shrink-0 text-4xl font-black tabular-nums">{bucket.value.toLocaleString(isRtl ? "ar-SA" : "en-US")}</p>
+                  <p className="shrink-0 text-2xl font-black tabular-nums">{bucket.value.toLocaleString("en-US")}</p>
                 </div>
               </Link>
             </motion.div>
@@ -266,35 +265,35 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex items-center justify-between gap-4">
+      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div className="mb-5 flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-black text-slate-950">{isRtl ? "النشاطات الأخيرة" : "Recent activities"}</h2>
-            <p className="text-xs font-bold text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
+            <h2 className="text-base font-black text-slate-950">{isRtl ? "النشاطات الأخيرة" : "Recent activities"}</h2>
+            <p className="text-[11px] font-bold text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
-            <Activity className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+            <Activity className="h-4.5 w-4.5" />
           </div>
         </div>
 
         {activities.length === 0 ? (
-          <div className="py-16 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+          <div className="py-12 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">
             {isRtl ? "لا توجد نشاطات" : "No activities"}
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
             {activities.map((activity, index) => (
-              <div key={activity.id || index} className="flex items-start gap-4 py-4">
-                <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
-                  <Activity className="h-4 w-4" />
+              <div key={activity.id || index} className="flex items-start gap-3.5 py-3.5">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                  <Activity className="h-3.5 w-3.5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black text-slate-950">{getActivityTitle(activity)}</p>
+                  <p className="text-xs font-black text-slate-950">{getActivityTitle(activity)}</p>
                   {activity.description && (
-                    <p className="mt-1 line-clamp-2 text-xs font-medium leading-6 text-slate-500">{activity.description}</p>
+                    <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-5 text-slate-500">{activity.description}</p>
                   )}
                   {activity.createdAt && (
-                    <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-300">
+                    <p className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-slate-300">
                       {formatDistanceToNow(new Date(activity.createdAt), {
                         addSuffix: true,
                         locale: isRtl ? arSA : undefined,

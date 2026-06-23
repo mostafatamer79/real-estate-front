@@ -23,6 +23,7 @@ import {
   Bell,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import api from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -148,7 +149,7 @@ function DepartmentHubContent() {
       label: isRtl ? "الدخل" : "Income",
       value: counts.income ?? 0,
       Icon: Wallet,
-      unit: "SAR",
+      unit: "",
     },
   ].filter((c) => {
     if (c.key === "income") return mods.finance && moduleStatus("finance") === "enabled";
@@ -245,7 +246,7 @@ function DepartmentHubContent() {
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
                 <p className="text-2xl font-black text-slate-950 tabular-nums">
                   {c.key === "income" ? Number(c.value || 0).toLocaleString("en-US") : c.value}
-                  {c.unit && <span className="text-[10px] font-black text-slate-400 ml-2">{c.unit}</span>}
+                  {c.key === "income" ? <SaudiRiyalSymbol className="ml-2 text-slate-400" iconClassName="h-3 w-3" /> : c.unit ? <span className="text-[10px] font-black text-slate-400 ml-2">{c.unit}</span> : null}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800">
@@ -401,7 +402,7 @@ function DepartmentHubContent() {
                       </p>
                     </div>
                     <div className="text-[11px] font-black text-slate-700 tabular-nums">
-                      {o.price ? `${Number(o.price).toLocaleString("en-US")} SAR` : ""}
+                      {o.price ? <SaudiRiyalAmount amount={Number(o.price)} locale="en-US" iconClassName="h-3 w-3 text-slate-700" /> : ""}
                     </div>
                   </div>
                 ))}

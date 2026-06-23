@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { useSettings } from "@/context/SettingsContext";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 
 const legalCategories = [
   { id: "disputes",      title: "المنازعات العقارية", desc: "منازعات الملكية، البيع، الرهن والمخالفات", icon: Scale },
@@ -538,7 +539,7 @@ export default function LegalRequestFlow({
             <label className={LBL}>مبلغ البيع</label>
             <div className="relative">
                 <input className={INP + " pl-12"} value={documentationData.saleAmount} onChange={(e) => setDocumentationData({ ...documentationData, saleAmount: e.target.value })} placeholder="0.00" dir="ltr" />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">ر.س</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
             </div>
         </div>
       </div>

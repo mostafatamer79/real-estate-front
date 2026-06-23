@@ -7,6 +7,7 @@ import stripePromise from '@/lib/stripe';
 import CheckoutForm from './CheckoutForm';
 import { Loader2 } from 'lucide-react';
 import { ordersApi } from '@/lib/api'; // We might need a paymentApi, let's assume we can add it or make a fetch
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 interface StripePaymentModalProps {
   isOpen: boolean;
@@ -64,7 +65,7 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, invoice
         <DialogHeader>
           <DialogTitle>{t('payment.title')}</DialogTitle>
           <DialogDescription>
-             {t('payment.amountRequired')}: {price} {t('chat.currency')}
+             {t('payment.amountRequired')}: <SaudiRiyalAmount amount={price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
           </DialogDescription>
         </DialogHeader>
         

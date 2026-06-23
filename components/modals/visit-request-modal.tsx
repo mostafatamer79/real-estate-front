@@ -16,6 +16,7 @@ import {
 import { ar, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/LanguageContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 // ── Hijri helpers (lightweight, no extra dep) ──────────────────────────────
 function toHijri(gDate: Date): { year: number; month: number; day: number } {
@@ -66,19 +67,12 @@ type CalendarType = 'hijri' | 'gregorian';
 type RecordingType = 'video' | 'live';
 type Step = 'type' | 'calendar' | 'recording' | 'confirm';
 
-// ── Visit service prices (SAR) ───────────────────────────────────────────
+// ── Visit service prices ─────────────────────────────────────────────────
 const VISIT_PRICES = {
     proxy_video: 400,
     proxy_live:  600,
     self:        200,
 } as const;
-
-function fmtSAR(amount: number, lang: string) {
-    return new Intl.NumberFormat(lang === 'ar' ? 'ar-SA' : 'en-US', {
-        style: 'currency', currency: 'SAR',
-        minimumFractionDigits: 0, maximumFractionDigits: 0,
-    }).format(amount);
-}
 
 interface VisitRequestModalProps {
     isOpen: boolean;
@@ -119,7 +113,7 @@ export default function VisitRequestModal({
         : recordingType === 'live'
             ? VISIT_PRICES.proxy_live
             : VISIT_PRICES.proxy_video;
-    const visitPriceFmt = fmtSAR(visitPriceAmount, language);
+    const visitPriceLocale = language === 'ar' ? 'ar-SA' : 'en-US';
 
     // ── Labels ────────────────────────────────────────────────────────────
     const T = {
@@ -515,7 +509,7 @@ export default function VisitRequestModal({
                                                     {isAr ? 'تكلفة الخدمة' : 'Service Fee'}
                                                 </span>
                                                 <span className="text-xl font-black text-slate-900">
-                                                    {visitPriceFmt}
+                                                    <SaudiRiyalAmount amount={visitPriceAmount} locale={visitPriceLocale} minimumFractionDigits={0} maximumFractionDigits={0} />
                                                 </span>
                                             </div>
                                         </div>
@@ -615,7 +609,7 @@ export default function VisitRequestModal({
                             {isAr ? 'تكلفة الزيارة' : 'Visit Fee'}
                         </span>
                         <span className="text-base font-black text-slate-900 bg-white border border-slate-200 px-3 py-1 rounded-xl shadow-sm">
-                            {visitPriceFmt}
+                            <SaudiRiyalAmount amount={visitPriceAmount} locale={visitPriceLocale} minimumFractionDigits={0} maximumFractionDigits={0} />
                         </span>
                     </div>
 

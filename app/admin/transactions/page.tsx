@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-hot-toast";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { SaudiRiyalIcon } from "@/components/ui/saudi-riyal-icon";
 
 const transactionTypes = ["sale", "rent", "commission", "tax", "deposit", "withdrawal", "settlement", "expense"];
 const transactionStatuses = ["pending", "completed", "failed", "cancelled"];
@@ -99,6 +100,22 @@ export default function TransactionsPage() {
     if (value && value !== key) return value;
     return isRtl ? fallbackAr : fallbackEn;
   };
+
+  const formatCurrency = (amount: number) => {
+    const parts = new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(Number(amount || 0));
+
+    return parts;
+  };
+
+  const renderCurrency = (amount: number) => (
+    <span className="inline-flex items-center gap-1">
+      <span>{formatCurrency(amount)}</span>
+      <SaudiRiyalIcon className="h-4 w-4 shrink-0" />
+    </span>
+  );
 
   const fetchTransactions = async () => {
     try {
@@ -366,7 +383,7 @@ export default function TransactionsPage() {
                     </div>
                   </TableCell>
                   <TableCell className="font-black text-slate-900">
-                    {new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", { style: "currency", currency: "SAR" }).format(Number(tx.amount || 0))}
+                    {renderCurrency(Number(tx.amount || 0))}
                   </TableCell>
                   <TableCell>
                     {tx.fromUser ? (
@@ -536,7 +553,7 @@ export default function TransactionsPage() {
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
                   <p className="text-sm font-black text-slate-950">
-                    {new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", { style: "currency", currency: "SAR" }).format(Number(viewingTransaction.amount || 0))}
+                    {renderCurrency(Number(viewingTransaction.amount || 0))}
                   </p>
                 </div>
 
@@ -613,7 +630,7 @@ export default function TransactionsPage() {
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الضريبة" : "Tax"}</span>
                   <p className="text-sm font-bold text-slate-900">
                     {viewingTransaction.taxAmount != null 
-                      ? new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", { style: "currency", currency: "SAR" }).format(Number(viewingTransaction.taxAmount))
+                      ? renderCurrency(Number(viewingTransaction.taxAmount))
                       : "—"
                     }
                   </p>
@@ -624,7 +641,7 @@ export default function TransactionsPage() {
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "العمولة" : "Commission"}</span>
                   <p className="text-sm font-bold text-slate-900">
                     {viewingTransaction.commissionAmount != null 
-                      ? new Intl.NumberFormat(isRtl ? "ar-SA" : "en-US", { style: "currency", currency: "SAR" }).format(Number(viewingTransaction.commissionAmount))
+                      ? renderCurrency(Number(viewingTransaction.commissionAmount))
                       : "—"
                     }
                   </p>

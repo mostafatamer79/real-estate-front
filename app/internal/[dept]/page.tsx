@@ -23,6 +23,7 @@ import Link from "next/link";
 import api from "@/lib/api";
 import { motion } from "framer-motion";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import InternalRequestsPage from "@/app/internal/[dept]/requests/page";
 import BuildingManagementPage from "@/app/buildingmanagement/page";
@@ -376,7 +377,7 @@ export default function DepartmentDashboard() {
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
                   <p className="text-2xl font-black text-slate-950 tabular-nums">
                     {c.key === 'income' ? `${Number(c.value || 0).toLocaleString('en-US')}` : c.value}
-                    {c.key === 'income' && <span className="text-[10px] font-black text-slate-400 ml-2">SAR</span>}
+                    {c.key === 'income' && <span className="text-[10px] font-black text-slate-400 ml-2"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800">
@@ -463,7 +464,7 @@ export default function DepartmentDashboard() {
                       <p className="text-[10px] font-bold text-slate-400 truncate">{new Date(o.createdAt).toLocaleString('ar-SA')}</p>
                     </div>
                     <div className="text-[11px] font-black text-slate-700 tabular-nums">
-                      {o.price ? `${Number(o.price).toLocaleString('en-US')} SAR` : ''}
+                      {o.price ? <SaudiRiyalAmount amount={Number(o.price)} locale="en-US" iconClassName="h-3 w-3 text-slate-700" /> : ''}
                     </div>
                   </div>
                 ))}

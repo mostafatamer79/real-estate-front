@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { 
   Search, 
   MapPin, 
@@ -420,7 +421,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-1">
-                <label className={labelCls}>السعر (ر.س)</label>
+                <label className={labelCls}>السعر</label>
                 <input 
                   type="number" 
                   value={form.price || ''} 
@@ -1105,7 +1106,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-1">
-                <label className={labelCls}>السعر (ر.س)</label>
+                <label className={labelCls}>السعر</label>
                 <input 
                   type="number" 
                   value={form.price || ''} 
@@ -1890,7 +1891,7 @@ export default function AdminOffersPage() {
                             <span className="font-black text-slate-950 text-sm">
                               {new Intl.NumberFormat('ar-SA').format(offer.price)}
                             </span>
-                            <span className="text-[9px] font-black text-slate-400 uppercase">ريال سعودي</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
                           </div>
                       </TableCell>
                       <TableCell className="px-6 py-5">

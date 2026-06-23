@@ -10,6 +10,7 @@ import { financialApi, WalletData, TransactionType, TransactionStatus } from '@/
 import { toast } from 'react-hot-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 export default function UserWallet() {
     const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -82,7 +83,7 @@ export default function UserWallet() {
                             <div className='text-right md:text-right'>
                                 <div className='text-black text-sm mb-2'>الرصيد المتاح</div>
                                 <div className='text-3xl font-bold text-black'>
-                                    {walletData?.balance.toLocaleString() || '0.00'} <span className='text-xl font-normal'>ريال</span>
+                                    <SaudiRiyalAmount amount={walletData?.balance || 0} locale="ar-SA" className='text-3xl font-bold text-black' iconClassName='h-5 w-5' />
                                 </div>
                             </div>
                         </div>
@@ -122,7 +123,7 @@ export default function UserWallet() {
                                         <TableCell>{t.type}</TableCell>
                                         <TableCell>{new Date(t.transactionDate).toLocaleDateString('ar-SA')}</TableCell>
                                         <TableCell className={t.type === TransactionType.WITHDRAWAL || t.type === TransactionType.EXPENSE ? 'text-red-600' : 'text-green-600'}>
-                                            {t.amount} ر.س
+                                            <SaudiRiyalAmount amount={t.amount} locale="ar-SA" iconClassName='h-4 w-4' />
                                         </TableCell>
                                         <TableCell>{t.status}</TableCell>
                                     </TableRow>
@@ -156,7 +157,7 @@ export default function UserWallet() {
                                  <div>
                                      <Label>المبلغ المراد سحبه</Label>
                                      <Input type="number" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} placeholder="0.00" />
-                                     <p className="text-sm text-gray-500 mt-1">الرصيد المتاح: {walletData?.balance} ريال</p>
+                                     <p className="text-sm text-gray-500 mt-1">الرصيد المتاح: <SaudiRiyalAmount amount={walletData?.balance || 0} locale="ar-SA" iconClassName='h-3 w-3 text-gray-500' /></p>
                                  </div>
                                  <div className="flex gap-2 justify-end">
                                      <Button type="button" variant="ghost" onClick={() => setShowWithdrawModal(false)}>إلغاء</Button>

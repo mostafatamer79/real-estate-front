@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState, useRef, useEffect, useMemo, Suspense, useCallback } from "react";
 import {
   ShoppingBag,
@@ -78,6 +79,7 @@ const Map = dynamic(() => import('@/app/src/components/Map'), {
   loading: () => <div className="h-[400px] w-full bg-slate-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
 });
 import OrderDetailsModal from "@/components/modals/order-details-modal";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import PropertyDetailsModal from "@/components/modals/property-details-modal";
 import TenantDetailsModal from "@/components/modals/tenant-details-modal";
 import OfferDetailsModal from "@/components/modals/offer-details-modal";
@@ -504,7 +506,7 @@ function BuildingManagementContent() {
       id: "subscriptions",
       label: t('pm.subscriptions'),
       icon: Home,
-      image: "/icons/a4trkat.png"
+      image: "/icons/sub.png"
     },
   ];
 
@@ -2838,21 +2840,21 @@ function BuildingManagementContent() {
                           <div className="bg-slate-50 p-5 rounded-[2rem] border border-slate-100 shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
                                 <p className="text-3xl font-black text-slate-900 tracking-tight">
-                                    {(selectedProperty ? (selectedProperty.purchasePrice || 0) : properties.reduce((acc, p) => acc + (p.purchasePrice || 0), 0)).toLocaleString()} <span className="text-xs ml-1 opacity-40 uppercase tracking-widest">SAR</span>
+                                    <SaudiRiyalAmount amount={selectedProperty ? (selectedProperty.purchasePrice || 0) : properties.reduce((acc, p) => acc + (p.purchasePrice || 0), 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
                           <div className="bg-slate-900 p-5 rounded-[2rem] shadow-xl shadow-slate-200 group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2 opacity-60">{t('pm.roi.annualIncome')}</p>
                                 <p className="text-3xl font-black text-white tracking-tight">
-                                    {(payments
+                                    <SaudiRiyalAmount amount={(payments
                                         .filter(p => p.status === 'paid' && (!selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id))
-                                        .reduce((acc, p) => acc + p.amount, 0)).toLocaleString()} <span className="text-xs ml-1 opacity-40 uppercase tracking-widest">SAR</span>
+                                        .reduce((acc, p) => acc + p.amount, 0))} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
                           <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-red-400 font-black uppercase tracking-widest mb-2">{t('pm.roi.annualExpenses')}</p>
                                 <p className="text-3xl font-black text-red-900 tracking-tight">
-                                    0 <span className="text-xs ml-1 opacity-40 uppercase tracking-widest">SAR</span>
+                                    <SaudiRiyalAmount amount={0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
                       </div>
@@ -2924,8 +2926,7 @@ function BuildingManagementContent() {
                                                </td>
                                                <td className="p-6 font-black text-slate-900 text-base tracking-tight">{log.description}</td>
                                                <td className="p-6 font-black text-slate-900 text-lg">
-                                                   {log.cost?.toLocaleString() || '0'} 
-                                                   <span className="text-[10px] ml-1 opacity-30 uppercase tracking-widest font-bold">SAR</span>
+                                                   <SaudiRiyalAmount amount={log.cost || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-30" />
                                                </td>
                                                <td className="p-6">
                                                    <div className="flex flex-col px-4 py-2 border border-slate-100 rounded-xl bg-slate-50 group-hover:bg-white group-hover:border-slate-200 transition-all">
@@ -3349,7 +3350,7 @@ function BuildingManagementContent() {
                         placeholder="0.00"
                       />
                       <div className="absolute start-3 top-3 text-gray-500 font-medium">
-                         {createUserForm.financialAgreementType === 'salary' ? t('chat.currency') : '%'}
+                         {createUserForm.financialAgreementType === 'salary' ? <SaudiRiyalSymbol className="h-4 w-4" /> : '%'}
                       </div>
                    </div>
                 </div>
@@ -4033,7 +4034,7 @@ function BuildingManagementContent() {
                                       <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()}</p>
                                     </div>
                                     <div className="text-right">
-                                      <p className="font-black text-slate-900">{inv.amount} SAR</p>
+                                      <p className="font-black text-slate-900"><SaudiRiyalAmount amount={inv.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{inv.status}</span>
                                     </div>
                                   </div>
@@ -4279,8 +4280,7 @@ function BuildingManagementContent() {
                         <div>
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{t('pm.financial.income')}</p>
                             <p className="text-2xl font-black text-slate-900 tracking-tight">
-                                {payments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0).toLocaleString()} 
-                                <span className="text-xs ml-1 opacity-50">SAR</span>
+                                <SaudiRiyalAmount amount={payments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-50" />
                             </p>
                         </div>
                     </div>
@@ -4398,7 +4398,7 @@ function BuildingManagementContent() {
                                 .map(payment => (
                                     <tr key={payment.id} className="hover:bg-slate-50/30 transition-all group">
                                         <td className="p-6 font-black text-slate-900 text-sm">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
-                                        <td className="p-6 font-black text-slate-900 text-base">{payment.amount.toLocaleString()} <span className="text-[10px] opacity-40">SAR</span></td>
+                                        <td className="p-6 font-black text-slate-900 text-base"><SaudiRiyalAmount amount={payment.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" /></td>
                                         <td className="p-6">
                                             <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                                                 payment.status === 'paid' ? 'bg-white text-green-600 border-green-100 shadow-sm shadow-green-50' : 
@@ -4666,7 +4666,7 @@ function BuildingManagementContent() {
                                             
                                             <div className="text-end space-y-1">
                                                 <div className="text-sm font-black text-slate-800">
-                                                    {order.price?.toLocaleString()} {t('chat.currency')}
+                                                    <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                                                 </div>
                                                 <div className="flex items-center justify-end gap-1.5 text-xs text-gray-400">
                                                     <Clock className="w-3.5 h-3.5" />
@@ -5218,7 +5218,7 @@ function BuildingManagementContent() {
                                 <h4 className="font-bold text-base mb-1">{offer.propertyType}</h4>
                                 <p className="text-xs text-gray-500 mb-2">{offer.city} - {offer.neighborhood}</p>
                                 <p className="font-bold text-slate-600 text-base mb-4">
-                                    {offer.price.toLocaleString()} <span className="text-xs text-gray-500">SAR</span>
+                                    <SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 text-gray-500" />
                                 </p>
                                 <div className="flex gap-2">
                                      <button 
@@ -5298,7 +5298,7 @@ function BuildingManagementContent() {
                         if (!coords) return null;
                         return {
                           id: offer.id,
-                          name: `${offer.propertyType} - ${offer.price.toLocaleString()} SAR`,
+                          name: `${offer.propertyType} - ${offer.price.toLocaleString()} \u20C1`,
                           type: 'property', // Uses the 'property' icon type we saw in Map.tsx
                           latitude: coords.lat,
                           longitude: coords.lng,
@@ -5478,7 +5478,7 @@ function BuildingManagementContent() {
                                         <h3 className="font-bold text-gray-900">{pkg.name}</h3>
                                         {newSubscriptionData.packageId === pkg.id && <div className="w-5 h-5 bg-slate-600 rounded-full flex items-center justify-center"><CheckCircle className="w-3 h-3 text-white" /></div>}
                                     </div>
-                                    <p className="text-xl font-black text-slate-600 mb-4">{pkg.price} <span className="text-xs font-normal text-gray-500">SAR</span></p>
+                                    <p className="text-xl font-black text-slate-600 mb-4"><SaudiRiyalAmount amount={pkg.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 text-gray-500" /></p>
                                     <p className="text-xs text-gray-500 line-clamp-2 mb-4">{pkg.description}</p>
                                     <ul className="space-y-1">
                                         {pkg.features?.slice(0, 3).map((f: any, i: number) => (
@@ -5577,7 +5577,7 @@ function BuildingManagementContent() {
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.property?.name || sub.propertyId}</td>
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.unit?.unitNumber || '-'}</td>
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.subscriptionType}</td>
-                            <td className="px-6 py-4 text-xs text-gray-900">{sub.amount} {t('fin.currencyShort')}</td>
+                            <td className="px-6 py-4 text-xs text-gray-900"><SaudiRiyalAmount amount={sub.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-gray-900" /></td>
                             <td className="px-6 py-4 text-xs text-gray-900">{new Date(sub.startDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
                             <td className="px-6 py-4">
                               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -5825,7 +5825,17 @@ function BuildingManagementContent() {
                       ? 'bg-slate-950 text-white scale-105 rotate-3 shadow-slate-950/20' 
                       : 'bg-slate-50 text-slate-700 group-hover:bg-slate-100 group-hover:scale-105 group-hover:-rotate-2'}
                   `}>
-                    <item.icon className="h-6 w-6 lg:h-7 lg:w-7 transition-all duration-700" />
+                    {item.image ? (
+                      <Image 
+                        src={item.image} 
+                        alt={item.label} 
+                        width={28} 
+                        height={28} 
+                        className={`object-contain transition-all duration-700 ${selectedSection === item.id ? "brightness-0 invert" : ""}`}
+                      />
+                    ) : (
+                      <item.icon className="h-6 w-6 lg:h-7 lg:w-7 transition-all duration-700" />
+                    )}
                   </div>
                   
                   {/* Text Content */}
@@ -6180,7 +6190,7 @@ function BuildingManagementContent() {
                             <p className="text-xs text-slate-500">{format(new Date(inv.createdAt), "dd MMMM yyyy")}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-black text-slate-900">{inv.amount} SAR</p>
+                            <p className="font-black text-slate-900"><SaudiRiyalAmount amount={inv.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${inv.status === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}>{inv.status}</span>
                           </div>
                         </div>

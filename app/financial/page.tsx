@@ -23,6 +23,7 @@ import ReportsManager from '@/components/financial/ReportsManager';
 import PaymentsManager from '@/components/financial/PaymentsManager';
 import { financialApi, FinancialTransaction } from '@/lib/financial-service';
 import { useLanguage } from "@/context/LanguageContext";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
@@ -211,7 +212,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
 function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -225,12 +226,12 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     }, []);
 
     const kpis = [
-        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: DollarSign, color: "text-slate-900", bg: "bg-slate-50", unit: t('fin.currency') },
-        { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-slate-50", unit: t('fin.currency') },
-        { label: t('fin.kpi.commission'), value: stats?.totalCommission || 0, icon: Banknote, color: "text-slate-900", bg: "bg-slate-50", unit: t('fin.currency') },
-        { label: t('fin.kpi.expenses'), value: stats?.totalExpenses || 0, icon: ArrowDownLeft, color: "text-slate-900", bg: "bg-slate-50", unit: t('fin.currency') },
-        { label: t('fin.kpi.netProfit'), value: stats?.netProfit || 0, icon: ArrowUpRight, color: "text-slate-950", bg: "bg-slate-100", unit: t('fin.currency') },
-        { label: t('fin.kpi.vat'), value: stats?.totalTax || 0, icon: Calculator, color: "text-slate-900", bg: "bg-slate-50", unit: t('fin.currency') },
+        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: DollarSign, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.commission'), value: stats?.totalCommission || 0, icon: Banknote, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.expenses'), value: stats?.totalExpenses || 0, icon: ArrowDownLeft, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.netProfit'), value: stats?.netProfit || 0, icon: ArrowUpRight, color: "text-slate-950", bg: "bg-slate-100" },
+        { label: t('fin.kpi.vat'), value: stats?.totalTax || 0, icon: Calculator, color: "text-slate-900", bg: "bg-slate-50" },
     ];
 
     if (loading) return (
@@ -257,7 +258,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                             <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{kpi.label}</p>
                                 <h3 className="text-lg font-black text-slate-900 transition-colors">
-                                  {Number(kpi.value || 0).toLocaleString()} <span className="text-[10px] opacity-40 font-bold">{kpi.unit}</span>
+                                  <SaudiRiyalAmount amount={Number(kpi.value || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-4 w-4 text-slate-400" className="text-lg font-black text-slate-900 transition-colors" />
                                 </h3>
                             </div>
                         </div>
@@ -299,7 +300,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                     </div>
                                     <div className="text-center">
                                         <p className="text-[11px] font-black text-slate-900">{item.month}</p>
-                                        <p className="text-[9px] font-bold text-slate-400">{Number(item.net || 0).toLocaleString()} {t('fin.currency')}</p>
+                                        <p className="text-[9px] font-bold text-slate-400"><SaudiRiyalAmount amount={Number(item.net || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 text-slate-400" className="text-[9px] font-bold text-slate-400" /></p>
                                     </div>
                                 </motion.div>
                             );
@@ -328,8 +329,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                       <p className="text-[10px] font-bold opacity-70 mt-1">{row.count} عنصر</p>
                                   </div>
                                   <div className="text-left">
-                                      <p className="text-sm font-black tabular-nums">{Number(row.total || 0).toLocaleString()}</p>
-                                      <p className="text-[10px] font-bold opacity-70">{t('fin.currency')}</p>
+                                      <p className="text-sm font-black tabular-nums"><SaudiRiyalAmount amount={Number(row.total || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-4 w-4" className="text-sm font-black tabular-nums" /></p>
                                   </div>
                               </div>
                           </div>
@@ -355,7 +355,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                 <div key={item.category} className="space-y-2">
                                     <div className="flex items-center justify-between text-sm font-black text-slate-900">
                                         <span>{item.category}</span>
-                                        <span className="tabular-nums">{Number(item.total || 0).toLocaleString()} {t('fin.currency')}</span>
+                                        <span className="tabular-nums"><SaudiRiyalAmount amount={Number(item.total || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} className="tabular-nums" /></span>
                                     </div>
                                     <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
                                         <div className="h-full rounded-full bg-slate-900" style={{ width: `${width}%` }} />
@@ -382,8 +382,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                     <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{tx.type} • {tx.status}</p>
                                 </div>
                                 <div className="text-left shrink-0">
-                                    <p className="text-sm font-black text-slate-950 tabular-nums">{Number(tx.amount || 0).toLocaleString()}</p>
-                                    <p className="text-[10px] font-bold text-slate-400">{t('fin.currency')}</p>
+                                    <p className="text-sm font-black text-slate-950 tabular-nums"><SaudiRiyalAmount amount={Number(tx.amount || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-4 w-4 text-slate-400" className="text-sm font-black text-slate-950 tabular-nums" /></p>
                                 </div>
                             </div>
                         ))}
@@ -458,8 +457,8 @@ function TransactionsSection() {
                                       </div>
                                     </TableCell>
                                     <TableCell className="px-8 py-5 font-black text-slate-900 text-xs">{tx.type}</TableCell>
-                                    <TableCell className="px-8 py-5 font-black text-slate-900 text-sm tabular-nums">{tx.amount.toLocaleString()} <span className="text-[9px] opacity-40 font-bold">ر.س</span></TableCell>
-                                    <TableCell className="px-8 py-5 font-bold text-slate-500 tabular-nums text-xs">{tx.commissionAmount} <span className="text-[9px] opacity-30 font-bold">ر.س</span></TableCell>
+                                    <TableCell className="px-8 py-5 font-black text-slate-900 text-sm tabular-nums">{tx.amount.toLocaleString()} <span className="text-[9px] opacity-40 font-bold"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></TableCell>
+                                    <TableCell className="px-8 py-5 font-bold text-slate-500 tabular-nums text-xs">{tx.commissionAmount} <span className="text-[9px] opacity-30 font-bold"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></TableCell>
                                     <TableCell className="px-8 py-5 text-center">
                                         <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border
                                             ${tx.status === 'completed' ? 'bg-slate-50 text-slate-900 border-slate-100' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>

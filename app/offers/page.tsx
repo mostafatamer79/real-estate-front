@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OfferAppointmentsModal from "@/components/modals/offer-appointments-modal";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 interface Offer {
   id: string;
@@ -502,7 +503,7 @@ export default function OffersPage() {
                     <div className="flex items-center gap-2 mb-3 text-sm"><span className="font-semibold text-gray-700">{sellerName}</span><span className="text-gray-400 mr-auto">•</span><span className="text-gray-500">{offer.timeAgo}</span></div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{offer.description}</p>
                     <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-100 pt-4">
-                      <div className="flex items-center gap-4"><div className="flex items-center gap-1"><Ruler className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><DollarSign className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800">{offer.price.toLocaleString()} {t('chat.currency')}</span></div></div>
+                      <div className="flex items-center gap-4"><div className="flex items-center gap-1"><Ruler className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><DollarSign className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
                       <div className="flex items-center gap-3">
                         <button onClick={() => window.location.href = `/offers/${offer.id}`} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-slate-50 transition-colors text-sm">{t('offers.details')}</button>
                         {(user?.id === offer.userId || user?.id === offer.user?.id) && (<button onClick={() => { setSelectedOfferId(offer.id); setSelectedOfferTitle(offer.address); setIsAppointmentsModalOpen(true); }} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium">{language === 'ar' ? 'عرض المواعيد' : 'View Appointments'}</button>)}

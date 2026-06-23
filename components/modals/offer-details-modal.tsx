@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { chatApi } from "@/lib/chat";
 import { offersApi } from "@/lib/api";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { 
     Home, 
     Maximize, 
@@ -203,7 +204,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 <span className="text-4xl font-black text-slate-900 tracking-tighter">
                                 {activeOffer.price.toLocaleString()}
                                 </span>
-                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest">SAR</span>
+                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                         </div>
                         <div className="flex-1 p-6 bg-slate-50 rounded-3xl border border-slate-100 relative group overflow-hidden">

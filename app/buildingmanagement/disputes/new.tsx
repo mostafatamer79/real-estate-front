@@ -17,6 +17,7 @@ import { offersApi, uploadFile, prepareOfferData } from "@/lib/api";
 import { useOffers } from "@/hooks/useOffers";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 
 interface SidebarItem {
   id: string;
@@ -495,7 +496,7 @@ export default function BuildingManagement() {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
-                  <span className="absolute left-3 top-3 text-gray-500">ريال</span>
+                  <span className="absolute left-3 top-3 text-gray-500"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                 </div>
               </div>
 

@@ -19,6 +19,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 interface OrderDetailsModalProps {
     isOpen: boolean;
@@ -189,7 +190,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{t('common.price')}</span>
                                     </div>
                                     <p className="text-2xl font-black text-white">
-                                        {order.price?.toLocaleString()} <span className="text-sm font-bold opacity-40">{t('chat.currency')}</span>
+                                        <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-5 w-5 text-white/40" className="text-2xl font-black text-white" />
                                     </p>
                                 </div>
                             </div>

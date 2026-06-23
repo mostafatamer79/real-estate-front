@@ -30,9 +30,11 @@ import {
   X,
   User,
   UserCheck,
-  Check
+  Check,
+  SaudiRiyalIcon
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { useSettings } from "@/context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -377,7 +379,7 @@ export default function AdminServicesManagementPage() {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {[
           { id: "requests", label: "الطلبات", desc: "عرض كامل، رد على العميل، تسعير الطلب وإرسال الفاتورة", icon: FileText, count: filteredServiceRequests.length },
-          { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: DollarSign, count: activeCategoryServices.length },
+          { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: SaudiRiyalIcon, count: activeCategoryServices.length },
           { id: "availability", label: "تفعيل الخدمات", desc: "تشغيل أو تعطيل ظهور الخدمات للعملاء", icon: Settings2, count: visibleServiceCategories.length },
         ].map((panel) => {
           const Icon = panel.icon;
@@ -544,7 +546,7 @@ export default function AdminServicesManagementPage() {
                         className="h-10 min-w-0 flex-1 bg-transparent text-lg font-black tabular-nums text-slate-950 outline-none placeholder:text-slate-300"
                         placeholder="0.00"
                       />
-                      <span className="rounded-lg bg-slate-950 px-3 py-2 text-[10px] font-black text-white">ر.س</span>
+                      <span className="rounded-lg bg-slate-950 px-3 py-2 text-[10px] font-black text-white"><SaudiRiyalSymbol iconClassName="h-4 w-4 text-white" /></span>
                     </div>
                   </div>
                 </div>
@@ -1153,7 +1155,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
               />
             </div>
             <div>
-              <label className={labelCls}>السعر التقريبي (ر.س)</label>
+              <label className={labelCls}>السعر التقريبي</label>
               <input
                 type="number"
                 min="0"

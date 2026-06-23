@@ -91,13 +91,11 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 `}
                             >
                                 {/* Icon Container */}
-                                <div className={`h-20 w-20 shrink-0 rounded-2xl shadow-md transition-all duration-500 flex items-center justify-center overflow-hidden ${activeTab === item.id ? 'bg-slate-950 shadow-slate-950/20 rotate-6 scale-105' : 'bg-slate-100 group-hover:bg-slate-200 group-hover:-rotate-3'}`}>
-                                    <Image
+                                <div className={`h-24 w-24 shrink-0 rounded-2xl shadow-md transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-slate-950/20 rotate-6 scale-105' : 'bg-slate-100 group-hover:bg-slate-200 group-hover:-rotate-3'}`}>
+                                    <img
                                         src={item.icon}
                                         alt={item.label}
-                                        width={64}
-                                        height={64}
-                                        className={`h-16 w-16 scale-[1.6] object-contain transition-all duration-300 ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
+                                        className={`w-full h-full scale-[2] object-contain transition-all duration-300 ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
                                     />
                                 </div>
                                 
@@ -140,12 +138,10 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 }
                             `}
                         >
-                            <Image
+                            <img
                                 src={item.icon}
                                 alt={item.label}
-                                width={28}
-                                height={28}
-                                className={`h-7 w-7 scale-[1.5] object-contain ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
+                                className={`h-10 w-10 scale-[1.3] object-contain ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
                             />
                             {item.label}
                         </button>

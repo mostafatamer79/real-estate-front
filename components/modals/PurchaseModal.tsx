@@ -12,7 +12,7 @@ interface PurchaseModalProps {
     onConfirm: () => void;
     loading?: boolean;
     propertyTitle: string;
-    price: string;
+    price: React.ReactNode;
 }
 
 export default function PurchaseModal({ isOpen, onClose, onConfirm, loading, propertyTitle, price }: PurchaseModalProps) {

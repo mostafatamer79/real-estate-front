@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { financialApi, bookingsApi } from "@/lib/api";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import {
   Dialog,
   DialogContent,
@@ -759,7 +760,7 @@ export default function ServiceRequestsPage() {
                                                         <p className="text-xs text-slate-500">{format(new Date(invoice.createdAt), 'dd MMMM yyyy')}</p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <p className="font-black text-slate-900">{invoice.amount} SAR</p>
+                                                        <p className="font-black text-slate-900"><SaudiRiyalAmount amount={invoice.amount} locale="ar-SA" /></p>
                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                                             invoice.status === 'paid' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'
                                                         }`}>

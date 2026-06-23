@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { X, Plus, Trash2, ArrowDownCircle } from 'lucide-react';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 import { financialApi, FinancialTransaction } from '@/lib/financial-service';
 import { Loader2 } from 'lucide-react';
@@ -115,7 +116,7 @@ export default function CommissionManager() {
                                         commissions.map((c) => (
                                             <TableRow key={c.id}>
                                                 <TableCell className='text-right'>{c.id.slice(0, 8)}</TableCell>
-                                                <TableCell className='text-right'>{c.commissionAmount || c.amount} ر.س</TableCell>
+                                                <TableCell className='text-right'><SaudiRiyalAmount amount={c.commissionAmount || c.amount} locale="ar-SA" /></TableCell>
                                                 <TableCell className='text-right'>{new Date(c.transactionDate).toLocaleDateString('ar-SA')}</TableCell>
                                                 <TableCell className='text-right'>
                                                     <span className={`px-2 py-1 rounded-full text-xs ${c.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>

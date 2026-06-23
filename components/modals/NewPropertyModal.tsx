@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Property } from "@/types/api";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 
 interface NewPropertyModalProps {
   isOpen: boolean;
@@ -141,7 +142,7 @@ export function NewPropertyModal({
                   onChange={(e) => setData({ ...data, purchasePrice: Number(e.target.value) })}
                   className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl pl-4 pr-12"
                 />
-                <span className="absolute right-4 top-3.5 text-gray-500 text-sm">SAR</span>
+                <span className="absolute right-4 top-3.5 text-gray-500 text-sm"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
               </div>
             </div>
 

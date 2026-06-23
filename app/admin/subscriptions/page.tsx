@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { 
   CreditCard, 
   Search, 
@@ -778,7 +779,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                 </div>
                 <div className="text-left">
                   <div className="text-xs font-black text-slate-400">{form.subscriptionType}</div>
-                  <div className="text-lg font-black text-slate-950">{Number(form.amount || 0).toFixed(2)} ر.س</div>
+                  <div className="text-lg font-black text-slate-950"><SaudiRiyalAmount amount={Number(form.amount || 0)} locale="ar-SA" /></div>
                 </div>
               </div>
             </div>
@@ -809,7 +810,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-black text-slate-800">{departmentLabel(department)}</span>
-                        <span className="text-[11px] font-black text-slate-400">{departmentPrice(department).toFixed(2)} ر.س / {form.subscriptionType}</span>
+                        <span className="text-[11px] font-black text-slate-400"><SaudiRiyalAmount amount={departmentPrice(department)} locale="ar-SA" iconClassName="h-3 w-3 text-slate-400" /> / {form.subscriptionType}</span>
                       </div>
                     </button>
                   );
@@ -829,7 +830,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                 className={inputCls}
                 placeholder="0"
               />
-              <p className="text-[10px] font-bold text-slate-400">سعر الموظف: {employeeSeatPrice.toFixed(2)} ر.س</p>
+              <p className="text-[10px] font-bold text-slate-400">سعر الموظف: <SaudiRiyalAmount amount={employeeSeatPrice} locale="ar-SA" iconClassName="h-3 w-3 text-slate-400" /></p>
             </div>
           )}
 
@@ -848,17 +849,17 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                   {selectedDepartmentPricing.map((item) => (
                     <div key={item.department} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
                       <span className="text-xs font-black text-slate-700">{item.label}</span>
-                      <span className="text-xs font-black text-slate-950">{item.price.toFixed(2)} ر.س</span>
+                      <span className="text-xs font-black text-slate-950"><SaudiRiyalAmount amount={item.price} locale="ar-SA" iconClassName="h-3 w-3" /></span>
                     </div>
                   ))}
                   {isEmployeeSelected && (
                     <div className="rounded-xl bg-slate-950 px-3 py-2 text-white">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-black">الموظفون</span>
-                        <span className="text-xs font-black">{employeeSeatTotal.toFixed(2)} ر.س</span>
+                        <span className="text-xs font-black"><SaudiRiyalAmount amount={employeeSeatTotal} locale="ar-SA" iconClassName="h-3 w-3 text-white" /></span>
                       </div>
                       <div className="mt-1 text-[10px] font-bold text-white/60">
-                        {form.employeeSeats || 0} × {employeeSeatPrice.toFixed(2)} ر.س لكل موظف
+                        {form.employeeSeats || 0} × <SaudiRiyalAmount amount={employeeSeatPrice} locale="ar-SA" iconClassName="h-3 w-3 text-white/60" /> لكل موظف
                       </div>
                     </div>
                   )}
@@ -881,7 +882,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
               <label className={labelCls}>المبلغ</label>
               <div className="relative">
                 <input type="number" value={form.amount} onChange={e => setForm(f => ({...f, amount: parseFloat(e.target.value)}))} className={inputCls} />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300">ر.س</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
               </div>
             </div>
           </div>

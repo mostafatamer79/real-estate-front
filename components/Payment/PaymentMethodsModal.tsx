@@ -7,6 +7,7 @@ import { Wallet, CreditCard, Calendar, CheckCircle2, Loader2, AlertCircle } from
 import { financialApi } from '@/lib/api';
 import { apiClient } from '@/lib/client';
 import toast from 'react-hot-toast';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 interface PaymentMethodsModalProps {
   isOpen: boolean;
@@ -95,7 +96,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
   };
 
   const methods = [
-    { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: `${balance} ${t('chat.currency')}` },
+    { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <SaudiRiyalAmount amount={balance} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-slate-500 font-medium" /> },
     { id: 'credit', title: t('payment.credit'), icon: <CreditCard className="w-5 h-5" />, desc: t('payment.creditDesc') || "مدى، فيزا، ماستركارد" },
     { id: 'installments', title: t('payment.installments') || "تقسيط", icon: <Calendar className="w-5 h-5" />, desc: t('payment.installmentsDesc') },
   ];
@@ -106,7 +107,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         <DialogHeader className="mb-6">
           <DialogTitle className="text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">
-             {t('payment.amountRequired')}: <span className="text-slate-900 font-black">{price} {t('chat.currency')}</span>
+             {t('payment.amountRequired')}: <span className="text-slate-900 font-black"><SaudiRiyalAmount amount={price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
           </DialogDescription>
         </DialogHeader>
 
@@ -134,7 +135,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-slate-900">{method.title}</p>
-                  <p className="text-xs text-slate-500 font-medium">{method.desc}</p>
+                  <div className="text-xs text-slate-500 font-medium">{method.desc}</div>
                 </div>
               </div>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${

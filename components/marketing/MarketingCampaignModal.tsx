@@ -14,6 +14,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import api, { offersApi, ordersApi, propertiesApi } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { SaudiRiyalSymbol } from '@/components/ui/saudi-riyal';
 
 interface Props {
   isOpen: boolean;
@@ -372,7 +373,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'السعر (ريال)' : 'Price (SAR)'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                     <input
                       type="number"
                       value={formData.price || ''}

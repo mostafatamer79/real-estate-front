@@ -6,6 +6,7 @@ import { CheckCircle2, CreditCard, Eye, Loader2, Shield, Wallet } from "lucide-r
 import toast from "react-hot-toast";
 import api, { subscriptionsApi } from "@/lib/api";
 import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 type DeptSlug = "properties" | "offers" | "orders" | "finance" | "employees";
 
@@ -200,7 +201,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
                       </div>
                       {isSelected && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
                     </div>
-                    <div className="text-2xl font-black text-slate-900 mb-3">{amount.toFixed(2)} ر.س</div>
+                    <div className="text-2xl font-black text-slate-900 mb-3"><SaudiRiyalAmount amount={amount} locale="ar-SA" /></div>
                     <div className="space-y-2">
                       {(pkg.features || []).slice(0, 4).map((feature, index) => (
                         <div key={index} className="text-sm text-slate-600 font-bold flex items-center gap-2">
@@ -261,7 +262,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
           <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4 space-y-2">
             <div className="text-xs font-black text-slate-500">الإجمالي الحالي</div>
-            <div className="text-3xl font-black text-slate-950">{computedAmount.toFixed(2)} ر.س</div>
+            <div className="text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
             <div className="text-xs font-bold text-slate-400">سيتم إنشاء الاشتراك بحالة معلّق ثم تحويلك إلى المحفظة لإتمام الدفع.</div>
           </div>
 
@@ -288,7 +289,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
                 <div className="min-w-0">
                   <div className="text-sm font-black text-slate-950">{sub.managementPackage?.name || "باقة اشتراك"}</div>
                   <div className="text-xs font-bold text-slate-500 mt-1">
-                    {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • {sub.amount} ر.س
+                    {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • <SaudiRiyalAmount amount={Number(sub.amount || 0)} locale="ar-SA" iconClassName="h-3 w-3" />
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

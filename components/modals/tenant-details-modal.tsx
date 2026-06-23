@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TenantProfile, Lease, Payment } from "@/types/api";
 import { useLanguage } from "@/context/LanguageContext";
 import { User, Phone, Mail, Building, FileText, Calendar, Hash } from "lucide-react";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 interface TenantDetailsModalProps {
     isOpen: boolean;
@@ -83,7 +84,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                                         <div className="grid grid-cols-2 gap-2 text-xs">
                                             <div>
                                                 <p className="text-blue-500 font-bold uppercase">{t('pm.field.rentAmount')}</p>
-                                                <p className="font-black text-blue-800">{lease.annualRent?.toLocaleString()} SAR</p>
+                                                <p className="font-black text-blue-800">{lease.annualRent != null ? <SaudiRiyalAmount amount={lease.annualRent} locale="en-US" /> : null}</p>
                                             </div>
                                             <div>
                                                 <p className="text-blue-500 font-bold uppercase">{t('pm.field.leaseEnd')}</p>
@@ -112,7 +113,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-400 font-bold">{new Date(payment.dueDate).toLocaleDateString()}</p>
-                                            <p className="font-bold text-gray-900">{payment.amount.toLocaleString()} SAR</p>
+                                            <p className="font-bold text-gray-900"><SaudiRiyalAmount amount={payment.amount} locale="en-US" /></p>
                                         </div>
                                     </div>
                                     <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase ${payment.status === 'paid' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-yellow-50 text-yellow-600 border border-yellow-100'}`}>

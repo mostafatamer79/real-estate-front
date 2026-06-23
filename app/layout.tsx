@@ -55,36 +55,32 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
         suppressHydrationWarning
       >
-        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none">
+        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none opacity-15">
           {Array.from({ length: 30 }).map((_, i) => {
             const left = `${(i * 137) % 100}%`;
+            const top = `${(i * 93) % 100}%`;
             const size = 30 + (i % 4) * 15; // 30px to 75px
-            const delay = `${i * -1.2}s`;
-            const duration = `${22 + (i % 3) * 8}s`;
-            const maxOpacity = 0.06 + (i % 3) * 0.03; // 0.06 to 0.12
-            const drift = `${-50 + (i % 3) * 50}px`;
+            const maxOpacity = 0.02 + (i % 3) * 0.01; // 0.02 to 0.04
             const rotate = `${180 + (i % 3) * 90}deg`;
             
             return (
               <div
                 key={i}
-                className="absolute animate-float-particle dark:invert"
+                className="absolute dark:invert"
                 style={{
                   left,
+                  top,
                   width: `${size}px`,
                   height: `${size}px`,
+                  opacity: maxOpacity,
+                  transform: `rotate(${rotate})`,
                   backgroundImage: "url('/icons/black.png')",
                   backgroundSize: "contain",
                   backgroundRepeat: "no-repeat",
                   backgroundPosition: "center",
-                  ["--duration" as any]: duration,
-                  ["--delay" as any]: delay,
-                  ["--max-opacity" as any]: maxOpacity,
-                  ["--drift" as any]: drift,
-                  ["--rotate" as any]: rotate,
                 } as React.CSSProperties}
               />
             );

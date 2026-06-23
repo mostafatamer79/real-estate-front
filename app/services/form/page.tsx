@@ -10,6 +10,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
 import { toast } from "react-hot-toast";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 type ServiceType = "postPurchase" | "legal" | "construction" | "marketing" | "leasing" | "visit" | "other";
 
@@ -380,8 +381,8 @@ function ServiceFormContent() {
                       <span className="text-xl font-black text-slate-950">
                         {price !== null
                           ? qty > 1
-                            ? <>{(price * qty).toLocaleString('ar-SA')} <span className="text-xs text-slate-500">ريال ({qty} × {price.toLocaleString('ar-SA')})</span></>
-                            : <>{price.toLocaleString('ar-SA')} <span className="text-xs text-slate-500">ريال</span></>
+                            ? <><SaudiRiyalAmount amount={price * qty} locale="ar-SA" /> <span className="text-xs text-slate-500">({qty} × {price.toLocaleString('ar-SA')})</span></>
+                            : <SaudiRiyalAmount amount={price} locale="ar-SA" />
                           : <span className="text-sm text-slate-500">يحدد بعد المراجعة</span>
                         }
                       </span>
@@ -390,7 +391,7 @@ function ServiceFormContent() {
                       <div className="flex justify-between items-center border-t border-slate-200 pt-3">
                         <span className="text-[9px] font-black text-slate-400 uppercase">شامل ضريبة {settings.taxPercentage}%</span>
                         <span className="text-sm font-black text-slate-600">
-                          {((price * qty) * (1 + settings.taxPercentage / 100)).toLocaleString('ar-SA')} ريال
+                          <SaudiRiyalAmount amount={(price * qty) * (1 + settings.taxPercentage / 100)} locale="ar-SA" />
                         </span>
                       </div>
                     )}

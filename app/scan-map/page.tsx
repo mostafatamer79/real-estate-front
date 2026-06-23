@@ -11,6 +11,7 @@ import { financialApi } from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 // ✅ Dynamic Import with Loading Component
 const MapLoading = () => {
@@ -495,7 +496,7 @@ export default function ScanMapPage() {
                 </p>
                 <div className="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl mb-4">
                   <span className="text-sm">{t('scan.price')}</span>
-                  <span className="font-bold text-emerald-400">{reportPrice} {t('chat.currency')}</span>
+                  <span className="font-bold text-emerald-400"><SaudiRiyalAmount amount={reportPrice} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
                 </div>
 
                 {isPaid ? (

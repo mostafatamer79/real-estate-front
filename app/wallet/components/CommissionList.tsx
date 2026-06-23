@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table"
 import { useLanguage } from '@/context/LanguageContext'
 import { Commission } from './types'
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal'
 
 interface CommissionListProps {
     onNewRequest: () => void;
@@ -18,7 +19,7 @@ interface CommissionListProps {
 }
 
 const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissions }) => {
-    const { t } = useLanguage()
+    const { t, language } = useLanguage()
 
     return (
         <div className='flex-1'>
@@ -67,7 +68,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                                         </span>
                                     </TableCell>
                                     <TableCell className='text-right font-bold text-slate-900'>
-                                        {Number(commission.commissionAmount).toLocaleString()} {t('chat.currency')}
+                                        <SaudiRiyalAmount amount={Number(commission.commissionAmount)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                                     </TableCell>
                                 </TableRow>
                             ))}

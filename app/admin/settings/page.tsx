@@ -16,6 +16,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { translations } from '@/context/translations';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
+import { SaudiRiyalSymbol } from '@/components/ui/saudi-riyal';
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
 
@@ -240,26 +241,20 @@ function SettingsPageInner() {
 
             <nav className="grid w-full grid-cols-2 gap-3 rounded-[2rem] border border-slate-200/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
                 {[
-                    { id: 'pricing', label: t('admin.settings.tab.pricing'), icon: DollarSign },
-                    { id: 'appearance', label: t('admin.settings.tab.appearance'), icon: Palette },
-                    { id: 'text', label: t('admin.settings.tab.text'), icon: Type },
-                    { id: 'site_control', label: t('admin.settings.tab.control'), icon: ShieldAlert },
+                    { id: 'appearance', label: t('admin.settings.tab.appearance') },
+                    { id: 'text', label: t('admin.settings.tab.text') },
+                    { id: 'site_control', label: t('admin.settings.tab.control') },
                 ].map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`group relative flex min-h-[74px] items-center justify-center gap-3 overflow-hidden rounded-[1.75rem] border px-5 py-4 text-sm font-black transition-all md:min-w-[180px] ${
+                        className={`group relative flex min-h-[44px] items-center justify-center gap-3 overflow-hidden rounded-[1.75rem] border px-5 py-4 text-sm font-black transition-all md:min-w-[180px] ${
                             activeTab === tab.id
                                 ? 'border-white bg-white text-slate-950 shadow-[0_10px_30px_rgba(15,23,42,0.10)]'
                                 : 'border-transparent bg-white/35 text-slate-400 hover:border-white/70 hover:bg-white/75 hover:text-slate-700'
                         }`}
                     >
-                        <div className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-                            activeTab === tab.id ? 'bg-slate-950 text-white' : 'bg-white text-slate-500 group-hover:bg-slate-100'
-                        }`}>
-                            <tab.icon className="h-5 w-5" />
-                        </div>
-                        <span className="text-base font-black tracking-tight">{tab.label}</span>
+                        <span className="text-sm font-black tracking-tight">{tab.label}</span>
                         {activeTab === tab.id && (
                             <div className="absolute inset-x-6 bottom-0 h-1 rounded-full bg-[linear-gradient(90deg,#0f172a_0%,#64748b_100%)]" />
                         )}
@@ -389,9 +384,9 @@ function PricingTab({
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الإعدادات المالية العامة</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
-56emwst                            <div className="relative">
+                            <div className="relative">
                                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
-                                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">ريال</span>
+                                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
                             </div>
                         </div>
                         <div className="space-y-2">
@@ -436,7 +431,7 @@ function PricingTab({
                                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{service}</label>
                                                 <div className="relative">
                                                     <input type="number" value={servicePrices[key] || ""} onChange={(e) => setServicePrices(prev => ({ ...prev, [key]: e.target.value }))} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-12" placeholder="0.00" />
-                                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">ريال</span>
+                                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
                                                 </div>
                                             </div>
                                         );
@@ -895,6 +890,334 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
     );
 }
 
+export const STRUCTURED_SECTIONS = [
+    {
+        id: 'entry_portal',
+        title: '١- بوابة الدخول',
+        icon: KeyRound,
+        subcategories: [
+            {
+                id: 'welcome_screen',
+                title: 'الواجهة الأولى',
+                icon: Play,
+                keys: ['project.name', 'header.welcome'],
+                controls: [
+                    { key: 'welcomeBg', label: 'درجة اللون', type: 'color', default: '#0f172a' },
+                    { key: 'welcomeColor', label: 'لون النص', type: 'color', default: '#ffffff' },
+                    { key: 'welcomeLogoSize', label: 'حجم اللوقو', type: 'range', min: 40, max: 220, default: '100px' },
+                    { key: 'welcomeLogoDuration', label: 'مدة ظهور اللوقو واختفائه', type: 'range', min: 1, max: 10, default: '3s' }
+                ]
+            },
+            {
+                id: 'login_screen',
+                title: 'تسجيل الدخول',
+                icon: ShieldCheck,
+                keys: ['header.login', 'auth.login_title', 'otp.title', 'chat.email', 'profile.mobile', 'profile.email'],
+                controls: [
+                    { key: 'loginBg', label: 'لون الخلفية', type: 'color', default: '#ffffff' },
+                    { key: 'loginColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'loginFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '15px', '16px', '18px'], default: '15px' },
+                    { key: 'loginEmailEnabled', label: 'إظهار البريد الإلكتروني', type: 'toggle', default: true },
+                    { key: 'loginPhoneEnabled', label: 'إظهار رقم الجوال', type: 'toggle', default: false }
+                ]
+            },
+            {
+                id: 'customer_service',
+                title: 'خدمة العملاء',
+                icon: LifeBuoy,
+                keys: ['header.customerService', 'footer.support', 'footer.contact_us', 'footer.contact', 'footer.newsletter'],
+                controls: [
+                    { key: 'csBg', label: 'لون الخلفية', type: 'color', default: '#f8fafc' },
+                    { key: 'csTextColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'csFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'csFontFamily', label: 'نوع الخط', type: 'select', options: ['system-ui', 'Arial', 'Tahoma', "'Noto Sans Arabic'"], default: 'system-ui' },
+                    { key: 'csEnabled', label: 'إظهار القسم', type: 'toggle', default: true }
+                ]
+            }
+        ]
+    },
+    {
+        id: 'top_bar',
+        title: '٢- الشريط العلوي',
+        icon: LayoutGrid,
+        subcategories: [
+            {
+                id: 'notifications',
+                title: 'الإشعارات',
+                icon: Bell,
+                keys: ['notification.empty', 'chat.refresh', 'chat.noResults'],
+                controls: [
+                    { key: 'headerNotificationColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
+                    { key: 'headerNotificationSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
+                    { key: 'navBadgeBg', label: 'لون شارة العدد', type: 'color', default: '#ef4444' },
+                    { key: 'navBadgeText', label: 'لون رقم الشارة', type: 'color', default: '#ffffff' }
+                ]
+            },
+            {
+                id: 'chat_center',
+                title: 'المحادثات',
+                icon: Mail,
+                keys: ['chat.title', 'chat.search', 'chat.startNew', 'chat.typeMessage', 'internal.chat.centerTitle', 'internal.chat.centerSubtitle'],
+                controls: [
+                    { key: 'headerChatColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
+                    { key: 'headerChatSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
+                    { key: 'chatTitleSize', label: 'حجم عناوين المحادثات', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'chatTextSize', label: 'حجم النصوص الداخلية', type: 'select', options: ['11px', '12px', '14px', '16px'], default: '12px' }
+                ]
+            },
+            {
+                id: 'user_page',
+                title: 'صفحة المستخدم',
+                icon: UserCheck,
+                keys: ['profile.title', 'profile.accountInfo', 'profile.save', 'profile.email', 'profile.mobile', 'internal.profile.title'],
+                controls: [
+                    { key: 'headerProfileColor', label: 'لون الأيقونة والنص', type: 'color', default: '#cbd5e1' },
+                    { key: 'headerProfileSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 32, default: '14' },
+                    { key: 'profileTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' },
+                    { key: 'profileTextSize', label: 'حجم النصوص', type: 'select', options: ['12px', '14px', '16px'], default: '14px' }
+                ]
+            }
+        ]
+    },
+    {
+        id: 'home_page',
+        title: '٣- الصفحة الرئيسية',
+        icon: Sparkles,
+        subcategories: [
+            {
+                id: 'home_map',
+                title: 'الخريطة التفاعلية',
+                icon: Globe,
+                keys: ['details.map.title', 'home.scan', 'home.scanDesc'],
+                controls: [
+                    { key: 'mapIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'mapIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'mapTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'mapTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_stats',
+                title: 'إحصائيات العمليات',
+                icon: FileText,
+                keys: ['home.controlPanel', 'details.header.title', 'details.header.highlight'],
+                controls: [
+                    { key: 'statsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'statsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'statsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'statsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_ads',
+                title: 'الإعلانات',
+                icon: ImageIcon,
+                keys: ['offers.title', 'offers.allOffers', 'offers.details', 'footer.offers'],
+                controls: [
+                    { key: 'adsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'adsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'adsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'adsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_analytics',
+                title: 'التحليلات والاتجاهات',
+                icon: Zap,
+                keys: ['details.charts.title', 'scan.footer.update', 'scan.footer.found'],
+                controls: [
+                    { key: 'chartsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'chartsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'chartsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'chartsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_about',
+                title: 'عن المنصة',
+                icon: Info,
+                keys: ['footer.brand_desc', 'footer.rights', 'project.name'],
+                controls: [
+                    { key: 'aboutIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'aboutIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'aboutTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'aboutTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_support',
+                title: 'المساعدة والدعم',
+                icon: LifeBuoy,
+                keys: ['footer.support', 'footer.newsletter', 'footer.systems_ok'],
+                controls: [
+                    { key: 'supportIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'supportIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'supportTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'supportTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'home_contact',
+                title: 'اتصل بنا',
+                icon: Mail,
+                keys: ['footer.contact', 'footer.contact_us', 'footer.address', 'footer.newsletter', 'footer.systems_ok'],
+                controls: [
+                    { key: 'contactIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'contactIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
+                    { key: 'contactTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'contactTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            }
+        ]
+    },
+    {
+        id: 'real_estate_departments',
+        title: '٤- الإدارات العقارية',
+        icon: BookOpen,
+        subcategories: [
+            {
+                id: 'dept_property',
+                title: 'إدارة الأملاك',
+                icon: LayoutGrid,
+                keys: ['header.property_management', 'footer.management', 'pm.orders', 'pm.offers'],
+                controls: [
+                    { key: 'deptPropertyColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'deptPropertySize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'deptPropertyIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'deptPropertyIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'dept_marketing',
+                title: 'إدارة التسويق',
+                icon: Share2,
+                keys: ['header.marketing_management', 'marketing.header.badge', 'marketing.header.desc', 'marketing.tab.requests'],
+                controls: [
+                    { key: 'deptMarketingColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'deptMarketingSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'deptMarketingIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'deptMarketingIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'dept_legal',
+                title: 'الإدارة القانونية',
+                icon: ShieldQuestion,
+                keys: ['header.legal_management', 'footer.terms', 'footer.usage', 'footer.permits'],
+                controls: [
+                    { key: 'deptLegalColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'deptLegalSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'deptLegalIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'deptLegalIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'dept_finance',
+                title: 'الإدارة المالية',
+                icon: DollarSign,
+                keys: ['header.financial_management', 'wallet.invoices.title', 'wallet.commission.title', 'wallet.balance.label'],
+                controls: [
+                    { key: 'deptFinanceColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'deptFinanceSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'deptFinanceIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'deptFinanceIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'dept_subscriptions',
+                title: 'الاشتراكات والباقات',
+                icon: BookOpen,
+                keys: ['sub.public.quickAction', 'sub.tab.list', 'pm.subscriptions', 'internal.nav.subscriptions'],
+                controls: [
+                    { key: 'deptSubscriptionsColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
+                    { key: 'deptSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'deptSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'deptSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            }
+        ]
+    },
+    {
+        id: 'quick_access',
+        title: '٥- الوصول السريع',
+        icon: Smartphone,
+        subcategories: [
+            {
+                id: 'quick_access_main',
+                title: 'الوصول السريع',
+                icon: Zap,
+                keys: ['details.quickActions.title', 'footer.quick_links'],
+                controls: [
+                    { key: 'quickActionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickActionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 20, max: 72, default: '40' },
+                    { key: 'quickActionsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
+                    { key: 'quickActionsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
+                ]
+            },
+            {
+                id: 'quick_subscriptions',
+                title: 'الاشتراكات',
+                icon: BookOpen,
+                keys: ['sub.public.quickAction', 'pm.subscriptions', 'internal.nav.subscriptions'],
+                controls: [
+                    { key: 'quickSubscriptionsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                    { key: 'quickSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'quickSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'quick_wallet',
+                title: 'المحفظة',
+                icon: DollarSign,
+                keys: ['wallet.wallet', 'wallet.invoices', 'wallet.commission', 'wallet.files', 'wallet.invest'],
+                controls: [
+                    { key: 'quickWalletColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                    { key: 'quickWalletSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'quickWalletIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickWalletIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'quick_services',
+                title: 'الخدمات الإدارية',
+                icon: Settings2,
+                keys: ['services.title', 'services.platformServices', 'services.legal', 'services.marketing', 'services.construction', 'services.postPurchase'],
+                controls: [
+                    { key: 'quickServicesColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                    { key: 'quickServicesSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'quickServicesIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickServicesIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'quick_offers',
+                title: 'العروض',
+                icon: ImageIcon,
+                keys: ['action.offers', 'offers.title', 'offers.allOffers', 'offers.myOffers'],
+                controls: [
+                    { key: 'quickOffersColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                    { key: 'quickOffersSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'quickOffersIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickOffersIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            },
+            {
+                id: 'quick_requests',
+                title: 'الطلبات',
+                icon: FileText,
+                keys: ['action.requests', 'orders.title', 'orders.myOrders', 'header.myRequests', 'chat.myRequests'],
+                controls: [
+                    { key: 'quickRequestsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
+                    { key: 'quickRequestsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
+                    { key: 'quickRequestsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
+                    { key: 'quickRequestsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
+                ]
+            }
+        ]
+    }
+];
+
 function TextTab({
     localSettings, updateSettings, t,
     searchTerm, setSearchTerm, textOverrides, setTextOverrides, language
@@ -917,333 +1240,7 @@ function TextTab({
     }, [selectedCategory, selectedSubcategory, selectedKeyGroup, searchTerm]);
 
     // Group definition for structured editing
-    const STRUCTURED_SECTIONS = [
-        {
-            id: 'entry_portal',
-            title: '١- بوابة الدخول',
-            icon: KeyRound,
-            subcategories: [
-                {
-                    id: 'welcome_screen',
-                    title: 'الواجهة الأولى',
-                    icon: Play,
-                    keys: ['project.name', 'header.welcome'],
-                    controls: [
-                        { key: 'welcomeBg', label: 'درجة اللون', type: 'color', default: '#0f172a' },
-                        { key: 'welcomeColor', label: 'لون النص', type: 'color', default: '#ffffff' },
-                        { key: 'welcomeLogoSize', label: 'حجم اللوقو', type: 'range', min: 40, max: 220, default: '100px' },
-                        { key: 'welcomeLogoDuration', label: 'مدة ظهور اللوقو واختفائه', type: 'range', min: 1, max: 10, default: '3s' }
-                    ]
-                },
-                {
-                    id: 'login_screen',
-                    title: 'تسجيل الدخول',
-                    icon: ShieldCheck,
-                    keys: ['header.login', 'auth.login_title', 'otp.title', 'chat.email', 'profile.mobile', 'profile.email'],
-                    controls: [
-                        { key: 'loginBg', label: 'لون الخلفية', type: 'color', default: '#ffffff' },
-                        { key: 'loginColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'loginFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '15px', '16px', '18px'], default: '15px' },
-                        { key: 'loginEmailEnabled', label: 'إظهار البريد الإلكتروني', type: 'toggle', default: true },
-                        { key: 'loginPhoneEnabled', label: 'إظهار رقم الجوال', type: 'toggle', default: false }
-                    ]
-                },
-                {
-                    id: 'customer_service',
-                    title: 'خدمة العملاء',
-                    icon: LifeBuoy,
-                    keys: ['header.customerService', 'footer.support', 'footer.contact_us', 'footer.contact', 'footer.newsletter'],
-                    controls: [
-                        { key: 'csBg', label: 'لون الخلفية', type: 'color', default: '#f8fafc' },
-                        { key: 'csTextColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'csFontSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'csFontFamily', label: 'نوع الخط', type: 'select', options: ['system-ui', 'Arial', 'Tahoma', "'Noto Sans Arabic'"], default: 'system-ui' },
-                        { key: 'csEnabled', label: 'إظهار القسم', type: 'toggle', default: true }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'top_bar',
-            title: '٢- الشريط العلوي',
-            icon: LayoutGrid,
-            subcategories: [
-                {
-                    id: 'notifications',
-                    title: 'الإشعارات',
-                    icon: Bell,
-                    keys: ['notification.empty', 'chat.refresh', 'chat.noResults'],
-                    controls: [
-                        { key: 'headerNotificationColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
-                        { key: 'headerNotificationSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
-                        { key: 'navBadgeBg', label: 'لون شارة العدد', type: 'color', default: '#ef4444' },
-                        { key: 'navBadgeText', label: 'لون رقم الشارة', type: 'color', default: '#ffffff' }
-                    ]
-                },
-                {
-                    id: 'chat_center',
-                    title: 'المحادثات',
-                    icon: Mail,
-                    keys: ['chat.title', 'chat.search', 'chat.startNew', 'chat.typeMessage', 'internal.chat.centerTitle', 'internal.chat.centerSubtitle'],
-                    controls: [
-                        { key: 'headerChatColor', label: 'لون الأيقونة والنص', type: 'color', default: '#94a3b8' },
-                        { key: 'headerChatSize', label: 'حجم الأيقونة', type: 'range', min: 14, max: 40, default: '24' },
-                        { key: 'chatTitleSize', label: 'حجم عناوين المحادثات', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'chatTextSize', label: 'حجم النصوص الداخلية', type: 'select', options: ['11px', '12px', '14px', '16px'], default: '12px' }
-                    ]
-                },
-                {
-                    id: 'user_page',
-                    title: 'صفحة المستخدم',
-                    icon: UserCheck,
-                    keys: ['profile.title', 'profile.accountInfo', 'profile.save', 'profile.email', 'profile.mobile', 'internal.profile.title'],
-                    controls: [
-                        { key: 'headerProfileColor', label: 'لون الأيقونة والنص', type: 'color', default: '#cbd5e1' },
-                        { key: 'headerProfileSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 32, default: '14' },
-                        { key: 'profileTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' },
-                        { key: 'profileTextSize', label: 'حجم النصوص', type: 'select', options: ['12px', '14px', '16px'], default: '14px' }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'home_page',
-            title: '٣- الصفحة الرئيسية',
-            icon: Sparkles,
-            subcategories: [
-                {
-                    id: 'home_map',
-                    title: 'الخريطة التفاعلية',
-                    icon: Globe,
-                    keys: ['details.map.title', 'home.scan', 'home.scanDesc'],
-                    controls: [
-                        { key: 'mapIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'mapIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'mapTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'mapTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_stats',
-                    title: 'إحصائيات العمليات',
-                    icon: FileText,
-                    keys: ['home.controlPanel', 'details.header.title', 'details.header.highlight'],
-                    controls: [
-                        { key: 'statsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'statsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'statsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'statsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_ads',
-                    title: 'الإعلانات',
-                    icon: ImageIcon,
-                    keys: ['offers.title', 'offers.allOffers', 'offers.details', 'footer.offers'],
-                    controls: [
-                        { key: 'adsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'adsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'adsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'adsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_analytics',
-                    title: 'التحليلات والاتجاهات',
-                    icon: Zap,
-                    keys: ['details.charts.title', 'scan.footer.update', 'scan.footer.found'],
-                    controls: [
-                        { key: 'chartsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'chartsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'chartsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'chartsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_about',
-                    title: 'عن المنصة',
-                    icon: Info,
-                    keys: ['footer.brand_desc', 'footer.rights', 'project.name'],
-                    controls: [
-                        { key: 'aboutIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'aboutIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'aboutTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'aboutTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_support',
-                    title: 'المساعدة والدعم',
-                    icon: LifeBuoy,
-                    keys: ['footer.support', 'footer.newsletter', 'footer.systems_ok'],
-                    controls: [
-                        { key: 'supportIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'supportIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'supportTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'supportTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'home_contact',
-                    title: 'اتصل بنا',
-                    icon: Mail,
-                    keys: ['footer.contact', 'footer.contact_us', 'footer.address', 'footer.newsletter', 'footer.systems_ok'],
-                    controls: [
-                        { key: 'contactIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'contactIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '16' },
-                        { key: 'contactTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'contactTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'real_estate_departments',
-            title: '٤- الإدارات العقارية',
-            icon: BookOpen,
-            subcategories: [
-                {
-                    id: 'dept_property',
-                    title: 'إدارة الأملاك',
-                    icon: LayoutGrid,
-                    keys: ['header.property_management', 'footer.management', 'pm.orders', 'pm.offers'],
-                    controls: [
-                        { key: 'deptPropertyColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'deptPropertySize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'deptPropertyIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'deptPropertyIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'dept_marketing',
-                    title: 'إدارة التسويق',
-                    icon: Share2,
-                    keys: ['header.marketing_management', 'marketing.header.badge', 'marketing.header.desc', 'marketing.tab.requests'],
-                    controls: [
-                        { key: 'deptMarketingColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'deptMarketingSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'deptMarketingIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'deptMarketingIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'dept_legal',
-                    title: 'الإدارة القانونية',
-                    icon: ShieldQuestion,
-                    keys: ['header.legal_management', 'footer.terms', 'footer.usage', 'footer.permits'],
-                    controls: [
-                        { key: 'deptLegalColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'deptLegalSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'deptLegalIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'deptLegalIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'dept_finance',
-                    title: 'الإدارة المالية',
-                    icon: DollarSign,
-                    keys: ['header.financial_management', 'wallet.invoices.title', 'wallet.commission.title', 'wallet.balance.label'],
-                    controls: [
-                        { key: 'deptFinanceColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'deptFinanceSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'deptFinanceIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'deptFinanceIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'dept_subscriptions',
-                    title: 'الاشتراكات والباقات',
-                    icon: BookOpen,
-                    keys: ['sub.public.quickAction', 'sub.tab.list', 'pm.subscriptions', 'internal.nav.subscriptions'],
-                    controls: [
-                        { key: 'deptSubscriptionsColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
-                        { key: 'deptSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'deptSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'deptSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'quick_access',
-            title: '٥- الوصول السريع',
-            icon: Smartphone,
-            subcategories: [
-                {
-                    id: 'quick_access_main',
-                    title: 'الوصول السريع',
-                    icon: Zap,
-                    keys: ['details.quickActions.title', 'footer.quick_links'],
-                    controls: [
-                        { key: 'quickActionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickActionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 20, max: 72, default: '40' },
-                        { key: 'quickActionsTitleColor', label: 'لون العنوان', type: 'color', default: '#cbd5e1' },
-                        { key: 'quickActionsTitleSize', label: 'حجم العنوان', type: 'select', options: ['14px', '16px', '18px', '20px'], default: '16px' }
-                    ]
-                },
-                {
-                    id: 'quick_subscriptions',
-                    title: 'الاشتراكات',
-                    icon: BookOpen,
-                    keys: ['sub.public.quickAction', 'pm.subscriptions', 'internal.nav.subscriptions'],
-                    controls: [
-                        { key: 'quickSubscriptionsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
-                        { key: 'quickSubscriptionsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'quickSubscriptionsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickSubscriptionsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'quick_wallet',
-                    title: 'المحفظة',
-                    icon: DollarSign,
-                    keys: ['wallet.wallet', 'wallet.invoices', 'wallet.commission', 'wallet.files', 'wallet.invest'],
-                    controls: [
-                        { key: 'quickWalletColor', label: 'لون النص', type: 'color', default: '#0f172a' },
-                        { key: 'quickWalletSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'quickWalletIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickWalletIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'quick_services',
-                    title: 'الخدمات الإدارية',
-                    icon: Settings2,
-                    keys: ['services.title', 'services.platformServices', 'services.legal', 'services.marketing', 'services.construction', 'services.postPurchase'],
-                    controls: [
-                        { key: 'quickServicesColor', label: 'لون النص', type: 'color', default: '#0f172a' },
-                        { key: 'quickServicesSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'quickServicesIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickServicesIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'quick_offers',
-                    title: 'العروض',
-                    icon: ImageIcon,
-                    keys: ['action.offers', 'offers.title', 'offers.allOffers', 'offers.myOffers'],
-                    controls: [
-                        { key: 'quickOffersColor', label: 'لون النص', type: 'color', default: '#0f172a' },
-                        { key: 'quickOffersSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'quickOffersIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickOffersIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                },
-                {
-                    id: 'quick_requests',
-                    title: 'الطلبات',
-                    icon: FileText,
-                    keys: ['action.requests', 'orders.title', 'orders.myOrders', 'header.myRequests', 'chat.myRequests'],
-                    controls: [
-                        { key: 'quickRequestsColor', label: 'لون النص', type: 'color', default: '#0f172a' },
-                        { key: 'quickRequestsSize', label: 'حجم الخط', type: 'select', options: ['12px', '14px', '16px', '18px'], default: '14px' },
-                        { key: 'quickRequestsIconColor', label: 'لون الأيقونة', type: 'color', default: '#94a3b8' },
-                        { key: 'quickRequestsIconSize', label: 'حجم الأيقونة', type: 'range', min: 12, max: 40, default: '18' }
-                    ]
-                }
-            ]
-        }
-    ];
+    // STRUCTURED_SECTIONS is now imported from the file level.
 
     // Find the currently active subcategory config
     const currentSubcategory = STRUCTURED_SECTIONS.flatMap(s => s.subcategories).find(sub => sub.id === activeSection);
@@ -1403,6 +1400,54 @@ function TextTab({
         });
         return count;
     }, [allKeys, textOverrides]);
+
+    const getActiveSectionKeys = React.useCallback((sectionId: string, baseKeys: string[]) => {
+        const keysSet = new Set(baseKeys);
+        
+        const prefixMap: Record<string, string[]> = {
+            'welcome_screen': ['header.'],
+            'login_screen': ['auth.', 'login.', 'otp.'],
+            'customer_service': ['cs.'],
+            'notifications': ['notification.'],
+            'chat_center': ['chat.'],
+            'user_page': ['profile.', 'admin.users.'],
+            'home_map': ['map.'],
+            'home_stats': ['chart.', 'status.', 'range.'],
+            'home_ads': ['cards.'],
+            'home_analytics': ['admin.dashboard.', 'admin.stats.', 'admin.scan.', 'admin.activity.'],
+            'home_about': ['common.', 'admin.settings.'],
+            'home_support': ['footer.'],
+            'home_contact': [],
+            'dept_property': ['pm.', 'details.', 'bm.'],
+            'dept_marketing': ['marketing.', 'admin.marketing.'],
+            'dept_legal': ['legal.', 'admin.legal.', 'admin.info_content.'],
+            'dept_finance': ['wallet.commission.', 'wallet.invoices.', 'wallet.files', 'wallet.investments'],
+            'dept_subscriptions': ['sub.', 'admin.packages.'],
+            'quick_access_main': ['action.'],
+            'quick_subscriptions': [],
+            'quick_wallet': ['wallet.'],
+            'quick_services': ['service.', 'admin.services_mgmt.', 'admin.service_requests.'],
+            'quick_offers': ['offers.', 'offer.', 'admin.offers.'],
+            'quick_requests': ['orders.', 'admin.orders.', 'admin.trans.']
+        };
+
+        const prefixes = prefixMap[sectionId] || [];
+        
+        if (prefixes.length > 0) {
+            allKeys.forEach(k => {
+                if (prefixes.some(p => k.startsWith(p))) {
+                    keysSet.add(k);
+                }
+            });
+        }
+        
+        return Array.from(keysSet);
+    }, [allKeys]);
+
+    const currentSectionKeys = React.useMemo(() => {
+        if (!currentSubcategory) return [];
+        return getActiveSectionKeys(currentSubcategory.id, currentSubcategory.keys || []);
+    }, [currentSubcategory, getActiveSectionKeys]);
 
     return (
         <div className="p-8 space-y-6">
@@ -1721,7 +1766,7 @@ function TextTab({
                                         {/* Fallback Preview */}
                                         {!['welcome_screen', 'login_screen', 'customer_service'].includes(activeSection) && (
                                             <div className="p-6 rounded-2xl border bg-slate-50 text-slate-400 text-xs text-center font-bold">
-                                                المكون نشط ومربوط بـ {currentSubcategory.keys?.length} نصوص رئيسية.
+                                                المكون نشط ومربوط بـ {currentSectionKeys.length} نصوص رئيسية.
                                             </div>
                                         )}
                                     </div>
@@ -1735,7 +1780,7 @@ function TextTab({
                                     </div>
 
                                     <div className="space-y-6">
-                                        {currentSubcategory.keys?.map((key) => (
+                                        {currentSectionKeys.map((key) => (
                                             <div key={key} className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-[10px] font-mono font-black text-slate-400 select-all">{key}</span>
@@ -1877,8 +1922,8 @@ function TextTab({
                             {paginatedKeys.length === 0 ? (
                                 <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-8">
                                     <Languages className="w-12 h-12 text-slate-300 mb-4 stroke-[1.5]" />
-                                    <h4 className="text-base font-black text-slate-700">لم يتم العثور على أي نصوص</h4>
-                                    <p className="text-slate-400 text-xs mt-1">جرب تغيير كلمة البحث أو اختيار تصنيف فرعي آخر</p>
+                                    <h4 className="text-base font-black text-slate-700">{t('admin.settings.noTexts') || 'لم يتم العثور على أي نصوص'}</h4>
+                                    <p className="text-slate-400 text-xs mt-1">{t('admin.settings.noTextsDesc') || 'جرب تغيير كلمة البحث أو اختيار تصنيف فرعي آخر'}</p>
                                 </div>
                             ) : (
                                 <div className="space-y-6">
@@ -1975,64 +2020,135 @@ function TextTab({
 
 
 function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
-    const [selectedSub, setSelectedSub] = useState<string>('all');
+    const [selectedSection, setSelectedSection] = useState<string>('login_screen');
     const [query, setQuery] = useState('');
-    const [selectedSectionGroup, setSelectedSectionGroup] = useState<string>('all');
-    const [selectedModuleGroup, setSelectedModuleGroup] = useState<string>('all');
 
-    function filterByQuery(items: { id: string; label: string; [key: string]: any }[]) {
-        const q = query.trim().toLowerCase();
-        if (!q) return items;
-        return items.filter((x) => `${x.label} ${x.id}`.toLowerCase().includes(q));
-    }
+    const CONTROL_ITEMS = [
+        // --- entry_portal ---
+        { id: 'phone', label: 'تسجيل الدخول بالهاتف', type: 'loginMethod', subcategoryId: 'login_screen' },
+        { id: 'email', label: 'تسجيل الدخول بالبريد', type: 'loginMethod', subcategoryId: 'login_screen' },
+        { id: 'customer_service', label: 'خدمة العملاء (لوحة التحكم)', type: 'module', subcategoryId: 'customer_service' },
+        { id: 'customerservice', label: 'خدمة العملاء (الواجهة)', type: 'section', subcategoryId: 'customer_service' },
 
+        // --- top_bar ---
+        { id: 'chat', label: 'المحادثات والرسائل', type: 'module', subcategoryId: 'chat_center' },
+        { id: 'users', label: 'إدارة المستخدمين', type: 'module', subcategoryId: 'user_page' },
+        { id: 'employees', label: 'إدارة الموظفين', type: 'module', subcategoryId: 'user_page' },
 
+        // --- home_page ---
+        { id: 'show_map_section', label: 'إظهار قسم الخريطة', type: 'uiFlag', subcategoryId: 'home_map' },
+        { id: 'map_control', label: 'الخريطة (لوحة التحكم)', type: 'module', subcategoryId: 'home_map' },
+        { id: 'scan_map', label: 'المسح والمخططات (الواجهة)', type: 'section', subcategoryId: 'home_map' },
+        { id: 'map', label: 'الخريطة (التفاصيل)', type: 'detailsPart', subcategoryId: 'home_map' },
+
+        { id: 'show_stats_cards', label: 'إظهار بطاقات الإحصائيات', type: 'uiFlag', subcategoryId: 'home_stats' },
+        { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)', type: 'module', subcategoryId: 'home_stats' },
+        { id: 'operations', label: 'الإحصائيات والعمليات', type: 'module', subcategoryId: 'home_stats' },
+        { id: 'stats', label: 'إحصاءات وملخصات (التفاصيل)', type: 'detailsPart', subcategoryId: 'home_stats' },
+
+        { id: 'show_quickaction_offers', label: 'إظهار أيقونة العروض السريعة', type: 'uiFlag', subcategoryId: 'home_ads' },
+        { id: 'offers', label: 'العروض العقارية (الواجهة)', type: 'section', subcategoryId: 'home_ads' },
+        { id: 'offers', label: 'العروض (لوحة التحكم)', type: 'module', subcategoryId: 'home_ads' },
+
+        { id: 'show_charts_section', label: 'إظهار الرسوم البيانية', type: 'uiFlag', subcategoryId: 'home_analytics' },
+        { id: 'trends', label: 'التحليلات والاتجاهات', type: 'module', subcategoryId: 'home_analytics' },
+        { id: 'charts', label: 'التحليلات والاتجاهات (التفاصيل)', type: 'detailsPart', subcategoryId: 'home_analytics' },
+
+        { id: 'dashboard', label: 'لوحة التحكم', type: 'module', subcategoryId: 'home_about' },
+        { id: 'internal', label: 'الإدارة الداخلية (الواجهة)', type: 'section', subcategoryId: 'home_about' },
+        { id: 'settings', label: 'الإعدادات والتحكم', type: 'module', subcategoryId: 'home_about' },
+        { id: 'details', label: 'صفحة التفاصيل (الرئيسية)', type: 'section', subcategoryId: 'home_about' },
+
+        // --- real_estate_departments ---
+        { id: 'show_quickaction_buildingmgmt', label: 'إظهار أيقونة إدارة الأملاك', type: 'uiFlag', subcategoryId: 'dept_property' },
+        { id: 'buildingmanagement', label: 'إدارة الأملاك (الواجهة)', type: 'section', subcategoryId: 'dept_property' },
+        { id: 'properties', label: 'إدارة الأملاك (لوحة التحكم)', type: 'module', subcategoryId: 'dept_property' },
+
+        { id: 'marketing', label: 'التسويق (الواجهة)', type: 'section', subcategoryId: 'dept_marketing' },
+        { id: 'marketing', label: 'إدارة التسويق (لوحة التحكم)', type: 'module', subcategoryId: 'dept_marketing' },
+        { id: 'services_marketing', label: 'الخدمات: التسويق', type: 'module', subcategoryId: 'dept_marketing' },
+
+        { id: 'disputes', label: 'المنازعات والقانونية (الواجهة)', type: 'section', subcategoryId: 'dept_legal' },
+        { id: 'legal', label: 'الإدارة القانونية (لوحة التحكم)', type: 'module', subcategoryId: 'dept_legal' },
+        { id: 'services_legal', label: 'الخدمات: القانونية', type: 'module', subcategoryId: 'dept_legal' },
+        { id: 'legal_disputes', label: 'القانوني: المنازعات العقارية', type: 'module', subcategoryId: 'dept_legal' },
+        { id: 'legal_contracts', label: 'القانوني: العقود', type: 'module', subcategoryId: 'dept_legal' },
+        { id: 'legal_documentation', label: 'القانوني: التوثيق', type: 'module', subcategoryId: 'dept_legal' },
+        { id: 'legal_other', label: 'القانوني: أخرى', type: 'module', subcategoryId: 'dept_legal' },
+
+        { id: 'financial', label: 'التقارير المالية (الواجهة)', type: 'section', subcategoryId: 'dept_finance' },
+        { id: 'finance', label: 'الإدارة المالية (لوحة التحكم)', type: 'module', subcategoryId: 'dept_finance' },
+
+        { id: 'subscriptions', label: 'الباقات والاشتراكات (الواجهة)', type: 'section', subcategoryId: 'dept_subscriptions' },
+        { id: 'subscriptions', label: 'الباقات والاشتراكات (لوحة التحكم)', type: 'module', subcategoryId: 'dept_subscriptions' },
+
+        // --- quick_access ---
+        { id: 'show_quick_actions', label: 'إظهار قسم الإجراءات السريعة', type: 'uiFlag', subcategoryId: 'quick_access_main' },
+        { id: 'quick_actions', label: 'الوصول السريع (التفاصيل)', type: 'detailsPart', subcategoryId: 'quick_access_main' },
+
+        { id: 'show_quickaction_wallet', label: 'إظهار أيقونة المحفظة', type: 'uiFlag', subcategoryId: 'quick_wallet' },
+        { id: 'wallet', label: 'المحفظة المالية (الواجهة)', type: 'section', subcategoryId: 'quick_wallet' },
+        { id: 'wallet', label: 'المحفظة (لوحة التحكم)', type: 'module', subcategoryId: 'quick_wallet' },
+        { id: 'wallet_invoices', label: 'المحفظة: الفواتير', type: 'module', subcategoryId: 'quick_wallet' },
+        { id: 'wallet_commissions', label: 'المحفظة: العمولات', type: 'module', subcategoryId: 'quick_wallet' },
+        { id: 'wallet_files', label: 'المحفظة: الملفات', type: 'module', subcategoryId: 'quick_wallet' },
+        { id: 'wallet_investments', label: 'المحفظة: الاستثمارات', type: 'module', subcategoryId: 'quick_wallet' },
+
+        { id: 'show_quickaction_services', label: 'إظهار أيقونة الخدمات', type: 'uiFlag', subcategoryId: 'quick_services' },
+        { id: 'services', label: 'الخدمات (الواجهة)', type: 'section', subcategoryId: 'quick_services' },
+        { id: 'service_requests', label: 'طلبات الخدمات', type: 'module', subcategoryId: 'quick_services' },
+        { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء', type: 'module', subcategoryId: 'quick_services' },
+        { id: 'services_construction', label: 'الخدمات: البناء والمقاولات', type: 'module', subcategoryId: 'quick_services' },
+        { id: 'services_other', label: 'الخدمات: أخرى', type: 'module', subcategoryId: 'quick_services' },
+
+        { id: 'show_quickaction_orders', label: 'إظهار أيقونة الطلبات', type: 'uiFlag', subcategoryId: 'quick_requests' },
+        { id: 'orders', label: 'إدارة الطلبات (الواجهة)', type: 'section', subcategoryId: 'quick_requests' },
+        { id: 'orders', label: 'الطلبات (لوحة التحكم)', type: 'module', subcategoryId: 'quick_requests' },
+    ];
+
+    const currentSubcategory = STRUCTURED_SECTIONS.flatMap(s => s.subcategories).find(sub => sub.id === selectedSection);
+    
+    // Filter controls based on selection or search
+    const filteredControls = CONTROL_ITEMS.filter(item => {
+        if (query.trim()) {
+            return item.label.toLowerCase().includes(query.trim().toLowerCase());
+        }
+        return item.subcategoryId === selectedSection;
+    });
 
     const SectionRow = ({ id, label }: { id: string; label: string }) => {
         const v = (localSettings.sectionFlags || {})[id] === 'open' ? 'open' : 'closed';
         const setV = (next: 'open' | 'closed') => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
-                <div className="px-4 py-4 flex items-center justify-between gap-4">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+                <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
-                        <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
+                        <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-slate-400" /> {label}
+                        </p>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
-                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${v === 'open' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-700'}`}>
-                            {v === 'open' ? 'ظاهر الآن' : 'قريباً'}
-                        </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setV('open')} className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${v === 'open' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}>متاح</button>
+                        <button type="button" onClick={() => setV('open')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'open' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
                         <button
                             type="button"
                             onClick={() => setV('closed')}
-                            className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${
-                                v === 'closed' ? 'ring-2 ring-slate-900/5' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
-                            }`}
-                            style={
-                                v === 'closed'
-                                    ? {
-                                          backgroundColor: 'var(--soon-badge-bg, #ffffff)',
-                                          color: 'var(--soon-badge-text, #000000)',
-                                          borderColor: 'var(--soon-badge-bg, #ffffff)',
-                                      }
-                                    : undefined
-                            }
+                            className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'closed' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
                         >
                             قريباً
                         </button>
                     </div>
                 </div>
                 {v === 'closed' && (
-                    <div className="px-4 pb-4 pt-0">
-                        <div className="pt-3 border-t border-slate-100">
+                    <div className="px-5 pb-5 pt-0">
+                        <div className="pt-4 border-t border-slate-100">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.sectionMessages || {})[id] || ""}
                                 onChange={(e) => updateSettings({ sectionMessages: { ...(localSettings.sectionMessages || {}), [id]: e.target.value } })}
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                placeholder="مثال: قريباً..."
+                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
+                                placeholder="مثال: قريباً، نعمل على تطوير هذا القسم..."
                             />
                         </div>
                     </div>
@@ -2045,50 +2161,30 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const status: 'enabled' | 'soon' | 'disabled' = (localSettings.moduleFlags || {})[id] || 'enabled';
         const setStatus = (next: 'enabled' | 'soon' | 'disabled') => updateSettings({ moduleFlags: { ...(localSettings.moduleFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
-                <div className="px-4 py-4 flex items-center justify-between gap-4">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+                <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
-                        <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
+                        <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                            <ShieldQuestion className="w-4 h-4 text-slate-400" /> {label}
+                        </p>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
-                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${
-                            status === 'enabled' ? 'bg-emerald-50 text-emerald-600' : status === 'soon' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'
-                        }`}>
-                            {status === 'enabled' ? 'مفعل' : status === 'soon' ? 'قريباً' : 'مخفي'}
-                        </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}>متاح</button>
-                        <button
-                            type="button"
-                            onClick={() => setStatus('soon')}
-                            className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${
-                                status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
-                            }`}
-                            style={
-                                status === 'soon'
-                                    ? {
-                                          backgroundColor: 'var(--soon-badge-bg, #ffffff)',
-                                          color: 'var(--soon-badge-text, #000000)',
-                                          borderColor: 'var(--soon-badge-bg, #ffffff)',
-                                      }
-                                    : undefined
-                            }
-                        >
-                            قريباً
-                        </button>
-                        <button type="button" onClick={() => setStatus('disabled')} className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${status === 'disabled' ? 'bg-slate-200 text-slate-700 border-slate-200' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'}`}>إزالة</button>
+                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
+                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>قريباً</button>
+                        <button type="button" onClick={() => setStatus('disabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'disabled' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
                     </div>
                 </div>
                 {status === 'soon' && (
-                    <div className="px-4 pb-4 pt-0">
-                        <div className="pt-3 border-t border-slate-100">
+                    <div className="px-5 pb-5 pt-0">
+                        <div className="pt-4 border-t border-slate-100">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.moduleMessages || {})[id] || ""}
                                 onChange={(e) => updateSettings({ moduleMessages: { ...(localSettings.moduleMessages || {}), [id]: e.target.value } })}
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                placeholder="مثال: قريباً..."
+                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
+                                placeholder="مثال: قريباً، نعمل على تطوير هذه الخاصية..."
                             />
                         </div>
                     </div>
@@ -2099,77 +2195,32 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
     const DetailsPartRow = ({ id, label }: { id: string; label: string }) => {
         const status: 'enabled' | 'soon' | 'hidden' = (localSettings.detailsPartFlags || {})[id] || 'enabled';
-        const setStatus = (next: 'enabled' | 'soon' | 'hidden') =>
-            updateSettings({ detailsPartFlags: { ...(localSettings.detailsPartFlags || {}), [id]: next } });
+        const setStatus = (next: 'enabled' | 'soon' | 'hidden') => updateSettings({ detailsPartFlags: { ...(localSettings.detailsPartFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
-                <div className="px-4 py-4 flex items-center justify-between gap-4">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+                <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
-                        <p className="text-sm font-bold text-slate-950 truncate">{label}</p>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{`details:${id}`}</p>
-                        <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-black ${
-                            status === 'enabled' ? 'bg-emerald-50 text-emerald-600' : status === 'soon' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'
-                        }`}>
-                            {status === 'enabled' ? 'مفعل' : status === 'soon' ? 'قريباً' : 'مخفي'}
-                        </span>
+                        <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                            <Type className="w-4 h-4 text-slate-400" /> {label}
+                        </p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">details:{id}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button
-                            type="button"
-                            onClick={() => setStatus('enabled')}
-                            className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${
-                                status === 'enabled'
-                                    ? 'bg-slate-900 text-white border-slate-900'
-                                    : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
-                            }`}
-                        >
-                            متاح
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setStatus('soon')}
-                            className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${
-                                status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
-                            }`}
-                            style={
-                                status === 'soon'
-                                    ? {
-                                          backgroundColor: 'var(--soon-badge-bg, #ffffff)',
-                                          color: 'var(--soon-badge-text, #000000)',
-                                          borderColor: 'var(--soon-badge-bg, #ffffff)',
-                                      }
-                                    : undefined
-                            }
-                        >
-                            قريباً
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setStatus('hidden')}
-                            className={`h-8 px-3 rounded-xl text-[10px] font-black border transition-colors ${
-                                status === 'hidden'
-                                    ? 'bg-slate-200 text-slate-700 border-slate-200'
-                                    : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
-                            }`}
-                        >
-                            إزالة
-                        </button>
+                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
+                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>قريباً</button>
+                        <button type="button" onClick={() => setStatus('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
                     </div>
                 </div>
                 {status === 'soon' && (
-                    <div className="px-4 pb-4 pt-0">
-                        <div className="pt-3 border-t border-slate-100">
+                    <div className="px-5 pb-5 pt-0">
+                        <div className="pt-4 border-t border-slate-100">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.detailsPartMessages || {})[id] || ''}
-                                onChange={(e) =>
-                                    updateSettings({
-                                        detailsPartMessages: { ...(localSettings.detailsPartMessages || {}), [id]: e.target.value },
-                                    })
-                                }
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 shadow-sm"
-                                placeholder="مثال: قريباً..."
+                                onChange={(e) => updateSettings({ detailsPartMessages: { ...(localSettings.detailsPartMessages || {}), [id]: e.target.value } })}
+                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
+                                placeholder="مثال: قريباً، نعمل على تطوير هذا القسم..."
                             />
                         </div>
                     </div>
@@ -2178,107 +2229,46 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         );
     };
 
-    const sections = filterByQuery([
-        { id: 'wallet', label: 'المحفظة المالية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
-        { id: 'orders', label: 'إدارة الطلبات (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
-        { id: 'offers', label: 'العروض العقارية (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
-        { id: 'services', label: 'الخدمات (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
-        { id: 'buildingmanagement', label: 'إدارة الأملاك (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
-        { id: 'marketing', label: 'التسويق (واجهة المستخدم)', group: 'الخدمات والمعاملات' },
-        { id: 'scan_map', label: 'المسح والمخططات', group: 'الخدمات المتخصصة' },
-        { id: 'subscriptions', label: 'الباقات والاشتراكات (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
-        { id: 'financial', label: 'التقارير المالية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
-        { id: 'disputes', label: 'المنازعات والقانونية (واجهة المستخدم)', group: 'الخدمات المتخصصة' },
-        { id: 'customerservice', label: 'مركز العناية بالعملاء', group: 'الخدمات والمعاملات' },
-        { id: 'internal', label: 'الإدارة الداخلية (الواجهة)', group: 'الرئيسية والتنقل' },
-        { id: 'map', label: 'خريطة الموقع (الرئيسية)', group: 'الرئيسية والتنقل' },
-        { id: 'details', label: 'صفحة التفاصيل (الرئيسية)', group: 'الرئيسية والتنقل' },
-    ]);
+    const UiFlagRow = ({ id, label }: { id: string; label: string }) => {
+        return (
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
+                <div className="min-w-0 space-y-1">
+                    <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-slate-400" /> {label}
+                    </p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [id]: !localSettings.uiFlags[id] } })}
+                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.uiFlags[id] ? 'bg-emerald-500 border-emerald-600' : 'bg-slate-200 border-slate-300'}`}
+                >
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all shadow-sm ${localSettings.uiFlags[id] ? 'left-8' : 'left-1'}`} />
+                </button>
+            </div>
+        );
+    };
 
-    const modules = filterByQuery([
-        { id: 'dashboard', label: 'لوح التحكم', group: 'الأساسيات' },
-        { id: 'users', label: 'المستخدمين', group: 'الأساسيات' },
-        { id: 'internal_stats', label: 'الإحصاءات (داخل الإدارة)', group: 'التشغيل اليومي' },
-        { id: 'map_control', label: 'الخريطة', group: 'التشغيل اليومي' },
-        { id: 'operations', label: 'الإحصائيات والعمليات', group: 'التشغيل اليومي' },
-        { id: 'trends', label: 'التحليلات والاتجاهات', group: 'التشغيل اليومي' },
-        { id: 'customer_service', label: 'خدمة العملاء', group: 'الأساسيات' },
-        { id: 'settings', label: 'الإعدادات والتحكم', group: 'الأساسيات' },
-        { id: 'chat', label: 'الدردشة', group: 'الأساسيات' },
-        { id: 'service_requests', label: 'طلبات الخدمات', group: 'التشغيل اليومي' },
-        { id: 'marketing', label: 'إدارة التسويق', group: 'الإدارات المتخصصة' },
-        { id: 'properties', label: 'إدارة الأملاك', group: 'الإدارات المتخصصة' },
-        { id: 'finance', label: 'الإدارة المالية', group: 'الإدارات المتخصصة' },
-        { id: 'legal', label: 'الإدارة القانونية', group: 'الإدارات المتخصصة' },
-        { id: 'employees', label: 'إدارة الموظفين', group: 'الأساسيات' },
-        { id: 'offers', label: 'العروض', group: 'التشغيل اليومي' },
-        { id: 'orders', label: 'الطلبات', group: 'التشغيل اليومي' },
-        { id: 'subscriptions', label: 'الباقات والاشتراكات', group: 'الإدارات المتخصصة' },
-        { id: 'wallet', label: 'المحفظة', group: 'الإدارات المتخصصة' },
-        { id: 'wallet_invoices', label: 'المحفظة: الفواتير', group: 'تفريعات متقدمة' },
-        { id: 'wallet_commissions', label: 'المحفظة: العمولات', group: 'تفريعات متقدمة' },
-        { id: 'wallet_files', label: 'المحفظة: الملفات والمستندات', group: 'تفريعات متقدمة' },
-        { id: 'wallet_investments', label: 'المحفظة: الاستثمارات', group: 'تفريعات متقدمة' },
-        { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء', group: 'تفريعات متقدمة' },
-        { id: 'services_legal', label: 'الخدمات: القانونية', group: 'تفريعات متقدمة' },
-        { id: 'services_construction', label: 'الخدمات: البناء والمقاولات', group: 'تفريعات متقدمة' },
-        { id: 'services_marketing', label: 'الخدمات: التسويق', group: 'تفريعات متقدمة' },
-        { id: 'services_other', label: 'الخدمات: أخرى', group: 'تفريعات متقدمة' },
-        { id: 'legal_disputes', label: 'القانوني: المنازعات العقارية', group: 'تفريعات متقدمة' },
-        { id: 'legal_contracts', label: 'القانوني: العقود', group: 'تفريعات متقدمة' },
-        { id: 'legal_documentation', label: 'القانوني: التوثيق', group: 'تفريعات متقدمة' },
-        { id: 'legal_other', label: 'القانوني: أخرى', group: 'تفريعات متقدمة' },
-    ]);
-
-    const uiFlags = filterByQuery([
-        { id: 'show_map_section', label: 'قسم الخريطة' },
-        { id: 'show_stats_cards', label: 'بطاقات الإحصائيات' },
-        { id: 'show_charts_section', label: 'الرسوم البيانية' },
-        { id: 'show_quick_actions', label: 'الإجراءات السريعة' },
-        { id: 'show_quickaction_buildingmgmt', label: 'أيقونة إدارة الأملاك' },
-        { id: 'show_quickaction_wallet', label: 'أيقونة المحفظة' },
-        { id: 'show_quickaction_services', label: 'أيقونة الخدمات' },
-        { id: 'show_quickaction_offers', label: 'أيقونة العروض' },
-        { id: 'show_quickaction_orders', label: 'أيقونة الطلبات' },
-    ]);
-
-    const detailsParts = filterByQuery([
-        { id: 'map', label: 'الخريطة التفاعلية (التفاصيل)' },
-        { id: 'stats', label: 'إحصاءات وملخصات (التفاصيل)' },
-        { id: 'charts', label: 'التحليلات والاتجاهات (التفاصيل)' },
-        { id: 'quick_actions', label: 'الوصول السريع (التفاصيل)' },
-    ]);
-
-    const subcategories = [
-        { id: 'all',     label: 'عرض الكل',                  icon: LayoutGrid,    count: sections.length + modules.length + uiFlags.length + detailsParts.length + 2 },
-        { id: 'sections', label: 'أقسام الموقع (المستخدم)',   icon: Globe,         count: sections.length },
-        { id: 'modules',  label: 'تبويبات لوحة التحكم',       icon: ShieldQuestion, count: modules.length },
-        { id: 'login',    label: 'طرق تسجيل الدخول',          icon: Smartphone,    count: 2 },
-        { id: 'ui',       label: 'عناصر الواجهة',              icon: Zap,           count: uiFlags.length },
-        { id: 'details',  label: 'أقسام صفحة التفاصيل',        icon: Type,          count: detailsParts.length },
-    ];
-
-    const showSection  = selectedSub === 'all' || selectedSub === 'sections';
-    const showModules  = selectedSub === 'all' || selectedSub === 'modules';
-    const showLogin    = selectedSub === 'all' || selectedSub === 'login';
-    const showUi       = selectedSub === 'all' || selectedSub === 'ui';
-    const showDetails  = selectedSub === 'all' || selectedSub === 'details';
-    function groupItems(items: { group?: string; [key: string]: any }[]) {
-        return Object.entries(items.reduce((acc, item) => {
-            const key = item.group || 'عام';
-            acc[key] = acc[key] || [];
-            acc[key].push(item);
-            return acc;
-        }, {} as Record<string, any[]>));
-    }
-
-    const sectionGroups = groupItems(sections);
-    const moduleGroups = groupItems(modules);
-
-    useEffect(() => {
-        setSelectedSectionGroup('all');
-        setSelectedModuleGroup('all');
-    }, [query, selectedSub]);
+    const LoginMethodRow = ({ id, label }: { id: string; label: string }) => {
+        const methodKey = `${id}Enabled` as keyof typeof localSettings.loginConfig;
+        return (
+            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
+                <div className="min-w-0 space-y-1">
+                    <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                        <Smartphone className="w-4 h-4 text-slate-400" /> {label}
+                    </p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{String(methodKey)}</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
+                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.loginConfig[methodKey] ? 'bg-emerald-500 border-emerald-600' : 'bg-slate-200 border-slate-300'}`}
+                >
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all shadow-sm ${localSettings.loginConfig[methodKey] ? 'left-8' : 'left-1'}`} />
+                </button>
+            </div>
+        );
+    };
 
     return (
         <div className="p-8 space-y-6">
@@ -2300,7 +2290,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                     <input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 transition-all"
+                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
                         placeholder="ابحث (العروض، الطلبات...)"
                     />
                     {query && (
@@ -2312,254 +2302,106 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Subcategory Sidebar */}
-                <div className="lg:col-span-1">
-                    <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2rem] p-4 space-y-1.5 sticky top-4 shadow-sm">
-                        <div className="rounded-[1.5rem] bg-slate-950 p-4 text-white mb-3">
-                            <h4 className="text-[11px] font-black">الفئات الرئيسية</h4>
-                            <p className="mt-1 text-[10px] font-bold text-slate-300">ترتيب هرمي: قسم رئيسي ثم مجموعة فرعية ثم العناصر</p>
+                {/* Sidebar Hierarchy (Same as TextTab) */}
+                <div className="lg:col-span-1 space-y-4">
+                    {!query && STRUCTURED_SECTIONS.filter(section => section.subcategories.some(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id))).map((section) => {
+                        const SectionIcon = section.icon;
+                        const isSectionActive = section.subcategories.some(sub => sub.id === selectedSection);
+                        
+                        return (
+                            <div key={section.id} className="space-y-1">
+                                <div className={`flex items-center gap-2.5 px-2 py-2 ${isSectionActive ? 'text-slate-900' : 'text-slate-400'}`}>
+                                    <SectionIcon className="w-4 h-4" />
+                                    <h4 className="text-xs font-black">{section.title}</h4>
+                                </div>
+                                <div className="space-y-1 pr-6 border-r-2 border-slate-100 mr-2">
+                                    {section.subcategories.filter(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id)).map((sub) => {
+                                        const SubIcon = sub.icon;
+                                        const isActive = selectedSection === sub.id;
+                                        return (
+                                            <button
+                                                key={sub.id}
+                                                onClick={() => setSelectedSection(sub.id)}
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-[11px] font-bold transition-all ${
+                                                    isActive 
+                                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]' 
+                                                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <SubIcon className={`w-3.5 h-3.5 ${isActive ? 'text-white/70' : 'text-slate-400'}`} />
+                                                    {sub.title}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {query && (
+                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <p className="text-xs font-black text-slate-500">نتائج البحث عن: "{query}"</p>
                         </div>
-                        {subcategories.map((sub) => {
-                            const Icon = sub.icon;
-                            const isActive = selectedSub === sub.id;
-                            return (
-                                <button
-                                    key={sub.id}
-                                    onClick={() => setSelectedSub(sub.id)}
-                                    className={`w-full flex items-center justify-between text-right px-4 py-3 rounded-[1.25rem] text-xs font-black transition-all border ${
-                                        isActive
-                                            ? 'bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                            : 'bg-white hover:bg-slate-50 text-slate-500 border-slate-100 hover:text-slate-900 hover:border-slate-200'
-                                    }`}
-                                >
-                                    <div className="flex items-center gap-2.5">
-                                        <Icon className="w-3.5 h-3.5 shrink-0" />
-                                        <div>
-                                            <p>{sub.label}</p>
-                                            <p className={`mt-1 text-[10px] font-bold ${isActive ? 'text-slate-200' : 'text-slate-400'}`}>عرض المجموعة</p>
-                                        </div>
-                                    </div>
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                                        {sub.count}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
+                    )}
                 </div>
 
-                {/* Main content */}
-                <div className="lg:col-span-3 space-y-8">
-
-                    {/* User-facing Sections */}
-                    {showSection && sections.length > 0 && (
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <Globe className="w-4 h-4 text-slate-600" />
+                {/* Main Content Area */}
+                <div className="lg:col-span-3">
+                    <div className="rounded-[2.5rem] border border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-xl space-y-8 min-h-[500px]">
+                        
+                        {!query && currentSubcategory && (
+                            <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-slate-900/20">
+                                    <currentSubcategory.icon className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="text-sm font-black text-slate-950">أقسام الموقع (العملاء)</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">{sections.length} قسم — تحكم في الظهور للمستخدمين</p>
+                                    <h2 className="text-2xl font-black text-slate-900">{currentSubcategory.title}</h2>
+                                    <p className="text-xs font-bold text-slate-400 mt-1">تفعيل وتعطيل العناصر داخل هذا القسم</p>
                                 </div>
                             </div>
-                            <div className="space-y-5">
-                                {sectionGroups.length > 1 && (
-                                    <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4">
-                                        <div className="mb-3">
-                                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Sub Sub Tabs</p>
-                                            <p className="mt-1 text-xs font-bold text-slate-600">المجموعات المرتبطة داخل أقسام الموقع</p>
-                                        </div>
-                                        <div className="flex gap-2 overflow-x-auto pb-1">
-                                            <button
-                                                type="button"
-                                                onClick={() => setSelectedSectionGroup('all')}
-                                                className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
-                                                    selectedSectionGroup === 'all' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                }`}
-                                            >
-                                                الكل ({sections.length})
-                                            </button>
-                                            {sectionGroups.map(([group, items]) => (
-                                                <button
-                                                    key={group}
-                                                    type="button"
-                                                    onClick={() => setSelectedSectionGroup(group)}
-                                                    className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
-                                                        selectedSectionGroup === group ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                    }`}
-                                                >
-                                                    {group} ({items.length})
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {sectionGroups.filter(([group]) => selectedSectionGroup === 'all' || selectedSectionGroup === group).map(([group, items]) => (
-                                    <div key={group} className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
-                                        <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">فئة فرعية</p>
-                                                <h5 className="mt-1 text-sm font-black text-slate-900">{group}</h5>
-                                            </div>
-                                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-500">{items.length}</span>
-                                        </div>
-                                        <div className="space-y-3">
-                                            {items.map((s) => <SectionRow key={s.id} id={s.id} label={s.label} />)}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Admin Modules */}
-                    {showModules && modules.length > 0 && (
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <ShieldQuestion className="w-4 h-4 text-slate-600" />
+                        {filteredControls.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center mb-4">
+                                    <Search className="w-8 h-8 text-slate-300" />
                                 </div>
-                                <div>
-                                    <h4 className="text-sm font-black text-slate-950">تبويبات لوحة التحكم</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">{modules.length} وحدة — تحكم في ظهورها داخل الإدارة</p>
-                                </div>
+                                <h3 className="text-lg font-black text-slate-900">{t('admin.settings.noItems') || 'لم يتم العثور على عناصر'}</h3>
+                                <p className="text-sm font-bold text-slate-400 mt-2">{t('admin.settings.noItemsDesc') || 'لا توجد إعدادات تحكم تطابق هذا البحث أو القسم'}</p>
                             </div>
-                            <div className="space-y-5">
-                                {moduleGroups.length > 1 && (
-                                    <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4">
-                                        <div className="mb-3">
-                                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Sub Sub Tabs</p>
-                                            <p className="mt-1 text-xs font-bold text-slate-600">المجموعات المرتبطة داخل تبويبات لوحة التحكم</p>
-                                        </div>
-                                        <div className="flex gap-2 overflow-x-auto pb-1">
-                                            <button
-                                                type="button"
-                                                onClick={() => setSelectedModuleGroup('all')}
-                                                className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
-                                                    selectedModuleGroup === 'all' ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                }`}
-                                            >
-                                                الكل ({modules.length})
-                                            </button>
-                                            {moduleGroups.map(([group, items]) => (
-                                                <button
-                                                    key={group}
-                                                    type="button"
-                                                    onClick={() => setSelectedModuleGroup(group)}
-                                                    className={`shrink-0 rounded-2xl border px-4 py-2 text-xs font-black transition-all ${
-                                                        selectedModuleGroup === group ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900'
-                                                    }`}
-                                                >
-                                                    {group} ({items.length})
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {moduleGroups.filter(([group]) => selectedModuleGroup === 'all' || selectedModuleGroup === group).map(([group, items]) => (
-                                    <div key={group} className="rounded-[2rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
-                                        <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
-                                            <div>
-                                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">فئة فرعية</p>
-                                                <h5 className="mt-1 text-sm font-black text-slate-900">{group}</h5>
-                                            </div>
-                                            <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-500">{items.length}</span>
-                                        </div>
-                                        <div className="space-y-3">
-                                            {items.map((m) => <ModuleRow key={m.id} id={m.id} label={m.label} />)}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Login Methods */}
-                    {showLogin && (
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <Smartphone className="w-4 h-4 text-slate-600" />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-black text-slate-950">طرق تسجيل الدخول</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">تفعيل / تعطيل قنوات الدخول المتاحة</p>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                {[
-                                    { id: 'phone', label: 'رقم الجوال' },
-                                    { id: 'email', label: 'البريد الإلكتروني' },
-                                ].map((method) => {
-                                    const methodKey = `${method.id}Enabled` as keyof typeof localSettings.loginConfig;
-                                    return (
-                                        <div key={method.id} className="rounded-2xl border border-slate-100 bg-white p-5 flex items-center justify-between shadow-sm hover:border-slate-900/10 transition-all">
-                                            <div>
-                                                <p className="text-sm font-bold text-slate-950">{method.label}</p>
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{String(methodKey)}</p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
-                                                className={`w-12 h-6 rounded-full relative transition-all ${localSettings.loginConfig[methodKey] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                            >
-                                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.loginConfig[methodKey] ? 'left-7' : 'left-1'}`} />
-                                            </button>
-                                        </div>
-                                    );
+                        ) : (
+                            <div className="space-y-4">
+                                {filteredControls.map((item, index) => {
+                                    const keyStr = `${item.type}-${item.id}-${index}`;
+                                    switch (item.type) {
+                                        case 'section':
+                                            return <SectionRow key={keyStr} id={item.id} label={item.label} />;
+                                        case 'module':
+                                            return <ModuleRow key={keyStr} id={item.id} label={item.label} />;
+                                        case 'detailsPart':
+                                            return <DetailsPartRow key={keyStr} id={item.id} label={item.label} />;
+                                        case 'uiFlag':
+                                            return <UiFlagRow key={keyStr} id={item.id} label={item.label} />;
+                                        case 'loginMethod':
+                                            return <LoginMethodRow key={keyStr} id={item.id} label={item.label} />;
+                                        default:
+                                            return null;
+                                    }
                                 })}
-                                <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:border-slate-900/10 transition-all">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">شارة زر تسجيل دخول الهاتف</label>
-                                    <input
-                                        type="text"
-                                        value={localSettings.loginConfig.phoneLabel || ""}
-                                        onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
-                                        className="mt-3 w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all"
-                                        placeholder="مثال: تسجيل الدخول بالهاتف"
-                                    />
-                                </div>
                             </div>
-                        </div>
-                    )}
-
-                    {/* UI Flags */}
-                    {showUi && uiFlags.length > 0 && (
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <Zap className="w-4 h-4 text-slate-600" />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-black text-slate-950">عناصر الواجهة العامة</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">إظهار أو إخفاء عناصر الصفحة الرئيسية</p>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                {uiFlags.map((flag) => (
-                                    <div key={flag.id} className="rounded-2xl border border-slate-100 bg-white p-5 flex items-center justify-between shadow-sm hover:border-slate-900/10 transition-all">
-                                        <div className="min-w-0">
-                                            <p className="text-sm font-bold text-slate-950 truncate">{flag.label}</p>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{flag.id}</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [flag.id]: !localSettings.uiFlags[flag.id] } })}
-                                            className={`w-12 h-6 rounded-full relative transition-all shrink-0 ${localSettings.uiFlags[flag.id] ? 'bg-slate-900' : 'bg-slate-200'}`}
-                                        >
-                                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${localSettings.uiFlags[flag.id] ? 'left-7' : 'left-1'}`} />
-                                        </button>
-                                    </div>
-                                ))}
-
-                                {/* Quick Actions Icon Size inside UI section */}
-                                <div className="rounded-2xl border border-slate-100 bg-white p-5 space-y-4 shadow-sm hover:border-slate-900/10 transition-all">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-slate-950">حجم أيقونات الوصول السريع</p>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">quickActionsIconSize</p>
-                                        </div>
-                                        <span className="text-sm font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl">{localSettings.quickActionsIconSize || '40'}px</span>
+                        )}
+                        
+                        {/* Quick Actions Global Settings shown only on "quick_access_main" */}
+                        {currentSubcategory?.id === 'quick_access_main' && !query && (
+                            <div className="mt-12 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                                <h4 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
+                                    <Settings2 className="w-4 h-4 text-slate-400" /> إعدادات الإجراءات السريعة العامة
+                                </h4>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between bg-slate-50 p-4 rounded-[1.25rem] border border-slate-100">
+                                        <label className="text-xs font-black text-slate-600">حجم الأيقونات (الرئيسية)</label>
+                                        <span className="text-sm font-black text-slate-900 bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">{localSettings.quickActionsIconSize || '40'}<span className="text-[10px] text-slate-400 ml-1">px</span></span>
                                     </div>
                                     <input
                                         type="range"
@@ -2568,43 +2410,32 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                         step={2}
                                         value={parseInt(localSettings.quickActionsIconSize || '40', 10)}
                                         onChange={(e) => updateSettings({ quickActionsIconSize: e.target.value })}
-                                        className="w-full accent-slate-900 h-2"
+                                        className="w-full accent-slate-900 h-2 bg-slate-100 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-slate-900 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
                                     />
-                                    <div className="flex justify-between text-[9px] font-black text-slate-300 uppercase">
-                                        <span>12px صغير جداً</span>
-                                        <span>64px كبير جداً</span>
+                                    <div className="flex justify-between text-[10px] font-black text-slate-300 uppercase px-1">
+                                        <span>12px صغير</span>
+                                        <span>64px كبير</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Details Page Parts */}
-                    {showDetails && detailsParts.length > 0 && (
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <Type className="w-4 h-4 text-slate-600" />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-black text-slate-950">أقسام صفحة التفاصيل</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">تحكم في مكونات صفحة تفاصيل العقار</p>
-                                </div>
+                        )}
+                        
+                        {/* Phone Label setting inside login_screen */}
+                        {currentSubcategory?.id === 'login_screen' && !query && (
+                            <div className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:border-slate-300 transition-all">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Type className="w-3.5 h-3.5" /> نص زر الهاتف الافتراضي
+                                </label>
+                                <input
+                                    type="text"
+                                    value={localSettings.loginConfig.phoneLabel || ""}
+                                    onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
+                                    className="mt-3 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:bg-white transition-all shadow-inner"
+                                    placeholder="مثال: تسجيل الدخول بالهاتف"
+                                />
                             </div>
-                            <div className="space-y-3">
-                                {detailsParts.map((p) => <DetailsPartRow key={p.id} id={p.id} label={p.label} />)}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Empty state */}
-                    {sections.length === 0 && modules.length === 0 && uiFlags.length === 0 && detailsParts.length === 0 && (
-                        <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-8">
-                            <ShieldCheck className="w-12 h-12 text-slate-300 mb-4 stroke-[1.5]" />
-                            <h4 className="text-base font-black text-slate-700">لا توجد نتائج</h4>
-                            <p className="text-slate-400 text-xs mt-1">جرب تغيير كلمة البحث</p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

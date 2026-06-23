@@ -11,6 +11,7 @@ import { Loader2, Plus } from 'lucide-react';
 import { financialApi, TransactionType, CreateTransactionDto, FinancialTransaction, TransactionStatus } from '@/lib/financial-service';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from "@/context/LanguageContext";
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 // Expense categories
 const EXPENSE_CATEGORIES = [
@@ -205,7 +206,7 @@ export default function ExpensesManager() {
                                             </TableCell>
                                             <TableCell>{expense.description || '-'}</TableCell>
                                             <TableCell className="font-bold text-red-600">
-                                                -{expense.amount} {t('fin.currencyShort')}
+                                                -<SaudiRiyalAmount amount={expense.amount} locale={isRTL ? 'ar-SA' : 'en-US'} />
                                             </TableCell>
                                             <TableCell>
                                                 {new Date(expense.transactionDate).toLocaleDateString(

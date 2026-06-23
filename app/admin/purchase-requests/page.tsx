@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { adminApi } from "@/lib/api";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import {
   Table,
   TableBody,
@@ -207,7 +208,7 @@ export default function PurchaseRequestsPage() {
                          <span className="text-slate-500">{req.offer?.user?.firstName || 'System'}</span>
                     </TableCell>
                     <TableCell className="font-bold text-slate-900">
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'SAR' }).format(Number(req.offer?.price || 0))}
+                        <SaudiRiyalAmount amount={Number(req.offer?.price || 0)} locale="en-US" minimumFractionDigits={2} maximumFractionDigits={2} />
                     </TableCell>
                     <TableCell>{getStatusBadge(req.status)}</TableCell>
                     <TableCell className="text-slate-500 text-xs">

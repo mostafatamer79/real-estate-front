@@ -29,6 +29,7 @@ import {
 import toast from 'react-hot-toast';
 import Header from '@/app/src/components/Header';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -165,7 +166,7 @@ export default function MyServiceRequestsPage() {
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'السعر' : 'Price'}</p>
-                  <p className="font-bold text-slate-800 text-lg">{selectedRequest.price} {t('chat.currency')}</p>
+                  <p className="font-bold text-slate-800 text-lg"><SaudiRiyalAmount amount={selectedRequest.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'رقم الفاتورة' : 'Invoice Number'}</p>
@@ -206,7 +207,7 @@ export default function MyServiceRequestsPage() {
                           </div>
                           <div className="flex flex-col items-center md:items-end gap-3">
                             <div className="text-xl font-black text-slate-900">
-                              {data.price} <span className="text-sm font-medium text-slate-500">{t('chat.currency')}</span>
+                              <SaudiRiyalAmount amount={data.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                             </div>
                             <div className="flex gap-2">
                               <Button
@@ -345,7 +346,7 @@ export default function MyServiceRequestsPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">{language === 'ar' ? 'السعر' : 'Price'}</p>
-                    <p className="font-black text-slate-900">{request.price} {t('chat.currency')}</p>
+                    <p className="font-black text-slate-900"><SaudiRiyalAmount amount={request.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                   </div>
                 </div>
 

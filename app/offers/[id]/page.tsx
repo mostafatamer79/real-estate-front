@@ -63,6 +63,7 @@ import ChatButton from "@/components/chat/chat-button";
 import SimpleChatModal from "@/components/chat/chat-modal";
 import VisitRequestModal from "@/components/modals/visit-request-modal";
 import PurchaseModal from "@/components/modals/PurchaseModal";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -1747,7 +1748,7 @@ export default function OfferDetailsPage() {
             onConfirm={handlePurchaseSubmit}
             loading={actionLoading === 'buy'}
             propertyTitle={`${offer.propertyType} ${t('cards.ops.sale2024')} ${offer.city}`}
-            price={`${offer.price.toLocaleString()} ${t('currency')}`}
+            price={<SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />}
         />
       )}
     </div>

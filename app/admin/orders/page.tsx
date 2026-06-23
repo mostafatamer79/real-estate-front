@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
 import { 
   Search, 
   MapPin, 
@@ -452,7 +453,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 />
               </div>
               <div className="space-y-1">
-                <label className={labelCls}>السعر الأقصى (ريال)</label>
+                <label className={labelCls}>السعر الأقصى</label>
                 <input
                   type="number"
                   value={form.price || ''}
@@ -1041,7 +1042,7 @@ export default function OrdersPage() {
                                 )}
                             </TableCell>
                             <TableCell>
-                                <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400">ر.س</span></p>
+                                <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
                             </TableCell>
                             <TableCell>{getStatusBadge(order.status)}</TableCell>
                             <TableCell>

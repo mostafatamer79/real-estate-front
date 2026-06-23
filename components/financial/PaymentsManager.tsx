@@ -11,6 +11,7 @@ import { Loader2, CreditCard, Wallet, Banknote, StopCircle, Plus, Building2 } fr
 import { financialApi, FinancialTransaction, TransactionStatus, PaymentMethod, TransactionType, CreateTransactionDto } from '@/lib/financial-service';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from "@/context/LanguageContext";
+import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 
 export default function PaymentsManager() {
     const { t, language } = useLanguage();
@@ -280,7 +281,7 @@ export default function PaymentsManager() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="font-semibold">
-                                                {payment.amount} {t('fin.currencyShort')}
+                                                <SaudiRiyalAmount amount={payment.amount} locale={isRTL ? 'ar-SA' : 'en-US'} />
                                             </TableCell>
                                             <TableCell>
                                                 {new Date(payment.transactionDate).toLocaleDateString(

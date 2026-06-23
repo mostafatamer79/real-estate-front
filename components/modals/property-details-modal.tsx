@@ -12,6 +12,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Loader2, Plus, Trash2, Home, Building, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 interface PropertyDetailsModalProps {
     isOpen: boolean;
@@ -256,7 +257,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                 </div>
                                  <div className="p-3 bg-slate-50 rounded border">
                                     <span className="text-xs text-gray-500 block">{t('pm.field.purchasePrice')}</span>
-                                    <span className="font-semibold">{property.purchasePrice?.toLocaleString() || "---"} SAR</span>
+                                    <span className="font-semibold">{property.purchasePrice != null ? <SaudiRiyalAmount amount={property.purchasePrice} locale="en-US" /> : "---"}</span>
                                 </div>
                             </div>
                          </div>

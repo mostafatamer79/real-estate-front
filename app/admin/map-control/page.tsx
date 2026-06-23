@@ -6,6 +6,7 @@ import { Map, Save, FileText, Lock, Unlock, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 export default function AdminMapControlPage() {
   const { language } = useLanguage();
@@ -27,7 +28,7 @@ export default function AdminMapControlPage() {
       },
       {
         label: isRtl ? "سعر التقرير" : "Report price",
-        value: `${reportPrice} ${isRtl ? "ر.س" : "SAR"}`,
+        value: <SaudiRiyalAmount amount={reportPrice} locale={isRtl ? "ar-SA" : "en-US"} />,
         icon: FileText,
       },
     ],
