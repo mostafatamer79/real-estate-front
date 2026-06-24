@@ -81,6 +81,7 @@ const emptyForms: Record<WalletTab, Record<string, string>> = {
   wallet: { type: "deposit", amount: "", fromUserId: "", toUserId: "", status: "completed", paymentMethod: "wallet", description: "", referenceType: "", referenceId: "" },
   invoices: { userId: "", amount: "", description: "", status: "unpaid", documentUrl: "", referenceType: "", referenceId: "" },
   commissions: { type: "sale", propertyType: "", city: "", neighborhood: "", streetName: "", planNumber: "", plotNumber: "", area: "", deedNumber: "", totalAmount: "", commissionPercentage: "", ownerName: "", ownerIdNumber: "", buyerName: "", buyerIdNumber: "", status: "draft", finalCommissionAmount: "", notes: "" },
+  files: { invoiceId: "", documentUrl: "" },
   investments: { userId: "", clientName: "", phone: "", city: "", district: "", serviceType: "استثمار عقاري", quantity: "1", price: "", description: "", status: "pending", rooms: "", bathrooms: "", propertyAge: "", livingRooms: "", kitchens: "", floors: "", apartments: "", buildingArea: "", length: "", width: "", streetWidth: "", direction: "", deedType: "", propertyCondition: "", furnitureStatus: "", hasGarage: "false", hasPool: "false", hasElevator: "false", hasMaidRoom: "false", hasRoof: "false", hasExternalAnnex: "false" },
 };
 
