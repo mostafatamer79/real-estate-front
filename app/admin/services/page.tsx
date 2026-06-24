@@ -470,7 +470,7 @@ export default function AdminServicesManagementPage() {
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
-                  <DollarSign className="h-6 w-6" />
+                  <SaudiRiyalIcon className="h-6 w-6" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-black tracking-tight text-slate-950">تسعير {activeCategoryConfig.label}</h2>
@@ -480,11 +480,11 @@ export default function AdminServicesManagementPage() {
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length.toLocaleString("ar-SA")}</p>
+                  <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
                   <p className="text-[10px] font-black text-slate-400">خدمة</p>
                 </div>
                 <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount.toLocaleString("ar-SA")}</p>
+                  <p className="text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount}</p>
                   <p className="text-[10px] font-black text-slate-400">مسعرة</p>
                 </div>
                 <div className="col-span-2 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-right sm:col-span-1">
@@ -679,7 +679,7 @@ export default function AdminServicesManagementPage() {
                             value={draft.description}
                             onChange={(event) => updateRequestDraft(request, "description", event.target.value)}
                             className="h-20 w-56 resize-none rounded-xl border border-slate-100 bg-white px-3 py-2 text-xs font-bold leading-5 outline-none"
-                          />
+                          />e
                         </td>
                         <td className="px-5 py-4">
                           <div className="space-y-2">
@@ -695,7 +695,7 @@ export default function AdminServicesManagementPage() {
                               onClick={() => sendInvoice(request)}
                               className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
                             >
-                              <DollarSign className="h-3.5 w-3.5" />
+                              <SaudiRiyalIcon className="h-3.5 w-3.5" />
                               إرسال
                             </button>
                           </div>
@@ -786,7 +786,7 @@ export default function AdminServicesManagementPage() {
             <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
-                <span>{pricedServicesCount.toLocaleString("ar-SA")} خدمة مسعرة</span>
+                <span>{pricedServicesCount} خدمة مسعرة</span>
               </div>
             </div>
             <DialogFooter className="mt-6 grid grid-cols-2 gap-3">
@@ -829,7 +829,7 @@ export default function AdminServicesManagementPage() {
             <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
-                <span>{pricedServicesCount.toLocaleString("ar-SA")} خدمة مسعرة</span>
+                <span>{pricedServicesCount} خدمة مسعرة</span>
               </div>
             </div>
             <DialogFooter className="mt-6">

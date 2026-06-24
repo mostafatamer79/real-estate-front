@@ -142,6 +142,9 @@ export default function QuickActions() {
         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/2 via-transparent to-slate-500/2 pointer-events-none" />
 
         {actions.map((action) => {
+          const flagKey = action.id === 'requests' ? 'orders' : action.id;
+          if (settings.sectionFlags[flagKey] === 'hidden') return null;
+
           return (
             <Tooltip key={action.id}>
               <TooltipTrigger asChild>
@@ -151,7 +154,7 @@ export default function QuickActions() {
                   whileTap={{ scale: 0.92 }}
                   onClick={() => {
                     const flagKey = action.id === 'requests' ? 'orders' : action.id;
-                    if (settings.sectionFlags[flagKey] === 'closed') return;
+                    if (settings.sectionFlags[flagKey] === 'hidden' || settings.sectionFlags[flagKey] === 'closed') return;
 
                     if (action.id === "services")           router.push("/services");
                     else if (action.id === "wallet")        router.push("/wallet");
@@ -172,14 +175,14 @@ export default function QuickActions() {
                     shadow-[0_2px_12px_rgba(0,0,0,0.3)]
                     ${action.glowColor}
                     transition-all duration-300
-                    ${settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
+                    ${settings.sectionFlags[flagKey] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
                   `}
                 >
                   {/* Inner shimmer */}
                   <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-transparent via-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Optimized Soon Badge */}
-                  {settings.sectionFlags[action.id === 'requests' ? 'orders' : action.id] === 'closed' && (
+                  {settings.sectionFlags[flagKey] === 'closed' && (
                     <SoonBadge className="absolute -top-1.5 -right-1.5 z-20 px-2 py-0.5 rounded-lg shadow-xl shadow-black/40">
                       {t('common.soon') || 'قريباً'}
                     </SoonBadge>

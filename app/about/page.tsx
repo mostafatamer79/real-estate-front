@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowUp,
   BarChart3,
   Building2,
   CheckCircle2,
+  ChevronDown,
   FileText,
   Headphones,
   Layers3,
   MapPinned,
   Megaphone,
   MessageSquare,
+  Mouse,
   Scale,
   ShieldCheck,
   ShoppingBag,
@@ -22,6 +24,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
 
 const platformStats = [
   { value: "AI", label: "مسح الخريطة وتحليل الموقع" },
@@ -90,7 +93,6 @@ const journey = [
   "تغلق العملية بسجل قابل للرجوع إليه داخل المنصة.",
 ];
 
-const departments = ["الرئيسية", "الإدارات", "المحفظة", "الخدمات", "إدارة العقارات", "الإعدادات والتحكم"];
 
 const fallingSignals = [
   { label: "AI Scanner", left: "7%", delay: 0, duration: 10 },
@@ -109,10 +111,8 @@ const motionRails = [
 ];
 
 const commandCards = [
-  { icon: MapPinned, label: "مسح خريطة ذكي", value: "AI Scanner", side: "right" },
-  { icon: FileText, label: "تقرير قابل للتسعير", value: "PDF Report", side: "left" },
-  { icon: Wallet, label: "فاتورة ومحفظة", value: "Wallet Flow", side: "right" },
-  { icon: Scale, label: "طلب قانوني", value: "Legal Desk", side: "left" },
+  { icon: MapPinned, label: "مسح ذكي وشامل للأحياء", value: "AI Scanner", side: "right" },
+  { icon: FileText, label: "تقارير تحليل وتخطيط جغرافي مؤتمتة", value: "PDF Report", side: "left" },
 ];
 
 const serviceFlow = [
@@ -145,35 +145,10 @@ const serviceMatrix = [
   ["أخرى", "طلبات مخصصة", "متابعة", "تسعير", "خدمة جديدة"],
 ];
 
-function AnimatedFrame({ reduceMotion }: { reduceMotion: boolean }) {
-  return (
-    <div className="relative min-h-[520px] overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/[0.03] p-5 shadow-2xl shadow-black/30 [contain:paint]">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:54px_54px] opacity-30" />
-      {!reduceMotion && (
-        <motion.div
-          initial={{ x: "-130%" }}
-          animate={{ x: "420%" }}
-          transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-y-0 z-0 w-28 bg-gradient-to-r from-transparent via-white/[0.055] to-transparent [will-change:transform]"
-        />
-      )}
-      <motion.div
-        animate={reduceMotion ? undefined : { rotate: 360 }}
-        transition={{ duration: 42, repeat: Infinity, ease: "linear" }}
-        className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/10 [will-change:transform]"
-      />
-      <motion.div
-        animate={reduceMotion ? undefined : { scale: [1, 1.04, 1], opacity: [0.5, 0.85, 0.5] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 [will-change:transform,opacity]"
-      />
-
-
-    </div>
-  );
-}
+// AnimatedFrame Removed
 
 function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
+  const { settings } = useSettings();
   return (
     <section className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
       <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-8 lg:p-10">
@@ -210,29 +185,11 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
               <span className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">Live Digital Command</span>
             </div>
             <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">
-              تجربة واحدة تجمع الخريطة، الذكاء، الخدمات، الفواتير، والقرارات التشغيلية.
+              تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
             </h2>
             <p className="max-w-2xl text-base font-bold leading-8 text-white/66">
-              هنا تظهر قوة المنصة: العميل يبدأ من احتياج بسيط، والنظام يحوله إلى مسار كامل فيه تقرير، طلب، إدارة مختصة، محادثة، فاتورة، ومتابعة واضحة حتى النهاية.
+              هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها بالذكاء الاصطناعي إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة.
             </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {serviceFlow.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ y: reduceMotion ? 0 : 18 }}
-                  whileInView={{ y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: reduceMotion ? 0 : 0.55, delay: index * 0.05 }}
-                  whileHover={reduceMotion ? undefined : { y: -5 }}
-                  className="rounded-3xl border border-white/10 bg-slate-950/55 p-4 [will-change:transform]"
-                >
-                  <item.icon className="mb-3 h-5 w-5 text-white/55" />
-                  <h3 className="text-sm font-black text-white">{item.title}</h3>
-                  <p className="mt-2 text-xs font-bold leading-6 text-white/52">{item.text}</p>
-                </motion.div>
-              ))}
-            </div>
           </motion.div>
 
           <div className="relative min-h-[560px] overflow-hidden rounded-[2.25rem] border border-white/10 bg-slate-950/70 p-4 sm:p-6">
@@ -257,18 +214,31 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             )}
 
             <div className="relative flex min-h-[520px] items-center justify-center">
+
+              {/* Glowing animated orb background */}
+              <motion.div 
+                animate={reduceMotion ? undefined : { scale: [1, 1.2, 1], filter: ["blur(20px)", "blur(40px)", "blur(20px)"], opacity: [0.4, 0.7, 0.4] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute h-40 w-40 rounded-full bg-blue-600/40"
+              />
+              <motion.div 
+                animate={reduceMotion ? undefined : { rotate: 360, scale: [1, 1.05, 1] }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="absolute h-[300px] w-[300px] rounded-full border border-dashed border-blue-400/40"
+              />
+              <motion.div 
+                animate={reduceMotion ? undefined : { rotate: -360, scale: [1, 1.1, 1] }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                className="absolute h-[420px] w-[420px] rounded-full border border-dotted border-indigo-400/30"
+              />
               <motion.div
-                initial={{ scale: reduceMotion ? 1 : 0.92, y: reduceMotion ? 0 : 18 }}
-                whileInView={{ scale: 1, y: 0 }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: reduceMotion ? 0 : 0.75, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 flex h-56 w-56 items-center justify-center rounded-[2rem] border border-white/15 bg-white/[0.045] shadow-2xl shadow-black/30"
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="relative z-10 flex h-52 w-52 items-center justify-center rounded-full border border-white/10 bg-slate-950/80 shadow-[0_0_60px_rgba(59,130,246,0.35)] backdrop-blur-xl"
               >
-                <div className="text-center">
-                  <Building2 className="mx-auto h-12 w-12 text-white/80" />
-                  <p className="mt-4 text-lg font-black text-white">الوساطة الرقمية</p>
-                  <p className="mt-2 text-[10px] font-black uppercase tracking-[0.24em] text-white/38">One Operating System</p>
-                </div>
+                <img src={settings?.logoWhiteUrl || '/icons/white.png'} alt="Logo" className="w-32 object-contain" />
               </motion.div>
 
               {commandCards.map((item, index) => (
@@ -315,106 +285,17 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
   );
 }
 
-function ScannerStory({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
-  return (
-    <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
-      <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div className="relative min-h-[620px] overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.028] p-5 [contain:paint] sm:p-8">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:58px_58px] opacity-35" />
-          {[0, 1, 2, 3, 4].map((item) => (
-            <motion.div
-              key={item}
-              animate={reduceMotion ? undefined : { scale: [1, 1.18, 1], opacity: [0.12, 0.34, 0.12] }}
-              transition={{ duration: 4.5 + item * 0.5, repeat: Infinity, delay: item * 0.35, ease: "easeInOut" }}
-              className="absolute rounded-full border border-white/12 [will-change:transform,opacity]"
-              style={{
-                inset: `${10 + item * 8}%`,
-              }}
-            />
-          ))}
-          {!reduceMotion && (
-            <>
-              <motion.div
-                initial={{ x: isRtl ? "-120%" : "120%" }}
-                whileInView={{ x: isRtl ? "260%" : "-260%" }}
-                viewport={{ once: false }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[28%] h-px w-2/3 bg-gradient-to-r from-transparent via-white/45 to-transparent [will-change:transform]"
-              />
-              <motion.div
-                initial={{ y: "-100%" }}
-                whileInView={{ y: "760%" }}
-                viewport={{ once: false }}
-                transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-[50%] top-0 h-20 w-px bg-gradient-to-b from-transparent via-white/45 to-transparent [will-change:transform]"
-              />
-            </>
-          )}
-
-          <div className="relative flex min-h-[560px] items-center justify-center">
-            <motion.div
-              initial={{ scale: reduceMotion ? 1 : 0.86, rotate: reduceMotion ? 0 : -5 }}
-              whileInView={{ scale: 1, rotate: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: reduceMotion ? 0 : 0.85, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 h-[330px] w-[330px] rounded-[2.5rem] border border-white/14 bg-slate-950/75 p-5 shadow-2xl shadow-black/35"
-            >
-              <div className="grid h-full grid-cols-3 grid-rows-3 gap-3">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <motion.div
-                    key={index}
-                    animate={reduceMotion ? undefined : { opacity: [0.26, 0.72, 0.26], y: [0, -4, 0] }}
-                    transition={{ duration: 2.2, repeat: Infinity, delay: index * 0.08, ease: "easeInOut" }}
-                    className="rounded-2xl border border-white/10 bg-white/[0.035] [will-change:transform,opacity]"
-                  />
-                ))}
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="rounded-full border border-white/15 bg-slate-950/85 px-5 py-4 text-center shadow-2xl shadow-black/35">
-                  <MapPinned className="mx-auto h-9 w-9 text-white/75" />
-                  <p className="mt-3 text-sm font-black text-white">AI Map Scanner</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="space-y-7">
-          <div className="space-y-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">AI Scanner Map</p>
-            <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">الخريطة ليست صورة. هي بداية قرار وتشغيل وتقرير.</h2>
-            <p className="text-base font-bold leading-8 text-white/65">
-              تجربة الخريطة داخل المنصة تتحول من مشاهدة موقع إلى مسار عمل كامل: تحليل، تقرير، طلب، تسعير، وفريق يتابع النتيجة.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {scannerSteps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ x: reduceMotion ? 0 : isRtl ? -28 : 28 }}
-                whileInView={{ x: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 [will-change:transform]"
-              >
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-xs font-black text-white/55">{index + 1}</span>
-                  <h3 className="text-lg font-black text-white">{step.title}</h3>
-                </div>
-                <p className="text-sm font-bold leading-7 text-white/62">{step.text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+// ScannerStory Removed
 
 function OperatingTimeline({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"],
+  });
+
   return (
-    <section className="relative border-y border-white/10 bg-white/[0.014] px-5 py-24 sm:px-8 lg:px-12">
+    <section ref={containerRef} className="relative border-y border-white/10 bg-white/[0.014] px-5 py-24 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="mb-14 max-w-3xl space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Full Operating Flow</p>
@@ -426,6 +307,16 @@ function OperatingTimeline({ reduceMotion, isRtl }: { reduceMotion: boolean; isR
 
         <div className="relative">
           <div className="absolute bottom-0 top-0 hidden w-px bg-white/10 md:block" style={{ right: isRtl ? "50%" : undefined, left: isRtl ? undefined : "50%" }} />
+          {!reduceMotion && (
+            <motion.div 
+              className="absolute bottom-0 top-0 hidden w-0.5 bg-gradient-to-b from-blue-500 via-indigo-400 to-transparent md:block origin-top shadow-[0_0_20px_rgba(99,102,241,0.8)]" 
+              style={{ 
+                right: isRtl ? "50%" : undefined, 
+                left: isRtl ? undefined : "50%",
+                scaleY: scrollYProgress,
+              }} 
+            />
+          )}
           <div className="space-y-5">
             {timeline.map((item, index) => (
               <motion.article
@@ -447,8 +338,16 @@ function OperatingTimeline({ reduceMotion, isRtl }: { reduceMotion: boolean; isR
                 <motion.span
                   animate={reduceMotion ? undefined : { scale: [1, 1.28, 1], opacity: [0.4, 1, 0.4] }}
                   transition={{ duration: 2.4, repeat: Infinity, delay: index * 0.2 }}
-                  className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-white/55 shadow-[0_0_24px_rgba(255,255,255,0.28)] md:block"
-                />
+                  className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-slate-900 shadow-[0_0_24px_rgba(255,255,255,0.28)] md:block z-10"
+                >
+                  <motion.div 
+                    className="absolute inset-1 rounded-full bg-white"
+                    style={{
+                      scale: scrollYProgress,
+                      opacity: scrollYProgress
+                    }}
+                  />
+                </motion.span>
               </motion.article>
             ))}
           </div>
@@ -484,7 +383,8 @@ function ServiceMatrix({ reduceMotion }: { reduceMotion: boolean }) {
                 key={cell}
                 animate={reduceMotion || cellIndex === 0 ? undefined : { y: [0, -4, 0] }}
                 transition={{ duration: 2.6, repeat: Infinity, delay: cellIndex * 0.1 + rowIndex * 0.08, ease: "easeInOut" }}
-                className={`rounded-2xl border px-4 py-4 text-sm font-black [will-change:transform] ${
+                whileHover={cellIndex === 0 ? undefined : { scale: 1.05, backgroundColor: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.2)" }}
+                className={`rounded-2xl border px-4 py-4 text-sm font-black transition-colors duration-300 [will-change:transform] ${
                   cellIndex === 0 ? "border-white/14 bg-slate-950/78 text-white" : "border-white/10 bg-slate-950/48 text-white/58"
                 }`}
               >
@@ -514,43 +414,43 @@ export default function AboutPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", updateMousePosition);
+    return () => window.removeEventListener("mousemove", updateMousePosition);
+  }, []);
+
   return (
     <main className="min-h-screen overflow-x-hidden bg-slate-950 text-white" dir={isRtl ? "rtl" : "ltr"}>
       <motion.div
+        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
+        animate={{
+          background: `radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59,130,246,0.08), transparent 40%)`,
+        }}
+      />
+      <motion.div
         style={{ scaleX: progressScale, transformOrigin: isRtl ? "right" : "left" }}
-        className="fixed inset-x-0 top-0 z-[60] h-px bg-white/70 [will-change:transform]"
+        className="fixed inset-x-0 top-0 z-[60] h-1 bg-gradient-to-r from-blue-500 to-indigo-500 [will-change:transform] shadow-[0_0_15px_rgba(59,130,246,0.6)]"
       />
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <motion.div style={{ y: backgroundShift }} className="absolute right-[6%] top-[10%] h-96 w-96 rounded-full bg-white/[0.025] blur-3xl [will-change:transform]" />
-        <motion.div style={{ y: backgroundShift }} className="absolute bottom-[12%] left-[8%] h-[32rem] w-[32rem] rounded-full bg-white/[0.018] blur-3xl [will-change:transform]" />
+        <motion.div 
+          style={{ y: backgroundShift }} 
+          animate={reduceMotion ? undefined : { scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute right-[6%] top-[10%] h-[40rem] w-[40rem] rounded-full bg-blue-600/10 blur-[100px] [will-change:transform]" 
+        />
+        <motion.div 
+          style={{ y: backgroundShift }} 
+          animate={reduceMotion ? undefined : { scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-[12%] left-[8%] h-[48rem] w-[48rem] rounded-full bg-indigo-600/10 blur-[100px] [will-change:transform]" 
+        />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:76px_76px] opacity-20 [mask-image:radial-gradient(circle_at_top,black,transparent_72%)]" />
         {!reduceMotion && (
-          <>
-            {fallingSignals.map((signal) => (
-              <motion.div
-                key={signal.label}
-                initial={{ y: "-12vh", opacity: 0 }}
-                animate={{ y: "118vh", opacity: [0, 0.32, 0.18, 0] }}
-                transition={{ duration: signal.duration, delay: signal.delay, repeat: Infinity, ease: "linear" }}
-                style={{ left: signal.left }}
-                className="absolute top-0 rounded-full border border-white/10 bg-slate-950/55 px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/35 shadow-2xl shadow-black/20 [will-change:transform,opacity]"
-              >
-                {signal.label}
-              </motion.div>
-            ))}
-            {motionRails.map((rail, index) => (
-              <motion.div
-                key={rail.top}
-                initial={{ x: "-125%" }}
-                animate={{ x: "360%" }}
-                transition={{ duration: rail.duration, delay: rail.delay, repeat: Infinity, ease: "linear" }}
-                style={{ top: rail.top }}
-                className="absolute left-0 h-px w-1/3 bg-gradient-to-r from-transparent via-white/[0.18] to-transparent [will-change:transform]"
-              >
-                <span className="absolute -top-1.5 h-3 w-3 rounded-full bg-white/45 shadow-[0_0_22px_rgba(255,255,255,0.35)]" style={{ right: index % 2 ? "18%" : "76%" }} />
-              </motion.div>
-            ))}
-          </>
+            <></>
         )}
       </div>
 
@@ -570,53 +470,61 @@ export default function AboutPage() {
         </motion.button>
       )}
 
-      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-28 sm:px-8 lg:grid-cols-[1fr_0.92fr] lg:px-12 lg:pt-32">
-        <div className="space-y-8">
-          <motion.div
-            initial={{ y: reduceMotion ? 0 : 18 }}
-            animate={{ y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-4 py-2"
+      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-28 sm:px-8 lg:px-12 lg:pt-32">
+        <div className="space-y-8 text-center max-w-4xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6 relative z-10"
           >
-            <Building2 className="h-4 w-4 text-white/50" />
-            <span className="text-[10px] font-black uppercase tracking-[0.28em] text-white/50">Digital Brokerage</span>
-          </motion.div>
-
-          <div className="space-y-6">
-            <h1 className="max-w-5xl text-4xl font-black leading-[1.12] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              منصة الوساطة الرقمية ليست صفحة عقارية فقط، بل نظام تشغيل كامل للرحلة العقارية.
-            </h1>
-            <p className="max-w-3xl text-base font-bold leading-8 text-white/70 sm:text-lg">
-              تجمع المنصة بين الخريطة الذكية، إدارة العروض والطلبات، الخدمات العقارية والقانونية، المحفظة، التسويق، خدمة العملاء، وإدارة الأملاك داخل تجربة واحدة واضحة وقابلة للمتابعة من العميل والإدارة.
+            <motion.h1 
+              animate={reduceMotion ? undefined : { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+              className="text-4xl font-black leading-[1.12] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-6xl lg:text-7xl drop-shadow-sm"
+              style={{ backgroundSize: "200% auto" }}
+            >
+              من نحن
+            </motion.h1>
+            <p className="text-base font-bold leading-8 text-white/75 sm:text-lg">
+              نحن منصة "الوساطة الرقمية" منصة سعودية متخصصة في قطاع تكنولوجيا العقار انطلقنا لنقدم نموذجاً متطوراً يجمع بين الحلول التقنية المبتكرة والالتزام بالأنظمة، حيث نوفر بيئة رقمية متكاملة لخدمات الوساطة وإدارة العقارات، تهدف إلى تسهيل التعاملات العقارية، وتسريع إجراءاتها، ورفع كفاءتها، بما يضمن حقوق جميع الأطراف ويوفر تجربة مستخدم آمنة وموثوقة.
+              <br /><br />
+              ونعتمد في أعمالنا على بنية تحتية تقنية متقدمة تحمي البيانات وتضمن سرية المعلومات، مع التزامنا الكامل باللوائح والتشريعات التي تنظم القطاع العقاري في المملكة العربية السعودية، لنكون الشريك الرقمي الموثوق في تطوير التعاملات العقارية وتنظيمه
             </p>
-          </div>
-
- 
+          </motion.div>
         </div>
 
-        <AnimatedFrame reduceMotion={reduceMotion} />
+        {/* Scroll Down Indicator */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        >
+          <motion.button
+            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
+            animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="flex flex-col items-center gap-2 text-white/40 hover:text-blue-400 transition-colors group"
+          >
+            <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-current p-1">
+              <motion.div 
+                animate={reduceMotion ? undefined : { y: [0, 12, 0], opacity: [1, 0, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="h-2 w-1 rounded-full bg-current"
+              />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-0 transition-opacity group-hover:opacity-100">
+              {isRtl ? 'اكتشف' : 'Scroll'}
+            </span>
+            <ChevronDown className="h-4 w-4 absolute -bottom-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+          </motion.button>
+        </motion.div>
       </section>
 
       <CommandRoom reduceMotion={reduceMotion} isRtl={isRtl} />
 
-      <ScannerStory reduceMotion={reduceMotion} isRtl={isRtl} />
 
-      <section className="relative border-y border-white/10 bg-white/[0.015] px-5 py-10 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3">
-          {departments.map((item, index) => (
-            <motion.div
-              key={item}
-              initial={{ y: reduceMotion ? 0 : 12 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-120px" }}
-              transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.04 }}
-              className="rounded-full border border-white/10 bg-slate-950/70 px-5 py-3 text-[11px] font-black text-white/60"
-            >
-              {item}
-            </motion.div>
-          ))}
-        </div>
-      </section>
 
       <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-3xl space-y-4">
@@ -635,11 +543,11 @@ export default function AboutPage() {
               whileInView={{ y: 0 }}
               viewport={{ once: true, margin: "-90px" }}
               transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={reduceMotion ? undefined : { y: -6 }}
-              className="group rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 transition-colors hover:bg-white/[0.045] [will-change:transform]"
+              whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
+              className="group rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 transition-all duration-300 hover:bg-white/[0.06] [will-change:transform]"
             >
               <div className="mb-6 flex items-start justify-between gap-4">
-                <div className="flex h-13 w-13 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65">
+                <div className="flex h-13 w-13 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65 transition-colors duration-300 group-hover:border-blue-500/30 group-hover:text-blue-400 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                   <item.icon className="h-6 w-6" />
                 </div>
                 <span className="rounded-full border border-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/35">{item.eyebrow}</span>
@@ -680,9 +588,10 @@ export default function AboutPage() {
                 whileInView={{ x: 0 }}
                 viewport={{ once: true, margin: "-120px" }}
                 transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
-                className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 [will-change:transform]"
+                whileHover={reduceMotion ? undefined : { x: isRtl ? -10 : 10, backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.2)" }}
+                className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.02] p-5 transition-all duration-300 [will-change:transform]"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-sm font-black text-white/55">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-sm font-black text-white/55 transition-colors duration-300 group-hover:bg-blue-500/10 group-hover:text-blue-400">
                   {String(index + 1).padStart(2, "0")}
                 </div>
                 <p className="text-sm font-black leading-7 text-white/75">{item}</p>
@@ -709,9 +618,10 @@ export default function AboutPage() {
               whileInView={{ y: 0 }}
               viewport={{ once: true, margin: "-110px" }}
               transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6"
+              whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
+              className="group rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 transition-all duration-300 hover:bg-white/[0.06] [will-change:transform]"
             >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65 transition-colors duration-300 group-hover:border-blue-500/30 group-hover:text-blue-400 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                 <item.icon className="h-5 w-5" />
               </div>
               <h3 className="text-xl font-black text-white">{item.title}</h3>
@@ -722,13 +632,20 @@ export default function AboutPage() {
       </section>
 
       <section className="relative px-5 pb-28 sm:px-8 lg:px-12">
-        <div className="mx-auto overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] p-8 text-center sm:p-12">
-          <MessageSquare className="mx-auto h-10 w-10 text-white/45" />
-          <h2 className="mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
-          <p className="mx-auto mt-6 max-w-3xl text-base font-bold leading-8 text-white/65">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative mx-auto overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
+          <MessageSquare className="relative z-10 mx-auto h-12 w-12 text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]" />
+          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
+          <p className="relative z-10 mx-auto mt-6 max-w-3xl text-base font-bold leading-8 text-white/75">
             الوساطة الرقمية تجمع الأدوات التي يحتاجها العميل والإدارة ومقدم الخدمة في منصة واحدة، حتى تتحول العملية العقارية من صفحات منفصلة إلى تجربة تشغيل واضحة.
           </p>
-        </div>
+        </motion.div>
       </section>
     </main>
   );

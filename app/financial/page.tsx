@@ -11,7 +11,8 @@ import {
     Calculator, FileText, Wallet, ArrowUpRight,
     ArrowDownLeft, DollarSign, Briefcase, Loader2,
     TrendingUp, ShieldCheck, PieChart, Sparkles,
-    ChevronLeft, MoreHorizontal, ArrowRight, Filter, Rocket
+    ChevronLeft, MoreHorizontal, ArrowRight, Filter, Rocket,
+    SaudiRiyalIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
@@ -226,7 +227,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     }, []);
 
     const kpis = [
-        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: DollarSign, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: SaudiRiyalIcon, color: "text-slate-900", bg: "bg-slate-50" },
         { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-slate-50" },
         { label: t('fin.kpi.commission'), value: stats?.totalCommission || 0, icon: Banknote, color: "text-slate-900", bg: "bg-slate-50" },
         { label: t('fin.kpi.expenses'), value: stats?.totalExpenses || 0, icon: ArrowDownLeft, color: "text-slate-900", bg: "bg-slate-50" },

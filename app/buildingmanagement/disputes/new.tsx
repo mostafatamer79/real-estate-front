@@ -12,6 +12,7 @@ import {
   Plus,
   X,
   AlertCircle,
+  SaudiRiyalIcon,
 } from "lucide-react";
 import { offersApi, uploadFile, prepareOfferData } from "@/lib/api";
 import { useOffers } from "@/hooks/useOffers";
@@ -44,7 +45,7 @@ const sidebarItems: SidebarItem[] = [
   {
     id: "financial",
     label: "الادارة المالية",
-    icon: DollarSign,
+    icon: SaudiRiyalIcon,
   },
   {
     id: "legal",

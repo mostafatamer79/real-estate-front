@@ -40,13 +40,13 @@ const serviceOptions: Record<ServiceType, string[]> = {
 };
 
 // Premium white background inputs
-const inputClass = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
-const labelClass = "text-[9px] font-black text-slate-500 uppercase tracking-[0.22em] mb-2 block";
+const inputClass = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-900 focus:outline-none transition-all duration-200 shadow-sm";
+const labelClass = "text-[9px] font-black text-slate-900 uppercase tracking-[0.22em] mb-2 block";
 
 const sectionDivider = (label: string) => (
   <div className="flex items-center gap-4 py-1">
     <div className="h-px flex-1 bg-slate-200" />
-    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">{label}</span>
+    <span className="text-[8px] font-black text-slate-900 uppercase tracking-[0.3em]">{label}</span>
     <div className="h-px flex-1 bg-slate-200" />
   </div>
 );
@@ -204,7 +204,7 @@ function ServiceFormContent() {
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 max-w-3xl mx-auto w-full px-6 pt-10"
+        className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-10"
       >
         <button
           onClick={() => router.push("/services")}
@@ -218,7 +218,7 @@ function ServiceFormContent() {
       </motion.div>
 
       {/* Hero */}
-      <div className="relative z-10 max-w-3xl mx-auto w-full px-6 pt-12 pb-10">
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-12 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
           <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
@@ -226,7 +226,7 @@ function ServiceFormContent() {
         </motion.div>
       </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto w-full px-6 pb-24">
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pb-24">
         {/* Legal Flow */}
         {serviceType === "legal" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
@@ -304,7 +304,7 @@ function ServiceFormContent() {
                     <label className={labelClass}>نوع الخدمة المطلوبة</label>
                     <div className="relative">
                       <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
-                        <option value="" disabled className="bg-white text-slate-400">اختر من القائمة...</option>
+                        <option value="" disabled className="bg-white text-slate-900">اختر من القائمة...</option>
                         {serviceOptions[serviceType].map((s, i) => <option key={i} value={s} className="bg-white text-slate-900">{s}</option>)}
                       </select>
                       </div>

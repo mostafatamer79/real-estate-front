@@ -26,6 +26,16 @@ import {
   Subscription
 } from '@/types/api';
 
+export type Opinion = {
+  id: string;
+  name: string;
+  email?: string | null;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type CustomerServiceFaq = {
   id: string;
   categoryAr: string;
@@ -58,6 +68,7 @@ export type CustomerServiceFeedback = {
   email?: string | null;
   phoneNumber?: string | null;
   question: string;
+  type?: 'complaint' | 'inquiry' | 'suggestion';
   adminReply?: string | null;
   adminRepliedAt?: string | null;
   adminRepliedById?: string | null;
@@ -294,6 +305,7 @@ export const customerServiceFeedbackApi = {
     email?: string;
     phoneNumber?: string;
     question: string;
+    type?: 'complaint' | 'inquiry' | 'suggestion';
     pagePath?: string;
   }): Promise<{ success: boolean; data: CustomerServiceFeedback }> =>
     api.post('/customer-service/feedback', data).then((r) => r.data),
@@ -341,6 +353,17 @@ export const infoContentApi = {
     api.delete(`/info-content/blocks/${id}`).then((r) => r.data),
   reorderBlocks: (tabId: string, ids: string[]): Promise<{ success: boolean; data: { tabs: InfoTab[]; blocks: InfoBlock[] } }> =>
     api.post(`/info-content/blocks/reorder/${tabId}`, { ids }).then((r) => r.data),
+};
+
+export const opinionApi = {
+  create: (data: { name: string; email?: string; message: string }): Promise<Opinion> =>
+    api.post('/opinions', data).then((r) => r.data),
+  
+  findAll: (): Promise<Opinion[]> =>
+    api.get('/opinions').then((r) => r.data),
+    
+  markAsRead: (id: string): Promise<Opinion> =>
+    api.patch(`/opinions/${id}/read`).then((r) => r.data),
 };
 
 

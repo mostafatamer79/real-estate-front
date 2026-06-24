@@ -29,7 +29,7 @@ const Map = dynamic(() => import("../src/components/Map"), {
 });
 
 // ✅ Constants
-const DEFAULT_LOCATION: [number, number] = [24.7136, 46.6753];
+const DEFAULT_LOCATION: [number, number] = [24.7136, 46.6753]
 const RADIUS = 2000;
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3009";
 const SCAN_DISCLAIMER_AR = "يُعد استخدامك لخدمة مسح الحي بالذكاء الاصطناعي أو اعتمادك على هذا التقرير، إقراراً علنياً وصريحاً منك بالعلم التام بطبيعة الخدمات التقنية واحتمالية وجود نسبة خطأ أو تباين إحصائي في مخرجاتها";
@@ -328,12 +328,7 @@ export default function ScanMapPage() {
       {isDisclaimerOpen && (
         <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[2rem] border border-white/10 bg-white text-slate-950 shadow-2xl" dir="rtl">
-            <div className="border-b border-slate-100 bg-slate-950 px-6 py-5 text-white">
-              <h2 className="text-2xl font-black">إخلاء مسؤولية</h2>
-              <p className="mt-2 text-xs font-bold leading-6 text-slate-300">
-                يجب الموافقة على الإقرار قبل بدء مسح الحي بالذكاء الاصطناعي وإنشاء التقرير.
-              </p>
-            </div>
+     
    
             <div className="border-t border-slate-100 bg-white px-6 py-5">
               <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-slate-800">
@@ -706,11 +701,7 @@ export default function ScanMapPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-8 pt-4 border-t border-slate-800 text-center text-sm text-slate-500">
-        <p>© {new Date().getFullYear()} {t('scan.footer.rights')}</p>
-        <p className="mt-1">{t('scan.footer.update')}</p>
-      </footer>
+
 
       {/* Payment Modal */}
       <PaymentMethodsModal

@@ -11,10 +11,10 @@ export function useSectionGuard(sectionKey: string) {
     const isAdmin = (user as any)?.role === 'admin';
 
     const flag = settings.sectionFlags[sectionKey];
-    // Default to closed. Only open if flag is explicitly 'open'.
-    // Admins can bypass regardless of the flag state.
+    const isHidden = flag === 'hidden';
+    // Admins always bypass guards, unless they specifically check isHidden
     const isOpen = isAdmin || (flag === 'open');
     const message = settings.sectionMessages[sectionKey] || '';
 
-    return { isOpen, message, isAdmin };
+    return { isOpen, isHidden, message, isAdmin };
 }

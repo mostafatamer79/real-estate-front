@@ -81,8 +81,7 @@ const emptyForms: Record<WalletTab, Record<string, string>> = {
   wallet: { type: "deposit", amount: "", fromUserId: "", toUserId: "", status: "completed", paymentMethod: "wallet", description: "", referenceType: "", referenceId: "" },
   invoices: { userId: "", amount: "", description: "", status: "unpaid", documentUrl: "", referenceType: "", referenceId: "" },
   commissions: { type: "sale", propertyType: "", city: "", neighborhood: "", streetName: "", planNumber: "", plotNumber: "", area: "", deedNumber: "", totalAmount: "", commissionPercentage: "", ownerName: "", ownerIdNumber: "", buyerName: "", buyerIdNumber: "", status: "draft", finalCommissionAmount: "", notes: "" },
-  files: { invoiceId: "", documentUrl: "" },
-  investments: { userId: "", clientName: "", phone: "", city: "", district: "", serviceType: "استثمار عقاري", quantity: "1", price: "", description: "", status: "pending" },
+  investments: { userId: "", clientName: "", phone: "", city: "", district: "", serviceType: "استثمار عقاري", quantity: "1", price: "", description: "", status: "pending", rooms: "", bathrooms: "", propertyAge: "", livingRooms: "", kitchens: "", floors: "", apartments: "", buildingArea: "", length: "", width: "", streetWidth: "", direction: "", deedType: "", propertyCondition: "", furnitureStatus: "", hasGarage: "false", hasPool: "false", hasElevator: "false", hasMaidRoom: "false", hasRoof: "false", hasExternalAnnex: "false" },
 };
 
 const valueLabels: Record<string, string> = {
@@ -443,10 +442,16 @@ export default function AdminWalletPage() {
         if (!payload.invoiceId) throw new Error("invoiceId is required");
         await financialApi.updateInvoiceDocument(payload.invoiceId, payload.documentUrl || null);
       } else {
+        const metadata = {
+          rooms: payload.rooms, bathrooms: payload.bathrooms, propertyAge: payload.propertyAge, livingRooms: payload.livingRooms, kitchens: payload.kitchens, floors: payload.floors, apartments: payload.apartments, buildingArea: payload.buildingArea, length: payload.length, width: payload.width, streetWidth: payload.streetWidth, direction: payload.direction, deedType: payload.deedType, propertyCondition: payload.propertyCondition, furnitureStatus: payload.furnitureStatus, hasGarage: payload.hasGarage === 'true', hasPool: payload.hasPool === 'true', hasElevator: payload.hasElevator === 'true', hasMaidRoom: payload.hasMaidRoom === 'true', hasRoof: payload.hasRoof === 'true', hasExternalAnnex: payload.hasExternalAnnex === 'true'
+        };
+        const requestPayload = { ...payload, metadata };
+        ['rooms', 'bathrooms', 'propertyAge', 'livingRooms', 'kitchens', 'floors', 'apartments', 'buildingArea', 'length', 'width', 'streetWidth', 'direction', 'deedType', 'propertyCondition', 'furnitureStatus', 'hasGarage', 'hasPool', 'hasElevator', 'hasMaidRoom', 'hasRoof', 'hasExternalAnnex'].forEach(k => delete requestPayload[k]);
+
         if (editingId) {
-          await api.put(`/service-requests/${editingId}`, payload);
+          await api.put(`/service-requests/${editingId}`, requestPayload);
         } else {
-          await api.post("/service-requests", { ...payload, category: "other", serviceType: payload.serviceType || "استثمار عقاري" });
+          await api.post("/service-requests", { ...requestPayload, category: "other", serviceType: payload.serviceType || "استثمار عقاري" });
         }
       }
 
@@ -469,6 +474,12 @@ export default function AdminWalletPage() {
       else if (key === "ownerIdNumber") next[key] = item.owner?.idNumber || "";
       else if (key === "buyerName") next[key] = item.buyer?.name || "";
       else if (key === "buyerIdNumber") next[key] = item.buyer?.idNumber || "";
+      else if (activeTab === "investments" && ["rooms", "bathrooms", "propertyAge", "livingRooms", "kitchens", "floors", "apartments", "buildingArea", "length", "width", "streetWidth", "direction", "deedType", "propertyCondition", "furnitureStatus"].includes(key)) {
+        next[key] = String(item.metadata?.[key] || "");
+      }
+      else if (activeTab === "investments" && ["hasGarage", "hasPool", "hasElevator", "hasMaidRoom", "hasRoof", "hasExternalAnnex"].includes(key)) {
+        next[key] = item.metadata?.[key] ? "true" : "false";
+      }
       else if (item[key] !== undefined && item[key] !== null) next[key] = String(item[key]);
     });
     if (activeTab === "files") {
@@ -728,6 +739,129 @@ export default function AdminWalletPage() {
                 </label>
               );
             })}
+            
+            {activeTab === 'investments' && (
+              <div className="col-span-1 md:col-span-2 xl:col-span-4 bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4 my-2 text-right">
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-4">
+                  مواصفات العقار للاستثمار
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد الصالات</label>
+                    <input type="number" value={form.livingRooms || ''} onChange={(e) => setValue('livingRooms', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد المطابخ</label>
+                    <input type="number" value={form.kitchens || ''} onChange={(e) => setValue('kitchens', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد الأدوار</label>
+                    <input type="number" value={form.floors || ''} onChange={(e) => setValue('floors', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد الشقق</label>
+                    <input type="number" value={form.apartments || ''} onChange={(e) => setValue('apartments', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد الغرف</label>
+                    <input type="number" value={form.rooms || ''} onChange={(e) => setValue('rooms', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عدد الحمامات</label>
+                    <input type="number" value={form.bathrooms || ''} onChange={(e) => setValue('bathrooms', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عمر العقار</label>
+                    <input type="text" value={form.propertyAge || ''} onChange={(e) => setValue('propertyAge', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="جديد" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">مساحة البناء</label>
+                    <input type="number" value={form.buildingArea || ''} onChange={(e) => setValue('buildingArea', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">الطول</label>
+                    <input type="number" value={form.length || ''} onChange={(e) => setValue('length', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">العرض</label>
+                    <input type="number" value={form.width || ''} onChange={(e) => setValue('width', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">عرض الشارع</label>
+                    <input type="number" value={form.streetWidth || ''} onChange={(e) => setValue('streetWidth', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">الواجهة</label>
+                    <select value={form.direction || ''} onChange={(e) => setValue('direction', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">الكل</option>
+                      <option value="شمالي">شمالي</option>
+                      <option value="جنوبي">جنوبي</option>
+                      <option value="شرقي">شرقي</option>
+                      <option value="غربي">غربي</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">نوع الصك</label>
+                    <select value={form.deedType || ''} onChange={(e) => setValue('deedType', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">الكل</option>
+                      <option value="إلكتروني">إلكتروني</option>
+                      <option value="ورقي">ورقي</option>
+                      <option value="مشاع">مشاع</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">حالة العقار</label>
+                    <select value={form.propertyCondition || ''} onChange={(e) => setValue('propertyCondition', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">الكل</option>
+                      <option value="جديد">جديد</option>
+                      <option value="ممتاز">ممتاز</option>
+                      <option value="جيد">جيد</option>
+                      <option value="يحتاج صيانة">يحتاج صيانة</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">التأثيث</label>
+                    <select value={form.furnitureStatus || ''} onChange={(e) => setValue('furnitureStatus', e.target.value)} className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">الكل</option>
+                      <option value="مؤثث">مؤثث</option>
+                      <option value="شبه مؤثث">شبه مؤثث</option>
+                      <option value="غير مؤثث">غير مؤثث</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-2">
+                  {[
+                    { key: 'hasGarage', label: 'كراج' },
+                    { key: 'hasPool', label: 'مسبح' },
+                    { key: 'hasElevator', label: 'مصعد' },
+                    { key: 'hasMaidRoom', label: 'غرفة خادمة' },
+                    { key: 'hasRoof', label: 'سطح' },
+                    { key: 'hasExternalAnnex', label: 'ملحق خارجي' }
+                  ].map(f => (
+                    <label key={f.key} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form[f.key] === 'true'}
+                        onChange={(e) => setValue(f.key, e.target.checked ? 'true' : 'false')}
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-100 border-slate-300"
+                      />
+                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">{f.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <button onClick={saveRecord} disabled={saving} className="mt-auto inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-xs font-black text-white disabled:opacity-50">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {activeTab === "investments" ? "حفظ الإعلان" : activeTab === "invoices" ? "إصدار الفاتورة" : activeTab === "commissions" ? "حفظ العقد" : "حفظ"}

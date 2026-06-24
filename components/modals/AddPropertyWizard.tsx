@@ -19,6 +19,7 @@ import { CreatePropertyDto, CreateUnitDto, CreateLeaseDto, CreateTenantDto, Crea
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import { SaudiRiyalIcon } from "../ui/saudi-riyal-icon";
 
 // Dynamic import for Map to avoid SSR issues
 const Map = dynamic(() => import('@/app/src/components/Map'), { 
@@ -975,7 +976,7 @@ export function AddPropertyWizard({
                                                                     onChange={e => setTempLease({...tempLease, annualRent: Number(e.target.value)})}
                                                                     className="bg-slate-50 border-gray-200 h-11 ps-10 focus:bg-white transition-colors text-gray-900" 
                                                                 />
-                                                                <DollarSign className="absolute start-3 top-3.5 w-4 h-4 text-gray-400" />
+                                                                <SaudiRiyalIcon className="absolute start-3 top-3.5 w-4 h-4 text-gray-400" />
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">

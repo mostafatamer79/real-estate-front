@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import { ar, enUS } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
+import { SaudiRiyalIcon } from '../ui/saudi-riyal-icon';
 
 interface OrderDetailsModalProps {
     isOpen: boolean;
@@ -185,7 +186,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                 <div className="p-6 rounded-[2rem] bg-slate-900 border border-slate-800 flex flex-col justify-center gap-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shadow-sm">
-                                            <DollarSign className="w-4 h-4 text-white" />
+                                            <SaudiRiyalIcon className="w-4 h-4 text-white" />
                                         </div>
                                         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{t('common.price')}</span>
                                     </div>

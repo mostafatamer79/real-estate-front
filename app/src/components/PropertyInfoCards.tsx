@@ -83,11 +83,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               transition-all duration-500
             "
             onClick={() => {
-              if (settings.sectionFlags.wallet === 'closed') return;
+              if (settings.sectionFlags.wallet === 'hidden' || settings.sectionFlags.wallet === 'closed') return;
               handleCardClick("operations");
             }}
           >
-            {settings.sectionFlags.wallet === 'closed' ? (
+            {settings.sectionFlags.wallet === 'hidden' ? null : settings.sectionFlags.wallet === 'closed' ? (
               <div className="absolute inset-0 z-50">
                 <ComingSoonInline 
                   sectionName={t('cards.prevOperations')} 
@@ -96,7 +96,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               </div>
             ) : null}
             {/* Soon Badge */}
-            {settings.sectionFlags.financial === 'closed' && (
+            {settings.sectionFlags.financial === 'hidden' ? null : settings.sectionFlags.financial === 'closed' && (
               <div
                 className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
                 style={{
@@ -203,11 +203,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               transition-all duration-500
             "
             onClick={() => {
-              if (settings.sectionFlags.marketing === 'closed') return;
+              if (settings.sectionFlags.marketing === 'hidden' || settings.sectionFlags.marketing === 'closed') return;
               handleCardClick("ads");
             }}
           >
-            {settings.sectionFlags.marketing === 'closed' ? (
+            {settings.sectionFlags.marketing === 'hidden' ? null : settings.sectionFlags.marketing === 'closed' ? (
               <div className="absolute inset-0 z-50">
                 <ComingSoonInline 
                   sectionName={t('cards.dealsAds')} 
@@ -216,7 +216,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               </div>
             ) : null}
             {/* Soon Badge */}
-            {settings.sectionFlags.marketing === 'closed' && (
+            {settings.sectionFlags.marketing === 'hidden' ? null : settings.sectionFlags.marketing === 'closed' && (
               <div
                 className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
                 style={{

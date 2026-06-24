@@ -61,7 +61,7 @@ export default function Footer() {
 
   const supportLinks = [
     { label: "الأسئلة الشائعة", href: "/customerservice#faq", icon: HelpCircle },
-    { label: "شاركنا رأيك", href: "/customerservice#feedback", icon: Send },
+    { label: "شاركنا رأيك", href: "/share-opinion", icon: Send },
     { label: "تواصل معنا", href: "/customerservice#contact", icon: MessageCircle },
   ];
 

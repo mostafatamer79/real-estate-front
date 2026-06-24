@@ -21,8 +21,9 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { CheckCircle2, Plus, RefreshCcw, Trash2, Pencil, FolderPlus, MessageCircleQuestion, ChevronUp, ChevronDown, GripVertical, Send, Mail, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import AdminOpinionsPage from "../opinions/page";
 
-type TabKey = "faqs" | "feedback" | "chat";
+type TabKey = "faqs" | "feedback" | "opinions" | "chat";
 
 export default function AdminCustomerServicePage() {
   const { language, t } = useLanguage();
@@ -321,10 +322,10 @@ export default function AdminCustomerServicePage() {
   };
 
   const statusClass = (status: CustomerServiceFeedback["status"]) => {
-    if (status === "resolved") return "text-emerald-600";
-    if (status === "replied") return "text-blue-600";
-    if (status === "customer_replied") return "text-indigo-600";
-    return "text-amber-600";
+    if (status === "resolved") return "text-slate-600";
+    if (status === "replied") return "text-slate-600";
+    if (status === "customer_replied") return "text-slate-600";
+    return "text-slate-600";
   };
 
   const resetDefaults = async () => {
@@ -401,7 +402,7 @@ export default function AdminCustomerServicePage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button 
             type="button" 
             variant={tab === "faqs" ? "default" : "outline"} 
@@ -427,6 +428,19 @@ export default function AdminCustomerServicePage() {
             }}
           >
             {t("admin.customer_service.tabs.feedback") || (isRtl ? "الاستفسارات" : "Inquiries")}
+          </Button>
+          <Button 
+            type="button" 
+            variant={tab === "opinions" ? "default" : "outline"} 
+            className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest" 
+            onClick={() => setTab("opinions")}
+            style={{
+              backgroundColor: tab === "opinions" ? (settings.csTextColor || undefined) : undefined,
+              color: tab === "opinions" ? (settings.csBg || undefined) : undefined,
+              fontFamily: settings.csFontFamily || undefined,
+            }}
+          >
+            {isRtl ? "آراء العملاء" : "Client Opinions"}
           </Button>
           <Button 
             type="button" 
@@ -987,7 +1001,7 @@ export default function AdminCustomerServicePage() {
                         <div className="flex flex-wrap items-center gap-2 text-xs opacity-75 font-medium">
                           {m.contactMethod === "email" ? `${m.email || ""}` : `${m.phoneNumber || ""}`}
                           {m.email && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50/60 px-2 py-0.5 text-[10px] font-black text-blue-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50/60 px-2 py-0.5 text-[10px] font-black text-slate-700">
                               <Mail className="h-3 w-3" />
                               {isRtl ? "يرسل بريد مع الرد" : "Email on reply"}
                             </span>
@@ -1047,8 +1061,8 @@ export default function AdminCustomerServicePage() {
                       {m.question}
                     </div>
                     {m.adminReply && (
-                      <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-4">
-                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-blue-700">
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/40 p-4">
+                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-700">
                           {isRtl ? "رد الإدارة" : "Admin reply"}
                         </div>
                         <div 
@@ -1059,7 +1073,7 @@ export default function AdminCustomerServicePage() {
                         >
                           {m.adminReply}
                         </div>
-                        {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-blue-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
+                        {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-slate-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
                     {m.userReply && (
@@ -1106,6 +1120,12 @@ export default function AdminCustomerServicePage() {
             )}
           </CardContent>
         </Card>
+      )}
+
+      {tab === "opinions" && (
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <AdminOpinionsPage />
+        </div>
       )}
 
       <ConfirmDialog

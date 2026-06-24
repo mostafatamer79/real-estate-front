@@ -6,7 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Scale, CheckCircle2, XCircle, Clock,
-  AlertCircle, ArrowLeft, Plus, Users, DollarSign, ChevronDown, ChevronUp
+  AlertCircle, ArrowLeft, Plus, Users, DollarSign, ChevronDown, ChevronUp,
+  SaudiRiyalIcon
 } from "lucide-react";
 import Link from "next/link";
 
@@ -262,7 +263,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
                               <div className="p-5 bg-white/[0.03] rounded-2xl border border-white/10 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                   <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                                    <DollarSign className="w-4 h-4 text-white/40" />
+                                    <SaudiRiyalIcon className="w-4 h-4 text-white/40" />
                                   </div>
                                   <div>
                                     <p className="text-[8px] font-black text-white/25 uppercase tracking-widest">{t("legal.requests.invoicePrice")}</p>

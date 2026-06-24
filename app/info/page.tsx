@@ -53,14 +53,15 @@ function InfoPageContent() {
 
   const tabsToRender = useMemo(() => {
     const fallback = [
-      { key: "terms", title: t("footer.terms") || "الشروط والأحكام", icon: Shield },
+      { key: "terms_short", title: t("footer.terms") || "الشروط والأحكام", icon: Shield },
       { key: "usage", title: t("footer.usage") || "سياسة الاستخدام", icon: BookOpen },
       { key: "permits", title: t("footer.permits") || "التراخيص والتصاريح", icon: FileCheck },
       { key: "contact", title: t("footer.contact") || "اتصل بنا", icon: Phone },
     ];
     if (!infoTabs) return fallback;
-    const keyToIcon: Record<string, any> = { terms: Shield, usage: BookOpen, permits: FileCheck, contact: Phone };
+    const keyToIcon: Record<string, any> = { terms_short: Shield, usage: BookOpen, permits: FileCheck, contact: Phone };
     return infoTabs
+      .filter((tab) => tab.key !== "terms" && tab.key !== "privacy")
       .slice()
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
       .map((tab) => ({
@@ -100,31 +101,7 @@ function InfoPageContent() {
     <div className="min-h-screen bg-slate-950 text-white pb-20 pt-24" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-5xl mx-auto px-6 h-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <motion.h1 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl font-black tracking-tight text-white"
-              >
-                {t("footer.rights")?.split("{year}")[0]?.trim() || "منصتنا العقارية"}
-              </motion.h1>
-              <p className="text-slate-400 font-medium max-w-xl text-sm leading-relaxed">
-                هنا تجد كافة المعلومات القانونية، سياسات الاستخدام، والتراخيص التي تضمن لك رحلة عقارية آمنة وموثوقة.
-              </p>
-            </div>
-          </div>
-          
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-bold bg-white/5 px-4 py-2 rounded-xl border border-white/5"
-          >
-            <ChevronLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
-            العودة
-          </button>
-        </div>
-
+  
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <TabsList className="flex h-14 items-center justify-start rounded-2xl bg-white/5 border border-white/5 p-1.5 w-full overflow-x-auto overflow-y-hidden no-scrollbar gap-2">
@@ -149,9 +126,9 @@ function InfoPageContent() {
               const content =
                 blocksByTabKey.get(tab.key)?.map(({ label, text }) => ({ label, text })) || [];
               const actionBtn =
-                tab.key === "terms" ? (
+                tab.key === "terms_short" ? (
                   <button
-                    onClick={() => openModal("privacy")}
+                    onClick={() => openModal("terms")}
                     className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all"
                   >
                     <span>{isRtl ? "قراءة الشروط والأحكام بالتفصيل" : "Read full terms"}</span>
@@ -159,7 +136,7 @@ function InfoPageContent() {
                   </button>
                 ) : tab.key === "usage" ? (
                   <button
-                    onClick={() => openModal("terms")}
+                    onClick={() => openModal("privacy")}
                     className="mt-8 flex items-center justify-center gap-2 w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-black text-sm transition-all"
                   >
                     <span>{isRtl ? "قراءة سياسة الخصوصية بالتفصيل" : "Read full privacy policy"}</span>

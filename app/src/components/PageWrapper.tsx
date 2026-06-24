@@ -33,8 +33,8 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         pathname?.startsWith('/admin') || 
         pathname?.startsWith('/internal') || 
         pathname?.startsWith('/services') || 
-        pathname?.startsWith('/offers') || 
-        pathname?.startsWith('/orders') || 
+        pathname === '/offers' || 
+        pathname === '/orders' || 
         pathname === '/login';
     
     const isHomePage = pathname === '/';

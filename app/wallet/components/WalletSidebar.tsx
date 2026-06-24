@@ -84,18 +84,18 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 whileTap={{ scale: 0.985 }}
                                 onClick={() => onTabChange(item.id)}
                                 className={`
-                                    group relative p-4 bg-white border border-slate-100 rounded-2xl 
+                                    group relative p-3 bg-white border border-slate-100 rounded-2xl 
                                     hover:border-slate-950 shadow-sm hover:shadow-md text-slate-900
-                                    transition-all duration-300 flex items-center gap-4 text-right
+                                    transition-all duration-300 flex items-center gap-3 text-right
                                     ${activeTab === item.id ? 'border-slate-950 bg-slate-50 ring-1 ring-slate-950/5' : ''}
                                 `}
                             >
                                 {/* Icon Container */}
-                                <div className={`h-24 w-24 shrink-0 rounded-2xl shadow-md transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-slate-950/20 rotate-6 scale-105' : 'bg-slate-100 group-hover:bg-slate-200 group-hover:-rotate-3'}`}>
+                                <div className={`h-12 w-12 shrink-0 rounded-xl shadow-sm transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-slate-950/20 rotate-6 scale-105' : 'bg-slate-100 group-hover:bg-slate-200 group-hover:-rotate-3'}`}>
                                     <img
                                         src={item.icon}
                                         alt={item.label}
-                                        className={`w-full h-full scale-[2] object-contain transition-all duration-300 ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
+                                        className={`w-full h-full scale-[3] object-contain transition-all duration-300 ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
                                     />
                                 </div>
                                 

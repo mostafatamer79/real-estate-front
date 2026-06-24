@@ -24,7 +24,8 @@ import {
   ArrowLeft,
   Plus,
   Building2,
-  Lock
+  Lock,
+  SaudiRiyalIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Header from '@/app/src/components/Header';
@@ -119,7 +120,7 @@ export default function MyServiceRequestsPage() {
     return (
       <div className="min-h-screen bg-slate-100" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Header />
-        <main className="max-w-5xl mx-auto px-6 pt-24 pb-12">
+        <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
           <Button
             variant="ghost"
             className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
@@ -184,7 +185,7 @@ export default function MyServiceRequestsPage() {
 
                 <div className="pt-6 border-t border-slate-100">
                   <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-emerald-500" />
+                    <SaudiRiyalIcon className="w-5 h-5 text-emerald-500" />
                     {language === 'ar' ? 'عروض الأسعار المتاحة' : 'Available Pricing Offers'}
                   </h3>
 

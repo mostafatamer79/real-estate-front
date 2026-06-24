@@ -101,7 +101,7 @@ export interface GlobalSettings {
     textOverrides: Record<string, string>;
 
     // Section feature flags: 'open' | 'closed'
-    sectionFlags: Record<string, 'open' | 'closed'>;
+    sectionFlags: Record<string, 'open' | 'closed' | 'hidden'>;
 
     // Per-section custom "coming soon" messages
     sectionMessages: Record<string, string>;

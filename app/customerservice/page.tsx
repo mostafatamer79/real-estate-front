@@ -63,6 +63,7 @@ export default function CustomerService() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [contactMethod, setContactMethod] = useState<"email" | "phone">("email");
+  const [type, setType] = useState<"complaint" | "inquiry" | "suggestion">("inquiry");
   const [name, setName] = useState("");
   const [charCount, setCharCount] = useState(0);
   const MAX_CHARACTERS = 200;
@@ -220,6 +221,7 @@ export default function CustomerService() {
           contactMethod,
           email: contactMethod === 'email' ? email : undefined,
           phoneNumber: contactMethod === 'phone' ? phoneNumber : undefined,
+          type,
           question,
           pagePath: '/customerservice',
         });
@@ -361,7 +363,7 @@ export default function CustomerService() {
       <div className="max-w-7xl mx-auto px-6">
           {/* Contact Channels Grid */}
           {settings.uiFlags?.show_cs_channels !== false && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
               {[
                 settings.contactPhone?.trim()
                   ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone }
@@ -375,7 +377,7 @@ export default function CustomerService() {
                     key={item.id}
                     whileHover={{ y: -5 }}
                     href={item.href}
-                    className="group p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
+                    className="group flex-1 min-w-[250px] max-w-[350px] p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
                     style={{ backgroundColor: settings.csCardBg || undefined }}
                   >
                     <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
@@ -458,8 +460,13 @@ export default function CustomerService() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-black text-slate-900">#{ticket.id.slice(0, 8)}</p>
-                          <p className="mt-1 line-clamp-2 text-sm font-bold leading-6 text-slate-500">{ticket.question}</p>
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-black text-slate-900">#{ticket.id.slice(0, 8)}</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest rounded bg-slate-100 text-slate-500 px-1.5 py-0.5">
+                              {ticket.type === 'complaint' ? (language === 'ar' ? 'شكوى' : 'Complaint') : ticket.type === 'suggestion' ? (language === 'ar' ? 'اقتراح' : 'Suggestion') : (language === 'ar' ? 'استفسار' : 'Inquiry')}
+                            </span>
+                          </div>
+                          <p className="line-clamp-2 text-sm font-bold leading-6 text-slate-500">{ticket.question}</p>
                         </div>
                         <MessageSquare className="h-5 w-5 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" />
                       </div>
@@ -485,8 +492,11 @@ export default function CustomerService() {
                   <DialogHeader className="border-b border-slate-100 p-6 text-start">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <DialogTitle className="text-lg font-black text-slate-950">
+                        <DialogTitle className="text-lg font-black text-slate-950 flex items-center gap-2">
                           {language === "ar" ? "تذكرة الدعم" : "Support ticket"} #{selectedTicket.id.slice(0, 8)}
+                          <span className="text-[9px] font-black uppercase tracking-widest rounded bg-slate-100 text-slate-500 px-2 py-0.5 ml-2 border border-slate-200">
+                            {selectedTicket.type === 'complaint' ? (language === 'ar' ? 'شكوى' : 'Complaint') : selectedTicket.type === 'suggestion' ? (language === 'ar' ? 'اقتراح' : 'Suggestion') : (language === 'ar' ? 'استفسار' : 'Inquiry')}
+                          </span>
                         </DialogTitle>
                         <DialogDescription className="mt-1 text-xs font-bold text-slate-400">
                           {new Date(selectedTicket.createdAt).toLocaleString(language === "ar" ? "ar-SA" : "en-US")}
@@ -613,6 +623,53 @@ export default function CustomerService() {
                             className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
                             style={{ color: settings.csTextColor || undefined }}
                           >
+                            {language === 'ar' ? 'نوع الرسالة' : 'Message Type'}
+                          </Label>
+                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                              <button
+                                  type="button"
+                                  onClick={() => setType("inquiry")}
+                                  className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all`}
+                                  style={{
+                                      fontFamily: settings.csFontFamily || undefined,
+                                      backgroundColor: type === "inquiry" ? (settings.csTextColor || '#0f172a') : 'transparent',
+                                      color: type === "inquiry" ? (settings.csBg || '#ffffff') : undefined,
+                                  }}
+                              >
+                                  {language === 'ar' ? 'استفسار' : 'Inquiry'}
+                              </button>
+                              <button
+                                  type="button"
+                                  onClick={() => setType("complaint")}
+                                  className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all`}
+                                  style={{
+                                      fontFamily: settings.csFontFamily || undefined,
+                                      backgroundColor: type === "complaint" ? (settings.csTextColor || '#0f172a') : 'transparent',
+                                      color: type === "complaint" ? (settings.csBg || '#ffffff') : undefined,
+                                  }}
+                              >
+                                  {language === 'ar' ? 'شكوى' : 'Complaint'}
+                              </button>
+                              <button
+                                  type="button"
+                                  onClick={() => setType("suggestion")}
+                                  className={`flex items-center justify-center gap-2 h-10 rounded-lg font-black text-[10px] uppercase transition-all`}
+                                  style={{
+                                      fontFamily: settings.csFontFamily || undefined,
+                                      backgroundColor: type === "suggestion" ? (settings.csTextColor || '#0f172a') : 'transparent',
+                                      color: type === "suggestion" ? (settings.csBg || '#ffffff') : undefined,
+                                  }}
+                              >
+                                  {language === 'ar' ? 'اقتراح' : 'Suggestion'}
+                              </button>
+                          </div>
+                      </div>
+
+                      <div className="space-y-2">
+                          <Label 
+                            className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
+                            style={{ color: settings.csTextColor || undefined }}
+                          >
                             طريقة التواصل المفضلة
                           </Label>
                           <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
@@ -696,7 +753,11 @@ export default function CustomerService() {
                             className="text-[10px] font-black uppercase tracking-widest px-1 opacity-60"
                             style={{ color: settings.csTextColor || undefined }}
                           >
-                            {t('cs.placeholder.inquiry')}
+                            {type === 'complaint' 
+                              ? (language === 'ar' ? 'تفاصيل الشكوى...' : 'Complaint details...') 
+                              : type === 'suggestion' 
+                                ? (language === 'ar' ? 'اكتب اقتراحك هنا...' : 'Write your suggestion here...')
+                                : t('cs.placeholder.inquiry')}
                           </Label>
                           <div className="relative">
                             <Textarea

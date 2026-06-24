@@ -9,7 +9,8 @@ import {
     LayoutGrid, Zap, ShieldQuestion, Upload, ImageIcon,
     ChevronLeft, ChevronRight, Globe, Languages,
     Bell, FileText, Mail, Share2, LifeBuoy, KeyRound,
-    Plus, Trash2, Eye, BookOpen, Play, UserCheck, Info, Sliders
+    Plus, Trash2, Eye, BookOpen, Play, UserCheck, Info, Sliders,
+    SaudiRiyalIcon
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -1114,7 +1115,7 @@ export const STRUCTURED_SECTIONS = [
             {
                 id: 'dept_finance',
                 title: 'الإدارة المالية',
-                icon: DollarSign,
+                icon: SaudiRiyalIcon,
                 keys: ['header.financial_management', 'wallet.invoices.title', 'wallet.commission.title', 'wallet.balance.label'],
                 controls: [
                     { key: 'deptFinanceColor', label: 'لون النصوص', type: 'color', default: '#0f172a' },
@@ -2117,8 +2118,8 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     });
 
     const SectionRow = ({ id, label }: { id: string; label: string }) => {
-        const v = (localSettings.sectionFlags || {})[id] === 'open' ? 'open' : 'closed';
-        const setV = (next: 'open' | 'closed') => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [id]: next } });
+        const v = (localSettings.sectionFlags || {})[id] || 'open';
+        const setV = (next: 'open' | 'closed' | 'hidden') => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [id]: next } });
         return (
             <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
                 <div className="px-5 py-4 flex items-center justify-between gap-4">
@@ -2129,7 +2130,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setV('open')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'open' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
+                        <button type="button" onClick={() => setV('open')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'open' || (v !== 'closed' && v !== 'hidden') ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
                         <button
                             type="button"
                             onClick={() => setV('closed')}
@@ -2137,6 +2138,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         >
                             قريباً
                         </button>
+                        <button type="button" onClick={() => setV('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
                     </div>
                 </div>
                 {v === 'closed' && (

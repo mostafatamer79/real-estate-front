@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
-import { TableOfContents, MessageCircle, Ruler, DollarSign, MapPin, Calendar, Layers, CheckCircle, AlertCircle, ArrowRight, LayoutGrid, User as UserIcon } from "lucide-react";
+import { TableOfContents, MessageCircle, Ruler, DollarSign, MapPin, Calendar, Layers, CheckCircle, AlertCircle, ArrowRight, LayoutGrid, User as UserIcon, SaudiRiyalIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer, Booking } from "@/types/api";
@@ -424,7 +424,7 @@ export default function OffersPage() {
               </div>
             </div>
 
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4" />{t('offers.filter.price')}</h3>
+            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><SaudiRiyalIcon className="w-4 h-4" />{t('offers.filter.price')}</h3>
               <div className="flex gap-2">
                 <Input type="number" placeholder={language === 'ar' ? 'من' : 'From'} value={priceFrom} onChange={(e) => setPriceFrom(e.target.value)} />
                 <Input type="number" placeholder={language === 'ar' ? 'إلى' : 'To'} value={priceTo} onChange={(e) => setPriceTo(e.target.value)} />
@@ -503,7 +503,7 @@ export default function OffersPage() {
                     <div className="flex items-center gap-2 mb-3 text-sm"><span className="font-semibold text-gray-700">{sellerName}</span><span className="text-gray-400 mr-auto">•</span><span className="text-gray-500">{offer.timeAgo}</span></div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{offer.description}</p>
                     <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-100 pt-4">
-                      <div className="flex items-center gap-4"><div className="flex items-center gap-1"><Ruler className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><DollarSign className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
+                      <div className="flex items-center gap-4"><div className="flex items-center gap-1"><Ruler className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><SaudiRiyalIcon className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
                       <div className="flex items-center gap-3">
                         <button onClick={() => window.location.href = `/offers/${offer.id}`} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-slate-50 transition-colors text-sm">{t('offers.details')}</button>
                         {(user?.id === offer.userId || user?.id === offer.user?.id) && (<button onClick={() => { setSelectedOfferId(offer.id); setSelectedOfferTitle(offer.address); setIsAppointmentsModalOpen(true); }} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium">{language === 'ar' ? 'عرض المواعيد' : 'View Appointments'}</button>)}

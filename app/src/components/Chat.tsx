@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import StripePaymentModal from "@/components/Payment/StripePaymentModal";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import { SaudiRiyalIcon } from "@/components/ui/saudi-riyal-icon";
 
 interface Message {
   id: string;
@@ -175,7 +176,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
             <div className="flex items-center gap-2">
                {/* DEBUG TOOLBAR FOR DEMO */}
                <button onClick={handleCreateBooking} title="Simulate Payment Request" className="text-white hover:text-green-300">
-                   <DollarSign className="w-4 h-4" />
+                   <SaudiRiyalIcon className="w-4 h-4" />
                </button>
               <button
                 onClick={onClose}

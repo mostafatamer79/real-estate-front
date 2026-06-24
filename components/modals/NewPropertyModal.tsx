@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Building, MapPin, Hash, DollarSign, Loader2, Home, Landmark, Warehouse, Map } from "lucide-react";
+import { X, Building, MapPin, Hash, DollarSign, Loader2, Home, Landmark, Warehouse, Map, SaudiRiyalIcon } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -132,7 +132,7 @@ export function NewPropertyModal({
             {/* Price */}
             <div className="space-y-2">
               <Label className="text-gray-300 flex items-center gap-2 ml-1">
-                <DollarSign className="w-4 h-4 text-blue-500" />
+                <SaudiRiyalIcon className="w-4 h-4 text-blue-500" />
                 {t('pm.field.purchasePrice')}
               </Label>
               <div className="relative">

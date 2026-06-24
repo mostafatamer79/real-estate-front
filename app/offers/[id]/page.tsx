@@ -53,7 +53,8 @@ import {
   BadgeCheck,
   Star as StarIcon,
   CheckCheck,
-  Send
+  Send,
+  SaudiRiyalIcon
 } from "lucide-react";
 import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer } from "@/types/api";
@@ -924,7 +925,7 @@ export default function OfferDetailsPage() {
     if (!offer) return null;
 
     const highlights = [
-      { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: DollarSign },
+      { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: SaudiRiyalIcon },
       { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: Ruler },
       { key: 'type', label: t('offer.type'), value: offer.propertyType, icon: Building },
       { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
@@ -1272,7 +1273,7 @@ export default function OfferDetailsPage() {
                         onClick={() => handleInterest('buy')}
                         disabled={!!actionLoading}
                     >
-                         {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <DollarSign className="w-4 h-4 ml-2" />}
+                         {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className="w-4 h-4 ml-2" />}
                          {offer.dealType === 'rent' ? t('offer.rentProp') : t('offer.buyProp')}
                     </Button>
                 </div>

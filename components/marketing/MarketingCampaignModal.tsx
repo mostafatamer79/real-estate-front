@@ -11,7 +11,7 @@ import {
   Upload
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import api, { offersApi, ordersApi, propertiesApi } from '@/lib/api';
+import api, { offersApi, ordersApi, propertiesApi, usersApi } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { SaudiRiyalSymbol } from '@/components/ui/saudi-riyal';
@@ -27,10 +27,12 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
   const { t, language } = useLanguage();
   const isRtl = language === 'ar';
   const [loading, setLoading] = useState(false);
-  const [resourcesLoading, setResourcesLoading] = useState(false);
-  const [resourceOptions, setResourceOptions] = useState<Array<{ id: string; label: string }>>([]);
-  const [rawOffers, setRawOffers] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [images, setImages] = useState<File[]>([]);
+  const [sourceType, setSourceType] = useState<'existing' | 'new'>(campaign?.linkedResourceId ? 'existing' : 'new');
+  const [linkedResourceId, setLinkedResourceId] = useState(campaign?.linkedResourceId || '');
+  const [resourcesLoading, setResourcesLoading] = useState(false);
+  const [resourceOptions, setResourceOptions] = useState<Array<{ id: string; label: string; item: any }>>([]);
   const [formData, setFormData] = useState({
     category: campaign?.category || 'offers',
     subject: campaign?.subject || '',
@@ -40,7 +42,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
     isActive: campaign?.isActive !== undefined ? campaign.isActive : true,
     sortOrder: campaign?.sortOrder ?? 0,
     scheduleMode: campaign?.scheduleMode || 'manual',
-    linkedResourceId: campaign?.linkedResourceId || '',
+    assignedTo: campaign?.assignedTo || '',
     startDate: campaign?.startDate ? String(campaign.startDate).slice(0, 10) : '',
     endDate: campaign?.endDate ? String(campaign.endDate).slice(0, 10) : '',
     propertyType: campaign?.propertyType || 'فيلا',
@@ -51,6 +53,33 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
     city: campaign?.city || 'الرياض',
     neighborhood: campaign?.neighborhood || '',
     mediaFiles: campaign?.mediaFiles || [],
+    details: campaign?.details || {
+      rooms: '',
+      bathrooms: '',
+      propertyAge: '',
+      priceFrom: '',
+      priceTo: '',
+      areaFrom: '',
+      areaTo: '',
+      livingRooms: '',
+      kitchens: '',
+      floors: '',
+      apartments: '',
+      hasMaidRoom: false,
+      hasRoof: false,
+      hasExternalAnnex: false,
+      buildingArea: '',
+      hasGarage: false,
+      hasPool: false,
+      hasElevator: false,
+      furnitureStatus: '',
+      direction: '',
+      streetWidth: '',
+      deedType: '',
+      propertyCondition: '',
+      length: '',
+      width: ''
+    },
   });
 
   const propertyTypeOptions: Record<string, string[]> = {
@@ -83,41 +112,48 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
   useEffect(() => {
     if (!isOpen) return;
 
+    const fetchUsers = async () => {
+      try {
+        const res = await usersApi.findAll();
+        setUsers(res.data || []);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [isOpen, isRtl]);
+
+  useEffect(() => {
+    if (!isOpen || sourceType !== 'existing') return;
     const loadResources = async () => {
       if (formData.category === 'custom') {
         setResourceOptions([]);
         return;
       }
-
       try {
         setResourcesLoading(true);
         if (formData.category === 'orders') {
           const res = await ordersApi.findAll();
           setResourceOptions((res.data || []).map((item: any) => ({
             id: item.id,
-            label: `${item.orderType || (isRtl ? 'طلب' : 'Order')} - ${item.location || item.city || item.id.slice(0, 8)}`,
+            label: `${item.orderType || (isRtl ? 'طلب' : 'Order')} - ${item.city || item.id.slice(0, 8)}`,
+            item
           })));
-          return;
-        }
-
-        if (formData.category === 'offers') {
+        } else if (formData.category === 'offers') {
           const res = await offersApi.findAll();
-          const list = res.data || [];
-          setRawOffers(list);
-          setResourceOptions(list.map((item: any) => ({
+          setResourceOptions((res.data || []).map((item: any) => ({
             id: item.id,
-            label: `${item.title || item.propertyType || (isRtl ? 'عرض' : 'Offer')} - ${item.location || item.city || item.id.slice(0, 8)}`,
+            label: `${item.propertyType || (isRtl ? 'عرض' : 'Offer')} - ${item.city || item.id.slice(0, 8)} - ${item.price} SAR`,
+            item
           })));
-          return;
-        }
-
-        if (formData.category === 'property_management') {
+        } else if (formData.category === 'property_management') {
           const res = await propertiesApi.findAll();
           setResourceOptions((res.data || []).map((item: any) => ({
             id: item.id,
-            label: `${item.title || item.name || item.propertyType || (isRtl ? 'ملك' : 'Property')} - ${item.location || item.city || item.id.slice(0, 8)}`,
+            label: `${item.propertyType || (isRtl ? 'ملك' : 'Property')} - ${item.city || item.id.slice(0, 8)}`,
+            item
           })));
-          return;
         }
       } catch (error) {
         setResourceOptions([]);
@@ -125,9 +161,8 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
         setResourcesLoading(false);
       }
     };
-
     loadResources();
-  }, [formData.category, isOpen, isRtl]);
+  }, [formData.category, isOpen, isRtl, sourceType]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,20 +170,18 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
       toast.error(isRtl ? 'المحتوى مطلوب' : 'Content is required');
       return;
     }
-    if (formData.category !== 'custom' && !formData.linkedResourceId) {
-      toast.error(isRtl ? 'اختر العنصر المرتبط' : 'Choose the linked item');
-      return;
-    }
+
 
     try {
       setLoading(true);
       const data = {
         ...formData,
         targetRole: formData.targetRole || null,
-        linkedResourceType: categoryResourceMap[formData.category]?.value || 'none',
-        linkedResourceId: formData.category === 'custom' ? null : formData.linkedResourceId,
+        assignedTo: formData.assignedTo || null,
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
+        linkedResourceType: sourceType === 'existing' && formData.category !== 'custom' ? categoryResourceMap[formData.category]?.value || 'none' : null,
+        linkedResourceId: sourceType === 'existing' && formData.category !== 'custom' ? linkedResourceId : null,
       };
 
       let savedCampaign: any;
@@ -242,6 +275,89 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               </select>
             </div>
 
+            {/* Source Type */}
+            {formData.category !== 'custom' && (
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                  <Target className="w-3 h-3" />
+                  {isRtl ? 'مصدر بيانات الإعلان' : 'Ad Data Source'}
+                </label>
+                <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setSourceType('new')}
+                    className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                      sourceType === 'new' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                    }`}
+                  >
+                    {isRtl ? 'إنشاء بيانات جديدة للإعلان' : 'Create new data'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSourceType('existing')}
+                    className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                      sourceType === 'existing' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                    }`}
+                  >
+                    {isRtl ? 'ربط بعنصر موجود مسبقاً' : 'Link existing item'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Linked Resource Selector */}
+            {sourceType === 'existing' && formData.category !== 'custom' && (
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                  <Type className="w-3 h-3" />
+                  {isRtl ? 'اختر العنصر المرتبط' : 'Choose Linked Item'}
+                </label>
+                <select
+                  value={linkedResourceId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setLinkedResourceId(id);
+                    const selected = resourceOptions.find(opt => opt.id === id)?.item;
+                    if (selected) {
+                      setFormData(prev => ({
+                        ...prev,
+                        propertyType: selected.propertyType || prev.propertyType,
+                        mainCategory: selected.mainCategory || prev.mainCategory,
+                        dealType: selected.dealType || prev.dealType,
+                        price: selected.price || prev.price,
+                        area: selected.area || prev.area,
+                        city: selected.city || prev.city,
+                        neighborhood: selected.neighborhood || prev.neighborhood,
+                        details: {
+                          ...prev.details,
+                          rooms: selected.rooms || prev.details?.rooms || '',
+                          bathrooms: selected.bathrooms || prev.details?.bathrooms || '',
+                          propertyAge: selected.propertyAge || prev.details?.propertyAge || '',
+                          priceFrom: selected.price || prev.details?.priceFrom || '',
+                          priceTo: selected.price || prev.details?.priceTo || '',
+                          areaFrom: selected.area || prev.details?.areaFrom || '',
+                          areaTo: selected.area || prev.details?.areaTo || ''
+                        }
+                      }));
+                    }
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                >
+                  <option value="">{resourcesLoading ? (isRtl ? 'جاري التحميل...' : 'Loading...') : (isRtl ? 'اختر العنصر لجلبه' : 'Select item to fetch')}</option>
+                  {resourceOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {linkedResourceId && (
+                  <p className="text-[10px] text-emerald-600 font-bold px-1 mt-1">
+                    {isRtl ? '✓ تم ربط العنصر وتعبئة الحقول أدناه لتتمكن من تخصيصها.' : '✓ Item linked and fields below are auto-filled.'}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Target Role */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
@@ -261,63 +377,27 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               </select>
             </div>
 
+            {/* Assigned To */}
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
-                <Mail className="w-3 h-3" />
-                {isRtl ? 'يرتبط بـ' : 'Linked to'}
+                <CheckCircle className="w-3 h-3" />
+                {isRtl ? 'مسند إلى' : 'Assigned to'}
               </label>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900">
-                {categoryResourceMap[formData.category]?.label || (isRtl ? 'مخصص' : 'Custom')}
-              </div>
-              <p className="text-[11px] font-bold text-slate-400 px-1">
-                {isRtl
-                  ? 'طلبات مع الطلبات، العروض مع العروض، الأملاك مع إدارة الأملاك، والمخصص بدون ربط.'
-                  : 'Orders map to orders, offers map to offers, property management maps to properties, and custom stays unlinked.'}
-              </p>
+              <select
+                value={formData.assignedTo}
+                onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+              >
+                <option value="">{isRtl ? 'غير مسند' : 'Unassigned'}</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.firstName} {user.lastName} ({user.role})
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {formData.category !== 'custom' && (
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
-                  <Type className="w-3 h-3" />
-                  {isRtl ? 'اختر العنصر' : 'Choose item'}
-                </label>
-                <select
-                  value={formData.linkedResourceId}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    let updated = { ...formData, linkedResourceId: id };
-                    if (formData.category === 'offers' && id) {
-                      const selectedOffer = rawOffers.find(o => o.id === id);
-                      if (selectedOffer) {
-                        updated = {
-                          ...updated,
-                          propertyType: selectedOffer.propertyType || 'فيلا',
-                          mainCategory: selectedOffer.mainCategory || 'residential',
-                          dealType: selectedOffer.dealType || 'بيع',
-                          price: selectedOffer.price || 0,
-                          area: selectedOffer.area || 0,
-                          city: selectedOffer.city || 'الرياض',
-                          neighborhood: selectedOffer.neighborhood || '',
-                          mediaFiles: selectedOffer.mediaFiles || [],
-                        };
-                      }
-                    }
-                    setFormData(updated);
-                  }}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
-                >
-                  <option value="">{resourcesLoading ? (isRtl ? 'جاري التحميل...' : 'Loading...') : (isRtl ? 'اختر' : 'Select')}</option>
-                  {resourceOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
 
-            {formData.category === 'offers' && (
               <div className="md:col-span-2 bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4 my-2 text-right">
                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-600" />
@@ -371,29 +451,81 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
-                    <input
-                      type="number"
-                      value={formData.price || ''}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
-                      placeholder="0"
-                    />
-                  </div>
+                {formData.category === 'orders' ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'من سعر' : 'Price From'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                        <input
+                          type="number"
+                          value={formData.details?.priceFrom || ''}
+                          onChange={(e) => setFormData({ ...formData, details: { ...formData.details, priceFrom: e.target.value } })}
+                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          placeholder="0"
+                        />
+                      </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
-                    <input
-                      type="number"
-                      value={formData.area || ''}
-                      onChange={(e) => setFormData({ ...formData, area: parseFloat(e.target.value) || 0 })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
-                      placeholder="0"
-                    />
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'إلى سعر' : 'Price To'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                        <input
+                          type="number"
+                          value={formData.details?.priceTo || ''}
+                          onChange={(e) => setFormData({ ...formData, details: { ...formData.details, priceTo: e.target.value } })}
+                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'من مساحة (م²)' : 'Area From (m²)'}</label>
+                        <input
+                          type="number"
+                          value={formData.details?.areaFrom || ''}
+                          onChange={(e) => setFormData({ ...formData, details: { ...formData.details, areaFrom: e.target.value } })}
+                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          placeholder="0"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'إلى مساحة (م²)' : 'Area To (m²)'}</label>
+                        <input
+                          type="number"
+                          value={formData.details?.areaTo || ''}
+                          onChange={(e) => setFormData({ ...formData, details: { ...formData.details, areaTo: e.target.value } })}
+                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                      <input
+                        type="number"
+                        value={formData.price || ''}
+                        onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                        className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                        placeholder="0"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
+                      <input
+                        type="number"
+                        value={formData.area || ''}
+                        onChange={(e) => setFormData({ ...formData, area: parseFloat(e.target.value) || 0 })}
+                        className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                        placeholder="0"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
@@ -419,44 +551,178 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                {/* Upload Image Section */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                    <Upload className="w-3.5 h-3.5" />
-                    {isRtl ? 'تحميل صور إضافية للإعلان' : 'Upload Additional Ad Images'}
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files) {
-                        setImages(Array.from(e.target.files));
-                      }
-                    }}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold outline-none transition-colors cursor-pointer"
-                  />
-                  {images.length > 0 && (
-                    <p className="text-[10px] text-emerald-600 font-bold">
-                      {isRtl ? `✓ تم تحديد عدد ${images.length} صور للتحميل` : `✓ Selected ${images.length} images for upload`}
-                    </p>
-                  )}
-                  {formData.mediaFiles && formData.mediaFiles.length > 0 && (
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الصور الحالية:' : 'Current Images:'}</span>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.mediaFiles.map((url: string, idx: number) => (
-                          <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0 bg-slate-100">
-                            <img src={url} alt="ad property" className="w-full h-full object-cover" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الغرف' : 'Rooms'}</label>
+                    <input
+                      type="number"
+                      value={formData.details?.rooms || ''}
+                      onChange={(e) => setFormData({ ...formData, details: { ...formData.details, rooms: e.target.value } })}
+                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      placeholder="0"
+                    />
+                  </div>
 
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الحمامات' : 'Bathrooms'}</label>
+                    <input
+                      type="number"
+                      value={formData.details?.bathrooms || ''}
+                      onChange={(e) => setFormData({ ...formData, details: { ...formData.details, bathrooms: e.target.value } })}
+                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      placeholder="0"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عمر العقار' : 'Property Age'}</label>
+                    <input
+                      type="text"
+                      value={formData.details?.propertyAge || ''}
+                      onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyAge: e.target.value } })}
+                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      placeholder={isRtl ? 'جديد' : 'New'}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الصالات' : 'Living Rooms'}</label>
+                    <input type="number" value={formData.details?.livingRooms || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, livingRooms: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد المطابخ' : 'Kitchens'}</label>
+                    <input type="number" value={formData.details?.kitchens || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, kitchens: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الأدوار' : 'Floors'}</label>
+                    <input type="number" value={formData.details?.floors || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, floors: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الشقق' : 'Apartments'}</label>
+                    <input type="number" value={formData.details?.apartments || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, apartments: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'مساحة البناء' : 'Building Area'}</label>
+                    <input type="number" value={formData.details?.buildingArea || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, buildingArea: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الطول' : 'Length'}</label>
+                    <input type="number" value={formData.details?.length || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, length: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'العرض' : 'Width'}</label>
+                    <input type="number" value={formData.details?.width || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, width: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عرض الشارع' : 'Street Width'}</label>
+                    <input type="number" value={formData.details?.streetWidth || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, streetWidth: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الواجهة' : 'Direction'}</label>
+                    <select value={formData.details?.direction || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, direction: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">{isRtl ? 'الكل' : 'All'}</option>
+                      <option value="شمالي">شمالي</option>
+                      <option value="جنوبي">جنوبي</option>
+                      <option value="شرقي">شرقي</option>
+                      <option value="غربي">غربي</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع الصك' : 'Deed Type'}</label>
+                    <select value={formData.details?.deedType || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, deedType: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">{isRtl ? 'الكل' : 'All'}</option>
+                      <option value="إلكتروني">إلكتروني</option>
+                      <option value="ورقي">ورقي</option>
+                      <option value="مشاع">مشاع</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'حالة العقار' : 'Condition'}</label>
+                    <select value={formData.details?.propertyCondition || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyCondition: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">{isRtl ? 'الكل' : 'All'}</option>
+                      <option value="جديد">جديد</option>
+                      <option value="ممتاز">ممتاز</option>
+                      <option value="جيد">جيد</option>
+                      <option value="يحتاج صيانة">يحتاج صيانة</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'التأثيث' : 'Furniture'}</label>
+                    <select value={formData.details?.furnitureStatus || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, furnitureStatus: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                      <option value="">{isRtl ? 'الكل' : 'All'}</option>
+                      <option value="مؤثث">مؤثث</option>
+                      <option value="شبه مؤثث">شبه مؤثث</option>
+                      <option value="غير مؤثث">غير مؤثث</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-2 pb-2">
+                  {[
+                    { key: 'hasGarage', label: isRtl ? 'كراج' : 'Garage' },
+                    { key: 'hasPool', label: isRtl ? 'مسبح' : 'Pool' },
+                    { key: 'hasElevator', label: isRtl ? 'مصعد' : 'Elevator' },
+                    { key: 'hasMaidRoom', label: isRtl ? 'غرفة خادمة' : 'Maid Room' },
+                    { key: 'hasRoof', label: isRtl ? 'سطح' : 'Roof' },
+                    { key: 'hasExternalAnnex', label: isRtl ? 'ملحق خارجي' : 'External Annex' }
+                  ].map(f => (
+                    <label key={f.key} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!!formData.details?.[f.key]}
+                        onChange={(e) => setFormData({ ...formData, details: { ...formData.details, [f.key]: e.target.checked } })}
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-100 border-slate-300"
+                      />
+                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">{f.label}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {formData.category !== 'orders' && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                      <Upload className="w-3.5 h-3.5" />
+                      {isRtl ? 'تحميل صور إضافية للإعلان' : 'Upload Additional Ad Images'}
+                    </label>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          setImages(Array.from(e.target.files));
+                        }
+                      }}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold outline-none transition-colors cursor-pointer"
+                    />
+                    {images.length > 0 && (
+                      <p className="text-[10px] text-emerald-600 font-bold">
+                        {isRtl ? `✓ تم تحديد عدد ${images.length} صور للتحميل` : `✓ Selected ${images.length} images for upload`}
+                      </p>
+                    )}
+                    {formData.mediaFiles && formData.mediaFiles.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الصور الحالية:' : 'Current Images:'}</span>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.mediaFiles.map((url: string, idx: number) => (
+                            <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0 bg-slate-100">
+                              <img src={url} alt="ad property" className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             {/* Status */}
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">

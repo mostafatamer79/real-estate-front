@@ -174,7 +174,7 @@ export default function HomePage() {
       content: (
         detailsPartStatus('map') === 'soon' ? (
           <ComingSoonInline sectionName={t('details.map.title')} message={settings.detailsPartMessages?.map} />
-        ) : settings.sectionFlags.scan_map === 'closed' ? (
+        ) : settings.sectionFlags.scan_map === 'hidden' ? null : settings.sectionFlags.scan_map === 'closed' ? (
           <ComingSoonInline sectionName={t('details.map.title')} message={settings.sectionMessages.scan_map} />
         ) : (
           <div className="relative group">
@@ -211,7 +211,7 @@ export default function HomePage() {
       content: (
         detailsPartStatus('stats') === 'soon' ? (
           <ComingSoonInline sectionName={t('details.stats.title')} message={settings.detailsPartMessages?.stats} />
-        ) : settings.sectionFlags.financial === 'closed' ? (
+        ) : settings.sectionFlags.financial === 'hidden' ? null : settings.sectionFlags.financial === 'closed' ? (
           <ComingSoonInline sectionName={t('details.stats.title')} message={settings.sectionMessages.financial} />
         ) : (
           <div className="space-y-8">
@@ -231,7 +231,7 @@ export default function HomePage() {
       content: (
         detailsPartStatus('charts') === 'soon' ? (
           <ComingSoonInline sectionName={t('details.charts.title')} message={settings.detailsPartMessages?.charts} />
-        ) : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
+        ) : settings.sectionFlags.financial === 'hidden' && user?.role !== 'admin' ? null : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
           <ComingSoonInline sectionName={t('details.charts.title')} message={settings.sectionMessages.financial} />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">

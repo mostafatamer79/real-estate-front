@@ -17,20 +17,27 @@ import {
   X,
   Bell,
   MessageSquare,
-  Building2
+  Building2,
+  FileText,
+  ShieldCheck
 } from 'lucide-react';
 import { useNotifications } from "@/context/NotificationContext";
 import { Role } from "@/types/user";
+import { TermsPrivacyModal } from "@/components/modals/terms-privacy-modal";
 
 export default function Header() {
   const [user, setUser] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const { toggleLanguage, language, t } = useLanguage();
   const { settings } = useSettings();
   const { notifications } = useNotifications();
+
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [termsModalTab, setTermsModalTab] = useState<"terms" | "privacy">("terms");
 
   const unreadChatCount = React.useMemo(() => {
     return Array.isArray(notifications)
@@ -65,8 +72,16 @@ export default function Header() {
       if (e.key === 'user' || e.key === 'token') refreshUser();
     });
 
+    let lastScrollY = window.scrollY;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 64) {
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      }
+      setIsScrolled(currentScrollY > 10);
+      lastScrollY = currentScrollY;
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
@@ -129,7 +144,9 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`fixed top-0 left-0 right-0 h-16 z-[9999] transition-all duration-300 bg-slate-950 border-b border-white/10`}
+      className={`fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
     >
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-6">
         {/* Logo */}
@@ -150,23 +167,27 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-8 items-center">
-              <div className="relative group/nav">
-                <Link
-                  href="/customerservice"
-                  className={`flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
-                  onClick={(e) => {
-                    if (settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN) e.preventDefault();
-                  }}
-                >
-                   <Headset className="w-4 h-4" />
-                   {t('header.customerService')}
-                </Link>
-                {settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN && (
-                  <SoonBadge className="absolute -top-3 -right-2 pointer-events-none">
-                    {t('common.soon') || 'قريباً'}
-                  </SoonBadge>
-                )}
-              </div>
+            
+         
+              {settings.sectionFlags.customerservice !== 'hidden' && (
+                <div className="relative group/nav">
+                  <Link
+                    href="/customerservice"
+                    className={`flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
+                    onClick={(e) => {
+                      if (settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN) e.preventDefault();
+                    }}
+                  >
+                     <Headset className="w-4 h-4" />
+                     {t('header.customerService')}
+                  </Link>
+                  {settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN && (
+                    <SoonBadge className="absolute -top-3 -right-2 pointer-events-none">
+                      {t('common.soon') || 'قريباً'}
+                    </SoonBadge>
+                  )}
+                </div>
+              )}
 
              <button
                 onClick={toggleLanguage}
@@ -304,14 +325,17 @@ export default function Header() {
       {/* Mobile Navigation Drawer */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-6 gap-6 z-40 animate-in slide-in-from-top duration-300">
-             <Link
-                href="/customerservice"
-                className={`flex items-center gap-3 text-white/80 text-lg font-medium ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                 <Headset className="w-5 h-5" />
-                 {t('header.customerService')}
-              </Link>
+             {settings.sectionFlags.customerservice !== 'hidden' && (
+               <Link
+                  href="/customerservice"
+                  className={`flex items-center gap-3 text-white/80 text-lg font-medium ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                   <Headset className="w-5 h-5" />
+                   {t('header.customerService')}
+                </Link>
+             )}
+
 
              <button
                 onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
@@ -384,7 +408,7 @@ export default function Header() {
                     </>
                   )}
 
-                   {(user?.role === Role.ADMIN || user?.role === Role.MARKETING) && (
+                   {(user?.role === Role.ADMIN || user?.role === Role.MARKETING) && settings.sectionFlags.marketing !== 'hidden' && (
                     <div className="relative">
                       <Link
                         href="/marketing"
@@ -402,7 +426,7 @@ export default function Header() {
                     </div>
                   )}
 
-                   {(user?.role === Role.ADMIN || user?.role === Role.LEGAL) && (
+                   {(user?.role === Role.ADMIN || user?.role === Role.LEGAL) && settings.sectionFlags.disputes !== 'hidden' && (
                     <div className="relative">
                       <Link
                         href="/disputes"
@@ -420,7 +444,7 @@ export default function Header() {
                     </div>
                   )}
 
-                   {(user?.role === Role.ADMIN || user?.role === Role.FINANCE) && (
+                   {(user?.role === Role.ADMIN || user?.role === Role.FINANCE) && settings.sectionFlags.financial !== 'hidden' && (
                     <div className="relative">
                       <Link
                         href="/financial"
@@ -438,9 +462,7 @@ export default function Header() {
                     </div>
                   )}
 
-
-                   {/* Building Management Link (Restricted to those with departments or Admin, but NOT Watcher) */}
-                   {(user?.role === Role.ADMIN || (user?.departments && user?.departments.length > 0)) && user?.role !== Role.VIEWER && (
+                   {(user?.role === Role.ADMIN || (user?.departments && user?.departments.length > 0)) && user?.role !== Role.VIEWER && settings.sectionFlags.buildingmanagement !== 'hidden' && (
                     <div className="relative">
                       <Link
                         href="/buildingmanagement"
@@ -476,6 +498,12 @@ export default function Header() {
              )}
         </div>
       )}
+      
+      <TermsPrivacyModal 
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+        defaultTab={termsModalTab}
+      />
     </header>
   );
 }

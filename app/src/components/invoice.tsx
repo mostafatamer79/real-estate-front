@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Download, Printer, X, CheckCircle, XCircle, FileText, Calendar, User, Phone, MapPin, Hash, DollarSign, Loader2 } from 'lucide-react'
+import { Download, Printer, X, CheckCircle, XCircle, FileText, Calendar, User, Phone, MapPin, Hash, DollarSign, Loader2, SaudiRiyalIcon } from 'lucide-react'
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal'
 
 // Define ServiceRequest type
@@ -294,7 +294,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                             {/* Fee Details Table */}
                             <div>
                                 <h3 className='text-xl font-bold mb-4 flex items-center gap-2'>
-                                    <DollarSign className='h-5 w-5 text-purple-600' />
+                                    <SaudiRiyalIcon className='h-5 w-5 text-purple-600' />
                                     تفاصيل الرسوم
                                 </h3>
                                 <div className='overflow-x-auto'>
@@ -419,7 +419,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                 disabled={isProcessing}
                                                 className='px-8 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 font-bold disabled:opacity-50'
                                             >
-                                                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <DollarSign className='h-4 w-4' />}
+                                                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className='h-4 w-4' />}
                                                 {t('legal.decision.accept')}
                                             </button>
                                             <button 
@@ -445,7 +445,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                                 }}
                                                 className='px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 font-bold'
                                             >
-                                                <DollarSign className='h-4 w-4' />
+                                                <SaudiRiyalIcon className='h-4 w-4' />
                                                 {t('invoice.payNow')}
                                             </button>
                                         )

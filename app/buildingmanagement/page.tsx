@@ -61,6 +61,7 @@ import {
   Send,
   Loader2,
   CreditCard,
+  SaudiRiyalIcon,
 } from "lucide-react";
 import {
   offersApi,
@@ -488,7 +489,7 @@ function BuildingManagementContent() {
     {
       id: "financial",
       label: t('pm.financial'),
-      icon: DollarSign,
+      icon: SaudiRiyalIcon,
       image: "/icons/finacial.png"
     },
     {
@@ -2381,7 +2382,7 @@ function BuildingManagementContent() {
             {[
               { id: "portfolio", label: t('pm.tab.portfolio'), icon: Building },
               { id: "tenants", label: t('pm.tenants'), icon: Users },
-              { id: "financial", label: t('pm.financial.desc'), icon: DollarSign },
+              { id: "financial", label: t('pm.financial.desc'), icon: SaudiRiyalIcon },
               { id: "reports", label: t('pm.reports'), icon: BarChart3 },
               { id: "service-requests", label: t('disputes.tab.service_requests'), icon: LayoutDashboard }
             ].map((tab) => (
@@ -4275,7 +4276,7 @@ function BuildingManagementContent() {
                 <div className="bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
                         <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-200">
-                            <DollarSign className="w-7 h-7" />
+                            <SaudiRiyalIcon className="w-7 h-7" />
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{t('pm.financial.income')}</p>
@@ -4365,7 +4366,7 @@ function BuildingManagementContent() {
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <DollarSign className="w-6 h-6 text-slate-900/20" />
+                            <SaudiRiyalIcon className="w-6 h-6 text-slate-900/20" />
                         </div>
                     </div>
                     <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{t('common.loading')}</p>

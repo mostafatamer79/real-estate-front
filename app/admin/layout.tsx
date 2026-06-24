@@ -105,37 +105,39 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     {
       title: isRtl ? 'الرئيسية' : 'Workspace',
       items: [
-        { id: 'dashboard', href: '/admin/dashboard', icon: LayoutDashboard, label: isRtl ? ' لوح التحكم' : 'Dashboard' },
-        { id: 'users', href: '/admin/users', icon: Users, label: isRtl ? ' المستخدمين' : 'Users' },
-        { id: 'subscriptions', href: '/admin/subscriptions', icon: CreditCard, label: isRtl ? ' الاشتراكات' : 'Subscriptions' },
-        { id: 'finance-transactions', href: '/admin/transactions', icon: Wallet, label: isRtl ? 'العمليات المالية' : 'Transactions' },
+        { id: 'dashboard', href: '/admin/dashboard', label: isRtl ? ' لوح التحكم' : 'Dashboard' },
+        { id: 'users', href: '/admin/users', label: isRtl ? ' المستخدمين' : 'Users' },
+        { id: 'subscriptions', href: '/admin/subscriptions', label: isRtl ? ' الاشتراكات' : 'Subscriptions' },
+        { id: 'finance-transactions', href: '/admin/transactions', label: isRtl ? 'العمليات المالية' : 'Transactions' },
 
-        { id: 'map-control', href: '/admin/map-control', icon: MapPinned, label: isRtl ? ' الخريطة' : 'Map' },
-        { id: 'operations', href: '/admin/operations', icon: BarChart3, label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },
-        { id: 'trends', href: '/admin/trends', icon: LineChart, label: isRtl ? ' تحليلات والاتجاهات' : 'Analytics & Trends' },
-        { id: 'customer-service', href: '/admin/customer-service', icon: Headphones, label: isRtl ? ' خدمة العملاء' : 'Customer Service' },
-        { id: 'chat', href: '/internal/chat', icon: MessageSquare, label: isRtl ? 'الرسائل والمحادثات' : 'Messages & Chats' },
-        { id: 'settings', href: '/admin/settings', icon: Settings, label: isRtl ? 'الإعدادات والتحكم' : 'Settings & Control' },
+        { id: 'map-control', href: '/admin/map-control', label: isRtl ? ' الخريطة' : 'Map' },
+        { id: 'operations', href: '/admin/operations', label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },
+        { id: 'trends', href: '/admin/trends', label: isRtl ? ' تحليلات والاتجاهات' : 'Analytics & Trends' },
+        { id: 'customer-service', href: '/admin/customer-service', label: isRtl ? ' خدمة العملاء' : 'Customer Service' },
+        { id: 'chat', href: '/internal/chat', label: isRtl ? 'الرسائل والمحادثات' : 'Messages & Chats' },
+        { id: 'settings', href: '/admin/settings', label: isRtl ? 'الإعدادات والتحكم' : 'Settings & Control' },
+                { id: 'info-content', href: '/admin/info-content',  label: isRtl ? 'المحتوى القانوني' : 'Legal Content' },
+
       ]
     },
     {
       title: isRtl ? 'الإدارات' : 'Departments',
       items: [
-        { id: 'offers', href: '/admin/offers', icon: FileText, label: isRtl ? 'إدارة العروض' : 'Offers Management' },
-        { id: 'orders', href: '/admin/orders', icon: ShoppingBag, label: isRtl ? 'إدارة الطلبات' : 'Orders Management' },
-        { id: 'marketing', href: '/admin/marketing', icon: Megaphone, label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
-        { id: 'properties-management', href: '/admin/properties-management', icon: Building2, label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
-        { id: 'legal', href: '/admin/legal', icon: Scale, label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
+        { id: 'offers', href: '/admin/offers',  label: isRtl ? 'إدارة العروض' : 'Offers Management' },
+        { id: 'orders', href: '/admin/orders',  label: isRtl ? 'إدارة الطلبات' : 'Orders Management' },
+        { id: 'marketing', href: '/admin/marketing', label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
+        { id: 'properties-management', href: '/admin/properties-management',  label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
+        { id: 'legal', href: '/admin/legal',  label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
       ]
     },
     {
       title: isRtl ? 'الإدارة المالية' : 'Financial Management',
       items: [
-        { id: 'finance-main', href: '/admin/wallet', icon: Receipt, label: isRtl ? 'الفواتير' : 'Finance Overview' },
-        { id: 'invoices', href: '/admin/wallet?tab=invoices', icon: FileText, label: isRtl ? 'الفواتير' : 'Invoices' },
-        { id: 'commissions', href: '/admin/wallet?tab=commissions', icon: Percent, label: isRtl ? 'العقود والعمولات' : 'Contracts & Commissions' },
-        { id: 'files', href: '/admin/wallet?tab=files', icon: CreditCard, label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
-        { id: 'investments', href: '/admin/wallet?tab=investments', icon: TrendingUp, label: isRtl ? 'الاستثمارات' : 'Investments' },
+        { id: 'finance-main', href: '/admin/wallet',  label: isRtl ? 'الفواتير' : 'Finance Overview' },
+        { id: 'invoices', href: '/admin/wallet?tab=invoices',  label: isRtl ? 'الفواتير' : 'Invoices' },
+        { id: 'commissions', href: '/admin/wallet?tab=commissions', label: isRtl ? 'العقود والعمولات' : 'Contracts & Commissions' },
+        { id: 'files', href: '/admin/wallet?tab=files',  label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
+        { id: 'investments', href: '/admin/wallet?tab=investments',  label: isRtl ? 'الاستثمارات' : 'Investments' },
       ]
     },
     {
@@ -250,6 +252,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                       '/admin/legal': 'disputes',
                       '/admin/packages': 'subscriptions',
                       '/admin/customer-service': 'customerservice',
+                      '/admin/info-content': 'disputes',
                     };
 
                     const hrefToModule: Record<string, string> = {
@@ -272,16 +275,21 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                       '/admin/services': 'service_requests',
                       '/admin/service-requests': 'service_requests',
                       '/admin/packages': 'subscriptions',
+                      '/admin/info-content': 'legal',
                     };
 
                     const sectionKey = hrefToSection[itemPath];
                     const moduleKey = hrefToModule[itemPath];
                     const moduleStatus = moduleKey ? (settings.moduleFlags?.[moduleKey] || 'enabled') : 'enabled';
 
-                    const isClosed = false;
+                    const isSectionHidden = sectionKey && settings.sectionFlags?.[sectionKey] === 'hidden';
+                    const isModuleHidden = moduleStatus === 'disabled';
+
+                    if (isSectionHidden || isModuleHidden) return null;
+
                     const showAdminStatusBadge =
                       (sectionKey && settings.sectionFlags?.[sectionKey] === 'closed') ||
-                      (moduleKey && (moduleStatus === 'soon' || moduleStatus === 'disabled'));
+                      (moduleKey && moduleStatus === 'soon');
 
                     return (
                       <div key={item.id} className="relative group">
@@ -296,20 +304,19 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                               : 'text-white/50 hover:text-white hover:bg-white/5'
                           }`}
                         >
-                          <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-950' : 'group-hover:scale-110 transition-transform'}`} />
                           {isSidebarOpen && (
                             <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
                           )}
 
                           {showAdminStatusBadge && isSidebarOpen && (
                             <SoonBadge className="mr-auto">
-                              {moduleStatus === 'disabled' ? (isRtl ? 'معطل' : 'Off') : (t('common.soon') || 'قريباً')}
+                              {(moduleStatus as any) === 'disabled' ? (isRtl ? 'معطل' : 'Off') : (t('common.soon') || 'قريباً')}
                             </SoonBadge>
                           )}
 
                           {!isSidebarOpen && (
                             <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 border border-white/10 pointer-events-none">
-                              {item.label} {showAdminStatusBadge ? `(${moduleStatus === 'disabled' ? (isRtl ? 'معطل' : 'Off') : (t('common.soon') || 'قريباً')})` : ''}
+                              {item.label} {showAdminStatusBadge ? `(${(moduleStatus as any) === 'disabled' ? (isRtl ? 'معطل' : 'Off') : (t('common.soon') || 'قريباً')})` : ''}
                             </div>
                           )}
                         </Link>

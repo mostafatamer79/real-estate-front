@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, ArrowRight, PlusCircle, List, MapPin, Ruler, DollarSign, Calendar } from "lucide-react";
+import { Loader2, ArrowRight, PlusCircle, List, MapPin, Ruler, DollarSign, Calendar, SaudiRiyal } from "lucide-react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
@@ -217,7 +217,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
   return (
       <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <Button 
             variant="ghost" 
             onClick={() => router.push('/details')} 
@@ -252,12 +252,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <div className="space-y-2">
-                  <Label>{t('orders.type')}</Label>
+                  <Label className="text-slate-900 font-bold">{t('orders.type')}</Label>
                   <Select 
                       value={formData.orderType} 
                       onValueChange={(val) => handleChange("orderType", val)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-slate-900 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -271,12 +271,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.propType')}</Label>
+                  <Label className="text-slate-900 font-bold">{t('orders.propType')}</Label>
                   <Select 
                       value={formData.propertyType} 
                       onValueChange={(val) => handleChange("propertyType", val)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-slate-900 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -286,8 +286,8 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.city')}</Label>
-                  <Input 
+                  <Label className="text-slate-900 font-bold">{t('orders.city')}</Label>
+                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     value={formData.city}
                     onChange={(e) => handleChange("city", e.target.value)}
                     placeholder={language === 'ar' ? "مثال: الرياض" : "e.g. Riyadh"}
@@ -296,8 +296,8 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.neighborhood')}</Label>
-                  <Input 
+                  <Label className="text-slate-900 font-bold">{t('orders.neighborhood')}</Label>
+                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     value={formData.neighborhood}
                     onChange={(e) => handleChange("neighborhood", e.target.value)}
                     placeholder={language === 'ar' ? "مثال: النرجس" : "e.g. Al-Narjis"}
@@ -306,8 +306,8 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.area')}</Label>
-                  <Input 
+                  <Label className="text-slate-900 font-bold">{t('orders.area')}</Label>
+                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     type="number"
                     value={formData.area || ''}
                     onChange={(e) => handleChange("area", Number(e.target.value))}
@@ -317,8 +317,8 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.price')}</Label>
-                  <Input 
+                  <Label className="text-slate-900 font-bold">{t('orders.price')}</Label>
+                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     type="number"
                     value={formData.price || ''}
                     onChange={(e) => handleChange("price", Number(e.target.value))}
@@ -328,12 +328,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.age')}</Label>
+                  <Label className="text-slate-900 font-bold">{t('orders.age')}</Label>
                   <Select 
                       value={formData.propertyAge} 
                       onValueChange={(val) => handleChange("propertyAge", val)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-slate-900 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -343,12 +343,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 </div>
   
                 <div className="space-y-2">
-                  <Label>{t('orders.deed')}</Label>
+                  <Label className="text-slate-900 font-bold">{t('orders.deed')}</Label>
                   <Select 
                       value={formData.deedType} 
                       onValueChange={(val) => handleChange("deedType", val)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-slate-900 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -362,32 +362,32 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                   <h3 className="text-lg font-semibold mb-6">{t('bm.offer.detailed')}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div className="space-y-2">
-                      <Label>{t('orders.rooms')}</Label>
-                      <Input type="number" value={formData.rooms || ''} onChange={(e) => handleChange("rooms", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.rooms')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.rooms || ''} onChange={(e) => handleChange("rooms", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.baths')}</Label>
-                      <Input type="number" value={formData.bathrooms || ''} onChange={(e) => handleChange("bathrooms", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.baths')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.bathrooms || ''} onChange={(e) => handleChange("bathrooms", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.living')}</Label>
-                      <Input type="number" value={formData.livingRooms || ''} onChange={(e) => handleChange("livingRooms", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.living')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.livingRooms || ''} onChange={(e) => handleChange("livingRooms", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.kitchens')}</Label>
-                      <Input type="number" value={formData.kitchens || ''} onChange={(e) => handleChange("kitchens", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.kitchens')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.kitchens || ''} onChange={(e) => handleChange("kitchens", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.floors')}</Label>
-                      <Input type="number" value={formData.floors || ''} onChange={(e) => handleChange("floors", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.floors')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.floors || ''} onChange={(e) => handleChange("floors", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.apartments')}</Label>
-                      <Input type="number" value={formData.apartments || ''} onChange={(e) => handleChange("apartments", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.apartments')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.apartments || ''} onChange={(e) => handleChange("apartments", Number(e.target.value))} placeholder="0" />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('orders.buildArea')}</Label>
-                      <Input type="number" value={formData.buildingArea || ''} onChange={(e) => handleChange("buildingArea", Number(e.target.value))} placeholder="0" />
+                      <Label className="text-slate-900 font-bold">{t('orders.buildArea')}</Label>
+                      <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.buildingArea || ''} onChange={(e) => handleChange("buildingArea", Number(e.target.value))} placeholder="0" />
                     </div>
                   </div>
 
@@ -419,12 +419,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                   </div>
 
                   <div className="mt-6 space-y-2">
-                    <Label>{t('orders.furniture')}</Label>
+                    <Label className="text-slate-900 font-bold">{t('orders.furniture')}</Label>
                     <Select 
                       value={formData.furnitureStatus} 
                       onValueChange={(val) => handleChange("furnitureStatus", val)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="text-slate-900 font-bold">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -437,12 +437,12 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               )}
 
                 <div className="md:col-span-2 space-y-2">
-                  <Label>{t('orders.details')}</Label>
+                  <Label className="text-slate-900 font-bold">{t('orders.details')}</Label>
                   <Textarea 
                     value={formData.additionalDetails}
                     onChange={(e) => handleChange("additionalDetails", e.target.value)}
                     placeholder={language === 'ar' ? "أي تفاصيل أخرى ترغب بإضافتها..." : "Any additional details..."}
-                    className="min-h-[100px]"
+                    className="placeholder:text-slate-900 text-slate-900 font-bold min-h-[100px]"
                   />
                 </div>
   
@@ -507,7 +507,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                     <span>{order.area} م²</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
-                     <DollarSign className="w-4 h-4 text-gray-400" />
+                     <SaudiRiyal className="w-4 h-4 text-gray-400" />
                      <span className="font-bold text-gray-900">{order.price.toLocaleString()}</span>
                   </div>
                    <div className="flex items-center gap-2 text-gray-600">
