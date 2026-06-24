@@ -446,7 +446,7 @@ export default function AdminWalletPage() {
         const metadata = {
           rooms: payload.rooms, bathrooms: payload.bathrooms, propertyAge: payload.propertyAge, livingRooms: payload.livingRooms, kitchens: payload.kitchens, floors: payload.floors, apartments: payload.apartments, buildingArea: payload.buildingArea, length: payload.length, width: payload.width, streetWidth: payload.streetWidth, direction: payload.direction, deedType: payload.deedType, propertyCondition: payload.propertyCondition, furnitureStatus: payload.furnitureStatus, hasGarage: payload.hasGarage === 'true', hasPool: payload.hasPool === 'true', hasElevator: payload.hasElevator === 'true', hasMaidRoom: payload.hasMaidRoom === 'true', hasRoof: payload.hasRoof === 'true', hasExternalAnnex: payload.hasExternalAnnex === 'true'
         };
-        const requestPayload = { ...payload, metadata };
+        const requestPayload: Record<string, any> = { ...payload, metadata };
         ['rooms', 'bathrooms', 'propertyAge', 'livingRooms', 'kitchens', 'floors', 'apartments', 'buildingArea', 'length', 'width', 'streetWidth', 'direction', 'deedType', 'propertyCondition', 'furnitureStatus', 'hasGarage', 'hasPool', 'hasElevator', 'hasMaidRoom', 'hasRoof', 'hasExternalAnnex'].forEach(k => delete requestPayload[k]);
 
         if (editingId) {

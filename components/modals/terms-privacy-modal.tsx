@@ -89,12 +89,12 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
   }, [isOpen, defaultTab]);
 
   const currentTab = tabs.find(t => t.key === activeTab) || DEFAULT_INFO_TABS.find(t => t.key === activeTab);
-  let currentBlocks = currentTab ? blocks.filter(b => b.tabId === currentTab.id).sort((a,b) => (a.sortOrder || 0) - (b.sortOrder || 0)) : [];
+  let currentBlocks = currentTab ? blocks.filter(b => b.tabId === (currentTab as any).id).sort((a,b) => (a.sortOrder || 0) - (b.sortOrder || 0)) : [];
 
   if (currentBlocks.length === 0) {
     currentBlocks = DEFAULT_INFO_BLOCKS.filter(b => b.tabKey === activeTab).sort((a,b) => a.sortOrder - b.sortOrder).map(b => ({
       id: `default-${Math.random()}`,
-      tabId: currentTab?.id || activeTab,
+      tabId: (currentTab as any)?.id || activeTab,
       labelAr: b.labelAr,
       labelEn: b.labelEn,
       textAr: b.textAr,
