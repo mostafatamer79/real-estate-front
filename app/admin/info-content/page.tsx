@@ -319,11 +319,11 @@ export default function AdminInfoContentPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-black text-slate-500">Label (AR)</Label>
+                      <Label className="text-xs font-black text-slate-500">Label (AR) - اختياري</Label>
                       <Input value={blockForm.labelAr} onChange={(e) => setBlockForm((p) => ({ ...p, labelAr: e.target.value }))} className="bg-white" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-black text-slate-500">Label (EN)</Label>
+                      <Label className="text-xs font-black text-slate-500">Label (EN) - Optional</Label>
                       <Input value={blockForm.labelEn} onChange={(e) => setBlockForm((p) => ({ ...p, labelEn: e.target.value }))} dir="ltr" className="bg-white" />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
@@ -336,7 +336,7 @@ export default function AdminInfoContentPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 pt-2">
-                    <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitBlock} disabled={savingBlock || !blockForm.labelAr.trim() || !blockForm.labelEn.trim() || !blockForm.textAr.trim() || !blockForm.textEn.trim()}>
+                    <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitBlock} disabled={savingBlock || !blockForm.textAr.trim() || !blockForm.textEn.trim()}>
                       {savingBlock ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingBlockId ? (t("common.update") || (isRtl ? "تحديث البند" : "Update Block")) : (t("common.add") || (isRtl ? "حفظ البند" : "Save Block"))}
                     </Button>
                     <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white" onClick={resetBlockForm}>
@@ -380,7 +380,7 @@ export default function AdminInfoContentPage() {
                                   <span className="shrink-0 text-[10px] font-black text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
                                     #{idx + 1}
                                   </span>
-                                  <div className="text-slate-900 font-bold text-sm truncate">{isRtl ? b.labelAr : b.labelEn}</div>
+                                  <div className="text-slate-900 font-bold text-sm truncate">{(isRtl ? b.labelAr : b.labelEn) || (isRtl ? "بدون عنوان" : "Untitled")}</div>
                                 </div>
                                 <div className="text-slate-500 text-xs line-clamp-2 leading-relaxed">{isRtl ? b.textAr : b.textEn}</div>
                               </div>

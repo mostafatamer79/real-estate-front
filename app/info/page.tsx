@@ -20,7 +20,7 @@ function InfoPageContent() {
   const { isOpen, message, isAdmin } = useSectionGuard('info');
 
 
-  const defaultTab = searchParams.get("tab") || "terms";
+  const requestedTab = searchParams.get("tab") || "terms";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<"terms" | "privacy">("terms");
@@ -28,6 +28,14 @@ function InfoPageContent() {
   const openModal = (tab: "terms" | "privacy") => {
     setModalTab(tab);
     setIsModalOpen(true);
+  };
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/");
   };
 
   const isRtl = language === "ar";
@@ -71,6 +79,16 @@ function InfoPageContent() {
       }));
   }, [infoTabs, isRtl, t]);
 
+  const defaultTab = useMemo(() => {
+    const aliasMap: Record<string, string> = {
+      terms: "terms_short",
+      privacy: "usage",
+    };
+    const normalized = aliasMap[requestedTab] || requestedTab;
+    const validKeys = tabsToRender.map((tab) => tab.key);
+    return validKeys.includes(normalized) ? normalized : validKeys[0] || "terms_short";
+  }, [requestedTab, tabsToRender]);
+
   const blocksByTabKey = useMemo(() => {
     const map = new Map<string, Array<{ label: string; text: string; sortOrder: number }>>();
     if (!infoTabs || !infoBlocks) return map;
@@ -100,7 +118,16 @@ function InfoPageContent() {
   return (
     <div className="min-h-screen bg-slate-950 text-white pb-20 pt-24" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-5xl mx-auto px-6 h-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        {/* Header */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-xs font-black text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+          >
+            {isRtl ? <ChevronLeft className="w-4 h-4 rotate-180" /> : <ChevronLeft className="w-4 h-4" />}
+            {isRtl ? "رجوع" : "Back"}
+          </button>
+        </div>
   
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>

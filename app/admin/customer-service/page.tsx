@@ -81,8 +81,6 @@ export default function AdminCustomerServicePage() {
     questionEn: "",
     answerEn: "",
     sortOrder: 0,
-    color: "",
-    fontSize: "",
   });
   const [savingFaq, setSavingFaq] = useState(false);
 
@@ -186,8 +184,6 @@ export default function AdminCustomerServicePage() {
       questionEn: "", 
       answerEn: "", 
       sortOrder: 0,
-      color: "",
-      fontSize: "",
     });
   };
 
@@ -241,8 +237,6 @@ export default function AdminCustomerServicePage() {
       questionEn: faq.questionEn,
       answerEn: faq.answerEn,
       sortOrder: faq.sortOrder ?? 0,
-      color: faq.color ?? "",
-      fontSize: faq.fontSize ?? "",
     });
   };
 
@@ -253,8 +247,8 @@ export default function AdminCustomerServicePage() {
       const payload = {
         ...faqForm,
         categoryId: selectedCategoryId,
-        color: faqForm.color.trim() || null,
-        fontSize: faqForm.fontSize.trim() || null,
+        color: null,
+        fontSize: null,
       };
       if (editingFaqId) {
         await customerServiceFaqApi.update(editingFaqId, payload as any);
@@ -592,15 +586,20 @@ export default function AdminCustomerServicePage() {
                               </div>
                               <button type="button" className="flex-1 text-left" onClick={() => setSelectedCategoryId(c.id)}>
                                 <div className="flex items-center gap-2">
-                                  <div 
-                                    className="text-sm font-black"
-                                    style={{
-                                      color: settings.csTextColor || undefined,
-                                      fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
-                                      fontFamily: settings.csFontFamily || undefined,
-                                    }}
-                                  >
-                                    {isRtl ? c.nameAr : c.nameEn}
+                                  <div className="min-w-0 flex-1">
+                                    <div 
+                                      className="text-sm font-black"
+                                      style={{
+                                        color: settings.csTextColor || undefined,
+                                        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                        fontFamily: settings.csFontFamily || undefined,
+                                      }}
+                                    >
+                                      {c.nameAr}
+                                    </div>
+                                    <div className="text-[11px] font-bold text-slate-400" dir="ltr">
+                                      {c.nameEn}
+                                    </div>
                                   </div>
                                   <span className="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
                                     #{idx + 1}
@@ -615,7 +614,7 @@ export default function AdminCustomerServicePage() {
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="h-9 w-9 p-0 rounded-xl"
+                                className="h-8 w-8 p-0 rounded-lg"
                                 onClick={async () => {
                                   const idx = categories.findIndex((x) => x.id === c.id);
                                   const next = moveInArray(categories, idx, idx - 1);
@@ -628,7 +627,7 @@ export default function AdminCustomerServicePage() {
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="h-9 w-9 p-0 rounded-xl"
+                                className="h-8 w-8 p-0 rounded-lg"
                                 onClick={async () => {
                                   const idx = categories.findIndex((x) => x.id === c.id);
                                   const next = moveInArray(categories, idx, idx + 1);
@@ -638,16 +637,16 @@ export default function AdminCustomerServicePage() {
                               >
                                 <ChevronDown className="w-4 h-4" />
                               </Button>
-                              <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startAddFaqForCategory(c.id)} title={isRtl ? "إضافة سؤال" : "Add question"}>
+                              <Button type="button" variant="outline" className="h-8 w-8 p-0 rounded-lg" onClick={() => startAddFaqForCategory(c.id)} title={isRtl ? "إضافة سؤال" : "Add question"}>
                                 <Plus className="w-4 h-4" />
                               </Button>
-                              <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startEditCategory(c)} title={isRtl ? "تعديل" : "Edit"}>
+                              <Button type="button" variant="outline" className="h-8 w-8 p-0 rounded-lg" onClick={() => startEditCategory(c)} title={isRtl ? "تعديل" : "Edit"}>
                                 <Pencil className="w-4 h-4" />
                               </Button>
                               <Button
                                 type="button"
                                 variant="destructive"
-                                className="h-9 w-9 p-0 rounded-xl"
+                                className="h-8 w-8 p-0 rounded-lg"
                                 onClick={() =>
                                   setConfirm({
                                     type: "deleteCategory",
@@ -757,48 +756,6 @@ export default function AdminCustomerServicePage() {
                         }}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4 my-2">
-                      <div className="space-y-2">
-                        <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>
-                          {isRtl ? "لون السؤال (اختياري)" : "Question Color (Optional)"}
-                        </Label>
-                        <div className="flex gap-2 items-center">
-                          <input 
-                            type="color" 
-                            value={faqForm.color || "#000000"} 
-                            onChange={(e) => setFaqForm((p) => ({ ...p, color: e.target.value }))}
-                            className="w-8 h-8 rounded border cursor-pointer shrink-0"
-                          />
-                          <Input 
-                            type="text"
-                            placeholder="#000000"
-                            value={faqForm.color || ""}
-                            onChange={(e) => setFaqForm((p) => ({ ...p, color: e.target.value }))}
-                            className="h-9 text-xs"
-                            style={{
-                              color: settings.csTextColor || undefined,
-                              backgroundColor: settings.csBg || undefined,
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>
-                          {isRtl ? "حجم الخط بالبكسل (اختياري)" : "Font Size in px (Optional)"}
-                        </Label>
-                        <Input 
-                          type="number"
-                          placeholder="e.g. 16"
-                          value={faqForm.fontSize || ""}
-                          onChange={(e) => setFaqForm((p) => ({ ...p, fontSize: e.target.value }))}
-                          className="h-9 text-xs"
-                          style={{
-                            color: settings.csTextColor || undefined,
-                            backgroundColor: settings.csBg || undefined,
-                          }}
-                        />
-                      </div>
-                    </div>
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
@@ -849,7 +806,7 @@ export default function AdminCustomerServicePage() {
                             className="p-4 rounded-xl border border-slate-100"
                             style={{
                               backgroundColor: settings.csBg || undefined,
-                              color: q.color || settings.csTextColor || undefined,
+                              color: settings.csTextColor || undefined,
                               fontFamily: settings.csFontFamily || undefined,
                             }}
                             draggable
@@ -872,14 +829,19 @@ export default function AdminCustomerServicePage() {
                                   <div className="mt-0.5 opacity-40 cursor-grab active:cursor-grabbing">
                                     <GripVertical className="w-4 h-4" />
                                   </div>
-                                  <div 
-                                    className="font-bold flex-1"
-                                    style={{
-                                      color: q.color || settings.csTextColor || undefined,
-                                      fontSize: q.fontSize ? `${q.fontSize}px` : (settings.csFontSize ? `${settings.csFontSize}px` : undefined),
-                                    }}
-                                  >
-                                    {isRtl ? q.questionAr : q.questionEn}
+                                  <div className="flex-1">
+                                    <div 
+                                      className="font-bold"
+                                      style={{
+                                        color: settings.csTextColor || undefined,
+                                        fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
+                                      }}
+                                    >
+                                      {q.questionAr}
+                                    </div>
+                                    <div className="mt-1 text-[12px] font-medium text-slate-400" dir="ltr">
+                                      {q.questionEn}
+                                    </div>
                                   </div>
                                   <span className="shrink-0 text-[10px] font-black text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
                                     #{idx + 1}
@@ -888,11 +850,14 @@ export default function AdminCustomerServicePage() {
                                 <div 
                                   className="mt-1 line-clamp-2 opacity-80"
                                   style={{
-                                    color: q.color || settings.csTextColor || undefined,
-                                    fontSize: q.fontSize ? `${parseInt(q.fontSize) - 2}px` : (settings.csFontSize ? `${parseInt(settings.csFontSize) - 2}px` : undefined),
+                                    color: settings.csTextColor || undefined,
+                                    fontSize: settings.csFontSize ? `${Math.max(parseInt(settings.csFontSize) - 2, 12)}px` : undefined,
                                   }}
                                 >
-                                  {isRtl ? q.answerAr : q.answerEn}
+                                  {q.answerAr}
+                                </div>
+                                <div className="mt-1 line-clamp-2 text-[12px] text-slate-400" dir="ltr">
+                                  {q.answerEn}
                                 </div>
                                 <div className="text-[10px] font-black opacity-50 uppercase tracking-widest mt-2">
                                   {isRtl ? "اسحب أو استخدم الأسهم لإعادة الترتيب" : "Drag or use arrows to reorder"}
@@ -902,7 +867,7 @@ export default function AdminCustomerServicePage() {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="h-9 w-9 p-0 rounded-xl"
+                                  className="h-8 w-8 p-0 rounded-lg"
                                   onClick={async () => {
                                     if (!selectedCategoryId) return;
                                     const idx = selectedFaqs.findIndex((x) => x.id === q.id);
@@ -916,7 +881,7 @@ export default function AdminCustomerServicePage() {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="h-9 w-9 p-0 rounded-xl"
+                                  className="h-8 w-8 p-0 rounded-lg"
                                   onClick={async () => {
                                     if (!selectedCategoryId) return;
                                     const idx = selectedFaqs.findIndex((x) => x.id === q.id);
@@ -927,13 +892,13 @@ export default function AdminCustomerServicePage() {
                                 >
                                   <ChevronDown className="w-4 h-4" />
                                 </Button>
-                                <Button type="button" variant="outline" className="h-9 w-9 p-0 rounded-xl" onClick={() => startEditFaq(q)} title={isRtl ? "تعديل" : "Edit"}>
+                                <Button type="button" variant="outline" className="h-8 w-8 p-0 rounded-lg" onClick={() => startEditFaq(q)} title={isRtl ? "تعديل" : "Edit"}>
                                   <Pencil className="w-4 h-4" />
                                 </Button>
                                 <Button
                                   type="button"
                                   variant="destructive"
-                                  className="h-9 w-9 p-0 rounded-xl"
+                                  className="h-8 w-8 p-0 rounded-lg"
                                   onClick={() =>
                                     setConfirm({
                                       type: "deleteFaq",

@@ -30,13 +30,13 @@ const initialContractPartyState = {
 
 // ─── Shared style tokens — navbar palette ───────────────────────────────────
 const INP = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
-const LBL = "text-[9px] font-black text-slate-500 uppercase tracking-[0.22em] mb-2 block";
+const LBL = "text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-2 block";
 const CARD = "bg-white border border-slate-200 rounded-[2rem] p-6 space-y-4 shadow-sm";
 
 const SectionDivider = ({ label }: { label: string }) => (
   <div className="flex items-center gap-4 py-1">
     <div className="h-px flex-1 bg-slate-200" />
-    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">{label}</span>
+    <span className="text-[11px] font-black text-slate-950 uppercase tracking-[0.25em]">{label}</span>
     <div className="h-px flex-1 bg-slate-200" />
   </div>
 );

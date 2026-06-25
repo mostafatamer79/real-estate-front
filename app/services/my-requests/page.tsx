@@ -103,15 +103,15 @@ export default function MyServiceRequestsPage() {
   const getStatusBadge = (status: ServiceStatus) => {
     switch (status) {
       case ServiceStatus.PENDING:
-        return <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">{t('legal.status.pending')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.pending')}</Badge>;
       case ServiceStatus.IN_PROGRESS:
-        return <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">{t('legal.status.in_progress')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.in_progress')}</Badge>;
       case ServiceStatus.COMPLETED:
-        return <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">{t('legal.status.completed')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.completed')}</Badge>;
       case ServiceStatus.CANCELLED:
-        return <Badge variant="destructive">{t('legal.status.cancelled')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.cancelled')}</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{status}</Badge>;
     }
   };
 
@@ -134,13 +134,13 @@ export default function MyServiceRequestsPage() {
             <CardHeader className="bg-white border-b border-slate-100 p-8">
               <div className="flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                    <Package className="w-7 h-7" />
+                  <div className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-600">
+                    <Package className="w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-slate-900">{selectedRequest.serviceType}</h2>
                     <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
-                      <span className="font-semibold text-blue-600">#{selectedRequest.id.substring(0, 8)}</span>
+                      <span className="font-semibold text-slate-600">#{selectedRequest.id.substring(0, 8)}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{new Date(selectedRequest.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -150,7 +150,7 @@ export default function MyServiceRequestsPage() {
                   {getStatusBadge(selectedRequest.status)}
                   <Button
                     variant="outline"
-                    className="border-blue-200 text-blue-600 hover:bg-blue-50 gap-2 rounded-xl"
+                    className="border-slate-200 text-slate-700 hover:bg-slate-50 gap-2 rounded-xl h-9 px-3 text-xs"
                     onClick={() => handleSelfChat(selectedRequest.id)}
                   >
                     <Lock className="w-4 h-4" />
@@ -185,7 +185,7 @@ export default function MyServiceRequestsPage() {
 
                 <div className="pt-6 border-t border-slate-100">
                   <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <SaudiRiyalIcon className="w-5 h-5 text-emerald-500" />
+                    <SaudiRiyalIcon className="w-4 h-4 text-slate-500" />
                     {language === 'ar' ? 'عروض الأسعار المتاحة' : 'Available Pricing Offers'}
                   </h3>
 
@@ -193,28 +193,28 @@ export default function MyServiceRequestsPage() {
                     {Object.entries(selectedRequest.departmentPrices || {}).map(([dept, data]) => {
                       const isAccepted = acceptedOffer?.dept === dept;
                       return (
-                        <div key={dept} className={`flex flex-col md:flex-row items-center justify-between p-6 rounded-2xl border transition-all ${isAccepted ? 'bg-emerald-50 border-emerald-200 ring-2 ring-emerald-500/20' : 'bg-white border-slate-200 hover:border-blue-200'}`}>
+                        <div key={dept} className={`flex flex-col md:flex-row items-center justify-between p-4 rounded-xl border transition-all ${isAccepted ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'}`}>
                           <div className="flex items-center gap-4 mb-4 md:mb-0">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isAccepted ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                              <Building2 className="w-6 h-6" />
+                            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-white border border-slate-200 text-slate-500">
+                              <Building2 className="w-4 h-4" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-slate-900 capitalize">{dept === 'admin' ? (language === 'ar' ? 'الإدارة' : 'Admin') : dept}</span>
-                                {isAccepted && <Badge className="bg-emerald-500 text-white border-0">{language === 'ar' ? 'مقبول' : 'Accepted'}</Badge>}
+                                {isAccepted && <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{language === 'ar' ? 'مقبول' : 'Accepted'}</Badge>}
                               </div>
                               <p className="text-xs text-slate-500 mt-0.5">{data.note || (language === 'ar' ? 'عرض سعر رسمي' : 'Official pricing offer')}</p>
                             </div>
                           </div>
                           <div className="flex flex-col items-center md:items-end gap-3">
-                            <div className="text-xl font-black text-slate-900">
+                            <div className="text-base font-black text-slate-900">
                               <SaudiRiyalAmount amount={data.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                             </div>
                             <div className="flex gap-2">
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-9 px-4 gap-2 rounded-lg hover:bg-slate-100 text-blue-600 border-blue-100"
+                                className="h-8 px-3 gap-2 rounded-lg hover:bg-slate-100 text-slate-700 border-slate-200 text-xs"
                                 onClick={() => handleStaffChat(selectedRequest.id, data.addedBy)}
                               >
                                 <MessageSquare className="w-4 h-4" />
@@ -223,7 +223,7 @@ export default function MyServiceRequestsPage() {
                               {!isAccepted && !acceptedOffer && (
                                 <Button
                                   size="sm"
-                                  className="h-9 px-4 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm"
+                                  className="h-8 px-3 gap-2 bg-slate-900 hover:bg-black text-white rounded-lg text-xs"
                                   onClick={() => handleAcceptOffer(selectedRequest.id, dept)}
                                 >
                                   <Check className="w-4 h-4" />
@@ -270,19 +270,19 @@ export default function MyServiceRequestsPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <Package className="w-10 h-10 text-blue-600" />
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <Package className="w-6 h-6 text-slate-600" />
               {t('chat.myRequests')}
             </h1>
-            <p className="text-slate-500 mt-2 text-lg">
+            <p className="text-slate-500 mt-2 text-sm">
               {language === 'ar' ? 'إدارة ومتابعة طلبات الخدمات الخاصة بك في مكان واحد' : 'Manage and track your service requests in one place'}
             </p>
           </div>
           <Button
             onClick={() => router.push('/services')}
-            className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 h-12 rounded-xl shadow-lg shadow-blue-200 text-lg font-bold"
+            className="bg-slate-900 hover:bg-black text-white gap-2 px-4 h-10 rounded-lg text-sm font-bold"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             {language === 'ar' ? 'طلب خدمة جديد' : 'New Service Request'}
           </Button>
         </div>
@@ -291,22 +291,22 @@ export default function MyServiceRequestsPage() {
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <div className="relative w-16 h-16">
               <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+            <div className="absolute inset-0 border-4 border-slate-500 rounded-full border-t-transparent animate-spin"></div>
             </div>
             <p className="text-slate-400 font-medium animate-pulse">{t('common.loading')}</p>
           </div>
         ) : requests.length === 0 ? (
-          <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center">
-            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Search className="w-12 h-12 text-slate-300" />
+          <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-slate-300" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-3">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
               {language === 'ar' ? 'لا توجد طلبات حتى الآن' : 'No requests yet'}
             </h3>
-            <p className="text-slate-500 mb-8 max-w-md mx-auto">
+            <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
               {language === 'ar' ? 'ابدأ بطلب أول خدمة لك، وسيقوم فريقنا بمراجعتها وتقديم العروض المناسبة.' : 'Start by requesting your first service, and our team will review it and provide suitable offers.'}
             </p>
-            <Button onClick={() => router.push('/services')} variant="outline" className="h-12 px-8 rounded-xl font-bold border-2">
+            <Button onClick={() => router.push('/services')} variant="outline" className="h-10 px-5 rounded-lg font-bold border">
               {language === 'ar' ? 'تصفح الخدمات المتاحة' : 'Browse Available Services'}
             </Button>
           </div>
@@ -315,17 +315,17 @@ export default function MyServiceRequestsPage() {
             {requests.map((request) => (
               <div
                 key={request.id}
-                className="group bg-white rounded-3xl border border-slate-200 p-6 hover:border-blue-400 hover:shadow-2xl hover:shadow-blue-100 transition-all cursor-pointer relative overflow-hidden"
+                className="group bg-white rounded-2xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
                 onClick={() => setSelectedRequest(request)}
               >
                 <div className="flex justify-between items-start mb-6">
-                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <Package className="w-6 h-6" />
+                  <div className="w-9 h-9 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 transition-colors">
+                    <Package className="w-4 h-4" />
                   </div>
                   {getStatusBadge(request.status)}
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+                <h3 className="text-base font-bold text-slate-900 mb-2 transition-colors line-clamp-1">
                   {request.serviceType}
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-slate-400 mb-6">
@@ -352,7 +352,7 @@ export default function MyServiceRequestsPage() {
                 </div>
 
                 <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                  <ChevronRight className={`w-5 h-5 text-blue-600 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                  <ChevronRight className={`w-4 h-4 text-slate-500 ${language === 'ar' ? 'rotate-180' : ''}`} />
                 </div>
               </div>
             ))}
@@ -366,7 +366,7 @@ export default function MyServiceRequestsPage() {
               variant="ghost"
               disabled={page === 1}
               onClick={(e) => { e.stopPropagation(); setPage(p => p - 1); }}
-              className="rounded-xl h-12 px-6 font-bold"
+              className="rounded-lg h-10 px-4 font-bold text-sm"
             >
               <ChevronLeft className={`w-5 h-5 me-2 ${language === 'ar' ? 'rotate-180' : ''}`} />
               {language === 'ar' ? 'السابق' : 'Previous'}
@@ -377,7 +377,7 @@ export default function MyServiceRequestsPage() {
                   key={p}
                   variant={page === p ? "default" : "ghost"}
                   onClick={() => setPage(p)}
-                  className={`w-12 h-12 rounded-xl font-bold text-lg ${page === p ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : ''}`}
+                  className={`w-10 h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
                 >
                   {p}
                 </Button>
@@ -387,7 +387,7 @@ export default function MyServiceRequestsPage() {
               variant="ghost"
               disabled={page === totalPages}
               onClick={(e) => { e.stopPropagation(); setPage(p => p + 1); }}
-              className="rounded-xl h-12 px-6 font-bold"
+              className="rounded-lg h-10 px-4 font-bold text-sm"
             >
               {language === 'ar' ? 'التالي' : 'Next'}
               <ChevronRight className={`w-5 h-5 ms-2 ${language === 'ar' ? 'rotate-180' : ''}`} />

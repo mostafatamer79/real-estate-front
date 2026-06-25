@@ -27,6 +27,10 @@ const DEED_MAP: Record<string, string> = {
   electronic: "إلكتروني", paper: "ورقي", digital: "رقمي",
 };
 
+const MeterIcon = ({ className }: { className?: string }) => (
+  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '3em', height: '3em', opacity: 0.7 }} />
+);
+
 function InfoRow({ label, value, icon: Icon }: { label: string; value?: any; icon?: any }) {
   if (!value && value !== 0) return null;
   return (
@@ -293,13 +297,7 @@ export default function OrderDetailsPage() {
   const isRtl = language === "ar";
 
   const handleBack = () => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("user");
-      let isAdmin = false;
-      try { const p = JSON.parse(stored || "{}"); isAdmin = p.role === "admin" || p.role === "super_admin"; } catch {}
-      if (document.referrer?.includes("/admin")) { router.push("/admin/orders"); return; }
-      router.push(isAdmin ? "/admin/orders" : "/orders");
-    }
+    router.back();
   };
 
   useEffect(() => {
@@ -411,7 +409,7 @@ export default function OrderDetailsPage() {
                 <InfoRow label="نوع العقار"   value={order.propertyType}  icon={Building2} />
                 <InfoRow label="المدينة"       value={order.city}          icon={MapPin} />
                 <InfoRow label="الحي"          value={order.neighborhood}  icon={MapPin} />
-                <InfoRow label="المساحة المطلوب" value={order.area ? `${Number(order.area).toLocaleString()} م²` : undefined} icon={Ruler} />
+                <InfoRow label="المساحة المطلوب" value={order.area ? `${Number(order.area).toLocaleString()} م²` : undefined} icon={MeterIcon} />
                 <InfoRow label="السعر المطلوب" value={order.price ? <SaudiRiyalAmount amount={Number(order.price)} locale="ar-SA" /> : undefined} icon={Tag} />
                 <InfoRow label="عمر العقار"   value={order.propertyAge}   icon={Clock} />
                 <InfoRow label="نوع الصك"     value={DEED_MAP[order.deedType] || order.deedType} icon={FileText} />
@@ -430,7 +428,7 @@ export default function OrderDetailsPage() {
                   <InfoRow label="المطابخ"           value={(order as any).kitchens}     icon={ChefHat} />
                   <InfoRow label="عدد الأدوار"       value={(order as any).floors}       icon={Layers2} />
                   <InfoRow label="عدد الشقق"         value={(order as any).apartments}   icon={Home} />
-                  <InfoRow label="مساحة البناء"      value={(order as any).buildingArea ? `${Number((order as any).buildingArea).toLocaleString()} م²` : undefined} icon={Ruler} />
+                  <InfoRow label="مساحة البناء"      value={(order as any).buildingArea ? `${Number((order as any).buildingArea).toLocaleString()} م²` : undefined} icon={MeterIcon} />
                   <InfoRow label="حالة الأثاث"       value={(order as any).furnitureStatus === 'furnished' ? 'مفروش' : (order as any).furnitureStatus === 'unfurnished' ? 'غير مفروش' : (order as any).furnitureStatus} icon={Warehouse} />
                 </div>
               </div>

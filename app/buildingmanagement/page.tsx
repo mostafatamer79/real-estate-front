@@ -180,6 +180,9 @@ const getStatusColor = (status: string, t: any, invoiceStatus?: string) => {
       return "bg-slate-100 text-gray-800 border border-slate-200";
   }
 };
+const MeterIcon = ({ className }: { className?: string }) => (
+  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '5em', height: '5em', opacity: 1 }} />
+);
 
 const getStatusIcon = (status: string, t: any, invoiceStatus?: string) => {
   if (invoiceStatus) {
@@ -4681,7 +4684,7 @@ function BuildingManagementContent() {
                                         <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
                                             <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
                                                 <div className="flex items-center gap-1.5">
-                                                    <Ruler className="w-4 h-4 text-slate-400" />
+                                                    <MeterIcon className="w-4 h-4 text-slate-400" />
                                                     <span>{order.area} {t('bm.prop.area')}</span>
                                                 </div>
                                                 {order.rooms && (
@@ -5775,7 +5778,7 @@ function BuildingManagementContent() {
           initial={{ x: language === 'ar' ? 100 : -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-          className="fixed top-0 right-0 h-screen w-72 lg:w-80 p-6 z-20"
+          className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20"
         >
           <div className="bg-white/90 backdrop-blur-3xl p-6 h-full rounded-[2rem] border border-white/50 shadow-2xl flex flex-col gap-6">
             <div className="space-y-6">
@@ -5901,7 +5904,7 @@ function BuildingManagementContent() {
         </motion.div>
 
         {/* Main Workspace - Adjusted for sidebar */}
-        <div className="flex-1 mr-96 lg:mr-[28rem] relative overflow-hidden">
+        <div className="flex-1 mr-[22rem] lg:mr-[25rem] relative overflow-hidden">
           <main className="h-full overflow-y-auto overflow-x-hidden p-5 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div

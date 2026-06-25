@@ -381,7 +381,9 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
     </div>
   );
 }
-
+const MeterIcon = ({ className }: { className?: string }) => (
+  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '10em', height: '10em', opacity: 1 }} />
+);
 export default function OfferDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -926,7 +928,7 @@ export default function OfferDetailsPage() {
 
     const highlights = [
       { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: SaudiRiyalIcon },
-      { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: Ruler },
+      { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: MeterIcon },
       { key: 'type', label: t('offer.type'), value: offer.propertyType, icon: Building },
       { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
     ];
@@ -948,7 +950,7 @@ export default function OfferDetailsPage() {
               {highlights.map((item) => (
                 <div key={item.key} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-5 text-center">
                   <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm">
-                    <item.icon className="w-5 h-5 text-slate-600" />
+                    {item.key === 'area' ? <MeterIcon className="w-10 h-10 text-slate-600" /> : <item.icon className="w-5 h-5 text-slate-600" />}
                   </div>
                   <div className="text-lg font-black text-slate-900 break-words">{item.value}</div>
                   <p className="mt-1 text-xs font-bold text-slate-500">{item.label}</p>
@@ -959,7 +961,7 @@ export default function OfferDetailsPage() {
         </Card>
 
         {/* Tabbed view for Details and Attachments */}
-        <Tabs defaultValue="details" className="w-full">
+        <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-slate-100/80 p-1 rounded-2xl">
             <TabsTrigger value="details" className="rounded-xl text-sm font-black transition-all">
               {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
@@ -1066,7 +1068,7 @@ export default function OfferDetailsPage() {
                         {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
                         {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
                         {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
-                        {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Ruler className="w-4 h-4" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
+                        {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><MeterIcon className="w-5 h-5" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
                       </div>
                     </div>
 
@@ -1475,12 +1477,6 @@ export default function OfferDetailsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Property Details */}
-            {renderPropertyDetails()}
-          </div>
-
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Seller Info */}
@@ -1550,6 +1546,12 @@ export default function OfferDetailsPage() {
 
             {/* Direct Chat Module */}
             <OfferChatBox offer={offer} currentUser={user} />
+          </div>
+
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Property Details */}
+            {renderPropertyDetails()}
           </div>
         </div>
       </div>

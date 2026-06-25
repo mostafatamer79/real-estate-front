@@ -133,11 +133,13 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     {
       title: isRtl ? 'الإدارة المالية' : 'Financial Management',
       items: [
-        { id: 'finance-main', href: '/admin/wallet',  label: isRtl ? 'الفواتير' : 'Finance Overview' },
-        { id: 'invoices', href: '/admin/wallet?tab=invoices',  label: isRtl ? 'الفواتير' : 'Invoices' },
-        { id: 'commissions', href: '/admin/wallet?tab=commissions', label: isRtl ? 'العقود والعمولات' : 'Contracts & Commissions' },
-        { id: 'files', href: '/admin/wallet?tab=files',  label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
-        { id: 'investments', href: '/admin/wallet?tab=investments',  label: isRtl ? 'الاستثمارات' : 'Investments' },
+        { id: 'finance-dashboard', href: '/admin/wallet?section=financial', label: isRtl ? 'لوحة مالية' : 'Finance Dashboard' },
+        { id: 'finance-transactions-tab', href: '/admin/wallet?section=transactions', label: isRtl ? 'العمليات' : 'Transactions' },
+        { id: 'finance-payments', href: '/admin/wallet?section=payments', label: isRtl ? 'المدفوعات' : 'Payments' },
+        { id: 'finance-expenses', href: '/admin/wallet?section=expenses', label: isRtl ? 'المصروفات' : 'Expenses' },
+        { id: 'finance-reports', href: '/admin/wallet?section=reports', label: isRtl ? 'التقارير' : 'Reports' },
+        { id: 'finance-settlements', href: '/admin/wallet?section=settlements', label: isRtl ? 'التسويات' : 'Settlements' },
+        { id: 'finance-service-requests', href: '/admin/wallet?section=service_requests', label: isRtl ? 'إدارة الخدمات' : 'Service Requests' },
       ]
     },
     {

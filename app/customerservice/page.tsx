@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Twitter, Mail, MessageCircle, Phone,
-  HelpCircle, ChevronDown, Send,
-  User, ExternalLink, X, Building2, Sparkles,
-  ChevronLeft, ArrowRight, ShieldCheck, Headphones,
-  Search, Home, BadgeDollarSign, Tag, CheckCircle2, AlertCircle, MessageSquare
+  Send,
+  X,
+  ChevronLeft, ArrowRight, CheckCircle2, AlertCircle, MessageSquare
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
@@ -17,12 +16,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { faqData } from "./faq-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { customerServiceFaqApi, customerServiceFeedbackApi, customerServiceFaqCategoryApi, type CustomerServiceFaq, type CustomerServiceFaqCategory, type CustomerServiceFeedback } from "@/lib/api";
+import { customerServiceFeedbackApi, type CustomerServiceFeedback } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
 function getXProfileUrl(value: string) {
@@ -42,22 +38,12 @@ function getXDisplayHandle(value: string) {
   return trimmed.startsWith("@") ? trimmed : `@${trimmed}`;
 }
 
-export default function CustomerService() {
+export function CustomerServicePage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { user, isAuthenticated } = useAuth();
   const { isOpen, message, isAdmin } = useSectionGuard('customerservice');
   const { settings } = useSettings();
-
-  const categoryIcons: Record<string, React.ElementType> = {
-    "أسئلة عامة": HelpCircle,
-    "أسئلة البحث والعرض": Search,
-    "أسئلة الشراء": ShieldCheck,
-    "أسئلة الإيجار": Home,
-    "أسئلة البيع": Tag,
-    "أسئلة الدفع": BadgeDollarSign,
-    "أسئلة الدعم": Headphones,
-  };
 
   const [question, setQuestion] = useState("");
   const [email, setEmail] = useState("");
@@ -68,12 +54,6 @@ export default function CustomerService() {
   const [charCount, setCharCount] = useState(0);
   const MAX_CHARACTERS = 200;
 
-  const isAdminUser = user?.role === "admin";
-
-  const [faqs, setFaqs] = useState<CustomerServiceFaq[] | null>(null);
-  const [faqCategories, setFaqCategories] = useState<CustomerServiceFaqCategory[] | null>(null);
-  const [faqsLoading, setFaqsLoading] = useState(false);
-  const [faqsError, setFaqsError] = useState<string | null>(null);
   const [tickets, setTickets] = useState<CustomerServiceFeedback[]>([]);
   const [ticketsLoading, setTicketsLoading] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<CustomerServiceFeedback | null>(null);
@@ -93,30 +73,6 @@ export default function CustomerService() {
     }
     router.push("/details");
   };
-
-  const refreshFaqs = async () => {
-    setFaqsLoading(true);
-    setFaqsError(null);
-    try {
-      const [catsRes, faqsRes] = await Promise.all([
-        customerServiceFaqCategoryApi.list(),
-        customerServiceFaqApi.list(),
-      ]);
-      setFaqCategories(Array.isArray(catsRes.data) ? catsRes.data : []);
-      setFaqs(Array.isArray(faqsRes.data) ? faqsRes.data : []);
-    } catch (e: any) {
-      setFaqsError(e?.message || "Failed to load FAQs");
-      setFaqs(null);
-      setFaqCategories(null);
-    } finally {
-      setFaqsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    refreshFaqs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -144,63 +100,6 @@ export default function CustomerService() {
     refreshTickets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
-
-  const faqSections = useMemo(() => {
-    if (!faqs || faqs.length === 0) return faqData;
-    // Build using categories table first (ordered), then append uncategorized.
-    const itemsByCat = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number; color?: string | null; fontSize?: string | null }>>();
-    const uncategorized: Array<{ id: string; question: string; answer: string; sortOrder: number; category: string; color?: string | null; fontSize?: string | null }> = [];
-
-    for (const item of faqs) {
-      const question = language === "ar" ? item.questionAr : item.questionEn;
-      const answer = language === "ar" ? item.answerAr : item.answerEn;
-      const sortOrder = item.sortOrder ?? 0;
-      const color = item.color;
-      const fontSize = item.fontSize;
-      if (item.categoryId) {
-        const arr = itemsByCat.get(item.categoryId) || [];
-        arr.push({ id: item.id, question, answer, sortOrder, color, fontSize });
-        itemsByCat.set(item.categoryId, arr);
-      } else {
-        const category = language === "ar" ? (item.categoryAr || "أخرى") : (item.categoryEn || "Other");
-        uncategorized.push({ id: item.id, question, answer, sortOrder, category, color, fontSize });
-      }
-    }
-
-    for (const [catId, arr] of itemsByCat.entries()) {
-      arr.sort((a, b) => a.sortOrder - b.sortOrder);
-      itemsByCat.set(catId, arr);
-    }
-    uncategorized.sort((a, b) => a.sortOrder - b.sortOrder);
-
-    const sections: Array<{ category: string; items: Array<{ id: string; question: string; answer: string; color?: string | null; fontSize?: string | null }> }> = [];
-
-    const orderedCats = (faqCategories || []).slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-    for (const cat of orderedCats) {
-      const arr = itemsByCat.get(cat.id) || [];
-      if (arr.length === 0) continue;
-      sections.push({
-        category: language === "ar" ? cat.nameAr : cat.nameEn,
-        items: arr.map(({ id, question, answer, color, fontSize }) => ({ id, question, answer, color, fontSize })),
-      });
-    }
-
-    // Group uncategorized by their category string (fallback legacy)
-    if (uncategorized.length > 0) {
-      const map = new Map<string, Array<{ id: string; question: string; answer: string; sortOrder: number; color?: string | null; fontSize?: string | null }>>();
-      for (const u of uncategorized) {
-        const arr = map.get(u.category) || [];
-        arr.push({ id: u.id, question: u.question, answer: u.answer, sortOrder: u.sortOrder, color: u.color, fontSize: u.fontSize });
-        map.set(u.category, arr);
-      }
-      for (const [cat, arr] of map.entries()) {
-        arr.sort((a, b) => a.sortOrder - b.sortOrder);
-        sections.push({ category: cat, items: arr.map(({ id, question, answer, color, fontSize }) => ({ id, question, answer, color, fontSize })) });
-      }
-    }
-
-    return sections.length > 0 ? sections : faqData;
-  }, [faqs, faqCategories, language]);
 
   // Admin management is now in /admin/customer-service
 
@@ -792,109 +691,6 @@ export default function CustomerService() {
                   </form>
                 </motion.div>
               )}
-
-              {/* FAQ Section */}
-              {settings.uiFlags?.show_cs_faq !== false && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="space-y-6"
-                >
-                    <div className="flex items-center justify-between gap-4">
-                      <h2 className="text-lg font-black text-slate-900 flex items-center gap-3">
-                        <div className="p-2 rounded-xl bg-slate-900 text-white shadow-sm">
-                          <HelpCircle className="w-4 h-4" />
-                        </div>
-                        {language === "ar" ? "الأسئلة المتكررة" : "FAQs"}
-                      </h2>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest"
-                        onClick={refreshFaqs}
-                        disabled={faqsLoading}
-                      >
-                        {language === "ar" ? "تحديث" : "Refresh"}
-                      </Button>
-                    </div>
-                  <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
-                    {faqsError && (
-                      <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
-                        {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}
-                      </div>
-                    )}
-                    <Accordion type="multiple" className="w-full space-y-6">
-                      {faqSections.map((section, idx) => {
-                        const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
-                        return (
-                          <AccordionItem
-                            key={idx}
-                            value={`section-${idx}`}
-                            className="border-none glass bg-white/50 rounded-[2.5rem] px-6 md:px-8 transition-all hover:bg-white"
-                            style={{ backgroundColor: settings.csCardBg || undefined }}
-                          >
-                            <AccordionTrigger 
-                              className="font-black hover:no-underline text-right py-6 group"
-                              style={{
-                                color: settings.csTextColor || undefined,
-                                fontFamily: settings.csFontFamily || undefined,
-                                fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) + 1}px` : undefined
-                              }}
-                            >
-                              <span className="flex items-center gap-3 flex-1 text-right ">
-                                <CategoryIcon className="w-4 h-4" />
-                                {section.category}
-                              </span>
-                              <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
-                                <ChevronDown className="h-4 w-4" />
-                              </span>
-                            </AccordionTrigger>
-                            <AccordionContent className="pb-6">
-                              <Accordion type="single" collapsible className="w-full space-y-4">
-                                {section.items.map((item: any, itemIdx: number) => (
-                                  <AccordionItem
-                                    key={itemIdx}
-                                    value={`item-${idx}-${itemIdx}`}
-                                    className="border-none glass bg-white/40 rounded-3xl px-6 transition-all hover:bg-white"
-                                    style={{
-                                      backgroundColor: settings.csBg || undefined,
-                                      color: item.color || settings.csTextColor || undefined,
-                                      fontFamily: settings.csFontFamily || undefined,
-                                    }}
-                                  >
-                                    <AccordionTrigger 
-                                      className="font-bold hover:no-underline text-right py-6 group"
-                                      style={{
-                                        color: item.color || settings.csTextColor || undefined,
-                                        fontSize: item.fontSize ? `${item.fontSize}px` : (settings.csFontSize ? `${settings.csFontSize}px` : undefined),
-                                      }}
-                                    >
-                                      <span className="flex-1 text-right">{item.question}</span>
-                                      <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
-                                        <ChevronDown className="h-4 h-4" />
-                                      </span>
-                                    </AccordionTrigger>
-                                    <AccordionContent 
-                                      className="font-medium leading-[1.8] text-right pb-6 opacity-90"
-                                      style={{
-                                        color: item.color || settings.csTextColor || undefined,
-                                        fontSize: item.fontSize ? `${parseInt(item.fontSize) - 2}px` : (settings.csFontSize ? `${parseInt(settings.csFontSize) - 2}px` : undefined),
-                                      }}
-                                    >
-                                      {item.answer}
-                                    </AccordionContent>
-                                  </AccordionItem>
-                                ))}
-                              </Accordion>
-                            </AccordionContent>
-                          </AccordionItem>
-                        );
-                      })}
-                    </Accordion>
-                  </div>
-                </motion.div>
-              )}
           </div>
       </div>
 
@@ -914,4 +710,8 @@ export default function CustomerService() {
       )}
     </div>
   );
+}
+
+export default function CustomerService() {
+  return <CustomerServicePage />;
 }

@@ -115,7 +115,7 @@ function SettingsPageInner() {
     const { t, language } = useLanguage();
     const isRtl = language === 'ar';
     const { settings, saveSettings, isLoading, refetch } = useSettings();
-    const [activeTab, setActiveTab] = useState<'pricing' | 'appearance' | 'text' | 'site_control'>('pricing');
+    const [activeTab, setActiveTab] = useState<'pricing' | 'appearance' | 'text' | 'site_control'>('appearance');
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState<'success' | 'error'>('success');
@@ -1347,7 +1347,7 @@ function TextTab({
 
                 const arValue = translations.ar[key as keyof typeof translations.ar] || "";
                 const enValue = translations.en[key as keyof typeof translations.en] || "";
-                
+
                 const matchesSearch = !normalizedSearch
                     || key.toLowerCase().includes(normalizedSearch)
                     || arValue.toLowerCase().includes(normalizedSearch)
@@ -1404,7 +1404,7 @@ function TextTab({
 
     const getActiveSectionKeys = React.useCallback((sectionId: string, baseKeys: string[]) => {
         const keysSet = new Set(baseKeys);
-        
+
         const prefixMap: Record<string, string[]> = {
             'welcome_screen': ['header.'],
             'login_screen': ['auth.', 'login.', 'otp.'],
@@ -1433,7 +1433,7 @@ function TextTab({
         };
 
         const prefixes = prefixMap[sectionId] || [];
-        
+
         if (prefixes.length > 0) {
             allKeys.forEach(k => {
                 if (prefixes.some(p => k.startsWith(p))) {
@@ -1441,7 +1441,7 @@ function TextTab({
                 }
             });
         }
-        
+
         return Array.from(keysSet);
     }, [allKeys]);
 
@@ -1510,7 +1510,7 @@ function TextTab({
                                 <h4 className="text-[11px] font-black">شجرة الأقسام والهوية</h4>
                                 <p className="mt-1 text-[10px] font-bold text-slate-300">تصفح أقسام المنصة مباشرة لتعديلها</p>
                             </div>
-                            
+
                             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                                 {STRUCTURED_SECTIONS.map((sec) => {
                                     const SecIcon = sec.icon;
@@ -1575,7 +1575,7 @@ function TextTab({
                                                         <label className="text-[11px] font-black text-slate-600">{ctrl.label}</label>
                                                         <span className="text-[10px] font-mono text-slate-400 font-bold">{String(currentValue)}</span>
                                                     </div>
-                                                    
+
                                                     {ctrl.type === 'color' && (
                                                         <div className="flex items-center gap-3">
                                                             <input
@@ -1861,7 +1861,7 @@ function TextTab({
                                 <h4 className="text-[11px] font-black">الفئة الفرعية</h4>
                                 <p className="mt-1 text-[10px] font-bold text-slate-300">اختر الفئة لعرض مفاتيحها</p>
                             </div>
-                            
+
                             <div className="flex flex-col gap-2 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
                                 {SUBCATEGORIES[selectedCategory].map((sub) => {
                                     const count = subcategoryCounts[sub.id] || 0;
@@ -2108,7 +2108,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     ];
 
     const currentSubcategory = STRUCTURED_SECTIONS.flatMap(s => s.subcategories).find(sub => sub.id === selectedSection);
-    
+
     // Filter controls based on selection or search
     const filteredControls = CONTROL_ITEMS.filter(item => {
         if (query.trim()) {
@@ -2309,7 +2309,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                     {!query && STRUCTURED_SECTIONS.filter(section => section.subcategories.some(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id))).map((section) => {
                         const SectionIcon = section.icon;
                         const isSectionActive = section.subcategories.some(sub => sub.id === selectedSection);
-                        
+
                         return (
                             <div key={section.id} className="space-y-1">
                                 <div className={`flex items-center gap-2.5 px-2 py-2 ${isSectionActive ? 'text-slate-900' : 'text-slate-400'}`}>
@@ -2325,8 +2325,8 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                                 key={sub.id}
                                                 onClick={() => setSelectedSection(sub.id)}
                                                 className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-[11px] font-bold transition-all ${
-                                                    isActive 
-                                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]' 
+                                                    isActive
+                                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]'
                                                         : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                                                 }`}
                                             >
@@ -2351,7 +2351,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 {/* Main Content Area */}
                 <div className="lg:col-span-3">
                     <div className="rounded-[2.5rem] border border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-xl space-y-8 min-h-[500px]">
-                        
+
                         {!query && currentSubcategory && (
                             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
                                 <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-slate-900/20">
@@ -2393,7 +2393,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                 })}
                             </div>
                         )}
-                        
+
                         {/* Quick Actions Global Settings shown only on "quick_access_main" */}
                         {currentSubcategory?.id === 'quick_access_main' && !query && (
                             <div className="mt-12 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -2421,7 +2421,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                 </div>
                             </div>
                         )}
-                        
+
                         {/* Phone Label setting inside login_screen */}
                         {currentSubcategory?.id === 'login_screen' && !query && (
                             <div className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:border-slate-300 transition-all">

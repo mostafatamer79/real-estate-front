@@ -27,6 +27,9 @@ interface OrderDetailsModalProps {
     onClose: () => void;
     orderId: string | null;
 }
+const MeterIcon = ({ className }: { className?: string }) => (
+  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '5em', height: '5em', opacity: 1 }} />
+);
 
 export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDetailsModalProps) {
     const { t, language } = useLanguage();
@@ -234,7 +237,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                     <div className="h-0.5 flex-1 bg-slate-100"></div>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    <SpecItem icon={Ruler} label={t('bm.prop.area')} value={`${order.area} م²`} />
+                                    <SpecItem icon={MeterIcon} label={t('bm.prop.area')} value={`${order.area} م²`} />
                                     <SpecItem icon={Home} label={t('orders.rooms')} value={order.rooms} />
                                     <SpecItem icon={Bath} label={t('orders.baths')} value={order.bathrooms} />
                                     {order.propertyAge && <SpecItem icon={Calendar} label={t('bm.prop.age')} value={order.propertyAge} />}

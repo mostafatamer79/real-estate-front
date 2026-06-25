@@ -81,7 +81,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <motion.h1
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl md:text-5xl font-black tracking-tight text-slate-950"
+                  className="text-sm md:text-3xl font-black tracking-tight text-slate-950"
                 >
                   {t('fin.title')}
                 </motion.h1>
@@ -113,22 +113,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <Tabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
                     {/* Scrollable Premium Tabs */}
                     <div className="overflow-x-auto pb-2 hide-scrollbar">
-                <TabsList className="inline-flex h-14 items-center gap-1.5 rounded-2xl bg-slate-50 border border-slate-100 p-1.5 min-w-max" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                            {[
-                              { val: 'dashboard', icon: LayoutDashboard, label: t('fin.tab.dashboard') },
-                              { val: 'transactions', icon: Receipt, label: t('fin.tab.transactions') },
-                              { val: 'payments', icon: CreditCard, label: t('fin.tab.payments') },
-                              { val: 'expenses', icon: Calculator, label: t('fin.tab.expenses') },
-                               { val: 'reports', icon: FileText, label: t('fin.tab.reports') },
-                               { val: 'settlements', icon: Briefcase, label: t('fin.tab.settlements') },
-                               { val: 'service_requests', icon: LayoutDashboard, label: t('fin.tab.service_requests') }
-                            ].map((tab) => (
-                              <TabsTrigger key={tab.val} value={tab.val} className="px-5 rounded-xl h-10 gap-2.5 data-[state=active]:bg-white data-[state=active]:text-slate-950 data-[state=active]:shadow-sm font-bold text-[11px] uppercase tracking-wider transition-all duration-300 whitespace-nowrap">
-                                <tab.icon className={`w-3.5 h-3.5 transition-colors ${activeTab === tab.val ? 'text-slate-950' : 'text-slate-400'}`} />
-                                {tab.label}
-                              </TabsTrigger>
-                            ))}
-                        </TabsList>
+       
                     </div>
 
                     <AnimatePresence mode="wait">

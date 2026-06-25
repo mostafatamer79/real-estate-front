@@ -328,9 +328,9 @@ export default function ScanMapPage() {
       {isDisclaimerOpen && (
         <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[2rem] border border-white/10 bg-white text-slate-950 shadow-2xl" dir="rtl">
-     
-   
-            <div className="border-t border-slate-100 bg-white px-6 py-5">
+
+
+            <div className="border-t border-slate-100 bg-white px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
               <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-slate-800">
                 <input
                   type="checkbox"
@@ -377,8 +377,8 @@ export default function ScanMapPage() {
           {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
           {language === 'ar' ? 'رجوع' : 'Back'}
         </button>
-        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-emerald-400">
-          🗺️ {t('scan.title')}
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-slate-400">
+           {t('scan.title')}
         </h1>
         <p className="text-slate-400 text-center text-sm md:text-base">
           {t('scan.desc')}
@@ -391,7 +391,6 @@ export default function ScanMapPage() {
           {/* Location Card */}
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="text-emerald-400">📍</span>
               {t('scan.propertyLocation')}
             </h2>
 
@@ -408,7 +407,6 @@ export default function ScanMapPage() {
                         : 'bg-slate-700 hover:bg-slate-600'
                     }`}
                   >
-                    {isSelectingLocation ? `❌ ${t('scan.cancelSelect')}` : `📍 ${t('scan.selectNew')}`}
                   </button>
                 </div>
                 <div className="font-mono text-sm bg-slate-800 p-2 rounded-lg text-center">
@@ -420,9 +418,7 @@ export default function ScanMapPage() {
 
               {/* Search Radius Slider */}
               <div>
-                <label className="block text-sm text-slate-400 mb-2">
-                  🔍 {t('scan.radius')}: <span className="text-emerald-400">{searchRadius.toLocaleString()} {t('chat.meters')}</span>
-                </label>
+
                 <input
                   type="range"
                   min="500"
@@ -444,7 +440,7 @@ export default function ScanMapPage() {
                 <button
                   onClick={handleStartScan}
                   disabled={loading || isSelectingLocation}
-                  className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  className="bg-gradient-to-r from-slate-600 to-slate-500 hover:from-slate-500 hover:to-slate-400 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -453,7 +449,6 @@ export default function ScanMapPage() {
                     </>
                   ) : (
                     <>
-                      <span>🔍</span>
                       {t('scan.start')}
                     </>
                   )}
@@ -464,7 +459,6 @@ export default function ScanMapPage() {
                     onClick={resetToDefault}
                     className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
-                    <span>🏠</span>
                     {t('scan.default')}
                   </button>
 
@@ -473,7 +467,6 @@ export default function ScanMapPage() {
                       onClick={() => setShowTable(!showTable)}
                       className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
-                      <span>{showTable ? "👁️‍🗨️" : "📊"}</span>
                       {showTable ? t('scan.hideTable') : t('scan.showTable')}
                     </button>
                   )}
@@ -481,9 +474,8 @@ export default function ScanMapPage() {
               </div>
 
               {/* Neighborhood Report Service Card */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700 mt-6 bg-gradient-to-br from-slate-800 to-indigo-950/30">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700 mt-6 bg-gradient-to-br from-slate-800 to-slate-950/30">
                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-                  <span className="text-indigo-400">📄</span>
                   {t('scan.neighborReport')}
                 </h2>
                 <p className="text-xs text-slate-400 mb-4">
@@ -496,19 +488,18 @@ export default function ScanMapPage() {
 
                 {isPaid ? (
                   <div className="bg-emerald-900/20 border border-emerald-500/50 text-emerald-400 p-3 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
-                    <span>✅</span> {t('scan.unlocked')}
+                    {t('scan.unlocked')}
                   </div>
                 ) : (
                   <button
                     onClick={handleRequestReport}
                     disabled={creatingInvoice}
-                    className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-slate-600 hover:bg-slate-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                   >
                     {creatingInvoice ? (
                       <span className="animate-spin text-lg">⟳</span>
                     ) : (
                       <>
-                        <span>💳</span>
                         {t('scan.payNow')}
                       </>
                     )}
@@ -522,7 +513,6 @@ export default function ScanMapPage() {
           {hasPlaces && (
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <span className="text-blue-400">📊</span>
                 {t('scan.results')}
               </h2>
 
@@ -589,7 +579,6 @@ export default function ScanMapPage() {
           {isSelectingLocation && (
             <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-2xl p-4">
               <div className="flex items-start gap-3">
-                <div className="text-yellow-400 text-xl mt-1">💡</div>
                 <div>
                   <h3 className="font-bold text-yellow-300 mb-1">{t('scan.tips.title')}</h3>
                   <p className="text-sm text-yellow-200/80">
@@ -623,7 +612,6 @@ export default function ScanMapPage() {
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
               <div className="p-4 bg-slate-800/70 border-b border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <h2 className="text-lg font-bold flex items-center gap-2">
-                  <span>📋</span>
                   {t('scan.table.results')} ({places.length} {t('scan.table.places')})
                 </h2>
                 <div className="flex gap-2">

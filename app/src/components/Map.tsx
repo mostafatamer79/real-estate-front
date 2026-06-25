@@ -562,14 +562,6 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
             </Marker>
           ))}
 
-          {/* ✅ Click instructions */}
-          {onLocationSelect && (
-            <div className="leaflet-bottom leaflet-left">
-              <div className="leaflet-control bg-white/90 backdrop-blur-sm px-3 py-2 m-2 rounded shadow text-sm">
-                {t('map.scan_desc')}
-              </div>
-            </div>
-          )}
         </MapContainer>
       </div>
 

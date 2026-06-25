@@ -191,6 +191,9 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
         setLoadingMyOrders(false);
       }
     };
+    const MeterIcon = ({ className }: { className?: string }) => (
+  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '5em', height: '5em', opacity: 1 }} />
+);
 
 
     const handleDeleteOrder = async (id: string) => {
@@ -231,7 +234,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               <p className="text-gray-500">{t('orders.subtitle')}</p>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="create" className="flex items-center gap-2">
                 <PlusCircle className="w-4 h-4" />
@@ -503,7 +506,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                     <span>{order.city} - {order.neighborhood}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
-                    <Ruler className="w-4 h-4 text-gray-400" />
+                    <MeterIcon className="w-4 h-4 text-gray-400" />
                     <span>{order.area} م²</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">

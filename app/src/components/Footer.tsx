@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
-import { 
+import {
   Shield,
   BookOpen,
   Mail,
@@ -60,9 +60,9 @@ export default function Footer() {
   ];
 
   const supportLinks = [
-    { label: "الأسئلة الشائعة", href: "/customerservice#faq", icon: HelpCircle },
+    { label: "الأسئلة الشائعة", href: "/customerservice/faq", icon: HelpCircle },
     { label: "شاركنا رأيك", href: "/share-opinion", icon: Send },
-    { label: "تواصل معنا", href: "/customerservice#contact", icon: MessageCircle },
+    { label: "تواصل معنا", href: "/customerservice/contact", icon: MessageCircle },
   ];
 
   return (
@@ -85,7 +85,7 @@ export default function Footer() {
       )}
 
       <div className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative z-10">
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -147,7 +147,7 @@ export default function Footer() {
         </motion.div>
 
         {/* Bottom Bar */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
