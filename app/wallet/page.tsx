@@ -143,7 +143,7 @@ const WalletPage = () => {
                     onTabChange={handleTabChange} 
                 />
 
-                <div className='flex-1 lg:mr-[360px] p-4'>
+                <div className='flex-1 lg:mr-[360px] p-4 pt-28 lg:pt-4'>
                     {activeTab === 'invoices' && (
                         <InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} />
                     )}

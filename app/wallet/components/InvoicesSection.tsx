@@ -249,22 +249,22 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 <Table>
                             <TableHeader className='bg-muted/50'>
                                 <TableRow>
-                                    <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.invoiceNo')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.date')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.amount')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.status')}</TableHead>
-                                    <TableHead className='text-left py-5 font-black text-slate-900'>{t('wallet.commission.actions')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.invoiceNo')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.service')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.date')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.amount')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.status')}</TableHead>
+                                    <TableHead className='text-left py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.commission.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice, index) => (
                                     <TableRow key={index} className='hover:bg-muted/50 transition-colors group'>
-                                        <TableCell className='font-bold text-slate-700 py-4'>{invoice.invoice}</TableCell>
-                                        <TableCell className='font-medium text-slate-600 py-4'>{invoice.service}</TableCell>
-                                        <TableCell className='text-slate-500 py-4'>{invoice.date}</TableCell>
-                                        <TableCell className='font-black text-slate-900 py-4'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
-                                        <TableCell className="py-4 text-center">
+                                        <TableCell className='font-bold text-slate-700 py-4 whitespace-nowrap'>{invoice.invoice}</TableCell>
+                                        <TableCell className='font-medium text-slate-600 py-4 whitespace-nowrap'>{invoice.service}</TableCell>
+                                        <TableCell className='text-slate-500 py-4 whitespace-nowrap'>{invoice.date}</TableCell>
+                                        <TableCell className='font-black text-slate-900 py-4 whitespace-nowrap'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
+                                        <TableCell className="py-4 text-center whitespace-nowrap">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                                                 invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
                                                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
