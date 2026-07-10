@@ -228,16 +228,16 @@ export default function NormalChatRoomPage() {
     : roomDetails?.name || 'محادثة';
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-5" dir="rtl">
-      <div className="mx-auto flex h-[calc(100vh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="min-h-screen bg-muted px-4 py-5" dir="rtl">
+      <div className="mx-auto flex h-[calc(100vh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm">
         
         {/* Header */}
-        <div className="border-b border-slate-200 bg-white px-5 py-4">
+        <div className="border-b border bg-card px-5 py-4">
           <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button
               onClick={handleReturn}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-all hover:bg-slate-950 hover:text-white"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border bg-muted text-slate-600 transition-all hover:bg-slate-950 hover:text-white"
               aria-label="العودة"
             >
               <ArrowRight className="h-5 w-5" />
@@ -258,18 +258,18 @@ export default function NormalChatRoomPage() {
               </div>
             </div>
           </div>
-          <div className="hidden rounded-full bg-slate-100 px-4 py-2 text-[10px] font-black text-slate-500 md:block">
+          <div className="hidden rounded-full bg-muted px-4 py-2 text-[10px] font-black text-slate-500 md:block">
             Enter للإرسال · Shift+Enter لسطر جديد
           </div>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 p-5 scrollbar-hide md:p-7">
+        <div className="flex-1 space-y-4 overflow-y-auto bg-muted p-5 scrollbar-hide md:p-7">
           <AnimatePresence initial={false}>
             {messages.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-slate-300">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card shadow-sm">
                   <MessageSquare className="h-10 w-10" />
                 </div>
                 <p className="text-sm font-black text-slate-400">لا توجد رسائل سابقة</p>
@@ -290,7 +290,7 @@ export default function NormalChatRoomPage() {
                         className={`px-4 py-3 shadow-sm ${
                           isOwn
                             ? 'rounded-2xl rounded-br-md bg-slate-950 text-white'
-                            : 'rounded-2xl rounded-bl-md border border-slate-200 bg-white text-slate-900'
+                            : 'rounded-2xl rounded-bl-md border border bg-card text-slate-900'
                         }`}
                       >
                         <p className="text-[13px] font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -311,7 +311,7 @@ export default function NormalChatRoomPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-slate-200 bg-white p-4">
+        <div className="border-t border bg-card p-4">
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <textarea
@@ -319,7 +319,7 @@ export default function NormalChatRoomPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="اكتب رسالة..."
-                className="max-h-[150px] min-h-[52px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition-all focus:border-slate-950"
+                className="max-h-[150px] min-h-[52px] w-full resize-none rounded-xl border border bg-muted px-4 py-3 text-sm font-bold outline-none transition-all focus:border-slate-950"
                 rows={1}
               />
             </div>

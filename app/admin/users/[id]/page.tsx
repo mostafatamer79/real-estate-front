@@ -437,18 +437,18 @@ export default function AdminUserDetailsPage() {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-10 w-64 rounded-xl bg-slate-200" />
+        <div className="h-10 w-64 rounded-xl bg-muted" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          {[1, 2, 3, 4].map((item) => <div key={item} className="h-28 rounded-2xl bg-slate-200" />)}
+          {[1, 2, 3, 4].map((item) => <div key={item} className="h-28 rounded-2xl bg-muted" />)}
         </div>
-        <div className="h-96 rounded-2xl bg-slate-200" />
+        <div className="h-96 rounded-2xl bg-muted" />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="rounded-2xl border border bg-card p-10 text-center" dir={isRtl ? "rtl" : "ltr"}>
         <p className="font-black text-slate-950">{isRtl ? "المستخدم غير موجود" : "User not found"}</p>
         <Link href="/admin/users" className="mt-4 inline-flex text-sm font-black text-slate-950 underline">
           {isRtl ? "العودة للمستخدمين" : "Back to users"}
@@ -476,7 +476,7 @@ export default function AdminUserDetailsPage() {
             className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest disabled:opacity-60 ${
               user.isActive === false
                 ? "bg-slate-950 text-white"
-                : "border border-slate-200 bg-white text-slate-700"
+                : "border border bg-card text-slate-700"
             }`}
           >
             {user.isActive === false ? <CheckCircle className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
@@ -491,8 +491,8 @@ export default function AdminUserDetailsPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {userCards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+          <div key={card.label} className="rounded-2xl border border bg-card p-5 shadow-sm">
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-950">
               <card.icon className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
@@ -502,7 +502,7 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <UserIcon className="h-5 w-5" />
             {isRtl ? "بيانات الحساب" : "Account details"}
@@ -516,7 +516,7 @@ export default function AdminUserDetailsPage() {
               [isRtl ? "الإدارات" : "Departments", Array.isArray(user.departments) && user.departments.length ? user.departments.join(" , ") : "—"],
               [isRtl ? "تاريخ الإنشاء" : "Created", formatDate(user.createAt, locale)],
             ].map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between gap-4 border-b border-slate-50 pb-3">
+              <div key={label} className="flex items-center justify-between gap-4 border-b border pb-3">
                 <span className="font-black text-slate-400">{label}</span>
                 <span className="font-bold text-slate-950">{value}</span>
               </div>
@@ -524,17 +524,17 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <CreditCard className="h-5 w-5" />
             {isRtl ? "الاشتراك" : "Subscription"}
           </h2>
           <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+            <div className="flex items-center justify-between border-b border pb-3">
               <span className="font-black text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
               <span className="font-bold text-slate-950">{subscriptionStatus?.active ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}</span>
             </div>
-            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+            <div className="flex items-center justify-between border-b border pb-3">
               <span className="font-black text-slate-400">{isRtl ? "ينتهي في" : "Ends at"}</span>
               <span className="font-bold text-slate-950">{currentSubscription?.noExpiry ? (isRtl ? "غير محدود" : "No expiry") : formatDate(currentSubscription?.endDate, locale)}</span>
             </div>
@@ -544,7 +544,7 @@ export default function AdminUserDetailsPage() {
               <RefreshCw className="h-4 w-4" />
               {isRtl ? "تمديد" : "Extend"}
             </button>
-            <button disabled={saving} onClick={createFreeSubscription} className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[10px] font-black uppercase tracking-widest text-slate-700">
+            <button disabled={saving} onClick={createFreeSubscription} className="inline-flex h-10 items-center gap-2 rounded-xl border border bg-card px-4 text-[10px] font-black uppercase tracking-widest text-slate-700">
               <CheckCircle className="h-4 w-4" />
               {isRtl ? "اشتراك مجاني" : "Free sub"}
             </button>
@@ -555,7 +555,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <Shield className="h-5 w-5" />
             {isRtl ? "نطاق العمل" : "Scope"}
@@ -567,7 +567,7 @@ export default function AdminUserDetailsPage() {
               [isRtl ? "طلبات ضمن الإدارة" : "Department requests", overview?.stats?.departmentRequests || 0],
               [isRtl ? "المحادثات" : "Chats", overview?.stats?.chats || 0],
             ].map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between border-b border-slate-50 pb-3">
+              <div key={label} className="flex items-center justify-between border-b border pb-3">
                 <span className="font-black text-slate-400">{label}</span>
                 <span className="font-black text-slate-950">{Number(value || 0).toLocaleString(locale)}</span>
               </div>
@@ -577,7 +577,7 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <Layers3 className="h-5 w-5" />
@@ -594,7 +594,7 @@ export default function AdminUserDetailsPage() {
                       <p className="font-black text-slate-900">{offer.propertyType || offer.mainCategory || offer.id}</p>
                       <p className="mt-1 text-xs font-bold text-slate-400">{offer.city || "—"} · {offer.status || "draft"}</p>
                     </div>
-                    <Link href={`/offers/${offer.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                    <Link href={`/offers/${offer.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
                       {isRtl ? "فتح" : "Open"}
                     </Link>
@@ -613,7 +613,7 @@ export default function AdminUserDetailsPage() {
                       <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
                       <p className="mt-1 text-xs font-bold text-slate-400">{request.status || "pending"} · {formatDate(request.createdAt, locale)}</p>
                     </div>
-                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
                       {isRtl ? "إدارة" : "Manage"}
                     </Link>
@@ -625,7 +625,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <BriefcaseBusiness className="h-5 w-5" />
@@ -642,7 +642,7 @@ export default function AdminUserDetailsPage() {
                       <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
                       <p className="mt-1 text-xs font-bold text-slate-400">{request.targetDepartment || "—"} · {request.status || "pending"}</p>
                     </div>
-                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
+                    <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
                       {isRtl ? "فتح" : "Open"}
                     </Link>
@@ -668,14 +668,14 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <MessageSquare className="h-5 w-5" />
           {isRtl ? "محادثات المستخدم" : "User chats"}
         </h2>
         <div className="space-y-4">
           {chats.slice(0, 8).map((chat) => (
-            <div key={chat.id} className="rounded-2xl border border-slate-100 p-4">
+            <div key={chat.id} className="rounded-2xl border border p-4">
               <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="font-black text-slate-900">{chat.name || chat.id}</p>
@@ -700,7 +700,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
@@ -721,7 +721,7 @@ export default function AdminUserDetailsPage() {
               <button
                 key={value}
                 onClick={() => setWalletTab(value)}
-                className={`inline-flex h-10 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest ${walletTab === value ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-600"}`}
+                className={`inline-flex h-10 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest ${walletTab === value ? "bg-slate-950 text-white" : "border border bg-card text-slate-600"}`}
               >
                 <Icon className="h-4 w-4" />
                 {label}
@@ -732,25 +732,25 @@ export default function AdminUserDetailsPage() {
 
         {walletTab === "invoices" && (
           <div className="space-y-5">
-            <div className="grid grid-cols-1 gap-3 rounded-2xl bg-slate-50 p-4 lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 rounded-2xl bg-muted p-4 lg:grid-cols-5">
               <input
                 type="number"
                 min="0"
                 value={invoiceForm.amount}
                 onChange={(event) => setInvoiceForm((current) => ({ ...current, amount: event.target.value }))}
                 placeholder={isRtl ? "المبلغ" : "Amount"}
-                className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none"
+                className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none"
               />
               <input
                 value={invoiceForm.description}
                 onChange={(event) => setInvoiceForm((current) => ({ ...current, description: event.target.value }))}
                 placeholder={isRtl ? "وصف الفاتورة" : "Description"}
-                className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none lg:col-span-2"
+                className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none lg:col-span-2"
               />
               <select
                 value={invoiceForm.status}
                 onChange={(event) => setInvoiceForm((current) => ({ ...current, status: event.target.value }))}
-                className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none"
+                className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none"
               >
                 <option value="draft">{isRtl ? "مسودة" : "Draft"}</option>
                 <option value="unpaid">{isRtl ? "غير مدفوعة" : "Unpaid"}</option>
@@ -765,9 +765,9 @@ export default function AdminUserDetailsPage() {
                 value={invoiceForm.documentUrl}
                 onChange={(event) => setInvoiceForm((current) => ({ ...current, documentUrl: event.target.value }))}
                 placeholder={isRtl ? "رابط مستند الفاتورة" : "Invoice document URL"}
-                className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none lg:col-span-3"
+                className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none lg:col-span-3"
               />
-              <label className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[10px] font-black uppercase tracking-widest text-slate-600">
+              <label className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border bg-card px-4 text-[10px] font-black uppercase tracking-widest text-slate-600">
                 <Upload className="h-4 w-4" />
                 {uploadingDocument ? (isRtl ? "جاري الرفع" : "Uploading") : (isRtl ? "رفع ملف" : "Upload")}
                 <input
@@ -784,7 +784,7 @@ export default function AdminUserDetailsPage() {
                 />
               </label>
               {editingInvoiceId && (
-                <button onClick={resetInvoiceForm} className="h-11 rounded-xl border border-slate-200 bg-white px-4 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                <button onClick={resetInvoiceForm} className="h-11 rounded-xl border border bg-card px-4 text-[10px] font-black uppercase tracking-widest text-slate-600">
                   {isRtl ? "إلغاء التعديل" : "Cancel edit"}
                 </button>
               )}
@@ -798,7 +798,7 @@ export default function AdminUserDetailsPage() {
                     <p className="mt-1 text-xs font-bold text-slate-400">{formatDate(invoice.createdAt, locale)} · {invoice.status || "unpaid"}</p>
                   </div>
                   <span className="font-black text-slate-950">{Number(invoice.total || invoice.amount || 0).toLocaleString(locale)}</span>
-                  <button disabled={saving} onClick={() => editInvoice(invoice)} className="h-9 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                  <button disabled={saving} onClick={() => editInvoice(invoice)} className="h-9 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
                     {isRtl ? "تعديل" : "Edit"}
                   </button>
                   <button disabled={saving} onClick={() => deleteInvoice(invoice.id)} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-red-50 px-3 text-[10px] font-black uppercase tracking-widest text-red-600">
@@ -826,14 +826,14 @@ export default function AdminUserDetailsPage() {
                     <p className="font-black text-slate-950">{Number(commission.finalCommissionAmount || commission.commissionAmount || 0).toLocaleString(locale)}</p>
                   </div>
                   <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
-                    <select value={draft.status} onChange={(event) => updateCommissionDraft(commission, "status", event.target.value)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none">
+                    <select value={draft.status} onChange={(event) => updateCommissionDraft(commission, "status", event.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none">
                       {["draft", "pending", "under_review", "approved", "rejected", "paid", "cancelled"].map((status) => <option key={status} value={status}>{status}</option>)}
                     </select>
-                    <input type="number" min="0" value={draft.finalCommissionAmount} onChange={(event) => updateCommissionDraft(commission, "finalCommissionAmount", event.target.value)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none" />
-                    <input value={draft.notes} onChange={(event) => updateCommissionDraft(commission, "notes", event.target.value)} placeholder={isRtl ? "ملاحظات" : "Notes"} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none" />
+                    <input type="number" min="0" value={draft.finalCommissionAmount} onChange={(event) => updateCommissionDraft(commission, "finalCommissionAmount", event.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none" />
+                    <input value={draft.notes} onChange={(event) => updateCommissionDraft(commission, "notes", event.target.value)} placeholder={isRtl ? "ملاحظات" : "Notes"} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold outline-none" />
                     <div className="flex gap-2">
-                      <input value={draft.attachmentUrl} onChange={(event) => updateCommissionDraft(commission, "attachmentUrl", event.target.value)} placeholder={isRtl ? "رابط مستند" : "Attachment URL"} className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none" />
-                      <label className="inline-flex h-11 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-slate-600">
+                      <input value={draft.attachmentUrl} onChange={(event) => updateCommissionDraft(commission, "attachmentUrl", event.target.value)} placeholder={isRtl ? "رابط مستند" : "Attachment URL"} className="h-11 min-w-0 flex-1 rounded-xl border border bg-card px-3 text-sm font-bold outline-none" />
+                      <label className="inline-flex h-11 cursor-pointer items-center justify-center rounded-xl border border bg-card px-3 text-slate-600">
                         <Upload className="h-4 w-4" />
                         <input
                           type="file"
@@ -875,7 +875,7 @@ export default function AdminUserDetailsPage() {
                   <p className="mt-1 text-xs font-bold text-slate-400">{file.type} · {formatDate(file.date, locale)}</p>
                 </div>
                 {file.url && (
-                  <a href={file.url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                  <a href={file.url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
                     <ExternalLink className="h-4 w-4" />
                     {isRtl ? "فتح" : "Open"}
                   </a>
@@ -898,7 +898,7 @@ export default function AdminUserDetailsPage() {
                   <p className="font-black text-slate-800">{investment.serviceType || investment.category || investment.id}</p>
                   <p className="mt-1 text-xs font-bold text-slate-400">{investment.status || "—"} · {formatDate(investment.createdAt, locale)}</p>
                 </div>
-                <Link href={`/admin/service-requests?requestId=${investment.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                <Link href={`/admin/service-requests?requestId=${investment.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
                   <ExternalLink className="h-4 w-4" />
                   {isRtl ? "إدارة الطلب" : "Manage"}
                 </Link>
@@ -909,7 +909,7 @@ export default function AdminUserDetailsPage() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <Calendar className="h-5 w-5" />
           {isRtl ? "الطلبات والحجوزات" : "Requests & bookings"}
@@ -958,7 +958,7 @@ export default function AdminUserDetailsPage() {
               <select
                 value={subModalConfig.type}
                 onChange={(e) => setSubModalConfig(prev => ({ ...prev, type: e.target.value }))}
-                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all cursor-pointer"
+                className="w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all cursor-pointer"
               >
                 <option value="yearly">{isRtl ? "سنوي (1 سنة)" : "Yearly (1 Year)"}</option>
                 <option value="monthly">{isRtl ? "شهري (1 شهر)" : "Monthly (1 Month)"}</option>
@@ -982,7 +982,7 @@ export default function AdminUserDetailsPage() {
                     const val = parseInt(e.target.value) || 1;
                     setSubModalConfig(prev => ({ ...prev, customMonths: Math.max(1, val) }));
                   }}
-                  className="w-full h-11 bg-slate-50 border border-slate-100 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                  className="w-full h-11 bg-muted border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
                 />
               </div>
             )}
@@ -996,7 +996,7 @@ export default function AdminUserDetailsPage() {
                 value={subModalConfig.notes}
                 onChange={(e) => setSubModalConfig(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder={isRtl ? "سبب التفعيل/التمديد..." : "Reason for activation/extension..."}
-                className="w-full h-20 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
+                className="w-full h-20 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
               />
             </div>
           </div>
@@ -1006,7 +1006,7 @@ export default function AdminUserDetailsPage() {
               type="button"
               variant="outline"
               onClick={() => setShowSubModal(false)}
-              className="h-11 rounded-2xl font-bold border-slate-200 px-5"
+              className="h-11 rounded-2xl font-bold border px-5"
             >
               {isRtl ? "إلغاء" : "Cancel"}
             </Button>
@@ -1045,7 +1045,7 @@ export default function AdminUserDetailsPage() {
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 placeholder={isRtl ? "اكتب سبب إلغاء الاشتراك هنا..." : "Type the cancellation reason here..."}
-                className="w-full h-24 bg-slate-50 border border-slate-100 focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
+                className="w-full h-24 bg-muted border border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-medium outline-none transition-all resize-none"
               />
             </div>
           </div>
@@ -1055,7 +1055,7 @@ export default function AdminUserDetailsPage() {
               type="button"
               variant="outline"
               onClick={() => setShowCancelModal(false)}
-              className="h-11 rounded-2xl font-bold border-slate-200 px-5"
+              className="h-11 rounded-2xl font-bold border px-5"
             >
               {isRtl ? "تراجع" : "Go Back"}
             </Button>

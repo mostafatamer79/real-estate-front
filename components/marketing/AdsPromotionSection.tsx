@@ -215,7 +215,7 @@ export default function AdsPromotionSection() {
                                 transition={{ delay: i * 0.1 }}
                                 whileHover={{ y: -5, scale: 1.01 }}
                                 onClick={item.action}
-                                className="group bg-white border border-slate-100 rounded-[2.5rem] p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-xl shadow-slate-200/40 relative overflow-hidden"
+                                className="group bg-card border border rounded-[1rem] p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-xl shadow-stone-400 relative overflow-hidden"
                             >
                                 <div className="flex justify-between items-start mb-6">
                                     <div className={`w-14 h-14 rounded-2xl ${item.color} text-white flex items-center justify-center shadow-lg`}>
@@ -237,9 +237,9 @@ export default function AdsPromotionSection() {
                     </div>
 
                     {/* Quick Stats Banner */}
-                    <div className="bg-slate-900 rounded-[3rem] p-10 flex flex-wrap gap-12 items-center justify-between text-white shadow-2xl shadow-blue-900/20">
+                    <div className="bg-slate-900 rounded-[1.25rem] p-10 flex flex-wrap gap-12 items-center justify-between text-white shadow-2xl shadow-blue-900/20">
                         <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-2xl bg-card/10 flex items-center justify-center">
                                 <Mail className="w-8 h-8 text-blue-400" />
                             </div>
                             <div>
@@ -270,29 +270,29 @@ export default function AdsPromotionSection() {
                     className="space-y-8"
                 >
                     <div className="flex justify-between items-center">
-                        <Button variant="ghost" onClick={() => setView('overview')} className="h-12 px-6 rounded-2xl font-black text-xs gap-3 hover:bg-white border border-transparent hover:border-slate-200 transition-all">
+                        <Button variant="ghost" onClick={() => setView('overview')} className="h-12 px-6 rounded-2xl font-black text-xs gap-3 hover:bg-card border border-transparent hover:border transition-all">
                             <ArrowLeft className="w-4 h-4" />
                             {t('marketing.btn.prev')}
                         </Button>
                         <Button 
                             variant="outline" 
                             onClick={() => setRefreshTrigger(prev => prev + 1)}
-                            className="h-12 px-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] border-slate-200 hover:bg-white hover:border-blue-400 hover:text-blue-600 transition-all gap-3"
+                            className="h-12 px-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] border hover:bg-card hover:border-blue-400 hover:text-blue-600 transition-all gap-3"
                         >
                             <RefreshCw className="w-4 h-4" />
                             {t('marketing.btn.refresh')}
                         </Button>
                     </div>
 
-                    <div className="bg-white rounded-[3rem] overflow-hidden border border-slate-100 shadow-2xl shadow-slate-200/60">
-                        <div className="p-10 border-b border-slate-50 bg-slate-50/30">
+                    <div className="bg-card rounded-[1.25rem] overflow-hidden border border shadow-2xl shadow-stone-400">
+                        <div className="p-10 border-b border bg-muted/30">
                             <h4 className="text-2xl font-black text-slate-900">{t('marketing.history.title')}</h4>
                             <p className="text-slate-400 text-xs font-bold mt-1">{t('marketing.ads.performance')}</p>
                         </div>
                         <div className="overflow-x-auto">
                             <Table>
-                                <TableHeader className="bg-slate-50/50">
-                                    <TableRow className="hover:bg-transparent border-slate-100">
+                                <TableHeader className="bg-muted/50">
+                                    <TableRow className="hover:bg-transparent border">
                                         <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.title')}</TableHead>
                                         <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.photo.type')}</TableHead>
                                         <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('orders.rooms')}</TableHead>
@@ -305,7 +305,7 @@ export default function AdsPromotionSection() {
                                         <TableRow>
                                             <TableCell colSpan={5} className='text-center py-32'>
                                                 <div className="flex flex-col items-center gap-6 opacity-20">
-                                                    <div className="p-8 bg-slate-100 rounded-full">
+                                                    <div className="p-8 bg-muted rounded-full">
                                                         <Mail className="w-12 h-12 text-slate-400" />
                                                     </div>
                                                     <p className="font-black text-sm uppercase tracking-[0.3em] text-slate-500">{t('marketing.noRequests')}</p>
@@ -313,7 +313,7 @@ export default function AdsPromotionSection() {
                                             </TableCell>
                                         </TableRow>
                                     ) : campaigns.map((camp, i) => (
-                                        <TableRow key={camp.id} className="hover:bg-blue-50/20 transition-all group border-slate-50 text-center">
+                                        <TableRow key={camp.id} className="hover:bg-blue-50/20 transition-all group border text-center">
                                             <TableCell className="px-10 py-8">
                                                 <div className="text-right">
                                                     <p className="font-black text-slate-900 text-sm mb-0.5">{camp.subject || 'Weekly Newsletter'}</p>
@@ -343,7 +343,7 @@ export default function AdsPromotionSection() {
                                             </TableCell>
                                             <TableCell className="px-10 py-8">
                                                 <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border
-                                                    ${camp.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                                                    ${camp.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-muted text-slate-400 border'}`}>
                                                     {camp.isActive ? t('marketing.status.active') : t('marketing.status.cancelled')}
                                                 </span>
                                             </TableCell>
@@ -371,7 +371,7 @@ export default function AdsPromotionSection() {
 
             {/* Email Wizard Modal */}
             <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
-                <DialogContent className="max-w-2xl bg-white rounded-[3rem] p-0 overflow-hidden border-none shadow-3xl">
+                <DialogContent className="max-w-2xl bg-card rounded-[1.25rem] p-0 overflow-hidden border-none shadow-3xl">
                     <div className="bg-slate-900 p-10 text-white">
                         <div className="flex justify-between items-center mb-8">
                             <span className="px-4 py-2 bg-blue-500 rounded-xl text-[10px] font-black uppercase tracking-widest">
@@ -379,7 +379,7 @@ export default function AdsPromotionSection() {
                             </span>
                             <div className="flex gap-2">
                                 {[1, 2, 3, 4].map(s => (
-                                    <div key={s} className={`h-1.5 w-8 rounded-full transition-all ${s <= wizardStep ? 'bg-blue-400' : 'bg-white/10'}`} />
+                                    <div key={s} className={`h-1.5 w-8 rounded-full transition-all ${s <= wizardStep ? 'bg-blue-400' : 'bg-card/10'}`} />
                                 ))}
                             </div>
                         </div>
@@ -414,7 +414,7 @@ export default function AdsPromotionSection() {
                                                     type="button"
                                                     onClick={() => setEmailWizardData({...emailWizardData, category: cat.id})}
                                                     className={`p-6 rounded-3xl border-2 transition-all text-right flex flex-col gap-2 ${
-                                                        emailWizardData.category === cat.id ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'
+                                                        emailWizardData.category === cat.id ? 'border-blue-600 bg-blue-50/50' : 'border hover:border'
                                                     }`}
                                                 >
                                                     <span className="font-black text-slate-900">{language === 'ar' ? cat.labelAr : cat.labelEn}</span>
@@ -423,7 +423,7 @@ export default function AdsPromotionSection() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-6 pt-4 border-t border-slate-50">
+                                    <div className="space-y-6 pt-4 border-t border">
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.linkResource')}</label>
                                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                                             {[
@@ -438,7 +438,7 @@ export default function AdsPromotionSection() {
                                                     type="button"
                                                     onClick={() => setEmailWizardData({...emailWizardData, linkedResourceType: type.id, linkedResourceId: ''})}
                                                     className={`py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                                                        emailWizardData.linkedResourceType === type.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-400 border-slate-100'
+                                                        emailWizardData.linkedResourceType === type.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-card text-slate-400 border'
                                                     }`}
                                                 >
                                                     {type.label}
@@ -453,10 +453,10 @@ export default function AdsPromotionSection() {
                                                     value={emailWizardData.linkedResourceId} 
                                                     onValueChange={(val) => setEmailWizardData({...emailWizardData, linkedResourceId: val})}
                                                 >
-                                                    <SelectTrigger className="h-12 rounded-xl border-slate-100 font-bold bg-slate-50 text-right">
+                                                    <SelectTrigger className="h-12 rounded-xl border font-bold bg-muted text-right">
                                                         <SelectValue placeholder={t('marketing.wizard.selectResource')} />
                                                     </SelectTrigger>
-                                                    <SelectContent className="rounded-xl border-slate-100 max-h-[200px]">
+                                                    <SelectContent className="rounded-xl border max-h-[200px]">
                                                         {emailWizardData.linkedResourceType === 'order' && resources.orders.map(o => (
                                                             <SelectItem key={o.id} value={o.id}>{o.description || `Order #${o.id.slice(0,8)}`}</SelectItem>
                                                         ))}
@@ -478,16 +478,16 @@ export default function AdsPromotionSection() {
                                         )}
                                     </div>
 
-                                    <div className="space-y-4 pt-4 border-t border-slate-50">
+                                    <div className="space-y-4 pt-4 border-t border">
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.audience')}</label>
                                         <Select 
                                             value={emailWizardData.targetRole} 
                                             onValueChange={(val) => setEmailWizardData({...emailWizardData, targetRole: val})}
                                         >
-                                            <SelectTrigger className="h-14 rounded-2xl border-slate-100 font-bold bg-slate-50 text-right">
+                                            <SelectTrigger className="h-14 rounded-2xl border font-bold bg-muted text-right">
                                                 <SelectValue placeholder={language === 'ar' ? 'جميع المستخدمين' : 'All Users'} />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-2xl border-slate-100">
+                                            <SelectContent className="rounded-2xl border">
                                                 <SelectItem value="all">{language === 'ar' ? 'جميع المستخدمين' : 'All Users'}</SelectItem>
                                                 <SelectItem value="user">{language === 'ar' ? 'مستفيد (مستأجر/مشتري)' : 'Beneficiary (User)'}</SelectItem>
                                                 <SelectItem value="broker">{language === 'ar' ? 'وسيط عقاري' : 'Broker'}</SelectItem>
@@ -512,7 +512,7 @@ export default function AdsPromotionSection() {
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.subject')}</label>
                                         <Input 
                                             placeholder={t('marketing.wizard.placeholder.subject')}
-                                            className="h-14 rounded-2xl border-slate-100 font-bold bg-slate-50 text-right"
+                                            className="h-14 rounded-2xl border font-bold bg-muted text-right"
                                             value={emailWizardData.subject}
                                             onChange={(e) => setEmailWizardData({...emailWizardData, subject: e.target.value})}
                                         />
@@ -521,7 +521,7 @@ export default function AdsPromotionSection() {
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.body')}</label>
                                         <Textarea 
                                             placeholder={t('marketing.wizard.placeholder.body')}
-                                            className="min-h-[150px] rounded-[2rem] border-slate-100 font-bold bg-slate-50 p-6 text-right"
+                                            className="min-h-[150px] rounded-[1.25rem] border font-bold bg-muted p-6 text-right"
                                             value={emailWizardData.content}
                                             onChange={(e) => setEmailWizardData({...emailWizardData, content: e.target.value})}
                                         />
@@ -551,7 +551,7 @@ export default function AdsPromotionSection() {
                                                     type="button"
                                                     onClick={() => setEmailWizardData({...emailWizardData, frequency: freq.id})}
                                                     className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center gap-3 ${
-                                                        emailWizardData.frequency === freq.id ? 'border-blue-600 bg-blue-50/50 text-blue-600' : 'border-slate-100 hover:border-slate-200'
+                                                        emailWizardData.frequency === freq.id ? 'border-blue-600 bg-blue-50/50 text-blue-600' : 'border hover:border'
                                                     }`}
                                                 >
                                                     <span className="text-2xl">{freq.icon}</span>
@@ -570,8 +570,8 @@ export default function AdsPromotionSection() {
                                     animate={{ opacity: 1, x: 0 }} 
                                     className="space-y-8"
                                 >
-                                    <div className="p-8 bg-slate-50 rounded-[2.5rem] space-y-6 border border-slate-100 shadow-sm">
-                                        <h4 className="font-black text-xl text-slate-900 border-b border-slate-200 pb-4">{t('marketing.wizard.review.summary')}</h4>
+                                    <div className="p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
+                                        <h4 className="font-black text-xl text-slate-900 border-b border pb-4">{t('marketing.wizard.review.summary')}</h4>
                                         <div className="grid grid-cols-2 gap-x-12 gap-y-6">
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.category')}</p>
@@ -644,7 +644,7 @@ export default function AdsPromotionSection() {
             {view === 'analytics' && selectedCampaign && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                      <div className="flex justify-between items-center">
-                        <Button variant="ghost" onClick={() => setView('history')} className="h-12 px-6 rounded-2xl font-black text-xs gap-3 hover:bg-white border border-transparent hover:border-slate-200 transition-all">
+                        <Button variant="ghost" onClick={() => setView('history')} className="h-12 px-6 rounded-2xl font-black text-xs gap-3 hover:bg-card border border-transparent hover:border transition-all">
                             <ArrowLeft className="w-4 h-4" />
                             {t('marketing.btn.prev')}
                         </Button>
@@ -660,7 +660,7 @@ export default function AdsPromotionSection() {
                             { label: t('marketing.stats.clickRate'), value: '12.1%', trend: '+2.1%', color: 'text-purple-600' },
                             { label: t('marketing.stats.delivery'), value: '99.8%', trend: 'Optimum', color: 'text-blue-400' },
                         ].map((stat, i) => (
-                            <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+                            <div key={i} className="bg-card p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">{stat.label}</p>
                                 <div className="flex items-baseline gap-4">
                                     <span className="text-3xl font-black text-slate-900">{stat.value}</span>
@@ -669,7 +669,7 @@ export default function AdsPromotionSection() {
                             </div>
                         ))}
                     </div>
-                    <div className="bg-white p-12 rounded-[3.5rem] border border-slate-100 shadow-3xl">
+                    <div className="bg-card p-12 rounded-[1rem] border border shadow-3xl">
                         <div className="flex justify-between items-center mb-8">
                             <h4 className="text-xl font-black text-slate-900">{t('marketing.stats.trend')}</h4>
                             <div className="flex gap-4">
@@ -683,7 +683,7 @@ export default function AdsPromotionSection() {
                                 </div>
                             </div>
                         </div>
-                        <div className="h-72 w-full bg-slate-50/50 rounded-3xl flex items-end justify-between p-10 gap-6">
+                        <div className="h-72 w-full bg-muted/50 rounded-3xl flex items-end justify-between p-10 gap-6">
                             {[60, 85, 45, 95, 75, 80, 70].map((h, i) => (
                                 <div key={i} className="flex-1 flex flex-col justify-end gap-1 group h-full">
                                     <div className="flex items-end gap-1 h-full">

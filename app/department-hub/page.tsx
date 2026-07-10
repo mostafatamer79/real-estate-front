@@ -203,7 +203,7 @@ function DepartmentHubContent() {
       {/* Welcome card */}
       <motion.div
         variants={item}
-        className="relative overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-8 shadow-sm"
+        className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-8 shadow-sm"
       >
         <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
@@ -232,7 +232,7 @@ function DepartmentHubContent() {
       <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {(loading ? new Array(4).fill(0) : statCards).map((c: any, idx: number) => {
           if (loading)
-            return <div key={idx} className="bg-white rounded-2xl border border-slate-100 p-6 h-[110px] animate-pulse" />;
+            return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
           const Icon = c.Icon;
           return (
             <motion.div
@@ -240,7 +240,7 @@ function DepartmentHubContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.25 }}
-              className="bg-white rounded-2xl border border-slate-100 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl border border p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
             >
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
@@ -249,7 +249,7 @@ function DepartmentHubContent() {
                   {c.key === "income" ? <SaudiRiyalSymbol className="ml-2 text-slate-400" iconClassName="h-3 w-3" /> : c.unit ? <span className="text-[10px] font-black text-slate-400 ml-2">{c.unit}</span> : null}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800">
+              <div className="w-12 h-12 rounded-2xl bg-muted border border flex items-center justify-center text-slate-800">
                 <Icon className="w-6 h-6" />
               </div>
             </motion.div>
@@ -260,7 +260,7 @@ function DepartmentHubContent() {
       {/* Departments + Quick actions */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Department cards */}
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-6 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-[1rem] border border p-6 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-black text-slate-950">
@@ -291,13 +291,13 @@ function DepartmentHubContent() {
                       href={disabled ? "#" : d.href}
                       onClick={(e) => { if (disabled) e.preventDefault(); }}
                       title={disabled ? d.message || (isRtl ? "قريباً" : "Coming soon") : ""}
-                      className={`relative block rounded-[2.25rem] bg-white shadow-[0_8px_22px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all ${
+                      className={`relative block rounded-[2.25rem] bg-card shadow-[0_8px_22px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all ${
                         disabled ? "opacity-60 cursor-not-allowed" : "hover:shadow-[0_10px_26px_rgba(15,23,42,0.10)]"
                       }`}
                     >
                       <div className="flex items-center justify-between px-6 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-2xl bg-muted flex items-center justify-center">
                             <ChevronLeft className={`w-6 h-6 text-slate-300 ${isRtl ? "" : "rotate-180"}`} />
                           </div>
                           <div className="min-w-0">
@@ -307,7 +307,7 @@ function DepartmentHubContent() {
                             </div>
                           </div>
                         </div>
-                        <div className="w-20 h-20 rounded-[1.75rem] bg-slate-50 shadow-[0_10px_20px_rgba(15,23,42,0.08)] flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-[1.25rem] bg-muted shadow-[0_10px_20px_rgba(15,23,42,0.08)] flex items-center justify-center">
                           {disabled ? <Lock className="w-9 h-9 text-slate-400" /> : <Icon className="w-9 h-9 text-slate-900" />}
                         </div>
                       </div>
@@ -322,7 +322,7 @@ function DepartmentHubContent() {
         {/* Quick actions + Latest requests */}
         <div className="space-y-6">
           {/* Quick actions */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
             <div className="mb-4">
               <h2 className="text-sm font-black text-slate-950">{isRtl ? "روابط سريعة" : "Quick Links"}</h2>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Quick actions</p>
@@ -330,25 +330,25 @@ function DepartmentHubContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Link
                 href="/chat"
-                className="group rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white transition-colors p-4 flex items-center justify-between"
+                className="group rounded-2xl border border bg-muted hover:bg-card transition-colors p-4 flex items-center justify-between"
               >
                 <div>
                   <p className="text-sm font-black text-slate-950">{isRtl ? "المحادثات" : "Chat"}</p>
                   <p className="text-[10px] font-bold text-slate-400 mt-1">{isRtl ? "مراجعة المحادثات" : "Review chats"}</p>
                 </div>
-                <div className="w-11 h-11 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-colors">
+                <div className="w-11 h-11 rounded-2xl bg-card border border flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-colors">
                   <MessageSquare className="w-5 h-5" />
                 </div>
               </Link>
               <Link
                 href="/details"
-                className="group rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white transition-colors p-4 flex items-center justify-between"
+                className="group rounded-2xl border border bg-muted hover:bg-card transition-colors p-4 flex items-center justify-between"
               >
                 <div>
                   <p className="text-sm font-black text-slate-950">{isRtl ? "التفاصيل" : "Details"}</p>
                   <p className="text-[10px] font-bold text-slate-400 mt-1">{isRtl ? "لوحة البيانات" : "Main dashboard"}</p>
                 </div>
-                <div className="w-11 h-11 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-colors">
+                <div className="w-11 h-11 rounded-2xl bg-card border border flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-colors">
                   <LayoutDashboard className="w-5 h-5" />
                 </div>
               </Link>
@@ -356,7 +356,7 @@ function DepartmentHubContent() {
           </div>
 
           {/* Latest requests */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-sm font-black text-slate-950">{isRtl ? "آخر الطلبات" : "Latest Requests"}</h2>
@@ -379,7 +379,7 @@ function DepartmentHubContent() {
             ) : loading ? (
               <div className="space-y-3">
                 {new Array(4).fill(0).map((_, i) => (
-                  <div key={i} className="p-4 rounded-2xl border border-slate-100 bg-slate-50 h-[74px] animate-pulse" />
+                  <div key={i} className="p-4 rounded-2xl border border bg-muted h-[74px] animate-pulse" />
                 ))}
               </div>
             ) : (summary?.latestOrders || []).length === 0 ? (
@@ -391,7 +391,7 @@ function DepartmentHubContent() {
                 {(summary?.latestOrders || []).slice(0, 4).map((o: any) => (
                   <div
                     key={o.id}
-                    className="p-4 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white transition-colors flex items-center justify-between"
+                    className="p-4 rounded-2xl border border bg-muted hover:bg-card transition-colors flex items-center justify-between"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-black text-slate-950 truncate">
@@ -416,7 +416,7 @@ function DepartmentHubContent() {
 
   // ── Main render ───────────────────────────────────────────────────────────
   return (
-    <div className="flex h-screen bg-slate-50" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="flex h-screen bg-muted" dir={isRtl ? "rtl" : "ltr"}>
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -472,15 +472,15 @@ function DepartmentHubContent() {
                 }}
                 className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors duration-150 group border-r-2 ${
                   isActive
-                    ? "bg-white/10 text-white border-white/70"
-                    : "text-white/70 hover:text-white hover:bg-white/5 border-transparent hover:border-white/30"
+                    ? "bg-card/10 text-white border-white/70"
+                    : "text-white/70 hover:text-white hover:bg-card/5 border-transparent hover:border-white/30"
                 }`}
               >
                 <div
                   className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
                     isActive
-                      ? "bg-white text-slate-950 border-white/20"
-                      : "bg-white/5 border-white/10 group-hover:bg-white/10"
+                      ? "bg-card text-slate-950 border-white/20"
+                      : "bg-card/5 border-white/10 group-hover:bg-card/10"
                   }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-white/80"}`} />
@@ -499,7 +499,7 @@ function DepartmentHubContent() {
             onClick={logout}
             className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-white/70 hover:text-white hover:bg-red-500/10 transition-colors border-r-2 border-transparent hover:border-red-300/60 group"
           >
-            <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
+            <div className="w-9 h-9 rounded-lg bg-card/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
               <LogOut className="w-4 h-4 text-white/80 group-hover:rotate-12 transition-transform" />
             </div>
             {isSidebarOpen && (
@@ -514,17 +514,17 @@ function DepartmentHubContent() {
       {/* ── Main area ────────────────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top header */}
-        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 shrink-0">
+        <header className="h-16 bg-card border-b border flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-slate-100 transition-colors"
+              className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-muted transition-colors"
             >
               <Menu className="w-4 h-4 text-slate-400" />
             </button>
-            <div className="h-4 w-px bg-slate-200" />
+            <div className="h-4 w-px bg-muted" />
             <div className="flex items-center gap-2 min-w-0">
-              <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+              <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-muted border border min-w-0">
                 <Building2 className="w-4 h-4 text-slate-700 shrink-0" />
                 <span className="text-[12px] font-black text-slate-900 truncate">
                   {isRtl ? "مركز الإدارات" : "Department Hub"}
@@ -533,7 +533,7 @@ function DepartmentHubContent() {
                   DEPT
                 </span>
               </div>
-              <div className="hidden sm:flex items-center h-9 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black">
+              <div className="hidden sm:flex items-center h-9 px-3 rounded-xl bg-card border border text-slate-700 text-[11px] font-black">
                 {isRtl ? "لوحة التحكم" : "Dashboard"}
               </div>
             </div>
@@ -572,7 +572,7 @@ export default function DepartmentHub() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="flex items-center justify-center min-h-screen bg-muted">
           <Loader2 className="w-8 h-8 animate-spin text-slate-600" />
         </div>
       }

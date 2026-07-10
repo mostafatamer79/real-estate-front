@@ -473,7 +473,7 @@ export default function AdminCustomerServicePage() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Categories */}
           <Card 
-            className="xl:col-span-1 border-slate-200"
+            className="xl:col-span-1 border"
             style={{
               backgroundColor: settings.csCardBg || undefined,
               color: settings.csTextColor || undefined,
@@ -549,7 +549,7 @@ export default function AdminCustomerServicePage() {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-200 space-y-2">
+              <div className="pt-2 border-t border space-y-2">
                 {categories.length === 0 ? (
                   <div className="text-sm font-medium text-slate-500">{isRtl ? "لا يوجد تصنيفات." : "No categories yet."}</div>
                 ) : (
@@ -562,7 +562,7 @@ export default function AdminCustomerServicePage() {
                           className={`rounded-xl border p-3`}
                           style={{
                             borderColor: active ? (settings.csTextColor || '#0f172a') : '#e2e8f0',
-                            backgroundColor: active ? (settings.csBg || '#f8fafc') : '#ffffff',
+                            backgroundColor: active ? (settings.csBg || '#f8fafc') : '#f9fafb',
                           }}
                         >
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -601,7 +601,7 @@ export default function AdminCustomerServicePage() {
                                       {c.nameEn}
                                     </div>
                                   </div>
-                                  <span className="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                                  <span className="text-[10px] font-black text-slate-600 bg-card border border px-2 py-0.5 rounded-full">
                                     #{idx + 1}
                                   </span>
                                 </div>
@@ -672,7 +672,7 @@ export default function AdminCustomerServicePage() {
 
           {/* FAQs */}
           <Card 
-            className="xl:col-span-2 border-slate-200"
+            className="xl:col-span-2 border"
             style={{
               backgroundColor: settings.csCardBg || undefined,
               color: settings.csTextColor || undefined,
@@ -799,11 +799,11 @@ export default function AdminCustomerServicePage() {
                     {selectedFaqs.length === 0 ? (
                       <div className="text-sm font-medium text-slate-500">{t("common.noData") || (isRtl ? "لا يوجد أسئلة في هذا التصنيف." : "No questions in this category.")}</div>
                     ) : (
-                      <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden">
+                      <div className="divide-y divide-slate-200 border border rounded-2xl overflow-hidden">
                         {selectedFaqs.map((q, idx) => (
                           <div
                             key={q.id}
-                            className="p-4 rounded-xl border border-slate-100"
+                            className="p-4 rounded-xl border border"
                             style={{
                               backgroundColor: settings.csBg || undefined,
                               color: settings.csTextColor || undefined,
@@ -843,7 +843,7 @@ export default function AdminCustomerServicePage() {
                                       {q.questionEn}
                                     </div>
                                   </div>
-                                  <span className="shrink-0 text-[10px] font-black text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
+                                  <span className="shrink-0 text-[10px] font-black text-slate-600 bg-muted border border px-2 py-0.5 rounded-full">
                                     #{idx + 1}
                                   </span>
                                 </div>
@@ -927,7 +927,7 @@ export default function AdminCustomerServicePage() {
 
       {tab === "feedback" && (
         <Card 
-          className="border-slate-200"
+          className="border"
           style={{
             backgroundColor: settings.csCardBg || undefined,
             color: settings.csTextColor || undefined,
@@ -944,11 +944,11 @@ export default function AdminCustomerServicePage() {
             {feedback.length === 0 ? (
               <div className="text-sm font-medium text-slate-500">{t("common.noData") || (isRtl ? "لا توجد رسائل." : "No messages yet.")}</div>
             ) : (
-              <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden">
+              <div className="divide-y divide-slate-200 border border rounded-2xl overflow-hidden">
                 {feedback.map((m) => (
                   <div 
                     key={m.id} 
-                    className="p-4 flex flex-col gap-3 rounded-xl border border-slate-100"
+                    className="p-4 flex flex-col gap-3 rounded-xl border border"
                     style={{
                       backgroundColor: settings.csBg || undefined,
                       color: settings.csTextColor || undefined,
@@ -966,7 +966,7 @@ export default function AdminCustomerServicePage() {
                         <div className="flex flex-wrap items-center gap-2 text-xs opacity-75 font-medium">
                           {m.contactMethod === "email" ? `${m.email || ""}` : `${m.phoneNumber || ""}`}
                           {m.email && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-50/60 px-2 py-0.5 text-[10px] font-black text-slate-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-black text-slate-700">
                               <Mail className="h-3 w-3" />
                               {isRtl ? "يرسل بريد مع الرد" : "Email on reply"}
                             </span>
@@ -984,7 +984,7 @@ export default function AdminCustomerServicePage() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="h-9 rounded-xl gap-2 font-bold border-slate-200 text-slate-800 hover:bg-slate-100"
+                            className="h-9 rounded-xl gap-2 font-bold border text-slate-800 hover:bg-muted"
                             onClick={() => handleOpenChat(m.resolvedUser.id)}
                             title={isRtl ? "مراسلة العميل" : "Message Client"}
                           >
@@ -1026,7 +1026,7 @@ export default function AdminCustomerServicePage() {
                       {m.question}
                     </div>
                     {m.adminReply && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50/40 p-4">
+                      <div className="rounded-2xl border border bg-muted/40 p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-700">
                           {isRtl ? "رد الإدارة" : "Admin reply"}
                         </div>
@@ -1042,7 +1042,7 @@ export default function AdminCustomerServicePage() {
                       </div>
                     )}
                     {m.userReply && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50/40 p-4">
+                      <div className="rounded-2xl border border bg-muted/40 p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
                           {isRtl ? "رد العميل" : "Customer reply"}
                         </div>
@@ -1057,14 +1057,14 @@ export default function AdminCustomerServicePage() {
                         {m.userRepliedAt && <div className="mt-2 text-[10px] font-black opacity-45">{new Date(m.userRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
-                    <div className="rounded-2xl border border-slate-100 bg-white/40 p-3">
+                    <div className="rounded-2xl border border bg-card/40 p-3">
                       <Label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-500">
                         {isRtl ? "اكتب رد الإدارة" : "Admin reply"}
                       </Label>
                       <Textarea
                         value={replyDrafts[m.id] ?? ""}
                         onChange={(event) => setReplyDrafts((current) => ({ ...current, [m.id]: event.target.value }))}
-                        className="min-h-24 rounded-xl bg-white text-sm font-bold"
+                        className="min-h-24 rounded-xl bg-card text-sm font-bold"
                         placeholder={isRtl ? "اكتب الرد الذي سيظهر للعميل ويرسل للبريد إن وجد..." : "Write the reply shown to the customer and emailed if available..."}
                       />
                       <div className="mt-3 flex justify-end">
@@ -1088,7 +1088,7 @@ export default function AdminCustomerServicePage() {
       )}
 
       {tab === "opinions" && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
           <AdminOpinionsPage />
         </div>
       )}

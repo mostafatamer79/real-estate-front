@@ -173,13 +173,13 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="space-y-8 animate-pulse">
-        <div className="h-10 w-56 rounded-xl bg-slate-200" />
+        <div className="h-10 w-56 rounded-xl bg-muted" />
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="h-32 rounded-2xl bg-slate-200" />
+            <div key={item} className="h-32 rounded-2xl bg-muted" />
           ))}
         </div>
-        <div className="h-96 rounded-2xl bg-slate-200" />
+        <div className="h-96 rounded-2xl bg-muted" />
       </div>
     );
   }
@@ -204,8 +204,8 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Link href={stat.href} className="block rounded-2xl border border-slate-100 bg-white p-4.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
-              <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+            <Link href={stat.href} className="block rounded-2xl border border bg-card p-4.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
+              <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-950">
                 <stat.icon className="h-4.5 w-4.5" />
               </div>
               <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
         ))}
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-5 shadow-sm">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-base font-black text-slate-950">{isRtl ? "طلبات المنصة" : "Platform requests"}</h2>
@@ -240,15 +240,15 @@ export default function AdminDashboard() {
                 href={bucket.href}
                 className={`group block h-full rounded-xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
                   bucket.value > 0
-                    ? "border-slate-200 bg-slate-950 text-white shadow-sm"
-                    : "border-slate-100 bg-slate-50/60 text-slate-500"
+                    ? "border bg-slate-950 text-white shadow-sm"
+                    : "border bg-muted/60 text-slate-500"
                 }`}
               >
                 <div className="mb-4 flex items-center justify-between gap-4">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bucket.value > 0 ? "bg-white/10 text-white" : "bg-white text-slate-400"}`}>
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bucket.value > 0 ? "bg-card/10 text-white" : "bg-card text-slate-400"}`}>
                     <bucket.icon className="h-4.5 w-4.5" />
                   </div>
-                  <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${bucket.value > 0 ? "bg-white text-slate-950" : "bg-white text-slate-400"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${bucket.value > 0 ? "bg-card text-slate-950" : "bg-card text-slate-400"}`}>
                     {bucket.value > 0 ? (isRtl ? "يحتاج متابعة" : "Needs review") : (isRtl ? "لا يوجد" : "Clear")}
                   </span>
                 </div>
@@ -265,13 +265,13 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-5 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-black text-slate-950">{isRtl ? "النشاطات الأخيرة" : "Recent activities"}</h2>
             <p className="text-[11px] font-bold text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-400">
             <Activity className="h-4.5 w-4.5" />
           </div>
         </div>
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
           <div className="divide-y divide-slate-100">
             {activities.map((activity, index) => (
               <div key={activity.id || index} className="flex items-start gap-3.5 py-3.5">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-slate-500">
                   <Activity className="h-3.5 w-3.5" />
                 </div>
                 <div className="min-w-0 flex-1">

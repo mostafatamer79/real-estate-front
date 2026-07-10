@@ -33,7 +33,7 @@ const itemVariants = {
 function SectionHeader({ title, icon: Icon, colorClass }: { title: string; icon: any; colorClass?: string }) {
   return (
     <motion.div variants={itemVariants} className="flex items-center gap-3 mb-4 mt-8">
-      <div className="p-2.5 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+      <div className="p-2.5 rounded-xl bg-muted text-slate-600 flex items-center justify-center">
         <Icon className="w-5 h-5" />
       </div>
       <h3 className="text-base font-black text-slate-900 tracking-tight">{title}</h3>
@@ -51,7 +51,7 @@ function Paragraph({ children }: { children: React.ReactNode }) {
 
 function List({ items }: { items: string[] }) {
   return (
-    <motion.ul variants={itemVariants} className="space-y-3 mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+    <motion.ul variants={itemVariants} className="space-y-3 mb-6 bg-muted p-5 rounded-2xl border border">
       {items.map((item, idx) => (
         <li key={idx} className="flex items-start gap-3">
           <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
@@ -105,7 +105,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-[2rem] gap-0 outline-none" dir="rtl">
+      <DialogContent className="max-w-4xl p-0 overflow-hidden bg-card border-0 shadow-2xl rounded-[1.25rem] gap-0 outline-none" dir="rtl">
         {/* Header / Tabs */}
         <div className={`bg-slate-900 px-6 pt-6 ${hideTabs ? 'pb-6' : 'pb-0'} flex flex-col items-center relative overflow-hidden shrink-0`}>
           {/* Background pattern */}
@@ -115,7 +115,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
           </div>
 
           <div className={`flex items-center gap-3 relative z-10 ${hideTabs ? '' : 'mb-6'}`}>
-            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
+            <div className="w-12 h-12 rounded-2xl bg-card/10 flex items-center justify-center backdrop-blur-md border border-white/10">
               <Scale className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -139,8 +139,8 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
                     className={cn(
                       "flex items-center gap-2 px-6 py-3 rounded-t-2xl text-sm font-black uppercase tracking-widest transition-all",
                       isActive
-                        ? "bg-white text-slate-900 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
-                        : "bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+                        ? "bg-card text-slate-900 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
+                        : "bg-card/5 text-slate-300 hover:bg-card/10 hover:text-white"
                     )}
                   >
                     <Icon className="w-4 h-4" />
@@ -163,14 +163,14 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
           }}
         >
           {/* Subtle overlay to guarantee readability of text */}
-          <div className="absolute inset-0 bg-white/20 pointer-events-none z-0" />
+          <div className="absolute inset-0 bg-card/20 pointer-events-none z-0" />
           
           {/* Scrollable Content Area */}
           <div className="p-8 pb-10 max-h-[70vh] overflow-y-auto w-full custom-scrollbar relative z-10 bg-transparent">
             <AnimatePresence mode="wait">
               {loading ? (
                 <div className="flex justify-center py-20">
-                  <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+                  <div className="w-8 h-8 border-4 border border-t-slate-900 rounded-full animate-spin"></div>
                 </div>
               ) : currentBlocks.length > 0 ? (
                 <motion.div
@@ -217,7 +217,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div className="p-4 bg-muted border-t border flex justify-end">
           <button
             onClick={onClose}
             className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"

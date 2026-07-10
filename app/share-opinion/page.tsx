@@ -48,11 +48,11 @@ export default function ShareOpinionPage() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
-  const inputClass = "w-full h-14 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-900 px-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none";
+  const inputClass = "w-full h-14 rounded-2xl border border bg-muted focus:bg-card focus:border-slate-900 px-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none";
   const labelClass = "text-[10px] font-black uppercase tracking-widest text-slate-900 px-1";
 
   return (
-    <section className="w-full min-h-screen bg-slate-50 text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-slate-200" dir="rtl">
+    <section className="w-full min-h-screen bg-muted text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-muted" dir="rtl">
       {/* Back nav */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -63,7 +63,7 @@ export default function ShareOpinionPage() {
           onClick={() => router.back()}
           className="group flex items-center gap-3 text-slate-500 hover:text-slate-950 transition-colors text-[10px] font-black uppercase tracking-[0.25em]"
         >
-          <div className="w-8 h-8 rounded-full border border-slate-200 group-hover:border-slate-400 flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-full border border group-hover:border-slate-400 flex items-center justify-center transition-colors">
             <ChevronRight className="w-3.5 h-3.5" />
           </div>
           العودة
@@ -90,7 +90,7 @@ export default function ShareOpinionPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white p-12 rounded-[2.5rem] border border-slate-200 shadow-sm text-center flex flex-col items-center"
+            className="bg-card p-12 rounded-[1rem] border border shadow-sm text-center flex flex-col items-center"
           >
             <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 className="w-10 h-10" />
@@ -103,7 +103,7 @@ export default function ShareOpinionPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative bg-white border border-slate-200 rounded-[2.5rem] p-8 sm:p-12 overflow-hidden shadow-sm"
+            className="relative bg-card border border rounded-[1rem] p-8 sm:p-12 overflow-hidden shadow-sm"
           >
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
@@ -147,7 +147,7 @@ export default function ShareOpinionPage() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="اكتب رسالتك وتفاصيل مقترحك هنا..."
-                  className="w-full min-h-[160px] rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-900 p-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none resize-none"
+                  className="w-full min-h-[160px] rounded-2xl border border bg-muted focus:bg-card focus:border-slate-900 p-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none resize-none"
                 />
               </div>
 

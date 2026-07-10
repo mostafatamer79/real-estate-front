@@ -111,9 +111,9 @@ export default function PaymentsManager() {
             case TransactionStatus.PENDING:
                 return 'bg-yellow-100 text-yellow-800';
             case TransactionStatus.CANCELLED:
-                return 'bg-slate-100 text-gray-800';
+                return 'bg-muted text-gray-800';
             default:
-                return 'bg-slate-100 text-gray-800';
+                return 'bg-muted text-gray-800';
         }
     };
 
@@ -130,7 +130,7 @@ export default function PaymentsManager() {
                 <CardContent>
                     {/* Payment Form */}
                     {showForm && (
-                        <div className="mb-6 p-6 bg-slate-50 rounded-lg border">
+                        <div className="mb-6 p-6 bg-muted rounded-lg border">
                             <h3 className="text-lg font-semibold mb-4">{t('fin.payment.record')}</h3>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,9 +280,7 @@ export default function PaymentsManager() {
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="font-semibold">
-                                                <SaudiRiyalAmount amount={payment.amount} locale={isRTL ? 'ar-SA' : 'en-US'} />
-                                            </TableCell>
+                                      
                                             <TableCell>
                                                 {new Date(payment.transactionDate).toLocaleDateString(
                                                     isRTL ? 'ar-SA' : 'en-US'

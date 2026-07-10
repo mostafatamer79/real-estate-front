@@ -117,8 +117,8 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
     const SpecItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string | number | undefined | null }) => {
         if (value === undefined || value === null || value === '') return null;
         return (
-            <div className="flex items-center gap-3 p-3.5 bg-slate-50/50 rounded-2xl border border-slate-100/50 hover:bg-white hover:shadow-sm transition-all duration-300">
-                <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-600 border border-slate-50">
+            <div className="flex items-center gap-3 p-3.5 bg-muted/50 rounded-2xl border border-/50 hover:bg-card hover:shadow-sm transition-all duration-300">
+                <div className="w-9 h-9 rounded-xl bg-card shadow-sm flex items-center justify-center text-slate-600 border border">
                     <Icon className="w-4.5 h-4.5" />
                 </div>
                 <div>
@@ -131,7 +131,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[750px] max-h-[92vh] rounded-[2.5rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
+            <DialogContent className="sm:max-w-[750px] max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
                 <div className="h-72 w-full bg-slate-950 relative shrink-0">
                     {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (
@@ -153,7 +153,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Close Button Overlay */}
                     <button 
                         onClick={onClose}
-                        className="absolute top-6 left-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+                        className="absolute top-6 left-6 w-10 h-10 rounded-full bg-card/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-card/20 transition-colors z-20"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -164,7 +164,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                             <span className="px-3 py-1 bg-slate-800/80 backdrop-blur-md text-white text-[10px] font-black rounded-lg uppercase tracking-widest border border-slate-700/50">
                                 {activeOffer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                             </span>
-                            <span className="px-3 py-1 bg-white text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg">
+                            <span className="px-3 py-1 bg-card text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg">
                                 {activeOffer.propertyType}
                             </span>
                         </div>
@@ -172,7 +172,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                             {activeOffer.propertyType} {t('offer.in')} {activeOffer.city}
                         </h2>
                         <div className="flex items-center gap-4 text-slate-300">
-                            <p className="text-xs font-bold flex items-center gap-1.5 bg-white/5 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                            <p className="text-xs font-bold flex items-center gap-1.5 bg-card/5 backdrop-blur-sm px-2.5 py-1 rounded-full">
                                 <MapPin className="w-3.5 h-3.5 text-slate-400" />
                                 {activeOffer.city} • {activeOffer.neighborhood}
                             </p>
@@ -192,10 +192,10 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Body Content - Scrollable */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 space-y-10 custom-scrollbar bg-white">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 space-y-10 custom-scrollbar bg-card">
                     {/* Price & Primary Stats */}
                     <div className="flex flex-col sm:flex-row gap-6">
-                        <div className="flex-1 p-6 bg-slate-50 rounded-3xl border border-slate-100 relative group overflow-hidden">
+                        <div className="flex-1 p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Tag className="w-12 h-12 text-slate-900" />
                             </div>
@@ -207,7 +207,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 <span className="text-sm font-black text-slate-400 uppercase tracking-widest"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                         </div>
-                        <div className="flex-1 p-6 bg-slate-50 rounded-3xl border border-slate-100 relative group overflow-hidden">
+                        <div className="flex-1 p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Maximize className="w-12 h-12 text-slate-900" />
                             </div>
@@ -224,9 +224,9 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Specifications Grid */}
                     <section>
                         <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
-                             <div className="h-[1px] flex-1 bg-slate-100" />
+                             <div className="h-[1px] flex-1 bg-muted" />
                              {t('offer.basic')}
-                             <div className="h-[1px] flex-1 bg-slate-100" />
+                             <div className="h-[1px] flex-1 bg-muted" />
                         </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             <SpecItem icon={Calendar} label={t('offer.age')} value={activeOffer.propertyAge} />
@@ -242,9 +242,9 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {(activeOffer.rooms || activeOffer.bathrooms || activeOffer.livingRooms || activeOffer.kitchens) && (
                         <section>
                             <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
-                                <div className="h-[1px] flex-1 bg-slate-100" />
+                                <div className="h-[1px] flex-1 bg-muted" />
                                 {t('offer.facilities')}
-                                <div className="h-[1px] flex-1 bg-slate-100" />
+                                <div className="h-[1px] flex-1 bg-muted" />
                             </h3>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 <SpecItem icon={Home} label={t('offer.rooms')} value={activeOffer.rooms} />
@@ -259,37 +259,37 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {(activeOffer.hasElevator || activeOffer.hasGarage || activeOffer.hasPool || activeOffer.hasRoof || activeOffer.hasMaidRoom) && (
                          <section>
                             <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
-                                <div className="h-[1px] flex-1 bg-slate-100" />
+                                <div className="h-[1px] flex-1 bg-muted" />
                                 {t('offer.features')}
-                                <div className="h-[1px] flex-1 bg-slate-100" />
+                                <div className="h-[1px] flex-1 bg-muted" />
                             </h3>
                             <div className="flex flex-wrap gap-3">
                                 {activeOffer.hasElevator && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
+                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
                                         <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.elevator')}
                                     </div>
                                 )}
                                 {activeOffer.hasGarage && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
+                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
                                         <Car className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.garage')}
                                     </div>
                                 )}
                                 {activeOffer.hasPool && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
+                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
                                         <Waves className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.pool')}
                                     </div>
                                 )}
                                 {activeOffer.hasRoof && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
+                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
                                         <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.roof')}
                                     </div>
                                 )}
                                 {activeOffer.hasMaidRoom && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-600 font-bold text-xs rounded-2xl border border-slate-100 hover:bg-white hover:shadow-sm transition-all duration-300">
+                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
                                         <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.maid')}
                                     </div>
@@ -300,7 +300,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
                     {/* Description */}
                     {activeOffer.additionalNotes && (
-                        <section className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100/50">
+                        <section className="bg-muted/50 p-6 rounded-[1.25rem] border border-/50">
                             <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">{t('marketing.field.description')}</h3>
                             <p className="text-sm text-slate-600 leading-[1.8] font-medium italic">
                                 "{activeOffer.additionalNotes}"
@@ -310,11 +310,11 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Footer Section - Sticky */}
-                <div className="p-6 sm:p-8 bg-white border-t border-slate-100 flex flex-col sm:flex-row gap-4 shrink-0">
+                <div className="p-6 sm:p-8 bg-card border-t border flex flex-col sm:flex-row gap-4 shrink-0">
                     <Button 
                         onClick={handleChat}
                         disabled={isChatLoading || isLoadingDetails}
-                        className="flex-[2] h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-sm tracking-widest uppercase flex items-center justify-center gap-3 shadow-xl shadow-slate-900/10 transition-all active:scale-95 disabled:opacity-70"
+                        className="flex-[2] h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-sm tracking-widest uppercase flex items-center justify-center gap-3 shadow-xl shadow-stone-400/10 transition-all active:scale-95 disabled:opacity-70"
                     >
                         {isChatLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
@@ -326,7 +326,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                         )}
                     </Button>
                     <DialogClose asChild>
-                        <Button variant="outline" className="flex-1 h-14 rounded-2xl border-slate-200 text-slate-400 hover:text-slate-900 hover:bg-slate-50 font-black text-sm tracking-widest uppercase transition-all">
+                        <Button variant="outline" className="flex-1 h-14 rounded-2xl border text-slate-400 hover:text-slate-900 hover:bg-muted font-black text-sm tracking-widest uppercase transition-all">
                              {t('common.close')}
                         </Button>
                     </DialogClose>

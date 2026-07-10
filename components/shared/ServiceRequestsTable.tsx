@@ -216,29 +216,29 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         placeholder={t('admin.trans.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className={`bg-white border border-slate-100 py-3.5 ${language === 'ar' ? 'pr-12 pl-6' : 'pl-12 pr-6'} text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1.5rem]`}
+                        className={`bg-card border border py-3.5 ${language === 'ar' ? 'pr-12 pl-6' : 'pl-12 pr-6'} text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1rem]`}
                     />
                 </div>
                 <button 
                     onClick={fetchRequests}
-                    className="p-3.5 rounded-2xl bg-white border border-slate-100 hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
+                    className="p-3.5 rounded-2xl bg-card border border hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
                 >
                     <Filter className="w-4 h-4" />
                 </button>
             </div>
 
             {/* Requests Table */}
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden min-h-[400px]">
+            <div className="bg-card rounded-[1rem] border border shadow-xl shadow-stone-400 overflow-hidden min-h-[400px]">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <div className="w-12 h-12 rounded-full border-4 border-slate-100 border-t-slate-900 animate-spin" />
+                        <div className="w-12 h-12 rounded-full border-4 border border-t-slate-900 animate-spin" />
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                     </div>
                 ) : filteredRequests.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
                             <thead>
-                                <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <tr className="bg-muted/50 border-b border">
                                     <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
@@ -252,11 +252,11 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         key={req.id}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="group hover:bg-slate-50/50 transition-colors"
+                                        className="group hover:bg-muted/50 transition-colors"
                                     >
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
+                                                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                                     <User className="w-5 h-5" />
                                                 </div>
                                                 <div>
@@ -307,7 +307,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         <td className="px-8 py-6 text-center">
                                             <button 
                                                 onClick={() => openDetails(req)}
-                                                className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
                                             </button>
@@ -319,7 +319,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
-                        <div className="p-8 rounded-[2.5rem] bg-slate-50">
+                        <div className="p-8 rounded-[1rem] bg-muted">
                             <Briefcase className="w-16 h-16 text-slate-200" />
                         </div>
                         <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('common.noData')}</p>
@@ -329,7 +329,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="max-w-2xl bg-white rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <DialogContent className="max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <DialogHeader className="p-8 bg-slate-950 text-white flex flex-row items-center justify-between">
                         <div>
                             <DialogTitle className="text-2xl font-black">{selectedRequest?.serviceType}</DialogTitle>
@@ -347,7 +347,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <User className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.clientName}</span>
@@ -356,7 +356,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الهاتف</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <Phone className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.phone}</span>
@@ -367,7 +367,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الموقع</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <MapPin className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.city}, {selectedRequest.district}</span>
@@ -389,7 +389,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                                 setInvoiceMessage(null); 
                                                                 setInvoicePrice(e.target.value); 
                                                             }}
-                                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900"
+                                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900"
                                                         />
                                                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
                                                     </div>
@@ -440,14 +440,14 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                 </div>
                             </div>
 
-                            <div className="space-y-3 pt-6 border-t border-slate-100">
+                            <div className="space-y-3 pt-6 border-t border">
                                 <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">حالة الطلب</label>
                                         <select
                                             value={statusValue}
                                             onChange={(e) => setStatusValue(e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
                                         >
                                             <option value="pending">قيد الانتظار</option>
                                             <option value="assigned">تم التعيين</option>
@@ -471,7 +471,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                     <button
                                         type="button"
                                         onClick={handleOpenChat}
-                                        className="bg-slate-100 text-slate-700 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center gap-2"
+                                        className="bg-muted text-slate-700 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all flex items-center gap-2"
                                     >
                                         <MessageSquare className="w-4 h-4" />
                                         فتح الشات
@@ -489,13 +489,13 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                             </div>
 
                             {selectedRequest.description && (
-                                <div className="space-y-2 pt-6 border-t border-slate-100">
+                                <div className="space-y-2 pt-6 border-t border">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">التفاصيل</label>
-                                    <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl">{selectedRequest.description}</p>
+                                    <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted p-4 rounded-2xl">{selectedRequest.description}</p>
                                 </div>
                             )}
 
-                             <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                             <div className="pt-6 border-t border flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                                     <Calendar className="w-3.5 h-3.5" />
                                     <span>تاريخ الطلب: {format(new Date(selectedRequest.createdAt), 'dd MMMM yyyy', { locale: ar })}</span>

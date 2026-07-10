@@ -122,15 +122,15 @@ export default function NotificationBell({
 
   const isLight = variant === 'light';
   const panelBaseClass = isLight
-    ? 'bg-white border-slate-200 shadow-2xl'
+    ? 'bg-card border shadow-2xl'
     : 'bg-slate-800 border-gray-700 shadow-xl';
-  const headerBorderClass = isLight ? 'border-slate-100' : 'border-gray-700';
+  const headerBorderClass = isLight ? 'border' : 'border-gray-700';
   const titleClass = isLight ? 'text-slate-950' : 'text-white';
   const actionClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';
   const emptyTextClass = isLight ? 'text-slate-400' : 'text-gray-400';
   const listDividerClass = isLight ? 'divide-slate-100' : 'divide-gray-700';
-  const unreadClass = isLight ? 'bg-slate-50' : 'bg-slate-750/50';
-  const itemHoverClass = isLight ? 'hover:bg-slate-50' : 'hover:bg-slate-750';
+  const unreadClass = isLight ? 'bg-muted' : 'bg-slate-750/50';
+  const itemHoverClass = isLight ? 'hover:bg-muted' : 'hover:bg-slate-750';
   const messageClass = isLight ? 'text-slate-500' : 'text-gray-400';
   const timeClass = isLight ? 'text-slate-400' : 'text-gray-500';
   const markReadClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';

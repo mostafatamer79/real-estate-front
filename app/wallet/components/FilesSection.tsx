@@ -74,16 +74,16 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     }
 
     return (
-        <Card className='bg-white border-0 shadow-lg rounded-[2rem] overflow-hidden'>
+        <Card className='bg-card border-0 shadow-lg rounded-[1.25rem] overflow-hidden'>
             <div className='p-8'>
                 <div className='mb-8'>
                     <h2 className='text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
                     <p className='text-slate-500 font-bold text-sm'>{t('wallet.desc.files')}</p>
                 </div>
 
-                <div className='rounded-2xl border border-slate-100 overflow-hidden'>
+                <div className='rounded-2xl border border overflow-hidden'>
                     <Table>
-                        <TableHeader className='bg-slate-50/50'>
+                        <TableHeader className='bg-muted/50'>
                             <TableRow>
                                 <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
                                 <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.commission.propertyType')}</TableHead>
@@ -93,7 +93,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                         </TableHeader>
                         <TableBody>
                             {files.map((file, index) => (
-                                <TableRow key={index} className='hover:bg-slate-50/50 transition-colors group'>
+                                <TableRow key={index} className='hover:bg-muted/50 transition-colors group'>
                                     <TableCell className='py-4'>
                                         <div className='flex items-center gap-3'>
                                             <div className='p-2 bg-blue-50 text-blue-600 rounded-lg'>
@@ -113,7 +113,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                         </div>
                                     </TableCell>
                                     <TableCell className='text-right py-4'>
-                                        <span className='px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
+                                        <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
                                             {getFileTypeLabel(file)}
                                         </span>
                                     </TableCell>
@@ -122,12 +122,12 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                     </TableCell>
                                     <TableCell className='text-center py-4'>
                                         <div className='flex items-center justify-center gap-2'>
-                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
                                                 onClick={() => handleViewFile(file)}
                                             >
                                                 <Eye className='w-4 h-4' />
                                             </Button>
-                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
                                                 onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
                                             >
                                                 <Download className='w-4 h-4' />

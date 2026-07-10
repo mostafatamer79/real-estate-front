@@ -46,7 +46,7 @@ export default function PurchaseModal({ isOpen, onClose, onConfirm, loading, pro
                     </div>
 
                     <div className="space-y-3">
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                             <span className="text-gray-600">{language === 'ar' ? 'سعر العقار' : 'Property Price'}</span>
                             <span className="font-bold text-lg">{price}</span>
                         </div>

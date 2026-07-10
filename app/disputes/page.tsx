@@ -62,11 +62,11 @@ export default function DisputesPage() {
 
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'completed': return { color: 'text-blue-950 bg-slate-50', ring: 'ring-slate-100', dot: 'bg-slate-900' };
-      case 'inProgress': return { color: 'text-blue-950 bg-slate-100', ring: 'ring-blue-100', dot: 'bg-slate-950' };
-      case 'pending': return { color: 'text-slate-400 bg-slate-50', ring: 'ring-slate-100', dot: 'bg-slate-400' };
-      case 'cancelled': return { color: 'text-slate-400 bg-slate-50', ring: 'ring-slate-100', dot: 'bg-slate-400' };
-      default: return { color: 'text-blue-950 bg-slate-50', ring: 'ring-slate-100', dot: 'bg-slate-900' };
+      case 'completed': return { color: 'text-blue-950 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-900' };
+      case 'inProgress': return { color: 'text-blue-950 bg-muted', ring: 'ring-blue-100', dot: 'bg-slate-950' };
+      case 'pending': return { color: 'text-slate-400 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-400' };
+      case 'cancelled': return { color: 'text-slate-400 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-400' };
+      default: return { color: 'text-blue-950 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-900' };
     }
   };
 
@@ -89,10 +89,10 @@ export default function DisputesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
       {/* Premium Header Container */}
-      <section className="relative overflow-hidden mb-8 md:mb-12 p-6 md:p-12 rounded-b-[2rem] md:rounded-b-[3rem] bg-slate-950 text-white shadow-2xl">
+      <section className="relative overflow-hidden mb-8 md:mb-12 p-6 md:p-12 rounded-b-[1.25rem] md:rounded-b-[1.25rem] bg-slate-950 text-white shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-slate-600 rounded-full blur-[100px]" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
@@ -103,7 +103,7 @@ export default function DisputesPage() {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em]"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-card/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em]"
                       >
                         <ShieldAlert className="w-3 h-3 text-slate-300" />
                         Legal Protection
@@ -126,7 +126,7 @@ export default function DisputesPage() {
                   </div>
 
                   <div className="flex items-center gap-4">
-                      <div className="glass p-6 rounded-[2rem] bg-white/10 border-white/10 text-center min-w-[160px]">
+                      <div className="glass p-6 rounded-[1.25rem] bg-card/10 border-white/10 text-center min-w-[160px]">
                           <p className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-1">قضايا تحت المراجعة</p>
                           <p className="text-3xl font-black tabular-nums">{disputes.filter(d => d.status === 'inProgress').length}</p>
                           <div className="mt-1 text-[9px] font-black uppercase tracking-widest text-white/30">تتطلب تدخل سريع</div>
@@ -139,7 +139,7 @@ export default function DisputesPage() {
       <div className="max-w-7xl mx-auto px-6">
         <Tabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
           <div className="flex justify-center mb-8 w-full">
-            <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-white border border-slate-100 p-1.5 shadow-xl shadow-slate-100/50 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
+            <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
               <TabsTrigger value="disputes" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <Gavel className="w-4 h-4" />
                 {t('disputes.tab.disputes')}
@@ -163,14 +163,14 @@ export default function DisputesPage() {
                     <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors`} />
                     <input
                         placeholder="ابحث عن قضية..."
-                        className="h-12 w-full rounded-xl border border-slate-100 bg-white px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
+                        className="h-12 w-full rounded-xl border border bg-card px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
 
                 <div className="flex gap-2 w-full md:w-auto">
-                  <Button variant="outline" className="flex-1 md:flex-none h-12 px-6 rounded-xl border-slate-100 font-bold text-xs uppercase tracking-widest gap-2 hover:bg-slate-50 transition-all">
+                  <Button variant="outline" className="flex-1 md:flex-none h-12 px-6 rounded-xl border font-bold text-xs uppercase tracking-widest gap-2 hover:bg-muted transition-all">
                     <Filter className="w-4 h-4" />
                     تصفية
                   </Button>
@@ -179,11 +179,11 @@ export default function DisputesPage() {
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[3rem] bg-slate-50/50 animate-pulse" />)}
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[1.25rem] bg-muted/50 animate-pulse" />)}
           </div>
         ) : filteredDisputes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-slate-400 glass rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/30 text-center">
-              <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl mb-8">
+          <div className="flex flex-col items-center justify-center py-32 text-slate-400 glass rounded-[1.25rem] border-2 border-dashed border bg-card/30 text-center">
+              <div className="w-24 h-24 bg-card rounded-3xl flex items-center justify-center shadow-xl mb-8">
                   <Gavel className="w-12 h-12 text-slate-200" />
               </div>
               <p className="text-xl font-black uppercase tracking-widest opacity-40">{t('disputes.empty')}</p>
@@ -199,13 +199,13 @@ export default function DisputesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
                     key={dispute.id}
-                    className="bg-white border border-slate-100 rounded-[2rem] group hover:border-slate-900 transition-all duration-300 overflow-hidden"
+                    className="bg-card border border rounded-[1.25rem] group hover:border-slate-900 transition-all duration-300 overflow-hidden"
                   >
                     <div className="p-8 space-y-6">
                       {/* Card Header */}
                       <div className="flex justify-between items-start">
                         <div className="space-y-3">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${status.color} ${status.ring.replace('ring-', 'border-')}`}>
+                          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${status.color} ${status.ring.replace('ring-', 'border')}`}>
                             <div className={`w-1 h-1 rounded-full ${status.dot} ${dispute.status === 'inProgress' ? 'animate-pulse' : ''}`} />
                             {getStatusLabel(dispute.status)}
                           </div>
@@ -213,14 +213,14 @@ export default function DisputesPage() {
                             {dispute.disputeType}
                           </h3>
                         </div>
-                        <div className="p-3 bg-slate-50 rounded-xl group-hover:rotate-6 transition-transform border border-slate-100">
+                        <div className="p-3 bg-muted rounded-xl group-hover:rotate-6 transition-transform border border">
                           <Gavel className="w-5 h-5 text-slate-400" />
                         </div>
                       </div>
 
                       {/* Details Info */}
-                      <div className="grid grid-cols-1 gap-3 pt-6 border-t border-slate-50">
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                      <div className="grid grid-cols-1 gap-3 pt-6 border-t border">
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted border border">
                           <div className="flex items-center gap-3">
                              <div className="w-9 h-9 rounded-lg bg-slate-950 text-white flex items-center justify-center font-black text-[10px]">A</div>
                             <div>
@@ -229,9 +229,9 @@ export default function DisputesPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted border border">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center font-black text-[10px]">B</div>
+                            <div className="w-9 h-9 rounded-lg bg-muted text-slate-900 flex items-center justify-center font-black text-[10px]">B</div>
                             <div>
                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('disputes.secondParty')}</p>
                                <p className="text-xs font-bold text-blue-950">{typeof dispute.secondParty === 'object' ? (dispute.secondParty as any).name : dispute.secondParty}</p>
@@ -246,7 +246,7 @@ export default function DisputesPage() {
                            <Calendar className="w-3.5 h-3.5" />
                            {new Date(dispute.createdAt).toLocaleDateString('ar-SA')}
                          </div>
-                         <div className="font-mono bg-slate-100 px-3 py-1 rounded-lg">
+                         <div className="font-mono bg-muted px-3 py-1 rounded-lg">
                            #{dispute.disputeNumber}
                          </div>
                       </div>
@@ -274,7 +274,7 @@ export default function DisputesPage() {
       </TabsContent>
 
       <TabsContent value="new_request" className="m-0">
-         <div className="bg-slate-950 rounded-[3rem] border border-slate-800 p-8 md:p-12 shadow-2xl relative overflow-hidden">
+         <div className="bg-slate-950 rounded-[1.25rem] border border-slate-800 p-8 md:p-12 shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 w-64 h-64 bg-slate-800/10 blur-3xl -mr-32 -mt-32 opacity-50" />
            <div className="text-center mb-10 relative z-10">
              <h2 className="text-2xl font-black text-white mb-2">تقديم طلب جديد</h2>

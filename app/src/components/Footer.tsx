@@ -78,7 +78,7 @@ export default function Footer() {
           type="button"
           onClick={scrollToTop}
           aria-label="العودة للأعلى"
-          className="fixed bottom-6 left-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-white hover:text-slate-950"
+          className="fixed bottom-6 left-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950"
         >
           <ArrowUp className="h-5 w-5" />
         </button>

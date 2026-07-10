@@ -50,13 +50,13 @@ const DEPARTMENTS = [
 ];
 
 const DEPT_COLORS: Record<string, string> = {
-  marketing:  'bg-slate-50 text-slate-600 border-slate-100',
-  properties: 'bg-slate-50 text-slate-600 border-slate-100',
-  offers:     'bg-slate-50 text-slate-600 border-slate-100',
-  orders:     'bg-slate-50 text-slate-600 border-slate-100',
-  finance:    'bg-slate-50 text-slate-600 border-slate-100',
-  legal:      'bg-slate-50 text-slate-600 border-slate-100',
-  employees:  'bg-slate-50 text-slate-600 border-slate-100',
+  marketing:  'bg-muted text-slate-600 border',
+  properties: 'bg-muted text-slate-600 border',
+  offers:     'bg-muted text-slate-600 border',
+  orders:     'bg-muted text-slate-600 border',
+  finance:    'bg-muted text-slate-600 border',
+  legal:      'bg-muted text-slate-600 border',
+  employees:  'bg-muted text-slate-600 border',
 };
 
 const getDeptLabel = (dept: string) => DEPARTMENTS.find(d => d.value === dept)?.labelAr ?? dept;
@@ -144,12 +144,12 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   };
 
   const deptLabel = (d: typeof DEPARTMENTS[0]) => language === 'ar' ? d.labelAr : d.labelEn;
-  const fieldCls = (f: string) => `w-full h-11 bg-slate-50 rounded-xl px-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
-  const iconFieldCls = (f: string) => `w-full h-11 bg-slate-50 rounded-xl pr-10 pl-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
+  const fieldCls = (f: string) => `w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
+  const iconFieldCls = (f: string) => `w-full h-11 bg-muted rounded-xl pr-10 pl-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-lg rounded-[1rem] p-8 shadow-2xl relative overflow-hidden">
         <button onClick={onClose} className="absolute left-6 top-6 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -202,7 +202,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الصلاحية</label>
-              <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} className="w-full h-11 bg-slate-50 rounded-xl px-4 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all appearance-none">
+              <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} className="w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all appearance-none">
                 <option value={Role.VIEWER}>{language === 'ar' ? 'مشاهد (Viewer)' : 'Viewer'}</option>
                 <option value={Role.MANGER}>{language === 'ar' ? 'مدير (Manager)' : 'Manager'}</option>
                 <option value={Role.EMPLOYEE}>{language === 'ar' ? 'موظف (Employee)' : 'Employee'}</option>
@@ -232,7 +232,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                 {DEPARTMENTS.map(dept => {
                   const isSelected = form.department.includes(dept.value);
                   return (
-                    <div key={dept.value} className={`flex items-center gap-1 rounded-xl border p-1 transition-all ${isSelected ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-500 border-transparent hover:border-slate-200'}`}>
+                    <div key={dept.value} className={`flex items-center gap-1 rounded-xl border p-1 transition-all ${isSelected ? 'bg-slate-950 text-white border-slate-950' : 'bg-muted text-slate-500 border-transparent hover:border'}`}>
                       <button
                         type="button"
                         onClick={() => {
@@ -253,7 +253,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                           setPreviewOpen(true);
                         }}
                         className={`h-8 w-8 shrink-0 rounded-lg flex items-center justify-center transition-colors ${
-                          isSelected ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-slate-400 hover:text-slate-950'
+                          isSelected ? 'bg-card/10 text-white hover:bg-card/20' : 'bg-card text-slate-400 hover:text-slate-950'
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -271,7 +271,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
 
           {['legal', 'finance', 'marketing'].includes(form.role) && (
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
               <Building2 className="w-5 h-5 text-slate-400" />
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة التلقائية</p>
@@ -568,11 +568,11 @@ export default function UsersPage() {
         <div className="space-y-8 animate-pulse">
             <div className="flex justify-between items-end">
                 <div className="space-y-2">
-                    <div className="h-8 w-48 bg-slate-200 rounded-lg" /><div className="h-4 w-32 bg-slate-100 rounded-lg" />
+                    <div className="h-8 w-48 bg-muted rounded-lg" /><div className="h-4 w-32 bg-muted rounded-lg" />
                 </div>
-                <div className="h-10 w-24 bg-slate-100 rounded-xl" />
+                <div className="h-10 w-24 bg-muted rounded-xl" />
             </div>
-            <div className="h-[600px] bg-slate-200 rounded-[2rem]" />
+            <div className="h-[600px] bg-muted rounded-[1.25rem]" />
         </div>
     );
 
@@ -593,7 +593,7 @@ export default function UsersPage() {
             {/* Header Section */}
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest border border-slate-200">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-slate-500 text-[9px] font-black uppercase tracking-widest border border">
                         <Users className="w-4 h-4" />
                         {t('admin.users.directory')}
                     </div>
@@ -602,7 +602,7 @@ export default function UsersPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="bg-white border border-slate-100 px-4 py-2.5 rounded-2xl shadow-sm">
+                    <div className="bg-card border border px-4 py-2.5 rounded-2xl shadow-sm">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('admin.users.total')}</p>
                         <p className="text-xl font-black text-slate-950 tabular-nums">{users.length}</p>
                     </div>
@@ -612,32 +612,32 @@ export default function UsersPage() {
             </section>
 
             {/* Table Control Bar */}
-            <div className="grid grid-cols-1 gap-3 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm md:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 bg-card p-4 rounded-3xl border border shadow-sm md:grid-cols-5">
                 <div className={`relative w-full group md:col-span-2`}>
                     <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-950 transition-colors`} />
                     <input 
                         type="text"
                         placeholder={t('admin.users.searchPlaceholder')}
-                        className="w-full h-11 bg-slate-50 rounded-2xl px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
+                        className="w-full h-11 bg-muted rounded-2xl px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="h-11 rounded-2xl border border bg-card px-4 text-sm font-bold">
                     <option value="all">كل الأدوار</option>
                     {Object.values(Role).map((role) => <option key={role} value={role}>{t(`admin.trans.role.${role}`) || role}</option>)}
                 </select>
-                <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="h-11 rounded-2xl border border bg-card px-4 text-sm font-bold">
                     <option value="all">كل الإدارات</option>
                     {DEPARTMENTS.map((dept) => <option key={dept.value} value={dept.value}>{language === 'ar' ? dept.labelAr : dept.labelEn}</option>)}
                 </select>
-                <select value={verificationFilter} onChange={(e) => setVerificationFilter(e.target.value)} className="h-11 rounded-2xl border border-slate-100 bg-white px-4 text-sm font-bold">
+                <select value={verificationFilter} onChange={(e) => setVerificationFilter(e.target.value)} className="h-11 rounded-2xl border border bg-card px-4 text-sm font-bold">
                     <option value="all">كل الحالات</option>
                     <option value="verified">موثق</option>
                     <option value="pending">بانتظار التوثيق</option>
                 </select>
                 <div className="flex gap-2 w-full">
-                    <button onClick={() => { setSearchTerm(""); setRoleFilter("all"); setDepartmentFilter("all"); setVerificationFilter("all"); }} className="flex-1 h-11 px-6 rounded-2xl bg-white border border-slate-100 hover:border-slate-950 transition-all font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                    <button onClick={() => { setSearchTerm(""); setRoleFilter("all"); setDepartmentFilter("all"); setVerificationFilter("all"); }} className="flex-1 h-11 px-6 rounded-2xl bg-card border border hover:border-slate-950 transition-all font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
                         <Filter className="w-4 h-4" />
                         مسح
                     </button>
@@ -645,14 +645,14 @@ export default function UsersPage() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
+            <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-sm">
                 <div className="relative group/table">
                     {/* Left scroll button */}
                     {showLeftScroll && (
                         <button
                             type="button"
                             onClick={() => scrollTable('left')}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
                             title={language === 'ar' ? 'تمرير لليسار' : 'Scroll Left'}
                         >
                             <ChevronLeft className="w-5 h-5" />
@@ -664,7 +664,7 @@ export default function UsersPage() {
                         <button
                             type="button"
                             onClick={() => scrollTable('right')}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
                             title={language === 'ar' ? 'تمرير لليمين' : 'Scroll Right'}
                         >
                             <ChevronRight className="w-5 h-5" />
@@ -685,7 +685,7 @@ export default function UsersPage() {
                     >
                     <table className="w-full text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                         <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-50">
+                            <tr className="bg-muted/50 border-b border">
                                 <th className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.user')}</th>
                                 <th className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.contact')}</th>
                                 <th className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.role')}</th>
@@ -710,11 +710,11 @@ export default function UsersPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.05 }}
                                     key={user.id} 
-                                    className="hover:bg-slate-50/50 transition-colors group"
+                                    className="hover:bg-muted/50 transition-colors group"
                                 >
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border-slate-100 flex items-center justify-center text-white font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
+                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border flex items-center justify-center text-white font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
                                                 {user.firstName?.[0]}
                                             </div>
                                             <div>
@@ -741,7 +741,7 @@ export default function UsersPage() {
                                         <div className="flex flex-wrap gap-1">
                                             <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
                                                 user.role === Role.ADMIN ? 'bg-slate-900 text-white' : 
-                                                'bg-slate-100 text-slate-600 border border-slate-200'
+                                                'bg-muted text-slate-600 border border'
                                             }`}>
                                                 {t(`admin.trans.role.${user.role || 'viewer'}`)}
                                             </span>
@@ -751,7 +751,7 @@ export default function UsersPage() {
                                         <div className="flex flex-wrap gap-1">
                                             {user.departments && user.departments.length > 0 ? (
                                                 user.departments.map(dept => (
-                                                    <span key={dept} className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black border ${DEPT_COLORS[dept] ?? 'bg-slate-100 text-slate-600 border-slate-100'}`}>
+                                                    <span key={dept} className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black border ${DEPT_COLORS[dept] ?? 'bg-muted text-slate-600 border'}`}>
                                                         <Building2 className="w-2.5 h-2.5" />
                                                         {getDeptLabel(dept)}
                                                     </span>
@@ -763,12 +763,12 @@ export default function UsersPage() {
                                     </td>
                                     <td className="px-8 py-5 text-center">
                                         {user.isVerified ? (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-slate-50 border border-slate-200">
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-muted border border">
                                                 <div className="w-1 h-1 rounded-full bg-slate-950" />
                                                 {t('admin.users.status.verified')}
                                             </div>
                                         ) : (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 border border-slate-100">
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 bg-muted border border">
                                                 <div className="w-1 h-1 rounded-full bg-slate-300 animate-pulse" />
                                                 {t('admin.users.status.pending')}
                                             </div>
@@ -788,7 +788,7 @@ export default function UsersPage() {
                                                 <button 
                                                     type="button"
                                                     onClick={() => handleVerifyUser(user.id, false)}
-                                                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:text-slate-950 hover:bg-slate-200 transition-all"
+                                                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted text-slate-400 hover:text-slate-950 hover:bg-muted transition-all"
                                                     title="تعليق"
                                                 >
                                                     <XCircle className="w-4 h-4" />
@@ -798,7 +798,7 @@ export default function UsersPage() {
                                             <button
                                                   type="button"
                                                   onClick={() => handleOpenChat(user.id)}
-                                                  className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all"
+                                                  className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-card text-slate-600 hover:bg-muted transition-all"
                                                   title={language === 'ar' ? "مراسلة العميل" : "Message Client"}
                                              >
                                                  <MessageSquare className="w-4 h-4" />
@@ -820,7 +820,7 @@ export default function UsersPage() {
                                             
                                             <Link
                                                  href={`/admin/users/${user.id}`}
-                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
                                                  title="الدخول للملف"
                                              >
                                                  <Eye className="w-4 h-4" />
@@ -839,7 +839,7 @@ export default function UsersPage() {
                                             <button 
                                                  type="button"
                                                  onClick={() => handleEditUser(user)}
-                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
                                                  title="تعديل"
                                              >
                                                  <Edit className="w-4 h-4" />

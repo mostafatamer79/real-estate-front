@@ -235,11 +235,11 @@ export default function Header() {
                     />
                   </Link>
 
-                  <div className="h-6 w-px bg-white/10 mx-2"></div>
+                  <div className="h-6 w-px bg-card/10 mx-2"></div>
 
                   <Link
                     href="/profile"
-                    className="flex items-center gap-2 text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 transition-all"
+                    className="flex items-center gap-2 text-white bg-card/5 hover:bg-card/10 px-4 py-2 rounded-full border border-white/10 transition-all"
                   >
                     <User 
                       className="w-4 h-4" 

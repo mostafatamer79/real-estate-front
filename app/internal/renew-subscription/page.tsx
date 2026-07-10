@@ -110,8 +110,8 @@ export default function RenewSubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[55vh] bg-slate-50 flex items-center justify-center" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="flex items-center gap-3 rounded-3xl border border-slate-100 bg-white px-6 py-5 text-sm font-black text-slate-500 shadow-sm">
+      <div className="min-h-[55vh] bg-muted flex items-center justify-center" dir={isRtl ? "rtl" : "ltr"}>
+        <div className="flex items-center gap-3 rounded-3xl border border bg-card px-6 py-5 text-sm font-black text-slate-500 shadow-sm">
           <Loader2 className="h-5 w-5 animate-spin" />
           {isRtl ? "جاري تحميل بيانات الاشتراك" : "Loading subscription details"}
         </div>
@@ -120,25 +120,25 @@ export default function RenewSubscriptionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-muted px-4 py-6 sm:px-6 lg:px-8" dir={isRtl ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push("/internal")}
-            className="h-11 rounded-2xl border-slate-200 bg-white px-4 text-xs font-black text-slate-600 hover:bg-slate-50"
+            className="h-11 rounded-2xl border bg-card px-4 text-xs font-black text-slate-600 hover:bg-muted"
           >
             <ArrowRight className="h-4 w-4" />
             {isRtl ? "العودة للإدارات" : "Back to internal"}
           </Button>
-          <div className="inline-flex h-10 items-center gap-2 rounded-2xl bg-white px-4 text-[11px] font-black uppercase tracking-widest text-slate-400 shadow-sm ring-1 ring-slate-100">
+          <div className="inline-flex h-10 items-center gap-2 rounded-2xl bg-card px-4 text-[11px] font-black uppercase tracking-widest text-slate-400 shadow-sm ring-1 ring-slate-100">
             <CreditCard className="h-4 w-4" />
             {isRtl ? "إدارة الاشتراك" : "Subscription"}
           </div>
         </div>
 
-        <section className="relative overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <section className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-6 shadow-sm sm:p-8">
           <div className="absolute -top-28 -left-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
           <div className="absolute -bottom-28 -right-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
@@ -168,7 +168,7 @@ export default function RenewSubscriptionPage() {
                   type="button"
                   variant="outline"
                   onClick={() => router.push("/wallet")}
-                  className="h-12 rounded-2xl border-slate-200 bg-white px-6 text-xs font-black text-slate-700 hover:bg-slate-50"
+                  className="h-12 rounded-2xl border bg-card px-6 text-xs font-black text-slate-700 hover:bg-muted"
                 >
                   <Wallet className="h-4 w-4" />
                   {isRtl ? "المحفظة" : "Wallet"}
@@ -176,7 +176,7 @@ export default function RenewSubscriptionPage() {
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] border border-slate-100 bg-slate-50 p-5">
+            <div className="rounded-[1.25rem] border border bg-muted p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -187,13 +187,13 @@ export default function RenewSubscriptionPage() {
                   </p>
                 </div>
                 <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
-                  status?.active ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"
+                  status?.active ? "bg-emerald-100 text-emerald-700" : "bg-muted text-slate-700"
                 }`}>
                   {status?.active ? <CheckCircle2 className="h-7 w-7" /> : <Clock className="h-7 w-7" />}
                 </div>
               </div>
 
-              <div className="mt-5 space-y-3 rounded-2xl bg-white p-4 text-sm font-bold text-slate-600 ring-1 ring-slate-100">
+              <div className="mt-5 space-y-3 rounded-2xl bg-card p-4 text-sm font-bold text-slate-600 ring-1 ring-slate-100">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-slate-400">{isRtl ? "الباقة" : "Package"}</span>
                   <span className="text-slate-900">{currentSub?.managementPackage?.name || (isRtl ? "غير محدد" : "Not set")}</span>
@@ -219,10 +219,10 @@ export default function RenewSubscriptionPage() {
                 key={card.id}
                 type="button"
                 onClick={card.action}
-                className="group rounded-[1.75rem] border border-slate-100 bg-white p-5 text-start shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="group rounded-[1.25rem] border border bg-card p-5 text-start shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="mb-5 flex items-center justify-between gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 ring-1 ring-slate-100 transition-colors group-hover:bg-slate-950 group-hover:text-white">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-slate-900 ring-1 ring-slate-100 transition-colors group-hover:bg-slate-950 group-hover:text-white">
                     <Icon className="h-6 w-6" />
                   </div>
                   <span className="text-[11px] font-black text-slate-400">{card.cta}</span>
@@ -234,10 +234,10 @@ export default function RenewSubscriptionPage() {
           })}
         </section>
 
-        <section className="rounded-[1.75rem] border border-slate-100 bg-white p-5 shadow-sm">
+        <section className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-800 ring-1 ring-slate-100">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-muted text-slate-800 ring-1 ring-slate-100">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
@@ -253,7 +253,7 @@ export default function RenewSubscriptionPage() {
               type="button"
               variant="outline"
               onClick={() => router.push("/subscriptions/new")}
-              className="h-11 rounded-2xl border-slate-200 bg-white px-5 text-xs font-black text-slate-700 hover:bg-slate-50"
+              className="h-11 rounded-2xl border bg-card px-5 text-xs font-black text-slate-700 hover:bg-muted"
             >
               {isRtl ? "فتح صفحة الاشتراكات" : "Open subscriptions"}
             </Button>

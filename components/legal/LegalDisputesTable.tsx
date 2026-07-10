@@ -35,17 +35,17 @@ export function LegalDisputesTable({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'inProgress': return 'bg-slate-50 text-blue-600 border-blue-100';
+      case 'inProgress': return 'bg-muted text-blue-600 border-blue-100';
       case 'pending': return 'bg-yellow-50 text-yellow-600 border-yellow-100';
       case 'cancelled': return 'bg-red-50 text-red-600 border-red-100';
-      default: return 'bg-slate-50 text-gray-600 border-gray-100';
+      default: return 'bg-muted text-gray-600 border';
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Header & Search */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+      <div className="bg-card p-6 rounded-2xl border border shadow-sm">
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
@@ -54,7 +54,7 @@ export function LegalDisputesTable({
               placeholder={t('bm.list.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-slate-50 border-gray-100 text-right pr-9 focus:border-blue-500 focus:bg-white transition-all"
+              className="bg-muted border text-right pr-9 focus:border-blue-500 focus:bg-card transition-all"
             />
           </div>
           {onCreate && (
@@ -70,21 +70,21 @@ export function LegalDisputesTable({
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+      <div className="bg-card rounded-2xl border border overflow-hidden shadow-sm">
         {loading ? (
           <div className="p-8 space-y-4">
             {Array(5).fill(0).map((_, index) => (
-              <div key={index} className="h-12 bg-slate-50 animate-pulse rounded-lg"></div>
+              <div key={index} className="h-12 bg-muted animate-pulse rounded-lg"></div>
             ))}
           </div>
         ) : filteredDisputes.length === 0 ? (
           <div className="text-center py-20 flex flex-col items-center">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <AlertCircle className="w-8 h-8 text-gray-300" />
             </div>
             <p className="text-gray-500 text-lg mb-4">{t('bm.list.empty')}</p>
             {onCreate && (
-              <Button variant="outline" onClick={onCreate} className="border-gray-200 text-gray-600 hover:bg-slate-50">
+              <Button variant="outline" onClick={onCreate} className="border text-gray-600 hover:bg-muted">
                 {t('bm.list.createFirst')}
               </Button>
             )}
@@ -92,7 +92,7 @@ export function LegalDisputesTable({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-right">
-              <thead className="bg-slate-50/50 border-b border-gray-100">
+              <thead className="bg-muted/50 border-b border">
                 <tr>
                   <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.number')}</th>
                   <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.type')}</th>
@@ -108,7 +108,7 @@ export function LegalDisputesTable({
                   const secondPartyName = typeof dispute.secondParty === 'string' ? dispute.secondParty : (dispute.secondParty as any)?.name;
 
                   return (
-                    <tr key={dispute.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={dispute.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-6 py-4">
                         <span className="font-mono text-blue-600 font-medium">{dispute.disputeNumber}</span>
                       </td>
@@ -134,13 +134,13 @@ export function LegalDisputesTable({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => onView(dispute)} className="p-2 hover:bg-white rounded-lg text-blue-600 hover:text-blue-700 hover:shadow-sm border border-transparent hover:border-blue-100 transition-all">
+                          <button onClick={() => onView(dispute)} className="p-2 hover:bg-card rounded-lg text-blue-600 hover:text-blue-700 hover:shadow-sm border border-transparent hover:border-blue-100 transition-all">
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button onClick={() => onEdit(dispute.id)} className="p-2 hover:bg-white rounded-lg text-emerald-600 hover:text-emerald-700 hover:shadow-sm border border-transparent hover:border-emerald-100 transition-all">
+                          <button onClick={() => onEdit(dispute.id)} className="p-2 hover:bg-card rounded-lg text-emerald-600 hover:text-emerald-700 hover:shadow-sm border border-transparent hover:border-emerald-100 transition-all">
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button onClick={() => onDelete(dispute.id)} className="p-2 hover:bg-white rounded-lg text-red-600 hover:text-red-700 hover:shadow-sm border border-transparent hover:border-red-100 transition-all">
+                          <button onClick={() => onDelete(dispute.id)} className="p-2 hover:bg-card rounded-lg text-red-600 hover:text-red-700 hover:shadow-sm border border-transparent hover:border-red-100 transition-all">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>

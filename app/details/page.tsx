@@ -240,7 +240,7 @@ export default function HomePage() {
               <PropertyDistributionChart key="dist" data={propertyTypes} />
             ].map((chart, i) => (
               <motion.div key={i} whileHover={{ y: -4 }}
-                className="relative bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/70 hover:border-slate-700/60 rounded-[2rem] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(99,102,241,0.04)] transition-all duration-300 h-full"
+                className="relative bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/70 hover:border-slate-700/60 rounded-[1.25rem] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(99,102,241,0.04)] transition-all duration-300 h-full"
               >
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-800/50 to-transparent" />
                 {chart}

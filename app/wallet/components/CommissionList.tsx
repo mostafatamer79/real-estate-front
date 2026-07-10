@@ -23,7 +23,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
 
     return (
         <div className='flex-1'>
-            <Card className='bg-white rounded-xl shadow-lg p-6'>
+            <Card className='bg-card rounded-xl shadow-lg p-6'>
                 <CardHeader className='pb-6'>
                     <div className='flex items-center justify-between'>
                         <CardTitle className='text-2xl font-bold text-black text-right'>{t('wallet.commission.title')}</CardTitle>
@@ -36,7 +36,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                     </div>
                 </CardHeader>
                 <div className='overflow-x-auto'>
-                    <Table className='bg-white border border-gray-200 text-black shadow-lg'>
+                    <Table className='bg-card border border text-black shadow-lg'>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className='text-right'>{t('wallet.commission.table.number')}</TableHead>

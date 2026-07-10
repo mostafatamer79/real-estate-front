@@ -459,7 +459,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
   if (!mounted) {
     return (
       <div
-        className={`w-full flex items-center justify-center bg-slate-100 ${className}`}
+        className={`w-full flex items-center justify-center bg-muted ${className}`}
         style={{ height }}
       >
         <div className="text-gray-600">{t('map.loading')}</div>
@@ -476,7 +476,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
         <div className="absolute top-2 left-2 z-[1000] flex flex-col gap-2">
           <button
             onClick={handleResetLocation}
-            className="bg-white hover:bg-slate-50 text-gray-800 px-3 py-2 rounded shadow text-sm flex items-center gap-1"
+            className="bg-card hover:bg-muted text-gray-800 px-3 py-2 rounded shadow text-sm flex items-center gap-1"
             title="إعادة تعيين الموقع"
           >
             <span>🔄</span>
@@ -487,7 +487,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
 
       {/* ✅ Locating Overlay */}
       {isLoadingLocation && (
-        <div className="absolute top-2 right-2 z-[1000] bg-white/90 px-3 py-2 rounded shadow text-sm font-medium text-blue-600 animate-pulse flex items-center gap-2">
+        <div className="absolute top-2 right-2 z-[1000] bg-card/90 px-3 py-2 rounded shadow text-sm font-medium text-blue-600 animate-pulse flex items-center gap-2">
             <span className="animate-spin">⏳</span>
             {t('map.locating')}
         </div>
@@ -495,7 +495,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
 
       {/* ✅ Map Container */}
       <div
-        className={`w-full rounded-lg overflow-hidden shadow-lg border border-gray-200 ${className}`}
+        className={`w-full rounded-lg overflow-hidden shadow-lg border border ${className}`}
         style={{ height }}
       >
         <MapContainer
@@ -530,7 +530,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
                   <p className="text-sm text-gray-600 mb-2">
                     {useCurrentLocation && currentLocation ? t('map.location_success') : markerDescription}
                   </p>
-                  <div className="bg-slate-50 p-1 rounded text-xs font-mono">
+                  <div className="bg-muted p-1 rounded text-xs font-mono">
                     {markerPos[0].toFixed(6)}, {markerPos[1].toFixed(6)}
                   </div>
                 </div>
@@ -549,7 +549,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
                 <div className="min-w-[150px]">
                   <strong className="block mb-1">{place.name}</strong>
                   <div className="flex items-center gap-1 mb-2">
-                    <span className="text-xs bg-slate-100 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-muted px-2 py-0.5 rounded">
                       {place.arabicType}
                     </span>
                     <span className="text-xs text-gray-500">({place.type})</span>
@@ -581,7 +581,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
       {/* ✅ Stats */}
       {places.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          <div className="text-sm bg-slate-50 text-blue-700 px-3 py-1 rounded-full">
+          <div className="text-sm bg-muted text-blue-700 px-3 py-1 rounded-full">
             {places.length} مكان
           </div>
           <div className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-full">

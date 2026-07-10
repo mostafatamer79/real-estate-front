@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useSettings } from "@/context/SettingsContext";
 import ComingSoonInline from "@/components/ComingSoonInline";
+import RequestAdModal from "@/components/modals/RequestAdModal";
 
 interface PropertyInfoCardsProps {
   propertyId?: string;
@@ -26,6 +27,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
   const { t, language } = useLanguage();
   const { settings } = useSettings();
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [isRequestAdModalOpen, setIsRequestAdModalOpen] = useState(false);
 
   const handleCardClick = (cardType: string) => setSelectedCard(cardType);
   const handleCloseModal = () => setSelectedCard(null);
@@ -252,6 +254,13 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                   {t('cards.dealsAds')}
                 </CardTitle>
               </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); setIsRequestAdModalOpen(true); }}
+                className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-colors"
+                title={language === 'ar' ? 'إضافة إعلان جديد' : 'Request New Ad'}
+              >
+                <PlusCircle className="h-5 w-5" />
+              </button>
             </CardHeader>
 
             <CardContent className="relative z-10">
@@ -401,6 +410,15 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
           </div>
         )}
       </AnimatePresence>
+
+      <RequestAdModal
+        isOpen={isRequestAdModalOpen}
+        onClose={() => setIsRequestAdModalOpen(false)}
+        onSuccess={() => {
+          setIsRequestAdModalOpen(false);
+          // Optional: re-fetch or show a success message
+        }}
+      />
     </>
   );
 }

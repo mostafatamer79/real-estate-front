@@ -105,8 +105,8 @@ function StatCard({ label, value, icon: Icon, color }: {
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-50 ${color}`}>
+    <div className="bg-card rounded-2xl border border p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-muted ${color}`}>
         <Icon className="w-6 h-6" />
       </div>
       <div>
@@ -368,11 +368,11 @@ export default function DepartmentDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {(mgrLoading ? new Array(4).fill(0) : filteredCards).map((c: any, idx: number) => {
             if (mgrLoading) {
-              return <div key={idx} className="bg-white rounded-2xl border border-slate-100 p-6 h-[110px] animate-pulse" />;
+              return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
             }
             const Icon = c.icon;
             return (
-              <div key={c.key} className="bg-white rounded-2xl border border-slate-100 p-6 flex items-center justify-between shadow-sm">
+              <div key={c.key} className="bg-card rounded-2xl border border p-6 flex items-center justify-between shadow-sm">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
                   <p className="text-2xl font-black text-slate-950 tabular-nums">
@@ -380,7 +380,7 @@ export default function DepartmentDashboard() {
                     {c.key === 'income' && <span className="text-[10px] font-black text-slate-400 ml-2"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>}
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-800">
+                <div className="w-12 h-12 rounded-2xl bg-muted border border flex items-center justify-center text-slate-800">
                   <Icon className="w-6 h-6" />
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default function DepartmentDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Quick services */}
-          <div className="rounded-[2rem] bg-slate-950 text-white p-6 shadow-xl border border-slate-900">
+          <div className="rounded-[1.25rem] bg-slate-950 text-white p-6 shadow-xl border border-slate-900">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-black uppercase tracking-widest">خدمات سريعة</h2>
             </div>
@@ -404,12 +404,12 @@ export default function DepartmentDashboard() {
                     key={q.id}
                     href={disabled ? '#' : q.href}
                     onClick={(e) => { if (disabled) e.preventDefault(); }}
-                    className={`rounded-2xl border border-white/10 bg-white/5 p-4 flex items-center justify-between gap-4 transition-colors ${
-                      disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                    className={`rounded-2xl border border-white/10 bg-card/5 p-4 flex items-center justify-between gap-4 transition-colors ${
+                      disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-card/10'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-card/10 flex items-center justify-center">
                         <q.icon className="w-5 h-5 text-white" />
                       </div>
                       <div className="min-w-0">
@@ -438,7 +438,7 @@ export default function DepartmentDashboard() {
           </div>
 
           {/* Latest orders */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-black text-slate-950">أحدث الطلبات</h2>
               {mods.orders && moduleStatus('orders') === 'enabled' && (
@@ -458,7 +458,7 @@ export default function DepartmentDashboard() {
             ) : (
               <div className="space-y-3">
                 {latestOrders.map((o) => (
-                  <div key={o.id} className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+                  <div key={o.id} className="p-4 rounded-2xl border border bg-muted flex items-center justify-between">
                     <div className="min-w-0">
                       <p className="text-sm font-black text-slate-950 truncate">{o.propertyType} • {o.city}</p>
                       <p className="text-[10px] font-bold text-slate-400 truncate">{new Date(o.createdAt).toLocaleString('ar-SA')}</p>
@@ -482,11 +482,11 @@ export default function DepartmentDashboard() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} p-8 text-white shadow-xl`}
+        className={`relative overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} p-8 text-white shadow-xl`}
       >
         {/* Decorative circles */}
-        <div className="absolute -top-8 -left-8 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+        <div className="absolute -top-8 -left-8 w-40 h-40 bg-card/10 rounded-full blur-2xl" />
+        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-card/10 rounded-full blur-2xl" />
 
         <div className="relative z-10 flex items-start justify-between">
           <div className="space-y-2">
@@ -498,7 +498,7 @@ export default function DepartmentDashboard() {
               {config.description}
             </p>
           </div>
-          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 bg-card/20 rounded-2xl flex items-center justify-center flex-shrink-0">
             <DeptIcon className="w-8 h-8 text-white" />
           </div>
         </div>
@@ -508,7 +508,7 @@ export default function DepartmentDashboard() {
             <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">الإدارة</p>
             <p className="text-white font-black text-sm mt-0.5">{config.nameAr}</p>
           </div>
-          <div className="h-8 w-px bg-white/20" />
+          <div className="h-8 w-px bg-card/20" />
           <div>
             <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">التاريخ</p>
             <p className="text-white font-black text-sm mt-0.5">
@@ -518,7 +518,7 @@ export default function DepartmentDashboard() {
         </div>
       </motion.div>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 p-5 md:p-6 flex items-center justify-between gap-4">
+      <div className="bg-card rounded-[1.25rem] border border p-5 md:p-6 flex items-center justify-between gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">لوحة الإحصاءات</p>
           <h2 className="text-lg font-black text-slate-950">{config.nameAr}</h2>
@@ -546,16 +546,16 @@ export default function DepartmentDashboard() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="bg-white rounded-[2rem] border border-slate-100 p-6 space-y-4"
+        className="bg-card rounded-[1.25rem] border border p-6 space-y-4"
       >
         <h2 className="text-sm font-black text-slate-950 uppercase tracking-widest">الإجراءات السريعة</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Link
             href={`/internal/${dept}/requests`}
-            className="flex items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group"
+            className="flex items-center justify-between gap-4 p-4 bg-muted rounded-2xl hover:bg-muted transition-colors group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center">
+              <div className="w-10 h-10 bg-card rounded-xl shadow-sm flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-slate-600" />
               </div>
               <div>
@@ -566,9 +566,9 @@ export default function DepartmentDashboard() {
             <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-slate-950 transition-colors" />
           </Link>
 
-          <div className="relative flex items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl opacity-60 cursor-not-allowed">
+          <div className="relative flex items-center justify-between gap-4 p-4 bg-muted rounded-2xl opacity-60 cursor-not-allowed">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center">
+              <div className="w-10 h-10 bg-card rounded-xl shadow-sm flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-slate-400" />
               </div>
               <div>

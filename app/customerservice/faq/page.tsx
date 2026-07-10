@@ -123,7 +123,7 @@ const handleGoBack = () => {
 
   if (!isOpen) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-muted flex items-center justify-center p-6">
         <ComingSoonOverlay sectionName={language === "ar" ? "الأسئلة الشائعة" : "FAQ"} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -131,19 +131,19 @@ const handleGoBack = () => {
 
   return (
     <div
-      className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden"
+      className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden"
       dir={language === "ar" ? "rtl" : "ltr"}
       style={{
         backgroundColor: settings.csBg || undefined,
         fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
       }}
     >
-      <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
+      <section className="bg-card border-b border mb-12 p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
         <div className="max-w-7xl mx-auto relative z-10">
           <button
             type="button"
             onClick={() => handleGoBack()}
-            className="mb-8 inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 text-[11px] font-black text-slate-700 transition-all hover:border-slate-200 hover:bg-white hover:text-slate-950"
+            className="mb-8 inline-flex h-11 items-center gap-2 rounded-2xl border border bg-muted px-4 text-[11px] font-black text-slate-700 transition-all hover:border hover:bg-card hover:text-slate-950"
           >
             {language === "ar" ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             {language === "ar" ? "العودة لخدمة العملاء" : "Back to customer service"}
@@ -171,7 +171,7 @@ const handleGoBack = () => {
             </Button>
           </div>
 
-          <div className="glass p-6 md:p-10 rounded-[3rem] bg-white/60 border-none shadow-2xl shadow-slate-200/50 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
+          <div className="glass p-6 md:p-10 rounded-[1.25rem] bg-card/60 border-none shadow-2xl shadow-stone-400 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
             {faqsError && (
               <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
                 {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}
@@ -181,7 +181,7 @@ const handleGoBack = () => {
               {faqSections.map((section, idx) => {
                 const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
                 return (
-                  <AccordionItem key={idx} value={`section-${idx}`} className="border-none glass bg-white/50 rounded-[2.5rem] px-6 md:px-8 transition-all hover:bg-white" style={{ backgroundColor: settings.csCardBg || undefined }}>
+                  <AccordionItem key={idx} value={`section-${idx}`} className="border-none glass bg-card/50 rounded-[1rem] px-6 md:px-8 transition-all hover:bg-card" style={{ backgroundColor: settings.csCardBg || undefined }}>
                     <AccordionTrigger
                       className="font-black hover:no-underline text-right py-6 group"
                       style={{
@@ -194,7 +194,7 @@ const handleGoBack = () => {
                         <CategoryIcon className="w-4 h-4" />
                         {section.category}
                       </span>
-                      <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                      <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-slate-500 transition-all group-data-[state=open]:rotate-180">
                         <ChevronDown className="h-4 w-4" />
                       </span>
                     </AccordionTrigger>
@@ -204,7 +204,7 @@ const handleGoBack = () => {
                           <AccordionItem
                             key={itemIdx}
                             value={`item-${idx}-${itemIdx}`}
-                            className="border-none glass bg-white/40 rounded-3xl px-6 transition-all hover:bg-white"
+                            className="border-none glass bg-card/40 rounded-3xl px-6 transition-all hover:bg-card"
                             style={{
                               backgroundColor: settings.csBg || undefined,
                               color: item.color || settings.csTextColor || undefined,
@@ -219,7 +219,7 @@ const handleGoBack = () => {
                               }}
                             >
                               <span className="flex-1 text-right">{item.question}</span>
-                              <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-data-[state=open]:rotate-180">
+                              <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-slate-500 transition-all group-data-[state=open]:rotate-180">
                                 <ChevronDown className="h-4 h-4" />
                               </span>
                             </AccordionTrigger>

@@ -77,7 +77,7 @@ import { chatApi } from "@/lib/chat";
 import dynamic from 'next/dynamic';
 const Map = dynamic(() => import('@/app/src/components/Map'), { 
   ssr: false,
-  loading: () => <div className="h-[400px] w-full bg-slate-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
+  loading: () => <div className="h-[400px] w-full bg-muted animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
 });
 import OrderDetailsModal from "@/components/modals/order-details-modal";
 import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
@@ -168,7 +168,7 @@ const getStatusColor = (status: string, t: any, invoiceStatus?: string) => {
     case t('bm.status.processing'):
     case t('bm.status.review'):
     case t('bm.status.doc'):
-      return "bg-slate-100 text-slate-800 border border-slate-200";
+      return "bg-muted text-slate-800 border border";
     case 'completed':
     case t('bm.status.completed'):
     case t('property.condition.renovated'): // repurposed
@@ -177,7 +177,7 @@ const getStatusColor = (status: string, t: any, invoiceStatus?: string) => {
     case t('bm.status.cancelled'):
       return "bg-red-100 text-red-800 border border-red-200";
     default:
-      return "bg-slate-100 text-gray-800 border border-slate-200";
+      return "bg-muted text-gray-800 border border";
   }
 };
 const MeterIcon = ({ className }: { className?: string }) => (
@@ -274,7 +274,7 @@ function filterRequests(all: any[], tab: string) {
 
 function StatCard({ label, value, icon: Icon, color }: any) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+    <div className="bg-card rounded-2xl border border shadow-sm p-5 flex items-center gap-4">
       <div className={`w-12 h-10 rounded-xl flex items-center justify-center ${color}`}>
         <Icon className="w-6 h-6" />
       </div>
@@ -288,10 +288,10 @@ function StatCard({ label, value, icon: Icon, color }: any) {
 
 function RequestRow({ req, language, onOpen, t, getStatusColor, getServiceStatusLabel, actionIcon: ActionIcon = Receipt }: any) {
   return (
-    <tr className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
+    <tr className="border-b border hover:bg-muted/50 transition-colors group">
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
-  <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+  <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center shrink-0">
   <User className="w-3 h-3 text-slate-500" />
 </div>
           <div>
@@ -313,7 +313,7 @@ function RequestRow({ req, language, onOpen, t, getStatusColor, getServiceStatus
       <td className="px-6 py-4 text-center">
         <button
           onClick={() => onOpen(req)}
-          className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+          className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
         >
           <ActionIcon className="w-4 h-4" />
         </button>
@@ -341,16 +341,16 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("admin.service_requests.search_placeholder")}
-            className="w-full bg-white border border-slate-100 py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-slate-900 transition-all"
+            className="w-full bg-card border border py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-slate-900 transition-all"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
+              <tr className="border-b border bg-muted/50">
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.parties')}</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.type')}</th>
                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.status')}</th>
@@ -361,7 +361,7 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
               {isLoading ? (
                 Array(5).fill(0).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={4} className="px-6 py-4 h-16 bg-slate-50/50" />
+                    <td colSpan={4} className="px-6 py-4 h-16 bg-muted/50" />
                   </tr>
                 ))
               ) : filtered.length === 0 ? (
@@ -1677,7 +1677,7 @@ function BuildingManagementContent() {
       case t('bm.status.processing'):
       case t('bm.status.review'):
       case t('bm.status.doc'):
-        return "bg-slate-100 text-slate-800 border border-slate-200";
+        return "bg-muted text-slate-800 border border";
       case 'completed':
       case t('bm.status.completed'):
       case t('property.condition.renovated'): // repurposed
@@ -1686,7 +1686,7 @@ function BuildingManagementContent() {
       case t('bm.status.cancelled'):
         return "bg-red-100 text-red-800 border border-red-200";
       default:
-        return "bg-slate-100 text-gray-800 border border-slate-200";
+        return "bg-muted text-gray-800 border border";
     }
   };
 
@@ -1758,9 +1758,9 @@ function BuildingManagementContent() {
             typeLabel: t('bm.form.newDoc'), 
             descLabel: t('bm.form.descLabel'), 
             icon: FileCheck, 
-            colorClass: "bg-slate-100 text-slate-600",
-            borderColor: "border-slate-200",
-            bgClass: "bg-slate-50"
+            colorClass: "bg-muted text-slate-600",
+            borderColor: "border",
+            bgClass: "bg-muted"
           };
       
         case "new-dispute":
@@ -1771,8 +1771,8 @@ function BuildingManagementContent() {
             descLabel: t('bm.form.descLabel'), 
             icon: AlertCircle, 
             colorClass: "bg-red-100 text-red-600",
-            borderColor: "border-slate-200", // Keep blue for parties as default or make dynamic
-            bgClass: "bg-slate-50"
+            borderColor: "border", // Keep blue for parties as default or make dynamic
+            bgClass: "bg-muted"
           };
       }
     };
@@ -1781,7 +1781,7 @@ function BuildingManagementContent() {
     const Icon = details.icon;
 
     return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
       <div className="flex items-center gap-3 mb-8">
         <div className={`p-2 rounded-lg ${details.colorClass.split(" ")[0]}`}>
           <Icon className={`w-6 h-6 ${details.colorClass.split(" ")[1]}`} />
@@ -1798,9 +1798,9 @@ function BuildingManagementContent() {
           <h2 className="text-base font-semibold text-gray-800 mb-4">{t('bm.form.parties')}</h2>
 
           {/* الطرف الأول */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+          <div className="bg-muted border border rounded-xl p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-2 bg-slate-100 rounded-lg">
+              <div className="p-2 bg-muted rounded-lg">
                 <User className="w-5 h-5 text-slate-600" />
               </div>
               <h4 className="font-medium text-slate-800">{t('bm.form.firstParty')}</h4>
@@ -1915,7 +1915,7 @@ function BuildingManagementContent() {
           </div>
 
           {/* First Party Agent */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+          <div className="bg-muted border border rounded-xl p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <input
                 type="checkbox"
@@ -2229,7 +2229,7 @@ function BuildingManagementContent() {
               <h3 className="text-xs font-medium text-gray-700 mb-2">{t('bm.form.uploadedFiles')}</h3>
               <div className="space-y-2">
                 {uploadedDocuments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-400" />
                       <span className="text-xs text-gray-600">{file.name}</span>
@@ -2293,7 +2293,7 @@ function BuildingManagementContent() {
           <button
             type="button"
             onClick={() => setActiveLegalTab("disputes")}
-            className="px-8 py-3 bg-slate-200 text-gray-700 rounded-lg hover:bg-slate-300 transition-colors"
+            className="px-8 py-3 bg-muted text-gray-700 rounded-lg hover:bg-slate-300 transition-colors"
           >
             {t('common.cancel')}
           </button>
@@ -2369,10 +2369,10 @@ function BuildingManagementContent() {
   // Render Property Management Main Section with Sub-tabs
   const renderPropertyManagement = () => (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-10 border border-slate-50">
+      <div className="bg-card rounded-[1.25rem] shadow-2xl shadow-stone-400 p-10 border border">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 bg-slate-900 rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-slate-200 text-white">
+            <div className="w-16 h-16 bg-slate-900 rounded-[1rem] flex items-center justify-center shadow-xl shadow-stone-400 text-white">
               <Building className="w-8 h-8" />
             </div>
             <div>
@@ -2381,7 +2381,7 @@ function BuildingManagementContent() {
             </div>
           </div>
           
-          <div className="bg-slate-50 p-1.5 rounded-2xl flex flex-wrap gap-1 border border-slate-100/50">
+          <div className="bg-muted p-1.5 rounded-2xl flex flex-wrap gap-1 border border-/50">
             {[
               { id: "portfolio", label: t('pm.tab.portfolio'), icon: Building },
               { id: "tenants", label: t('pm.tenants'), icon: Users },
@@ -2394,8 +2394,8 @@ function BuildingManagementContent() {
                 onClick={() => setActivePropertyTab(tab.id as any)} 
                 className={`px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2 ${
                   activePropertyTab === tab.id 
-                    ? "bg-white text-slate-900 shadow-lg shadow-slate-200/50 scale-105" 
-                    : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
+                    ? "bg-card text-slate-900 shadow-lg shadow-stone-400 scale-105" 
+                    : "text-slate-400 hover:text-slate-600 hover:bg-card/50"
                 }`}
               >
                 <tab.icon className="w-3.5 h-3.5" />
@@ -2407,9 +2407,9 @@ function BuildingManagementContent() {
 
         {/* Selection Banner */}
         {selectedProperty && (
-            <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-6 flex justify-between items-center animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-muted border border p-4 rounded-2xl mb-6 flex justify-between items-center animate-in fade-in slide-in-from-top-4 duration-300">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-slate-600">
+                    <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-sm text-slate-600">
                         <Building className="w-5 h-5" />
                     </div>
                     <div>
@@ -2419,7 +2419,7 @@ function BuildingManagementContent() {
                 </div>
                 <button 
                     onClick={() => setSelectedProperty(null)}
-                    className="px-4 py-2 bg-white text-slate-600 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 transition-all border border-slate-100"
+                    className="px-4 py-2 bg-card text-slate-600 rounded-xl text-xs font-bold shadow-sm hover:bg-muted transition-all border border"
                 >
                     {t('common.clear') || 'Clear Filter'}
                 </button>
@@ -2497,11 +2497,11 @@ function BuildingManagementContent() {
   // Render New Tenant Modal
   const renderNewTenantModal = () => (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all animate-in fade-in" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all animate-in zoom-in-95 duration-300">
+        <div className="bg-card rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all animate-in zoom-in-95 duration-300">
             {/* Header */}
-            <div className={`p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r ${language === 'ar' ? 'from-slate-50 to-transparent' : 'from-transparent to-slate-50'}`}>
+            <div className={`p-6 border-b border flex justify-between items-center bg-gradient-to-r ${language === 'ar' ? 'from-slate-50 to-transparent' : 'from-transparent to-slate-50'}`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-600 rounded-xl flex items-center justify-center shadow-lg shadow-slate-200">
+                    <div className="w-10 h-10 bg-slate-600 rounded-xl flex items-center justify-center shadow-lg shadow-stone-400">
                         <Users className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -2511,7 +2511,7 @@ function BuildingManagementContent() {
                 </div>
                 <button 
                   onClick={() => setShowNewTenantModal(false)} 
-                  className="w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-slate-100 transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-muted transition-all"
                 >
                     <X className="w-6 h-6" />
                 </button>
@@ -2527,7 +2527,7 @@ function BuildingManagementContent() {
                         </Label>
                         <Input 
                             required
-                            className="h-10 bg-slate-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
+                            className="h-10 bg-muted border focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
                             value={newTenantData.fullName}
                             onChange={(e) => setNewTenantData({ ...newTenantData, fullName: e.target.value })}
                             placeholder={t('pm.field.tenantName')}
@@ -2540,7 +2540,7 @@ function BuildingManagementContent() {
                         </Label>
                         <Input 
                             required
-                            className="h-10 bg-slate-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
+                            className="h-10 bg-muted border focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
                             value={newTenantData.idNumber}
                             onChange={(e) => setNewTenantData({ ...newTenantData, idNumber: e.target.value })}
                             placeholder="1XXXXXXXXX"
@@ -2557,7 +2557,7 @@ function BuildingManagementContent() {
                         </Label>
                         <Input 
                             required
-                            className="h-10 bg-slate-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
+                            className="h-10 bg-muted border focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
                             value={newTenantData.phoneNumber}
                             onChange={(e) => setNewTenantData({ ...newTenantData, phoneNumber: e.target.value })}
                             placeholder="05XXXXXXXX"
@@ -2572,7 +2572,7 @@ function BuildingManagementContent() {
                             {t('pm.tenant.employer')}
                         </Label>
                         <Input 
-                            className="h-10 bg-slate-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
+                            className="h-10 bg-muted border focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
                             value={newTenantData.employer}
                             onChange={(e) => setNewTenantData({ ...newTenantData, employer: e.target.value })}
                             placeholder={t('pm.field.employer')}
@@ -2588,7 +2588,7 @@ function BuildingManagementContent() {
                             {t('bm.offer.type')}
                         </Label>
                         <select 
-                            className="w-full h-10 px-4 rounded-xl border border-gray-200 bg-slate-50 text-xs focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all appearance-none cursor-pointer text-start"
+                            className="w-full h-10 px-4 rounded-xl border border bg-muted text-xs focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all appearance-none cursor-pointer text-start"
                             value={newTenantData.type}
                             onChange={(e) => setNewTenantData({ ...newTenantData, type: e.target.value as any })}
                         >
@@ -2604,7 +2604,7 @@ function BuildingManagementContent() {
                             {t('pm.field.paymentDay')}
                         </Label>
                         <select 
-                            className="w-full h-10 px-4 rounded-xl border border-gray-200 bg-slate-50 text-xs focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all appearance-none cursor-pointer text-start"
+                            className="w-full h-10 px-4 rounded-xl border border bg-muted text-xs focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all appearance-none cursor-pointer text-start"
                             value={newTenantData.preferredPaymentDay}
                             onChange={(e) => setNewTenantData({ ...newTenantData, preferredPaymentDay: parseInt(e.target.value) })}
                         >
@@ -2623,7 +2623,7 @@ function BuildingManagementContent() {
                     </Label>
                     <Input 
                         type="email"
-                        className="h-10 bg-slate-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
+                        className="h-10 bg-muted border focus:bg-card focus:ring-2 focus:ring-slate-500/20 transition-all text-sm text-start"
                         value={newTenantData.email}
                         onChange={(e) => setNewTenantData({ ...newTenantData, email: e.target.value })}
                         placeholder="example@mail.com"
@@ -2637,7 +2637,7 @@ function BuildingManagementContent() {
                         <Upload className="w-4 h-4 text-slate-600" />
                         {t('pm.tenant.idUpload')}
                     </Label>
-                    <div className="relative group overflow-hidden bg-slate-50 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-slate-400 transition-all">
+                    <div className="relative group overflow-hidden bg-muted border-2 border-dashed border rounded-xl p-4 hover:border-slate-400 transition-all">
                         <input 
                             type="file" 
                             accept="image/*,application/pdf"
@@ -2646,7 +2646,7 @@ function BuildingManagementContent() {
                         />
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-gray-400 group-hover:text-slate-500 shadow-sm transition-colors">
+                                <div className="w-10 h-10 bg-card rounded-lg flex items-center justify-center text-gray-400 group-hover:text-slate-500 shadow-sm transition-colors">
                                     <FileText className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -2672,14 +2672,14 @@ function BuildingManagementContent() {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="flex-1 h-10 rounded-xl font-semibold border-gray-200 hover:bg-slate-50 transition-colors" 
+                      className="flex-1 h-10 rounded-xl font-semibold border hover:bg-muted transition-colors" 
                       onClick={() => setShowNewTenantModal(false)}
                     >
                         {t('common.cancel')}
                     </Button>
                     <Button 
                       type="submit" 
-                      className="flex-1 h-10 rounded-xl font-semibold bg-slate-600 hover:bg-slate-700 text-white shadow-lg shadow-slate-200 transition-all active:scale-[0.98] disabled:opacity-70" 
+                      className="flex-1 h-10 rounded-xl font-semibold bg-slate-600 hover:bg-slate-700 text-white shadow-lg shadow-stone-400 transition-all active:scale-[0.98] disabled:opacity-70" 
                       disabled={isCreatingTenant}
                     >
                         {isCreatingTenant ? <Loader2 className="animate-spin w-5 h-5 ms-2" /> : null}
@@ -2707,7 +2707,7 @@ function BuildingManagementContent() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="flex justify-between items-center mb-10">
           <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm">
+              <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center border border shadow-sm">
                   <Users className="w-7 h-7 text-slate-900" />
               </div>
               <div>
@@ -2717,7 +2717,7 @@ function BuildingManagementContent() {
           </div>
           <button 
             onClick={() => setShowNewTenantModal(true)}
-            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1"
+            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-stone-400 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1"
           >
             <Plus className="w-4 h-4" />
             {t('pm.tenant.add')}
@@ -2727,31 +2727,31 @@ function BuildingManagementContent() {
         {loadingTenants ? (
           <div className="space-y-6">
              {[1, 2, 3].map(i => (
-               <div key={i} className="h-24 bg-slate-50 rounded-[2rem] animate-pulse border border-slate-100" />
+               <div key={i} className="h-24 bg-muted rounded-[1.25rem] animate-pulse border border" />
              ))}
           </div>
         ) : tenants.filter(tenant => {
             if (!selectedProperty) return true;
             return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
         }).length === 0 ? (
-          <div className="text-center py-28 bg-slate-50/30 rounded-[3rem] border-2 border-dashed border-slate-200">
-            <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-200/50 mx-auto mb-6">
+          <div className="text-center py-28 bg-muted/30 rounded-[1.25rem] border-2 border-dashed border">
+            <div className="w-24 h-24 bg-card rounded-3xl flex items-center justify-center shadow-xl shadow-stone-400 mx-auto mb-6">
                 <Users className="w-10 h-10 text-slate-200" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">{t('pm.list.empty')}</h3>
             <p className="text-slate-500 font-medium text-sm mb-8">{t('pm.tenants.desc')}</p>
             <button 
                 onClick={() => setShowNewTenantModal(true)}
-                className="h-10 px-8 bg-white text-slate-900 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm"
+                className="h-10 px-8 bg-card text-slate-900 border border rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all shadow-sm"
             >
                 {t('pm.tenant.add')}
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-[2.5rem] border border-slate-50 overflow-hidden shadow-2xl shadow-slate-200/30">
+          <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
             <div className="overflow-x-auto">
                 <table className="w-full text-start">
-                    <thead className="bg-slate-50/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
+                    <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                         <tr>
                             <th className="p-6 text-start">{t('pm.field.tenantName')}</th>
                             <th className="p-6 text-start">{t('bm.offer.phone')}</th>
@@ -2766,10 +2766,10 @@ function BuildingManagementContent() {
                               return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
                           })
                           .map(tenant => (
-                            <tr key={tenant.id} className="hover:bg-slate-50/30 transition-all group">
+                            <tr key={tenant.id} className="hover:bg-muted/30 transition-all group">
                                 <td className="p-6">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-slate-200/50 group-hover:scale-110 transition-transform duration-500">
+                                        <div className="w-12 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-stone-400 group-hover:scale-110 transition-transform duration-500">
                                             {tenant.fullName.substring(0, 2)}
                                         </div>
                                         <div>
@@ -2782,8 +2782,8 @@ function BuildingManagementContent() {
                                  <td className="p-6">
                                     <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                                         tenant.type === 'company' 
-                                            ? 'bg-white text-slate-900 border-slate-200 shadow-sm' 
-                                            : 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200/50'
+                                            ? 'bg-card text-slate-900 border shadow-sm' 
+                                            : 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-stone-400'
                                     }`}>
                                         {tenant.type === 'company' ? t('pm.tenant.company') : t('pm.tenant.individual')}
                                     </span>
@@ -2792,13 +2792,13 @@ function BuildingManagementContent() {
                                     <div className="flex gap-2 justify-center opacity-30 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
                                         <button 
                                             onClick={() => { setSelectedTenant(tenant); setShowTenantDetails(true); }}
-                                            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-100 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
+                                            className="w-10 h-10 flex items-center justify-center bg-card border border rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
                                         >
                                             <Eye className="w-5 h-5" />
                                         </button>
                                         <button 
                                             onClick={() => handleDeleteTenant(tenant.id)}
-                                            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-100 rounded-xl text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm"
+                                            className="w-10 h-10 flex items-center justify-center bg-card border border rounded-xl text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm"
                                         >
                                             <Trash2 className="w-5 h-5" />
                                         </button>
@@ -2818,7 +2818,7 @@ function BuildingManagementContent() {
   const renderReports = () => (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           {/* Sub-tabs */}
-          <div className="bg-slate-50 p-1.5 rounded-2xl flex gap-1 border border-slate-100/50 w-fit">
+          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-/50 w-fit">
               {[
                 { id: 'roi', label: t('pm.tab.roi') },
                 { id: 'maintenance', label: t('pm.maintenance.log') }
@@ -2828,8 +2828,8 @@ function BuildingManagementContent() {
                   onClick={() => setActiveReportsSubTab(subTab.id as any)}
                   className={`px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
                     activeReportsSubTab === subTab.id 
-                    ? "bg-white text-slate-900 shadow-lg shadow-slate-200/50" 
-                    : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
+                    ? "bg-card text-slate-900 shadow-lg shadow-stone-400" 
+                    : "text-slate-400 hover:text-slate-600 hover:bg-card/50"
                   }`}
                 >
                   {subTab.label}
@@ -2837,17 +2837,17 @@ function BuildingManagementContent() {
               ))}
           </div>
 
-          <div className="bg-white rounded-[2.5rem] border border-slate-50 overflow-hidden shadow-2xl shadow-slate-200/30">
+          <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
               {activeReportsSubTab === 'roi' ? (
                   <div className="p-10 space-y-10">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                          <div className="bg-slate-50 p-5 rounded-[2rem] border border-slate-100 shadow-sm group hover:-translate-y-1 transition-all">
+                          <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
                                 <p className="text-3xl font-black text-slate-900 tracking-tight">
                                     <SaudiRiyalAmount amount={selectedProperty ? (selectedProperty.purchasePrice || 0) : properties.reduce((acc, p) => acc + (p.purchasePrice || 0), 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
-                          <div className="bg-slate-900 p-5 rounded-[2rem] shadow-xl shadow-slate-200 group hover:-translate-y-1 transition-all">
+                          <div className="bg-slate-900 p-5 rounded-[1.25rem] shadow-xl shadow-stone-400 group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2 opacity-60">{t('pm.roi.annualIncome')}</p>
                                 <p className="text-3xl font-black text-white tracking-tight">
                                     <SaudiRiyalAmount amount={(payments
@@ -2855,7 +2855,7 @@ function BuildingManagementContent() {
                                         .reduce((acc, p) => acc + p.amount, 0))} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
-                          <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm group hover:-translate-y-1 transition-all">
+                          <div className="bg-card p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-red-400 font-black uppercase tracking-widest mb-2">{t('pm.roi.annualExpenses')}</p>
                                 <p className="text-3xl font-black text-red-900 tracking-tight">
                                     <SaudiRiyalAmount amount={0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
@@ -2863,8 +2863,8 @@ function BuildingManagementContent() {
                           </div>
                       </div>
 
-                      <div className="p-20 text-center border-2 border-dashed border-slate-100 rounded-[3rem] bg-slate-50/20">
-                          <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-200/50 mx-auto mb-6">
+                      <div className="p-20 text-center border-2 border-dashed border rounded-[1.25rem] bg-muted/20">
+                          <div className="w-20 h-20 bg-card rounded-3xl flex items-center justify-center shadow-xl shadow-stone-400 mx-auto mb-6">
                               <BarChart3 className="w-10 h-10 text-slate-200" />
                           </div>
                           <h4 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">{t('pm.tab.roi')} {t('common.analysis') || 'Analysis'}</h4>
@@ -2873,14 +2873,14 @@ function BuildingManagementContent() {
                   </div>
               ) : (
                    <div className="p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="p-5 px-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                      <div className="p-5 px-10 border-b border flex justify-between items-center bg-muted/30">
                           <div>
                               <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">{t('pm.maintenance.log')}</h3>
                               <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">{t('common.history') || 'History'}</p>
                           </div>
                           <button 
                             onClick={() => setShowNewMaintenanceModal(true)}
-                            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1"
+                            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-stone-400 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1"
                           >
                               <Plus className="w-4 h-4" />
                               {t('bm.offer.new')}
@@ -2888,7 +2888,7 @@ function BuildingManagementContent() {
                       </div>
                       <div className="overflow-x-auto">
                            <table className="w-full text-start">
-                               <thead className="bg-slate-50/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
+                               <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                                    <tr>
                                        <th className="p-6 text-start">{t('pm.field.status')}</th>
                                        <th className="p-6 text-start">{t('pm.maintenance.faultDesc')}</th>
@@ -2901,7 +2901,7 @@ function BuildingManagementContent() {
                                    {loadingMaintenance ? (
                                        <tr>
                                            <td colSpan={5} className="p-32 text-center">
-                                                <div className="w-16 h-16 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin mx-auto mb-4"></div>
+                                                <div className="w-16 h-16 border-4 border border-t-slate-900 rounded-full animate-spin mx-auto mb-4"></div>
                                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{t('common.loading')}</p>
                                            </td>
                                        </tr>
@@ -2918,12 +2918,12 @@ function BuildingManagementContent() {
                                        maintenanceLogs
                                         .filter(log => !selectedProperty || log.propertyId === selectedProperty.id)
                                         .map(log => (
-                                           <tr key={log.id} className="hover:bg-slate-50/30 transition-all group">
+                                           <tr key={log.id} className="hover:bg-muted/30 transition-all group">
                                                <td className="p-6">
                                                    <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                                                       log.status === 'completed' ? 'bg-white text-green-600 border-green-100 shadow-sm shadow-green-50' :
-                                                       log.status === 'in_progress' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200/50' :
-                                                       'bg-white text-slate-400 border-slate-100 shadow-sm shadow-slate-50'
+                                                       log.status === 'completed' ? 'bg-card text-green-600 border-green-100 shadow-sm shadow-green-50' :
+                                                       log.status === 'in_progress' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-stone-400' :
+                                                       'bg-card text-slate-400 border shadow-sm shadow-slate-50'
                                                    }`}>
                                                        {t(`pm.status.${log.status}`) || log.status}
                                                    </span>
@@ -2933,7 +2933,7 @@ function BuildingManagementContent() {
                                                    <SaudiRiyalAmount amount={log.cost || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-30" />
                                                </td>
                                                <td className="p-6">
-                                                   <div className="flex flex-col px-4 py-2 border border-slate-100 rounded-xl bg-slate-50 group-hover:bg-white group-hover:border-slate-200 transition-all">
+                                                   <div className="flex flex-col px-4 py-2 border border rounded-xl bg-muted group-hover:bg-card group-hover:border transition-all">
                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('pm.maintenance.technician')}</span>
                                                        <span className="text-sm font-black text-slate-900">{log.technicianName || '-'}</span>
                                                    </div>
@@ -2959,7 +2959,7 @@ function BuildingManagementContent() {
   // Render Contracts List (similar to disputes)
   const renderContractsList = () => (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-card p-6 rounded-xl shadow-sm border border">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative mb-6">
@@ -2975,7 +2975,7 @@ function BuildingManagementContent() {
       </div>
 
       <div className="text-center py-12">
-        <div className="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
           <FileText className="w-8 h-8 text-gray-400" />
         </div>
         <h3 className="text-base font-medium text-gray-900 mb-2">{t('bm.form.devStatus')}</h3>
@@ -2986,14 +2986,14 @@ function BuildingManagementContent() {
 
   const renderAllServicesList = () => (
       <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-card p-6 rounded-xl shadow-sm border border">
                <h3 className="text-base font-bold mb-4">{t('bm.requests.all')}</h3>
                <div className="space-y-4">
                    {allServices.length === 0 && !loading.stats ? (
                        <p className="text-center text-gray-500 py-8">{t('bm.list.empty')}</p>
                    ) : (
                        allServices.map((service, idx) => (
-                           <div key={idx} className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg hover:shadow-md transition-shadow bg-slate-50">
+                           <div key={idx} className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg hover:shadow-md transition-shadow bg-muted">
                                <div>
                                    <div className="flex items-center gap-2 mb-1">
                                        <span className="font-bold text-gray-800">{service.type}</span>
@@ -3215,7 +3215,7 @@ function BuildingManagementContent() {
   };
 
   const renderUserManagement = () => (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+    <div className="bg-card p-4 rounded-xl shadow-sm border border">
       <h1 className="text-lg font-bold text-gray-800 mb-4">{t('bm.title.users')}</h1>
       
       <Tabs value={activeUserTab} onValueChange={(v) => setActiveUserTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
@@ -3226,7 +3226,7 @@ function BuildingManagementContent() {
 
         <TabsContent value="new">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-slate-100 rounded-lg">
+            <div className="p-2 bg-muted rounded-lg">
               <Users className="w-6 h-6 text-gray-600" />
             </div>
             <div>
@@ -3238,13 +3238,13 @@ function BuildingManagementContent() {
           <form onSubmit={handleCreateUserSubmit} className="space-y-8">
             
             {/* Classification Section */}
-            <div className="bg-slate-50 p-4 rounded-xl border border-gray-200">
+            <div className="bg-muted p-4 rounded-xl border border">
               <h3 className="text-sm font-semibold text-gray-800 mb-3">{t('bm.users.classification')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-700 mb-1">{t('bm.users.classification')} *</label>
                   <div className="flex gap-3">
-                    <label className={`flex-1 p-2 rounded-lg border-2 cursor-pointer transition-all ${createUserForm.role === 'employee' ? 'border-gray-600 bg-slate-50 text-gray-700' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <label className={`flex-1 p-2 rounded-lg border-2 cursor-pointer transition-all ${createUserForm.role === 'employee' ? 'border-gray-600 bg-muted text-gray-700' : 'border hover:border-gray-300'}`}>
                       <input 
                         type="radio" 
                         name="role" 
@@ -3255,7 +3255,7 @@ function BuildingManagementContent() {
                       />
                       <div className="text-center text-xs font-medium">{t('bm.users.role.employee')}</div>
                     </label>
-                    <label className={`flex-1 p-2 rounded-lg border-2 cursor-pointer transition-all ${createUserForm.role === 'collaborator' ? 'border-gray-600 bg-slate-50 text-gray-700' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <label className={`flex-1 p-2 rounded-lg border-2 cursor-pointer transition-all ${createUserForm.role === 'collaborator' ? 'border-gray-600 bg-muted text-gray-700' : 'border hover:border-gray-300'}`}>
                       <input 
                         type="radio" 
                         name="role" 
@@ -3323,7 +3323,7 @@ function BuildingManagementContent() {
             </div>
 
             {/* Financial Agreement Section */}
-            <div className="bg-slate-50 p-6 rounded-xl border border-gray-200">
+            <div className="bg-muted p-6 rounded-xl border border">
               <h3 className="text-base font-semibold text-gray-800 mb-4">{t('bm.users.financial')}</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3362,7 +3362,7 @@ function BuildingManagementContent() {
             </div>
 
             {/* Permissions Section */}
-            <div className="bg-slate-50 p-6 rounded-xl border border-gray-200">
+            <div className="bg-muted p-6 rounded-xl border border">
                <h3 className="text-base font-semibold text-gray-800 mb-2">{t('bm.users.permissions')}</h3>
                <p className="text-gray-500 text-xs mb-6">{t('bm.users.permissions.desc')}</p>
 
@@ -3375,20 +3375,20 @@ function BuildingManagementContent() {
                     { id: 'properties', label: t('bm.users.perm.properties') },
                     { id: 'legal', label: t('bm.users.perm.legal') }
                   ].map((dept) => (
-                    <div key={dept.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white rounded-lg border border-gray-100">
+                    <div key={dept.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-card rounded-lg border border">
                        <div className="font-medium text-gray-800 mb-2 md:mb-0">{dept.label}</div>
                        <div className="flex gap-2">
                           <button 
                             type="button"
                             onClick={() => handlePermissionChange(dept.id, 'none')}
-                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'none' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-gray-600 hover:bg-slate-200'}`}
+                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'none' ? 'bg-slate-800 text-white' : 'bg-muted text-gray-600 hover:bg-muted'}`}
                           >
                              {t('bm.perm.view')}
                           </button>
                           <button 
                             type="button"
                             onClick={() => handlePermissionChange(dept.id, 'view')}
-                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'view' ? 'bg-slate-600 text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+                            className={`px-3 py-1.5 text-xs rounded-md transition-colors ${createUserForm.departmentPermissions[dept.id as keyof typeof createUserForm.departmentPermissions] === 'view' ? 'bg-slate-600 text-white' : 'bg-muted text-slate-600 hover:bg-muted'}`}
                           >
                              {t('bm.perm.edit')}
                           </button>
@@ -3404,7 +3404,7 @@ function BuildingManagementContent() {
                   ))}
 
                   {/* Employee Management Special Permission */}
-                  <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-100">
+                  <div className="flex items-center justify-between p-4 bg-card rounded-lg border border">
                      <div className="font-medium text-gray-800">{t('bm.users.perm.employees')}</div>
                      <label className="relative inline-flex items-center cursor-pointer">
                         <input 
@@ -3413,7 +3413,7 @@ function BuildingManagementContent() {
                           onChange={(e) => handlePermissionChange('employees', e.target.checked)}
                           className="sr-only peer" 
                         />
-                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-600"></div>
+                        <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-card after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-600"></div>
                      </label>
                   </div>
                </div>
@@ -3453,7 +3453,7 @@ function BuildingManagementContent() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-start">
-                  <thead className="bg-slate-50 text-gray-700 uppercase">
+                  <thead className="bg-muted text-gray-700 uppercase">
                     <tr>
                       <th className="px-3 py-2">{t('profile.nameLabel')}</th>
                       <th className="px-3 py-2">{t('bm.form.role')}</th>
@@ -3465,12 +3465,12 @@ function BuildingManagementContent() {
                   </thead>
                   <tbody>
                     {users.map((u: any) => (
-                      <tr key={u.id} className="bg-white border-b hover:bg-slate-50">
+                      <tr key={u.id} className="bg-card border-b hover:bg-muted">
                         <td className="px-3 py-2 font-medium text-gray-900">{u.firstName} {u.lastName}</td>
                         <td className="px-3 py-2">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             u.role === 'admin' ? 'bg-red-100 text-red-800' : 
-                            u.role === 'broker' ? 'bg-slate-100 text-slate-800' : 'bg-slate-100 text-gray-800'
+                            u.role === 'broker' ? 'bg-muted text-slate-800' : 'bg-muted text-gray-800'
                           }`}>
                             {t(`profile.role.${u.role}`) || u.role}
                           </span>
@@ -3519,16 +3519,16 @@ function BuildingManagementContent() {
         return (
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
-              <StatCard label={t('bm.all.title')}       value={allServices.length}   icon={Layers}   color="bg-slate-100 text-slate-700" />
-              <StatCard label={t('bm.disputes.title')}   value={disputes.length}      icon={Scale}    color="bg-slate-100 text-slate-700" />
-              <StatCard label={t('bm.contracts.title')}  value={contracts.length}     icon={FileText} color="bg-slate-100 text-slate-700"   />
-              <StatCard label={t('bm.legal.docTitle')}   value={notaries.length}      icon={FileCheck}  color="bg-slate-100 text-slate-700" />
-              <StatCard label={t('pm.legal.stats.other')} value={services.length}      icon={Settings2} color="bg-slate-100 text-slate-700" />
-              <StatCard label={t('bm.status.pending')}   value={pending}              icon={Clock3}   color="bg-slate-100 text-slate-700"   />
+              <StatCard label={t('bm.all.title')}       value={allServices.length}   icon={Layers}   color="bg-muted text-slate-700" />
+              <StatCard label={t('bm.disputes.title')}   value={disputes.length}      icon={Scale}    color="bg-muted text-slate-700" />
+              <StatCard label={t('bm.contracts.title')}  value={contracts.length}     icon={FileText} color="bg-muted text-slate-700"   />
+              <StatCard label={t('bm.legal.docTitle')}   value={notaries.length}      icon={FileCheck}  color="bg-muted text-slate-700" />
+              <StatCard label={t('pm.legal.stats.other')} value={services.length}      icon={Settings2} color="bg-muted text-slate-700" />
+              <StatCard label={t('bm.status.pending')}   value={pending}              icon={Clock3}   color="bg-muted text-slate-700"   />
               <StatCard label={t('bm.status.completed')} value={completed}            icon={CheckCircle} color="bg-emeslaterald-100 text-slate-700" />
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border shadow-sm p-6">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 {t('bm.recent.title')}
@@ -3548,10 +3548,10 @@ function BuildingManagementContent() {
                     <div
                       key={req.id}
                       onClick={() => handleViewServiceRequest(req)}
-                      className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all cursor-pointer group"
+                      className="flex items-center justify-between p-4 bg-muted rounded-xl hover:bg-muted transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-             <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+             <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center shrink-0">
   <User className="w-3 h-3 text-slate-500" />
 </div>
                         <div>
@@ -3607,17 +3607,17 @@ function BuildingManagementContent() {
                     {t('admin.service_requests.subtitle')}
                   </p>
                 </div>
-                <div className="bg-slate-100 p-1.5 rounded-[2rem] flex items-center gap-1 self-start shadow-inner">
+                <div className="bg-muted p-1.5 rounded-[1.25rem] flex items-center gap-1 self-start shadow-inner">
                   <button
                     onClick={() => setSrActiveTab("create")}
-                    className={`px-5 py-2 rounded-[1.5rem] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-all ${srActiveTab === "create" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-5 py-2 rounded-[1rem] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-all ${srActiveTab === "create" ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     <PlusCircle className="w-4 h-4" />
                     {t('admin.service_requests.create')}
                   </button>
                   <button
                     onClick={() => setSrActiveTab("view")}
-                    className={`px-5 py-2 rounded-[1.5rem] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-all ${srActiveTab === "view" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-5 py-2 rounded-[1rem] flex items-center gap-2 text-xs font-black uppercase tracking-wider transition-all ${srActiveTab === "view" ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     <List className="w-4 h-4" />
                     {t('admin.service_requests.view_all')}
@@ -3627,7 +3627,7 @@ function BuildingManagementContent() {
 
               <AP mode="wait">
                 {srActiveTab === "create" ? (
-                  <m.div key="sr-create" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
+                  <m.div key="sr-create" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-card rounded-[1.25rem] border border shadow-xl overflow-hidden">
                     <form onSubmit={srHandleSubmit} className="p-5 space-y-8">
                       {srSubmitStatus === 'success' && (
                         <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-3xl flex items-center gap-4 text-emerald-900">
@@ -3657,11 +3657,11 @@ function BuildingManagementContent() {
                           </h3>
                           <div className="relative group">
                             <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
-                            <input required type="text" placeholder={t('admin.service_requests.client_name')} value={srFormData.clientName} onChange={e => srHandleInputChange('clientName', e.target.value)} className="bg-slate-50/50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-white transition-all rounded-2xl" />
+                            <input required type="text" placeholder={t('admin.service_requests.client_name')} value={srFormData.clientName} onChange={e => srHandleInputChange('clientName', e.target.value)} className="bg-muted/50 border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-card transition-all rounded-2xl" />
                           </div>
                           <div className="relative group">
                             <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
-                            <input required type="tel" placeholder={t('admin.service_requests.phone')} value={srFormData.phone} onChange={e => srHandleInputChange('phone', e.target.value)} className="bg-slate-50/50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-white transition-all rounded-2xl" dir="ltr" />
+                            <input required type="tel" placeholder={t('admin.service_requests.phone')} value={srFormData.phone} onChange={e => srHandleInputChange('phone', e.target.value)} className="bg-muted/50 border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-card transition-all rounded-2xl" dir="ltr" />
                           </div>
                         </div>
 
@@ -3673,11 +3673,11 @@ function BuildingManagementContent() {
                           </h3>
                           <div className="relative group">
                             <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
-                            <input required type="text" placeholder={t('admin.service_requests.city')} value={srFormData.city} onChange={e => srHandleInputChange('city', e.target.value)} className="bg-slate-50/50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-white transition-all rounded-2xl" />
+                            <input required type="text" placeholder={t('admin.service_requests.city')} value={srFormData.city} onChange={e => srHandleInputChange('city', e.target.value)} className="bg-muted/50 border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-card transition-all rounded-2xl" />
                           </div>
                           <div className="relative group">
                             <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 opacity-50" />
-                            <input required type="text" placeholder={t('admin.service_requests.district')} value={srFormData.district} onChange={e => srHandleInputChange('district', e.target.value)} className="bg-slate-50/50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-white transition-all rounded-2xl" />
+                            <input required type="text" placeholder={t('admin.service_requests.district')} value={srFormData.district} onChange={e => srHandleInputChange('district', e.target.value)} className="bg-muted/50 border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-card transition-all rounded-2xl" />
                           </div>
                         </div>
 
@@ -3692,7 +3692,7 @@ function BuildingManagementContent() {
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.category')}</label>
                               <div className="relative">
                                 <Layers className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <select value={srFormData.serviceCategory} onChange={e => srHandleInputChange('serviceCategory', e.target.value)} className="bg-slate-50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl appearance-none cursor-pointer">
+                                <select value={srFormData.serviceCategory} onChange={e => srHandleInputChange('serviceCategory', e.target.value)} className="bg-muted border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl appearance-none cursor-pointer">
                                   <option value="postPurchase">{t('admin.service_requests.category.postPurchase')}</option>
                                   <option value="legal">{t('admin.service_requests.category.legal')}</option>
                                   <option value="construction">{t('admin.service_requests.category.construction')}</option>
@@ -3705,7 +3705,7 @@ function BuildingManagementContent() {
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.service_type')}</label>
                               <div className="relative">
                                 <Layers className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <select required value={srFormData.serviceType} onChange={e => srHandleInputChange('serviceType', e.target.value)} className="bg-slate-50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl appearance-none cursor-pointer">
+                                <select required value={srFormData.serviceType} onChange={e => srHandleInputChange('serviceType', e.target.value)} className="bg-muted border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl appearance-none cursor-pointer">
                                   <option value="" disabled>{t('admin.service_requests.service_type')}</option>
                                   {(srServiceOptions[srFormData.serviceCategory] || []).map((opt, i) => (
                                     <option key={i} value={opt}>{t(`admin.service_requests.type.${opt}`)}</option>
@@ -3718,7 +3718,7 @@ function BuildingManagementContent() {
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.quantity')}</label>
                               <div className="relative">
                                 <Hash className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input required type="number" min="1" value={srFormData.quantity} onChange={e => srHandleInputChange('quantity', e.target.value)} className="bg-slate-50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl" />
+                                <input required type="number" min="1" value={srFormData.quantity} onChange={e => srHandleInputChange('quantity', e.target.value)} className="bg-muted border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 transition-all rounded-2xl" />
                               </div>
                             </div>
 
@@ -3729,10 +3729,10 @@ function BuildingManagementContent() {
                                   {srDepartments.map(dept => {
                                     const sel = srFormData.targetDepartment === dept.id;
                                     return (
-                                      <div key={dept.id} onClick={() => srHandleInputChange('targetDepartment', dept.id)} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 text-center ${sel ? 'bg-slate-900 border-slate-900 text-white shadow-xl' : 'bg-white border-slate-50 text-slate-400 hover:border-slate-200'}`}>
+                                      <div key={dept.id} onClick={() => srHandleInputChange('targetDepartment', dept.id)} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 text-center ${sel ? 'bg-slate-900 border-slate-900 text-white shadow-xl' : 'bg-card border text-slate-400 hover:border'}`}>
                                         <Building2 className={`w-6 h-6 ${sel ? 'text-white' : 'text-slate-200'}`} />
                                         <span className="text-[10px] font-black uppercase tracking-wider leading-tight">{t(dept.key)}</span>
-                                        {sel && <div className="w-1.5 h-1.5 rounded-full bg-white mt-1" />}
+                                        {sel && <div className="w-1.5 h-1.5 rounded-full bg-card mt-1" />}
                                       </div>
                                     );
                                   })}
@@ -3744,7 +3744,7 @@ function BuildingManagementContent() {
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.description')}</label>
                               <div className="relative">
                                 <AlignLeft className="absolute right-4 top-5 w-4 h-4 text-slate-400" />
-                                <textarea rows={4} placeholder={t('admin.service_requests.description')} value={srFormData.description} onChange={e => srHandleInputChange('description', e.target.value)} className="bg-slate-50 border border-slate-100 py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-white transition-all rounded-3xl resize-none" />
+                                <textarea rows={4} placeholder={t('admin.service_requests.description')} value={srFormData.description} onChange={e => srHandleInputChange('description', e.target.value)} className="bg-muted border border py-4 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 focus:bg-card transition-all rounded-3xl resize-none" />
                               </div>
                             </div>
                           </div>
@@ -3752,7 +3752,7 @@ function BuildingManagementContent() {
                       </div>
 
                       <div className="flex justify-end pt-4">
-                        <button disabled={srIsSubmitting} type="submit" className="bg-slate-950 text-white px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 disabled:opacity-50 shadow-2xl shadow-slate-900/20 hover:bg-slate-800 transition-all active:scale-95">
+                        <button disabled={srIsSubmitting} type="submit" className="bg-slate-950 text-white px-10 py-5 rounded-[1.25rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 disabled:opacity-50 shadow-2xl shadow-stone-400/20 hover:bg-slate-800 transition-all active:scale-95">
                           {srIsSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" />{t('admin.service_requests.submitting')}</> : <>{t('admin.service_requests.submit')}<Send className="w-5 h-5" /></>}
                         </button>
                       </div>
@@ -3763,24 +3763,24 @@ function BuildingManagementContent() {
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between px-1">
                       <div className="relative w-full md:w-96 group">
                         <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input type="text" placeholder={t('admin.service_requests.search_placeholder')} value={srSearchTerm} onChange={e => setSrSearchTerm(e.target.value)} className="bg-white border border-slate-100 py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1.5rem]" />
+                        <input type="text" placeholder={t('admin.service_requests.search_placeholder')} value={srSearchTerm} onChange={e => setSrSearchTerm(e.target.value)} className="bg-card border border py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1rem]" />
                       </div>
-                      <button onClick={srFetchRequests} className="p-3.5 rounded-2xl bg-white border border-slate-100 hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm">
+                      <button onClick={srFetchRequests} className="p-3.5 rounded-2xl bg-card border border hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm">
                         <Filter className="w-4 h-4" />
                       </button>
                     </div>
 
-                    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden min-h-[400px]">
+                    <div className="bg-card rounded-[1.25rem] border border shadow-xl overflow-hidden min-h-[400px]">
                       {srIsLoading ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
-                          <div className="w-12 h-10 rounded-full border-4 border-slate-100 border-t-slate-900 animate-spin" />
+                          <div className="w-12 h-10 rounded-full border-4 border border-t-slate-900 animate-spin" />
                           <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                         </div>
                       ) : srFiltered.length > 0 ? (
                         <div className="overflow-x-auto">
                           <table className="w-full text-right border-collapse">
                             <thead>
-                              <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <tr className="bg-muted/50 border-b border">
                                 <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.client_name')}</th>
                                 <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</th>
                                 <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')}</th>
@@ -3790,10 +3790,10 @@ function BuildingManagementContent() {
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                               {srFiltered.map(req => (
-                                <tr key={req.id} className="group hover:bg-slate-50/50 transition-colors">
+                                <tr key={req.id} className="group hover:bg-muted/50 transition-colors">
                                   <td className="px-8 py-5">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
+                                      <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                         <User className="w-4 h-4" />
                                       </div>
                                       <div>
@@ -3822,7 +3822,7 @@ function BuildingManagementContent() {
                                   <td className="px-8 py-5 text-center">
                                     <button
                                       onClick={() => { setSrSelectedRequest(req); setSrEditingPrice(req.price?.toString() || "0"); setSrEditingDepartment(req.targetDepartment || ""); setSrInvoiceMessage(null); setSrIsDetailsOpen(true); }}
-                                      className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                      className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
                                     >
                                       <ExternalLink className="w-4 h-4" />
                                     </button>
@@ -3834,7 +3834,7 @@ function BuildingManagementContent() {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
-                          <div className="p-5 rounded-[2.5rem] bg-slate-50"><Briefcase className="w-16 h-16 text-slate-200" /></div>
+                          <div className="p-5 rounded-[1rem] bg-muted"><Briefcase className="w-16 h-16 text-slate-200" /></div>
                           <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
                         </div>
                       )}
@@ -3855,14 +3855,14 @@ function BuildingManagementContent() {
                     return (
                       <div className="py-4">
                         <T defaultValue="details" className="w-full">
-                          <TL className="grid w-full grid-cols-3 mb-6 bg-slate-100 p-1 rounded-xl h-auto">
+                          <TL className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                             <TT value="details" className="py-2 rounded-lg font-bold">{t('common.details')}</TT>
                           
                           </TL>
 
                           <TC value="details" className="space-y-6">
-                            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-                              <div className="w-12 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm"><User className="w-6 h-6" /></div>
+                            <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
+                              <div className="w-12 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm"><User className="w-6 h-6" /></div>
                               <div>
                                 <p className="text-sm font-black text-slate-900">{srSelectedRequest.clientName}</p>
                                 <p className="text-xs font-bold text-slate-400">{srSelectedRequest.phone}</p>
@@ -3888,16 +3888,16 @@ function BuildingManagementContent() {
                               </div>
                             </div>
 
-                            <div className="space-y-3 pt-4 border-t border-slate-100">
+                            <div className="space-y-3 pt-4 border-t border">
                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')} (Admin)</label>
                               <select value={srEditingDepartment} >
                               </select>
                             </div>
 
                             {srSelectedRequest.category === 'legal' && (srSelectedRequest.firstParty || srSelectedRequest.secondParty || srSelectedRequest.metadata) && (
-                              <div className="space-y-4 pt-4 border-t border-slate-100">
+                              <div className="space-y-4 pt-4 border-t border">
                                 {srSelectedRequest.firstParty && (
-                                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                  <div className="p-4 bg-muted rounded-2xl border border">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
                                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.firstParty.name}</p></div>
@@ -3907,7 +3907,7 @@ function BuildingManagementContent() {
                                   </div>
                                 )}
                                 {srSelectedRequest.secondParty && (
-                                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                  <div className="p-4 bg-muted rounded-2xl border border">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
                                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.secondParty.name}</p></div>
@@ -3925,21 +3925,21 @@ function BuildingManagementContent() {
                             )}
 
                             {(!srSelectedRequest.firstParty && !srSelectedRequest.secondParty) && srSelectedRequest.description && (
-                              <div className="space-y-2 pt-2 border-t border-slate-100">
+                              <div className="space-y-2 pt-2 border-t border">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</label>
-                                <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50/50 p-4 rounded-2xl">{srSelectedRequest.description}</p>
+                                <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted/50 p-4 rounded-2xl">{srSelectedRequest.description}</p>
                               </div>
                             )}
 
                             {/* Price & Save */}
-                            <div className="space-y-3 pt-4 border-t border-slate-100">
+                            <div className="space-y-3 pt-4 border-t border">
                               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>
                               <div className="flex gap-3">
                                 <input 
                                   type="number" 
                                   value={srEditingPrice} 
                                   onChange={e => setSrEditingPrice(e.target.value)} 
-                                  className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all disabled:opacity-50" 
+                                  className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all disabled:opacity-50" 
                                   placeholder="0.00" 
                                   disabled={srSelectedRequest.invoiceSent}
                                 />
@@ -3974,13 +3974,13 @@ function BuildingManagementContent() {
                                 <div className="flex items-center justify-between">
                                   <label className="text-[10px] font-black text-black-600 uppercase tracking-widest">⚖️ {t('legal.invoice.sendBtn')}</label>
                                   {srSelectedRequest.invoiceSent ? (
-                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">✓ {t('legal.invoice.sent')}</span>
+                                    <span className="bg-muted text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">✓ {t('legal.invoice.sent')}</span>
                                   ) : (
-                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">⏳ {t('legal.invoice.notSent')}</span>
+                                    <span className="bg-muted text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">⏳ {t('legal.invoice.notSent')}</span>
                                   )}
                                 </div>
                                 {srSelectedRequest.clientDecision && srSelectedRequest.clientDecision !== 'pending' && (
-                                  <div className={`p-3 rounded-xl text-[11px] font-black text-center ${srSelectedRequest.clientDecision === 'accepted' ? 'bg-slate-50 text-slate-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                                  <div className={`p-3 rounded-xl text-[11px] font-black text-center ${srSelectedRequest.clientDecision === 'accepted' ? 'bg-muted text-slate-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
                                     {srSelectedRequest.clientDecision === 'accepted' ? `✓ ${t('legal.decision.accepted')}` : `✗ ${t('legal.decision.rejected')}`}
                                   </div>
                                 )}
@@ -4008,9 +4008,9 @@ function BuildingManagementContent() {
                             ) : srUserBookings.length > 0 ? (
                               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                 {srUserBookings.map((b: any) => (
-                                  <div key={b.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                  <div key={b.id} className="p-4 bg-muted rounded-xl border border">
                                     <div className="flex justify-between items-start mb-2">
-                                      <Badge variant="outline" className="bg-white">{b.type}</Badge>
+                                      <Badge variant="outline" className="bg-card">{b.type}</Badge>
                                       <span className="text-xs text-slate-400 font-medium">{new Date(b.createdAt).toLocaleDateString()}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-1">
@@ -4032,7 +4032,7 @@ function BuildingManagementContent() {
                             ) : srUserInvoices.length > 0 ? (
                               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                 {srUserInvoices.map((inv: any) => (
-                                  <div key={inv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                                  <div key={inv.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
                                     <div>
                                       <div className="flex items-center gap-2 mb-1"><Receipt className="w-4 h-4 text-slate-400" /><span className="font-bold text-slate-900 text-sm">#{inv.invoiceNumber || inv.id.substring(0,8)}</span></div>
                                       <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()}</p>
@@ -4060,7 +4060,7 @@ function BuildingManagementContent() {
       default:
         return (
           <div className="text-center py-12">
-            <div className="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
               <Scale className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-base font-medium text-gray-900 mb-2">{t('bm.dev.title')}</h3>
@@ -4202,7 +4202,7 @@ function BuildingManagementContent() {
       <DialogContent className="sm:max-w-[500px]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
-            <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
+            <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-slate-600">
               <Plus className="w-6 h-6" />
             </div>
             {t('bm.offer.new')}
@@ -4218,7 +4218,7 @@ function BuildingManagementContent() {
               value={newMaintenanceData.type} 
               onValueChange={(v) => setNewMaintenanceData({...newMaintenanceData, type: v as any})}
             >
-              <SelectTrigger className="h-10 rounded-xl border-gray-200">
+              <SelectTrigger className="h-10 rounded-xl border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -4234,7 +4234,7 @@ function BuildingManagementContent() {
               value={newMaintenanceData.description}
               onChange={(e) => setNewMaintenanceData({...newMaintenanceData, description: e.target.value})}
               placeholder={t('bm.list.searchPlaceholder')}
-              className="rounded-xl border-gray-200 min-h-[100px]"
+              className="rounded-xl border min-h-[100px]"
               required
             />
           </div>
@@ -4246,7 +4246,7 @@ function BuildingManagementContent() {
                 type="number"
                 value={newMaintenanceData.cost || ''}
                 onChange={(e) => setNewMaintenanceData({...newMaintenanceData, cost: Number(e.target.value)})}
-                className="h-10 rounded-xl border-gray-200"
+                className="h-10 rounded-xl border"
               />
             </div>
             <div className="space-y-1">
@@ -4254,7 +4254,7 @@ function BuildingManagementContent() {
               <Input 
                 value={newMaintenanceData.technicianName || ''}
                 onChange={(e) => setNewMaintenanceData({...newMaintenanceData, technicianName: e.target.value})}
-                className="h-10 rounded-xl border-gray-200"
+                className="h-10 rounded-xl border"
               />
             </div>
           </div>
@@ -4276,9 +4276,9 @@ function BuildingManagementContent() {
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           {/* Header Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+                <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
-                        <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-200">
+                        <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-stone-400">
                             <SaudiRiyalIcon className="w-7 h-7" />
                         </div>
                         <div>
@@ -4288,13 +4288,13 @@ function BuildingManagementContent() {
                             </p>
                         </div>
                     </div>
-                    <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-slate-900 w-2/3 group-hover:w-full transition-all duration-1000"></div>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+                <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
-                        <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 shadow-sm">
+                        <div className="w-14 h-14 bg-card border border rounded-2xl flex items-center justify-center text-slate-900 shadow-sm">
                             <FileCheck className="w-7 h-7" />
                         </div>
                         <div>
@@ -4304,13 +4304,13 @@ function BuildingManagementContent() {
                             </p>
                         </div>
                     </div>
-                    <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden">
-                        <div className="h-full bg-slate-200 w-1/2 group-hover:w-full transition-all duration-1000"></div>
+                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-muted w-1/2 group-hover:w-full transition-all duration-1000"></div>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+                <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
-                        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-600 shadow-sm">
+                        <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center text-slate-600 shadow-sm">
                             <Clock className="w-7 h-7" />
                         </div>
                         <div>
@@ -4320,11 +4320,11 @@ function BuildingManagementContent() {
                             </p>
                         </div>
                     </div>
-                    <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-slate-400 w-1/4 group-hover:w-full transition-all duration-1000"></div>
                     </div>
                 </div>
-                <div className="bg-white p-5 rounded-[2.5rem] border border-slate-50 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+                <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
                         <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 shadow-sm">
                             <AlertCircle className="w-7 h-7" />
@@ -4343,7 +4343,7 @@ function BuildingManagementContent() {
           </div>
 
           {/* Sub-tabs */}
-          <div className="bg-slate-50 p-1.5 rounded-2xl flex gap-1 border border-slate-100/50 w-fit">
+          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-/50 w-fit">
               {[
                 { id: 'payments', label: t('pm.cashflow.schedule') },
                 { id: 'utilities', label: t('pm.tab.utilities') },
@@ -4354,8 +4354,8 @@ function BuildingManagementContent() {
                   onClick={() => setActiveFinancialSubTab(subTab.id as any)}
                   className={`px-8 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
                     activeFinancialSubTab === subTab.id 
-                    ? "bg-white text-slate-900 shadow-lg shadow-slate-200/50" 
-                    : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
+                    ? "bg-card text-slate-900 shadow-lg shadow-stone-400" 
+                    : "text-slate-400 hover:text-slate-600 hover:bg-card/50"
                   }`}
                 >
                   {subTab.label}
@@ -4363,11 +4363,11 @@ function BuildingManagementContent() {
               ))}
           </div>
 
-          <div className="bg-white rounded-[2.5rem] border border-slate-50 overflow-hidden shadow-2xl shadow-slate-200/30">
+          <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
              {loadingFinancial ? (
                  <div className="p-32 text-center flex flex-col items-center gap-6">
                     <div className="relative">
-                        <div className="w-16 h-16 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin"></div>
+                        <div className="w-16 h-16 border-4 border border-t-slate-900 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
                             <SaudiRiyalIcon className="w-6 h-6 text-slate-900/20" />
                         </div>
@@ -4377,7 +4377,7 @@ function BuildingManagementContent() {
              ) : activeFinancialSubTab === 'payments' ? (
                 <div className="overflow-x-auto">
                     <table className="w-full text-start">
-                        <thead className="bg-slate-50/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
+                        <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                             <tr>
                                 <th className="p-6 text-start">{t('pm.field.dueDate')}</th>
                                 <th className="p-6 text-start">{t('pm.field.amount')}</th>
@@ -4400,14 +4400,14 @@ function BuildingManagementContent() {
                                 payments
                                 .filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id)
                                 .map(payment => (
-                                    <tr key={payment.id} className="hover:bg-slate-50/30 transition-all group">
+                                    <tr key={payment.id} className="hover:bg-muted/30 transition-all group">
                                         <td className="p-6 font-black text-slate-900 text-sm">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
                                         <td className="p-6 font-black text-slate-900 text-base"><SaudiRiyalAmount amount={payment.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" /></td>
                                         <td className="p-6">
                                             <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                                                payment.status === 'paid' ? 'bg-white text-green-600 border-green-100 shadow-sm shadow-green-50' : 
+                                                payment.status === 'paid' ? 'bg-card text-green-600 border-green-100 shadow-sm shadow-green-50' : 
                                                 payment.status === 'overdue' ? 'bg-red-900 text-white border-red-900 shadow-lg shadow-red-200' : 
-                                                'bg-white text-slate-400 border-slate-100 shadow-sm shadow-slate-50'
+                                                'bg-card text-slate-400 border shadow-sm shadow-slate-50'
                                             }`}>
                                                 {t(`pm.status.${payment.status || 'pending'}`)}
                                             </span>
@@ -4417,7 +4417,7 @@ function BuildingManagementContent() {
                                             <div className="flex justify-center transition-all duration-300">
                                                 <button 
                                                     onClick={() => { setSelectedTenant(payment.lease?.tenant || null); setShowTenantDetails(true); }}
-                                                    className="w-10 h-10 flex items-center justify-center bg-white border border-slate-100 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
+                                                    className="w-10 h-10 flex items-center justify-center bg-card border border rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
                                                 >
                                                     <FileText className="w-5 h-5" />
                                                 </button>
@@ -4431,7 +4431,7 @@ function BuildingManagementContent() {
                 </div>
              ) : (
                  <div className="p-32 text-center flex flex-col items-center gap-6 animate-in zoom-in duration-500">
-                     <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center shadow-inner">
+                     <div className="w-24 h-24 bg-muted rounded-[1.25rem] flex items-center justify-center shadow-inner">
                         <Landmark className="w-10 h-10 text-slate-200" />
                      </div>
                      <div className="space-y-2">
@@ -4459,9 +4459,9 @@ function BuildingManagementContent() {
     const showOrderDetailedFields = ["فيلا", "قصر", "شقة"].includes(orderFormData.propertyType);
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
             <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-slate-100 rounded-lg">
+                <div className="p-2 bg-muted rounded-lg">
                     <FileText className="w-6 h-6 text-slate-600" />
                 </div>
                 <div>
@@ -4564,27 +4564,27 @@ function BuildingManagementContent() {
                          </div>
 
                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasMaidRoom" checked={!!orderFormData.hasMaidRoom} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasMaidRoom: !!c}))} />
                                 <label htmlFor="order_hasMaidRoom" className="text-xs font-medium">{t('orders.maid')}</label>
                             </div>
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasRoof" checked={!!orderFormData.hasRoof} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasRoof: !!c}))} />
                                 <label htmlFor="order_hasRoof" className="text-xs font-medium">{t('orders.roof')}</label>
                             </div>
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasExternalAnnex" checked={!!orderFormData.hasExternalAnnex} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasExternalAnnex: !!c}))} />
                                 <label htmlFor="order_hasExternalAnnex" className="text-xs font-medium">{t('orders.annex')}</label>
                             </div>
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasGarage" checked={!!orderFormData.hasGarage} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasGarage: !!c}))} />
                                 <label htmlFor="order_hasGarage" className="text-xs font-medium">{t('orders.garage')}</label>
                             </div>
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasPool" checked={!!orderFormData.hasPool} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasPool: !!c}))} />
                                 <label htmlFor="order_hasPool" className="text-xs font-medium">{t('orders.pool')}</label>
                             </div>
-                            <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 p-3 rounded border">
+                            <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasElevator" checked={!!orderFormData.hasElevator} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasElevator: !!c}))} />
                                 <label htmlFor="order_hasElevator" className="text-xs font-medium">{t('orders.elevator')}</label>
                             </div>
@@ -4616,7 +4616,7 @@ function BuildingManagementContent() {
 
                 <TabsContent value="list" className="mt-6">
                     <div className="space-y-4">
-                       <div className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm gap-4">
+                       <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                            <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
                            <Tabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-[300px]">
                                 <TabsList className="grid w-full grid-cols-2">
@@ -4635,7 +4635,7 @@ function BuildingManagementContent() {
                                 {filteredOrders.map(order => (
                                     <div 
                                         key={order.id} 
-                                        className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 cursor-pointer group"
+                                        className="bg-card rounded-2xl border border p-5 hover:shadow-xl hover:shadow-stone-400 transition-all duration-300 cursor-pointer group"
                                         onClick={() => {
                                             console.log('Order clicked:', order);
                                             console.log('Current user:', user);
@@ -4645,7 +4645,7 @@ function BuildingManagementContent() {
                                     >
                                         <div className="flex justify-between items-start">
                                             <div className="flex gap-4">
-                                                <div className="w-12 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-slate-100 transition-colors">
+                                                <div className="w-12 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted transition-colors">
                                                     <Building className="w-6 h-6 text-slate-600" />
                                                 </div>
                                                 <div className="space-y-1">
@@ -4655,8 +4655,8 @@ function BuildingManagementContent() {
                                                         </h3>
                                                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                                                             order.orderType === 'sale' 
-                                                                ? 'bg-slate-100 text-slate-700' 
-                                                                : 'bg-slate-50 text-slate-500 border border-slate-100'
+                                                                ? 'bg-muted text-slate-700' 
+                                                                : 'bg-muted text-slate-500 border border'
                                                         }`}>
                                                             {order.orderType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                                                         </span>
@@ -4681,7 +4681,7 @@ function BuildingManagementContent() {
                                             </div>
                                         </div>
                                         
-                                        <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
+                                        <div className="mt-4 pt-4 border-t border flex items-center justify-between">
                                             <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
                                                 <div className="flex items-center gap-1.5">
                                                     <MeterIcon className="w-4 h-4 text-slate-400" />
@@ -4700,7 +4700,7 @@ function BuildingManagementContent() {
                         <Button 
                                                         size="sm" 
                                                         variant="ghost" 
-                                                        className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                                                        className="h-8 w-8 p-0 text-slate-400 hover:text-slate-900 hover:bg-muted rounded-lg transition-all"
                                                         onClick={(e) => handleOrderChat(e, order)}
                                                         disabled={chatLoadingId === order.id}
                                                     >
@@ -4714,7 +4714,7 @@ function BuildingManagementContent() {
                                                 <Button 
                                                     size="sm" 
                                                     variant="ghost" 
-                                                    className="h-8 text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-slate-50 rounded-lg group-hover:text-slate-950 transition-all"
+                                                    className="h-8 text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:bg-muted rounded-lg group-hover:text-slate-950 transition-all"
                                                 >
                                                     {t('bm.details')}
                                                     <ArrowRight className={`ms-2 w-3.5 h-3.5 transition-transform group-hover:translate-x-1 ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
@@ -4744,9 +4744,9 @@ function BuildingManagementContent() {
             </TabsList>
             
             <TabsContent value="new">
-              <div className="bg-white rounded-2xl shadow-xl shadow-slate-50/50 border border-gray-100 p-5 mb-5 pb-20">
+              <div className="bg-card rounded-2xl shadow-xl shadow-slate-50/50 border border p-5 mb-5 pb-20">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-slate-600 rounded-xl flex items-center justify-center shadow-md shadow-slate-200">
+                  <div className="w-10 h-10 bg-slate-600 rounded-xl flex items-center justify-center shadow-md shadow-stone-400">
                     <ShoppingBag className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -4758,11 +4758,11 @@ function BuildingManagementContent() {
         {/* Tabs for Sale / Rent */}
         <div className="mb-6">
             <Tabs defaultValue="sale" dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full" onValueChange={(val) => setDealType(val as "sale" | "rent")}>
-            <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-50 p-1 rounded-xl">
-                <TabsTrigger value="sale" className="text-xs font-bold rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
+            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted p-1 rounded-xl">
+                <TabsTrigger value="sale" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
                     {t('bm.offer.dealSale')}
                 </TabsTrigger>
-                <TabsTrigger value="rent" className="text-xs font-bold rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
+                <TabsTrigger value="rent" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
                     {t('bm.offer.dealRent')}
                 </TabsTrigger>
             </TabsList>
@@ -4775,9 +4775,9 @@ function BuildingManagementContent() {
             <RadioGroup defaultValue="residential" className="grid grid-cols-1 md:grid-cols-2 gap-3" onValueChange={(val) => handleCategoryChange(val as "residential" | "commercial")}>
                 <div 
                     onClick={() => handleCategoryChange('residential')}
-                    className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'residential' ? 'border-slate-500 bg-slate-50/50' : 'border-gray-100 hover:border-slate-200 hover:bg-slate-50'}`}
+                    className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'residential' ? 'border-slate-500 bg-muted/50' : 'border hover:border hover:bg-muted'}`}
                 >
-                    <div className={`w-8 h-8 rounded-md flex items-center justify-center ${mainCategory === 'residential' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-gray-500'}`}>
+                    <div className={`w-8 h-8 rounded-md flex items-center justify-center ${mainCategory === 'residential' ? 'bg-slate-700 text-white' : 'bg-muted text-gray-500'}`}>
                         <Home className="w-4 h-4" />
                     </div>
                     <div>
@@ -4788,9 +4788,9 @@ function BuildingManagementContent() {
                 </div>
                 <div 
                     onClick={() => handleCategoryChange('commercial')}
-                    className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'commercial' ? 'border-slate-500 bg-slate-50/50' : 'border-gray-100 hover:border-slate-200 hover:bg-slate-50'}`}
+                    className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'commercial' ? 'border-slate-500 bg-muted/50' : 'border hover:border hover:bg-muted'}`}
                 >
-                    <div className={`w-8 h-8 rounded-md flex items-center justify-center ${mainCategory === 'commercial' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-gray-500'}`}>
+                    <div className={`w-8 h-8 rounded-md flex items-center justify-center ${mainCategory === 'commercial' ? 'bg-slate-700 text-white' : 'bg-muted text-gray-500'}`}>
                         <Building className="w-4 h-4" />
                     </div>
                     <div>
@@ -4805,9 +4805,9 @@ function BuildingManagementContent() {
         <form onSubmit={handleOfferSubmit} className="space-y-6">
           
           {/* Media Upload */}
-          <div className="bg-slate-50/50 rounded-2xl p-5 border border-slate-100">
+          <div className="bg-muted/50 rounded-2xl p-5 border border">
             <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 bg-card rounded-lg flex items-center justify-center shadow-sm">
                     <ImageIcon className="w-4 h-4 text-slate-700" />
                 </div>
                 <div>
@@ -4820,7 +4820,7 @@ function BuildingManagementContent() {
                  {/* Image Upload */}
                  <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="group border border-dashed border-gray-200 rounded-xl p-5 text-center cursor-pointer hover:border-slate-800 hover:bg-white transition-all bg-white/50"
+                    className="group border border-dashed border rounded-xl p-5 text-center cursor-pointer hover:border-slate-800 hover:bg-card transition-all bg-card/50"
                  >
                     <input 
                         type="file" 
@@ -4830,7 +4830,7 @@ function BuildingManagementContent() {
                         accept="image/*" 
                         className="hidden" 
                     />
-                    <div className="w-12 h-10 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-10 bg-muted rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                         <Upload className="w-5 h-5 text-slate-700" />
                     </div>
                     <p className="text-gray-900 font-bold text-xs mb-1">{t('bm.offer.media.images')}</p>
@@ -4838,7 +4838,7 @@ function BuildingManagementContent() {
                     {offerImages.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2 justify-center">
                             {offerImages.map((img, i) => (
-                                <div key={i} className="w-8 h-8 rounded bg-slate-100 overflow-hidden border border-gray-200 relative group/img">
+                                <div key={i} className="w-8 h-8 rounded bg-muted overflow-hidden border border relative group/img">
                                     <img src={URL.createObjectURL(img)} className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center" onClick={(e) => { e.stopPropagation(); setOfferImages(prev => prev.filter((_, idx) => idx !== i)); }}>
                                         <X className="w-3 h-3 text-white" />
@@ -4852,7 +4852,7 @@ function BuildingManagementContent() {
                  {/* 3D Video Upload */}
                  <div 
                     onClick={() => video3dInputRef.current?.click()}
-                    className="group border border-dashed border-gray-200 rounded-xl p-5 text-center cursor-pointer hover:border-slate-800 hover:bg-white transition-all bg-white/50"
+                    className="group border border-dashed border rounded-xl p-5 text-center cursor-pointer hover:border-slate-800 hover:bg-card transition-all bg-card/50"
                  >
                     <input 
                         type="file" 
@@ -4861,14 +4861,14 @@ function BuildingManagementContent() {
                         accept="video/*" 
                         className="hidden" 
                     />
-                    <div className="w-12 h-10 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-10 bg-muted rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                         <Video className="w-5 h-5 text-slate-700" />
                     </div>
                     <p className="text-gray-900 font-bold text-xs mb-1">{t('bm.offer.media.video')}</p>
                     <p className="text-[10px] text-gray-400">{offerVideo3d ? offerVideo3d.name : t('bm.offer.mediaDesc')}</p>
                     {offerVideo3d && (
                         <div className="mt-4 flex justify-center">
-                            <div className="px-3 py-1 bg-slate-100 text-gray-700 rounded-full text-xs font-bold flex items-center gap-2">
+                            <div className="px-3 py-1 bg-muted text-gray-700 rounded-full text-xs font-bold flex items-center gap-2">
                                 <Video className="w-3 h-3" />
                                 {t('common.success')}
                                 <X className="w-3 h-3 cursor-pointer hover:text-gray-900" onClick={(e) => { e.stopPropagation(); setOfferVideo3d(null); }} />
@@ -4880,10 +4880,10 @@ function BuildingManagementContent() {
           </div>
 
           {/* Basic Info */}
-          <Card className="rounded-3xl border-slate-100 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-6">
+          <Card className="rounded-3xl border shadow-sm overflow-hidden">
+            <CardHeader className="bg-muted/50 border-b border pb-6">
               <CardTitle className="flex items-center gap-3 text-gray-900">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-sm">
                     <Building className="w-5 h-5 text-slate-700" />
                 </div>
                 {t('bm.offer.basicInfo')}
@@ -4894,7 +4894,7 @@ function BuildingManagementContent() {
               <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.propertyType')} <span className="text-red-500">*</span></Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('propertyType', val)} value={formData.propertyType}>
-                  <SelectTrigger className="h-10 rounded-xl border-gray-200 focus:ring-slate-500 text-start">
+                  <SelectTrigger className="h-10 rounded-xl border focus:ring-slate-500 text-start">
                     <SelectValue placeholder={t('bm.offer.propertyTypePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -4908,21 +4908,21 @@ function BuildingManagementContent() {
                <div className="space-y-3">
                   <Label className="text-gray-700 font-bold">{t('bm.offer.dimensions')}</Label>
                   <div className="flex gap-3 items-center">
-                      <Input type="number" name="length" placeholder={t('bm.offer.length')} value={formData.length} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                      <Input type="number" name="length" placeholder={t('bm.offer.length')} value={formData.length} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                       <span className="text-gray-300 font-bold">×</span>
-                      <Input type="number" name="width" placeholder={t('bm.offer.width')} value={formData.width} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                      <Input type="number" name="width" placeholder={t('bm.offer.width')} value={formData.width} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                   </div>
               </div>
 
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.area')} <span className="text-red-500">*</span> (م²)</Label>
-                <Input type="number" name="area" value={formData.area} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border-gray-200 bg-white text-start" required />
+                <Input type="number" name="area" value={formData.area} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border bg-card text-start" required />
               </div>
 
               <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('offer.age')} <span className="text-red-500">*</span></Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('propertyAge', val)} value={formData.propertyAge}>
-                  <SelectTrigger className="h-10 rounded-xl border-gray-200 text-start">
+                  <SelectTrigger className="h-10 rounded-xl border text-start">
                     <SelectValue placeholder={t('wallet.commission.select')} />
                   </SelectTrigger>
                   <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -4937,7 +4937,7 @@ function BuildingManagementContent() {
               <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('offer.direction')} <span className="text-red-500">*</span></Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('direction', val)} value={formData.direction}>
-                  <SelectTrigger className="h-10 rounded-xl border-gray-200 text-start">
+                  <SelectTrigger className="h-10 rounded-xl border text-start">
                     <SelectValue placeholder={t('wallet.commission.select')} />
                   </SelectTrigger>
                   <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -4955,7 +4955,7 @@ function BuildingManagementContent() {
 
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.priceSAR')} <span className="text-red-500">*</span></Label>
-                <Input type="number" name="price" value={formData.price} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border-gray-200 bg-white text-start" required />
+                <Input type="number" name="price" value={formData.price} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border bg-card text-start" required />
               </div>
 
                 <div className="space-y-3">
@@ -4966,7 +4966,7 @@ function BuildingManagementContent() {
                       value={formData.address || ''} 
                       onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                       placeholder={t('pm.field.address')}
-                      className="min-h-[80px] rounded-xl border-gray-200 bg-white ps-10 pt-3 text-start text-xs"
+                      className="min-h-[80px] rounded-xl border bg-card ps-10 pt-3 text-start text-xs"
                     />
                     <MapPin className="absolute top-3.5 w-4 h-4 text-gray-400 start-3" />
                  </div>
@@ -4981,11 +4981,11 @@ function BuildingManagementContent() {
                             value={formData.locationUrl || ''} 
                             onChange={(e) => setFormData(prev => ({ ...prev, locationUrl: e.target.value }))}
                             placeholder="https://maps.google.com/?q=..." 
-                            className="h-10 rounded-xl border-gray-200 bg-white ps-10"
+                            className="h-10 rounded-xl border bg-card ps-10"
                         />
                         <LinkIcon className="absolute top-3.5 w-5 h-5 text-gray-400 start-3" />
                     </div>
-                    <Button type="button" onClick={() => setShowOfferMap(true)} className="h-10 w-12 rounded-xl bg-slate-600 hover:bg-slate-700 text-white p-0 flex items-center justify-center shadow-lg shadow-slate-200">
+                    <Button type="button" onClick={() => setShowOfferMap(true)} className="h-10 w-12 rounded-xl bg-slate-600 hover:bg-slate-700 text-white p-0 flex items-center justify-center shadow-lg shadow-stone-400">
                         <MapIcon className="w-6 h-6" />
                     </Button>
                 </div>
@@ -4993,23 +4993,23 @@ function BuildingManagementContent() {
 
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.city')} <span className="text-red-500">*</span></Label>
-                <Input type="text" name="city" value={formData.city} onChange={handleOfferChange} placeholder={t('city.riyadh')} className="h-10 rounded-xl border-gray-200 text-start" required />
+                <Input type="text" name="city" value={formData.city} onChange={handleOfferChange} placeholder={t('city.riyadh')} className="h-10 rounded-xl border text-start" required />
               </div>
 
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.neighborhood')} <span className="text-red-500">*</span></Label>
-                <Input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleOfferChange} placeholder={t('offers.filter.neighborhood')} className="h-10 rounded-xl border-gray-200 text-start" required />
+                <Input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleOfferChange} placeholder={t('offers.filter.neighborhood')} className="h-10 rounded-xl border text-start" required />
               </div>
 
               <div className="space-y-3">
                  <Label className="text-gray-700 font-bold">{t('bm.offer.streetWidth')} <span className="text-red-500">*</span></Label>
-                 <Input type="number" name="streetWidth" value={formData.streetWidth} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border-gray-200 bg-white text-start" required />
+                 <Input type="number" name="streetWidth" value={formData.streetWidth} onChange={handleOfferChange} placeholder="0" className="h-10 rounded-xl border bg-card text-start" required />
               </div>
 
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.deedType')} <span className="text-red-500">*</span></Label>
                  <Select onValueChange={(val) => handleOfferSelectChange('deedType', val)} value={formData.deedType}>
-                  <SelectTrigger className="h-10 rounded-xl border-gray-200 text-start">
+                  <SelectTrigger className="h-10 rounded-xl border text-start">
                     <SelectValue placeholder={t('common.select')} />
                   </SelectTrigger>
                    <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -5022,7 +5022,7 @@ function BuildingManagementContent() {
                <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.condition')}</Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('propertyCondition', val)} value={formData.propertyCondition}>
-                  <SelectTrigger className="h-10 rounded-xl border-gray-200 text-start">
+                  <SelectTrigger className="h-10 rounded-xl border text-start">
                     <SelectValue placeholder={t('common.select')} />
                   </SelectTrigger>
                    <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -5039,10 +5039,10 @@ function BuildingManagementContent() {
 
            {/* Detailed Data (Conditional) */}
            {showDetailedFields && (
-            <Card className="rounded-3xl border-slate-100 bg-slate-50/20 overflow-hidden">
-                <CardHeader className="bg-slate-100/30 border-b border-slate-100/50 pb-6">
+            <Card className="rounded-3xl border bg-muted/20 overflow-hidden">
+                <CardHeader className="bg-muted/30 border-b border-/50 pb-6">
                 <CardTitle className="flex items-center gap-3 text-slate-900">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                    <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-sm">
                         <Building className="w-5 h-5 text-slate-600" />
                     </div>
                     {t('bm.offer.detailed')}
@@ -5052,55 +5052,55 @@ function BuildingManagementContent() {
                 <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-5 p-5">
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offers.filter.rooms')}</Label>
-                        <Input type="number" name="rooms" value={formData.rooms} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="rooms" value={formData.rooms} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offers.filter.baths')}</Label>
-                        <Input type="number" name="bathrooms" value={formData.bathrooms} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="bathrooms" value={formData.bathrooms} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offer.living')}</Label>
-                        <Input type="number" name="livingRooms" value={formData.livingRooms} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="livingRooms" value={formData.livingRooms} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offer.kitchens')}</Label>
-                        <Input type="number" name="kitchens" value={formData.kitchens} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="kitchens" value={formData.kitchens} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offer.floors')}</Label>
-                        <Input type="number" name="floors" value={formData.floors} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="floors" value={formData.floors} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offer.apartments')}</Label>
-                        <Input type="number" name="apartments" value={formData.apartments} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="apartments" value={formData.apartments} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
                      <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('property.area.build')}</Label>
-                        <Input type="number" name="buildingArea" value={formData.buildingArea} onChange={handleOfferChange} className="h-10 rounded-xl border-gray-200 bg-white text-start" />
+                        <Input type="number" name="buildingArea" value={formData.buildingArea} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
 
                     <div className="col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
-                        <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                        <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasMaidRoom" checked={!!formData.hasMaidRoom} onCheckedChange={(c) => handleOfferCheckboxChange('hasMaidRoom', c as boolean)} />
                             <Label htmlFor="hasMaidRoom" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.maid')}</Label>
                         </div>
-                        <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                        <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasRoof" checked={!!formData.hasRoof} onCheckedChange={(c) => handleOfferCheckboxChange('hasRoof', c as boolean)} />
                             <Label htmlFor="hasRoof" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.roof')}</Label>
                         </div>
-                        <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                        <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasExternalAnnex" checked={!!formData.hasExternalAnnex} onCheckedChange={(c) => handleOfferCheckboxChange('hasExternalAnnex', c as boolean)} />
                             <Label htmlFor="hasExternalAnnex" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.annex')}</Label>
                         </div>
-                        <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                        <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasGarage" checked={!!formData.hasGarage} onCheckedChange={(c) => handleOfferCheckboxChange('hasGarage', c as boolean)} />
                             <Label htmlFor="hasGarage" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.garage')}</Label>
                         </div>
-                        <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                        <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasPool" checked={!!formData.hasPool} onCheckedChange={(c) => handleOfferCheckboxChange('hasPool', c as boolean)} />
                             <Label htmlFor="hasPool" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.pool')}</Label>
                         </div>
-                         <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-slate-50 shadow-sm">
+                         <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasElevator" checked={!!formData.hasElevator} onCheckedChange={(c) => handleOfferCheckboxChange('hasElevator', c as boolean)} />
                             <Label htmlFor="hasElevator" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.elevator')}</Label>
                         </div>
@@ -5109,7 +5109,7 @@ function BuildingManagementContent() {
                      <div className="space-y-3 col-span-2">
                         <Label className="text-gray-700 font-bold">{t('offers.filter.furniture')}</Label>
                         <Select onValueChange={(val) => handleOfferSelectChange('furnitureStatus', val)} value={formData.furnitureStatus}>
-                            <SelectTrigger className="h-10 rounded-xl border-gray-200 bg-white text-start">
+                            <SelectTrigger className="h-10 rounded-xl border bg-card text-start">
                                 <SelectValue placeholder={t('common.select')} />
                             </SelectTrigger>
                             <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -5134,10 +5134,10 @@ function BuildingManagementContent() {
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Property Papers */}
-                    <div className="border p-4 rounded-xl bg-slate-50">
+                    <div className="border p-4 rounded-xl bg-muted">
                         <Label className="block mb-3 font-semibold">{t('bm.offer.paperReq')}</Label>
-                        <Input type="file" className="bg-white mb-2" />
-                        <Textarea placeholder={t('marketing.photo.notes')} className="bg-white h-20 text-xs text-start" />
+                        <Input type="file" className="bg-card mb-2" />
+                        <Textarea placeholder={t('marketing.photo.notes')} className="bg-card h-20 text-xs text-start" />
                     </div>
 
                     {/* Deposit Check */}
@@ -5167,7 +5167,7 @@ function BuildingManagementContent() {
             </CardContent>
            </Card>
 
-           <Button type="submit" disabled={isSubmitting} className="w-full bg-slate-800 hover:bg-slate-900 h-10 text-base shadow-xl shadow-slate-900/10">
+           <Button type="submit" disabled={isSubmitting} className="w-full bg-slate-800 hover:bg-slate-900 h-10 text-base shadow-xl shadow-stone-400/10">
                 {isSubmitting && <Loader2 className="animate-spin ms-2 w-5 h-5" />}
                 {t('bm.offer.addBtn')}
            </Button>
@@ -5178,7 +5178,7 @@ function BuildingManagementContent() {
 
     <TabsContent value="list">
        <div className="space-y-4">
-           <div className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm gap-4">
+           <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
                <Tabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-[300px]">
                     <TabsList className="grid w-full grid-cols-2">
@@ -5194,13 +5194,13 @@ function BuildingManagementContent() {
                         <Loader2 className="w-8 h-8 animate-spin text-slate-600 mx-auto" />
                     </div>
                 ) : filteredOffers.length === 0 ? (
-                    <div className="col-span-full text-center py-12 bg-slate-50 rounded-xl">
+                    <div className="col-span-full text-center py-12 bg-muted rounded-xl">
                         <p className="text-gray-500">{t('bm.list.empty')}</p>
                     </div>
                 ) : (
                     filteredOffers.map((offer) => (
-                        <Card key={offer.id} className="overflow-hidden hover:shadow-lg transition-shadow border-gray-200">
-                            <div className="aspect-video bg-slate-100 relative">
+                        <Card key={offer.id} className="overflow-hidden hover:shadow-lg transition-shadow border">
+                            <div className="aspect-video bg-muted relative">
                                 {offer.mediaFiles && offer.mediaFiles.length > 0 ? (
                                     <img src={offer.mediaFiles[0]} alt={offer.propertyType} className="w-full h-full object-cover" />
                                 ) : (
@@ -5208,7 +5208,7 @@ function BuildingManagementContent() {
                                         <ImageIcon className="w-12 h-10" />
                                     </div>
                                 )}
-                                <span className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold shadow-sm">
+                                <span className="absolute top-2 right-2 bg-card/90 px-2 py-1 rounded text-xs font-bold shadow-sm">
                                     {offer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                                 </span>
                                 {incomingBookings.filter(b => b.offerId === offer.id).length > 0 && (
@@ -5231,7 +5231,7 @@ function BuildingManagementContent() {
                                             setSelectedOffer(offer as Offer);
                                             setShowOfferDetails(true);
                                         }}
-                                        className="flex-1 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-colors shadow-lg shadow-slate-900/10 text-xs font-bold"
+                                        className="flex-1 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-colors shadow-lg shadow-stone-400/10 text-xs font-bold"
                                      >
                                         {t('common.details')}
                                      </button>
@@ -5242,7 +5242,7 @@ function BuildingManagementContent() {
                                             setSelectedOfferForAppointments(offer as Offer);
                                             setShowOfferAppointments(true);
                                         }}
-                                        className="flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors text-xs font-bold"
+                                        className="flex-1 py-2.5 bg-muted text-slate-700 rounded-xl hover:bg-muted transition-colors text-xs font-bold"
                                      >
                                         {language === 'ar' ? 'عرض المواعيد' : 'View Appointments'}
                                      </button>
@@ -5277,8 +5277,8 @@ function BuildingManagementContent() {
     if (!showOfferMap) return null;
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-           <div className="bg-white w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl ring-1 ring-gray-200 flex flex-col max-h-[90vh]">
-               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+           <div className="bg-card w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl ring-1 ring-gray-200 flex flex-col max-h-[90vh]">
+               <div className="p-4 border-b border flex justify-between items-center bg-muted">
                    <h3 className="font-bold text-base text-gray-800 flex items-center gap-2">
                        <MapPin className="w-5 h-5 text-slate-600" />
                        {t('bm.offer.location')}
@@ -5312,7 +5312,7 @@ function BuildingManagementContent() {
                       }).filter(Boolean) as any[]}
                    />
                </div>
-               <div className="p-4 border-t border-gray-100 flex justify-end gap-3 bg-white">
+               <div className="p-4 border-t border flex justify-end gap-3 bg-card">
                    <Button variant="outline" onClick={() => setShowOfferMap(false)}>{t('common.close')}</Button>
                    <Button className="bg-slate-600 hover:bg-slate-700 text-white" onClick={confirmOfferLocation}>
                        {t('common.save')}
@@ -5397,9 +5397,9 @@ function BuildingManagementContent() {
       return (
         <div className="space-y-6">
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-card rounded-lg shadow-lg p-6">
             <div className="flex items-center gap-3 mb-8">
-              <div className="p-2 bg-slate-50 rounded-lg">
+              <div className="p-2 bg-muted rounded-lg">
                 <Home className="w-6 h-6 text-slate-700" />
               </div>
               <div>
@@ -5408,7 +5408,7 @@ function BuildingManagementContent() {
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border mb-6">
               <div className="flex gap-4">
                 <button 
                   onClick={() => setActiveSubscriptionTab("new")} 
@@ -5428,10 +5428,10 @@ function BuildingManagementContent() {
             {/* Tab Content */}
             {activeSubscriptionTab === "new" ? (
               <div className="space-y-6">
-                <Card className="rounded-3xl border-slate-100 bg-slate-50/20 overflow-hidden">
-                  <CardHeader className="bg-slate-100/30 border-b border-slate-100/50 pb-6">
+                <Card className="rounded-3xl border bg-muted/20 overflow-hidden">
+                  <CardHeader className="bg-muted/30 border-b border-/50 pb-6">
                     <CardTitle className="flex items-center gap-3 text-slate-900">
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                      <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-sm">
                         <Home className="w-5 h-5 text-slate-700" />
                       </div>
                       {t('sub.tab.new')}
@@ -5449,7 +5449,7 @@ function BuildingManagementContent() {
                           value={newSubscriptionData.unitId || ''} 
                           onValueChange={(val) => setNewSubscriptionData({...newSubscriptionData, unitId: val})}
                         >
-                          <SelectTrigger className="h-10 rounded-xl border-slate-100 bg-white text-start">
+                          <SelectTrigger className="h-10 rounded-xl border bg-card text-start">
                             <SelectValue placeholder={t('pm.unit.selectHint')} />
                           </SelectTrigger>
                           <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-xl shadow-xl">
@@ -5476,7 +5476,7 @@ function BuildingManagementContent() {
                                 <div 
                                     key={pkg.id} 
                                     onClick={() => setNewSubscriptionData({...newSubscriptionData, packageId: pkg.id})}
-                                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all hover:shadow-md ${newSubscriptionData.packageId === pkg.id ? 'border-slate-600 bg-slate-50' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+                                    className={`cursor-pointer rounded-2xl border-2 p-4 transition-all hover:shadow-md ${newSubscriptionData.packageId === pkg.id ? 'border-slate-600 bg-muted' : 'border bg-card hover:border'}`}
                                 >
                                     <div className="flex justify-between items-start mb-2">
                                         <h3 className="font-bold text-gray-900">{pkg.name}</h3>
@@ -5505,7 +5505,7 @@ function BuildingManagementContent() {
                         type="date" 
                         value={newSubscriptionData.startDate}
                         onChange={(e) => setNewSubscriptionData({...newSubscriptionData, startDate: e.target.value})}
-                        className="h-10 rounded-xl border-slate-100 bg-white text-start"
+                        className="h-10 rounded-xl border bg-card text-start"
                       />
                     </div>
 
@@ -5515,7 +5515,7 @@ function BuildingManagementContent() {
                       <Textarea 
                         value={newSubscriptionData.notes}
                         onChange={(e) => setNewSubscriptionData({...newSubscriptionData, notes: e.target.value})}
-                        className="rounded-xl border-slate-100 bg-white min-h-[100px] text-start"
+                        className="rounded-xl border bg-card min-h-[100px] text-start"
                         placeholder={t('sub.field.notesPlaceholder')}
                       />
                     </div>
@@ -5525,7 +5525,7 @@ function BuildingManagementContent() {
                       <Button 
                         onClick={handleCreateSubscription}
                         disabled={isCreatingSubscription}
-                        className="flex-1 h-10 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-semibold shadow-lg shadow-slate-700/10"
+                        className="flex-1 h-10 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-semibold shadow-lg shadow-stone-400/10"
                       >
                         {isCreatingSubscription ? t('sub.btn.creating') : t('sub.btn.submit')}
                       </Button>
@@ -5552,7 +5552,7 @@ function BuildingManagementContent() {
             ) : (
               <div className="space-y-4">
                 {subscriptions.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-50 rounded-xl">
+                  <div className="text-center py-12 bg-muted rounded-xl">
                     <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500 mb-4">{t('sub.list.empty')}</p>
                     <Button 
@@ -5565,7 +5565,7 @@ function BuildingManagementContent() {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-slate-50 border-b border-gray-200">
+                      <thead className="bg-muted border-b border">
                         <tr>
                           <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.property')}</th>
                           <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('pm.unit')}</th>
@@ -5577,7 +5577,7 @@ function BuildingManagementContent() {
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {subscriptions.map((sub) => (
-                          <tr key={sub.id} className="hover:bg-slate-50">
+                          <tr key={sub.id} className="hover:bg-muted">
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.property?.name || sub.propertyId}</td>
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.unit?.unitNumber || '-'}</td>
                             <td className="px-6 py-4 text-xs text-gray-900">{sub.subscriptionType}</td>
@@ -5587,7 +5587,7 @@ function BuildingManagementContent() {
                               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                 sub.status === 'نشط' ? 'bg-green-100 text-green-700' : 
                                 sub.status === 'منتهي' ? 'bg-red-100 text-red-700' : 
-                                'bg-slate-100 text-gray-700'
+                                'bg-muted text-gray-700'
                               }`}>
                                 {sub.status}
                               </span>
@@ -5629,10 +5629,10 @@ function BuildingManagementContent() {
 
        return (
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
             <div className="flex items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
-              <div className="p-2 bg-slate-50 rounded-lg">
+              <div className="p-2 bg-muted rounded-lg">
                 <Scale className="w-6 h-6 text-slate-700" />
               </div>
               <div>
@@ -5650,8 +5650,8 @@ function BuildingManagementContent() {
                     onClick={() => setActiveLegalTab(item.id)}
                     className={`px-4 py-2 text-xs font-medium rounded-lg border transition-colors ${
                       activeLegalTab === item.id
-                        ? "bg-slate-50 border-slate-200 text-slate-700"
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "bg-muted border text-slate-700"
+                        : "bg-card border text-slate-600 hover:bg-muted"
                     }`}
                   >
                     {item.label}
@@ -5669,7 +5669,7 @@ function BuildingManagementContent() {
      const sidebarItem = sidebarItems.find((item) => item.id === selectedSection);
      if (sidebarItem && selectedSection !== "offers") {
        return (
-         <div className="p-6 bg-slate-50 rounded-lg border border-gray-200">
+         <div className="p-6 bg-muted rounded-lg border border">
            <h2 className="text-lg font-bold text-gray-800 mb-2">{sidebarItem.label}</h2>
            <p className="text-gray-600">{t('bm.form.devDesc')} {sidebarItem.label}</p>
          </div>
@@ -5697,7 +5697,7 @@ function BuildingManagementContent() {
               </DialogDescription>
             </DialogHeader>
             {subStatus.subscription && (
-              <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-600">
+              <div className="mt-5 rounded-3xl border border bg-muted p-4 text-sm font-medium text-slate-600">
                 {language === 'ar'
                   ? `آخر اشتراك انتهى في: ${new Date(subStatus.subscription.endDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}`
                   : `Last subscription ended on: ${new Date(subStatus.subscription.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`}
@@ -5708,7 +5708,7 @@ function BuildingManagementContent() {
             <Button
               type="button"
               variant="outline"
-              className="h-11 rounded-2xl border-slate-200 px-5 font-bold"
+              className="h-11 rounded-2xl border px-5 font-bold"
               onClick={() => router.push('/subscriptions/new')}
             >
               <CreditCard className="h-4 w-4 mr-2" />
@@ -5772,7 +5772,7 @@ function BuildingManagementContent() {
 
 
 
-      <div className="flex h-screen overflow-hidden bg-slate-50/50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="flex h-screen overflow-hidden bg-muted/50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         {/* Fixed Sidebar - PREMIUM GLASSMORPHISM */}
         <motion.div 
           initial={{ x: language === 'ar' ? 100 : -100, opacity: 0 }}
@@ -5780,13 +5780,13 @@ function BuildingManagementContent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20"
         >
-          <div className="bg-white/90 backdrop-blur-3xl p-6 h-full rounded-[2rem] border border-white/50 shadow-2xl flex flex-col gap-6">
+          <div className="bg-card/90 backdrop-blur-3xl p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
             <div className="space-y-6">
               <motion.button 
                 whileHover={{ x: language === 'ar' ? -5 : 5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleBack}
-                className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors bg-slate-50/50 px-5 py-3 rounded-2xl w-full border border-slate-100/50"
+                className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors bg-muted/50 px-5 py-3 rounded-2xl w-full border border-/50"
               >
                 <div className={`transform ${language === 'en' ? 'rotate-180' : ''}`}>
                    <ArrowRight className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
@@ -5815,19 +5815,19 @@ function BuildingManagementContent() {
                         }
                   }}
                   className={`
-                    group relative p-3 lg:p-4 bg-white border rounded-[1.5rem] 
+                    group relative p-3 lg:p-4 bg-card border rounded-[1rem] 
                     transition-all duration-700 flex items-center gap-3 lg:gap-4 text-start
                     ${selectedSection === item.id 
-                      ? 'border-slate-900 bg-slate-50 shadow-xl shadow-slate-200/50 ring-2 ring-slate-900/5' 
-                      : 'border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-lg'}
+                      ? 'border-slate-900 bg-muted shadow-xl shadow-stone-400 ring-2 ring-slate-900/5' 
+                      : 'border hover:border-slate-300 shadow-sm hover:shadow-lg'}
                   `}
                 >
                   {/* Icon Container - MORE COMPACT */}
                   <div className={`
                     w-12 h-10 lg:w-14 lg:h-14 flex items-center justify-center rounded-[1rem] shadow-lg transition-all duration-700
                     ${selectedSection === item.id 
-                      ? 'bg-slate-950 text-white scale-105 rotate-3 shadow-slate-950/20' 
-                      : 'bg-slate-50 text-slate-700 group-hover:bg-slate-100 group-hover:scale-105 group-hover:-rotate-2'}
+                      ? 'bg-slate-950 text-white scale-105 rotate-3 shadow-stone-400/20' 
+                      : 'bg-muted text-slate-700 group-hover:bg-muted group-hover:scale-105 group-hover:-rotate-2'}
                   `}>
                     {item.image ? (
                       <Image 
@@ -5872,13 +5872,13 @@ function BuildingManagementContent() {
             {!isAdmin && subStatus && (
               <div className={`mt-2 rounded-2xl border px-4 py-3 flex items-center gap-3 transition-all ${
                 subStatus.noExpiry
-                  ? 'bg-slate-50 border-slate-100'
+                  ? 'bg-muted border'
                   : subStatus.daysLeft <= 7
                   ? 'bg-red-50 border-red-200 animate-pulse'
-                  : 'bg-slate-50 border-slate-100'
+                  : 'bg-muted border'
               }`}>
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+                  subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'bg-red-100 text-red-600' : 'bg-muted text-slate-500'
                 }`}>
                   <Clock className="w-4 h-4" />
                 </div>
@@ -5961,7 +5961,7 @@ function BuildingManagementContent() {
             <div className="py-4">
               <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="flex justify-center w-full">
-                  <TabsList className="flex w-full max-w-xs mb-6 bg-slate-100 p-1 rounded-xl h-auto">
+                  <TabsList className="flex w-full max-w-xs mb-6 bg-muted p-1 rounded-xl h-auto">
                     <TabsTrigger value="details"  className="w-full py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
                   </TabsList>
                 </div>
@@ -5969,8 +5969,8 @@ function BuildingManagementContent() {
                 {/* ── Details tab ──────────────────────────────────────── */}
                 <TabsContent value="details" className="space-y-6">
                   {/* Client card */}
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-                    <div className="w-12 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                  <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
+                    <div className="w-12 h-10 rounded-xl bg-card flex items-center justify-center shadow-sm">
                       <User className="w-6 h-6 text-slate-500" />
                     </div>
                     <div>
@@ -5995,12 +5995,12 @@ function BuildingManagementContent() {
                   </div>
 
                   {/* Status & Department (Legal overrides) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border">
                     <div className="space-y-2">
                         {t("bm.users.status")}
                       <select
                         value={selectedServiceRequest.status}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
+                        className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
                       >
                        
                       </select>
@@ -6011,7 +6011,7 @@ function BuildingManagementContent() {
                       </label>
                       <select
                         value={srEditingDepartment}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
+                        className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
                       >
                       
                       </select>
@@ -6021,9 +6021,9 @@ function BuildingManagementContent() {
                   {/* Legal party info */}
                   {selectedServiceRequest.category === "legal" &&
                     (selectedServiceRequest.firstParty || selectedServiceRequest.secondParty) && (
-                      <div className="space-y-4 pt-4 border-t border-slate-100">
+                      <div className="space-y-4 pt-4 border-t border">
                         {selectedServiceRequest.firstParty && (
-                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('legal.party.first')}</p>
                             <div className="grid grid-cols-2 gap-2">
                               <div>
@@ -6038,7 +6038,7 @@ function BuildingManagementContent() {
                           </div>
                         )}
                         {selectedServiceRequest.secondParty && (
-                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('legal.party.second')}</p>
                             <div className="grid grid-cols-2 gap-2">
                               <div>
@@ -6056,21 +6056,21 @@ function BuildingManagementContent() {
                     )}
 
                   {selectedServiceRequest.description && (
-                    <div className="space-y-1 pt-2 border-t border-slate-100">
+                    <div className="space-y-1 pt-2 border-t border">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</p>
-                      <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl">{selectedServiceRequest.description}</p>
+                      <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted p-3 rounded-xl">{selectedServiceRequest.description}</p>
                     </div>
                   )}
 
                   {/* Price & Save */}
-                  <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className="space-y-3 pt-4 border-t border">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.price")}</label>
                     <div className="flex gap-3">
                       <input
                         type="number"
                         value={srEditingPrice}
                         onChange={(e) => setSrEditingPrice(e.target.value)}
-                        className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                        className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
                         placeholder="0.00"
                       />
                       <button
@@ -6099,7 +6099,7 @@ function BuildingManagementContent() {
                        {selectedServiceRequest.clientDecision && selectedServiceRequest.clientDecision !== "pending" && (
                          <div className="space-y-3">
                            <div className={`p-4 rounded-2xl text-xs font-black flex items-center justify-between ${
-                             selectedServiceRequest.clientDecision === "accepted" ? "bg-slate-50 text-slate-700 border border-slate-100" : "bg-slate-50 text-slate-700 border border-slate-100"
+                             selectedServiceRequest.clientDecision === "accepted" ? "bg-muted text-slate-700 border border" : "bg-muted text-slate-700 border border"
                            }`}>
                              <div className="flex items-center gap-2">
                                {selectedServiceRequest.clientDecision === "accepted" ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
@@ -6125,7 +6125,7 @@ function BuildingManagementContent() {
                                    }
                                  } catch (err) { toast.error(t("legal.action.markPaidError")); }
                                }}
-                               className="w-full h-11 bg-slate-600 text-white hover:bg-slate-700 rounded-xl font-black text-xs gap-2 shadow-lg shadow-slate-100"
+                               className="w-full h-11 bg-slate-600 text-white hover:bg-slate-700 rounded-xl font-black text-xs gap-2 shadow-lg shadow-stone-400"
                              >
                                <CheckCircle2 className="w-4 h-4" />
                                      {t("legal.action.markPaid")}
@@ -6159,9 +6159,9 @@ function BuildingManagementContent() {
                   ) : srUserBookings.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 text-start">
                       {srUserBookings.map((booking: any) => (
-                        <div key={booking.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div key={booking.id} className="p-4 bg-muted rounded-xl border border">
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="outline" className="bg-white">{booking.type}</Badge>
+                            <Badge variant="outline" className="bg-card">{booking.type}</Badge>
                             <span className="text-xs text-slate-400 font-medium">{format(new Date(booking.createdAt), "dd/MM/yyyy")}</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
@@ -6185,7 +6185,7 @@ function BuildingManagementContent() {
                   ) : srUserInvoices.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 text-start">
                       {srUserInvoices.map((inv: any) => (
-                        <div key={inv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                        <div key={inv.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <Receipt className="w-4 h-4 text-slate-400" />

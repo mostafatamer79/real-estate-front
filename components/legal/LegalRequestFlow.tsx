@@ -29,22 +29,22 @@ const initialContractPartyState = {
 };
 
 // ─── Shared style tokens — navbar palette ───────────────────────────────────
-const INP = "w-full h-13 bg-white border border-slate-200 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
+const INP = "w-full h-13 bg-card border border hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
 const LBL = "text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-2 block";
-const CARD = "bg-white border border-slate-200 rounded-[2rem] p-6 space-y-4 shadow-sm";
+const CARD = "bg-card/80 backdrop-blur-sm border border rounded-[1.25rem] p-6 space-y-4 shadow-sm";
 
 const SectionDivider = ({ label }: { label: string }) => (
   <div className="flex items-center gap-4 py-1">
-    <div className="h-px flex-1 bg-slate-200" />
+    <div className="h-px flex-1 bg-muted" />
     <span className="text-[11px] font-black text-slate-950 uppercase tracking-[0.25em]">{label}</span>
-    <div className="h-px flex-1 bg-slate-200" />
+    <div className="h-px flex-1 bg-muted" />
   </div>
 );
 
 const UploadRow = ({ label, sub }: { label: string; sub?: string }) => (
-  <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
+  <div className="flex items-center justify-between p-4 bg-muted border border rounded-xl">
     <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+      <div className="w-8 h-8 rounded-lg bg-card border border flex items-center justify-center">
         <Upload className="w-4 h-4 text-slate-500" />
       </div>
       <div>
@@ -52,7 +52,7 @@ const UploadRow = ({ label, sub }: { label: string; sub?: string }) => (
         {sub && <p className="text-[9px] text-slate-400 mt-0.5">{sub}</p>}
       </div>
     </div>
-    <button className="h-8 px-3 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-[10px] font-black text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
+    <button className="h-8 px-3 bg-card border border hover:border-slate-300 rounded-lg text-[10px] font-black text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
       <Upload className="w-3 h-3" />
       رفع
     </button>
@@ -60,8 +60,8 @@ const UploadRow = ({ label, sub }: { label: string; sub?: string }) => (
 );
 
 const DropZone = ({ label, sub }: { label: string; sub?: string }) => (
-  <div className="p-7 border border-dashed border-slate-200 hover:border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer group">
-    <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center group-hover:border-slate-300 transition-colors">
+  <div className="p-7 border border-dashed border hover:border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 bg-muted/50 hover:bg-muted transition-all cursor-pointer group">
+    <div className="w-12 h-12 rounded-xl bg-card border border flex items-center justify-center group-hover:border-slate-300 transition-colors">
       <Upload className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
     </div>
     <div className="text-center">
@@ -274,9 +274,9 @@ export default function LegalRequestFlow({
                     value={(disputeData as any)[p.key].side}
                     onChange={(e) => setDisputeData({ ...disputeData, [p.key]: { ...(disputeData as any)[p.key], side: e.target.value } })}
                   >
-                    <option value="seller" className="bg-white text-slate-900">بائع</option>
-                    <option value="buyer" className="bg-white text-slate-900">مشتري</option>
-                    <option value="broker" className="bg-white text-slate-900">وسيط</option>
+                    <option value="seller" className="bg-card text-slate-900">بائع</option>
+                    <option value="buyer" className="bg-card text-slate-900">مشتري</option>
+                    <option value="broker" className="bg-card text-slate-900">وسيط</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
@@ -304,8 +304,8 @@ export default function LegalRequestFlow({
                 value={disputeData.disputeType}
                 onChange={(e) => setDisputeData({ ...disputeData, disputeType: e.target.value })}
               >
-                <option value="" className="bg-white text-slate-900">اختر...</option>
-                {disputeTypes.map(t => <option key={t} value={t} className="bg-white text-slate-900">{t}</option>)}
+                <option value="" className="bg-card text-slate-900">اختر...</option>
+                {disputeTypes.map(t => <option key={t} value={t} className="bg-card text-slate-900">{t}</option>)}
               </select>
             </div>
             {disputeData.disputeType === "اخرى" && (
@@ -352,7 +352,7 @@ export default function LegalRequestFlow({
           <div className="space-y-1.5">
             <label className={LBL}>نوع العقد</label>
             <select className={INP + " appearance-none cursor-pointer"} value={contractData.type} onChange={(e) => setContractData({ ...contractData, type: e.target.value })}>
-              {types.map(t => <option key={t} value={t} className="bg-white text-slate-900">{t}</option>)}
+              {types.map(t => <option key={t} value={t} className="bg-card text-slate-900">{t}</option>)}
             </select>
           </div>
           {contractData.type === "أخرى" && (
@@ -386,11 +386,11 @@ export default function LegalRequestFlow({
                       <label className={LBL}>الهوية / الإقامة / السجل التجاري *</label>
                       <div className="flex gap-2">
                         <select
-                          className="w-40 h-13 bg-white border border-slate-200 rounded-2xl px-4 text-xs font-bold text-slate-700 text-slate-900 focus:outline-none focus:border-slate-400 hover:border-slate-300 transition-all appearance-none"
+                          className="w-40 h-13 bg-card border border rounded-2xl px-4 text-xs font-bold text-slate-700 text-slate-900 focus:outline-none focus:border-slate-400 hover:border-slate-300 transition-all appearance-none"
                           value={(contractData as any)[p.key].idType}
                           onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], idType: e.target.value } })}
                         >
-                          {idTypes.map(it => <option key={it.id} value={it.id} className="bg-white text-slate-900">{it.label}</option>)}
+                          {idTypes.map(it => <option key={it.id} value={it.id} className="bg-card text-slate-900">{it.label}</option>)}
                         </select>
                         <input className={INP} value={(contractData as any)[p.key].idNumber} onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], idNumber: e.target.value } })} placeholder="أدخل الأرقام" />
                       </div>
@@ -433,7 +433,7 @@ export default function LegalRequestFlow({
                     </div>
                     <div className="space-y-2">
                         <label className={LBL}>مرفق الوكالة</label>
-                        <button className="w-full h-13 bg-white border border-dashed border-slate-300 hover:border-slate-400 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
+                        <button className="w-full h-13 bg-card border border-dashed border-slate-300 hover:border-slate-400 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                         <Upload className="w-4 h-4" />
                         ارفاق الوكالة (صورة أو PDF)
                         </button>
@@ -486,7 +486,7 @@ export default function LegalRequestFlow({
                 className={`h-12 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
                   contractData.applicantRole === role.id
                     ? "bg-slate-950 text-white border-slate-950"
-                    : "bg-white shadow-sm border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900"
+                    : "bg-card shadow-sm border text-slate-500 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {role.label}
@@ -523,12 +523,12 @@ export default function LegalRequestFlow({
       {/* Deed Info */}
       <div className={CARD + " space-y-4"}>
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-card border border flex items-center justify-center">
             <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
           </div>
           <p className="text-xs font-black text-slate-900">صك الملكية</p>
         </div>
-        <p className="text-[10px] text-slate-500 leading-relaxed bg-white/[0.03] p-3 rounded-xl border border-white/5">
+        <p className="text-[10px] text-slate-500 leading-relaxed bg-card/[0.03] p-3 rounded-xl border border-white/5">
           الأصل المحدث والصادر من وزارة العدل، ويكون خالياً من أي موانع تمنع الإفراغ، مثل الرهن أو الحجز.
         </p>
         <UploadRow label="ارفاق صك الملكية" sub="PDF أو صورة واضحة (يقبل كذا صيغة)" />
@@ -572,7 +572,7 @@ export default function LegalRequestFlow({
                 className={`h-13 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
                   otherData.type === t.label
                     ? "bg-slate-950 text-white border-slate-950"
-                    : "bg-white shadow-sm border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900"
+                    : "bg-card shadow-sm border text-slate-500 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {t.label}
@@ -699,14 +699,14 @@ export default function LegalRequestFlow({
 	                }}
 	                className={`group relative rounded-2xl p-4 sm:p-5 text-right flex flex-col justify-between min-h-[140px] sm:min-h-[160px] transition-all duration-300 overflow-hidden border ${
 	                  disabled
-	                    ? 'opacity-60 cursor-not-allowed bg-white/[0.02] border-white/[0.08]'
-	                    : 'bg-white/[0.02] border-white/[0.08] hover:border-white/20 cursor-pointer hover:-translate-y-0.5'
+	                    ? 'opacity-60 cursor-not-allowed bg-card/[0.02] border-white/[0.08]'
+	                    : 'bg-card/[0.02] border-white/[0.08] hover:border-white/20 cursor-pointer hover:-translate-y-0.5'
 	                }`}
 	              >
 	                <motion.div
 	                  variants={{ hovered: { opacity: 1 }, initial: { opacity: 0 } }}
 	                  transition={{ duration: 0.3 }}
-	                  className="absolute inset-0 bg-white/[0.03] pointer-events-none"
+	                  className="absolute inset-0 bg-card/[0.03] pointer-events-none"
 	                />
 	                {/* Stronger "not available" sheen for soon/disabled so it doesn't look normal even for admin */}
 	                {disabled && (
@@ -717,7 +717,7 @@ export default function LegalRequestFlow({
 	                  className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
 	                />
 	                <div className="relative z-10 flex items-start justify-between gap-4">
-	                  <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 group-hover:scale-105 flex items-center justify-center transition-all duration-300">
+	                  <div className="w-9 h-9 rounded-xl bg-card/5 border border-white/10 group-hover:scale-105 flex items-center justify-center transition-all duration-300">
 	                    <cat.icon className="w-4 h-4 text-white/50 group-hover:text-white/90 transition-colors duration-200" />
 	                  </div>
 	                  {isSoon && (
@@ -765,7 +765,7 @@ export default function LegalRequestFlow({
           </button>
 
           {/* Form card */}
-          <div className="bg-white shadow-sm border border-slate-200 rounded-[2.5rem] p-8 relative overflow-hidden">
+          <div className="bg-card/80 backdrop-blur-sm shadow-sm border border rounded-[1rem] p-8 relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             {selectedCategory === "disputes"      && renderDisputesForm()}
@@ -778,7 +778,7 @@ export default function LegalRequestFlow({
           <div className="flex gap-4">
             <button
               onClick={() => onBackToSelection ? onBackToSelection() : setSelectedCategory(null)}
-              className="flex-1 h-14 rounded-2xl border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-900 text-xs font-black uppercase tracking-widest transition-all"
+              className="flex-1 h-14 rounded-2xl border border hover:border-slate-300 text-slate-500 hover:text-slate-900 text-xs font-black uppercase tracking-widest transition-all"
             >
               إلغاء
             </button>

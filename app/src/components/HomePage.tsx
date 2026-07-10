@@ -56,7 +56,7 @@ export default function HomePage() {
       {!isLoggedIn && !showSignIn && (
         <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700 relative z-10">
           {isLoading ? (
-            <span className="inline-block w-48 h-16 bg-white/5 rounded-2xl animate-pulse" />
+            <span className="inline-block w-48 h-16 bg-card/5 rounded-2xl animate-pulse" />
           ) : (
             <Image
               src={settings.logoWhiteUrl || '/icons/white.png'}
@@ -76,7 +76,7 @@ export default function HomePage() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse"
+                className="w-1.5 h-1.5 rounded-full bg-card/20 animate-pulse"
                 style={{ animationDelay: `${i * 200}ms` }}
               />
             ))}

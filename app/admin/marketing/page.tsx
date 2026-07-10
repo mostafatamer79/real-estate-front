@@ -14,9 +14,10 @@ import {
   Clock,
   Send,
   MessageSquare,
-  Megaphone
+  Megaphone,
+  Eye
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, Reorder } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
@@ -37,7 +38,8 @@ interface EmailMarketing {
 }
 
 export default function MarketingPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ar';
   const confirmDialog = useConfirmDialog();
   const [campaigns, setCampaigns] = useState<EmailMarketing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,13 +107,31 @@ export default function MarketingPage() {
     }
   };
 
+  const handleReorder = async (newOrder: EmailMarketing[]) => {
+    setCampaigns(newOrder);
+    try {
+      await Promise.all(
+        newOrder.map((camp, index) =>
+          api.patch(`/marketing/email-marketing/${camp.id}`, {
+            sortOrder: index,
+          })
+        )
+      );
+      // Optional: uncomment below if you want a toast for reordering
+      // toast.success(isRtl ? 'تم تحديث الترتيب' : 'Order updated');
+    } catch (error) {
+      toast.error(t('common.error'));
+      fetchCampaigns(); // revert on error
+    }
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 uppercase tracking-tight">
-            <div className="p-2 bg-slate-100 rounded-2xl text-slate-700">
+            <div className="p-2 bg-muted rounded-2xl text-slate-700">
               <Mail className="w-8 h-8" />
             </div>
             {t('admin.marketing.title')}
@@ -124,7 +144,7 @@ export default function MarketingPage() {
           <button
             onClick={handleManualTrigger}
             disabled={triggering}
-            className="flex items-center gap-2 px-5 py-3 bg-slate-100 text-slate-700 rounded-2xl hover:bg-slate-200 transition-all border border-slate-200 text-xs font-black uppercase tracking-widest disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-3 bg-muted text-slate-700 rounded-2xl hover:bg-muted transition-all border border text-xs font-black uppercase tracking-widest disabled:opacity-50"
           >
             {triggering ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {t('admin.marketing.action.trigger')}
@@ -135,7 +155,7 @@ export default function MarketingPage() {
               setEditingCampaign(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-950 text-white rounded-2xl hover:bg-slate-800 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-slate-500/20"
+            className="flex items-center gap-2 px-6 py-3 bg-slate-950 text-white rounded-2xl hover:bg-slate-800 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-stone-400/20"
           >
             <Plus className="w-5 h-5" />
             {t('admin.marketing.create')}
@@ -144,13 +164,13 @@ export default function MarketingPage() {
         )}
       </div>
 
-      <div className="flex gap-2 rounded-2xl bg-slate-100 p-1.5 w-fit">
+      <div className="flex gap-2 rounded-2xl bg-muted p-1.5 w-fit">
 
         <button
           type="button"
           onClick={() => setActiveTab('campaigns')}
           className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-            activeTab === 'campaigns' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+            activeTab === 'campaigns' ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
           <Mail className="w-4 h-4" />
@@ -160,7 +180,7 @@ export default function MarketingPage() {
           type="button"
           onClick={() => setActiveTab('internal')}
           className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-            activeTab === 'internal' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+            activeTab === 'internal' ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
           <Megaphone className="w-4 h-4" />
@@ -181,7 +201,7 @@ export default function MarketingPage() {
       )}
 
       {activeTab === 'campaigns' && (
-      <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-card rounded-[1rem] shadow-sm border border overflow-hidden">
         {loading ? (
           <div className="p-20 flex flex-col items-center justify-center space-y-4">
             <RefreshCcw className="w-10 h-10 text-slate-500 animate-spin" />
@@ -189,7 +209,7 @@ export default function MarketingPage() {
           </div>
         ) : campaigns.length === 0 ? (
           <div className="p-20 text-center flex flex-col items-center justify-center space-y-4">
-            <div className="p-6 bg-slate-50 rounded-full">
+            <div className="p-6 bg-muted rounded-full">
               <Mail className="w-16 h-16 text-slate-200" />
             </div>
             <div>
@@ -201,7 +221,7 @@ export default function MarketingPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left" dir="auto">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
+                <tr className="bg-muted/50 border-b border">
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.category')}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.role')}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.frequency')}</th>
@@ -210,20 +230,22 @@ export default function MarketingPage() {
                   <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.action')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <Reorder.Group as="tbody" axis="y" values={campaigns} onReorder={handleReorder} className="divide-y divide-slate-50">
                 {campaigns.map((campaign) => (
-                  <motion.tr
+                  <Reorder.Item
+                    as="tr"
+                    value={campaign}
                     key={campaign.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="hover:bg-slate-50/50 transition-all group"
+                    className="hover:bg-muted/50 transition-all group cursor-grab active:cursor-grabbing relative bg-card"
                   >
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
                         <div className={`p-2.5 rounded-xl ${
-                          campaign.category === 'OFFERS' ? 'bg-slate-100 text-slate-700' :
-                          campaign.category === 'ORDERS' ? 'bg-slate-100 text-slate-700' :
-                          'bg-slate-100 text-slate-700'
+                          campaign.category === 'OFFERS' ? 'bg-muted text-slate-700' :
+                          campaign.category === 'ORDERS' ? 'bg-muted text-slate-700' :
+                          'bg-muted text-slate-700'
                         }`}>
                           <AlertCircle className="w-4 h-4" />
                         </div>
@@ -233,7 +255,7 @@ export default function MarketingPage() {
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-muted text-slate-700 border border">
                         {campaign.targetRole ? t(`admin.marketing.targetRole.${campaign.targetRole.toLowerCase()}`) : t('admin.marketing.targetRole.all')}
                       </span>
                     </td>
@@ -244,17 +266,24 @@ export default function MarketingPage() {
                       </span>
                     </td>
                     <td className="px-8 py-5">
-                      <button
-                        onClick={() => handleToggleStatus(campaign)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                          campaign.isActive
-                            ? 'bg-slate-100 text-slate-700 border border-slate-200'
-                            : 'bg-slate-100 text-slate-500 border border-slate-200'
-                        }`}
-                      >
-                        {campaign.isActive ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                        {campaign.isActive ? t('admin.marketing.status.active') : t('admin.marketing.status.paused')}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(campaign)}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                            campaign.isActive ? 'bg-emerald-500' : 'bg-slate-300'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                              campaign.isActive ? (isRtl ? '-translate-x-4' : 'translate-x-4') : (isRtl ? '-translate-x-0.5' : 'translate-x-0.5')
+                            }`}
+                          />
+                        </button>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${campaign.isActive ? 'text-emerald-600' : 'text-slate-500'}`}>
+                          {campaign.isActive ? t('admin.marketing.status.active') : t('admin.marketing.status.paused')}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-8 py-5">
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -262,27 +291,28 @@ export default function MarketingPage() {
                       </p>
                     </td>
                     <td className="px-8 py-5 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => {
                             setEditingCampaign(campaign);
                             setIsModalOpen(true);
                           }}
-                          className="p-2.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors text-[10px] font-black uppercase tracking-widest"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Eye className="w-3.5 h-3.5" />
+                          {isRtl ? 'عرض / تعديل' : 'View / Edit'}
                         </button>
                         <button
                           onClick={() => handleDelete(campaign.id)}
-                          className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </Reorder.Item>
                 ))}
-              </tbody>
+              </Reorder.Group>
             </table>
           </div>
         )}

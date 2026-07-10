@@ -55,13 +55,13 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 transition={{ type: 'spring', damping: 20, stiffness: 100 }}
                 className='fixed top-0 right-0 h-screen w-80 lg:w-[360px] p-5 z-10 hidden lg:block'
             >
-                <div className='bg-white/90 backdrop-blur-2xl p-6 h-full rounded-[2rem] border border-white/50 shadow-2xl flex flex-col gap-6'>
+                <div className='bg-card/90 backdrop-blur-2xl p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6'>
                     <div className='space-y-4'>
                         <motion.button 
                             whileHover={{ x: -5 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => router.push('/')}
-                            className="flex items-center gap-2.5 text-slate-400 hover:text-slate-900 transition-colors bg-slate-50/50 px-4.5 py-2.5 rounded-xl w-full border border-slate-100/50"
+                            className="flex items-center gap-2.5 text-slate-400 hover:text-slate-900 transition-colors bg-muted/50 px-4.5 py-2.5 rounded-xl w-full border border-/50"
                         >
                             <ArrowRight className="w-4 h-4 transform rotate-180" />
                             <span className="font-bold text-[10px] uppercase tracking-widest">{t('wallet.backToHome')}</span>
@@ -84,14 +84,14 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 whileTap={{ scale: 0.985 }}
                                 onClick={() => onTabChange(item.id)}
                                 className={`
-                                    group relative p-3 bg-white border border-slate-100 rounded-2xl 
+                                    group relative p-3 bg-card border border rounded-2xl 
                                     hover:border-slate-950 shadow-sm hover:shadow-md text-slate-900
                                     transition-all duration-300 flex items-center gap-3 text-right
-                                    ${activeTab === item.id ? 'border-slate-950 bg-slate-50 ring-1 ring-slate-950/5' : ''}
+                                    ${activeTab === item.id ? 'border-slate-950 bg-muted ring-1 ring-slate-950/5' : ''}
                                 `}
                             >
                                 {/* Icon Container */}
-                                <div className={`h-12 w-12 shrink-0 rounded-xl shadow-sm transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-slate-950/20 rotate-6 scale-105' : 'bg-slate-100 group-hover:bg-slate-200 group-hover:-rotate-3'}`}>
+                                <div className={`h-12 w-12 shrink-0 rounded-xl shadow-sm transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-stone-400/20 rotate-6 scale-105' : 'bg-muted group-hover:bg-muted group-hover:-rotate-3'}`}>
                                     <img
                                         src={item.icon}
                                         alt={item.label}
@@ -123,7 +123,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             </motion.div>
 
             {/* Mobile Navigation */}
-            <div className='lg:hidden fixed top-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-3.5'>
+            <div className='lg:hidden fixed top-0 left-0 right-0 z-20 bg-card/80 backdrop-blur-xl border-b border p-3.5'>
                 <div className='flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none'>
                     {leftSectionItems.map((item, index) => {
                         return (
@@ -133,8 +133,8 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                             className={`
                                 whitespace-nowrap px-4.5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5
                                 ${activeTab === item.id 
-                                    ? 'bg-slate-950 text-white shadow-md shadow-slate-950/10' 
-                                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                                    ? 'bg-slate-950 text-white shadow-md shadow-stone-400/10' 
+                                    : 'bg-muted text-slate-600 hover:bg-muted'
                                 }
                             `}
                         >

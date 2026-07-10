@@ -136,15 +136,15 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
-                <DialogHeader className="border-b border-slate-200 bg-gradient-to-b from-white to-slate-50 px-6 py-5 sm:px-8">
+                <DialogHeader className="border-b border bg-gradient-to-b from-white to-slate-50 px-6 py-5 sm:px-8">
                     <div className="flex items-start gap-4 pe-12">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 shadow-sm">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-slate-700 shadow-sm">
                             <Building className="h-7 w-7" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <DialogTitle className="flex flex-wrap items-center gap-3 text-2xl">
                                 <span className="truncate">{property.name}</span>
-                                <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-bold text-slate-500 shadow-sm ring-1 ring-slate-200">
+                                <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-card px-3 py-1 text-sm font-bold text-slate-500 shadow-sm ring-1 ring-slate-200">
                                     <FileText className="h-4 w-4 shrink-0 text-blue-600" />
                                     <span className="truncate">{property.deedNumber || "---"}</span>
                                 </span>
@@ -158,15 +158,15 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
                 <div className="overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
                     <div className="grid gap-4 sm:grid-cols-3">
-                        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-4">
+                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>
                         </div>
-                        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-4">
+                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.deed')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">{property.deedNumber || "---"}</p>
                         </div>
-                        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-4">
+                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('pm.field.purchasePrice')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">
                                 {property.purchasePrice != null ? <SaudiRiyalAmount amount={property.purchasePrice} locale="en-US" /> : "---"}
@@ -175,13 +175,13 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                     </div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6 w-full">
-                        <TabsList className="grid h-auto w-full grid-cols-2 rounded-2xl bg-slate-100 p-1">
+                        <TabsList className="grid h-auto w-full grid-cols-2 rounded-2xl bg-muted p-1">
                             <TabsTrigger value="units" className="rounded-[1rem] py-3 font-black">{t('pm.tab.units')}</TabsTrigger>
                             <TabsTrigger value="details" className="rounded-[1rem] py-3 font-black">{t('offer.details')}</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="units" className="space-y-5 pt-5">
-                            <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+                            <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                 <div className="mb-5 flex items-center justify-between gap-3">
                                     <div>
                                         <h4 className="text-lg font-black text-slate-900">{t('pm.tab.units')}</h4>
@@ -201,13 +201,13 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                             value={newUnit.unitNumber}
                                             onChange={(e) => setNewUnit({...newUnit, unitNumber: e.target.value})}
                                             placeholder="Unit 101"
-                                            className="h-14 rounded-2xl border-slate-200 px-4 text-lg"
+                                            className="h-14 rounded-2xl border px-4 text-lg"
                                         />
                                     </div>
                                     <div>
                                         <Label className="mb-2 block text-base font-bold">{t('pm.field.unitType')}</Label>
                                         <select
-                                            className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-4 text-lg outline-none transition focus:border-slate-400"
+                                            className="h-14 w-full rounded-2xl border border bg-card px-4 text-lg outline-none transition focus:border-slate-400"
                                             value={newUnit.type}
                                             onChange={(e) => setNewUnit({...newUnit, type: e.target.value as any})}
                                         >
@@ -223,7 +223,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                             type="number"
                                             value={newUnit.roomsCount}
                                             onChange={(e) => setNewUnit({...newUnit, roomsCount: Number(e.target.value)})}
-                                            className="h-14 rounded-2xl border-slate-200 px-4 text-lg"
+                                            className="h-14 rounded-2xl border px-4 text-lg"
                                         />
                                     </div>
                                     <div>
@@ -232,13 +232,13 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                             type="number"
                                             value={newUnit.area}
                                             onChange={(e) => setNewUnit({...newUnit, area: Number(e.target.value)})}
-                                            className="h-14 rounded-2xl border-slate-200 px-4 text-lg"
+                                            className="h-14 rounded-2xl border px-4 text-lg"
                                         />
                                     </div>
                                     <div>
                                         <Label className="mb-2 block text-base font-bold">{t('bm.field.occupancyStatus')}</Label>
                                         <select
-                                            className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-4 text-lg outline-none transition focus:border-slate-400"
+                                            className="h-14 w-full rounded-2xl border border bg-card px-4 text-lg outline-none transition focus:border-slate-400"
                                             value={newUnit.occupancyStatus}
                                             onChange={(e) => setNewUnit({...newUnit, occupancyStatus: e.target.value as any})}
                                         >
@@ -254,7 +254,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                             type="date"
                                             value={newUnit.expectedVacancyDate}
                                             onChange={(e) => setNewUnit({...newUnit, expectedVacancyDate: e.target.value})}
-                                            className="h-14 rounded-2xl border-slate-200 px-4 text-lg"
+                                            className="h-14 rounded-2xl border px-4 text-lg"
                                         />
                                     </div>
                                     <div className="flex items-end md:col-span-2">
@@ -271,20 +271,20 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                             </div>
 
                             {loadingUnits ? (
-                                <div className="rounded-[2rem] border border-slate-200 bg-white py-16 text-center">
+                                <div className="rounded-[1.25rem] border border bg-card py-16 text-center">
                                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-500" />
                                 </div>
                             ) : units.length === 0 ? (
-                                <div className="rounded-[2rem] border border-dashed border-slate-200 bg-slate-50 py-16 text-center text-xl font-medium text-slate-500">
+                                <div className="rounded-[1.25rem] border border-dashed border bg-muted py-16 text-center text-xl font-medium text-slate-500">
                                     {t('bm.list.empty')}
                                 </div>
                             ) : (
                                 <div className="grid gap-4">
                                     {units.map((unit) => (
-                                        <div key={unit.id} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
+                                        <div key={unit.id} className="rounded-[1.25rem] border border bg-card p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
                                             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                                 <div className="flex items-start gap-4">
-                                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-700">
+                                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-slate-700">
                                                         <Home className="h-5 w-5" />
                                                     </div>
                                                     <div>
@@ -297,28 +297,28 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                                     unit.occupancyStatus === 'rented' ? 'bg-green-100 text-green-700' :
                                                     unit.occupancyStatus === 'reserved' ? 'bg-amber-100 text-amber-700' :
                                                     unit.occupancyStatus === 'maintenance' ? 'bg-rose-100 text-rose-700' :
-                                                    'bg-slate-100 text-slate-700'
+                                                    'bg-muted text-slate-700'
                                                 }`}>
                                                     {t(`bm.status.${unit.occupancyStatus}`) || unit.occupancyStatus}
                                                 </span>
                                             </div>
 
                                             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                                                <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                                                <div className="rounded-2xl bg-muted px-4 py-3">
                                                     <div className="flex items-center gap-2 text-slate-400">
                                                         <BedDouble className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('offer.rooms')}</span>
                                                     </div>
                                                     <p className="mt-2 text-base font-black text-slate-900">{unit.roomsCount || 0}</p>
                                                 </div>
-                                                <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                                                <div className="rounded-2xl bg-muted px-4 py-3">
                                                     <div className="flex items-center gap-2 text-slate-400">
                                                         <Ruler className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('offer.area')}</span>
                                                     </div>
                                                     <p className="mt-2 text-base font-black text-slate-900">{unit.area || 0} m²</p>
                                                 </div>
-                                                <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                                                <div className="rounded-2xl bg-muted px-4 py-3">
                                                     <div className="flex items-center gap-2 text-slate-400">
                                                         <CalendarDays className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('pm.field.expectedVacancyDate')}</span>
@@ -334,21 +334,21 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
                         <TabsContent value="details" className="pt-5">
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>
                                 </div>
-                                <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.deed')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">{property.deedNumber || "---"}</p>
                                 </div>
-                                <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('pm.field.purchasePrice')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">
                                         {property.purchasePrice != null ? <SaudiRiyalAmount amount={property.purchasePrice} locale="en-US" /> : "---"}
                                     </p>
                                 </div>
-                                <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
+                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('bm.offer.location')}</span>
                                     <p className="mt-3 break-all text-base font-bold text-slate-900">{property.locationUrl || "---"}</p>
                                 </div>
@@ -357,7 +357,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                     </Tabs>
                 </div>
 
-                <DialogFooter className="border-t border-slate-200 bg-white px-6 py-4 sm:px-8">
+                <DialogFooter className="border-t border bg-card px-6 py-4 sm:px-8">
                     <Button variant="outline" onClick={onClose} className="rounded-2xl px-6 font-bold">
                         {t('common.close')}
                     </Button>

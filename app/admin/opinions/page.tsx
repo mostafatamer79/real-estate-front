@@ -51,7 +51,7 @@ export default function AdminOpinionsPage() {
   return (
     <div className="p-6 md:p-10 space-y-8" dir="rtl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-3xl border border shadow-sm">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center">
             <MessageSquareHeart className="w-6 h-6" />
@@ -65,7 +65,7 @@ export default function AdminOpinionsPage() {
         </div>
         <button
           onClick={fetchOpinions}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-muted border border rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-muted transition-colors"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           تحديث
@@ -79,7 +79,7 @@ export default function AdminOpinionsPage() {
           <p className="font-bold text-sm uppercase tracking-widest">جاري التحميل...</p>
         </div>
       ) : opinions.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3 bg-white rounded-3xl border border-slate-200 border-dashed">
+        <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3 bg-card rounded-3xl border border border-dashed">
           <MessageSquareHeart className="w-10 h-10 opacity-50" />
           <p className="font-bold text-sm">لا توجد آراء مسجلة حتى الآن</p>
         </div>
@@ -92,7 +92,7 @@ export default function AdminOpinionsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               key={opinion.id}
-              className={`p-6 rounded-3xl border ${opinion.isRead ? 'bg-slate-50/50 border-slate-200' : 'bg-white border-slate-200 shadow-md shadow-slate-50'} flex flex-col gap-4 relative overflow-hidden`}
+              className={`p-6 rounded-3xl border ${opinion.isRead ? 'bg-muted/50 border' : 'bg-card border shadow-md shadow-slate-50'} flex flex-col gap-4 relative overflow-hidden`}
             >
               {!opinion.isRead && (
                 <div className="absolute top-0 right-0 w-2 h-full bg-slate-500"></div>
@@ -102,11 +102,11 @@ export default function AdminOpinionsPage() {
                   <h3 className="text-sm font-black text-slate-900">{opinion.name}</h3>
                   <p className="text-xs font-bold text-slate-500 mt-1" dir="ltr">{opinion.email || 'بدون بريد إلكتروني'}</p>
                 </div>
-                <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-100 px-2 py-1 rounded-lg">
+                <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-muted px-2 py-1 rounded-lg">
                   {new Date(opinion.createdAt).toLocaleString('ar-SA')}
                 </div>
               </div>
-              <div className="flex-1 bg-slate-50 rounded-2xl p-4 border border-slate-100">
+              <div className="flex-1 bg-muted rounded-2xl p-4 border border">
                 <p className="text-sm font-bold text-slate-700 whitespace-pre-wrap leading-relaxed">
                   {opinion.message}
                 </p>
@@ -132,17 +132,17 @@ export default function AdminOpinionsPage() {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="px-5 py-2.5 bg-card border border rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-muted transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 السابق
               </button>
-              <div className="px-4 py-2.5 bg-slate-100 rounded-xl text-xs font-black text-slate-700">
+              <div className="px-4 py-2.5 bg-muted rounded-xl text-xs font-black text-slate-700">
                 الصفحة {currentPage} من {totalPages}
               </div>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-slate-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="px-5 py-2.5 bg-card border border rounded-xl text-xs font-black uppercase tracking-widest text-slate-700 hover:bg-muted transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
                 التالي
               </button>

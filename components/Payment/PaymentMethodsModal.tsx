@@ -7,7 +7,7 @@ import { Wallet, CreditCard, Calendar, CheckCircle2, Loader2, AlertCircle } from
 import { financialApi } from '@/lib/api';
 import { apiClient } from '@/lib/client';
 import toast from 'react-hot-toast';
-import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
+
 
 interface PaymentMethodsModalProps {
   isOpen: boolean;
@@ -96,18 +96,18 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
   };
 
   const methods = [
-    { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <SaudiRiyalAmount amount={balance} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-slate-500 font-medium" /> },
+    { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> },
     { id: 'credit', title: t('payment.credit'), icon: <CreditCard className="w-5 h-5" />, desc: t('payment.creditDesc') || "مدى، فيزا، ماستركارد" },
     { id: 'installments', title: t('payment.installments') || "تقسيط", icon: <Calendar className="w-5 h-5" />, desc: t('payment.installmentsDesc') },
   ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md rounded-[2.5rem] p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="max-w-md rounded-[1rem] p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">
-             {t('payment.amountRequired')}: <span className="text-slate-900 font-black"><SaudiRiyalAmount amount={price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
+             {t('payment.amountRequired')}: <span className="text-slate-900 font-black">{price.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -124,12 +124,12 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all group ${
                 selectedMethod === method.id 
                   ? 'border-indigo-600 bg-indigo-50/50' 
-                  : 'border-slate-100 hover:border-slate-200 bg-white'
+                  : 'border hover:border bg-card'
               }`}
             >
               <div className="flex items-center gap-4">
                 <div className={`p-3 rounded-xl transition-colors ${
-                    selectedMethod === method.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+                    selectedMethod === method.id ? 'bg-indigo-600 text-white' : 'bg-muted text-slate-500'
                 }`}>
                   {method.icon}
                 </div>
@@ -139,7 +139,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
                 </div>
               </div>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                selectedMethod === method.id ? 'border-indigo-600 bg-indigo-600' : 'border-slate-200'
+                selectedMethod === method.id ? 'border-indigo-600 bg-indigo-600' : 'border'
               }`}>
                 {selectedMethod === method.id && <CheckCircle2 className="w-4 h-4 text-white" />}
               </div>
@@ -154,19 +154,19 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tamara'
                   ? 'border-pink-500 bg-pink-50/70'
-                  : 'border-slate-100 hover:border-slate-200 bg-white'
+                  : 'border hover:border bg-card'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-xl transition-colors ${
-                  selectedInstallment === 'tamara' ? 'bg-pink-500 text-white' : 'bg-slate-100 text-pink-400'
+                  selectedInstallment === 'tamara' ? 'bg-pink-500 text-white' : 'bg-muted text-pink-400'
                 }`}>
                   <Calendar className="w-4 h-4" />
                 </div>
                 <p className="font-bold text-slate-900">{t('payment.tamara')}</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                selectedInstallment === 'tamara' ? 'border-pink-500 bg-pink-500' : 'border-slate-200'
+                selectedInstallment === 'tamara' ? 'border-pink-500 bg-pink-500' : 'border'
               }`}>
                 {selectedInstallment === 'tamara' && <CheckCircle2 className="w-3 h-3 text-white" />}
               </div>
@@ -177,19 +177,19 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tabby'
                   ? 'border-emerald-500 bg-emerald-50/70'
-                  : 'border-slate-100 hover:border-slate-200 bg-white'
+                  : 'border hover:border bg-card'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-xl transition-colors ${
-                  selectedInstallment === 'tabby' ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-emerald-400'
+                  selectedInstallment === 'tabby' ? 'bg-emerald-500 text-white' : 'bg-muted text-emerald-400'
                 }`}>
                   <Calendar className="w-4 h-4" />
                 </div>
                 <p className="font-bold text-slate-900">{t('payment.tabby')}</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                selectedInstallment === 'tabby' ? 'border-emerald-500 bg-emerald-500' : 'border-slate-200'
+                selectedInstallment === 'tabby' ? 'border-emerald-500 bg-emerald-500' : 'border'
               }`}>
                 {selectedInstallment === 'tabby' && <CheckCircle2 className="w-3 h-3 text-white" />}
               </div>

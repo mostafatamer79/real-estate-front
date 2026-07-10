@@ -224,7 +224,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
           <Button 
             variant="ghost" 
             onClick={() => router.push('/details')} 
-            className="mb-4 flex items-center gap-2 hover:bg-slate-100"
+            className="mb-4 flex items-center gap-2 hover:bg-muted"
           >
               <ArrowRight className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
               {t('common.back')}
@@ -293,7 +293,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                   <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     value={formData.city}
                     onChange={(e) => handleChange("city", e.target.value)}
-                    placeholder={language === 'ar' ? "مثال: الرياض" : "e.g. Riyadh"}
+                    placeholder={language === 'ar' ? ": الرياض" : "e.g. Riyadh"}
                     required
                   />
                 </div>
@@ -303,7 +303,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                   <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
                     value={formData.neighborhood}
                     onChange={(e) => handleChange("neighborhood", e.target.value)}
-                    placeholder={language === 'ar' ? "مثال: النرجس" : "e.g. Al-Narjis"}
+                    placeholder={language === 'ar' ? ": النرجس" : "e.g. Al-Narjis"}
                     required
                   />
                 </div>
@@ -395,27 +395,27 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="maid" checked={formData.hasMaidRoom} onCheckedChange={(val) => handleChange("hasMaidRoom", !!val)} />
                       <Label htmlFor="maid" className="cursor-pointer">{t('orders.maid')}</Label>
                     </div>
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="roof" checked={formData.hasRoof} onCheckedChange={(val) => handleChange("hasRoof", !!val)} />
                       <Label htmlFor="roof" className="cursor-pointer">{t('orders.roof')}</Label>
                     </div>
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="annex" checked={formData.hasExternalAnnex} onCheckedChange={(val) => handleChange("hasExternalAnnex", !!val)} />
                       <Label htmlFor="annex" className="cursor-pointer">{t('orders.annex')}</Label>
                     </div>
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="garage" checked={formData.hasGarage} onCheckedChange={(val) => handleChange("hasGarage", !!val)} />
                       <Label htmlFor="garage" className="cursor-pointer">{t('orders.garage')}</Label>
                     </div>
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="pool" checked={formData.hasPool} onCheckedChange={(val) => handleChange("hasPool", !!val)} />
                       <Label htmlFor="pool" className="cursor-pointer">{t('orders.pool')}</Label>
                     </div>
-                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-slate-50/50">
+                    <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="elevator" checked={formData.hasElevator} onCheckedChange={(val) => handleChange("hasElevator", !!val)} />
                       <Label htmlFor="elevator" className="cursor-pointer">{t('orders.elevator')}</Label>
                     </div>
@@ -475,7 +475,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           </div>
         ) : myOrders.length === 0 ? (
-          <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-gray-200">
+          <div className="text-center py-12 bg-muted rounded-xl border border-dashed border">
             <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
             <Button variant="link" onClick={() => setActiveTab("create")}>
               {t('orders.createOrder')}
@@ -485,7 +485,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
           <div className="grid gap-4">
             {myOrders.map((order) => (
               <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                <CardHeader className="bg-slate-50/50 pb-3">
+                <CardHeader className="bg-muted/50 pb-3">
                   <div className="flex justify-between items-start">
                     <div>
                         <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -518,7 +518,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                      <span>{order.propertyAge}</span>
                   </div>
                 </CardContent>
-                <CardFooter className="bg-slate-50/50 py-3 flex justify-end gap-2">
+                <CardFooter className="bg-muted/50 py-3 flex justify-end gap-2">
                     <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDeleteOrder(order.id)}>
                         {t('common.delete')}
                     </Button>

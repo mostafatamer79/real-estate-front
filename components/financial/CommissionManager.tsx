@@ -86,7 +86,7 @@ export default function CommissionManager() {
 
     if (view === 'list') {
         return (
-            <Card className='bg-white rounded-xl shadow-lg border-0'>
+            <Card className='bg-card rounded-xl shadow-lg border-0'>
                 <CardHeader className='flex flex-row items-center justify-between pb-6'>
                     <CardTitle className='text-2xl font-bold text-black text-right'>إدارة العمولات (السعي)</CardTitle>
                     <Button
@@ -101,7 +101,7 @@ export default function CommissionManager() {
                         <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
                     ) : (
                         <div className='overflow-x-auto'>
-                            <Table className='bg-white border border-gray-200 text-black shadow-sm'>
+                            <Table className='bg-card border border text-black shadow-sm'>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className='text-right'>رقم العملية</TableHead>
@@ -146,7 +146,7 @@ export default function CommissionManager() {
 
     // FORM VIEW
     return (
-        <Card className='bg-white rounded-xl shadow-lg border-0'>
+        <Card className='bg-card rounded-xl shadow-lg border-0'>
             <CardHeader className="flex flex-row items-center justify-between pb-6">
                 <CardTitle className="text-2xl font-bold text-black">نموذج طلب سعي</CardTitle>
                 <button
@@ -154,7 +154,7 @@ export default function CommissionManager() {
                     className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
                 >
                     <span>رجوع للقائمة</span>
-                    <ArrowDownCircle className="h-5 w-5 bg-slate-200 rounded-full rotate-90" />
+                    <ArrowDownCircle className="h-5 w-5 bg-muted rounded-full rotate-90" />
                 </button>
             </CardHeader>
             
@@ -191,7 +191,7 @@ export default function CommissionManager() {
                     <h3 className="text-xl font-bold text-right border-b pb-2">بيانات الأطراف</h3>
                     
                     {/* Owner/Seller Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg space-y-3">
+                    <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المالك أو البائع</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.ownerName} onChange={(e) => setCommissionForm(prev => ({...prev, ownerName: e.target.value}))} className="text-right"/></div>
@@ -200,7 +200,7 @@ export default function CommissionManager() {
                     </div>
 
                     {/* Buyer Section */}
-                    <div className="bg-slate-50 p-4 rounded-lg space-y-3">
+                    <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المشتري</h4>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.buyerName} onChange={(e) => setCommissionForm(prev => ({...prev, buyerName: e.target.value}))} className="text-right"/></div>
@@ -213,7 +213,7 @@ export default function CommissionManager() {
                 <div className="space-y-4">
                     <h3 className="text-xl font-bold text-right border-b pb-2">بيانات الوسطاء</h3>
                     <div className="overflow-x-auto">
-                        <Table className="border border-gray-200">
+                        <Table className="border border">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="text-right">الاسم</TableHead>
@@ -252,7 +252,7 @@ export default function CommissionManager() {
             {showBrokerModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowBrokerModal(false)} dir="rtl">
-                    <div className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-card border border rounded-xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">إضافة وسيط</h2>
                         <div className="space-y-4">
                             <div><Label>الاسم</Label><Input value={brokerForm.name} onChange={(e) => setBrokerForm({...brokerForm, name: e.target.value})} /></div>

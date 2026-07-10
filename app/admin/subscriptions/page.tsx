@@ -412,7 +412,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
     }
   };
 
-  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
   const visibleDepartments = managerAllowedDepartments !== null
@@ -421,7 +421,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl relative">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1rem] p-8 shadow-2xl relative">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -437,17 +437,17 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
         <form onSubmit={isEdit ? handleEditSubmit : handleSubmit} className="space-y-6">
           {!isEdit && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border pb-3">
                 <div>
                   <h3 className="text-xs font-black text-slate-950">المستخدم المستهدف</h3>
                   <p className="text-[10px] text-slate-400 font-bold">اختر مستخدماً حالياً أو سجل مستخدماً جديداً</p>
                 </div>
-                <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                <div className="flex gap-1 rounded-xl bg-muted p-1">
                   <button
                     type="button"
                     onClick={() => setCreateUserMode(false)}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
-                      !createUserMode ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                      !createUserMode ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
                     }`}
                   >
                     مستخدم حالي
@@ -456,7 +456,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     type="button"
                     onClick={() => setCreateUserMode(true)}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
-                      createUserMode ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                      createUserMode ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
                     }`}
                   >
                     إنشاء مستخدم جديد
@@ -487,9 +487,9 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                         />
                       </div>
                       {userSearch && !form.userId && (
-                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden">
                           {filteredUsers.length > 0 ? filteredUsers.map(u => (
-                            <button key={u.id} type="button" onClick={() => { setForm(f => ({...f, userId: u.id})); setUserSearch(`${u.firstName} ${u.lastName}`); }} className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0">
+                            <button key={u.id} type="button" onClick={() => { setForm(f => ({...f, userId: u.id})); setUserSearch(`${u.firstName} ${u.lastName}`); }} className="w-full px-4 py-3 text-right hover:bg-muted flex items-center justify-between border-b border last:border-0">
                               <div className="flex flex-col">
                                 <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
                                 <span className="text-[10px] text-slate-400 font-bold">{u.email}</span>
@@ -515,7 +515,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     ) : (
                       <div className="space-y-1 col-span-2 sm:col-span-1">
                         <label className={labelCls}>نوع الاشتراك</label>
-                        <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
+                        <div className="flex h-11 items-center rounded-xl bg-muted px-4 text-sm font-black text-slate-700">
                           اشتراك مخصص بالإدارات
                         </div>
                       </div>
@@ -528,7 +528,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.15 }}
-                    className="space-y-4 p-5 rounded-[2rem] bg-slate-50 border border-slate-100/80"
+                    className="space-y-4 p-5 rounded-[1.25rem] bg-muted border border-/80"
                   >
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
@@ -649,7 +649,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                                   className={`flex items-center justify-between gap-2 rounded-xl border p-2.5 text-right text-[10px] font-black transition-all ${
                                     isSelected
                                       ? 'bg-slate-950 text-white border-slate-950 shadow-sm'
-                                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400'
+                                      : 'bg-card text-slate-500 border hover:border-slate-400'
                                   }`}
                                 >
                                   <span>{language === 'ar' ? dept.labelAr : dept.labelEn}</span>
@@ -669,17 +669,17 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
 
           {!isEdit && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border pb-3">
                 <div>
                   <h3 className="text-xs font-black text-slate-950">تفاصيل خطة الاشتراك</h3>
                   <p className="text-[10px] text-slate-400 font-bold">حدد نوع وهيكل خطة الاشتراك</p>
                 </div>
-                <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                <div className="flex gap-1 rounded-xl bg-muted p-1">
                   <button
                     type="button"
                     onClick={() => switchPlanMode("package")}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
-                      planMode === "package" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                      planMode === "package" ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
                     }`}
                   >
                     باقة جاهزة
@@ -688,7 +688,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     type="button"
                     onClick={() => switchPlanMode("custom")}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${
-                      planMode === "custom" ? "bg-white text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
+                      planMode === "custom" ? "bg-card text-slate-950 shadow-sm" : "text-slate-500 hover:text-slate-950"
                     }`}
                   >
                     اشتراك مخصص
@@ -718,7 +718,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     ) : (
                       <div className="space-y-1">
                         <label className={labelCls}>نوع الاشتراك</label>
-                        <div className="flex h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-black text-slate-700">
+                        <div className="flex h-11 items-center rounded-xl bg-muted px-4 text-sm font-black text-slate-700">
                           اشتراك مخصص بالإدارات
                         </div>
                       </div>
@@ -765,13 +765,13 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
           )}
 
           {planMode === "package" && selectedPackage && (
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <div className="rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-black text-slate-950">{selectedPackage.name}</div>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {(selectedPackage.administrations || []).map((department: string) => (
-                      <span key={department} className="rounded-full bg-white px-2 py-1 text-[10px] font-black text-slate-500">
+                      <span key={department} className="rounded-full bg-card px-2 py-1 text-[10px] font-black text-slate-500">
                         {departmentLabel(department)}
                       </span>
                     ))}
@@ -805,7 +805,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                         });
                       }}
                       className={`rounded-2xl border px-4 py-3 text-right transition-colors ${
-                        checked ? "border-slate-950 bg-slate-50" : "border-slate-100 hover:bg-slate-50"
+                        checked ? "border-slate-950 bg-muted" : "border hover:bg-muted"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -835,19 +835,19 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
           )}
 
           {planMode === "custom" && (
-            <div className="space-y-2 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <div className="space-y-2 rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
                 <span>تفصيل الأسعار</span>
                 <span>{form.subscriptionType}</span>
               </div>
               {selectedDepartmentPricing.length === 0 ? (
-                <div className="rounded-xl bg-white px-3 py-2 text-xs font-bold text-slate-400">
+                <div className="rounded-xl bg-card px-3 py-2 text-xs font-bold text-slate-400">
                   اختر إدارة لعرض السعر
                 </div>
               ) : (
                 <div className="space-y-1">
                   {selectedDepartmentPricing.map((item) => (
-                    <div key={item.department} className="flex items-center justify-between rounded-xl bg-white px-3 py-2">
+                    <div key={item.department} className="flex items-center justify-between rounded-xl bg-card px-3 py-2">
                       <span className="text-xs font-black text-slate-700">{item.label}</span>
                       <span className="text-xs font-black text-slate-950"><SaudiRiyalAmount amount={item.price} locale="ar-SA" iconClassName="h-3 w-3" /></span>
                     </div>
@@ -887,13 +887,13 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-2xl flex items-center justify-between">
+          <div className="p-4 bg-muted rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-slate-400" />
               <span className="text-xs font-bold text-slate-700">اشتراك غير محدود (لا ينتهي)</span>
             </div>
-            <button type="button" onClick={() => setForm(f => ({...f, noExpiry: !f.noExpiry}))} className={`w-10 h-5 rounded-full p-1 transition-all ${form.noExpiry ? 'bg-slate-950' : 'bg-slate-200'}`}>
-              <div className={`w-3 h-3 bg-white rounded-full transition-all ${form.noExpiry ? 'translate-x-5' : 'translate-x-0'}`} />
+            <button type="button" onClick={() => setForm(f => ({...f, noExpiry: !f.noExpiry}))} className={`w-10 h-5 rounded-full p-1 transition-all ${form.noExpiry ? 'bg-slate-950' : 'bg-muted'}`}>
+              <div className={`w-3 h-3 bg-card rounded-full transition-all ${form.noExpiry ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
           </div>
 
@@ -1024,8 +1024,8 @@ export default function AdminSubscriptionsPage() {
       case 'active': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200">نشط</Badge>;
       case 'pending': return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-200">معلق</Badge>;
       case 'expired': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">منتهي</Badge>;
-      case 'cancelled': return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200">ملغي</Badge>;
-      default: return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
+      case 'cancelled': return <Badge className="bg-muted text-slate-700 hover:bg-muted border">ملغي</Badge>;
+      default: return <Badge className="bg-muted text-slate-700">{status}</Badge>;
     }
   };
 
@@ -1058,14 +1058,14 @@ export default function AdminSubscriptionsPage() {
         <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
           <Link
             href="/admin/packages"
-            className="h-12 px-6 bg-white text-slate-950 border border-slate-200 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:border-slate-950 transition-all shadow-sm flex-1 md:flex-initial"
+            className="h-12 px-6 bg-card text-slate-950 border border rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:border-slate-950 transition-all shadow-sm flex-1 md:flex-initial"
           >
             <Package className="w-4 h-4" />
             إدارة الباقات
           </Link>
           <button 
             onClick={() => { setEditingSubscription(null); setIsModalOpen(true); }}
-            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20 flex-1 md:flex-initial"
+            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-stone-400/20 flex-1 md:flex-initial"
           >
             <Plus className="w-4 h-4" />
             إضافة اشتراك
@@ -1075,7 +1075,7 @@ export default function AdminSubscriptionsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          {[
-           { label: 'إجمالي المشتركين', val: subscriptions.length, icon: UserIcon, bg: 'bg-slate-50', color: 'text-slate-950' },
+           { label: 'إجمالي المشتركين', val: subscriptions.length, icon: UserIcon, bg: 'bg-muted', color: 'text-slate-950' },
            { label: 'اشتراكات نشطة', val: subscriptions.filter(s => normalizeStatus(s.status) === 'active').length, icon: Zap, bg: 'bg-emerald-50', color: 'text-emerald-600' },
            { label: 'بانتظار التفعيل', val: subscriptions.filter(s => normalizeStatus(s.status) === 'pending').length, icon: Clock, bg: 'bg-amber-50', color: 'text-amber-600' },
            { label: 'تم إلغاؤها', val: subscriptions.filter(s => normalizeStatus(s.status) === 'cancelled').length, icon: Ban, bg: 'bg-red-50', color: 'text-red-600' },
@@ -1085,7 +1085,7 @@ export default function AdminSubscriptionsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
             key={i} 
-            className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm"
+            className="p-6 bg-card border border rounded-3xl shadow-sm"
            >
               <div className={`w-10 h-10 rounded-xl ${card.bg} ${card.color} flex items-center justify-center mb-4`}>
                 <card.icon className="w-5 h-5" />
@@ -1097,7 +1097,7 @@ export default function AdminSubscriptionsPage() {
       </div>
 
       {/* Table Control/Filter Bar */}
-      <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+      <div className="bg-card p-5 rounded-[1.25rem] border border shadow-sm space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
           {/* Search */}
           <div className="relative col-span-1 sm:col-span-2">
@@ -1107,7 +1107,7 @@ export default function AdminSubscriptionsPage() {
               placeholder="بحث باسم المشترك أو الباقة..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-11 pr-10 pl-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+              className="w-full h-11 pr-10 pl-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
             />
           </div>
 
@@ -1115,7 +1115,7 @@ export default function AdminSubscriptionsPage() {
           <select 
             value={statusFilter} 
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+            className="h-11 px-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
           >
             <option value="all">كل الحالات</option>
             <option value="active">نشط</option>
@@ -1128,7 +1128,7 @@ export default function AdminSubscriptionsPage() {
           <select 
             value={subscriptionTypeFilter} 
             onChange={(e) => setSubscriptionTypeFilter(e.target.value)}
-            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
+            className="h-11 px-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm"
           >
             <option value="all">كل الأنواع</option>
             <option value="شهري">شهري</option>
@@ -1140,7 +1140,7 @@ export default function AdminSubscriptionsPage() {
           <select 
             value={packageFilter} 
             onChange={(e) => setPackageFilter(e.target.value)}
-            className="h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm animate-none"
+            className="h-11 px-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-sm font-bold transition-all shadow-sm animate-none"
           >
             <option value="all">كل الباقات</option>
             {packageOptions.map(([id, name]) => <option key={id as string} value={id as string}>{name || id}</option>)}
@@ -1152,7 +1152,7 @@ export default function AdminSubscriptionsPage() {
               type="date" 
               value={dateFrom} 
               onChange={(e) => setDateFrom(e.target.value)} 
-              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
+              className="w-full h-11 px-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
             />
           </div>
 
@@ -1162,7 +1162,7 @@ export default function AdminSubscriptionsPage() {
               type="date" 
               value={dateTo} 
               onChange={(e) => setDateTo(e.target.value)} 
-              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
+              className="w-full h-11 px-4 rounded-xl border border bg-muted/50 focus:bg-card focus:outline-none focus:border-slate-950 text-xs font-bold transition-all shadow-sm" 
             />
           </div>
 
@@ -1170,17 +1170,17 @@ export default function AdminSubscriptionsPage() {
           <button 
             type="button" 
             onClick={() => { setSearch(""); setStatusFilter("all"); setSubscriptionTypeFilter("all"); setPackageFilter("all"); setDateFrom(""); setDateTo(""); }} 
-            className="h-11 px-6 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-slate-950 hover:border-slate-950 text-xs font-black transition-all shadow-sm flex items-center justify-center gap-1 col-span-full sm:col-span-1"
+            className="h-11 px-6 rounded-xl border border bg-card text-slate-500 hover:text-slate-950 hover:border-slate-950 text-xs font-black transition-all shadow-sm flex items-center justify-center gap-1 col-span-full sm:col-span-1"
           >
             مسح الفلاتر
           </button>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl">
+      <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-slate-50/50">
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">المشترك</TableHead>
                 <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">الباقة</TableHead>
@@ -1204,10 +1204,10 @@ export default function AdminSubscriptionsPage() {
                 </TableRow>
               ) : (
                 filteredSubscriptions.map((sub) => (
-                  <TableRow key={sub.id} className="hover:bg-slate-50/50 group transition-colors">
+                  <TableRow key={sub.id} className="hover:bg-muted/50 group transition-colors">
                     <TableCell className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-[11px] font-black text-slate-500 border border-slate-200/50">
+                        <div className="w-10 h-10 rounded-2xl bg-muted flex items-center justify-center text-[11px] font-black text-slate-500 border border-/50">
                           {sub.user?.firstName?.[0] || 'U'}
                         </div>
                         <div className="flex flex-col">
@@ -1245,11 +1245,11 @@ export default function AdminSubscriptionsPage() {
                     <TableCell className="px-6 py-5 text-left">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-950">
+                          <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
                             <MoreVertical className="w-5 h-5" />
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-slate-100">
+                        <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border">
                           {normalizeStatus(sub.status) === 'pending' && (
                             <DropdownMenuItem 
                               onClick={() => handleActivate(sub.id)}
@@ -1266,7 +1266,7 @@ export default function AdminSubscriptionsPage() {
                             <RefreshCw className="w-4 h-4" /> تعديل المدة
                           </DropdownMenuItem>
                           
-                          <DropdownMenuSeparator className="my-1 bg-slate-50" />
+                          <DropdownMenuSeparator className="my-1 bg-muted" />
                           
                           <DropdownMenuItem 
                             onClick={() => handleCancel(sub.id)}

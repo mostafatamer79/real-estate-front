@@ -72,7 +72,7 @@ export default function UserWallet() {
 
     return (
         <div className="space-y-6">
-            <Card className='bg-white rounded-xl shadow-lg'>
+            <Card className='bg-card rounded-xl shadow-lg'>
                 <CardHeader className='pb-4'>
                     <CardTitle className='text-2xl font-bold text-black text-right'>المحفظة</CardTitle>
                 </CardHeader>
@@ -105,7 +105,7 @@ export default function UserWallet() {
                 {/* Recent Wallet Transactions */}
                 <div className='px-6 pb-6'>
                     <h3 className="text-right font-bold mb-4">آخر العمليات</h3>
-                    <Table className='bg-white border border-gray-200 text-black p-4 shadow-sm'>
+                    <Table className='bg-card border border text-black p-4 shadow-sm'>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className='text-right'>رقم العملية</TableHead>
@@ -148,7 +148,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-md mx-4 text-black p-6"
+                        className="bg-card border border rounded-xl shadow-2xl w-full max-w-md mx-4 text-black p-6"
                         onClick={(e) => e.stopPropagation()}
                     >
                          <h2 className="text-xl font-bold mb-4">طلب سحب رصيد</h2>
@@ -179,14 +179,14 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200"
+                        className="bg-card border border rounded-xl shadow-2xl w-full max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                        <div className="flex items-center justify-between p-6 border-b border">
                             <h2 className="text-2xl font-bold">طرق الدفع</h2>
                             <button
                                 onClick={() => setShowPaymentModal(false)}
-                                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                                className="p-2 hover:bg-muted rounded-full transition-colors"
                             >
                                 <X className="h-6 w-6 text-gray-400" />
                             </button>

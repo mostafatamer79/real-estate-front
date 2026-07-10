@@ -186,7 +186,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
     }
   };
 
-  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
   // Check if detailed specifications should be shown based on property type
@@ -194,7 +194,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-4xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -208,7 +208,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                       setUserSearch(e.target.value); 
                       if(form.userId) setForm((f: any) => ({...f, userId: ""})) 
                     }} 
-                    className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
+                    className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
                     placeholder="ابحث بالاسم أو اترك فارغاً للمجهول..." 
                   />
                   {form.userId && (
@@ -239,7 +239,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   )}
                 </div>
                 {userSearch && !form.userId && (
-                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                     {filteredUsers.length > 0 ? filteredUsers.map(u => (
                       <button 
                         key={u.id} 
@@ -248,7 +248,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                           setForm((f: any) => ({...f, userId: u.id, clientName: "", clientPhone: ""})); 
                           setUserSearch(`${u.firstName} ${u.lastName}`); 
                         }} 
-                        className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0"
+                        className="w-full px-4 py-3 text-right hover:bg-muted flex items-center justify-between border-b border last:border-0"
                       >
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
@@ -268,7 +268,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     <input 
                       value={form.clientName} 
                       onChange={e => setForm((f: any) => ({...f, clientName: e.target.value}))} 
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="اسم العميل..." 
                     />
                   </div>
@@ -277,7 +277,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     <input 
                       value={form.clientPhone} 
                       onChange={e => setForm((f: any) => ({...f, clientPhone: e.target.value}))} 
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="05xxxxxxxx" 
                     />
                   </div>
@@ -296,13 +296,13 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl h-11 items-center">
+                <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
                   <button
                     type="button"
                     onClick={() => handleCategoryChange("residential")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -313,7 +313,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     onClick={() => handleCategoryChange("commercial")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -371,7 +371,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   value={form.address} 
                   onChange={e => setForm((f: any) => ({...f, address: e.target.value}))} 
                   className={inputCls} 
-                  placeholder="مثال: شارع العليا العام، حي الورود..."
+                  placeholder=": شارع العليا العام، حي الورود..."
                 />
               </div>
             </div>
@@ -436,7 +436,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   value={form.propertyAge} 
                   onChange={e => setForm((f: any) => ({...f, propertyAge: e.target.value}))} 
                   className={inputCls} 
-                  placeholder="مثال: جديد، سنتين..." 
+                  placeholder=": جديد، سنتين..." 
                 />
               </div>
               <div className="space-y-1">
@@ -500,7 +500,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+            <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -593,7 +593,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
               {/* Checkboxes for features */}
               <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2">
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasMaidRoom}
@@ -603,7 +603,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasRoof}
@@ -613,7 +613,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <span className="text-xs font-bold text-slate-700">روف / سطح</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasExternalAnnex}
@@ -623,7 +623,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <span className="text-xs font-bold text-slate-700">ملحق خارجي</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasGarage}
@@ -633,7 +633,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <span className="text-xs font-bold text-slate-700">كراج سيارة</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasPool}
@@ -643,7 +643,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   <span className="text-xs font-bold text-slate-700">مسبح</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasElevator}
@@ -657,7 +657,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           )}
 
           {/* Media upload section */}
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -672,7 +672,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                       setImages(Array.from(e.target.files));
                     }
                   }}
-                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                  className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
                 />
                 {images.length > 0 && (
                   <p className="text-[10px] text-emerald-600 font-bold mt-1">
@@ -691,7 +691,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                       setVideoFile(e.target.files[0]);
                     }
                   }}
-                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                  className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
                 />
                 {videoFile && (
                   <p className="text-[10px] text-emerald-600 font-bold mt-1">
@@ -721,7 +721,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               <textarea 
                 value={form.additionalNotes} 
                 onChange={e => setForm((f: any) => ({...f, additionalNotes: e.target.value}))} 
-                className="w-full h-11 min-h-[44px] bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all resize-none"
+                className="w-full h-11 min-h-[44px] bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all resize-none"
                 placeholder="أدخل أي ملاحظات إضافية عن العقار..."
               />
             </div>
@@ -730,7 +730,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20"
+            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-stone-400/20"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             نشر العرض الآن
@@ -871,7 +871,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
     }
   };
 
-  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
 
   // Check if detailed specifications should be shown based on property type
@@ -879,7 +879,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-4xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -893,7 +893,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -907,7 +907,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                       setUserSearch(e.target.value); 
                       if(form.userId) setForm((f: any) => ({...f, userId: ""})) 
                     }} 
-                    className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
+                    className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl pr-10 pl-4 text-sm font-bold outline-none transition-all" 
                     placeholder="ابحث بالاسم أو اترك فارغاً للمجهول..." 
                   />
                   {form.userId && (
@@ -924,7 +924,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   )}
                 </div>
                 {userSearch && !form.userId && (
-                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                     {filteredUsers.length > 0 ? filteredUsers.map(u => (
                       <button 
                         key={u.id} 
@@ -933,7 +933,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                           setForm((f: any) => ({...f, userId: u.id, clientName: "", clientPhone: ""})); 
                           setUserSearch(`${u.firstName} ${u.lastName}`); 
                         }} 
-                        className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0"
+                        className="w-full px-4 py-3 text-right hover:bg-muted flex items-center justify-between border-b border last:border-0"
                       >
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
@@ -953,7 +953,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     <input 
                       value={form.clientName} 
                       onChange={e => setForm((f: any) => ({...f, clientName: e.target.value}))} 
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="اسم العميل..." 
                     />
                   </div>
@@ -962,7 +962,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     <input 
                       value={form.clientPhone} 
                       onChange={e => setForm((f: any) => ({...f, clientPhone: e.target.value}))} 
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all" 
                       placeholder="05xxxxxxxx" 
                     />
                   </div>
@@ -981,13 +981,13 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl h-11 items-center">
+                <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
                   <button
                     type="button"
                     onClick={() => handleCategoryChange("residential")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -998,7 +998,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     onClick={() => handleCategoryChange("commercial")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -1056,7 +1056,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   value={form.address} 
                   onChange={e => setForm((f: any) => ({...f, address: e.target.value}))} 
                   className={inputCls} 
-                  placeholder="مثال: شارع العليا العام، حي الورود..."
+                  placeholder=": شارع العليا العام، حي الورود..."
                 />
               </div>
             </div>
@@ -1121,7 +1121,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   value={form.propertyAge} 
                   onChange={e => setForm((f: any) => ({...f, propertyAge: e.target.value}))} 
                   className={inputCls} 
-                  placeholder="مثال: جديد، سنتين..." 
+                  placeholder=": جديد، سنتين..." 
                 />
               </div>
               <div className="space-y-1">
@@ -1185,7 +1185,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+            <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1278,7 +1278,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
               {/* Checkboxes for features */}
               <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2">
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasMaidRoom}
@@ -1288,7 +1288,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasRoof}
@@ -1298,7 +1298,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   <span className="text-xs font-bold text-slate-700">روف / سطح</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasExternalAnnex}
@@ -1308,7 +1308,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   <span className="text-xs font-bold text-slate-700">ملحق خارجي</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasGarage}
@@ -1318,7 +1318,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   <span className="text-xs font-bold text-slate-700">كراج سيارة</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasPool}
@@ -1328,7 +1328,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   <span className="text-xs font-bold text-slate-700">مسبح</span>
                 </label>
 
-                <label className="flex items-center gap-2 px-3 py-2.5 bg-white hover:bg-slate-100 rounded-xl cursor-pointer transition-colors border border-slate-100 select-none">
+                <label className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-muted rounded-xl cursor-pointer transition-colors border border select-none">
                   <input
                     type="checkbox"
                     checked={form.hasElevator}
@@ -1342,7 +1342,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           )}
 
           {/* Media upload section */}
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط الجديدة (اختياري)</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1357,7 +1357,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                       setImages(Array.from(e.target.files));
                     }
                   }}
-                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                  className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
                 />
                 {images.length > 0 && (
                   <p className="text-[10px] text-emerald-600 font-bold mt-1">
@@ -1376,7 +1376,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                       setVideoFile(e.target.files[0]);
                     }
                   }}
-                  className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
+                  className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all cursor-pointer"
                 />
                 {videoFile && (
                   <p className="text-[10px] text-emerald-600 font-bold mt-1">
@@ -1406,7 +1406,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               <textarea 
                 value={form.additionalNotes} 
                 onChange={e => setForm((f: any) => ({...f, additionalNotes: e.target.value}))} 
-                className="w-full h-11 min-h-[44px] bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all resize-none"
+                className="w-full h-11 min-h-[44px] bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold outline-none transition-all resize-none"
                 placeholder="أدخل أي ملاحظات إضافية عن العقار..."
               />
             </div>
@@ -1415,7 +1415,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-slate-950/20"
+            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-stone-400/20"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             حفظ التعديلات
@@ -1610,10 +1610,10 @@ export default function AdminOffersPage() {
       case 'published':
       case 'active': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200">منشور</Badge>;
       case 'paused': return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-200">متوقف</Badge>;
-      case 'draft': return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200">مسودة</Badge>;
+      case 'draft': return <Badge className="bg-muted text-slate-700 hover:bg-muted border">مسودة</Badge>;
       case 'rejected': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">مرفوض</Badge>;
       case 'sold': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200">تم البيع</Badge>;
-      default: return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
+      default: return <Badge className="bg-muted text-slate-700">{status}</Badge>;
     }
   };
 
@@ -1634,8 +1634,8 @@ export default function AdminOffersPage() {
       case 'pending': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">جديد</Badge>;
       case 'reviewed': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200">تمت المراجعة</Badge>;
       case 'resolved': return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200">تم الإجراء</Badge>;
-      case 'dismissed': return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200">مرفوض</Badge>;
-      default: return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
+      case 'dismissed': return <Badge className="bg-muted text-slate-700 hover:bg-muted border">مرفوض</Badge>;
+      default: return <Badge className="bg-muted text-slate-700">{status}</Badge>;
     }
   };
 
@@ -1663,7 +1663,7 @@ export default function AdminOffersPage() {
         <div className="grid w-full gap-3 md:w-auto md:grid-cols-4 xl:grid-cols-7">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-slate-950/20"
+            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-stone-400/20"
           >
             <Plus className="w-4 h-4" />
             إضافة عرض
@@ -1675,13 +1675,13 @@ export default function AdminOffersPage() {
               placeholder={t('admin.search') || "بحث..."} 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pr-10 pl-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64 text-sm font-bold shadow-sm transition-all"
+              className="pr-10 pl-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64 text-sm font-bold shadow-sm transition-all"
             />
           </div>
           <select 
             value={statusFilter} 
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer"
+            className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer"
           >
             <option value="all">كل الحالات</option>
             <option value="published">منشور</option>
@@ -1689,48 +1689,48 @@ export default function AdminOffersPage() {
             <option value="draft">مسودة</option>
             <option value="sold">تم البيع</option>
           </select>
-          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
             <option value="all">الكل (سكني/تجاري)</option>
             <option value="residential">سكني</option>
             <option value="commercial">تجاري</option>
           </select>
-          <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+          <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
             <option value="all">كل المعلنين</option>
             <option value="my_offers">العروض التي نشرتها</option>
           </select>
-          <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+          <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
             <option value="all">كل الظهور</option>
             <option value="visible">ظاهر</option>
             <option value="hidden">مخفي</option>
           </select>
-          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
-          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm" />
-          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setActiveFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-black shadow-sm">
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card text-sm font-bold shadow-sm" />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card text-sm font-bold shadow-sm" />
+          <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setActiveFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2.5 rounded-2xl border border bg-card text-sm font-black shadow-sm">
             مسح
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-         <div className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
+         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
          </div>
-         <div className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
+         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">عروض نشطة</p>
             <p className="text-3xl font-black text-emerald-600 tabular-nums">{offers.filter(o => o.status === 'published' || o.status === 'active').length}</p>
          </div>
-         <div className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
+         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">بانتظار المراجعة</p>
             <p className="text-3xl font-black text-amber-600 tabular-nums">{offers.filter(o => o.status === 'draft').length}</p>
          </div>
-         <div className="p-6 bg-white border border-red-100 rounded-3xl shadow-sm">
+         <div className="p-6 bg-card border border-red-100 rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">بلاغات العروض</p>
             <p className="text-3xl font-black text-red-600 tabular-nums">{reports.length}</p>
          </div>
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm">
+      <div className="bg-card border border rounded-[1.25rem] p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
@@ -1744,7 +1744,7 @@ export default function AdminOffersPage() {
           <select
             value={reportStatusFilter}
             onChange={(e) => setReportStatusFilter(e.target.value)}
-            className="h-11 px-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold shadow-sm"
+            className="h-11 px-4 rounded-2xl border border bg-card text-sm font-bold shadow-sm"
           >
             <option value="pending">بلاغات جديدة</option>
             <option value="reviewed">تمت المراجعة</option>
@@ -1759,13 +1759,13 @@ export default function AdminOffersPage() {
             <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-2xl bg-slate-50 py-10 text-center text-sm font-bold text-slate-400">
+          <div className="rounded-2xl bg-muted py-10 text-center text-sm font-bold text-slate-400">
             لا توجد بلاغات في هذه الحالة
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {reports.map((report) => (
-              <div key={report.id} className="rounded-3xl border border-slate-100 bg-slate-50/60 p-5 space-y-4">
+              <div key={report.id} className="rounded-3xl border border bg-muted/60 p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-2">
@@ -1782,14 +1782,14 @@ export default function AdminOffersPage() {
                   <button
                     type="button"
                     onClick={() => window.open(`/offers/${report.offerId}`, '_blank')}
-                    className="h-9 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black hover:bg-slate-100"
+                    className="h-9 px-3 rounded-xl bg-card border border text-slate-700 text-[11px] font-black hover:bg-muted"
                   >
                     عرض
                   </button>
                 </div>
 
                 {report.message && (
-                  <div className="rounded-2xl bg-white border border-slate-100 p-3 text-sm font-bold text-slate-600 leading-relaxed">
+                  <div className="rounded-2xl bg-card border border p-3 text-sm font-bold text-slate-600 leading-relaxed">
                     {report.message}
                   </div>
                 )}
@@ -1817,7 +1817,7 @@ export default function AdminOffersPage() {
                   <button
                     type="button"
                     onClick={() => handleReportAction(report.id, 'dismissed')}
-                    className="h-10 px-4 rounded-xl bg-white border border-slate-200 text-slate-700 text-[11px] font-black hover:bg-slate-100"
+                    className="h-10 px-4 rounded-xl bg-card border border text-slate-700 text-[11px] font-black hover:bg-muted"
                   >
                     رفض البلاغ
                   </button>
@@ -1828,10 +1828,10 @@ export default function AdminOffersPage() {
         )}
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl">
+      <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-slate-50/50">
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">العرض</TableHead>
                 <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">المعلن</TableHead>
@@ -1862,7 +1862,7 @@ export default function AdminOffersPage() {
                   </TableRow>
               ) : (
                   paginatedOffers.map((offer) => (
-                  <TableRow key={offer.id} className="hover:bg-slate-50/50 group transition-colors">
+                  <TableRow key={offer.id} className="hover:bg-muted/50 group transition-colors">
                       <TableCell className="px-6 py-5">
                         <div className="flex flex-col">
                           <span className="font-black text-slate-900 text-sm">{offer.propertyType}</span>
@@ -1871,7 +1871,7 @@ export default function AdminOffersPage() {
                       </TableCell>
                       <TableCell className="px-6 py-5">
                           <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 font-black text-xs border border-slate-200/50">
+                              <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-/50">
                                   {offer.user?.firstName?.[0] || <UserIcon className="w-4 h-4" />}
                               </div>
                               <div className="flex flex-col">
@@ -1900,11 +1900,11 @@ export default function AdminOffersPage() {
                       <TableCell className="px-6 py-5 text-left">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-950">
+                            <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
                               <MoreVertical className="w-5 h-5" />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-slate-100">
+                          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border">
                             <DropdownMenuItem 
                               onClick={() => window.open(`/offers/${offer.id}`, '_blank')}
                               className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
@@ -1917,7 +1917,7 @@ export default function AdminOffersPage() {
                             >
                               <Edit2 className="w-4 h-4" /> تعديل البيانات
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-slate-50" />
+                            <DropdownMenuSeparator className="my-1 bg-muted" />
                             
                             {offer.status === 'published' || offer.status === 'active' ? (
                               <DropdownMenuItem 
@@ -1939,7 +1939,7 @@ export default function AdminOffersPage() {
                               onClick={() => handleSetActive(offer.id, !offer.isActive)}
                               className={`rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer ${
                                 offer.isActive
-                                  ? "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                                  ? "text-slate-600 hover:text-slate-800 hover:bg-muted"
                                   : "text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
                               }`}
                             >

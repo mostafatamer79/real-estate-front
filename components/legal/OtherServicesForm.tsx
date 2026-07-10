@@ -175,7 +175,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
 
       {/* Consultation Fields */}
       {serviceType === "استشارات قانونية" && (
-        <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+        <div className="space-y-4 p-6 bg-muted rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800">{t('legal.other.consultation')}</h3>
           
           <div>
@@ -203,7 +203,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
 
       {/* Legal Report Fields */}
       {serviceType === "تقارير قانونية" && (
-        <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+        <div className="space-y-4 p-6 bg-muted rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800">{t('legal.other.report')}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,12 +263,12 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
             />
           </div>
 
-          <div className="p-4 bg-slate-50 border border-blue-200 rounded-lg">
+          <div className="p-4 bg-muted border border-blue-200 rounded-lg">
             <Label className="text-blue-800">{t('legal.other.legalStatus')}</Label>
             <Textarea
               value={legalStatus}
               onChange={(e) => setLegalStatus(e.target.value)}
-              className="mt-2 bg-white"
+              className="mt-2 bg-card"
               placeholder={t('legal.other.legalStatusPlaceholder') || "ضع الوضع القانوني للعقار"}
               rows={4}
             />
@@ -299,7 +299,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
           <div className="space-y-2">
             <p className="text-sm font-medium">{t('legal.filesUploaded')}:</p>
             {uploadedFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
                 <span className="text-sm truncate">{file.name}</span>
                 <button
                   type="button"

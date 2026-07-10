@@ -442,7 +442,7 @@ export default function AdminPropertiesManagementPage() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder={isRtl ? "بحث في الأملاك..." : "Search properties..."}
-              className={`h-12 w-full rounded-2xl border border-slate-100 bg-white px-11 text-sm font-bold outline-none focus:border-slate-900`}
+              className={`h-12 w-full rounded-2xl border border bg-card px-11 text-sm font-bold outline-none focus:border-slate-900`}
             />
           </div>
           <button
@@ -451,7 +451,7 @@ export default function AdminPropertiesManagementPage() {
               setForm(emptyForms[activeTab]);
               setIsCreateOpen(true);
             }}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800 transition-colors"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-stone-400/10 hover:bg-slate-800 transition-colors"
           >
             <Plus className="h-4 w-4" />
             {isRtl ? "تحديث" : "Add New"}
@@ -460,21 +460,21 @@ export default function AdminPropertiesManagementPage() {
       </header>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
           <p className="mt-1 text-3xl font-black text-slate-950">{properties.length}</p>
         </div>
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "نتائج البحث" : "Filtered"}</p>
           <p className="mt-1 text-3xl font-black text-slate-950">{filteredProperties.length}</p>
         </div>
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "صفحة التحكم" : "Control page"}</p>
           <p className="mt-1 text-lg font-black text-slate-950">{isRtl ? "إدارية فقط" : "Admin only"}</p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-2 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-2 shadow-sm">
         <div className="flex gap-2 overflow-x-auto">
           {propertyTabs.map((tab) => {
             const Icon = tab.icon;
@@ -484,12 +484,12 @@ export default function AdminPropertiesManagementPage() {
                 key={tab.id}
                 href={tab.href}
                 className={`flex min-w-fit flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-widest transition-all ${
-                  active ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
+                  active ? "bg-slate-950 text-white shadow-lg shadow-stone-400/10" : "text-slate-500 hover:bg-muted hover:text-slate-950"
                 }`}
               >
                 <Icon className="h-4 w-4" />
                 <span>{tab.label}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-card/15 text-white" : "bg-muted text-slate-500"}`}>
                   {tab.count}
                 </span>
               </Link>
@@ -498,10 +498,10 @@ export default function AdminPropertiesManagementPage() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] text-right">
-            <thead className="bg-slate-50/70">
+            <thead className="bg-muted/70">
               <tr>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل" : "Record"}</th>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المالك/الطرف" : "Owner/Party"}</th>
@@ -536,10 +536,10 @@ export default function AdminPropertiesManagementPage() {
                         ? `${property.property?.name || property.propertyId || "—"} - ${property.unit?.name || property.unitId || "—"}`
                         : [property.city, property.neighborhood, property.type || property.propertyType].filter(Boolean).join(" - ") || "—";
                   return (
-                  <tr key={property.id} className="hover:bg-slate-50/50">
+                  <tr key={property.id} className="hover:bg-muted/50">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-500">
                           {activeTab === "tenants" ? <User className="h-5 w-5" /> : activeTab === "leases" ? <FileText className="h-5 w-5" /> : activeTab === "payments" ? <CreditCard className="h-5 w-5" /> : activeTab === "maintenance" ? <Wrench className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
                         </div>
                         <div>
@@ -570,11 +570,11 @@ export default function AdminPropertiesManagementPage() {
                               handleToggleActive(property.id, property.isActive);
                             }}
                             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                              property.isActive ? "bg-slate-900" : "bg-slate-200"
+                              property.isActive ? "bg-slate-900" : "bg-muted"
                             }`}
                           >
                             <span
-                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-card shadow ring-0 transition duration-200 ease-in-out ${
                                 property.isActive ? (isRtl ? "-translate-x-5" : "translate-x-5") : "translate-x-0"
                               }`}
                             />
@@ -595,7 +595,7 @@ export default function AdminPropertiesManagementPage() {
                       <button
                         type="button"
                         onClick={() => setViewingRecord(property)}
-                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
                       >
                         <Eye className="h-4 w-4" />
                         {isRtl ? "عرض" : "View"}
@@ -603,7 +603,7 @@ export default function AdminPropertiesManagementPage() {
                       <button
                         type="button"
                         onClick={() => startEdit(property)}
-                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
                       >
                         <Edit2 className="h-4 w-4" />
                         {isRtl ? "تحديث" : "Update"}
@@ -637,9 +637,9 @@ export default function AdminPropertiesManagementPage() {
 
       {viewingRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+            <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {isRtl ? "تفاصيل السجل" : "Record Details"}
@@ -648,7 +648,7 @@ export default function AdminPropertiesManagementPage() {
               </div>
               <button
                 onClick={() => setViewingRecord(null)}
-                className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -660,7 +660,7 @@ export default function AdminPropertiesManagementPage() {
                 {formFields.map(([key, label]) => {
                   const val = viewingRecord[String(key)];
                   return (
-                    <div key={key} className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                    <div key={key} className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
                       <p className="text-sm font-bold text-slate-800">
                         {val === true ? (isRtl ? "نعم" : "Yes") : val === false ? (isRtl ? "لا" : "No") : val || "—"}
@@ -671,9 +671,9 @@ export default function AdminPropertiesManagementPage() {
               </div>
               
               {/* Additional fields not in formFields, like dates & relationship objects */}
-              <div className="border-t border-slate-100 pt-4 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="border-t border pt-4 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {viewingRecord.createdAt && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {isRtl ? "تاريخ الإنشاء" : "Created At"}
                     </span>
@@ -683,7 +683,7 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.updatedAt && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {isRtl ? "تاريخ التحديث" : "Updated At"}
                     </span>
@@ -693,7 +693,7 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.owner && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between sm:col-span-2">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
                     <div className="space-y-1">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                         {isRtl ? "بيانات المالك" : "Owner Details"}
@@ -714,7 +714,7 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.tenant && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between sm:col-span-2">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
                     <div className="space-y-1">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                         {isRtl ? "بيانات المستأجر" : "Tenant Details"}
@@ -736,7 +736,7 @@ export default function AdminPropertiesManagementPage() {
                 )}
 
                 {viewingRecord.unit && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1 sm:col-span-2">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {isRtl ? "بيانات الوحدة" : "Unit Details"}
                     </span>
@@ -746,7 +746,7 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.property && (
-                  <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-1 sm:col-span-2">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {isRtl ? "بيانات العقار" : "Property Details"}
                     </span>
@@ -759,7 +759,7 @@ export default function AdminPropertiesManagementPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-5 flex justify-end">
+            <div className="border-t border bg-muted/30 px-8 py-5 flex justify-end">
               <button
                 onClick={() => setViewingRecord(null)}
                 className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 transition-colors"
@@ -774,9 +774,9 @@ export default function AdminPropertiesManagementPage() {
       {/* Standard Create/Edit Form Modal */}
       {(isCreateOpen || editingId !== null) && (activeTab !== "properties" || editingId !== null) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+            <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {editingId 
@@ -790,7 +790,7 @@ export default function AdminPropertiesManagementPage() {
               </div>
               <button
                 onClick={handleCloseFormModal}
-                className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -809,7 +809,7 @@ export default function AdminPropertiesManagementPage() {
                         <select
                           value={form[String(key)] || ""}
                           onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
-                          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
+                          className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
                         >
                           {options.map((option) => <option key={option} value={option}>{option}</option>)}
                         </select>
@@ -823,7 +823,7 @@ export default function AdminPropertiesManagementPage() {
                         type={typeString}
                         value={form[String(key)] || ""}
                         onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
+                        className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
                       />
                     </div>
                   );
@@ -832,11 +832,11 @@ export default function AdminPropertiesManagementPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-5 flex justify-end gap-3">
+            <div className="border-t border bg-muted/30 px-8 py-5 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={handleCloseFormModal}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors"
+                className="inline-flex h-11 items-center justify-center rounded-xl border border bg-card px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-muted transition-colors"
               >
                 {isRtl ? "إلغاء" : "Cancel"}
               </button>

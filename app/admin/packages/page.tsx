@@ -247,7 +247,7 @@ export default function AdminPackagesPage() {
               if (window.history.length > 1) router.back();
               else router.push("/admin/subscriptions");
             }}
-            className="mb-3 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition-all hover:border-slate-900"
+            className="mb-3 inline-flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 text-sm font-black text-slate-700 transition-all hover:border-slate-900"
           >
             <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
             {isRtl ? "رجوع" : "Back"}
@@ -258,7 +258,7 @@ export default function AdminPackagesPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/subscriptions"
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 transition-colors hover:border-slate-900"
+            className="flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 font-bold text-slate-700 transition-colors hover:border-slate-900"
           >
             <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
             <span>{isRtl ? "العودة للاشتراكات" : "Back to subscriptions"}</span>
@@ -273,12 +273,12 @@ export default function AdminPackagesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-white p-1 shadow-sm">
+      <div className="grid grid-cols-2 gap-2 rounded-2xl border border bg-card p-1 shadow-sm">
         <button
           type="button"
           onClick={() => setActiveTab("packages")}
           className={`h-12 rounded-xl text-sm font-black transition-colors ${
-            activeTab === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-50"
+            activeTab === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
           }`}
         >
           {isRtl ? "الباقات" : "Packages"}
@@ -287,7 +287,7 @@ export default function AdminPackagesPage() {
           type="button"
           onClick={() => setActiveTab("pricing")}
           className={`h-12 rounded-xl text-sm font-black transition-colors ${
-            activeTab === "pricing" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-50"
+            activeTab === "pricing" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
           }`}
         >
           {isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}
@@ -301,7 +301,7 @@ export default function AdminPackagesPage() {
       ) : activeTab === "packages" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg) => (
-            <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div key={pkg.id} className="bg-card rounded-2xl p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
                 {!pkg.isActive && (
                     <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold">{t('admin.packages.inactive')}</div>
                 )}
@@ -323,7 +323,7 @@ export default function AdminPackagesPage() {
                   </div>
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleOpenModal(pkg)} className="p-2 hover:bg-slate-100 rounded-lg text-gray-600">
+                  <button onClick={() => handleOpenModal(pkg)} className="p-2 hover:bg-muted rounded-lg text-gray-600">
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button onClick={() => handleDelete(pkg.id)} className="p-2 hover:bg-red-50 rounded-lg text-red-600">
@@ -341,7 +341,7 @@ export default function AdminPackagesPage() {
                       <p className="text-xs font-bold text-gray-500 uppercase">{t('admin.packages.administrations')}</p>
                       <div className="flex flex-wrap gap-1">
                         {pkg.administrations.slice(0, 3).map((admin, idx) => (
-                          <span key={idx} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">{t(admin)}</span>
+                          <span key={idx} className="text-xs bg-muted text-slate-600 px-2 py-1 rounded-md">{t(admin)}</span>
                         ))}
                          {pkg.administrations.length > 3 && (
                             <span className="text-xs text-gray-400 px-1">+{pkg.administrations.length - 3}</span>
@@ -354,7 +354,7 @@ export default function AdminPackagesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border bg-card p-6 shadow-sm">
           <div className="mb-6">
             <div>
               <h2 className="text-xl font-black text-slate-950">{isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}</h2>
@@ -367,7 +367,7 @@ export default function AdminPackagesPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {AVAILABLE_ADMINISTRATIONS.map((admin) => (
-                  <div key={admin} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div key={admin} className="rounded-2xl border border bg-muted p-4">
                     <div className="mb-3 text-sm font-black text-slate-950">{t(admin)}</div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -377,7 +377,7 @@ export default function AdminPackagesPage() {
                           min="0"
                           value={globalPricing.departmentPrices?.[admin]?.monthly || ""}
                           onChange={(e) => updateDepartmentPrice(admin, "monthly", e.target.value)}
-                          className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full rounded-xl border border bg-card p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="0.00"
                         />
                       </div>
@@ -388,7 +388,7 @@ export default function AdminPackagesPage() {
                           min="0"
                           value={globalPricing.departmentPrices?.[admin]?.yearly || ""}
                           onChange={(e) => updateDepartmentPrice(admin, "yearly", e.target.value)}
-                          className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full rounded-xl border border bg-card p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="0.00"
                         />
                       </div>
@@ -397,7 +397,7 @@ export default function AdminPackagesPage() {
                 ))}
               </div>
 
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div className="rounded-2xl border border bg-muted p-4">
                   <div className="mb-3 text-sm font-black text-slate-950">{isRtl ? "سعر كل موظف" : "Employee Seat Price"}</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
@@ -407,7 +407,7 @@ export default function AdminPackagesPage() {
                         min="0"
                         value={globalPricing.employeeSeatMonthlyPrice || ""}
                         onChange={(e) => updateEmployeeSeatPrice("monthly", e.target.value)}
-                        className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-xl border border bg-card p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="0.00"
                       />
                     </div>
@@ -418,7 +418,7 @@ export default function AdminPackagesPage() {
                         min="0"
                         value={globalPricing.employeeSeatYearlyPrice || ""}
                         onChange={(e) => updateEmployeeSeatPrice("yearly", e.target.value)}
-                        className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-xl border border bg-card p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="0.00"
                       />
                     </div>
@@ -451,11 +451,11 @@ export default function AdminPackagesPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl"
+              className="bg-card rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl"
             >
-              <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+              <div className="p-6 border-b border flex justify-between items-center sticky top-0 bg-card z-10">
                 <h2 className="text-xl font-bold">{editingPackage ? t('admin.packages.modal.edit') : t('admin.packages.modal.new')}</h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-full">
+                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-muted rounded-full">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -471,7 +471,7 @@ export default function AdminPackagesPage() {
                                 required
                                 value={formData.name}
                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full p-3 rounded-xl border border focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder={t('admin.packages.form.namePlaceholder')}
                             />
                         </div>
@@ -484,7 +484,7 @@ export default function AdminPackagesPage() {
                                     min="0"
                                     value={formData.yearlyPrice}
                                     onChange={(e) => setFormData({...formData, yearlyPrice: e.target.value})}
-                                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -496,7 +496,7 @@ export default function AdminPackagesPage() {
                                     min="0"
                                     value={formData.monthlyPrice}
                                     onChange={(e) => setFormData({...formData, monthlyPrice: e.target.value})}
-                                    className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -510,7 +510,7 @@ export default function AdminPackagesPage() {
                                 max="100"
                                 value={formData.discount}
                                 onChange={(e) => setFormData({...formData, discount: e.target.value})}
-                                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full p-3 rounded-xl border border focus:ring-2 focus:ring-blue-500 outline-none"
                                 placeholder="0"
                             />
                         </div>
@@ -519,7 +519,7 @@ export default function AdminPackagesPage() {
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none min-h-[100px]"
+                                className="w-full p-3 rounded-xl border border focus:ring-2 focus:ring-blue-500 outline-none min-h-[100px]"
                                 placeholder={t('admin.packages.form.descPlaceholder')}
                             />
                         </div>
@@ -537,7 +537,7 @@ export default function AdminPackagesPage() {
                                         className={`p-2.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between text-sm ${
                                             formData.administrations.includes(admin)
                                             ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                                            : 'border hover:border-gray-300 text-gray-600'
                                         }`}
                                     >
                                         <span className="font-medium">{t(admin)}</span>
@@ -550,7 +550,7 @@ export default function AdminPackagesPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
+                <div className="flex items-center gap-3 pt-6 border-t border">
                     <input
                         type="checkbox"
                         id="isActive"
@@ -562,7 +562,7 @@ export default function AdminPackagesPage() {
                 </div>
 
                 <div className="pt-2 flex justify-end gap-3 save-btn">
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl border border-gray-200 font-medium hover:bg-slate-50">{t('admin.packages.form.cancel')}</button>
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl border border font-medium hover:bg-muted">{t('admin.packages.form.cancel')}</button>
                     <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800">{t('admin.packages.form.save')}</button>
                 </div>
               </form>

@@ -327,11 +327,11 @@ export default function ScanMapPage() {
       )}
       {isDisclaimerOpen && (
         <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[2rem] border border-white/10 bg-white text-slate-950 shadow-2xl" dir="rtl">
+          <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
 
 
-            <div className="border-t border-slate-100 bg-white px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
-              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-black text-slate-800">
+            <div className="border-t border bg-card px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
+              <label className="flex items-start gap-3 rounded-2xl border border bg-muted p-4 text-sm font-black text-slate-800">
                 <input
                   type="checkbox"
                   checked={disclaimerChecked}
@@ -346,7 +346,7 @@ export default function ScanMapPage() {
                 <button
                   type="button"
                   onClick={() => setIsDisclaimerOpen(false)}
-                  className="h-12 rounded-2xl border border-slate-200 bg-white px-6 text-sm font-black text-slate-600 hover:bg-slate-50"
+                  className="h-12 rounded-2xl border border bg-card px-6 text-sm font-black text-slate-600 hover:bg-muted"
                 >
                   إلغاء
                 </button>
@@ -372,7 +372,7 @@ export default function ScanMapPage() {
         <button
           type="button"
           onClick={handleBack}
-          className="mb-6 inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-[11px] font-black uppercase tracking-widest text-slate-200 backdrop-blur-sm transition-all hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-white"
+          className="mb-6 inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-card/10 px-4 text-[11px] font-black uppercase tracking-widest text-slate-200 backdrop-blur-sm transition-all hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-white"
         >
           {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
           {language === 'ar' ? 'رجوع' : 'Back'}

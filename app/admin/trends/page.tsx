@@ -129,8 +129,8 @@ export default function AdminTrendsPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+          <div key={card.label} className="rounded-2xl border border bg-card p-6 shadow-sm">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <TrendingUp className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
@@ -139,11 +139,11 @@ export default function AdminTrendsPage() {
         ))}
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "الاتجاه الشهري" : "Monthly trend"}</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
           {monthlyTotals.slice(-6).map((item: any, index: number) => (
-            <div key={item.month || index} className="rounded-xl bg-slate-50 p-4">
+            <div key={item.month || index} className="rounded-xl bg-muted p-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.month || index + 1}</p>
               <p className="mt-1 text-lg font-black text-slate-950">{Number(item.total || item.revenue || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}</p>
             </div>
@@ -156,10 +156,10 @@ export default function AdminTrendsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 text-slate-950">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <Megaphone className="h-5 w-5" />
             </div>
             <div>
@@ -177,7 +177,7 @@ export default function AdminTrendsPage() {
           </button>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-100">
+        <div className="overflow-hidden rounded-2xl border border">
           {loadingCampaigns ? (
             <div className="p-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
               <RefreshCcw className="mx-auto mb-3 h-5 w-5 animate-spin" />
@@ -202,12 +202,12 @@ export default function AdminTrendsPage() {
                       type="number"
                       defaultValue={campaign.sortOrder ?? index * 10}
                       onBlur={(e) => updateCampaignOrder(campaign, Number(e.target.value) || 0)}
-                      className="w-24 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-black outline-none"
+                      className="w-24 rounded-xl border border bg-muted px-3 py-2 text-xs font-black outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => { setEditingCampaign(campaign); setModalOpen(true); }}
-                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black uppercase tracking-widest text-slate-700"
+                      className="inline-flex items-center gap-2 rounded-xl border border bg-card px-3 py-2 text-[11px] font-black uppercase tracking-widest text-slate-700"
                     >
                       <Edit2 className="h-4 w-4" />
                       {isRtl ? "تعديل" : "Edit"}
@@ -228,7 +228,7 @@ export default function AdminTrendsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -244,7 +244,7 @@ export default function AdminTrendsPage() {
                   },
                 })
               }
-              className="h-12 w-full rounded-xl border border-slate-100 bg-slate-50 px-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-900"
             />
           </div>
           <div className="space-y-2">
@@ -261,7 +261,7 @@ export default function AdminTrendsPage() {
                   },
                 })
               }
-              className="min-h-28 w-full rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="min-h-28 w-full rounded-xl border border bg-muted p-4 text-sm font-bold outline-none focus:border-slate-900"
             />
           </div>
         </div>

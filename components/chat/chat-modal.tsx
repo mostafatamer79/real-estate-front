@@ -117,9 +117,9 @@ export default function SimpleChatModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" dir="rtl">
-      <div className="bg-white rounded-xl w-full max-w-md h-[600px] flex flex-col shadow-2xl">
+      <div className="bg-card rounded-xl w-full max-w-md h-[600px] flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
+        <div className="p-4 border-b flex justify-between items-center bg-muted rounded-t-xl">
           <div>
             <h3 className="font-bold text-gray-800">محادثة مع {otherUserName}</h3>
             <span className="text-xs text-green-500 flex items-center gap-1">
@@ -129,14 +129,14 @@ export default function SimpleChatModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-slate-200 rounded-full transition-colors"
+            className="p-1 hover:bg-muted rounded-full transition-colors"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/50">
           {loading ? (
              <div className="flex items-center justify-center h-full">
                 <Loader2 className="animate-spin w-8 h-8 text-gray-400" />
@@ -157,7 +157,7 @@ export default function SimpleChatModal({
                       className={`max-w-[70%] p-3 rounded-2xl ${
                         isMe
                           ? "bg-slate-600 text-white rounded-br-none"
-                          : "bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm"
+                          : "bg-card border border text-gray-800 rounded-bl-none shadow-sm"
                       }`}
                     >
                       <p className="text-sm">{msg.content}</p>
@@ -173,7 +173,7 @@ export default function SimpleChatModal({
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t bg-white rounded-b-xl">
+        <div className="p-4 border-t bg-card rounded-b-xl">
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"

@@ -144,37 +144,37 @@ export default function VisitRequestsPage() {
                 placeholder={t('admin.search') || "Search..."} 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
+                className="pl-10 pr-4 py-2 rounded-xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64"
              />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 rounded-xl border border bg-card text-sm font-bold">
           <option value="all">كل الحالات</option>
           <option value="pending">Pending</option>
           <option value="accepted">Accepted</option>
           <option value="completed">Completed</option>
           <option value="rejected">Rejected</option>
         </select>
-        <select value={visitTypeFilter} onChange={(e) => setVisitTypeFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+        <select value={visitTypeFilter} onChange={(e) => setVisitTypeFilter(e.target.value)} className="px-4 py-2 rounded-xl border border bg-card text-sm font-bold">
           <option value="all">كل الزيارات</option>
           <option value="agent">Agent</option>
           <option value="self">Self</option>
         </select>
-        <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold">
+        <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="px-4 py-2 rounded-xl border border bg-card text-sm font-bold">
           <option value="all">كل التعيينات</option>
           <option value="assigned">Assigned</option>
           <option value="unassigned">Unassigned</option>
         </select>
-        <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setVisitTypeFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-black">
+        <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setVisitTypeFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="px-4 py-2 rounded-xl border border bg-card text-sm font-black">
           مسح
         </button>
-        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
-        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-bold" />
+        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-4 py-2 rounded-xl border border bg-card text-sm font-bold" />
+        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-4 py-2 rounded-xl border border bg-card text-sm font-bold" />
         </div>
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm">
+      <div className="bg-card border border rounded-[1.25rem] overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-slate-50/50">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="py-5 font-black text-slate-900">ID</TableHead>
               <TableHead className="py-5 font-black text-slate-900">User</TableHead>
@@ -197,11 +197,11 @@ export default function VisitRequestsPage() {
                 </TableRow>
             ) : (
                 filteredRequests.map((req) => (
-                <TableRow key={req.id} className="hover:bg-slate-50/50 group whitespace-nowrap">
+                <TableRow key={req.id} className="hover:bg-muted/50 group whitespace-nowrap">
                     <TableCell className="font-mono text-xs text-slate-500">#{req.id.substring(0, 8)}</TableCell>
                     <TableCell>
                         <div className="flex items-center gap-2">
-                             <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-500">
                                 <User className="w-4 h-4" />
                             </div>
                             <span className="font-bold text-slate-700">{req.user?.firstName} {req.user?.lastName}</span>
@@ -243,11 +243,11 @@ export default function VisitRequestsPage() {
                                 </>
                              )}
                              {(req.user?.id || req.userId) && (
-                                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-500 hover:bg-slate-100" onClick={() => handleOpenChat(req.user?.id || req.userId)} title={isRtl ? "مراسلة العميل" : "Message Client"}>
+                                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-500 hover:bg-muted" onClick={() => handleOpenChat(req.user?.id || req.userId)} title={isRtl ? "مراسلة العميل" : "Message Client"}>
                                      <MessageSquare className="w-4 h-4" />
                                  </Button>
                              )}
-                             <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-400 hover:bg-slate-100">
+                             <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full text-slate-400 hover:bg-muted">
                                  <Eye className="w-4 h-4" />
                              </Button>
                         </div>

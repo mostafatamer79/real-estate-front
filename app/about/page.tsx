@@ -35,7 +35,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
   const { settings } = useSettings();
   return (
     <section className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
-      <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-8 lg:p-10">
+      <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-card/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.09),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
         {!reduceMotion && (
           <>
@@ -82,7 +82,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             <motion.div
               animate={reduceMotion ? undefined : { scale: [1, 1.08, 1], opacity: [0.35, 0.78, 0.35] }}
               transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-white/[0.025] [will-change:transform,opacity]"
+              className="absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-card/[0.025] [will-change:transform,opacity]"
             />
             {!reduceMotion && (
               <motion.div
@@ -139,7 +139,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //   });
 
 //   return (
-//     <section ref={containerRef} className="relative border-y border-white/10 bg-white/[0.014] px-5 py-24 sm:px-8 lg:px-12">
+//     <section ref={containerRef} className="relative border-y border-white/10 bg-card/[0.014] px-5 py-24 sm:px-8 lg:px-12">
 //       <div className="mx-auto max-w-7xl">
 //         <div className="mb-14 max-w-3xl space-y-4">
 //           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Full Operating Flow</p>
@@ -150,7 +150,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //         </div>
 
 //         <div className="relative">
-//           <div className="absolute bottom-0 top-0 hidden w-px bg-white/10 md:block" style={{ right: isRtl ? "50%" : undefined, left: isRtl ? undefined : "50%" }} />
+//           <div className="absolute bottom-0 top-0 hidden w-px bg-card/10 md:block" style={{ right: isRtl ? "50%" : undefined, left: isRtl ? undefined : "50%" }} />
 //           {!reduceMotion && (
 //             <motion.div
 //               className="absolute bottom-0 top-0 hidden w-0.5 bg-gradient-to-b from-blue-500 via-indigo-400 to-transparent md:block origin-top shadow-[0_0_20px_rgba(99,102,241,0.8)]"
@@ -171,8 +171,8 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //                 transition={{ duration: reduceMotion ? 0 : 0.65, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
 //                 className={`relative grid gap-5 md:grid-cols-2 md:items-center ${index % 2 === 0 ? "" : "md:[&>div:first-child]:col-start-2"}`}
 //               >
-//                 <div className="rounded-[2rem] border border-white/10 bg-slate-950/78 p-6 shadow-2xl shadow-black/20 [will-change:transform]">
-//                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
+//                 <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/78 p-6 shadow-2xl shadow-black/20 [will-change:transform]">
+//                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-card/[0.04]">
 //                     <item.icon className="h-5 w-5 text-white/65" />
 //                   </div>
 //                   <h3 className="text-xl font-black text-white">{item.title}</h3>
@@ -185,7 +185,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //                   className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-slate-900 shadow-[0_0_24px_rgba(255,255,255,0.28)] md:block z-10"
 //                 >
 //                   <motion.div
-//                     className="absolute inset-1 rounded-full bg-white"
+//                     className="absolute inset-1 rounded-full bg-card"
 //                     style={{
 //                       scale: scrollYProgress,
 //                       opacity: scrollYProgress
@@ -267,7 +267,7 @@ export default function AboutPage() {
           transition={{ duration: reduceMotion ? 0 : 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="العودة للأعلى"
-          className={`fixed bottom-6 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-slate-950/85 text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition-colors hover:bg-white hover:text-slate-950 ${isRtl ? "left-6" : "right-6"}`}
+          className={`fixed bottom-6 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-slate-950/85 text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition-colors hover:bg-card hover:text-slate-950 ${isRtl ? "left-6" : "right-6"}`}
         >
           <ArrowUp className="h-5 w-5" />
         </motion.button>
@@ -346,7 +346,7 @@ export default function AboutPage() {
               viewport={{ once: true, margin: "-90px" }}
               transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 transition-all duration-300 hover:bg-white/[0.06] [will-change:transform]"
+              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
             >
               <div className="mb-6 flex items-center justify-between gap-4">
                 <span className="text-sm font-black text-blue-200/85">
@@ -357,7 +357,7 @@ export default function AboutPage() {
               <p className="mt-4 text-sm font-bold leading-8 text-white/65">{item.text}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {item.points.map((point) => (
-                  <span key={point} className="rounded-full bg-white/[0.055] px-3 py-1.5 text-[10px] font-black text-white/55">
+                  <span key={point} className="rounded-full bg-card/[0.055] px-3 py-1.5 text-[10px] font-black text-white/55">
                     {point}
                   </span>
                 ))}
@@ -390,7 +390,7 @@ export default function AboutPage() {
                 viewport={{ once: true, margin: "-120px" }}
                 transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
                 whileHover={reduceMotion ? undefined : { x: isRtl ? -10 : 10, backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.2)" }}
-                className="flex items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.02] p-5 transition-all duration-300 [will-change:transform]"
+                className="flex items-center gap-4 rounded-3xl border border-white/10 bg-card/[0.02] p-5 transition-all duration-300 [will-change:transform]"
               >
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-sm font-black text-white/55 transition-colors duration-300 group-hover:bg-blue-500/10 group-hover:text-blue-400">
                   {String(index + 1).padStart(2, "0")}
@@ -420,7 +420,7 @@ export default function AboutPage() {
               viewport={{ once: true, margin: "-110px" }}
               transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 transition-all duration-300 hover:bg-white/[0.06] [will-change:transform]"
+              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
             >
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65 transition-colors duration-300 group-hover:border-blue-500/30 group-hover:text-blue-400 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                 <item.icon className="h-5 w-5" />
@@ -438,7 +438,7 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative mx-auto overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
+          className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
           <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>

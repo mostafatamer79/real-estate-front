@@ -69,9 +69,9 @@ export default function WorkflowSection() {
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border border-white/60 shadow-2xl shadow-slate-200/50"
+            className="bg-card/80 backdrop-blur-xl rounded-[1rem] overflow-hidden border border-white/60 shadow-2xl shadow-stone-400"
         >
-            <div className="p-8 border-b border-slate-100/50 flex flex-col md:flex-row justify-between items-center gap-6 bg-white/50">
+            <div className="p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-6 bg-card/50">
                 <div>
                     <h4 className="text-xl font-black text-slate-900 flex items-center gap-3">
                       {t('marketing.history.title')}
@@ -82,16 +82,16 @@ export default function WorkflowSection() {
                     </p>
                 </div>
                 <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                    <Button variant="outline" className="flex-1 md:flex-none h-11 rounded-xl border-slate-200 hover:bg-slate-50 gap-2 font-bold text-[10px] uppercase tracking-widest transition-all">
+                    <Button variant="outline" className="flex-1 md:flex-none h-11 rounded-xl border hover:bg-muted gap-2 font-bold text-[10px] uppercase tracking-widest transition-all">
                         <FileDown className="w-3.5 h-3.5" />
                         {t('marketing.btn.export')}
                     </Button>
-                    <div className="flex bg-slate-100/80 p-1.5 rounded-xl gap-1 border border-slate-200/50">
+                    <div className="flex bg-muted/80 p-1.5 rounded-xl gap-1 border border-/50">
                       {['all', 'pending', 'completed'].map((f) => (
                         <button
                           key={f}
                           onClick={() => setStatusFilter(f as any)}
-                          className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f ? 'bg-white text-slate-900 shadow-md shadow-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50'}`}
+                          className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f ? 'bg-card text-slate-900 shadow-md shadow-stone-400' : 'text-slate-400 hover:text-slate-600 hover:bg-card/50'}`}
                         >
                           {f === 'all' ? t('marketing.filter.all') : t('marketing.status.' + f)}
                         </button>
@@ -102,8 +102,8 @@ export default function WorkflowSection() {
             
             <div className="overflow-x-auto hide-scrollbar">
                 <Table>
-                        <TableHeader className="bg-slate-50/80">
-                            <TableRow className="hover:bg-transparent border-slate-100">
+                        <TableHeader className="bg-muted/80">
+                            <TableRow className="hover:bg-transparent border">
                                 <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.request')}</TableHead>
                                 <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</TableHead>
                                 <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</TableHead>
@@ -115,7 +115,7 @@ export default function WorkflowSection() {
                                 <TableRow>
                                     <TableCell colSpan={4} className='text-center py-24'>
                                         <div className="flex flex-col items-center gap-4 opacity-30">
-                                            <div className="p-4 bg-slate-100 rounded-full">
+                                            <div className="p-4 bg-muted rounded-full">
                                                 <ClipboardList className="w-8 h-8 text-slate-400" />
                                             </div>
                                             <p className="font-black text-xs uppercase tracking-widest text-slate-400">{t('marketing.noRequests')}</p>
@@ -123,12 +123,12 @@ export default function WorkflowSection() {
                                     </TableCell>
                                 </TableRow>
                             ) : filteredRequests.map((req, i) => (
-                                <TableRow key={req.id} className="hover:bg-slate-50/50 transition-colors group border-slate-50">
+                                <TableRow key={req.id} className="hover:bg-muted/50 transition-colors group border">
                                     <TableCell className="px-8 py-6">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-transform group-hover:scale-110
                                                 ${req.type === 'photography_professional' ? 'bg-blue-100 text-blue-600' : 
-                                                  req.type === 'ad_campaign' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'}`}>
+                                                  req.type === 'ad_campaign' ? 'bg-purple-100 text-purple-600' : 'bg-muted text-slate-600'}`}>
                                                 {t('marketing.type.' + req.type).charAt(0)}
                                             </div>
                                             <div>
@@ -148,9 +148,9 @@ export default function WorkflowSection() {
                                     </TableCell>
                                     <TableCell className="px-8 py-6">
                                         <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm
-                                            ${req.status === MarketingRequestStatus.PENDING ? 'bg-slate-50 text-slate-500 border-slate-100' : 
-                                              req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-slate-900/20' : 
-                                              req.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-slate-50 text-slate-600 border-slate-100'}`}>
+                                            ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
+                                              req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
+                                              req.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-muted text-slate-600 border'}`}>
                                             <div className={`w-1 h-1 rounded-full ${req.status === MarketingRequestStatus.PENDING ? 'bg-slate-400 animate-pulse' : 'bg-current'} ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
                                             {t('marketing.status.' + req.status)}
                                         </span>
@@ -164,7 +164,7 @@ export default function WorkflowSection() {
                                                     setSelectedRequest(req);
                                                     setIsDetailsOpen(true);
                                                 }}
-                                                className="w-9 h-9 rounded-lg border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all"
+                                                className="w-9 h-9 rounded-lg border hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all"
                                             >
                                                 <Eye className="w-4 h-4" />
                                             </Button>
@@ -172,7 +172,7 @@ export default function WorkflowSection() {
                                                 variant="outline" 
                                                 size="icon" 
                                                 onClick={() => handleDeleteRequest(req.id)}
-                                                className="w-9 h-9 rounded-lg border-slate-200 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all text-slate-400"
+                                                className="w-9 h-9 rounded-lg border hover:bg-red-500 hover:text-white hover:border-red-500 transition-all text-slate-400"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </Button>
@@ -186,7 +186,7 @@ export default function WorkflowSection() {
 
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="max-w-2xl bg-white rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <DialogContent className="max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <DialogHeader className="p-8 bg-slate-950 text-white">
                         <DialogTitle className="text-2xl font-black">
                             {selectedRequest && t(`marketing.type.${selectedRequest.type}`)}
@@ -204,9 +204,9 @@ export default function WorkflowSection() {
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</label>
                                         <div className="flex items-center gap-3">
                                             <span className={`inline-flex items-center px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border
-                                                ${selectedRequest.status === MarketingRequestStatus.PENDING ? 'bg-slate-50 text-slate-500 border-slate-100' : 
-                                                  selectedRequest.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-slate-900/20' : 
-                                                  selectedRequest.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-slate-50 text-slate-600 border-slate-100'}`}>
+                                                ${selectedRequest.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
+                                                  selectedRequest.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
+                                                  selectedRequest.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-muted text-slate-600 border'}`}>
                                                 {t('marketing.status.' + selectedRequest.status)}
                                             </span>
                                         </div>
@@ -214,7 +214,7 @@ export default function WorkflowSection() {
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-900">
+                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <Calendar className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">
@@ -245,14 +245,14 @@ export default function WorkflowSection() {
                             </div>
                             
                             {selectedRequest.details?.platform && (
-                                <div className="space-y-2 pt-6 border-t border-slate-100">
+                                <div className="space-y-2 pt-6 border-t border">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform</label>
-                                    <p className="text-sm font-medium text-slate-600 p-4 bg-slate-50 rounded-2xl">{selectedRequest.details?.platform?.join?.(', ') || selectedRequest.details?.platform}</p>
+                                    <p className="text-sm font-medium text-slate-600 p-4 bg-muted rounded-2xl">{selectedRequest.details?.platform?.join?.(', ') || selectedRequest.details?.platform}</p>
                                 </div>
                             )}
 
                              {selectedRequest.details?.preferredDate && (
-                                <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                                <div className="pt-6 border-t border flex items-center justify-between">
                                     <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                                         <Clock className="w-3.5 h-3.5" />
                                         <span>تاريخ مفضل: {new Date(selectedRequest.details?.preferredDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</span>

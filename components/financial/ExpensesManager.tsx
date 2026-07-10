@@ -104,7 +104,7 @@ export default function ExpensesManager() {
                 <CardContent>
                     {/* Expense Form */}
                     {showForm && (
-                        <div className="mb-6 p-6 bg-slate-50 rounded-lg border">
+                        <div className="mb-6 p-6 bg-muted rounded-lg border">
                             <h3 className="text-lg font-semibold mb-4">{t('fin.expense.new')}</h3>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

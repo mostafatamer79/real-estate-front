@@ -1,0 +1,23 @@
+{
+  "name": "الوساطة الرقمية",
+  "short_name": "الوساطة",
+  "description": "الوساطة الرقمية - منصة عقارية شاملة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icons/white.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/white.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

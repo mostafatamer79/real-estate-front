@@ -229,7 +229,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
     setAgent: React.Dispatch<React.SetStateAction<AgentInfo>>,
     agentType: "first" | "second"
   ) => (
-    <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+    <div className="space-y-4 p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -339,7 +339,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         </div>
 
         {hasAgent && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded border">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-card rounded border">
             <div>
               <Label>{t('legal.contract.agentName')} *</Label>
               <Input
@@ -417,7 +417,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         )}
 
         {isReviewMode && (
-          <div className="p-4 bg-slate-50 border border-blue-200 rounded-lg">
+          <div className="p-4 bg-muted border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800">{t('legal.contract.reviewModeDesc')}</p>
           </div>
         )}
@@ -439,7 +439,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
           )}
 
           {/* Contract Details */}
-          <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+          <div className="space-y-4 p-6 bg-muted rounded-lg">
             <h3 className="text-lg font-semibold text-gray-800">{t('legal.contract.details')}</h3>
             
             <div>
@@ -533,7 +533,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         {contractFiles.length > 0 && (
           <div className="space-y-2">
             {contractFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
                 <span className="text-sm truncate">{file.name}</span>
                 <button
                   type="button"

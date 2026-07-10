@@ -132,7 +132,7 @@ export default function QuickActions() {
         px-6 py-6
         bg-gradient-to-b from-slate-800 to-slate-900
         border border-slate-700/60
-        rounded-[2.5rem]
+        rounded-[1rem]
         shadow-[0_4px_32px_rgba(0,0,0,0.4)]
         relative overflow-hidden
       ">

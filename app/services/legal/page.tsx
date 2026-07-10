@@ -27,7 +27,7 @@ export default function LegalServiceSelectionPage() {
             onClick={() => router.push("/services")}
             className="group flex items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest"
           >
-            <span className="w-6 h-6 rounded-full bg-white/[0.02] border border-white/[0.06] group-hover:bg-white/[0.05] flex items-center justify-center transition-all duration-200">
+            <span className="w-6 h-6 rounded-full bg-card/[0.02] border border-white/[0.06] group-hover:bg-card/[0.05] flex items-center justify-center transition-all duration-200">
               <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
             </span>
             {isRtl ? "العودة للخدمات" : "Back to services"}
@@ -39,7 +39,7 @@ export default function LegalServiceSelectionPage() {
             transition={{ duration: 0.45 }}
             className="pt-10 pb-8"
           >
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 mb-3">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/5 border border-white/10 mb-3">
               <Scale className="w-3 h-3 text-slate-400" />
               <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{isRtl ? "خدمات المنصة" : "Platform services"}</p>
             </div>

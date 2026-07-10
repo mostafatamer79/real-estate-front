@@ -157,7 +157,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
     setParty: React.Dispatch<React.SetStateAction<PartyInfo>>,
     label: string
   ) => (
-    <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+    <div className="space-y-4 p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -200,7 +200,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="rounded-xl border border-blue-100 bg-slate-50 p-5">
+      <div className="rounded-xl border border-blue-100 bg-muted p-5">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('legal.doc.new')}</h2>
         <p className="text-gray-600">{t('legal.doc.partyInfo')}</p>
       </div>
@@ -215,7 +215,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           onChange={(e) => handleFileSelect(e, 'firstId')}
         />
         {firstPartyIdFile && (
-          <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+          <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
             <span className="text-sm truncate">{firstPartyIdFile.name}</span>
             <button type="button" onClick={() => removeFile('firstId')} className="text-red-500 hover:text-red-700">
               <X className="h-4 w-4" />
@@ -234,7 +234,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           onChange={(e) => handleFileSelect(e, 'secondId')}
         />
         {secondPartyIdFile && (
-          <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+          <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
             <span className="text-sm truncate">{secondPartyIdFile.name}</span>
             <button type="button" onClick={() => removeFile('secondId')} className="text-red-500 hover:text-red-700">
               <X className="h-4 w-4" />
@@ -244,7 +244,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       </div>
 
       {/* Ownership Deed */}
-      <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+      <div className="space-y-4 p-6 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold text-gray-800">{t('legal.doc.ownershipDeed')}</h3>
         <p className="text-sm text-gray-600">
           صك الملكية: الأصل المحدث والصادر من وزارة العدل، ويكون خالياً من أي موانع تمنع الإفراغ، مثل الرهن أو الحجز.
@@ -268,7 +268,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           </div>
 
           {ownershipDeedFile && (
-            <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+            <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
               <span className="text-sm truncate">{ownershipDeedFile.name}</span>
               <button
                 type="button"
@@ -292,7 +292,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       </div>
 
       {/* Sale Amount */}
-      <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+      <div className="space-y-4 p-6 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold text-gray-800">{t('legal.doc.saleAmount')}</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -323,7 +323,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
             </div>
 
             {saleAmountProofFile && (
-              <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+              <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
                 <span className="text-sm truncate">{saleAmountProofFile.name}</span>
                 <button
                   type="button"
@@ -360,7 +360,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
         {otherFiles.length > 0 && (
           <div className="space-y-2">
             {otherFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
                 <span className="text-sm truncate">{file.name}</span>
                 <button
                   type="button"

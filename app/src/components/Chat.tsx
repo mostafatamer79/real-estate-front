@@ -157,7 +157,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
         }`}
         dir={language === 'ar' ? "rtl" : "ltr"}
       >
-        <div className="bg-white rounded-2xl shadow-2xl w-96 h-[500px] flex flex-col border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-2xl w-96 h-[500px] flex flex-col border border overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-slate-700 text-white">
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -204,7 +204,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                   className={`max-w-[85%] rounded-lg p-3 shadow-sm ${
                     message.sender === "user"
                       ? "bg-[#DCF8C6] text-gray-900 rounded-tr-none"
-                      : "bg-white text-gray-900 rounded-tl-none"
+                      : "bg-card text-gray-900 rounded-tl-none"
                   }`}
                 >
                   {message.type === 'booking_offer' ? (
@@ -254,9 +254,9 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
           </div>
 
           {/* Input */}
-          <div className="p-2 bg-[#f0f2f5] border-t border-gray-200">
+          <div className="p-2 bg-[#f0f2f5] border-t border">
             <div className="flex gap-2 items-end">
-              <div className="flex-1 bg-white rounded-full px-4 py-2 border border-gray-300 focus-within:border-[#075E54]">
+              <div className="flex-1 bg-card rounded-full px-4 py-2 border border-gray-300 focus-within:border-[#075E54]">
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}

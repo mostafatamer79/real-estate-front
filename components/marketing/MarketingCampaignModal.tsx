@@ -214,7 +214,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-white rounded-[1.5rem] border-0 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="sr-only">
           <DialogTitle>{campaign ? (isRtl ? 'تعديل الإعلان' : 'Edit campaign') : t('admin.marketing.create')}</DialogTitle>
           <DialogDescription>
@@ -223,7 +223,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
         </DialogHeader>
 
         {/* Modal Header */}
-        <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+        <div className="px-6 py-5 bg-muted border-b border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
               <Target className="w-5 h-5" />
@@ -251,7 +251,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 type="text"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 placeholder={isRtl ? 'عنوان مختصر للإعلان' : 'Short ad title'}
               />
             </div>
@@ -265,7 +265,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
               >
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
@@ -282,12 +282,12 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   <Target className="w-3 h-3" />
                   {isRtl ? 'مصدر بيانات الإعلان' : 'Ad Data Source'}
                 </label>
-                <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-200">
+                <div className="flex bg-muted p-1 rounded-xl border border">
                   <button
                     type="button"
                     onClick={() => setSourceType('new')}
                     className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                      sourceType === 'new' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                      sourceType === 'new' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
                     }`}
                   >
                     {isRtl ? 'إنشاء بيانات جديدة للإعلان' : 'Create new data'}
@@ -296,7 +296,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     type="button"
                     onClick={() => setSourceType('existing')}
                     className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                      sourceType === 'existing' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                      sourceType === 'existing' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
                     }`}
                   >
                     {isRtl ? 'ربط بعنصر موجود مسبقاً' : 'Link existing item'}
@@ -341,7 +341,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       }));
                     }
                   }}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                  className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 >
                   <option value="">{resourcesLoading ? (isRtl ? 'جاري التحميل...' : 'Loading...') : (isRtl ? 'اختر العنصر لجلبه' : 'Select item to fetch')}</option>
                   {resourceOptions.map((option) => (
@@ -367,7 +367,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               <select
                 value={formData.targetRole}
                 onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
               >
                 {roles.map((role) => (
                   <option key={role.value} value={role.value}>
@@ -386,7 +386,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               <select
                 value={formData.assignedTo}
                 onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
               >
                 <option value="">{isRtl ? 'غير مسند' : 'Unassigned'}</option>
                 {users.map((user) => (
@@ -398,7 +398,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
 
-              <div className="md:col-span-2 bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4 my-2 text-right">
+              <div className="md:col-span-2 bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4 my-2 text-right">
                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-600" />
                   {isRtl ? 'تفاصيل ومواصفات العقار للإعلان' : 'Ad Property Specifications'}
@@ -407,18 +407,18 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
-                    <div className="flex bg-white p-1 rounded-xl border border-slate-200/60 gap-1">
+                    <div className="flex bg-card p-1 rounded-xl border border-/60 gap-1">
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'residential', propertyType: 'فيلا' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'سكني' : 'Residential'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'commercial', propertyType: 'مكتب' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-slate-50'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'تجاري' : 'Commercial'}
                       </button>
@@ -430,7 +430,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     <select
                       value={formData.propertyType}
                       onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                     >
                       {propertyTypeOptions[formData.mainCategory || 'residential']?.map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
@@ -443,7 +443,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     <select
                       value={formData.dealType}
                       onChange={(e) => setFormData({ ...formData, dealType: e.target.value })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                     >
                       <option value="بيع">{isRtl ? 'بيع' : 'Sale'}</option>
                       <option value="إيجار">{isRtl ? 'إيجار' : 'Rent'}</option>
@@ -460,7 +460,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                           type="number"
                           value={formData.details?.priceFrom || ''}
                           onChange={(e) => setFormData({ ...formData, details: { ...formData.details, priceFrom: e.target.value } })}
-                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                           placeholder="0"
                         />
                       </div>
@@ -471,7 +471,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                           type="number"
                           value={formData.details?.priceTo || ''}
                           onChange={(e) => setFormData({ ...formData, details: { ...formData.details, priceTo: e.target.value } })}
-                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                           placeholder="0"
                         />
                       </div>
@@ -484,7 +484,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                           type="number"
                           value={formData.details?.areaFrom || ''}
                           onChange={(e) => setFormData({ ...formData, details: { ...formData.details, areaFrom: e.target.value } })}
-                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                           placeholder="0"
                         />
                       </div>
@@ -495,7 +495,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                           type="number"
                           value={formData.details?.areaTo || ''}
                           onChange={(e) => setFormData({ ...formData, details: { ...formData.details, areaTo: e.target.value } })}
-                          className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                          className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                           placeholder="0"
                         />
                       </div>
@@ -509,7 +509,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                         type="number"
                         value={formData.price || ''}
                         onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                        className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                        className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                         placeholder="0"
                       />
                     </div>
@@ -520,7 +520,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                         type="number"
                         value={formData.area || ''}
                         onChange={(e) => setFormData({ ...formData, area: parseFloat(e.target.value) || 0 })}
-                        className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                        className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                         placeholder="0"
                       />
                     </div>
@@ -534,7 +534,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       type="text"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                       placeholder={isRtl ? 'الرياض' : 'Riyadh'}
                     />
                   </div>
@@ -545,7 +545,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       type="text"
                       value={formData.neighborhood}
                       onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                       placeholder={isRtl ? 'الياسمين' : 'Al-Yasmin'}
                     />
                   </div>
@@ -558,7 +558,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       type="number"
                       value={formData.details?.rooms || ''}
                       onChange={(e) => setFormData({ ...formData, details: { ...formData.details, rooms: e.target.value } })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                       placeholder="0"
                     />
                   </div>
@@ -569,7 +569,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       type="number"
                       value={formData.details?.bathrooms || ''}
                       onChange={(e) => setFormData({ ...formData, details: { ...formData.details, bathrooms: e.target.value } })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                       placeholder="0"
                     />
                   </div>
@@ -580,7 +580,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       type="text"
                       value={formData.details?.propertyAge || ''}
                       onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyAge: e.target.value } })}
-                      className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors"
                       placeholder={isRtl ? 'جديد' : 'New'}
                     />
                   </div>
@@ -589,45 +589,45 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الصالات' : 'Living Rooms'}</label>
-                    <input type="number" value={formData.details?.livingRooms || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, livingRooms: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.livingRooms || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, livingRooms: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد المطابخ' : 'Kitchens'}</label>
-                    <input type="number" value={formData.details?.kitchens || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, kitchens: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.kitchens || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, kitchens: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الأدوار' : 'Floors'}</label>
-                    <input type="number" value={formData.details?.floors || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, floors: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.floors || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, floors: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الشقق' : 'Apartments'}</label>
-                    <input type="number" value={formData.details?.apartments || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, apartments: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.apartments || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, apartments: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'مساحة البناء' : 'Building Area'}</label>
-                    <input type="number" value={formData.details?.buildingArea || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, buildingArea: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.buildingArea || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, buildingArea: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الطول' : 'Length'}</label>
-                    <input type="number" value={formData.details?.length || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, length: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.length || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, length: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'العرض' : 'Width'}</label>
-                    <input type="number" value={formData.details?.width || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, width: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.width || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, width: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عرض الشارع' : 'Street Width'}</label>
-                    <input type="number" value={formData.details?.streetWidth || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, streetWidth: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
+                    <input type="number" value={formData.details?.streetWidth || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, streetWidth: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الواجهة' : 'Direction'}</label>
-                    <select value={formData.details?.direction || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, direction: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                    <select value={formData.details?.direction || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, direction: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="شمالي">شمالي</option>
                       <option value="جنوبي">جنوبي</option>
@@ -637,7 +637,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع الصك' : 'Deed Type'}</label>
-                    <select value={formData.details?.deedType || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, deedType: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                    <select value={formData.details?.deedType || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, deedType: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="إلكتروني">إلكتروني</option>
                       <option value="ورقي">ورقي</option>
@@ -646,7 +646,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'حالة العقار' : 'Condition'}</label>
-                    <select value={formData.details?.propertyCondition || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyCondition: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                    <select value={formData.details?.propertyCondition || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyCondition: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="جديد">جديد</option>
                       <option value="ممتاز">ممتاز</option>
@@ -656,7 +656,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'التأثيث' : 'Furniture'}</label>
-                    <select value={formData.details?.furnitureStatus || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, furnitureStatus: e.target.value } })} className="w-full h-[38px] bg-white border border-slate-200 rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
+                    <select value={formData.details?.furnitureStatus || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, furnitureStatus: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="مؤثث">مؤثث</option>
                       <option value="شبه مؤثث">شبه مؤثث</option>
@@ -679,7 +679,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                         type="checkbox"
                         checked={!!formData.details?.[f.key]}
                         onChange={(e) => setFormData({ ...formData, details: { ...formData.details, [f.key]: e.target.checked } })}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-100 border-slate-300"
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-muted border-slate-300"
                       />
                       <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">{f.label}</span>
                     </label>
@@ -701,7 +701,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                           setImages(Array.from(e.target.files));
                         }
                       }}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold outline-none transition-colors cursor-pointer"
+                      className="w-full bg-card border border rounded-xl px-3 py-1.5 text-xs font-bold outline-none transition-colors cursor-pointer"
                     />
                     {images.length > 0 && (
                       <p className="text-[10px] text-emerald-600 font-bold">
@@ -713,7 +713,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الصور الحالية:' : 'Current Images:'}</span>
                         <div className="flex flex-wrap gap-2">
                           {formData.mediaFiles.map((url: string, idx: number) => (
-                            <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0 bg-slate-100">
+                            <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border shadow-sm shrink-0 bg-muted">
                               <img src={url} alt="ad property" className="w-full h-full object-cover" />
                             </div>
                           ))}
@@ -729,7 +729,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'الحالة' : t('admin.marketing.table.status')}
               </label>
-              <div className="flex items-center justify-between gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl h-[46px]">
+              <div className="flex items-center justify-between gap-3 p-3 bg-muted border border rounded-xl h-[46px]">
                 <span className="text-sm font-bold text-slate-700">{formData.isActive ? (isRtl ? 'نشط' : 'Active') : (isRtl ? 'متوقف' : 'Paused')}</span>
                 <button
                   type="button"
@@ -739,7 +739,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${
                       formData.isActive ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -756,7 +756,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 type="number"
                 value={formData.sortOrder}
                 onChange={(e) => setFormData({ ...formData, sortOrder: Number(e.target.value) })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
               />
             </div>
 
@@ -769,14 +769,14 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, scheduleMode: 'manual' })}
-                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'manual' ? 'border-slate-900 bg-slate-100 text-slate-950' : 'border-slate-200 bg-white text-slate-500'}`}
+                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'manual' ? 'border-slate-900 bg-muted text-slate-950' : 'border bg-card text-slate-500'}`}
                 >
                   {isRtl ? 'يدوي حتى الإيقاف' : 'Manual until off'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, scheduleMode: 'date_range' })}
-                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'date_range' ? 'border-slate-900 bg-slate-100 text-slate-950' : 'border-slate-200 bg-white text-slate-500'}`}
+                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'date_range' ? 'border-slate-900 bg-muted text-slate-950' : 'border bg-card text-slate-500'}`}
                 >
                   {isRtl ? 'من تاريخ إلى تاريخ' : 'From date to date'}
                 </button>
@@ -791,7 +791,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               <select
                 value={formData.frequency}
                 onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
               >
                 <option value="daily">{isRtl ? 'يومي' : 'Daily'}</option>
                 <option value="every_2_days">{isRtl ? 'كل يومين' : 'Every 2 days'}</option>
@@ -811,7 +811,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                    className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -823,7 +823,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                    className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                   />
                 </div>
               </>
@@ -841,7 +841,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={6}
               placeholder={isRtl ? 'اكتب محتوى الإعلان هنا...' : 'Enter the ad content here...'}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-none"
+              className="w-full bg-muted border border rounded-2xl px-4 py-4 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-none"
             />
           </div>
 
@@ -850,7 +850,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-all"
+              className="px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-muted transition-all"
             >
               {isRtl ? 'إلغاء' : 'Cancel'}
             </button>

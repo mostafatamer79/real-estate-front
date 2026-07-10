@@ -38,14 +38,14 @@ const departments = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:      "bg-slate-100 text-slate-600",
-  assigned:     "bg-slate-100 text-slate-600",
-  in_progress:  "bg-slate-100 text-slate-600",
+  pending:      "bg-muted text-slate-600",
+  assigned:     "bg-muted text-slate-600",
+  in_progress:  "bg-muted text-slate-600",
   completed:    "bg-slate-900 text-white",
-  cancelled:    "bg-slate-50 text-slate-400",
-  invoice_sent: "bg-slate-100 text-slate-600",
+  cancelled:    "bg-muted text-slate-400",
+  invoice_sent: "bg-muted text-slate-600",
   accepted:     "bg-slate-900 text-white",
-  rejected:     "bg-slate-50 text-slate-400",
+  rejected:     "bg-muted text-slate-400",
 };
 
 export default function ServiceRequestsPage() {
@@ -239,52 +239,52 @@ export default function ServiceRequestsPage() {
                                     placeholder={t('admin.service_requests.search_placeholder')}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="bg-white border border-slate-100 py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1.5rem]"
+                                    className="bg-card border border py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1rem]"
                                 />
                             </div>
-                            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]">
                                 <option value="all">كل الحالات</option>
                                 <option value="pending">Pending</option>
                                 <option value="accepted">Accepted</option>
                                 <option value="completed">Completed</option>
                                 <option value="cancelled">Cancelled</option>
                             </select>
-                            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]">
                                 <option value="all">كل التصنيفات</option>
                                 {categories.map((category) => <option key={category} value={category}>{category}</option>)}
                             </select>
-                            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]">
                                 <option value="all">كل الإدارات</option>
                                 {departmentsList.map((department) => <option key={department} value={department}>{t(`admin.trans.dept.${department}`) || department}</option>)}
                             </select>
-                            <select value={decisionFilter} onChange={(e) => setDecisionFilter(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]">
+                            <select value={decisionFilter} onChange={(e) => setDecisionFilter(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]">
                                 <option value="all">قرار العميل</option>
                                 <option value="pending">Pending</option>
                                 <option value="accepted">Accepted</option>
                                 <option value="rejected">Rejected</option>
                             </select>
-                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]" />
-                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-white border border-slate-100 py-3.5 px-4 text-sm font-bold rounded-[1.5rem]" />
+                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]" />
+                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]" />
                             <button 
                                 onClick={() => { setSearchTerm(""); setStatusFilter("all"); setCategoryFilter("all"); setDepartmentFilter("all"); setDecisionFilter("all"); setDateFrom(""); setDateTo(""); }}
-                                className="p-3.5 rounded-2xl bg-white border border-slate-100 hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
+                                className="p-3.5 rounded-2xl bg-card border border hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
                             >
                                 <Filter className="w-4 h-4" />
                             </button>
                         </div>
 
                         {/* Requests Table */}
-                        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden min-h-[400px]">
+                        <div className="bg-card rounded-[1rem] border border shadow-xl shadow-stone-400 overflow-hidden min-h-[400px]">
                             {isLoadingRequests ? (
                                 <div className="flex flex-col items-center justify-center py-32 gap-4">
-                                    <div className="w-12 h-12 rounded-full border-4 border-slate-100 border-t-slate-900 animate-spin" />
+                                    <div className="w-12 h-12 rounded-full border-4 border border-t-slate-900 animate-spin" />
                                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                                 </div>
                             ) : filteredRequests.length > 0 ? (
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-right border-collapse">
                                         <thead>
-                                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                            <tr className="bg-muted/50 border-b border">
                                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
                                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
                                                 <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
@@ -298,11 +298,11 @@ export default function ServiceRequestsPage() {
                                                     key={req.id}
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
-                                                    className="group hover:bg-slate-50/50 transition-colors"
+                                                    className="group hover:bg-muted/50 transition-colors"
                                                 >
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
+                                                            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                                                 <User className="w-5 h-5" />
                                                             </div>
                                                             <div>
@@ -341,7 +341,7 @@ export default function ServiceRequestsPage() {
                                                             }
 
                                                             return (
-                                                                <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-slate-100 text-slate-500"}`}>
+                                                                <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
                                                                     {label}
                                                                 </span>
                                                             );
@@ -363,7 +363,7 @@ export default function ServiceRequestsPage() {
                                                                 setEditingDepartment(req.targetDepartment || "");
                                                                 setIsDetailsOpen(true);
                                                             }}
-                                                            className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                            className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
                                                         >
                                                             <ExternalLink className="w-4 h-4" />
                                                         </button>
@@ -375,7 +375,7 @@ export default function ServiceRequestsPage() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
-                                    <div className="p-8 rounded-[2.5rem] bg-slate-50">
+                                    <div className="p-8 rounded-[1rem] bg-muted">
                                         <Briefcase className="w-16 h-16 text-slate-200" />
                                     </div>
                                     <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
@@ -395,16 +395,16 @@ export default function ServiceRequestsPage() {
                     {selectedRequest && (
                         <div className="py-4">
                             <Tabs defaultValue="details" className="w-full">
-                                <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-100 p-1 rounded-xl h-auto">
+                                <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                                     <TabsTrigger value="details" className="py-2 rounded-lg font-bold">{t('common.details')}</TabsTrigger>
                                     <TabsTrigger value="visits" className="py-2 rounded-lg font-bold">{t('admin.service_requests.customer_visits')}</TabsTrigger>
                                     <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t('admin.service_requests.customer_invoices')}</TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="details" className="space-y-6">
-                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                    <div className="flex items-center justify-between p-4 bg-muted rounded-2xl">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-slate-900 shadow-sm">
+                                            <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center text-slate-900 shadow-sm">
                                                 <User className="w-6 h-6" />
                                             </div>
                                             <div>
@@ -442,12 +442,12 @@ export default function ServiceRequestsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4 pt-4 border-t border-slate-100">
+                                    <div className="space-y-4 pt-4 border-t border">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')} (Admin)</label>
                                         <select 
                                             value={editingDepartment}
                                             onChange={(e) => setEditingDepartment(e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all cursor-pointer appearance-none"
+                                            className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all cursor-pointer appearance-none"
                                             disabled={!['postPurchase', 'other'].includes(selectedRequest.category)}
                                         >
                                             {departments.map(dept => (
@@ -457,9 +457,9 @@ export default function ServiceRequestsPage() {
                                     </div>
 
                                     {selectedRequest.category === 'legal' && (selectedRequest.firstParty || selectedRequest.secondParty || selectedRequest.metadata) ? (
-                                        <div className="space-y-6 pt-4 border-t border-slate-100">
+                                        <div className="space-y-6 pt-4 border-t border">
                                             {selectedRequest.firstParty && (
-                                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                <div className="p-4 bg-muted rounded-2xl border border">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
                                                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
@@ -488,7 +488,7 @@ export default function ServiceRequestsPage() {
                                             )}
 
                                             {selectedRequest.secondParty && (
-                                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                <div className="p-4 bg-muted rounded-2xl border border">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
                                                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
@@ -545,29 +545,29 @@ export default function ServiceRequestsPage() {
                                             )}
                                         </div>
                                     ) : selectedRequest.description && (
-                                        <div className="space-y-2 pt-2 border-t border-slate-100">
+                                        <div className="space-y-2 pt-2 border-t border">
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</label>
-                                            <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50/50 p-4 rounded-2xl">
+                                            <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted/50 p-4 rounded-2xl">
                                                 {selectedRequest.description}
                                             </p>
                                         </div>
                                     )}
 
-                                     <div className="space-y-4 pt-4 border-t border-slate-100">
+                                     <div className="space-y-4 pt-4 border-t border">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>
                                         <div className="flex gap-3">
                                             <input 
                                                 type="number"
                                                 value={editingPrice}
                                                 onChange={(e) => setEditingPrice(e.target.value)}
-                                                className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                                                className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
                                                 placeholder="0.00"
                                             />
                                             <div className="flex flex-col gap-3">
                                                 <button 
                                                     onClick={handleSave}
                                                     disabled={isUpdatingPrice}
-                                                    className="w-full bg-slate-900 text-white py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                                                    className="w-full bg-slate-900 text-white py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-stone-400 active:scale-95 disabled:opacity-50 whitespace-nowrap"
                                                 >
                                                     <Save className="w-4 h-4" />
                                                     {t('admin.service_requests.save_changes')}
@@ -614,11 +614,11 @@ export default function ServiceRequestsPage() {
                                                     ⚖️ {t('legal.invoice.sendBtn')}
                                                 </label>
                                                 {selectedRequest.invoiceSent ? (
-                                                    <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full border border-slate-200">
+                                                    <span className="bg-muted text-slate-700 text-[10px] font-black px-3 py-1 rounded-full border border">
                                                         ✓ {t('legal.invoice.sent')}
                                                     </span>
                                                 ) : (
-                                                    <span className="bg-slate-50 text-slate-400 text-[10px] font-black px-3 py-1 rounded-full border border-slate-100">
+                                                    <span className="bg-muted text-slate-400 text-[10px] font-black px-3 py-1 rounded-full border border">
                                                         ⏳ {t('legal.invoice.notSent')}
                                                     </span>
                                                 )}
@@ -627,7 +627,7 @@ export default function ServiceRequestsPage() {
                                             {selectedRequest.clientDecision && selectedRequest.clientDecision !== 'pending' && (
                                                 <div className={`p-3 rounded-xl text-[11px] font-black text-center ${
                                                     selectedRequest.clientDecision === 'accepted'
-                                                        ? 'bg-slate-50 text-slate-700 border border-slate-200'
+                                                        ? 'bg-muted text-slate-700 border border'
                                                         : 'bg-rose-50 text-rose-700 border border-rose-200'
                                                 }`}>
                                                     {selectedRequest.clientDecision === 'accepted'
@@ -712,9 +712,9 @@ export default function ServiceRequestsPage() {
                                     ) : userBookings.length > 0 ? (
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                             {userBookings.map((booking: any) => (
-                                                <div key={booking.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                                <div key={booking.id} className="p-4 bg-muted rounded-xl border border">
                                                     <div className="flex justify-between items-start mb-2">
-                                                        <Badge variant="outline" className="bg-white">{booking.type}</Badge>
+                                                        <Badge variant="outline" className="bg-card">{booking.type}</Badge>
                                                         <span className="text-xs text-slate-400 font-medium">
                                                             {format(new Date(booking.createdAt), 'dd/MM/yyyy')}
                                                         </span>
@@ -726,8 +726,8 @@ export default function ServiceRequestsPage() {
                                                     <div className="flex justify-between items-center mt-3">
                                                         <span className={`text-xs font-bold px-2 py-1 rounded-md ${
                                                             booking.status === 'confirmed' ? 'bg-slate-900 text-white' :
-                                                            booking.status === 'cancelled' ? 'bg-slate-50 text-slate-400' :
-                                                            'bg-slate-100 text-slate-600'
+                                                            booking.status === 'cancelled' ? 'bg-muted text-slate-400' :
+                                                            'bg-muted text-slate-600'
                                                         }`}>
                                                             {booking.status}
                                                         </span>
@@ -751,7 +751,7 @@ export default function ServiceRequestsPage() {
                                     ) : userInvoices.length > 0 ? (
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                             {userInvoices.map((invoice: any) => (
-                                                <div key={invoice.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                                                <div key={invoice.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <Receipt className="w-4 h-4 text-slate-400" />
@@ -762,7 +762,7 @@ export default function ServiceRequestsPage() {
                                                     <div className="text-right">
                                                         <p className="font-black text-slate-900"><SaudiRiyalAmount amount={invoice.amount} locale="ar-SA" /></p>
                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                                            invoice.status === 'paid' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'
+                                                            invoice.status === 'paid' ? 'bg-slate-900 text-white' : 'bg-muted text-slate-400'
                                                         }`}>
                                                             {invoice.status}
                                                         </span>

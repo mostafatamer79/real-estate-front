@@ -62,11 +62,11 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
     }
 
     return (
-        <div className={`${embedded ? '' : 'min-h-screen bg-white pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className={`${embedded ? '' : 'min-h-screen bg-card pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {/* Premium Header Container */}
              {/* Optimized Premium Header */}
       {!embedded && (
-      <section className="relative overflow-hidden mb-10 pb-10 border-b border-slate-100 bg-white">
+      <section className="relative overflow-hidden mb-10 pb-10 border-b border bg-card">
         <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8">
             <div className="space-y-4">
@@ -130,7 +130,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white">
-                                         <div className="bg-slate-900 p-8 rounded-[2rem] border border-blue-800 relative overflow-hidden group">
+                                         <div className="bg-slate-900 p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
                                              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                                <PieChart className="w-20 h-20" />
                                              </div>
@@ -139,18 +139,18 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                                                {t('fin.commissions.distributionTitle')}
                                              </h4>
                                              <div className="space-y-3">
-                                                 <div className="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5 transition-all">
+                                                 <div className="flex justify-between items-center p-4 bg-card/5 rounded-xl border border-white/5 transition-all">
                                                      <span className="font-bold text-xs opacity-60">{t('fin.commissions.brokers')}</span>
                                                      <span className="text-xl font-black">2.5%</span>
                                                  </div>
-                                                 <div className="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5 transition-all">
+                                                 <div className="flex justify-between items-center p-4 bg-card/5 rounded-xl border border-white/5 transition-all">
                                                      <span className="font-bold text-xs opacity-60">{t('fin.commissions.platform')}</span>
                                                      <span className="text-xl font-black">1.0%</span>
                                                  </div>
                                              </div>
                                          </div>
-                                         <div className="bg-white p-8 rounded-[2rem] border border-slate-200 flex flex-col justify-center items-center text-center group">
-                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 mb-5 group-hover:rotate-6 transition-all border border-slate-100">
+                                         <div className="bg-card p-8 rounded-[1.25rem] border border flex flex-col justify-center items-center text-center group">
+                                            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-slate-400 mb-5 group-hover:rotate-6 transition-all border border">
                                               <TrendingUp className="w-8 h-8" />
                                             </div>
                                             <h4 className="text-xl font-black text-slate-950 mb-1.5">{t('fin.policy.update')}</h4>
@@ -212,17 +212,17 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     }, []);
 
     const kpis = [
-        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: SaudiRiyalIcon, color: "text-slate-900", bg: "bg-slate-50" },
-        { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-slate-50" },
-        { label: t('fin.kpi.commission'), value: stats?.totalCommission || 0, icon: Banknote, color: "text-slate-900", bg: "bg-slate-50" },
-        { label: t('fin.kpi.expenses'), value: stats?.totalExpenses || 0, icon: ArrowDownLeft, color: "text-slate-900", bg: "bg-slate-50" },
-        { label: t('fin.kpi.netProfit'), value: stats?.netProfit || 0, icon: ArrowUpRight, color: "text-slate-950", bg: "bg-slate-100" },
-        { label: t('fin.kpi.vat'), value: stats?.totalTax || 0, icon: Calculator, color: "text-slate-900", bg: "bg-slate-50" },
+        { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: SaudiRiyalIcon, color: "text-slate-900", bg: "bg-muted" },
+        { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-muted" },
+        { label: t('fin.kpi.commission'), value: stats?.totalCommission || 0, icon: Banknote, color: "text-slate-900", bg: "bg-muted" },
+        { label: t('fin.kpi.expenses'), value: stats?.totalExpenses || 0, icon: ArrowDownLeft, color: "text-slate-900", bg: "bg-muted" },
+        { label: t('fin.kpi.netProfit'), value: stats?.netProfit || 0, icon: ArrowUpRight, color: "text-slate-950", bg: "bg-muted" },
+        { label: t('fin.kpi.vat'), value: stats?.totalTax || 0, icon: Calculator, color: "text-slate-900", bg: "bg-muted" },
     ];
 
     if (loading) return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1,2,3,4,5,6].map(i => <div key={i} className="h-32 rounded-3xl bg-slate-50 animate-pulse" />)}
+        {[1,2,3,4,5,6].map(i => <div key={i} className="h-32 rounded-3xl bg-muted animate-pulse" />)}
       </div>
     );
 
@@ -235,10 +235,10 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                       key={idx}
-                      className="p-6 rounded-3xl bg-white border border-slate-100 hover:border-slate-300 transition-all duration-300 group"
+                      className="p-6 rounded-3xl bg-card border border hover:border-slate-300 transition-all duration-300 group"
                     >
                         <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-slate-100`}>
+                            <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-`}>
                                 <kpi.icon className="w-5 h-5" />
                             </div>
                             <div>
@@ -253,7 +253,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
-                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                <div className="bg-card rounded-3xl border border p-6">
                     <div className="flex items-center justify-between gap-3 mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">أداء آخر 6 أشهر</h3>
@@ -294,7 +294,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                <div className="bg-card rounded-3xl border border p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">حالة الفواتير</h3>
@@ -306,7 +306,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                         {[
                           { label: 'مدفوعة', count: stats?.invoiceStats?.paidCount || 0, total: stats?.invoiceStats?.paidTotal || 0, tone: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
                           { label: 'غير مدفوعة', count: stats?.invoiceStats?.unpaidCount || 0, total: stats?.invoiceStats?.outstandingTotal || 0, tone: 'bg-amber-50 text-amber-700 border-amber-100' },
-                          { label: 'مسودة', count: stats?.invoiceStats?.draftCount || 0, total: 0, tone: 'bg-slate-50 text-slate-700 border-slate-100' },
+                          { label: 'مسودة', count: stats?.invoiceStats?.draftCount || 0, total: 0, tone: 'bg-muted text-slate-700 border' },
                         ].map((row) => (
                           <div key={row.label} className={`rounded-2xl border p-4 ${row.tone}`}>
                               <div className="flex items-center justify-between">
@@ -325,7 +325,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6">
-                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                <div className="bg-card rounded-3xl border border p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">المصروفات حسب الفئة</h3>
@@ -343,7 +343,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                         <span>{item.category}</span>
                                         <span className="tabular-nums"><SaudiRiyalAmount amount={Number(item.total || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} className="tabular-nums" /></span>
                                     </div>
-                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="h-2 rounded-full bg-muted overflow-hidden">
                                         <div className="h-full rounded-full bg-slate-900" style={{ width: `${width}%` }} />
                                     </div>
                                 </div>
@@ -352,7 +352,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-slate-100 p-6">
+                <div className="bg-card rounded-3xl border border p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">آخر النشاطات المالية</h3>
@@ -362,7 +362,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                     </div>
                     <div className="space-y-3">
                         {(stats?.recentTransactions?.length ? stats.recentTransactions : []).slice(0, embedded ? 5 : 8).map((tx: any) => (
-                            <div key={tx.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                            <div key={tx.id} className="rounded-2xl border border bg-muted p-4 flex items-center justify-between gap-4">
                                 <div className="min-w-0">
                                     <p className="text-sm font-black text-slate-950 truncate">{tx.description || tx.type}</p>
                                     <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{tx.type} • {tx.status}</p>
@@ -373,7 +373,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                             </div>
                         ))}
                         {!stats?.recentTransactions?.length && (
-                            <div className="h-44 rounded-2xl border border-dashed border-slate-200 flex items-center justify-center text-sm font-bold text-slate-300">
+                            <div className="h-44 rounded-2xl border border-dashed border flex items-center justify-center text-sm font-bold text-slate-300">
                                 لا توجد حركة مالية حديثة
                             </div>
                         )}
@@ -401,20 +401,20 @@ function TransactionsSection() {
     }, []);
 
     return (
-        <div className="rounded-3xl overflow-hidden border border-slate-200">
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
+        <div className="rounded-3xl overflow-hidden border border">
+            <div className="p-8 border-b border flex justify-between items-center bg-card">
                 <div>
                    <h4 className="text-xl font-black text-slate-900">{t('fin.tab.transactions')}</h4>
                    <p className="text-[10px] text-slate-400 font-black mt-1 uppercase tracking-widest">{t('fin.transactions.desc')}</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" className="rounded-xl h-10 px-5 font-black text-[11px] uppercase border-slate-200 hover:bg-slate-50">{t('common.export')}</Button>
-                    <Button variant="outline" className="rounded-xl h-10 px-5 font-black text-[11px] uppercase border-slate-200 hover:bg-slate-50"><Filter className="w-3.5 h-3.5 ml-2" />{t('common.filter')}</Button>
+                    <Button variant="outline" className="rounded-xl h-10 px-5 font-black text-[11px] uppercase border hover:bg-muted">{t('common.export')}</Button>
+                    <Button variant="outline" className="rounded-xl h-10 px-5 font-black text-[11px] uppercase border hover:bg-muted"><Filter className="w-3.5 h-3.5 ml-2" />{t('common.filter')}</Button>
                 </div>
             </div>
             <div className="overflow-x-auto hide-scrollbar">
                 <Table>
-                    <TableHeader className="bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <TableHeader className="bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                         <TableRow className="hover:bg-transparent">
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('fin.table.id')}</TableHead>
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('fin.table.type')}</TableHead>
@@ -424,7 +424,7 @@ function TransactionsSection() {
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('fin.table.date')}</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="divide-y divide-slate-50 bg-white">
+                    <TableBody className="divide-y divide-slate-50 bg-card">
                         {loading ? (
                           <TableRow><TableCell colSpan={6} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-300" /></TableCell></TableRow>
                         ) : transactions.length > 0 ? (
@@ -434,7 +434,7 @@ function TransactionsSection() {
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: idx * 0.05 }}
                                   key={tx.id}
-                                  className="hover:bg-slate-50 transition-colors group"
+                                  className="hover:bg-muted transition-colors group"
                                 >
                                     <TableCell className="px-8 py-5">
                                       <div className="flex items-center gap-2">
@@ -447,7 +447,7 @@ function TransactionsSection() {
                                     <TableCell className="px-8 py-5 font-bold text-slate-500 tabular-nums text-xs">{tx.commissionAmount} <span className="text-[9px] opacity-30 font-bold"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></TableCell>
                                     <TableCell className="px-8 py-5 text-center">
                                         <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border
-                                            ${tx.status === 'completed' ? 'bg-slate-50 text-slate-900 border-slate-100' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
+                                            ${tx.status === 'completed' ? 'bg-muted text-slate-900 border' : 'bg-muted text-slate-400 border'}`}>
                                             <div className={`w-1 h-1 rounded-full ${tx.status === 'completed' ? 'bg-slate-900' : 'bg-slate-300'} ${language === 'ar' ? 'ml-2' : 'mr-2'}`} />
                                             {t('bm.status.' + tx.status)}
                                         </span>
@@ -470,8 +470,8 @@ function TransactionsSection() {
 function PlaceholderSection({ title }: { title: string }) {
     const { t } = useLanguage();
     return (
-        <div className="p-20 rounded-[2.5rem] bg-white flex flex-col items-center justify-center text-center border border-slate-100">
-            <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 mb-6 border border-slate-100">
+        <div className="p-20 rounded-[1rem] bg-card flex flex-col items-center justify-center text-center border border">
+            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-slate-300 mb-6 border border">
               <Rocket className="w-8 h-8" />
             </div>
             <h4 className="text-xl font-black text-slate-900 mb-2">{title}</h4>

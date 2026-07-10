@@ -298,7 +298,7 @@ export default function BuildingManagement() {
   const renderMainContent = () => {
     if (selectedSection !== "offers") {
       return (
-        <div className="p-6 bg-slate-50 rounded-lg border border-gray-200">
+        <div className="p-6 bg-muted rounded-lg border border">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
             {sidebarItems.find((item) => item.id === selectedSection)?.label}
           </h2>
@@ -310,9 +310,9 @@ export default function BuildingManagement() {
     }
 
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div className="bg-card/80 backdrop-blur-sm rounded-lg shadow-lg p-6 mb-6">
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 bg-slate-100 rounded-lg">
+          <div className="p-2 bg-muted rounded-lg">
             <Home className="w-6 h-6 text-blue-600" />
           </div>
           <div>
@@ -589,7 +589,7 @@ export default function BuildingManagement() {
 
           {/* بيانات تفصيلية */}
           {showDetails && (
-            <div className="mb-8 p-6 bg-slate-50 rounded-lg">
+            <div className="mb-8 p-6 bg-muted rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">بيانات تفصيلية</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* عدد الغرف */}
@@ -854,7 +854,7 @@ export default function BuildingManagement() {
               type="button"
               onClick={resetForm}
               disabled={isSubmitting || offersLoading}
-              className="px-8 py-3 bg-slate-200 text-gray-700 rounded-lg hover:bg-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-muted text-gray-700 rounded-lg hover:bg-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               إلغاء
             </button>
@@ -867,9 +867,9 @@ export default function BuildingManagement() {
   return (
     <>
 
-      <div className="w-full min-h-screen bg-white flex" dir="rtl">
+      <div className="w-full min-h-screen bg-card flex" dir="rtl">
         {/* Fixed Sidebar */}
-        <div className="fixed top-0 right-0 h-screen w-80 bg-slate-50 border-l border-gray-200 p-6 overflow-y-auto">
+        <div className="fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-6 overflow-y-auto">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">إدارة الاملاك</h1>
 
           <div className="space-y-3">
@@ -883,7 +883,7 @@ export default function BuildingManagement() {
                   className={`w-full p-4 rounded-lg text-right transition-colors ${
                     isSelected
                       ? "bg-slate-700 text-white"
-                      : "bg-white text-gray-700 border border-gray-200 hover:bg-slate-100"
+                      : "bg-card text-gray-700 border border hover:bg-muted"
                   }`}
                 >
                   <div className="flex items-center gap-3">

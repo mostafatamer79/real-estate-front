@@ -103,22 +103,22 @@ export default function MyServiceRequestsPage() {
   const getStatusBadge = (status: ServiceStatus) => {
     switch (status) {
       case ServiceStatus.PENDING:
-        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.pending')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.pending')}</Badge>;
       case ServiceStatus.IN_PROGRESS:
-        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.in_progress')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.in_progress')}</Badge>;
       case ServiceStatus.COMPLETED:
-        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.completed')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.completed')}</Badge>;
       case ServiceStatus.CANCELLED:
-        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{t('legal.status.cancelled')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.cancelled')}</Badge>;
       default:
-        return <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{status}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{status}</Badge>;
     }
   };
 
   if (selectedRequest) {
     const acceptedOffer = selectedRequest.metadata?.acceptedOffer;
     return (
-      <div className="min-h-screen bg-slate-100" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="min-h-screen bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Header />
         <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
           <Button
@@ -130,11 +130,11 @@ export default function MyServiceRequestsPage() {
             {language === 'ar' ? 'العودة للطلبات' : 'Back to Requests'}
           </Button>
 
-          <Card className="overflow-hidden border-slate-200 shadow-xl rounded-2xl">
-            <CardHeader className="bg-white border-b border-slate-100 p-8">
+          <Card className="overflow-hidden border shadow-xl rounded-2xl">
+            <CardHeader className="bg-card border-b border p-8">
               <div className="flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-600">
+                  <div className="w-10 h-10 rounded-xl border border bg-card flex items-center justify-center text-slate-600">
                     <Package className="w-5 h-5" />
                   </div>
                   <div>
@@ -150,7 +150,7 @@ export default function MyServiceRequestsPage() {
                   {getStatusBadge(selectedRequest.status)}
                   <Button
                     variant="outline"
-                    className="border-slate-200 text-slate-700 hover:bg-slate-50 gap-2 rounded-xl h-9 px-3 text-xs"
+                    className="border text-slate-700 hover:bg-muted gap-2 rounded-xl h-9 px-3 text-xs"
                     onClick={() => handleSelfChat(selectedRequest.id)}
                   >
                     <Lock className="w-4 h-4" />
@@ -161,15 +161,15 @@ export default function MyServiceRequestsPage() {
             </CardHeader>
             <CardContent className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الموقع' : 'Location'}</p>
                   <p className="font-bold text-slate-800">{selectedRequest.city}, {selectedRequest.district}</p>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'السعر' : 'Price'}</p>
                   <p className="font-bold text-slate-800 text-lg"><SaudiRiyalAmount amount={selectedRequest.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                 </div>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'رقم الفاتورة' : 'Invoice Number'}</p>
                   <p className="font-mono font-bold text-blue-600">{selectedRequest.invoiceNumber || '---'}</p>
                 </div>
@@ -178,12 +178,12 @@ export default function MyServiceRequestsPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 mb-3">{language === 'ar' ? 'وصف الطلب' : 'Request Description'}</h3>
-                  <div className="p-4 bg-white border border-slate-200 rounded-xl italic text-slate-600 leading-relaxed">
+                  <div className="p-4 bg-card border border rounded-xl italic text-slate-600 leading-relaxed">
                     "{selectedRequest.description || (language === 'ar' ? 'لا يوجد وصف' : 'No description provided')}"
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-100">
+                <div className="pt-6 border-t border">
                   <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                     <SaudiRiyalIcon className="w-4 h-4 text-slate-500" />
                     {language === 'ar' ? 'عروض الأسعار المتاحة' : 'Available Pricing Offers'}
@@ -193,15 +193,15 @@ export default function MyServiceRequestsPage() {
                     {Object.entries(selectedRequest.departmentPrices || {}).map(([dept, data]) => {
                       const isAccepted = acceptedOffer?.dept === dept;
                       return (
-                        <div key={dept} className={`flex flex-col md:flex-row items-center justify-between p-4 rounded-xl border transition-all ${isAccepted ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'}`}>
+                        <div key={dept} className={`flex flex-col md:flex-row items-center justify-between p-4 rounded-xl border transition-all ${isAccepted ? 'bg-muted border-slate-300' : 'bg-card border hover:border-slate-300'}`}>
                           <div className="flex items-center gap-4 mb-4 md:mb-0">
-                            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-white border border-slate-200 text-slate-500">
+                            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-card border border text-slate-500">
                               <Building2 className="w-4 h-4" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-slate-900 capitalize">{dept === 'admin' ? (language === 'ar' ? 'الإدارة' : 'Admin') : dept}</span>
-                                {isAccepted && <Badge variant="outline" className="border-slate-300 bg-white text-slate-600">{language === 'ar' ? 'مقبول' : 'Accepted'}</Badge>}
+                                {isAccepted && <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{language === 'ar' ? 'مقبول' : 'Accepted'}</Badge>}
                               </div>
                               <p className="text-xs text-slate-500 mt-0.5">{data.note || (language === 'ar' ? 'عرض سعر رسمي' : 'Official pricing offer')}</p>
                             </div>
@@ -214,7 +214,7 @@ export default function MyServiceRequestsPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-8 px-3 gap-2 rounded-lg hover:bg-slate-100 text-slate-700 border-slate-200 text-xs"
+                                className="h-8 px-3 gap-2 rounded-lg hover:bg-muted text-slate-700 border text-xs"
                                 onClick={() => handleStaffChat(selectedRequest.id, data.addedBy)}
                               >
                                 <MessageSquare className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function MyServiceRequestsPage() {
                     })}
 
                     {Object.keys(selectedRequest.departmentPrices || {}).length === 0 && (
-                      <div className="p-12 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                      <div className="p-12 text-center bg-muted rounded-2xl border border-dashed border">
                         <Clock className="w-10 h-10 text-slate-300 mx-auto mb-3" />
                         <p className="text-slate-500 font-medium">
                           {language === 'ar' ? 'جاري انتظار عروض الأسعار من الأقسام المختصة...' : 'Waiting for pricing offers from relevant departments...'}
@@ -255,7 +255,7 @@ export default function MyServiceRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-card" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <Header />
 
       <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
@@ -290,14 +290,14 @@ export default function MyServiceRequestsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <div className="relative w-16 h-16">
-              <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border rounded-full"></div>
             <div className="absolute inset-0 border-4 border-slate-500 rounded-full border-t-transparent animate-spin"></div>
             </div>
             <p className="text-slate-400 font-medium animate-pulse">{t('common.loading')}</p>
           </div>
         ) : requests.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-card rounded-2xl border border-dashed border p-12 text-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-slate-300" />
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">
@@ -315,11 +315,11 @@ export default function MyServiceRequestsPage() {
             {requests.map((request) => (
               <div
                 key={request.id}
-                className="group bg-white rounded-2xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
+                className="group bg-card rounded-2xl border border p-4 hover:border-slate-300 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
                 onClick={() => setSelectedRequest(request)}
               >
                 <div className="flex justify-between items-start mb-6">
-                  <div className="w-9 h-9 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 transition-colors">
+                  <div className="w-9 h-9 bg-muted rounded-xl border border flex items-center justify-center text-slate-600 transition-colors">
                     <Package className="w-4 h-4" />
                   </div>
                   {getStatusBadge(request.status)}
@@ -334,10 +334,10 @@ export default function MyServiceRequestsPage() {
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(request.createdAt).toLocaleDateString()}</span>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                <div className="flex items-center justify-between pt-4 border-t border">
                   <div className="flex -space-x-2 rtl:space-x-reverse">
                     {Object.keys(request.departmentPrices || {}).map((dept, i) => (
-                      <div key={dept} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-500 uppercase" title={dept}>
+                      <div key={dept} className="w-8 h-8 rounded-full bg-muted border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-500 uppercase" title={dept}>
                         {dept[0]}
                       </div>
                     ))}

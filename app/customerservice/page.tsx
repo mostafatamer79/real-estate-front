@@ -168,7 +168,7 @@ export function CustomerServicePage() {
 
   if (!isOpen) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-muted flex items-center justify-center p-6">
         <ComingSoonOverlay sectionName={t('cs.title')} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -176,7 +176,7 @@ export function CustomerServicePage() {
 
   return (
     <div 
-      className="min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden" 
+      className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" 
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={{
         backgroundColor: settings.csBg || undefined,
@@ -191,7 +191,7 @@ export function CustomerServicePage() {
             exit={{ opacity: 0, y: -18, scale: 0.98 }}
             className="fixed left-1/2 top-5 z-[10000] w-[calc(100%-2rem)] max-w-md -translate-x-1/2"
           >
-            <div className={`flex items-start gap-3 rounded-2xl border bg-white p-4 shadow-2xl shadow-slate-200/70 ${
+            <div className={`flex items-start gap-3 rounded-2xl border bg-card p-4 shadow-2xl shadow-stone-400 ${
               submitNotice.type === "success" ? "border-emerald-100" : "border-red-100"
             }`} style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
@@ -208,7 +208,7 @@ export function CustomerServicePage() {
               <button
                 type="button"
                 onClick={() => setSubmitNotice(null)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-muted hover:text-slate-700"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -218,12 +218,12 @@ export function CustomerServicePage() {
       </AnimatePresence>
 
       {/* Premium Header Container */}
-      <section className="bg-white border-b border-gray-100 mb-12 p-8 md:p-12 rounded-b-[3rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
+      <section className="bg-card border-b border mb-12 p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
           <div className="max-w-7xl mx-auto relative z-10">
               <button
                 type="button"
                 onClick={handleBack}
-                className="mb-8 inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 text-[11px] font-black text-slate-700 transition-all hover:border-slate-200 hover:bg-white hover:text-slate-950"
+                className="mb-8 inline-flex h-11 items-center gap-2 rounded-2xl border border bg-muted px-4 text-[11px] font-black text-slate-700 transition-all hover:border hover:bg-card hover:text-slate-950"
               >
                 {language === 'ar' ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 {language === 'ar' ? 'رجوع' : 'Back'}
@@ -233,7 +233,7 @@ export function CustomerServicePage() {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-[9px] font-black uppercase tracking-[0.2em] text-slate-600"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted border border text-[9px] font-black uppercase tracking-[0.2em] text-slate-600"
                       >
 
                       </motion.div>
@@ -265,10 +265,10 @@ export function CustomerServicePage() {
             <div className="flex flex-wrap justify-center gap-6 mb-12">
               {[
                 settings.contactPhone?.trim()
-                  ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.contactNum'), val: settings.contactPhone }
+                  ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-muted', title: t('cs.contactNum'), val: settings.contactPhone }
                   : null,
-                { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-slate-50', title: t('cs.email'), val: settings.contactEmail },
-                { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-slate-50', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
+                { id: 'email', href: `mailto:${settings.contactEmail}`, icon: Mail, color: 'text-slate-900', bg: 'bg-muted', title: t('cs.email'), val: settings.contactEmail },
+                { id: 'x', href: getXProfileUrl(settings.contactTwitter), icon: X, color: 'text-slate-900', bg: 'bg-muted', title: 'X', val: getXDisplayHandle(settings.contactTwitter) }
               ].filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => {
                 const Icon = item.icon;
                 return (
@@ -276,7 +276,7 @@ export function CustomerServicePage() {
                     key={item.id}
                     whileHover={{ y: -5 }}
                     href={item.href}
-                    className="group flex-1 min-w-[250px] max-w-[350px] p-8 rounded-3xl bg-white border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all"
+                    className="group flex-1 min-w-[250px] max-w-[350px] p-8 rounded-3xl bg-card border border shadow-sm flex flex-col items-center text-center transition-all"
                     style={{ backgroundColor: settings.csCardBg || undefined }}
                   >
                     <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
@@ -291,8 +291,8 @@ export function CustomerServicePage() {
           )}
 
           {!isAuthenticated && (
-            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
-              <div className="w-14 h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+            <section className="mb-12 rounded-[1.25rem] border border bg-card p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
+              <div className="w-14 h-14 rounded-2xl bg-muted text-slate-400 flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-slate-700" />
               </div>
               <h2 className="text-sm font-black text-slate-900 mb-1">
@@ -314,7 +314,7 @@ export function CustomerServicePage() {
           )}
 
           {isAuthenticated && (
-            <section className="mb-12 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm" style={{ backgroundColor: settings.csCardBg || undefined }}>
+            <section className="mb-12 rounded-[1.25rem] border border bg-card p-6 shadow-sm" style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-lg font-black text-slate-900" style={{ color: settings.csTextColor || undefined, fontFamily: settings.csFontFamily || undefined }}>
@@ -336,11 +336,11 @@ export function CustomerServicePage() {
               </div>
 
               {ticketsLoading ? (
-                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
+                <div className="rounded-2xl bg-muted py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
                   {language === "ar" ? "جار تحميل التذاكر..." : "Loading tickets..."}
                 </div>
               ) : tickets.length === 0 ? (
-                <div className="rounded-2xl bg-slate-50 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300" style={{ backgroundColor: settings.csBg || undefined }}>
+                <div className="rounded-2xl bg-muted py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300" style={{ backgroundColor: settings.csBg || undefined }}>
                   {language === "ar" ? "لا توجد رسائل بعد" : "No messages yet"}
                 </div>
               ) : (
@@ -350,7 +350,7 @@ export function CustomerServicePage() {
                       type="button"
                       key={ticket.id} 
                       onClick={() => setSelectedTicket(ticket)}
-                      className="group rounded-2xl border border-slate-100 p-5 text-start transition-all hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/40" 
+                      className="group rounded-2xl border border p-5 text-start transition-all hover:-translate-y-0.5 hover:border hover:shadow-lg hover:shadow-stone-400" 
                       style={{ 
                         backgroundColor: settings.csBg || undefined,
                         color: settings.csTextColor || undefined,
@@ -361,7 +361,7 @@ export function CustomerServicePage() {
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <p className="text-sm font-black text-slate-900">#{ticket.id.slice(0, 8)}</p>
-                            <span className="text-[9px] font-black uppercase tracking-widest rounded bg-slate-100 text-slate-500 px-1.5 py-0.5">
+                            <span className="text-[9px] font-black uppercase tracking-widest rounded bg-muted text-slate-500 px-1.5 py-0.5">
                               {ticket.type === 'complaint' ? (language === 'ar' ? 'شكوى' : 'Complaint') : ticket.type === 'suggestion' ? (language === 'ar' ? 'اقتراح' : 'Suggestion') : (language === 'ar' ? 'استفسار' : 'Inquiry')}
                             </span>
                           </div>
@@ -369,7 +369,7 @@ export function CustomerServicePage() {
                         </div>
                         <MessageSquare className="h-5 w-5 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" />
                       </div>
-                      <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                      <div className="mt-5 flex items-center justify-between gap-3 border-t border pt-4">
                         <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${ticketStatusStyle(ticket.status)}`}>
                           {ticketStatusLabel(ticket.status)}
                         </span>
@@ -385,15 +385,15 @@ export function CustomerServicePage() {
           )}
 
           <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
-            <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-[2rem] p-0">
+            <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-[1.25rem] p-0">
               {selectedTicket && (
                 <>
-                  <DialogHeader className="border-b border-slate-100 p-6 text-start">
+                  <DialogHeader className="border-b border p-6 text-start">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <DialogTitle className="text-lg font-black text-slate-950 flex items-center gap-2">
                           {language === "ar" ? "تذكرة الدعم" : "Support ticket"} #{selectedTicket.id.slice(0, 8)}
-                          <span className="text-[9px] font-black uppercase tracking-widest rounded bg-slate-100 text-slate-500 px-2 py-0.5 ml-2 border border-slate-200">
+                          <span className="text-[9px] font-black uppercase tracking-widest rounded bg-muted text-slate-500 px-2 py-0.5 ml-2 border border">
                             {selectedTicket.type === 'complaint' ? (language === 'ar' ? 'شكوى' : 'Complaint') : selectedTicket.type === 'suggestion' ? (language === 'ar' ? 'اقتراح' : 'Suggestion') : (language === 'ar' ? 'استفسار' : 'Inquiry')}
                           </span>
                         </DialogTitle>
@@ -408,7 +408,7 @@ export function CustomerServicePage() {
                   </DialogHeader>
 
                   <div className="space-y-4 p-6">
-                    <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-slate-100 p-4">
+                    <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-muted p-4">
                       <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "أنت" : "You"}</p>
                       <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.question}</p>
                     </div>
@@ -420,7 +420,7 @@ export function CustomerServicePage() {
                       </div>
                     )}
                     {selectedTicket.userReply && (
-                      <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-slate-100 p-4">
+                      <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-muted p-4">
                         <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "ردك الأخير" : "Your latest reply"}</p>
                         <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.userReply}</p>
                       </div>
@@ -428,12 +428,12 @@ export function CustomerServicePage() {
                   </div>
 
                   {selectedTicket.status !== "resolved" && (
-                    <DialogFooter className="border-t border-slate-100 p-6">
-                      <div className="w-full rounded-2xl bg-slate-50 p-3">
+                    <DialogFooter className="border-t border p-6">
+                      <div className="w-full rounded-2xl bg-muted p-3">
                         <Textarea
                           value={ticketReplyDrafts[selectedTicket.id] || ""}
                           onChange={(event) => setTicketReplyDrafts((current) => ({ ...current, [selectedTicket.id]: event.target.value }))}
-                          className="min-h-24 rounded-xl border-slate-200 bg-white text-sm font-bold"
+                          className="min-h-24 rounded-xl border bg-card text-sm font-bold"
                           placeholder={language === "ar" ? "اكتب رسالة لخدمة العملاء..." : "Write a message to customer service..."}
                         />
                         <div className="mt-3 flex justify-end">
@@ -488,7 +488,7 @@ export function CustomerServicePage() {
                   </h2>
                   <form 
                     onSubmit={handleSubmit} 
-                    className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6" 
+                    className="bg-card p-8 rounded-3xl border border shadow-sm space-y-6" 
                     style={{ 
                       backgroundColor: settings.csCardBg || undefined,
                       color: settings.csTextColor || undefined,
@@ -506,7 +506,7 @@ export function CustomerServicePage() {
                               <Input
                                   value={name}
                                   onChange={(e) => setName(e.target.value)}
-                                  className="h-12 rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 px-4 transition-all font-bold placeholder:text-slate-300"
+                                  className="h-12 rounded-xl border bg-muted focus:border-slate-900 px-4 transition-all font-bold placeholder:text-slate-300"
                                   style={{
                                     color: settings.csTextColor || undefined,
                                     fontFamily: settings.csFontFamily || undefined,
@@ -524,7 +524,7 @@ export function CustomerServicePage() {
                           >
                             {language === 'ar' ? 'نوع الرسالة' : 'Message Type'}
                           </Label>
-                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                          <div className="grid grid-cols-3 gap-2 bg-muted p-1.5 rounded-xl border border">
                               <button
                                   type="button"
                                   onClick={() => setType("inquiry")}
@@ -571,7 +571,7 @@ export function CustomerServicePage() {
                           >
                             طريقة التواصل المفضلة
                           </Label>
-                          <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                          <div className="grid grid-cols-2 gap-2 bg-muted p-1.5 rounded-xl border border">
                               <button
                                   type="button"
                                   onClick={() => setContactMethod("email")}
@@ -613,7 +613,7 @@ export function CustomerServicePage() {
                                   type="email"
                                   value={email}
                                   onChange={(e) => setEmail(e.target.value)}
-                                  className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
+                                  className="h-16 rounded-[1rem] border bg-muted/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
                                   style={{
                                     color: settings.csTextColor || undefined,
                                     fontFamily: settings.csFontFamily || undefined,
@@ -635,7 +635,7 @@ export function CustomerServicePage() {
                                   type="tel"
                                   value={phoneNumber}
                                   onChange={(e) => setPhoneNumber(e.target.value)}
-                                  className="h-16 rounded-[1.5rem] border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
+                                  className="h-16 rounded-[1rem] border bg-muted/50 focus:ring-4 focus:ring-indigo-100 px-6 transition-all font-bold"
                                   style={{
                                     color: settings.csTextColor || undefined,
                                     fontFamily: settings.csFontFamily || undefined,
@@ -662,7 +662,7 @@ export function CustomerServicePage() {
                             <Textarea
                                 value={question}
                                 onChange={handleQuestionChange}
-                                className="min-h-[120px] rounded-xl border-slate-100 bg-slate-50 focus:border-slate-900 p-4 transition-all font-bold resize-none"
+                                className="min-h-[120px] rounded-xl border bg-muted focus:border-slate-900 p-4 transition-all font-bold resize-none"
                                 style={{
                                   color: settings.csTextColor || undefined,
                                   fontFamily: settings.csFontFamily || undefined,

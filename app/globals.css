@@ -50,25 +50,25 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.99 0.002 264);
+  --background: #f8fafc;
   --foreground: oklch(0.15 0.01 264);
-  --card: oklch(1 0 0);
+  --card: #ffffff;
   --card-foreground: oklch(0.15 0.01 264);
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: oklch(0.15 0.01 264);
   --primary: oklch(0.2 0.02 264);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.94 0.005 264);
+  --secondary: #f1f5f9;
   --secondary-foreground: oklch(0.2 0.02 264);
-  --muted: oklch(0.94 0.005 264);
+  --muted: #f1f5f9;
   --muted-foreground: oklch(0.45 0.01 264);
-  --accent: oklch(0.94 0.005 264);
+  --accent: #f1f5f9;
   --accent-foreground: oklch(0.2 0.02 264);
   --destructive: oklch(0.3 0.01 264);
-  --border: oklch(0.9 0.005 264);
-  --input: oklch(0.9 0.005 264);
+  --border: #e2e8f0;
+  --input: #f1f5f9;
   --ring: oklch(0.2 0.02 264 / 30%);
-  --sidebar: oklch(1 0 0 / 95%);
+  --sidebar: #ffffff;
   --sidebar-foreground: oklch(0.15 0.01 264);
   --sidebar-primary: oklch(0.2 0.02 264);
   --sidebar-primary-foreground: oklch(1 0 0);
@@ -81,13 +81,13 @@
   --platform-card-text: #0f172a;
   --platform-card-border: #e2e8f0;
   --platform-card-radius: 24px;
-  --platform-icon-bg: #f8fafc;
+  --platform-icon-bg: #f1f5f9;
   --platform-icon-color: #0f172a;
   --platform-button-radius: 16px;
 }
 
 .dark {
-  --background: oklch(0.08 0.01 264); /* slate-950 */
+  --background: #ffffff;
   --foreground: oklch(0.87 0.005 264); /* slate-200 */
   --card: oklch(0.1 0.01 264); /* slate-900 */
   --card-foreground: oklch(0.87 0.005 264);
@@ -194,7 +194,7 @@
   /* so shadcn Card, Popover, etc. adopt correct dark-surface tokens       */
 
   .details-page-dark {
-    --background: oklch(0.08 0.01 264);
+    --background: #ffffff;
     --foreground: oklch(0.87 0.005 264);
     --card: oklch(0.11 0.01 264);
     --card-foreground: oklch(0.87 0.005 264);

@@ -35,11 +35,11 @@ const DEPT_LABELS: Record<string, string> = {
 
 // ─── Status config ──────────────────────────────────────────────────────────
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  pending: { label: 'معلق', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: Clock },
-  assigned: { label: 'محجوز', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: UserIcon },
-  in_progress: { label: 'جارٍ التنفيذ', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: RefreshCw },
-  completed: { label: 'مكتمل', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: CheckCircle },
-  cancelled: { label: 'ملغى', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: AlertCircle },
+  pending: { label: 'معلق', color: 'bg-muted text-slate-700 border', icon: Clock },
+  assigned: { label: 'محجوز', color: 'bg-muted text-slate-700 border', icon: UserIcon },
+  in_progress: { label: 'جارٍ التنفيذ', color: 'bg-muted text-slate-700 border', icon: RefreshCw },
+  completed: { label: 'مكتمل', color: 'bg-muted text-slate-700 border', icon: CheckCircle },
+  cancelled: { label: 'ملغى', color: 'bg-muted text-slate-700 border', icon: AlertCircle },
 };
 
 interface ServiceRequest {
@@ -127,7 +127,7 @@ function RequestCard({
   const handleSaveOffer = async () => {
     const numericPrice = parseLocaleNumber(offerPrice);
     if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
-      alert("يرجى إدخال سعر صحيح (مثال: 250)");
+      alert("يرجى إدخال سعر صحيح (: 250)");
       return;
     }
     setSavingOffer(true);
@@ -149,7 +149,7 @@ function RequestCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       dir="rtl"
-      className="bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
+      className="bg-card rounded-2xl border border overflow-hidden hover:shadow-md transition-shadow"
     >
       {/* Header row */}
       <button
@@ -157,7 +157,7 @@ function RequestCard({
         className="w-full flex items-center justify-between px-5 py-4 text-right group"
       >
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
             <MessageSquare className="w-5 h-5 text-slate-400" />
           </div>
           <div>
@@ -190,9 +190,9 @@ function RequestCard({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="border-t border-slate-50 px-5 py-5 space-y-5">
+            <div className="border-t border px-5 py-5 space-y-5">
               {/* Actions row */}
-              <div className="border-b border-slate-50 pb-4 space-y-4">
+              <div className="border-b border pb-4 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
                     {existingOffer ? (
@@ -200,12 +200,12 @@ function RequestCard({
                         تم تقديم عرض سعر القسم وهو مقفل ومؤكد
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-slate-50 text-slate-700 border border-slate-200">
+                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-muted text-slate-700 border border">
                         بانتظار عرض سعر من القسم
                       </span>
                     )}
                     {request.clientDecision && (
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-slate-50 text-slate-700 border border-slate-200">
+                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-muted text-slate-700 border border">
                         قرار العميل: {String(request.clientDecision).toLowerCase()}
                       </span>
                     )}
@@ -214,7 +214,7 @@ function RequestCard({
                     <button
                       onClick={() => onOpenChat(request)}
                       disabled={!request.chatRoomId}
-                      className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted text-slate-700 rounded-xl text-xs font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       title={request.chatRoomId ? "فتح المحادثة" : "العميل هو من يبدأ المحادثة"}
                     >
                       <MessageSquare className="w-4 h-4" />
@@ -228,16 +228,16 @@ function RequestCard({
 
                 {/* Other departments' offers list */}
                 {otherDeptOffers.length > 0 && (
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
+                  <div className="bg-muted border border rounded-2xl p-4 space-y-3">
                     <p className="text-[10px] font-black text-slate-800 flex items-center gap-2 uppercase tracking-widest">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
                       عروض الأسعار من الأقسام الأخرى
                     </p>
                     <div className="space-y-2">
                       {otherDeptOffers.map((off: any, idx: number) => (
-                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white border border-slate-100 rounded-xl text-xs text-slate-600 shadow-sm">
+                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-card border border rounded-xl text-xs text-slate-600 shadow-sm">
                           <div className="flex items-center gap-2.5">
-                            <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-[10px]">
+                            <span className="w-5 h-5 rounded-full bg-muted text-slate-500 font-bold flex items-center justify-center text-[10px]">
                               {idx + 1}
                             </span>
                             <div>
@@ -259,7 +259,7 @@ function RequestCard({
                 )}
 
                 {/* Form to submit an offer */}
-                <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end bg-slate-50 p-4 border border-slate-100 rounded-2xl">
+                <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end bg-muted p-4 border border rounded-2xl">
                   <div className="flex-1 space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       {existingOffer ? "سعر العرض المقدم للمكتب (مغلق ومقفل)" : "سعر العرض الجديد"}
@@ -269,8 +269,8 @@ function RequestCard({
                       onChange={(e) => setOfferPrice(e.target.value)}
                       disabled={!!existingOffer}
                       inputMode="decimal"
-                      placeholder="مثال: 250"
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all text-slate-700 placeholder:text-slate-300 disabled:opacity-65 disabled:bg-slate-100/50 disabled:cursor-not-allowed"
+                      placeholder=": 250"
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all text-slate-700 placeholder:text-slate-300 disabled:opacity-65 disabled:bg-muted/50 disabled:cursor-not-allowed"
                     />
                     <p className="text-[10px] font-bold text-slate-400">
                       {existingOffer ? "تم تقديم عرض القسم مسبقاً وقفله بنجاح." : "بمجرد تقديم هذا العرض سيتم قفله تلقائياً ولن تتمكن من تعديله مجدداً."}
@@ -284,8 +284,8 @@ function RequestCard({
                       value={offerNote}
                       onChange={(e) => setOfferNote(e.target.value)}
                       disabled={!!existingOffer}
-                      placeholder="مثال: يشمل رسوم المعاملة..."
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all text-slate-700 placeholder:text-slate-300 disabled:opacity-65 disabled:bg-slate-100/50 disabled:cursor-not-allowed"
+                      placeholder=": يشمل رسوم المعاملة..."
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all text-slate-700 placeholder:text-slate-300 disabled:opacity-65 disabled:bg-muted/50 disabled:cursor-not-allowed"
                     />
                   </div>
                   {!existingOffer && (
@@ -331,7 +331,7 @@ function RequestCard({
 
               {/* Description */}
               {request.description && (
-                <div className="p-3 bg-slate-50 rounded-xl">
+                <div className="p-3 bg-muted rounded-xl">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">الوصف</p>
                   <p className="text-sm text-slate-600 leading-relaxed">{request.description}</p>
                 </div>
@@ -339,7 +339,7 @@ function RequestCard({
 
               {/* Legal parties (more details) */}
               {(request.category === "legal") && (request.firstParty || request.secondParty || request.metadata) && (
-                <div className="p-4 bg-slate-50 rounded-2xl space-y-3">
+                <div className="p-4 bg-muted rounded-2xl space-y-3">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">تفاصيل إضافية</p>
                   {request.firstParty && (
                     <div className="text-sm text-slate-700">
@@ -469,7 +469,7 @@ export default function DepartmentRequests() {
         </div>
         <button
           onClick={fetchRequests}
-          className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors"
+          className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-muted transition-colors"
         >
           <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
         </button>
@@ -479,9 +479,9 @@ export default function DepartmentRequests() {
       <div className="flex flex-wrap gap-2">
         {[
           { label: 'الكل', value: counts.all, color: 'bg-slate-950 text-white' },
-          { label: 'معلقة', value: counts.pending, color: 'bg-slate-100 text-slate-700' },
-          { label: 'جارية', value: counts.inProgress, color: 'bg-slate-100 text-slate-700' },
-          { label: 'مكتملة', value: counts.completed, color: 'bg-slate-100 text-slate-700' },
+          { label: 'معلقة', value: counts.pending, color: 'bg-muted text-slate-700' },
+          { label: 'جارية', value: counts.inProgress, color: 'bg-muted text-slate-700' },
+          { label: 'مكتملة', value: counts.completed, color: 'bg-muted text-slate-700' },
         ].map(chip => (
           <div key={chip.label} className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-black ${chip.color}`}>
             {chip.label}
@@ -498,7 +498,7 @@ export default function DepartmentRequests() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="بحث بالاسم، الخدمة، أو المدينة..."
-          className="w-full h-11 bg-white border border-slate-100 rounded-2xl pr-10 pl-4 text-sm font-bold outline-none focus:border-slate-950 transition-all"
+          className="w-full h-11 bg-card border border rounded-2xl pr-10 pl-4 text-sm font-bold outline-none focus:border-slate-950 transition-all"
         />
       </div>
 
@@ -506,11 +506,11 @@ export default function DepartmentRequests() {
       {loading ? (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-16 bg-slate-100 rounded-2xl animate-pulse" />
+            <div key={i} className="h-16 bg-muted rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-100 py-20 flex flex-col items-center gap-4 opacity-30">
+        <div className="bg-card rounded-2xl border border py-20 flex flex-col items-center gap-4 opacity-30">
           <MessageSquare className="w-12 h-12 text-slate-400" />
           <p className="font-black text-sm text-slate-500">لا توجد طلبات</p>
         </div>

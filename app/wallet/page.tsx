@@ -136,7 +136,7 @@ const WalletPage = () => {
     }
 
     return (
-        <div className='w-full min-h-screen bg-slate-50/50 text-black' dir="rtl">
+        <div className='w-full min-h-screen bg-muted/50 text-black' dir="rtl">
             <div className='flex max-w-[1600px] mx-auto'>
                 <WalletSidebar 
                     activeTab={activeTab} 

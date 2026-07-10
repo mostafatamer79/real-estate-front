@@ -34,7 +34,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
 function InfoRow({ label, value, icon: Icon }: { label: string; value?: any; icon?: any }) {
   if (!value && value !== 0) return null;
   return (
-    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50/50 px-2 rounded-xl transition-colors">
+    <div className="flex items-center justify-between py-3 border-b border last:border-0 hover:bg-muted/50 px-2 rounded-xl transition-colors">
       <span className="flex items-center gap-2 text-slate-500 text-sm font-medium">
         {Icon && <Icon className="w-4 h-4 text-slate-400" />}
         {label}
@@ -172,7 +172,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
 
   if (!currentUser) {
     return (
-      <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 text-center space-y-2">
+      <div className="bg-muted border border rounded-3xl p-6 text-center space-y-2">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
         <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
       </div>
@@ -181,7 +181,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
 
   if (!otherId) {
     return (
-      <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 text-center space-y-2">
+      <div className="bg-muted border border rounded-3xl p-6 text-center space-y-2">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-pulse" />
         <p className="text-xs font-black text-slate-500">
           {isRtl 
@@ -194,7 +194,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
 
   if (loading) {
     return (
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 flex items-center justify-center min-h-[300px]">
+      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-8 flex items-center justify-center min-h-[300px]">
         <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -205,9 +205,9 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
     : 'الطرف الآخر';
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden flex flex-col h-[400px]">
+    <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-md overflow-hidden flex flex-col h-[400px]">
       {/* Header */}
-      <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div className="px-5 py-3 border-b border flex items-center justify-between bg-muted/50">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs uppercase">
@@ -225,7 +225,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
       </div>
 
       {/* Messages list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/20">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-40">
             <MessageSquare className="w-8 h-8 text-slate-400" />
@@ -244,7 +244,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
                     className={`px-3 py-2 rounded-2xl shadow-sm text-xs ${
                       isOwn
                         ? 'bg-slate-900 text-white rounded-br-none'
-                        : 'bg-white border border-slate-100 text-slate-900 rounded-bl-none'
+                        : 'bg-card/90 backdrop-blur-sm border border text-slate-900 rounded-bl-none'
                     }`}
                   >
                     <p className="font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -264,7 +264,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
       </div>
 
       {/* Input section */}
-      <div className="p-3 border-t border-slate-100 bg-white">
+      <div className="p-3 border-t border bg-card/80 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -272,7 +272,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="اكتب رسالتك هنا..."
-            className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
+            className="flex-1 bg-muted border border rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
           />
           <button
             onClick={sendMessage}
@@ -347,12 +347,12 @@ export default function OrderDetailsPage() {
     );
   }
 
-  const status = (order.status ? STATUS_MAP[order.status] : null) || { label: order.status || "", color: "text-slate-700", bg: "bg-slate-50 border-slate-200" };
+  const status = (order.status ? STATUS_MAP[order.status] : null) || { label: order.status || "", color: "text-slate-700", bg: "bg-muted border" };
   const user = (order as any).user;
   const assignedTo = (order as any).assignedTo;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-12" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-muted/50 pb-12" dir={isRtl ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
         {/* Back Button */}
@@ -371,7 +371,7 @@ export default function OrderDetailsPage() {
           <div className="lg:col-span-8 space-y-6">
             
             {/* Header / Summary Card */}
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-4">
+            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6 space-y-4">
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest">
@@ -403,7 +403,7 @@ export default function OrderDetailsPage() {
             </div>
 
             {/* Basic Specifications Card */}
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6">
+            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">المواصفات الأساسية</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                 <InfoRow label="نوع العقار"   value={order.propertyType}  icon={Building2} />
@@ -419,7 +419,7 @@ export default function OrderDetailsPage() {
 
             {/* Layout specifications (conditional) */}
             {(order.rooms || order.bathrooms || order.livingRooms || order.kitchens || order.floors || order.apartments || order.buildingArea) && (
-              <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6">
+              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">التفاصيل الهيكلية</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                   <InfoRow label="عدد الغرف"        value={order.rooms}        icon={BedDouble} />
@@ -436,7 +436,7 @@ export default function OrderDetailsPage() {
 
             {/* Features list (conditional) */}
             {(order.hasGarage || order.hasPool || order.hasElevator || order.hasMaidRoom || (order as any).hasRoof || (order as any).hasExternalAnnex) && (
-              <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6">
+              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">الميزات المطلوبة</h3>
                 <div className="flex flex-wrap gap-2.5">
                   <FeatureBadge active={order.hasGarage}               label="كراج سيارة" />
@@ -451,9 +451,9 @@ export default function OrderDetailsPage() {
 
             {/* Additional details (conditional) */}
             {order.additionalDetails && (
-              <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6">
+              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">تفاصيل إضافية من العميل</h3>
-                <p className="text-slate-600 text-sm leading-relaxed bg-slate-50/50 rounded-2xl p-4 border border-slate-100 font-medium">
+                <p className="text-slate-600 text-sm leading-relaxed bg-muted/50 rounded-2xl p-4 border border font-medium">
                   {order.additionalDetails}
                 </p>
               </div>
@@ -464,17 +464,17 @@ export default function OrderDetailsPage() {
           <div className="lg:col-span-4 space-y-6">
             
             {/* Quick Status Box */}
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-4">
+            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات الطلب</h3>
               
               <div className="space-y-3">
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <div className="flex items-center justify-between py-1.5 border-b border">
                   <span className="text-slate-400 text-xs font-bold">رقم الطلب</span>
-                  <span className="font-mono text-xs text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100 select-all">
+                  <span className="font-mono text-xs text-slate-500 bg-muted px-2.5 py-1 rounded-lg border border select-all">
                     #{order.id.slice(0, 8)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <div className="flex items-center justify-between py-1.5 border-b border">
                   <span className="text-slate-400 text-xs font-bold">حالة الطلب</span>
                   <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[11px] font-black ${status.bg} ${status.color}`}>
                     {status.label}
@@ -491,19 +491,19 @@ export default function OrderDetailsPage() {
 
             {/* Profile Info (Owner or Assigned Agent) */}
             {user && (
-              <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-4">
+              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6 space-y-4">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">صاحب الطلب</h3>
                 <div className="flex items-center gap-3">
                   {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.firstName} className="w-12 h-12 rounded-2xl object-cover border border-slate-200" />
+                    <img src={user.profileImage} alt={user.firstName} className="w-12 h-12 rounded-2xl object-cover border border" />
                   ) : (
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-black text-lg">
+                    <div className="w-12 h-12 rounded-2xl bg-muted border border flex items-center justify-center text-slate-500 font-black text-lg">
                       {user.firstName?.[0] || <UserIcon className="w-5 h-5" />}
                     </div>
                   )}
                   <div>
                     <p className="font-black text-slate-900 text-sm">{user.firstName} {user.lastName}</p>
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-muted px-2 py-0.5 rounded-lg border border">
                       {user.role}
                     </span>
                   </div>
@@ -511,7 +511,7 @@ export default function OrderDetailsPage() {
                 
                 {/* Contact details shown to admin/agents */}
                 {currentUser?.role !== "client" && (
-                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                  <div className="space-y-2.5 pt-2 border-t border">
                     {user.email && (
                       <div className="flex items-center gap-2 text-xs">
                         <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -531,7 +531,7 @@ export default function OrderDetailsPage() {
 
             {/* Contact details for anonymous orders */}
             {((order as any).clientName || (order as any).clientPhone) && !user && (
-              <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-3">
+              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6 space-y-3">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العميل</h3>
                 <InfoRow label="الاسم"  value={(order as any).clientName}  icon={UserIcon} />
                 <InfoRow label="الهاتف" value={(order as any).clientPhone} icon={Phone} />

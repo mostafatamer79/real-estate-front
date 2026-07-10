@@ -255,7 +255,7 @@ export default function VisitRequestModal({
         <div className="space-y-4">
             {/* Calendar type toggle (proxy only) */}
             {showCalTypeToggle && (
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
+                <div className="flex gap-2 p-1 bg-muted rounded-xl">
                     {(['gregorian', 'hijri'] as CalendarType[]).map(ct => (
                         <button
                             key={ct}
@@ -302,7 +302,7 @@ export default function VisitRequestModal({
                             onClick={() => { onSelect(date); onTime(''); }}
                             className={`
                                 relative p-1.5 rounded-lg text-xs font-semibold transition-all
-                                ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-slate-100 text-slate-700'}
+                                ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-slate-700'}
                             `}
                         >
                             {dayLabel(date)}
@@ -321,7 +321,7 @@ export default function VisitRequestModal({
 
             {/* Selected date display */}
             {selDate && (
-                <div className="text-center text-xs text-slate-500 font-medium bg-slate-50 rounded-lg py-1.5">
+                <div className="text-center text-xs text-slate-500 font-medium bg-muted rounded-lg py-1.5">
                     {calType === 'hijri' ? hijriLabel(selDate) : format(selDate, 'dd MMMM yyyy', { locale })}
                 </div>
             )}
@@ -341,7 +341,7 @@ export default function VisitRequestModal({
                                     px-2 py-1.5 text-xs rounded-lg border font-semibold transition-all
                                     ${selTime === t
                                         ? 'bg-slate-900 text-white border-slate-900'
-                                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'}
+                                        : 'border text-slate-600 hover:bg-muted'}
                                 `}
                             >
                                 {t}
@@ -357,11 +357,11 @@ export default function VisitRequestModal({
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent
-                className="sm:max-w-[480px] bg-white rounded-2xl p-0 overflow-hidden gap-0"
+                className="sm:max-w-[480px] bg-card rounded-2xl p-0 overflow-hidden gap-0"
                 dir={isAr ? 'rtl' : 'ltr'}
             >
                 {/* Header */}
-                <DialogHeader className="px-6 pt-6 pb-4 border-b border-slate-100">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border">
                     <DialogTitle className="text-lg font-black text-slate-900">
                         {T.title}
                     </DialogTitle>
@@ -372,7 +372,7 @@ export default function VisitRequestModal({
                         onValueChange={v => { setVisitMode(v as VisitMode); resetAll(); }}
                         className="mt-3"
                     >
-                        <TabsList className="grid w-full grid-cols-2 bg-slate-100 rounded-xl p-1">
+                        <TabsList className="grid w-full grid-cols-2 bg-muted rounded-xl p-1">
                             <TabsTrigger value="proxy" className="rounded-lg flex items-center gap-1.5 text-xs font-bold data-[state=active]:bg-slate-900 data-[state=active]:text-white">
                                 <UserCheck className="w-3.5 h-3.5" />
                                 {T.proxyTab}
@@ -395,7 +395,7 @@ export default function VisitRequestModal({
                                 {steps.map((s, i) => (
                                     <div
                                         key={s}
-                                        className={`h-1 flex-1 rounded-full transition-all ${i <= stepIndex ? 'bg-slate-900' : 'bg-slate-200'}`}
+                                        className={`h-1 flex-1 rounded-full transition-all ${i <= stepIndex ? 'bg-slate-900' : 'bg-muted'}`}
                                     />
                                 ))}
                             </div>
@@ -459,7 +459,7 @@ export default function VisitRequestModal({
                                                     flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center
                                                     ${recordingType === opt.id
                                                         ? 'border-slate-900 bg-slate-900 text-white'
-                                                        : 'border-slate-200 text-slate-600 hover:border-slate-400'}
+                                                        : 'border text-slate-600 hover:border-slate-400'}
                                                 `}
                                             >
                                                 <opt.icon className="w-6 h-6" />
@@ -476,7 +476,7 @@ export default function VisitRequestModal({
                             {/* Step: confirm summary */}
                             {step === 'confirm' && (
                                 <div className="space-y-4">
-                                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                                    <div className="bg-muted border border rounded-xl p-4 space-y-3">
                                         <h3 className="font-bold text-slate-900 text-sm">{T.summary}</h3>
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
@@ -503,7 +503,7 @@ export default function VisitRequestModal({
                                                     {recordingType === 'video' ? T.videoRec : T.liveStream}
                                                 </span>
                                             </div>
-                                            <div className="border-t border-slate-200 my-1" />
+                                            <div className="border-t border my-1" />
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-600 font-bold">
                                                     {isAr ? 'تكلفة الخدمة' : 'Service Fee'}
@@ -527,7 +527,7 @@ export default function VisitRequestModal({
                     {/* ── SELF MODE ── */}
                     {visitMode === 'self' && (
                         <div className="space-y-4">
-                            <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-sm text-gray-600">
+                            <div className="bg-muted border border rounded-xl p-4 text-sm text-gray-600">
                                 {T.selfInfo}
                             </div>
                             <p className="text-xs font-bold text-slate-600 flex items-center gap-1">
@@ -564,7 +564,7 @@ export default function VisitRequestModal({
                                                 onClick={() => { setSelfDate(date); setSelfTime(null); }}
                                                 className={`
                                                     p-1.5 rounded-lg text-xs font-semibold transition-all
-                                                    ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-slate-100 text-slate-700'}
+                                                    ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-slate-700'}
                                                 `}
                                             >
                                                 {format(date, 'd')}
@@ -587,7 +587,7 @@ export default function VisitRequestModal({
                                                         px-2 py-1.5 text-xs rounded-lg border font-semibold transition-all
                                                         ${selfTime === t
                                                             ? 'bg-slate-900 text-white border-slate-900'
-                                                            : 'border-slate-200 text-slate-600 hover:bg-slate-50'}
+                                                            : 'border text-slate-600 hover:bg-muted'}
                                                     `}
                                                 >
                                                     {t}
@@ -602,13 +602,13 @@ export default function VisitRequestModal({
                 </div>
 
                 {/* Footer */}
-                <DialogFooter className="px-6 py-4 border-t border-slate-100 bg-slate-50">
+                <DialogFooter className="px-6 py-4 border-t border bg-muted">
                     {/* Live price badge — always visible */}
                     <div className="flex items-center justify-between w-full mb-3 px-1">
                         <span className="text-xs text-slate-500 font-medium">
                             {isAr ? 'تكلفة الزيارة' : 'Visit Fee'}
                         </span>
-                        <span className="text-base font-black text-slate-900 bg-white border border-slate-200 px-3 py-1 rounded-xl shadow-sm">
+                        <span className="text-base font-black text-slate-900 bg-card border border px-3 py-1 rounded-xl shadow-sm">
                             <SaudiRiyalAmount amount={visitPriceAmount} locale={visitPriceLocale} minimumFractionDigits={0} maximumFractionDigits={0} />
                         </span>
                     </div>

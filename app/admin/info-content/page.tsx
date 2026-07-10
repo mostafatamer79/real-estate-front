@@ -209,7 +209,7 @@ export default function AdminInfoContentPage() {
 
       <div className="space-y-6">
         {/* Horizontal Tabs Area */}
-        <Card className="border-slate-200">
+        <Card className="border">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div className="font-black text-slate-950">{t("admin.info_content.tabs") || (isRtl ? "التبويبات المتاحة" : "Available Tabs")}</div>
@@ -229,7 +229,7 @@ export default function AdminInfoContentPage() {
                   <div
                     key={tab.id}
                     onClick={() => { setSelectedTabId(tab.id); resetTabForm(); }}
-                    className={`shrink-0 cursor-pointer transition-all rounded-xl border ${active ? "border-slate-900 bg-slate-900 text-white shadow-md" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"} p-3 flex items-center gap-3 min-w-[200px]`}
+                    className={`shrink-0 cursor-pointer transition-all rounded-xl border ${active ? "border-slate-900 bg-slate-900 text-white shadow-md" : "border bg-card text-slate-600 hover:border-slate-300"} p-3 flex items-center gap-3 min-w-[200px]`}
                   >
                     <div className="flex-1">
                       <div className={`text-sm font-black ${active ? "text-white" : "text-slate-950"}`}>{isRtl ? tab.titleAr : tab.titleEn}</div>
@@ -238,7 +238,7 @@ export default function AdminInfoContentPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                      <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${active ? "text-slate-300 hover:text-white hover:bg-white/10" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditTab(tab)} title={isRtl ? "تعديل" : "Edit"}>
+                      <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${active ? "text-slate-300 hover:text-white hover:bg-card/10" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditTab(tab)} title={isRtl ? "تعديل" : "Edit"}>
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button
@@ -265,29 +265,29 @@ export default function AdminInfoContentPage() {
 
             {/* Tab Form (shown if editing a tab or adding a new tab) */}
             {(!selectedTabId || editingTabId) && (
-              <div className="mt-4 p-4 border border-slate-200 rounded-xl bg-slate-50">
+              <div className="mt-4 p-4 border border rounded-xl bg-muted">
                 <div className="text-sm font-black text-slate-800 mb-3">
                   {editingTabId ? (t("admin.info_content.editTab") || (isRtl ? "تعديل تبويب" : "Edit tab")) : (t("admin.info_content.addTab") || (isRtl ? "إضافة تبويب" : "Add tab"))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs font-black text-slate-500">Key (Identifier)</Label>
-                    <Input value={tabForm.key} onChange={(e) => setTabForm((p) => ({ ...p, key: e.target.value }))} dir="ltr" className="bg-white" />
+                    <Input value={tabForm.key} onChange={(e) => setTabForm((p) => ({ ...p, key: e.target.value }))} dir="ltr" className="bg-card" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs font-black text-slate-500">Title (AR)</Label>
-                    <Input value={tabForm.titleAr} onChange={(e) => setTabForm((p) => ({ ...p, titleAr: e.target.value }))} className="bg-white" />
+                    <Input value={tabForm.titleAr} onChange={(e) => setTabForm((p) => ({ ...p, titleAr: e.target.value }))} className="bg-card" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs font-black text-slate-500">Title (EN)</Label>
-                    <Input value={tabForm.titleEn} onChange={(e) => setTabForm((p) => ({ ...p, titleEn: e.target.value }))} dir="ltr" className="bg-white" />
+                    <Input value={tabForm.titleEn} onChange={(e) => setTabForm((p) => ({ ...p, titleEn: e.target.value }))} dir="ltr" className="bg-card" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitTab} disabled={savingTab || !tabForm.key.trim() || !tabForm.titleAr.trim() || !tabForm.titleEn.trim()}>
                     {savingTab ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingTabId ? (t("common.update") || (isRtl ? "تحديث التبويب" : "Update Tab")) : (t("common.add") || (isRtl ? "حفظ التبويب" : "Save Tab"))}
                   </Button>
-                  <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white" onClick={() => { resetTabForm(); if (!editingTabId && tabs.length > 0) setSelectedTabId(tabs[0].id); }}>
+                  <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-card" onClick={() => { resetTabForm(); if (!editingTabId && tabs.length > 0) setSelectedTabId(tabs[0].id); }}>
                     {t("common.cancel") || (isRtl ? "إلغاء" : "Cancel")}
                   </Button>
                 </div>
@@ -300,7 +300,7 @@ export default function AdminInfoContentPage() {
         {selectedTabId && !editingTabId && selectedTab && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left: Editor (Blocks List + Form) */}
-            <Card className="border-slate-200">
+            <Card className="border">
               <CardContent className="p-4 sm:p-6 space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="font-black text-slate-950 text-lg">
@@ -313,33 +313,33 @@ export default function AdminInfoContentPage() {
                 </div>
 
                 {/* Block Form */}
-                <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 space-y-4">
+                <div className="p-4 border border rounded-xl bg-muted space-y-4">
                   <div className="text-sm font-black text-slate-800">
                     {editingBlockId ? (isRtl ? "تعديل البند" : "Edit Block") : (isRtl ? "إضافة بند جديد" : "Add New Block")}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-black text-slate-500">Label (AR) - اختياري</Label>
-                      <Input value={blockForm.labelAr} onChange={(e) => setBlockForm((p) => ({ ...p, labelAr: e.target.value }))} className="bg-white" />
+                      <Input value={blockForm.labelAr} onChange={(e) => setBlockForm((p) => ({ ...p, labelAr: e.target.value }))} className="bg-card" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-black text-slate-500">Label (EN) - Optional</Label>
-                      <Input value={blockForm.labelEn} onChange={(e) => setBlockForm((p) => ({ ...p, labelEn: e.target.value }))} dir="ltr" className="bg-white" />
+                      <Input value={blockForm.labelEn} onChange={(e) => setBlockForm((p) => ({ ...p, labelEn: e.target.value }))} dir="ltr" className="bg-card" />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
                       <Label className="text-xs font-black text-slate-500">Text (AR) - ابدأ بـ (-) أو (*) لإنشاء قائمة</Label>
-                      <Textarea value={blockForm.textAr} onChange={(e) => setBlockForm((p) => ({ ...p, textAr: e.target.value }))} className="min-h-[120px] bg-white" />
+                      <Textarea value={blockForm.textAr} onChange={(e) => setBlockForm((p) => ({ ...p, textAr: e.target.value }))} className="min-h-[120px] bg-card" />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
                       <Label className="text-xs font-black text-slate-500">Text (EN) - Start with (-) or (*) to create a list</Label>
-                      <Textarea value={blockForm.textEn} onChange={(e) => setBlockForm((p) => ({ ...p, textEn: e.target.value }))} className="min-h-[120px] bg-white" dir="ltr" />
+                      <Textarea value={blockForm.textEn} onChange={(e) => setBlockForm((p) => ({ ...p, textEn: e.target.value }))} className="min-h-[120px] bg-card" dir="ltr" />
                     </div>
                   </div>
                   <div className="flex items-center gap-2 pt-2">
                     <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitBlock} disabled={savingBlock || !blockForm.textAr.trim() || !blockForm.textEn.trim()}>
                       {savingBlock ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingBlockId ? (t("common.update") || (isRtl ? "تحديث البند" : "Update Block")) : (t("common.add") || (isRtl ? "حفظ البند" : "Save Block"))}
                     </Button>
-                    <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white" onClick={resetBlockForm}>
+                    <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-card" onClick={resetBlockForm}>
                       {t("common.cancel") || (isRtl ? "إلغاء" : "Cancel")}
                     </Button>
                   </div>
@@ -349,15 +349,15 @@ export default function AdminInfoContentPage() {
                 <div className="space-y-2">
                   <div className="text-sm font-black text-slate-800">{isRtl ? "البنود الحالية" : "Current Blocks"}</div>
                   {blocksForTab.length === 0 ? (
-                    <div className="text-sm font-medium text-slate-500 p-4 border border-dashed border-slate-200 rounded-xl text-center">
+                    <div className="text-sm font-medium text-slate-500 p-4 border border-dashed border rounded-xl text-center">
                       {isRtl ? "لا يوجد بنود. أضف بنداً جديداً لرؤيته في المعاينة." : "No blocks. Add a new block to see it in preview."}
                     </div>
                   ) : (
-                    <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div className="divide-y divide-slate-100 border border rounded-xl overflow-hidden bg-card">
                       {blocksForTab.map((b, idx) => (
                         <div
                           key={b.id}
-                          className={`p-4 transition-colors ${editingBlockId === b.id ? "bg-slate-50" : "hover:bg-slate-50/50"}`}
+                          className={`p-4 transition-colors ${editingBlockId === b.id ? "bg-muted" : "hover:bg-muted/50"}`}
                           draggable
                           onDragStart={() => setDragBlockId(b.id)}
                           onDragOver={(e) => e.preventDefault()}
@@ -377,7 +377,7 @@ export default function AdminInfoContentPage() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="shrink-0 text-[10px] font-black text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
+                                  <span className="shrink-0 text-[10px] font-black text-slate-500 bg-muted px-1.5 py-0.5 rounded-md">
                                     #{idx + 1}
                                   </span>
                                   <div className="text-slate-900 font-bold text-sm truncate">{(isRtl ? b.labelAr : b.labelEn) || (isRtl ? "بدون عنوان" : "Untitled")}</div>
@@ -398,7 +398,7 @@ export default function AdminInfoContentPage() {
                                }}>
                                  <ChevronDown className="w-4 h-4" />
                                </Button>
-                               <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${editingBlockId === b.id ? "text-slate-900 bg-slate-200" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditBlock(b)}>
+                               <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${editingBlockId === b.id ? "text-slate-900 bg-muted" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditBlock(b)}>
                                  <Pencil className="w-4 h-4" />
                                </Button>
                                <Button
@@ -427,7 +427,7 @@ export default function AdminInfoContentPage() {
             </Card>
 
             {/* Right: Live Preview */}
-            <Card className="border-slate-200 overflow-hidden bg-slate-50 flex flex-col h-[800px] lg:sticky lg:top-24">
+            <Card className="border overflow-hidden bg-muted flex flex-col h-[800px] lg:sticky lg:top-24">
               <div className="bg-slate-900 p-3 text-center shrink-0">
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/70 flex items-center justify-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -443,11 +443,11 @@ export default function AdminInfoContentPage() {
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute inset-0 bg-white/20 pointer-events-none z-0" />
+                <div className="absolute inset-0 bg-card/20 pointer-events-none z-0" />
                 <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-6 lg:p-8 z-10 bg-transparent">
                   
                   {/* Preview Content matching Modal */}
-                  <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-md p-6 lg:p-8 rounded-[2rem] shadow-xl border border-white/40">
+                  <div className="max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
                     <div className="text-center mb-8">
                       <h1 className="text-2xl font-black text-slate-900 mb-2">
                         {isRtl ? selectedTab.titleAr : selectedTab.titleEn}
@@ -463,7 +463,7 @@ export default function AdminInfoContentPage() {
                         <div key={block.id}>
                           {((isRtl ? block.labelAr : block.labelEn) || "") && (
                             <div className="flex items-center gap-3 mb-4 mt-8">
-                              <div className="p-2.5 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                              <div className="p-2.5 rounded-xl bg-muted text-slate-600 flex items-center justify-center">
                                 <FileText className="w-5 h-5" />
                               </div>
                               <h3 className="text-base font-black text-slate-900 tracking-tight">
@@ -476,7 +476,7 @@ export default function AdminInfoContentPage() {
                             if (!line.trim()) return null;
                             if (line.trim().startsWith('-') || line.trim().startsWith('*')) {
                               return (
-                                <ul key={idx} className="space-y-3 mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                                <ul key={idx} className="space-y-3 mb-6 bg-muted p-5 rounded-2xl border border">
                                   <li className="flex items-start gap-3">
                                     <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                                     <span className="text-sm font-medium text-slate-700 leading-relaxed">{line.replace(/^[-*]/, '').trim()}</span>

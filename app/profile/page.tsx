@@ -220,11 +220,11 @@ export default function ProfilePage() {
   };
 
   if (!user) {
-      return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-gray-400 font-bold bg-slate-100/50" /></div>;
+      return <div className="min-h-screen flex items-center justify-center bg-muted"><Loader2 className="w-8 h-8 animate-spin text-gray-400 font-bold bg-muted/50" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-10" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-muted p-4 md:p-10" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
@@ -232,7 +232,7 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
             <button 
                 onClick={() => router.push('/')}
-                className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-slate-600 hover:bg-muted rounded-lg transition-colors"
                 dir="ltr" 
             >
                 {t('profile.back')}
@@ -242,9 +242,9 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Sidebar / User Card */}
             <div className="md:col-span-1 space-y-6">
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center text-center">
+                <div className="bg-card rounded-xl shadow-sm border border p-6 flex flex-col items-center text-center">
                     <div className="relative group">
-                        <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden mb-4 border-4 border-white shadow-md">
+                        <div className="w-32 h-32 bg-muted rounded-full flex items-center justify-center overflow-hidden mb-4 border-4 border-white shadow-md">
                             {user.profileImage ? (
                                 <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
@@ -267,13 +267,13 @@ export default function ProfilePage() {
                     <p className="text-sm text-slate-500 mb-4">{user.email || user.phone}</p>
                     
                     {/* Verification / National ID Badge */}
-                    <div className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium mb-4 ${user.isVerified ? 'bg-slate-50 text-gray-700' : 'bg-slate-50 text-gray-500'}`}>
+                    <div className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium mb-4 ${user.isVerified ? 'bg-muted text-gray-700' : 'bg-muted text-gray-500'}`}>
                         {user.isVerified ? <ShieldCheck className="w-4 h-4" /> : <Loader2 className="w-4 h-4" />}
                         <span>{user.isVerified ? t('profile.verification.verified') : t('profile.verification.unverified')}</span>
                     </div>
 
                     {user.isVerified && user.nationalId && (
-                        <div className="w-full bg-slate-50 rounded-lg p-3 mb-4">
+                        <div className="w-full bg-muted rounded-lg p-3 mb-4">
                             <p className="text-xs text-slate-500 mb-1">{t('profile.nationalId')}</p>
                             <p className="font-mono font-medium text-slate-700 tracking-wider">{user.nationalId}</p>
                         </div>
@@ -282,7 +282,7 @@ export default function ProfilePage() {
                     {!user.isVerified && (
                         <Button 
                             variant="outline" 
-                            className="w-full gap-2 border-gray-600 text-gray-600 hover:bg-slate-50"
+                            className="w-full gap-2 border-gray-600 text-gray-600 hover:bg-muted"
                             onClick={() => { setShowVerifyDialog(true); setVerificationStep('request'); }}
                         >
                             <img src="/nafath-logo-placeholder.png" className="w-5 h-5 object-contain hidden" alt="Nafath" /> {/* Placeholder */}
@@ -304,7 +304,7 @@ export default function ProfilePage() {
 
             {/* Main Form */}
             <div className="md:col-span-2">
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div className="bg-card rounded-xl shadow-sm border border p-6">
                     <h3 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4 text-start">{t('profile.accountInfo')}</h3>
                     
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                                     <input
                                     type="text"
                                     {...register('firstName')}
-                                    className={`w-full px-3 py-2 bg-slate-50 border rounded-lg focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'} ${errors.firstName ? 'border-red-500' : 'border-slate-300 focus:border-gray-500'}`}
+                                    className={`w-full px-3 py-2 bg-muted border rounded-lg focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'} ${errors.firstName ? 'border-red-500' : 'border-slate-300 focus:border-gray-500'}`}
                                     />
                                     {errors.firstName && <p className="text-red-500 text-xs mt-1">{t(errors.firstName.message || 'profile.nameRequired')}</p>}
                                 </div>
@@ -335,7 +335,7 @@ export default function ProfilePage() {
                                     <label className="block text-sm font-medium mb-1 text-slate-700 text-start">{t('profile.roleLabel')}</label>
                                     <select
                                         {...register('role')}
-                                        className={`w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                                        className={`w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                     >
                                         <option value={Role.USER}>{t('profile.role.user')}</option>
                                         <option value={Role.BROKER}>{t('profile.role.broker')}</option>
@@ -355,7 +355,7 @@ export default function ProfilePage() {
                                             type="text"
                                             {...register('roleOtherDescription')}
                                             placeholder={t('profile.activityPlaceholder')}
-                                            className={`w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                                            className={`w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                         />
                                     </div>
                                 )}
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                         {/* 2. Specialized Info (Conditional) */}
                         {/* Broker / Office */}
                         {(selectedRole === Role.BROKER || selectedRole === Role.REAL_ESTATE_OFFICE) && (
-                              <div className="bg-slate-100/50 p-5 rounded-xl border border-gray-200">
+                              <div className="bg-muted/50 p-5 rounded-xl border border">
                                 <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 font-bold text-gray-950 mb-4">
                                     <Building2 className="w-4 h-4" />
                                     {t('profile.brokerType.label')}
@@ -393,7 +393,7 @@ export default function ProfilePage() {
                                     </RadioGroup>
                                 </div>
 
-                                <Separator className="my-4 bg-slate-200" />
+                                <Separator className="my-4 bg-muted" />
 
                                 <div className="space-y-4">
                                     <h5 className="text-sm font-semibold text-gray-950 font-semibold text-gray-900 mb-2">{t('profile.license.fal')}</h5>
@@ -403,7 +403,7 @@ export default function ProfilePage() {
                                             <input
                                                 type="text"
                                                 {...register('falLicenseNumber')}
-                                                className={`w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                                                className={`w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
                                         </div>
                                         <div>
@@ -411,7 +411,7 @@ export default function ProfilePage() {
                                             <input
                                                 type="date"
                                                 {...register('licenseIssueDate')}
-                                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                                className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                             />
                                         </div>
                                         <div>
@@ -419,7 +419,7 @@ export default function ProfilePage() {
                                             <input
                                                 type="date"
                                                 {...register('falLicenseExpiry')}
-                                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                                className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                             />
                                         </div>
                                         
@@ -429,14 +429,14 @@ export default function ProfilePage() {
                                                 <input
                                                     type="text"
                                                     {...register('commercialRegistrationNumber')}
-                                                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                                    className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                                 />
                                             </div>
                                         )}
                                     </div>
                                     
                                     <div className="pt-2">
-                                        <button type="button" className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-900 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium">
+                                        <button type="button" className="flex items-center justify-center gap-2 w-full py-2.5 bg-card border border text-gray-900 rounded-lg hover:bg-muted transition-colors text-sm font-medium">
                                             <span>{t('profile.link.fal')}</span>
                                         </button>
                                         <p className="text-xs text-slate-400 mt-2 text-center">{t('profile.verify.auto')}</p>
@@ -447,7 +447,7 @@ export default function ProfilePage() {
 
                         {/* Specialized Legal/Notary Info */}
                         {[Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(selectedRole as Role) && (
-                             <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                             <div className="bg-muted p-5 rounded-xl border border">
                      
                                 <div className="space-y-4">
                                     <div>
@@ -455,7 +455,7 @@ export default function ProfilePage() {
                                         <input
                                             type="text"
                                             {...register('lawLicenseNumber')}
-                                            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                            className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                         />
                                     </div>
                                     <div>
@@ -463,7 +463,7 @@ export default function ProfilePage() {
                                         <input
                                             type="date"
                                             {...register('licenseIssueDate')}
-                                            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                            className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                         />
                                     </div>
                                 </div>
@@ -472,14 +472,14 @@ export default function ProfilePage() {
 
                         {/* Engineering Office */}
                         {selectedRole === Role.ENGINEERING_OFFICE && (
-                             <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                             <div className="bg-muted p-5 rounded-xl border border">
 
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.license.cr')}</label>
                                     <input
                                         type="text"
                                         {...register('commercialRegistrationNumber')}
-                                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-card border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                              </div>
@@ -494,13 +494,13 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-500 text-start">{t('profile.mobile')}</label>
-                                    <div className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-start cursor-not-allowed">
+                                    <div className="w-full px-3 py-2 bg-muted border border rounded-lg text-slate-500 text-start cursor-not-allowed">
                                         {user.phone || '-'}
                                     </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-500 text-start">{t('profile.email')}</label>
-                                    <div className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-start cursor-not-allowed">
+                                    <div className="w-full px-3 py-2 bg-muted border border rounded-lg text-slate-500 text-start cursor-not-allowed">
                                         {user.email || '-'}
                                     </div>
                                 </div>
@@ -519,14 +519,14 @@ export default function ProfilePage() {
                                     <input
                                         type="text"
                                         {...register('postalCode')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('city.name')}</label>
                                     <select
                                         {...register('city')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     >
                                         {['riyadh', 'jeddah', 'dammam', 'mecca', 'medina', 'taif', 'abha', 'hail', 'other'].map(c => (
                                             <option key={c} value={t(`city.${c}`)} className="slate-900">{t(`city.${c}`)}</option>
@@ -538,7 +538,7 @@ export default function ProfilePage() {
                                     <input
                                         type="text"
                                         {...register('streetName')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                                 <div>
@@ -546,7 +546,7 @@ export default function ProfilePage() {
                                     <input
                                         type="text"
                                         {...register('district')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                                 <div>
@@ -554,7 +554,7 @@ export default function ProfilePage() {
                                     <input
                                         type="text"
                                         {...register('additionalNumber')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                                 <div>
@@ -562,7 +562,7 @@ export default function ProfilePage() {
                                     <input
                                         type="text"
                                         {...register('unitNumber')}
-                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
+                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
                                     />
                                 </div>
                             </div>
@@ -571,7 +571,7 @@ export default function ProfilePage() {
                         <div className="pt-6 border-t flex justify-end gap-3">
                              {/* Link Brokers Option (as requested) */}
                              {(selectedRole === Role.REAL_ESTATE_OFFICE) && (
-                                <button type="button" className="px-4 py-2 text-gray-400 font-bold bg-slate-100/50 hover:bg-slate-50 rounded-lg text-sm font-medium transition-colors">
+                                <button type="button" className="px-4 py-2 text-gray-400 font-bold bg-muted/50 hover:bg-muted rounded-lg text-sm font-medium transition-colors">
                                     {t('profile.linkBrokers')}
                                 </button>
                              )}
@@ -614,8 +614,8 @@ export default function ProfilePage() {
 
             {verificationStep === 'request' ? (
                 <div className="flex flex-col items-center py-4">
-                     <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                        <ShieldCheck className="w-8 h-8 text-gray-400 font-bold bg-slate-100/50" />
+                     <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <ShieldCheck className="w-8 h-8 text-gray-400 font-bold bg-muted/50" />
                      </div>
                      <Button onClick={handleVerifyStart} disabled={isVerifying} className="w-full mt-4">
                         {isVerifying && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
@@ -632,7 +632,7 @@ export default function ProfilePage() {
                         placeholder="______"
                     />
                     <div className="text-xs text-center text-slate-400">
-                        {otpTimer > 0 ? `00:${otpTimer.toString().padStart(2, '0')}` : <span className="text-gray-400 font-bold bg-slate-100/50 cursor-pointer" onClick={handleVerifyStart}>{t('otp.resendBtn')}</span>}
+                        {otpTimer > 0 ? `00:${otpTimer.toString().padStart(2, '0')}` : <span className="text-gray-400 font-bold bg-muted/50 cursor-pointer" onClick={handleVerifyStart}>{t('otp.resendBtn')}</span>}
                     </div>
                     <Button onClick={handleVerifyOtp} disabled={isVerifying || otpCode.length < 6} className="w-full">
                          {isVerifying ? t('otp.verifying') : t('otp.verifyBtn')}

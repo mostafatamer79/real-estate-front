@@ -29,7 +29,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
             <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
-                        <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-blue-600">
+                        <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-blue-600">
                             <User className="w-6 h-6" />
                         </div>
                         {tenant.fullName}
@@ -44,21 +44,21 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{t('bm.legal.serviceDesc')}</h3>
                         <div className="space-y-3">
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl border border">
                                 <Phone className="w-4 h-4 text-blue-500" />
                                 <div>
                                     <p className="text-xs text-gray-400 font-bold">{t('bm.offer.phone')}</p>
                                     <p className="font-semibold text-gray-900">{tenant.phoneNumber}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl border border">
                                 <Mail className="w-4 h-4 text-blue-500" />
                                 <div>
                                     <p className="text-xs text-gray-400 font-bold">{t('chat.email')}</p>
                                     <p className="font-semibold text-gray-900">{tenant.email || '---'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-3 p-3 bg-muted rounded-xl border border">
                                 <Hash className="w-4 h-4 text-blue-500" />
                                 <div>
                                     <p className="text-xs text-gray-400 font-bold">{t('bm.users.idNumber') || 'ID Number'}</p>
@@ -76,7 +76,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                         ) : (
                             <div className="space-y-3">
                                 {tenantLeases.map(lease => (
-                                    <div key={lease.id} className="p-3 bg-slate-50 rounded-xl border border-blue-100">
+                                    <div key={lease.id} className="p-3 bg-muted rounded-xl border border-blue-100">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Building className="w-4 h-4 text-blue-600" />
                                             <p className="font-bold text-blue-900 text-sm">{lease.unit?.property?.name || '---'} - Unit {lease.unit?.unitNumber}</p>
@@ -106,7 +106,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                             <p className="text-gray-500 italic text-sm py-4">{t('bm.list.empty')}</p>
                         ) : (
                             tenantPayments.map(payment => (
-                                <div key={payment.id} className="flex items-center justify-between p-3 border rounded-xl hover:bg-slate-50 transition-colors">
+                                <div key={payment.id} className="flex items-center justify-between p-3 border rounded-xl hover:bg-muted transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-lg ${payment.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
                                             <FileText className="w-4 h-4" />

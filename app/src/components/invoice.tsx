@@ -149,30 +149,30 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             dir="rtl"
         >
             <div
-                className='bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-4xl my-8 text-black animate-in fade-in zoom-in duration-200 print:shadow-none print:border-0 print:w-full print:max-w-none print:my-0'
+                className='bg-card border border rounded-xl shadow-2xl w-full max-w-4xl my-8 text-black animate-in fade-in zoom-in duration-200 print:shadow-none print:border-0 print:w-full print:max-w-none print:my-0'
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header - Hide in print */}
-                <div className='flex justify-between items-center p-6 border-b border-gray-200 print:hidden'>
+                <div className='flex justify-between items-center p-6 border-b border print:hidden'>
                     <h1 className='text-2xl font-bold'>{t('invoice.title')}</h1>
                     <div className='flex items-center gap-2'>
                         <button
                             onClick={handlePrint}
-                            className='p-2 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-2'
+                            className='p-2 hover:bg-muted rounded-lg transition-colors flex items-center gap-2'
                         >
                             <Printer className='h-5 w-5' />
                             <span>{t('invoice.print')}</span>
                         </button>
                         <button
                             onClick={handleDownload}
-                            className='p-2 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-2'
+                            className='p-2 hover:bg-muted rounded-lg transition-colors flex items-center gap-2'
                         >
                             <Download className='h-5 w-5' />
                             <span>{t('invoice.download')}</span>
                         </button>
                         <button
                             onClick={onClose}
-                            className='p-2 hover:bg-slate-100 rounded-full transition-colors'
+                            className='p-2 hover:bg-muted rounded-full transition-colors'
                         >
                             <X className='h-6 w-6 text-gray-600' />
                         </button>
@@ -181,8 +181,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
                 {/* Invoice Content */}
                 <div className='p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible'>
-                    <Card className='bg-white border-0 shadow-none print:shadow-none'>
-                        <CardHeader className='border-b border-gray-200 pb-6 print:border-b-2'>
+                    <Card className='bg-card border-0 shadow-none print:shadow-none'>
+                        <CardHeader className='border-b border pb-6 print:border-b-2'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
                                     <div className='flex items-center gap-3'>
@@ -239,7 +239,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                         <User className='h-5 w-5 text-blue-600' />
                                         {t('invoice.clientData')}
                                     </h3>
-                                    <div className='bg-slate-50 p-4 rounded-lg space-y-3'>
+                                    <div className='bg-muted p-4 rounded-lg space-y-3'>
                                         <div className='flex items-center gap-2'>
                                             <User className='h-4 w-4 text-gray-500' />
                                             <div>
@@ -286,7 +286,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                             {/* Service Description */}
                             <div>
                                 <h3 className='text-xl font-bold mb-4'>{t('invoice.serviceDesc')}</h3>
-                                <div className='bg-slate-50 p-4 rounded-lg border border-blue-100'>
+                                <div className='bg-muted p-4 rounded-lg border border-blue-100'>
                                     <p className='text-gray-700 leading-relaxed'>{invoiceData.service.description}</p>
                                 </div>
                             </div>
@@ -298,9 +298,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                     تفاصيل الرسوم
                                 </h3>
                                 <div className='overflow-x-auto'>
-                                    <Table className='border border-gray-200'>
+                                    <Table className='border border'>
                                         <TableHeader>
-                                            <TableRow className='bg-slate-50'>
+                                            <TableRow className='bg-muted'>
                                                 <TableHead className='text-right font-bold text-gray-700'>{t('invoice.item')}</TableHead>
                                                 <TableHead className='text-right font-bold text-gray-700'>{t('wallet.commission.units')}</TableHead>
                                                 <TableHead className='text-right font-bold text-gray-700'>{t('invoice.unitPrice')}</TableHead>
@@ -316,7 +316,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                             </TableRow>
 
                                             {/* VAT Row */}
-                                            <TableRow className='bg-slate-50'>
+                                            <TableRow className='bg-muted'>
                                                 <TableCell colSpan={3} className='text-right font-medium'>
                                                     {t('invoice.vat')}
                                                 </TableCell>
@@ -352,7 +352,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                             )}
 
                                             {/* Total Row */}
-                                            <TableRow className='bg-slate-50 font-bold border-t-2 border-blue-200'>
+                                            <TableRow className='bg-muted font-bold border-t-2 border-blue-200'>
                                                 <TableCell colSpan={3} className='text-right text-blue-800'>
                                                     {t('invoice.finalTotal')}
                                                 </TableCell>
@@ -374,7 +374,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                     </ul>
                                 </div>
 
-                                <div className='bg-slate-50 p-4 rounded-lg border border-gray-200'>
+                                <div className='bg-muted p-4 rounded-lg border border'>
                                     <h4 className='font-bold text-gray-800 mb-2'>{t('invoice.importantNotes')}</h4>
                                     <ul className='space-y-1 text-sm text-gray-700'>
                                         <li>• {t('bm.status.processing')}</li>
@@ -391,14 +391,14 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                 <div className='flex gap-4'>
                                     <button
                                         onClick={handlePrint}
-                                        className='px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 font-bold'
+                                        className='px-6 py-3 bg-muted text-slate-700 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-bold'
                                     >
                                         <Printer className='h-4 w-4' />
                                         {t('invoice.printBtn')}
                                     </button>
                                     <button
                                         onClick={handleDownload}
-                                        className='px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 font-bold'
+                                        className='px-6 py-3 bg-muted text-slate-700 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-bold'
                                     >
                                         <Download className='h-4 w-4' />
                                         {t('invoice.downloadBtn')}

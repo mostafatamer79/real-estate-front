@@ -59,12 +59,12 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
 
   const getColorClasses = (color: string) => {
     switch (color) {
-      case "blue": return "bg-slate-50 text-blue-600 border-blue-100";
+      case "blue": return "bg-muted text-blue-600 border-blue-100";
       case "red": return "bg-red-50 text-red-600 border-red-100";
       case "yellow": return "bg-yellow-50 text-yellow-600 border-yellow-100";
       case "green": return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "purple": return "bg-purple-50 text-purple-600 border-purple-100";
-      default: return "bg-slate-50 text-gray-600 border-gray-100";
+      default: return "bg-muted text-gray-600 border";
     }
   };
 
@@ -81,7 +81,7 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statCards.map((card, index) => (
-        <div key={index} className="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-all">
+        <div key={index} className="bg-card p-6 rounded-2xl border border hover:shadow-md transition-all">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-500">{card.title}</h3>
             <div className={`p-2.5 rounded-xl ${getColorClasses(card.color).split(" ")[0]}`}>
@@ -91,7 +91,7 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
           
           <div className="text-3xl font-bold text-gray-900 mb-4">
             {loading ? (
-              <div className="h-8 w-16 bg-slate-100 animate-pulse rounded"></div>
+              <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
             ) : (
               card.value
             )}

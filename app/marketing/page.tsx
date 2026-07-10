@@ -50,10 +50,10 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
     }
 
     return (
-        <div className={`${embedded ? '' : 'min-h-screen bg-slate-50/50 pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className={`${embedded ? '' : 'min-h-screen bg-muted/50 pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {/* Optimized Premium Header - GLASSMORPHISM */}
             {!embedded && (
-            <section className="relative overflow-hidden mb-12 pb-12 border-b border-white/20 bg-white/50 backdrop-blur-3xl">
+            <section className="relative overflow-hidden mb-12 pb-12 border-b border-white/20 bg-card/50 backdrop-blur-3xl">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 via-white/80 to-slate-100/80 opacity-50 pointer-events-none" />
                 <div className="max-w-7xl mx-auto px-6 pt-12 relative z-10">
                     <div className="flex flex-col md:flex-row justify-between items-end gap-8">
@@ -61,7 +61,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                             <motion.div 
                                initial={{ opacity: 0, scale: 0.9 }}
                                animate={{ opacity: 1, scale: 1 }}
-                               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-900/10"
+                               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-[0.2em] shadow-lg shadow-stone-400/10"
                             >
                                 <Sparkles className="w-3 h-3 text-yellow-400" />
                                 <span>{t('marketing.header.badge')}</span>
@@ -93,7 +93,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                                     icon: '✨',
                                     duration: 4000,
                                 })}
-                                className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-slate-100 text-slate-900 hover:text-slate-600 transition-colors border border-white/50"
+                                className="w-14 h-14 bg-card rounded-2xl flex items-center justify-center shadow-xl shadow-stone-400 text-slate-900 hover:text-slate-600 transition-colors border border-white/50"
                             >
                                 <Info className="w-6 h-6" />
                             </motion.button>
@@ -108,17 +108,17 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                 <Tabs defaultValue="advertising" className="w-full space-y-10" onValueChange={setActiveTab} dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <div className="flex flex-col items-center gap-6 w-full">
                         <div className="w-full max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
-                            <TabsList className="inline-flex h-20 items-center justify-center rounded-[2rem] bg-white border border-slate-100 p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-slate-100/50">
-                                <TabsTrigger value="advertising" className="flex-1 rounded-[1.5rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                            <TabsList className="inline-flex h-20 items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400">
+                                <TabsTrigger value="advertising" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
                                     <span>{t('marketing.tab.ads')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="photography" className="flex-1 rounded-[1.5rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="photography" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
                                     <span>{t('marketing.tab.photography')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="requests" className="flex-1 rounded-[1.5rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="requests" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
                                     <span>{t('marketing.tab.requests')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="general_requests" className="flex-1 rounded-[1.5rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="general_requests" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
                                     <span>{t('marketing.tab.general_requests')}</span>
                                 </TabsTrigger>
                             </TabsList>

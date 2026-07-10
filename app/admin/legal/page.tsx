@@ -42,14 +42,14 @@ const departments = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:      "bg-slate-100 text-slate-700",
-  assigned:     "bg-slate-100 text-slate-700",
-  in_progress:  "bg-slate-100 text-slate-700",
-  completed:    "bg-slate-100 text-slate-700",
-  cancelled:    "bg-slate-100 text-slate-700",
-  invoice_sent: "bg-slate-100 text-slate-700",
-  accepted:     "bg-slate-100 text-slate-700",
-  rejected:     "bg-slate-100 text-slate-700",
+  pending:      "bg-muted text-slate-700",
+  assigned:     "bg-muted text-slate-700",
+  in_progress:  "bg-muted text-slate-700",
+  completed:    "bg-muted text-slate-700",
+  cancelled:    "bg-muted text-slate-700",
+  invoice_sent: "bg-muted text-slate-700",
+  accepted:     "bg-muted text-slate-700",
+  rejected:     "bg-muted text-slate-700",
 };
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4"
+      className="bg-card rounded-2xl border border shadow-sm p-5 flex items-center gap-4"
     >
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
         <Icon className="w-6 h-6" />
@@ -138,11 +138,11 @@ function RequestRow({
     <motion.tr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group"
+      className="border-b border hover:bg-muted/50 transition-colors group"
     >
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center shrink-0">
             <User className="w-4 h-4 text-slate-500" />
           </div>
           <div>
@@ -175,7 +175,7 @@ function RequestRow({
           }
 
           return (
-            <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-slate-100 text-slate-500"}`}>
+            <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
               {label}
             </span>
           );
@@ -194,7 +194,7 @@ function RequestRow({
       <td className="px-6 py-4 text-center">
         <button
           onClick={() => onOpen(req)}
-          className="p-2 rounded-xl border border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+          className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
         >
           <ExternalLink className="w-4 h-4" />
         </button>
@@ -236,22 +236,22 @@ function RequestsTable({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("admin.legal.search_placeholder")}
-            className="w-full bg-white border border-slate-100 py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-slate-900 transition-all"
+            className="w-full bg-card border border py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-slate-900 transition-all"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[300px]">
+      <div className="bg-card rounded-2xl border border shadow-sm overflow-hidden min-h-[300px]">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border-slate-100 border-t-slate-900 animate-spin" />
+            <div className="w-10 h-10 rounded-full border-4 border border-t-slate-900 animate-spin" />
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
               {t("common.loading")}
             </p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-40">
-            <div className="p-6 rounded-2xl bg-slate-50">
+            <div className="p-6 rounded-2xl bg-muted">
               <Scale className="w-12 h-12 text-slate-200" />
             </div>
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -262,7 +262,7 @@ function RequestsTable({
           <div className="overflow-x-auto">
             <table className="w-full text-right">
               <thead>
-                <tr className="bg-slate-50/60 border-b border-slate-100">
+                <tr className="bg-muted/60 border-b border">
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.parties")}
                   </th>
@@ -572,7 +572,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
       )}
 
       {/* ── Tab Bar ──────────────────────────────────────────────────────── */}
-      <div className="flex gap-1 bg-slate-100 p-1.5 rounded-2xl w-full overflow-x-auto hide-scrollbar">
+      <div className="flex gap-1 bg-muted p-1.5 rounded-2xl w-full overflow-x-auto hide-scrollbar">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -582,7 +582,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex-1 justify-center ${
                 isActive
-                  ? "bg-white text-slate-900 shadow-sm"
+                  ? "bg-card text-slate-900 shadow-sm"
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
@@ -606,16 +606,16 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           >
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <StatCard label={t("admin.legal.all")}       value={allLegal.length}   icon={Layers}   color="bg-slate-100 text-slate-700" />
-              <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-slate-100 text-slate-700" />
-              <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-slate-100 text-slate-700"   />
-              <StatCard label={t("admin.legal.services_short")}      value={services.length}   icon={Settings2} color="bg-slate-100 text-slate-700" />
-              <StatCard label={t("status.pending")}               value={pending}           icon={Clock3}   color="bg-slate-100 text-slate-700"   />
-              <StatCard label={t("status.completed")}              value={completed}         icon={CheckCircle} color="bg-slate-100 text-slate-700" />
+              <StatCard label={t("admin.legal.all")}       value={allLegal.length}   icon={Layers}   color="bg-muted text-slate-700" />
+              <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-muted text-slate-700" />
+              <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-muted text-slate-700"   />
+              <StatCard label={t("admin.legal.services_short")}      value={services.length}   icon={Settings2} color="bg-muted text-slate-700" />
+              <StatCard label={t("status.pending")}               value={pending}           icon={Clock3}   color="bg-muted text-slate-700"   />
+              <StatCard label={t("status.completed")}              value={completed}         icon={CheckCircle} color="bg-muted text-slate-700" />
             </div>
 
             {/* Recent Legal Requests */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border shadow-sm p-6">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 {t('admin.legal.recent_requests')}
@@ -635,10 +635,10 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                     <div
                       key={req.id}
                       onClick={() => openDetail(req)}
-                      className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all cursor-pointer group"
+                      className="flex items-center justify-between p-4 bg-muted rounded-xl hover:bg-muted transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-card flex items-center justify-center shadow-sm">
                           <User className="w-4 h-4 text-slate-500" />
                         </div>
                         <div>
@@ -647,7 +647,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[req.status] || "bg-slate-100"}`}>
+                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[req.status] || "bg-muted"}`}>
                           {req.status}
                         </span>
                         <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-slate-700 transition-colors" />
@@ -666,7 +666,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+            className="rounded-2xl border border bg-card p-5 shadow-sm"
           >
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
               {legalServiceTabs.map((tab) => {
@@ -675,7 +675,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   <Link
                     key={tab.id}
                     href={tab.href}
-                    className="flex min-h-24 items-center justify-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-slate-950 hover:bg-slate-950 hover:text-white"
+                    className="flex min-h-24 items-center justify-center gap-2 rounded-xl border border bg-muted px-4 py-3 text-center text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-slate-950 hover:bg-slate-950 hover:text-white"
                   >
                     <Icon className="h-4 w-4 shrink-0" />
                     {tab.label}
@@ -723,7 +723,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           {selectedRequest && (
             <div className="py-4">
               <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-100 p-1 rounded-xl h-auto">
+                <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                   <TabsTrigger value="details"  className="py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
                   <TabsTrigger value="visits"   className="py-2 rounded-lg font-bold">{t("admin.service_requests.customer_visits")}</TabsTrigger>
                   <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t("admin.service_requests.customer_invoices")}</TabsTrigger>
@@ -732,8 +732,8 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 {/* ── Details tab ──────────────────────────────────────── */}
                 <TabsContent value="details" className="space-y-6">
                   {/* Client card */}
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                  <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
+                    <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center shadow-sm">
                       <User className="w-6 h-6 text-slate-500" />
                     </div>
                     <div>
@@ -758,14 +758,14 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   </div>
 
                   {/* Department selector */}
-                  <div className="space-y-2 pt-4 border-t border-slate-100">
+                  <div className="space-y-2 pt-4 border-t border">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       {t("admin.service_requests.target_dept")} (Admin)
                     </label>
                     <select
                       value={editingDepartment}
                       onChange={(e) => setEditingDepartment(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
+                      className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
                     >
                       {departments.map((d) => (
                         <option key={d.id} value={d.id}>{t(d.key)}</option>
@@ -776,9 +776,9 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   {/* Legal party info */}
                   {selectedRequest.category === "legal" &&
                     (selectedRequest.firstParty || selectedRequest.secondParty || selectedRequest.metadata) && (
-                      <div className="space-y-4 pt-4 border-t border-slate-100">
+                      <div className="space-y-4 pt-4 border-t border">
                         {selectedRequest.firstParty && (
-                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                              {t('legal.party.first')}
                             </p>
@@ -795,7 +795,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                           </div>
                         )}
                         {selectedRequest.secondParty && (
-                          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                                {t('legal.party.second')}
                             </p>
@@ -814,14 +814,14 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         {selectedRequest.description && (
                           <div className="space-y-1">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</p>
-                            <p className="text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl">{selectedRequest.description}</p>
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted p-3 rounded-xl">{selectedRequest.description}</p>
                           </div>
                         )}
                       </div>
                     )}
 
                   {/* Price & Save */}
-                  <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className="space-y-3 pt-4 border-t border">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       {t("admin.service_requests.price")}
                     </label>
@@ -830,7 +830,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         type="number"
                         value={editingPrice}
                         onChange={(e) => setEditingPrice(e.target.value)}
-                        className="bg-slate-50 border border-slate-100 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                        className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
                         placeholder="0.00"
                       />
                       <div className="flex flex-col gap-2">
@@ -865,11 +865,11 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                           ⚖️ {t("legal.invoice.sendBtn")}
                         </label>
                         {selectedRequest.invoiceSent ? (
-                          <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
+                          <span className="bg-muted text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
                             ✓ {t("legal.invoice.sent")}
                           </span>
                         ) : (
-                          <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
+                          <span className="bg-muted text-slate-700 text-[10px] font-black px-3 py-1 rounded-full">
                             ⏳ {t("legal.invoice.notSent")}
                           </span>
                         )}
@@ -879,8 +879,8 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         <div className="space-y-3">
                           <div className={`p-4 rounded-2xl text-xs font-black flex items-center justify-between ${
                             selectedRequest.clientDecision === "accepted"
-                              ? "bg-slate-100 text-slate-700 border border-slate-200"
-                              : "bg-slate-100 text-slate-700 border border-slate-200"
+                              ? "bg-muted text-slate-700 border border"
+                              : "bg-muted text-slate-700 border border"
                           }`}>
                             <div className="flex items-center gap-2">
                               {selectedRequest.clientDecision === "accepted" ? (
@@ -899,7 +899,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                               <div className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedRequest.paymentStatus === "paid"
                                   ? "bg-slate-950 text-white border-slate-950"
-                                  : "bg-slate-200 text-slate-700 border-slate-200"
+                                  : "bg-muted text-slate-700 border"
                               }`}>
                                 <Receipt className="w-3 h-3" />
                                 <span className="text-[10px] uppercase">
@@ -918,7 +918,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             value={invoicePrice}
                             onChange={(e) => setInvoicePrice(e.target.value)}
                             placeholder={t("legal.invoice.price")}
-                            className="bg-slate-50 border border-slate-200 py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-500 rounded-xl transition-all"
+                            className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-500 rounded-xl transition-all"
                           />
                           <button
                             onClick={handleSendInvoice}
@@ -953,7 +953,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                     <button
                       type="button"
                       onClick={handleOpenChat}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-slate-700 hover:bg-slate-200"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-muted px-4 py-3 text-[11px] font-black uppercase tracking-widest text-slate-700 hover:bg-muted"
                     >
                       <Send className="h-4 w-4" />
                       فتح الشات
@@ -970,9 +970,9 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   ) : userBookings.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                       {userBookings.map((booking: any) => (
-                        <div key={booking.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div key={booking.id} className="p-4 bg-muted rounded-xl border border">
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="outline" className="bg-white">{booking.type}</Badge>
+                            <Badge variant="outline" className="bg-card">{booking.type}</Badge>
                             <span className="text-xs text-slate-400 font-medium">
                               {format(new Date(booking.createdAt), "dd/MM/yyyy")}
                             </span>
@@ -1003,7 +1003,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   ) : userInvoices.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                       {userInvoices.map((inv: any) => (
-                        <div key={inv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                        <div key={inv.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <Receipt className="w-4 h-4 text-slate-400" />
@@ -1018,7 +1018,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                           <div className="text-right">
                             <p className="font-black text-slate-900"><SaudiRiyalAmount amount={inv.amount} locale="ar-SA" /></p>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              inv.status === "paid" ? "bg-slate-100 text-slate-700" : "bg-slate-100 text-slate-700"
+                              inv.status === "paid" ? "bg-muted text-slate-700" : "bg-muted text-slate-700"
                             }`}>
                               {inv.status}
                             </span>

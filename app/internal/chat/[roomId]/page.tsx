@@ -209,21 +209,21 @@ export default function InternalChatRoomPage() {
     <motion.div 
       initial={{ opacity: 0, y: 10 }} 
       animate={{ opacity: 1, y: 0 }} 
-      className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-160px)] bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden w-full" 
+      className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-160px)] bg-card rounded-2xl border border shadow-sm overflow-hidden w-full" 
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+      <div className="px-4 py-3 border-b border flex items-center justify-between shrink-0 bg-card/80 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/internal/chat')}
-            className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-950 hover:border-slate-300 transition-all"
+            className="w-8 h-8 rounded-lg bg-muted border border flex items-center justify-center text-slate-400 hover:text-slate-950 hover:border-slate-300 transition-all"
           >
             <ArrowLeft className={`w-4 h-4 ${isRtl ? "rotate-180" : ""}`} />
           </button>
           <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center text-white text-base font-black shadow-lg shadow-slate-900/20">
+              <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center text-white text-base font-black shadow-lg shadow-stone-400/20">
                 {otherParticipantName.charAt(0)}
               </div>
               <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
@@ -243,7 +243,7 @@ export default function InternalChatRoomPage() {
         <AnimatePresence initial={false}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
-              <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200">
+              <div className="w-16 h-16 bg-muted border border rounded-2xl flex items-center justify-center text-slate-200">
                 <MessageSquare className="w-8 h-8" />
               </div>
               <div>
@@ -266,7 +266,7 @@ export default function InternalChatRoomPage() {
                       className={`px-4 py-2.5 rounded-2xl shadow-sm ${
                         isOwn
                           ? 'bg-slate-950 text-white rounded-tr-none'
-                          : 'bg-slate-50 border border-slate-100 text-slate-950 rounded-tl-none'
+                          : 'bg-muted border border text-slate-950 rounded-tl-none'
                       }`}
                     >
                       <p className="text-xs font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -288,7 +288,7 @@ export default function InternalChatRoomPage() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-slate-100 bg-white/50 backdrop-blur-md">
+      <div className="p-4 border-t border bg-card/50 backdrop-blur-md">
         <div className="flex items-end gap-2 max-w-3xl mx-auto">
           <div className="flex-1 relative">
             <textarea
@@ -296,14 +296,14 @@ export default function InternalChatRoomPage() {
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t("internal.chat.messagePlaceholder")}
-              className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-950 shadow-sm transition-all resize-none min-h-[40px] max-h-[150px] text-xs font-bold"
+              className="w-full bg-card border border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-950 shadow-sm transition-all resize-none min-h-[40px] max-h-[150px] text-xs font-bold"
               rows={1}
             />
           </div>
           <button
             onClick={sendMessage}
             disabled={!message.trim()}
-            className="w-10 h-10 bg-slate-950 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 transition-all shadow-lg shadow-slate-900/20"
+            className="w-10 h-10 bg-slate-950 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 transition-all shadow-lg shadow-stone-400/20"
           >
             <Send className="w-4 h-4 -rotate-45 ml-0.5 mb-0.5" />
           </button>

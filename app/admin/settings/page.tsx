@@ -240,7 +240,7 @@ function SettingsPageInner() {
                 </button>
             </header>
 
-            <nav className="grid w-full grid-cols-2 gap-3 rounded-[2rem] border border-slate-200/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
+            <nav className="grid w-full grid-cols-2 gap-3 rounded-[1.25rem] border border-/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
                 {[
                     { id: 'appearance', label: t('admin.settings.tab.appearance') },
                     { id: 'text', label: t('admin.settings.tab.text') },
@@ -249,10 +249,10 @@ function SettingsPageInner() {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`group relative flex min-h-[44px] items-center justify-center gap-3 overflow-hidden rounded-[1.75rem] border px-5 py-4 text-sm font-black transition-all md:min-w-[180px] ${
+                        className={`group relative flex min-h-[44px] items-center justify-center gap-3 overflow-hidden rounded-[1.25rem] border px-5 py-4 text-sm font-black transition-all md:min-w-[180px] ${
                             activeTab === tab.id
-                                ? 'border-white bg-white text-slate-950 shadow-[0_10px_30px_rgba(15,23,42,0.10)]'
-                                : 'border-transparent bg-white/35 text-slate-400 hover:border-white/70 hover:bg-white/75 hover:text-slate-700'
+                                ? 'border-white bg-card text-slate-950 shadow-[0_10px_30px_rgba(15,23,42,0.10)]'
+                                : 'border-transparent bg-card/35 text-slate-400 hover:border-white/70 hover:bg-card/75 hover:text-slate-700'
                         }`}
                     >
                         <span className="text-sm font-black tracking-tight">{tab.label}</span>
@@ -269,7 +269,7 @@ function SettingsPageInner() {
                         initial={{ opacity: 0, y: -16, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -16, scale: 0.98 }}
-                        className={`fixed top-6 ${isRtl ? 'left-4 md:left-6' : 'right-4 md:right-6'} z-[120] w-[calc(100vw-2rem)] max-w-md rounded-2xl border bg-white p-4 shadow-2xl ${messageType === 'success' ? 'border-emerald-100' : 'border-red-100'}`}
+                        className={`fixed top-6 ${isRtl ? 'left-4 md:left-6' : 'right-4 md:right-6'} z-[120] w-[calc(100vw-2rem)] max-w-md rounded-2xl border bg-card p-4 shadow-2xl ${messageType === 'success' ? 'border-emerald-100' : 'border-red-100'}`}
                     >
                         <div className="flex items-start gap-3">
                             <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${messageType === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
@@ -279,7 +279,7 @@ function SettingsPageInner() {
                                 <p className="text-sm font-black text-slate-950">{messageType === 'success' ? (isRtl ? "تم الحفظ" : "Saved") : (isRtl ? "تعذر الحفظ" : "Save failed")}</p>
                                 <p className="mt-1 text-xs font-bold leading-5 text-slate-500">{message}</p>
                             </div>
-                            <button type="button" onClick={() => setMessage("")} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+                            <button type="button" onClick={() => setMessage("")} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-muted hover:text-slate-700">
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
@@ -287,7 +287,7 @@ function SettingsPageInner() {
                 )}
             </AnimatePresence>
 
-            <main className="rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-xl bg-white min-h-[500px]">
+            <main className="rounded-[1rem] overflow-hidden border border shadow-xl bg-card min-h-[500px]">
                 <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                     {activeTab === 'pricing' && (
                         <PricingTab
@@ -319,9 +319,9 @@ function SettingsPageInner() {
 
             {activeTab === 'pricing' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div onClick={() => setIsLogsModalOpen(true)} className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
+                    <div onClick={() => setIsLogsModalOpen(true)} className="p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
+                            <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.logs')}</h4>
                                 <p className="text-sm font-medium text-slate-400">{t('admin.settings.logsDesc')}</p>
@@ -329,9 +329,9 @@ function SettingsPageInner() {
                         </div>
                         <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" />
                     </div>
-                    <div onClick={() => setIsCommissionModalOpen(true)} className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
+                    <div onClick={() => setIsCommissionModalOpen(true)} className="p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center"><DollarSign className="w-8 h-8" /></div>
+                            <div className="w-16 h-16 rounded-2xl bg-muted text-slate-900 flex items-center justify-center"><DollarSign className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.commissions')}</h4>
                                 <p className="text-sm font-medium text-slate-400">{t('admin.settings.commissionsDesc')}</p>
@@ -370,7 +370,7 @@ function PricingTab({
 }: PricingTabProps) {
     return (
         <div className="p-8 space-y-10">
-            <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
+            <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Sparkles className="w-6 h-6" />
                 </div>
@@ -386,21 +386,21 @@ function PricingTab({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <div className="relative">
-                                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
+                                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
                                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
                             </div>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600 px-1">عمولة الشراء (%)</label>
                             <div className="relative">
-                                <input type="number" value={purchaseFee} onChange={(e) => setPurchaseFee(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="2.5" />
+                                <input type="number" value={purchaseFee} onChange={(e) => setPurchaseFee(e.target.value)} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="2.5" />
                                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">%</span>
                             </div>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600 px-1">الضريبة (%)</label>
                             <div className="relative">
-                                <input type="number" value={taxPercentage} onChange={(e) => setTaxPercentage(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="15" />
+                                <input type="number" value={taxPercentage} onChange={(e) => setTaxPercentage(e.target.value)} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="15" />
                                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">%</span>
                             </div>
                         </div>
@@ -415,23 +415,23 @@ function PricingTab({
                         { category: 'construction', label: 'خدمات البناء والمقاولات', services: ['مقاول عظم', 'تصميم هندسي', 'تشطيبات', 'كهرباء', 'سباكة', 'نجارة', 'دهانات', 'ألمنيوم', 'إشراف هندسي', 'تصميم داخلي'] },
                         { category: 'marketing', label: 'خدمات التسويق', services: ['تصوير فوتوغرافي للعقار', 'حملة إعلانية (وسائل التواصل الاجتماعي)', 'حملة إعلانية (إعلانات طرق/تقليدية)'] }
                     ].map((group) => (
-                        <div key={group.category} className="border border-slate-100 rounded-3xl overflow-hidden mb-4">
+                        <div key={group.category} className="border border rounded-3xl overflow-hidden mb-4">
                             <button
                                 onClick={() => setCollapsedCategories(prev => ({ ...prev, [group.category]: !prev[group.category] }))}
-                                className="w-full flex items-center justify-between p-6 bg-slate-50 hover:bg-slate-100 transition-colors"
+                                className="w-full flex items-center justify-between p-6 bg-muted hover:bg-muted transition-colors"
                             >
                                 <span className="text-[11px] font-black uppercase tracking-widest">{group.label}</span>
                                 <ChevronDown className={`w-4 h-4 transition-transform ${collapsedCategories[group.category] ? '' : 'rotate-180'}`} />
                             </button>
                             {!collapsedCategories[group.category] && (
-                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-card">
                                     {group.services.map((service) => {
                                         const key = `service_price_${group.category}_${service}`.replace(/\s+/g, '_').toLowerCase();
                                         return (
                                             <div key={service} className="space-y-2">
                                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{service}</label>
                                                 <div className="relative">
-                                                    <input type="number" value={servicePrices[key] || ""} onChange={(e) => setServicePrices(prev => ({ ...prev, [key]: e.target.value }))} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-12" placeholder="0.00" />
+                                                    <input type="number" value={servicePrices[key] || ""} onChange={(e) => setServicePrices(prev => ({ ...prev, [key]: e.target.value }))} className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-12" placeholder="0.00" />
                                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
                                                 </div>
                                             </div>
@@ -494,7 +494,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
 
     return (
         <div className="p-8 space-y-10">
-            <div className="flex items-center gap-4 border-b border-slate-50 pb-6">
+            <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Palette className="w-6 h-6" />
                 </div>
@@ -520,7 +520,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 <div className="text-white/20 text-[10px] font-black uppercase">لا يوجد شعار</div>
                             )}
                         </div>
-                        <label className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all">
+                        <label className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-card/10 hover:bg-card/20 text-white text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all">
                             {uploadingWhite ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                             {uploadingWhite ? 'جارٍ الرفع...' : 'رفع الشعار الأبيض'}
                             <input type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) uploadLogo(e.target.files[0], 'white'); }} />
@@ -530,11 +530,11 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             value={localSettings.logoWhiteUrl || ''}
                             onChange={(e) => updateSettings({ logoWhiteUrl: e.target.value })}
                             placeholder="أو أدخل رابط الشعار مباشرة..."
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-[11px] font-mono text-white/60 outline-none focus:border-white/30"
+                            className="w-full bg-card/5 border border-white/10 rounded-xl py-2 px-4 text-[11px] font-mono text-white/60 outline-none focus:border-white/30"
                         />
                     </div>
                     {/* Black Logo */}
-                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                    <div className="p-6 bg-muted rounded-3xl border border space-y-4">
                         <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">الشعار الأسود (على الخلفيات الفاتحة)</p>
                         <div className="flex items-center justify-center h-20">
                             {localSettings.logoBlackUrl ? (
@@ -553,14 +553,14 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             value={localSettings.logoBlackUrl || ''}
                             onChange={(e) => updateSettings({ logoBlackUrl: e.target.value })}
                             placeholder="أو أدخل رابط الشعار مباشرة..."
-                            className="w-full bg-white border border-slate-100 rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
+                            className="w-full bg-card border border rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
                         />
                     </div>
                 </div>
 
-                <div className="p-6 bg-white rounded-3xl border border-slate-100 space-y-4">
+                <div className="p-6 bg-card rounded-3xl border border space-y-4">
                     <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">غلاف تقارير مسح الخريطة PDF</p>
-                    <div className="flex items-center justify-center h-36 rounded-2xl bg-slate-100 overflow-hidden">
+                    <div className="flex items-center justify-center h-36 rounded-2xl bg-muted overflow-hidden">
                         {localSettings.reportCoverUrl ? (
                             <img src={resolveAssetUrl(localSettings.reportCoverUrl)} alt="report cover" className="h-full w-full object-cover" />
                         ) : (
@@ -577,14 +577,14 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         value={localSettings.reportCoverUrl || ''}
                         onChange={(e) => updateSettings({ reportCoverUrl: e.target.value })}
                         placeholder="أو أدخل رابط صورة الغلاف مباشرة..."
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
+                        className="w-full bg-muted border border rounded-xl py-2 px-4 text-[11px] font-mono text-slate-400 outline-none focus:border-slate-900"
                     />
                     <p className="text-[10px] font-bold text-slate-400 leading-relaxed">
                         تستخدم هذه الصورة كخلفية للصفحة الأولى في تقارير مسح الخريطة، ويمكن تغييرها من الأدمن في أي وقت.
                     </p>
                 </div>
                 {/* Size Slider */}
-                <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                <div className="p-6 bg-muted rounded-3xl border border space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-[11px] font-black text-slate-600 uppercase tracking-widest">حجم الشعار في كل الصفحات</label>
                         <span className="text-2xl font-black text-slate-900">{localSettings.logoHeight || 40}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
@@ -607,14 +607,14 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
                             {localSettings.logoWhiteUrl && <img src={resolveAssetUrl(localSettings.logoWhiteUrl)} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
-                        <div className="rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
+                        <div className="rounded-2xl bg-card border border flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
                             {localSettings.logoBlackUrl && <img src={resolveAssetUrl(localSettings.logoBlackUrl)} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
                     </div>
                 </div>
 
                 {/* Quick Actions Icon Size Slider */}
-                <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                <div className="p-6 bg-muted rounded-3xl border border space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-[11px] font-black text-slate-600 uppercase tracking-widest">حجم أيقونات الوصول السريع (الرئيسية)</label>
                         <span className="text-2xl font-black text-slate-900">{localSettings.quickActionsIconSize || '40'}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
@@ -646,7 +646,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'foreground', label: 'لون الخط العام', value: localSettings.foreground, fallback: '#0f172a' },
                             { id: 'sidebar', label: 'لون القائمة الجانبية', value: localSettings.sidebar, fallback: '#ffffff' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value as string }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -666,7 +666,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'iconBg', label: 'خلفية الأيقونات', value: (localSettings as any).iconBg || '#f8fafc', fallback: '#f8fafc' },
                             { id: 'iconColor', label: 'لون الأيقونات', value: (localSettings as any).iconColor || '#0f172a', fallback: '#0f172a' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -678,7 +678,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                        <div className="p-5 bg-muted rounded-3xl border border space-y-3">
                             <div className="flex items-center justify-between">
                                 <label className="text-[11px] font-black text-slate-600">استدارة المربعات</label>
                                 <span className="text-sm font-black text-slate-900">{(localSettings as any).cardRadius || '24px'}</span>
@@ -693,7 +693,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 className="w-full accent-slate-900"
                             />
                         </div>
-                        <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                        <div className="p-5 bg-muted rounded-3xl border border space-y-3">
                             <div className="flex items-center justify-between">
                                 <label className="text-[11px] font-black text-slate-600">استدارة الأزرار والحقول</label>
                                 <span className="text-sm font-black text-slate-900">{(localSettings as any).buttonRadius || '16px'}</span>
@@ -716,9 +716,9 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'soonBadgeBg', label: 'خلفية الشارة', value: (localSettings as any).soonBadgeBg || '#ffffff' },
                             { id: 'soonBadgeText', label: 'لون النص', value: (localSettings as any).soonBadgeText || '#000000' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div
-                                    className="h-8 px-3 rounded-xl border border-slate-100 shadow-inner flex items-center justify-center text-[10px] font-black uppercase tracking-widest flex-shrink-0"
+                                    className="h-8 px-3 rounded-xl border border shadow-inner flex items-center justify-center text-[10px] font-black uppercase tracking-widest flex-shrink-0"
                                     style={{
                                         backgroundColor: (localSettings as any).soonBadgeBg || '#ffffff',
                                         color: (localSettings as any).soonBadgeText || '#000000',
@@ -748,19 +748,19 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
 
                 <div className="space-y-8">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">العلامة التجارية والخط</h4>
-                    <div className="space-y-4 pt-4 border-t border-slate-50">
+                    <div className="space-y-4 pt-4 border-t border">
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">اسم النظام (العلامة التجارية)</label>
-                            <input type="text" value={localSettings.appName} onChange={(e) => updateSettings({ appName: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 shadow-inner" placeholder="اسم النظام..." />
+                            <input type="text" value={localSettings.appName} onChange={(e) => updateSettings({ appName: e.target.value })} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 shadow-inner" placeholder="اسم النظام..." />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">وصف النظام في شاشة البداية</label>
-                            <input type="text" value={localSettings.description || ''} onChange={(e) => updateSettings({ description: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="وصف مختصر يظهر تحت الشعار..." />
+                            <input type="text" value={localSettings.description || ''} onChange={(e) => updateSettings({ description: e.target.value })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="وصف مختصر يظهر تحت الشعار..." />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">حجم الخط في المنصة</label>
-                                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                                <div className="bg-muted border border rounded-2xl p-4">
                                     <div className="flex items-center justify-between mb-3">
                                         <span className="text-[10px] font-black text-slate-400">12px</span>
                                         <span className="text-sm font-black text-slate-900">{localSettings.fontSize || '15px'}</span>
@@ -782,7 +782,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 <select
                                     value={localSettings.fontFamily || 'system-ui'}
                                     onChange={(e) => setThemeValue('fontFamily', e.target.value)}
-                                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-4 text-xs font-bold outline-none focus:border-slate-900"
+                                    className="w-full bg-muted border border rounded-2xl py-4 px-4 text-xs font-bold outline-none focus:border-slate-900"
                                 >
                                     <option value="system-ui">System UI</option>
                                     <option value="Arial">Arial</option>
@@ -795,29 +795,29 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">لاحقة العنوان (Badge)</label>
-                                <input type="text" value={(localSettings.texts || {})['admin_badge'] || 'ADMIN'} onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), 'admin_badge': e.target.value } })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="ADMIN..." />
+                                <input type="text" value={(localSettings.texts || {})['admin_badge'] || 'ADMIN'} onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), 'admin_badge': e.target.value } })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="ADMIN..." />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">مسمى مدير النظام</label>
-                                <input type="text" value={(localSettings.texts || {})['admin_role_label'] || 'admin'} onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), 'admin_role_label': e.target.value } })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="مدير النظام..." />
+                                <input type="text" value={(localSettings.texts || {})['admin_role_label'] || 'admin'} onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), 'admin_role_label': e.target.value } })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="مدير النظام..." />
                             </div>
                         </div>
                         <div className="space-y-2 mt-4">
                             <label className="text-[11px] font-black text-slate-600">البريد الإلكتروني للتواصل</label>
-                            <input type="email" value={localSettings.contactEmail} onChange={(e) => updateSettings({ contactEmail: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="info@example.com" />
+                            <input type="email" value={localSettings.contactEmail} onChange={(e) => updateSettings({ contactEmail: e.target.value })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="info@example.com" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">رقم الهاتف للتواصل</label>
-                            <input type="text" value={localSettings.contactPhone} onChange={(e) => updateSettings({ contactPhone: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="+966..." />
+                            <input type="text" value={localSettings.contactPhone} onChange={(e) => updateSettings({ contactPhone: e.target.value })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="+966..." />
                         </div>
                         <div className="space-y-2">
                             <label className="text-[11px] font-black text-slate-600">حساب X / تويتر</label>
-                            <input type="text" value={localSettings.contactTwitter || ''} onChange={(e) => updateSettings({ contactTwitter: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="@account أو رابط الحساب" dir="ltr" />
+                            <input type="text" value={localSettings.contactTwitter || ''} onChange={(e) => updateSettings({ contactTwitter: e.target.value })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="@account أو رابط الحساب" dir="ltr" />
                         </div>
                         <div className="pt-4">
                             <label className="text-[11px] font-black text-slate-600 mb-2 block">النمط الليلي / النهاري</label>
-                            <div className="flex p-1 bg-slate-100 rounded-2xl w-fit">
-                                <button onClick={() => updateSettings({ isDark: false })} className={`flex items-center gap-2 px-6 py-2 rounded-xl transition-all ${!localSettings.isDark ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}><Sun className="w-4 h-4" /> نهاري</button>
+                            <div className="flex p-1 bg-muted rounded-2xl w-fit">
+                                <button onClick={() => updateSettings({ isDark: false })} className={`flex items-center gap-2 px-6 py-2 rounded-xl transition-all ${!localSettings.isDark ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400'}`}><Sun className="w-4 h-4" /> نهاري</button>
                                 <button onClick={() => updateSettings({ isDark: true })} className={`flex items-center gap-2 px-6 py-2 rounded-xl transition-all ${localSettings.isDark ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400'}`}><Moon className="w-4 h-4" /> ليلي</button>
                             </div>
                         </div>
@@ -837,7 +837,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 <div
                                     className="p-5 border shadow-sm"
                                     style={{
-                                        backgroundColor: (localSettings as any).cardBg || '#ffffff',
+                                        backgroundColor: (localSettings as any).cardBg || '#f9fafb',
                                         color: (localSettings as any).cardText || '#0f172a',
                                         borderColor: (localSettings as any).cardBorder || '#e2e8f0',
                                         borderRadius: (localSettings as any).cardRadius || '24px',
@@ -1453,7 +1453,7 @@ function TextTab({
     return (
         <div className="p-8 space-y-6">
             {/* Header section with Stats & Mode Switcher */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-900 rounded-2xl text-white">
                         <Languages className="w-6 h-6" />
@@ -1468,12 +1468,12 @@ function TextTab({
 
                 <div className="flex flex-wrap items-center gap-4">
                     {/* View Mode Toggle */}
-                    <div className="flex p-1 bg-slate-100 rounded-2xl">
+                    <div className="flex p-1 bg-muted rounded-2xl">
                         <button
                             onClick={() => setViewMode('structured')}
                             className={`px-4 py-2 text-xs font-black rounded-xl transition-all ${
                                 viewMode === 'structured'
-                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    ? 'bg-card text-slate-900 shadow-sm'
                                     : 'text-slate-400 hover:text-slate-600'
                             }`}
                         >
@@ -1483,7 +1483,7 @@ function TextTab({
                             onClick={() => setViewMode('traditional')}
                             className={`px-4 py-2 text-xs font-black rounded-xl transition-all ${
                                 viewMode === 'traditional'
-                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    ? 'bg-card text-slate-900 shadow-sm'
                                     : 'text-slate-400 hover:text-slate-600'
                             }`}
                         >
@@ -1505,8 +1505,8 @@ function TextTab({
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Left Sidebar: Structured Categories & Subcategories */}
                     <div className="lg:col-span-1 space-y-4">
-                        <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2.5rem] p-4 space-y-4 shadow-sm">
-                            <div className="rounded-[1.75rem] bg-slate-950 p-4 text-white">
+                        <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-4 space-y-4 shadow-sm">
+                            <div className="rounded-[1.25rem] bg-slate-950 p-4 text-white">
                                 <h4 className="text-[11px] font-black">شجرة الأقسام والهوية</h4>
                                 <p className="mt-1 text-[10px] font-bold text-slate-300">تصفح أقسام المنصة مباشرة لتعديلها</p>
                             </div>
@@ -1520,7 +1520,7 @@ function TextTab({
                                                 <SecIcon className="w-3.5 h-3.5" />
                                                 <span>{sec.title}</span>
                                             </div>
-                                            <div className="space-y-1 pl-2 border-r border-slate-100 mr-2">
+                                            <div className="space-y-1 pl-2 border-r border mr-2">
                                                 {sec.subcategories.map((sub) => {
                                                     const SubIcon = sub.icon;
                                                     const isActive = activeSection === sub.id;
@@ -1530,8 +1530,8 @@ function TextTab({
                                                             onClick={() => setActiveSection(sub.id)}
                                                             className={`w-full flex items-center gap-2.5 text-right px-3 py-2.5 text-xs font-black rounded-xl transition-all ${
                                                                 isActive
-                                                                    ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10'
-                                                                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                                                    ? 'bg-slate-900 text-white shadow-md shadow-stone-400/10'
+                                                                    : 'text-slate-500 hover:bg-muted hover:text-slate-900'
                                                             }`}
                                                         >
                                                             <SubIcon className="w-3.5 h-3.5" />
@@ -1552,8 +1552,8 @@ function TextTab({
                         {currentSubcategory && (
                             <div className="space-y-6">
                                 {/* Component Customizer & Settings Card */}
-                                <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2.5rem] p-6 md:p-8 space-y-6 shadow-sm">
-                                    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                                <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                                    <div className="flex items-center justify-between border-b border pb-4">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2.5 bg-slate-900/5 text-slate-900 rounded-xl">
                                                 <Sliders className="w-5 h-5" />
@@ -1570,7 +1570,7 @@ function TextTab({
                                         {currentSubcategory.controls?.map((ctrl) => {
                                             const currentValue = localSettings[ctrl.key] !== undefined ? localSettings[ctrl.key] : ctrl.default;
                                             return (
-                                                <div key={ctrl.key} className="space-y-2 bg-white/60 p-4 border border-slate-100 rounded-2xl">
+                                                <div key={ctrl.key} className="space-y-2 bg-card/60 p-4 border border rounded-2xl">
                                                     <div className="flex justify-between items-center">
                                                         <label className="text-[11px] font-black text-slate-600">{ctrl.label}</label>
                                                         <span className="text-[10px] font-mono text-slate-400 font-bold">{String(currentValue)}</span>
@@ -1582,13 +1582,13 @@ function TextTab({
                                                                 type="color"
                                                                 value={currentValue}
                                                                 onChange={(e) => updateSettings({ [ctrl.key]: e.target.value })}
-                                                                className="w-10 h-10 border border-slate-200 rounded-xl cursor-pointer"
+                                                                className="w-10 h-10 border border rounded-xl cursor-pointer"
                                                             />
                                                             <input
                                                                 type="text"
                                                                 value={currentValue}
                                                                 onChange={(e) => updateSettings({ [ctrl.key]: e.target.value })}
-                                                                className="flex-1 bg-slate-50 border border-slate-100 rounded-xl py-2 px-3 text-xs font-bold font-mono text-left outline-none"
+                                                                className="flex-1 bg-muted border border rounded-xl py-2 px-3 text-xs font-bold font-mono text-left outline-none"
                                                             />
                                                         </div>
                                                     )}
@@ -1611,7 +1611,7 @@ function TextTab({
                                                         <select
                                                             value={currentValue}
                                                             onChange={(e) => updateSettings({ [ctrl.key]: e.target.value })}
-                                                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                                                            className="w-full bg-muted border border rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                                                         >
                                                             {(ctrl as any).options?.map((opt: string) => (
                                                                 <option key={opt} value={opt}>{opt}</option>
@@ -1639,10 +1639,10 @@ function TextTab({
                                                                 className={`w-12 h-6 rounded-full transition-all relative ${
                                                                     (ctrl.key.startsWith('login') ? localSettings.loginConfig?.[ctrl.key.replace('login', '').charAt(0).toLowerCase() + ctrl.key.replace('login', '').slice(1)] : currentValue)
                                                                         ? 'bg-emerald-500'
-                                                                        : 'bg-slate-200'
+                                                                        : 'bg-muted'
                                                                 }`}
                                                             >
-                                                                <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all ${
+                                                                <span className={`absolute top-1 left-1 w-4 h-4 bg-card rounded-full transition-all ${
                                                                     (ctrl.key.startsWith('login') ? localSettings.loginConfig?.[ctrl.key.replace('login', '').charAt(0).toLowerCase() + ctrl.key.replace('login', '').slice(1)] : currentValue)
                                                                         ? 'translate-x-6'
                                                                         : ''
@@ -1659,8 +1659,8 @@ function TextTab({
                                     </div>
 
                                     {/* Live Preview Card */}
-                                    <div className="border border-slate-100 rounded-3xl p-6 bg-white space-y-4">
-                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">
+                                    <div className="border border rounded-3xl p-6 bg-card space-y-4">
+                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border pb-2">
                                             <Eye className="w-3.5 h-3.5" />
                                             <span>معاينة حية للمكون المتأثر</span>
                                         </div>
@@ -1712,7 +1712,7 @@ function TextTab({
                                                             type="email"
                                                             placeholder="البريد الإلكتروني..."
                                                             disabled
-                                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
+                                                            className="w-full bg-muted border border rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
                                                         />
                                                     )}
                                                     {localSettings.loginConfig?.phoneEnabled && (
@@ -1721,7 +1721,7 @@ function TextTab({
                                                                 type="text"
                                                                 placeholder="رقم الجوال..."
                                                                 disabled
-                                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
+                                                                className="w-full bg-muted border border rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
                                                             />
                                                             <span className="text-[8px] text-red-500 font-bold bg-red-50 px-2 py-0.5 rounded-full">
                                                                 {localSettings.loginConfig?.phoneLabel || 'موقف'}
@@ -1766,7 +1766,7 @@ function TextTab({
 
                                         {/* Fallback Preview */}
                                         {!['welcome_screen', 'login_screen', 'customer_service'].includes(activeSection) && (
-                                            <div className="p-6 rounded-2xl border bg-slate-50 text-slate-400 text-xs text-center font-bold">
+                                            <div className="p-6 rounded-2xl border bg-muted text-slate-400 text-xs text-center font-bold">
                                                 المكون نشط ومربوط بـ {currentSectionKeys.length} نصوص رئيسية.
                                             </div>
                                         )}
@@ -1774,15 +1774,15 @@ function TextTab({
                                 </div>
 
                                 {/* Associated Texts Editing Section */}
-                                <div className="bg-white border border-slate-200 rounded-[2.5rem] p-6 md:p-8 space-y-6 shadow-sm">
-                                    <div className="border-b border-slate-100 pb-4">
+                                <div className="bg-card border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                                    <div className="border-b border pb-4">
                                         <h4 className="text-base font-black text-slate-950">النصوص والمسميات المرتبطة</h4>
                                         <p className="text-[10px] font-bold text-slate-400 mt-0.5">تعديل نصوص الترجمة الخاصة بهذا القسم مباشرة</p>
                                     </div>
 
                                     <div className="space-y-6">
                                         {currentSectionKeys.map((key) => (
-                                            <div key={key} className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+                                            <div key={key} className="p-6 bg-muted/50 rounded-2xl border border space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-[10px] font-mono font-black text-slate-400 select-all">{key}</span>
                                                     {(textOverrides['ar_' + key] !== undefined || textOverrides['en_' + key] !== undefined) && (
@@ -1808,7 +1808,7 @@ function TextTab({
                                                             type="text"
                                                             value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : (translations.ar[key as keyof typeof translations.ar] || "")}
                                                             onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
-                                                            className="w-full bg-white border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all"
+                                                            className="w-full bg-card border border rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all"
                                                         />
                                                     </div>
                                                     <div dir="ltr" className="space-y-1.5 text-left">
@@ -1817,7 +1817,7 @@ function TextTab({
                                                             type="text"
                                                             value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")}
                                                             onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))}
-                                                            className="w-full bg-white border border-slate-100 rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all text-left"
+                                                            className="w-full bg-card border border rounded-xl py-2.5 px-4 text-xs font-bold outline-none focus:border-slate-900 transition-all text-left"
                                                         />
                                                     </div>
                                                 </div>
@@ -1836,13 +1836,13 @@ function TextTab({
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Categories and Subcategories Selection */}
                     <div className="lg:col-span-1 space-y-4">
-                        <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2rem] p-4 space-y-2 shadow-sm">
+                        <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1.25rem] p-4 space-y-2 shadow-sm">
                             {/* Scopes selector */}
-                            <div className="flex p-1 bg-slate-100 rounded-2xl mb-4">
+                            <div className="flex p-1 bg-muted rounded-2xl mb-4">
                                 <button
                                     onClick={() => { setSelectedCategory('admin'); setSelectedSubcategory('all'); }}
                                     className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
-                                        selectedCategory === 'admin' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'
+                                        selectedCategory === 'admin' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400'
                                     }`}
                                 >
                                     لوحة التحكم
@@ -1850,14 +1850,14 @@ function TextTab({
                                 <button
                                     onClick={() => { setSelectedCategory('public'); setSelectedSubcategory('all'); }}
                                     className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
-                                        selectedCategory === 'public' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'
+                                        selectedCategory === 'public' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400'
                                     }`}
                                 >
                                     الموقع العام
                                 </button>
                             </div>
 
-                            <div className="rounded-[1.5rem] bg-slate-950 p-4 text-white mb-3">
+                            <div className="rounded-[1rem] bg-slate-950 p-4 text-white mb-3">
                                 <h4 className="text-[11px] font-black">الفئة الفرعية</h4>
                                 <p className="mt-1 text-[10px] font-bold text-slate-300">اختر الفئة لعرض مفاتيحها</p>
                             </div>
@@ -1877,12 +1877,12 @@ function TextTab({
                                             className={`w-full flex items-center justify-between text-right px-4 py-3 text-xs font-black rounded-xl transition-all ${
                                                 isActive
                                                     ? 'bg-slate-900 text-white shadow-sm'
-                                                    : 'bg-white text-slate-500 border border-slate-100 hover:text-slate-950 hover:bg-slate-50'
+                                                    : 'bg-card text-slate-500 border border hover:text-slate-950 hover:bg-muted'
                                             }`}
                                         >
                                             <span>{sub.label}</span>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                                                isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                                                isActive ? 'bg-card/20 text-white' : 'bg-muted text-slate-500'
                                             }`}>
                                                 {count}
                                             </span>
@@ -1893,7 +1893,7 @@ function TextTab({
                         </div>
 
                         {/* Search Input inside Traditional mode */}
-                        <div className="bg-slate-50 border border-slate-100 rounded-[2rem] p-5 space-y-3">
+                        <div className="bg-muted border border rounded-[1.25rem] p-5 space-y-3">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">بحث وتنقيب سريع</h4>
                             <div className="relative">
                                 <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -1901,7 +1901,7 @@ function TextTab({
                                     type="text"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-white border border-slate-100 rounded-xl py-2.5 pr-10 pl-4 text-xs font-bold outline-none focus:ring-2 focus:ring-slate-900/5 transition-all"
+                                    className="w-full bg-card border border rounded-xl py-2.5 pr-10 pl-4 text-xs font-bold outline-none focus:ring-2 focus:ring-slate-900/5 transition-all"
                                     placeholder="اكتب كلمة للبحث..."
                                 />
                             </div>
@@ -1910,12 +1910,12 @@ function TextTab({
 
                     {/* Traditional Inputs Display */}
                     <div className="lg:col-span-3 space-y-6">
-                        <div className="bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] border border-slate-200 rounded-[2.5rem] p-6 md:p-8 space-y-6 shadow-sm">
-                            <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 pb-4">
+                        <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                            <div className="flex flex-wrap items-center gap-2 border-b border pb-4">
                                 <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-white">
                                     {selectedCategory === 'admin' ? 'الإدارة' : 'الموقع العام'}
                                 </span>
-                                <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-bold text-slate-500">
+                                <span className="rounded-full border border bg-card px-3 py-1 text-[11px] font-bold text-slate-500">
                                     {selectedSubcategory === 'all' ? 'كل الفئات الفرعية' : (subcategoryLabelMap[selectedSubcategory] || selectedSubcategory)}
                                 </span>
                             </div>
@@ -1929,10 +1929,10 @@ function TextTab({
                             ) : (
                                 <div className="space-y-6">
                                     {paginatedKeys.map((key) => (
-                                        <div key={key} className="p-6 md:p-8 bg-white rounded-[2rem] border border-slate-200 transition-all hover:border-slate-900/20 group shadow-sm">
+                                        <div key={key} className="p-6 md:p-8 bg-card rounded-[1.25rem] border border transition-all hover:border-slate-900/20 group shadow-sm">
                                             <div className="flex items-center justify-between mb-5">
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-600">
+                                                    <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-black text-slate-600">
                                                         {subcategoryLabelMap[getTranslationKeyCategory(key).subcategory] || getTranslationKeyCategory(key).subcategory}
                                                     </span>
                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono select-all">
@@ -1964,7 +1964,7 @@ function TextTab({
                                                         type="text"
                                                         value={textOverrides['ar_' + key] !== undefined ? textOverrides['ar_' + key] : (translations.ar[key as keyof typeof translations.ar] || "")}
                                                         onChange={(e) => setTextOverrides(prev => ({ ...prev, ['ar_' + key]: e.target.value }))}
-                                                        className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-slate-100 transition-all"
+                                                        className="w-full bg-card border border rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-stone-400 transition-all"
                                                     />
                                                 </div>
                                                 <div dir="ltr" className="space-y-1.5 text-left">
@@ -1975,7 +1975,7 @@ function TextTab({
                                                         type="text"
                                                         value={textOverrides['en_' + key] !== undefined ? textOverrides['en_' + key] : (translations.en[key as keyof typeof translations.en] || "")}
                                                         onChange={(e) => setTextOverrides(prev => ({ ...prev, ['en_' + key]: e.target.value }))}
-                                                        className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-slate-100 transition-all text-left"
+                                                        className="w-full bg-card border border rounded-2xl py-3.5 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:shadow-xl focus:shadow-stone-400 transition-all text-left"
                                                     />
                                                 </div>
                                             </div>
@@ -1986,11 +1986,11 @@ function TextTab({
 
                             {/* Pagination Controls */}
                             {totalPages > 1 && (
-                                <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+                                <div className="flex items-center justify-between border-t border pt-6">
                                     <button
                                         onClick={() => setPage(p => Math.max(1, p - 1))}
                                         disabled={page === 1}
-                                        className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-100 text-slate-500 text-xs font-black hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                                        className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border text-slate-500 text-xs font-black hover:bg-muted hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                         <span>السابق</span>
@@ -2003,7 +2003,7 @@ function TextTab({
                                     <button
                                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                         disabled={page === totalPages}
-                                        className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-100 text-slate-500 text-xs font-black hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+                                        className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border text-slate-500 text-xs font-black hover:bg-muted hover:text-slate-900 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
                                     >
                                         <span>التالي</span>
                                         <ChevronLeft className="w-4 h-4" />
@@ -2121,7 +2121,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const v = (localSettings.sectionFlags || {})[id] || 'open';
         const setV = (next: 'open' | 'closed' | 'hidden') => updateSettings({ sectionFlags: { ...(localSettings.sectionFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all">
                 <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
@@ -2130,27 +2130,27 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setV('open')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'open' || (v !== 'closed' && v !== 'hidden') ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
+                        <button type="button" onClick={() => setV('open')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'open' || (v !== 'closed' && v !== 'hidden') ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-stone-400/10' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>متاح</button>
                         <button
                             type="button"
                             onClick={() => setV('closed')}
-                            className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'closed' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+                            className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'closed' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}
                         >
                             قريباً
                         </button>
-                        <button type="button" onClick={() => setV('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
+                        <button type="button" onClick={() => setV('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${v === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>مخفي</button>
                     </div>
                 </div>
                 {v === 'closed' && (
                     <div className="px-5 pb-5 pt-0">
-                        <div className="pt-4 border-t border-slate-100">
+                        <div className="pt-4 border-t border">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.sectionMessages || {})[id] || ""}
                                 onChange={(e) => updateSettings({ sectionMessages: { ...(localSettings.sectionMessages || {}), [id]: e.target.value } })}
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
-                                placeholder="مثال: قريباً، نعمل على تطوير هذا القسم..."
+                                className="mt-2 w-full bg-muted border border rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-card shadow-inner transition-all"
+                                placeholder=": قريباً، نعمل على تطوير هذا القسم..."
                             />
                         </div>
                     </div>
@@ -2163,7 +2163,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const status: 'enabled' | 'soon' | 'disabled' = (localSettings.moduleFlags || {})[id] || 'enabled';
         const setStatus = (next: 'enabled' | 'soon' | 'disabled') => updateSettings({ moduleFlags: { ...(localSettings.moduleFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all">
                 <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
@@ -2172,21 +2172,21 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{id}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
-                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>قريباً</button>
-                        <button type="button" onClick={() => setStatus('disabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'disabled' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
+                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-stone-400/10' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>متاح</button>
+                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>قريباً</button>
+                        <button type="button" onClick={() => setStatus('disabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'disabled' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>مخفي</button>
                     </div>
                 </div>
                 {status === 'soon' && (
                     <div className="px-5 pb-5 pt-0">
-                        <div className="pt-4 border-t border-slate-100">
+                        <div className="pt-4 border-t border">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.moduleMessages || {})[id] || ""}
                                 onChange={(e) => updateSettings({ moduleMessages: { ...(localSettings.moduleMessages || {}), [id]: e.target.value } })}
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
-                                placeholder="مثال: قريباً، نعمل على تطوير هذه الخاصية..."
+                                className="mt-2 w-full bg-muted border border rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-card shadow-inner transition-all"
+                                placeholder=": قريباً، نعمل على تطوير هذه الخاصية..."
                             />
                         </div>
                     </div>
@@ -2199,7 +2199,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         const status: 'enabled' | 'soon' | 'hidden' = (localSettings.detailsPartFlags || {})[id] || 'enabled';
         const setStatus = (next: 'enabled' | 'soon' | 'hidden') => updateSettings({ detailsPartFlags: { ...(localSettings.detailsPartFlags || {}), [id]: next } });
         return (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all">
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all">
                 <div className="px-5 py-4 flex items-center justify-between gap-4">
                     <div className="min-w-0 space-y-1">
                         <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
@@ -2208,21 +2208,21 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">details:{id}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>متاح</button>
-                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>قريباً</button>
-                        <button type="button" onClick={() => setStatus('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>مخفي</button>
+                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-stone-400/10' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>متاح</button>
+                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>قريباً</button>
+                        <button type="button" onClick={() => setStatus('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>مخفي</button>
                     </div>
                 </div>
                 {status === 'soon' && (
                     <div className="px-5 pb-5 pt-0">
-                        <div className="pt-4 border-t border-slate-100">
+                        <div className="pt-4 border-t border">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">رسالة "قريباً"</label>
                             <input
                                 type="text"
                                 value={(localSettings.detailsPartMessages || {})[id] || ''}
                                 onChange={(e) => updateSettings({ detailsPartMessages: { ...(localSettings.detailsPartMessages || {}), [id]: e.target.value } })}
-                                className="mt-2 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
-                                placeholder="مثال: قريباً، نعمل على تطوير هذا القسم..."
+                                className="mt-2 w-full bg-muted border border rounded-xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900 focus:bg-card shadow-inner transition-all"
+                                placeholder=": قريباً، نعمل على تطوير هذا القسم..."
                             />
                         </div>
                     </div>
@@ -2233,7 +2233,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
     const UiFlagRow = ({ id, label }: { id: string; label: string }) => {
         return (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
                 <div className="min-w-0 space-y-1">
                     <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
                         <Zap className="w-4 h-4 text-slate-400" /> {label}
@@ -2243,9 +2243,9 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 <button
                     type="button"
                     onClick={() => updateSettings({ uiFlags: { ...(localSettings.uiFlags || {}), [id]: !localSettings.uiFlags[id] } })}
-                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.uiFlags[id] ? 'bg-emerald-500 border-emerald-600' : 'bg-slate-200 border-slate-300'}`}
+                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.uiFlags[id] ? 'bg-emerald-500 border-emerald-600' : 'bg-muted border-slate-300'}`}
                 >
-                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all shadow-sm ${localSettings.uiFlags[id] ? 'left-8' : 'left-1'}`} />
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-card transition-all shadow-sm ${localSettings.uiFlags[id] ? 'left-8' : 'left-1'}`} />
                 </button>
             </div>
         );
@@ -2254,7 +2254,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     const LoginMethodRow = ({ id, label }: { id: string; label: string }) => {
         const methodKey = `${id}Enabled` as keyof typeof localSettings.loginConfig;
         return (
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
                 <div className="min-w-0 space-y-1">
                     <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
                         <Smartphone className="w-4 h-4 text-slate-400" /> {label}
@@ -2264,9 +2264,9 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 <button
                     type="button"
                     onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
-                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.loginConfig[methodKey] ? 'bg-emerald-500 border-emerald-600' : 'bg-slate-200 border-slate-300'}`}
+                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.loginConfig[methodKey] ? 'bg-emerald-500 border-emerald-600' : 'bg-muted border-slate-300'}`}
                 >
-                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all shadow-sm ${localSettings.loginConfig[methodKey] ? 'left-8' : 'left-1'}`} />
+                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-card transition-all shadow-sm ${localSettings.loginConfig[methodKey] ? 'left-8' : 'left-1'}`} />
                 </button>
             </div>
         );
@@ -2275,7 +2275,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     return (
         <div className="p-8 space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-900 rounded-2xl text-white">
                         <ShieldAlert className="w-6 h-6" />
@@ -2292,11 +2292,11 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                     <input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 focus:bg-white shadow-inner transition-all"
+                        className="w-full bg-muted border border rounded-2xl py-3 pr-12 pl-6 text-sm font-bold outline-none focus:border-slate-900 focus:bg-card shadow-inner transition-all"
                         placeholder="ابحث (العروض، الطلبات...)"
                     />
                     {query && (
-                        <button type="button" onClick={() => setQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg hover:bg-slate-200 flex items-center justify-center transition-colors">
+                        <button type="button" onClick={() => setQuery('')} className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg hover:bg-muted flex items-center justify-center transition-colors">
                             <X className="w-3.5 h-3.5 text-slate-400" />
                         </button>
                     )}
@@ -2316,7 +2316,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                     <SectionIcon className="w-4 h-4" />
                                     <h4 className="text-xs font-black">{section.title}</h4>
                                 </div>
-                                <div className="space-y-1 pr-6 border-r-2 border-slate-100 mr-2">
+                                <div className="space-y-1 pr-6 border-r-2 border mr-2">
                                     {section.subcategories.filter(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id)).map((sub) => {
                                         const SubIcon = sub.icon;
                                         const isActive = selectedSection === sub.id;
@@ -2326,8 +2326,8 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                                 onClick={() => setSelectedSection(sub.id)}
                                                 className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-[11px] font-bold transition-all ${
                                                     isActive
-                                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]'
-                                                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                                        ? 'bg-slate-900 text-white shadow-lg shadow-stone-400/10 scale-[1.02]'
+                                                        : 'text-slate-500 hover:bg-muted hover:text-slate-900'
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-2">
@@ -2342,7 +2342,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                         );
                     })}
                     {query && (
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="p-4 bg-muted rounded-2xl border border">
                             <p className="text-xs font-black text-slate-500">نتائج البحث عن: "{query}"</p>
                         </div>
                     )}
@@ -2350,11 +2350,11 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                 {/* Main Content Area */}
                 <div className="lg:col-span-3">
-                    <div className="rounded-[2.5rem] border border-slate-100 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-6 shadow-xl space-y-8 min-h-[500px]">
+                    <div className="rounded-[1rem] border border bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] p-6 shadow-xl space-y-8 min-h-[500px]">
 
                         {!query && currentSubcategory && (
-                            <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
-                                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-slate-900/20">
+                            <div className="flex items-center gap-4 mb-8 pb-6 border-b border">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-lg shadow-stone-400/20">
                                     <currentSubcategory.icon className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -2366,7 +2366,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                         {filteredControls.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
-                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center mb-4">
+                                <div className="w-16 h-16 rounded-3xl bg-muted flex items-center justify-center mb-4">
                                     <Search className="w-8 h-8 text-slate-300" />
                                 </div>
                                 <h3 className="text-lg font-black text-slate-900">{t('admin.settings.noItems') || 'لم يتم العثور على عناصر'}</h3>
@@ -2396,14 +2396,14 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                         {/* Quick Actions Global Settings shown only on "quick_access_main" */}
                         {currentSubcategory?.id === 'quick_access_main' && !query && (
-                            <div className="mt-12 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                            <div className="mt-12 rounded-[1.25rem] border border bg-card p-6 shadow-sm">
                                 <h4 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
                                     <Settings2 className="w-4 h-4 text-slate-400" /> إعدادات الإجراءات السريعة العامة
                                 </h4>
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between bg-slate-50 p-4 rounded-[1.25rem] border border-slate-100">
+                                    <div className="flex items-center justify-between bg-muted p-4 rounded-[1.25rem] border border">
                                         <label className="text-xs font-black text-slate-600">حجم الأيقونات (الرئيسية)</label>
-                                        <span className="text-sm font-black text-slate-900 bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">{localSettings.quickActionsIconSize || '40'}<span className="text-[10px] text-slate-400 ml-1">px</span></span>
+                                        <span className="text-sm font-black text-slate-900 bg-card px-3 py-1.5 rounded-lg border border shadow-sm">{localSettings.quickActionsIconSize || '40'}<span className="text-[10px] text-slate-400 ml-1">px</span></span>
                                     </div>
                                     <input
                                         type="range"
@@ -2412,7 +2412,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                         step={2}
                                         value={parseInt(localSettings.quickActionsIconSize || '40', 10)}
                                         onChange={(e) => updateSettings({ quickActionsIconSize: e.target.value })}
-                                        className="w-full accent-slate-900 h-2 bg-slate-100 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-slate-900 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
+                                        className="w-full accent-slate-900 h-2 bg-muted rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-slate-900 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
                                     />
                                     <div className="flex justify-between text-[10px] font-black text-slate-300 uppercase px-1">
                                         <span>12px صغير</span>
@@ -2424,7 +2424,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                         {/* Phone Label setting inside login_screen */}
                         {currentSubcategory?.id === 'login_screen' && !query && (
-                            <div className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:border-slate-300 transition-all">
+                            <div className="mt-8 rounded-2xl border border bg-card p-5 shadow-sm hover:border-slate-300 transition-all">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     <Type className="w-3.5 h-3.5" /> نص زر الهاتف الافتراضي
                                 </label>
@@ -2432,8 +2432,8 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                     type="text"
                                     value={localSettings.loginConfig.phoneLabel || ""}
                                     onChange={(e) => updateSettings({ loginConfig: { ...localSettings.loginConfig, phoneLabel: e.target.value } })}
-                                    className="mt-3 w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:bg-white transition-all shadow-inner"
-                                    placeholder="مثال: تسجيل الدخول بالهاتف"
+                                    className="mt-3 w-full bg-muted border border rounded-xl py-3 px-5 text-sm font-bold outline-none focus:border-slate-900 focus:bg-card transition-all shadow-inner"
+                                    placeholder=": تسجيل الدخول بالهاتف"
                                 />
                             </div>
                         )}
@@ -2449,14 +2449,14 @@ function LogsModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: boolean)
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-white rounded-[2.5rem] w-full max-w-2xl p-8 shadow-2xl overflow-hidden">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full max-w-2xl p-8 shadow-2xl overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">سجل التغييرات</h3>
-                    <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center"><X className="w-5 h-5" /></button>
+                    <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>
                 </div>
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                     {[{ user: 'Admin', action: 'تعديل الأسعار', date: 'منذ ساعتين' }].map((log, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                        <div key={i} className="flex items-center justify-between p-4 bg-muted rounded-2xl">
                             <div>
                                 <p className="text-xs font-black">{log.action}</p>
                                 <p className="text-[10px] text-slate-400">{log.user}</p>
@@ -2475,15 +2475,15 @@ function CommissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: bo
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full max-w-lg p-8 shadow-2xl">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">إدارة العمولات</h3>
-                    <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center"><X className="w-5 h-5" /></button>
+                    <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>
                 </div>
                 <div className="space-y-6">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase">عمولة شراء عقار (%)</label>
-                        <input type="text" defaultValue="2.5" className="w-full bg-slate-50 border border-transparent rounded-xl py-3 px-4 text-sm font-black outline-none" />
+                        <input type="text" defaultValue="2.5" className="w-full bg-muted border border-transparent rounded-xl py-3 px-4 text-sm font-black outline-none" />
                     </div>
                     <button onClick={() => onClose(false)} className="w-full h-12 bg-slate-900 text-white rounded-xl font-black text-sm">حفظ التغييرات</button>
                 </div>

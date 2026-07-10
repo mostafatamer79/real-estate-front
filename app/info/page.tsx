@@ -122,7 +122,7 @@ function InfoPageContent() {
           <button
             type="button"
             onClick={handleBack}
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-xs font-black text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-card/5 px-4 text-xs font-black text-slate-300 transition-all hover:bg-card/10 hover:text-white"
           >
             {isRtl ? <ChevronLeft className="w-4 h-4 rotate-180" /> : <ChevronLeft className="w-4 h-4" />}
             {isRtl ? "رجوع" : "Back"}
@@ -131,14 +131,14 @@ function InfoPageContent() {
   
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <TabsList className="flex h-14 items-center justify-start rounded-2xl bg-white/5 border border-white/5 p-1.5 w-full overflow-x-auto overflow-y-hidden no-scrollbar gap-2">
+          <TabsList className="flex h-14 items-center justify-start rounded-2xl bg-card/5 border border-white/5 p-1.5 w-full overflow-x-auto overflow-y-hidden no-scrollbar gap-2">
             {tabsToRender.map((tab) => {
               const Icon = tab.icon;
               return (
                 <TabsTrigger
                   key={tab.key}
                   value={tab.key}
-                  className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-white data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
+                  className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-card data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
                 >
                   <Icon className="w-4 h-4" />
                   {tab.title}
@@ -170,7 +170,7 @@ function InfoPageContent() {
                     <ExternalLink className="w-4 h-4" />
                   </button>
                 ) : tab.key === "contact" ? (
-                  <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <div className="bg-card/5 border border-white/5 rounded-3xl p-8 space-y-6">
                     <div className="p-4 bg-slate-700/30 rounded-2xl w-fit">
                       <Handshake className="w-8 h-8 text-slate-400" />
                     </div>
@@ -226,20 +226,20 @@ function InfoPageContent() {
   );
 }
 
-function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-white/10" }: { title: string, icon: React.ReactNode, content: { label: string, text: string }[], actionBtn?: React.ReactNode, bgColor?: string }) {
+function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-card/10" }: { title: string, icon: React.ReactNode, content: { label: string, text: string }[], actionBtn?: React.ReactNode, bgColor?: string }) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }}
       exit={{ opacity: 0, y: -15, transition: { duration: 0.2 } }}
-      className="bg-white/5 border border-white/5 rounded-[2rem] p-8 md:p-12 space-y-10 relative overflow-hidden"
+      className="bg-card/5 border border-white/5 rounded-[1.25rem] p-8 md:p-12 space-y-10 relative overflow-hidden"
     >
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className={cn("absolute -top-32 -right-32 w-96 h-96 rounded-full blur-[120px]", bgColor)} />
       </div>
 
       <div className="flex items-center gap-6 relative z-10">
-        <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
+        <div className="p-5 bg-card/5 border border-white/10 rounded-2xl">
           {icon}
         </div>
         <h2 className="text-2xl md:text-3xl font-black tracking-tight">{title}</h2>
@@ -249,7 +249,7 @@ function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-white/10" 
         {content.map((item, idx) => (
           <div key={idx} className="space-y-3 group">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-[2px] bg-white/20 group-hover:bg-white transition-colors" />
+              <div className="w-8 h-[2px] bg-card/20 group-hover:bg-card transition-colors" />
               <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">
                 {item.label}
               </h4>

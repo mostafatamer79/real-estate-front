@@ -206,8 +206,8 @@ export default function DepartmentFeaturePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl rounded-[2rem] border border-slate-200 bg-white p-0 overflow-hidden" dir={direction}>
-        <div className="border-b border-slate-100 bg-slate-950 px-6 py-5 text-white">
+      <DialogContent className="max-w-5xl rounded-[1.25rem] border border bg-card p-0 overflow-hidden" dir={direction}>
+        <div className="border-b border bg-slate-950 px-6 py-5 text-white">
           <DialogHeader className="space-y-2 text-right">
             <DialogTitle className="text-2xl font-black">
               {language === "ar" ? "معاينة الأقسام قبل الاشتراك" : "Department Preview Before Subscription"}
@@ -221,7 +221,7 @@ export default function DepartmentFeaturePreviewDialog({
         </div>
 
         <div className="grid gap-0 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <aside className="border-b border-slate-100 bg-slate-50 p-4 lg:border-b-0 lg:border-l">
+          <aside className="border-b border bg-muted p-4 lg:border-b-0 lg:border-l">
             <div className="space-y-2">
               {PREVIEW_DEPARTMENTS.map((department) => {
                 const Icon = department.icon;
@@ -234,7 +234,7 @@ export default function DepartmentFeaturePreviewDialog({
                     className={`w-full rounded-2xl border px-4 py-3 text-right transition-colors ${
                       active
                         ? "border-slate-900 bg-slate-900 text-white"
-                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                        : "border bg-card text-slate-700 hover:bg-muted"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-3">
@@ -255,7 +255,7 @@ export default function DepartmentFeaturePreviewDialog({
           </aside>
 
           <div className="p-6">
-            <div className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
+            <div className="rounded-[1rem] border border bg-muted p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2 text-right">
                   <div className="text-2xl font-black text-slate-950">
@@ -265,14 +265,14 @@ export default function DepartmentFeaturePreviewDialog({
                     {language === "ar" ? currentDepartment.subtitleAr : currentDepartment.subtitleEn}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-[11px] font-black text-slate-500">
+                <div className="rounded-2xl border border-dashed border-slate-300 bg-card px-4 py-3 text-[11px] font-black text-slate-500">
                   {language === "ar" ? "وضع استعراض بدون إنشاء أو تعديل" : "Read-only mode with no create or edit actions"}
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
                 {(language === "ar" ? currentDepartment.featuresAr : currentDepartment.featuresEn).map((feature) => (
-                  <span key={feature} className="rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700">
+                  <span key={feature} className="rounded-full border border bg-card px-3 py-2 text-[11px] font-black text-slate-700">
                     {feature}
                   </span>
                 ))}
@@ -295,7 +295,7 @@ export default function DepartmentFeaturePreviewDialog({
                       className={`inline-flex h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-black transition-colors ${
                         active
                           ? "border-slate-900 bg-slate-900 text-white"
-                          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          : "border bg-card text-slate-700 hover:bg-muted"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -307,7 +307,7 @@ export default function DepartmentFeaturePreviewDialog({
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-              <div className="rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="rounded-[1rem] border border bg-card p-5 shadow-sm">
                 <div className="mb-2 text-lg font-black text-slate-950">
                   {language === "ar" ? currentSection.titleAr : currentSection.titleEn}
                 </div>
@@ -317,15 +317,15 @@ export default function DepartmentFeaturePreviewDialog({
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {[1, 2, 3, 4].map((index) => (
-                    <div key={index} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div key={index} className="rounded-2xl border border bg-muted p-4">
                       <div className="text-xs font-black text-slate-400">
                         {language === "ar" ? `بطاقة عرض ${index}` : `Preview card ${index}`}
                       </div>
-                      <div className="mt-2 h-3 w-2/3 rounded-full bg-slate-200" />
+                      <div className="mt-2 h-3 w-2/3 rounded-full bg-muted" />
                       <div className="mt-3 space-y-2">
-                        <div className="h-2.5 rounded-full bg-slate-100" />
-                        <div className="h-2.5 w-5/6 rounded-full bg-slate-100" />
-                        <div className="h-2.5 w-3/4 rounded-full bg-slate-100" />
+                        <div className="h-2.5 rounded-full bg-muted" />
+                        <div className="h-2.5 w-5/6 rounded-full bg-muted" />
+                        <div className="h-2.5 w-3/4 rounded-full bg-muted" />
                       </div>
                     </div>
                   ))}
@@ -333,20 +333,20 @@ export default function DepartmentFeaturePreviewDialog({
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
+                <div className="rounded-[1rem] border border bg-muted p-5">
                   <div className="text-sm font-black text-slate-950">
                     {language === "ar" ? "ما الذي ستحصل عليه" : "What you will get"}
                   </div>
                   <div className="mt-3 space-y-2">
                     {(language === "ar" ? currentDepartment.featuresAr : currentDepartment.featuresEn).slice(0, 4).map((feature) => (
-                      <div key={feature} className="rounded-2xl bg-white px-3 py-3 text-sm font-bold text-slate-700">
+                      <div key={feature} className="rounded-2xl bg-card px-3 py-3 text-sm font-bold text-slate-700">
                         {feature}
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-white p-5">
+                <div className="rounded-[1rem] border border-dashed border-slate-300 bg-card p-5">
                   <div className="text-sm font-black text-slate-950">
                     {language === "ar" ? "بعد تفعيل الاشتراك" : "After subscription activation"}
                   </div>

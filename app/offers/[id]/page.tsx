@@ -256,7 +256,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
   if (!currentUser) {
     return (
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-2 shadow-sm">
+      <div className="bg-card/80 backdrop-blur-sm border border rounded-3xl p-6 text-center space-y-2 shadow-sm">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
         <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
       </div>
@@ -266,7 +266,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
   // A seller looking at their own offer doesn't chat with themselves
   if (currentUser.id === sellerId) {
     return (
-      <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6 text-center space-y-2">
+      <div className="bg-muted border border rounded-3xl p-6 text-center space-y-2">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-bounce" />
         <p className="text-xs font-black text-slate-500">
           {isRtl 
@@ -279,7 +279,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
   if (loading) {
     return (
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 flex items-center justify-center min-h-[300px]">
+      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-8 flex items-center justify-center min-h-[300px]">
         <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -290,9 +290,9 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
     : 'الدعم الفني للوساطة';
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden flex flex-col h-[400px]">
+    <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-md overflow-hidden flex flex-col h-[400px]">
       {/* Header */}
-      <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div className="px-5 py-3 border-b border flex items-center justify-between bg-muted/50">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs uppercase">
@@ -310,7 +310,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
         {roomId && (
           <button
             onClick={() => router.push(`/chat/${roomId}`)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted hover:bg-muted text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
             title="الانتقال إلى صفحة المحادثة الكاملة"
           >
             <MessageSquare className="w-3.5 h-3.5" />
@@ -320,7 +320,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
       </div>
 
       {/* Messages list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/20">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-40">
             <MessageSquare className="w-8 h-8 text-slate-400" />
@@ -339,7 +339,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
                     className={`px-3 py-2 rounded-2xl shadow-sm text-xs ${
                       isOwn
                         ? 'bg-slate-900 text-white rounded-br-none'
-                        : 'bg-white border border-slate-100 text-slate-900 rounded-bl-none'
+                        : 'bg-card/90 backdrop-blur-sm border border text-slate-900 rounded-bl-none'
                     }`}
                   >
                     <p className="font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -359,7 +359,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
       </div>
 
       {/* Input section */}
-      <div className="p-3 border-t border-slate-100 bg-white">
+      <div className="p-3 border-t border bg-card/80 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -367,7 +367,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="اكتب رسالتك هنا..."
-            className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
+            className="flex-1 bg-muted border border rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
           />
           <button
             onClick={sendMessage}
@@ -833,11 +833,11 @@ export default function OfferDetailsPage() {
       case t('offer.new'):
         return 'bg-green-100 text-green-800';
       case t('offer.used'):
-        return 'bg-slate-100 text-blue-800';
+        return 'bg-muted text-blue-800';
       case t('offer.construction'):
         return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-slate-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   };
 
@@ -846,7 +846,7 @@ export default function OfferDetailsPage() {
 
     if (images.length === 0) {
       return (
-        <div className="relative w-full h-[300px] md:h-[480px] bg-slate-100 rounded-[2.5rem] border border-slate-100 flex flex-col items-center justify-center overflow-hidden shadow-sm">
+        <div className="relative w-full h-[300px] md:h-[480px] bg-muted rounded-[1rem] border border flex flex-col items-center justify-center overflow-hidden shadow-sm">
           <Camera className="w-16 h-16 text-slate-300 mb-4 animate-pulse" />
           <p className="text-slate-400 font-bold">{t('offer.noImages')}</p>
         </div>
@@ -858,7 +858,7 @@ export default function OfferDetailsPage() {
     return (
       <div className="space-y-4">
         {/* Main Image Slider */}
-        <div className="relative w-full h-[320px] md:h-[500px] bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg group border border-slate-100">
+        <div className="relative w-full h-[320px] md:h-[500px] bg-slate-900 rounded-[1rem] overflow-hidden shadow-lg group border border">
           <Image
             src={currentImage}
             alt={`${t('offer.imageAlt')} ${currentImageIndex + 1}`}
@@ -876,13 +876,13 @@ export default function OfferDetailsPage() {
             <>
               <button
                 onClick={() => setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)}
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-card/10 hover:bg-card/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={() => setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)}
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-card/10 hover:bg-card/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
@@ -935,7 +935,7 @@ export default function OfferDetailsPage() {
 
     return (
       <div className="space-y-6">
-        <Card className="overflow-hidden border-slate-100 shadow-sm">
+        <Card className="bg-card/80 backdrop-blur-sm overflow-hidden border shadow-sm">
           <CardHeader>
             <CardTitle className="text-2xl">
               {offer.propertyType} في {offer.city}
@@ -948,8 +948,8 @@ export default function OfferDetailsPage() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {highlights.map((item) => (
-                <div key={item.key} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-5 text-center">
-                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm">
+                <div key={item.key} className="rounded-2xl border border bg-muted px-4 py-5 text-center">
+                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-card shadow-sm">
                     {item.key === 'area' ? <MeterIcon className="w-10 h-10 text-slate-600" /> : <item.icon className="w-5 h-5 text-slate-600" />}
                   </div>
                   <div className="text-lg font-black text-slate-900 break-words">{item.value}</div>
@@ -962,7 +962,7 @@ export default function OfferDetailsPage() {
 
         {/* Tabbed view for Details and Attachments */}
         <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-slate-100/80 p-1 rounded-2xl">
+          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-muted/80 p-1 rounded-2xl">
             <TabsTrigger value="details" className="rounded-xl text-sm font-black transition-all">
               {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
             </TabsTrigger>
@@ -972,7 +972,7 @@ export default function OfferDetailsPage() {
           </TabsList>
 
           <TabsContent value="details" className="space-y-6 outline-none focus:outline-none">
-            <Card className="border-slate-100 shadow-sm">
+            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
               <CardHeader>
                 <CardTitle>{t('offer.details')}</CardTitle>
                 <CardDescription>
@@ -982,7 +982,7 @@ export default function OfferDetailsPage() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="rounded-2xl border border bg-muted p-4">
                       <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                         <Building className="w-5 h-5" />
                         {t('offer.basic')}
@@ -1027,7 +1027,7 @@ export default function OfferDetailsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="rounded-2xl border border bg-muted p-4">
                       <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                         <MapPin className="w-5 h-5" />
                         {t('offer.location')}
@@ -1056,7 +1056,7 @@ export default function OfferDetailsPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="rounded-2xl border border bg-muted p-4">
                       <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                         <DoorOpen className="w-5 h-5" />
                         {t('offer.facilities')}
@@ -1072,7 +1072,7 @@ export default function OfferDetailsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div className="rounded-2xl border border bg-muted p-4">
                       <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                         <Award className="w-5 h-5" />
                         {t('offer.features')}
@@ -1101,7 +1101,7 @@ export default function OfferDetailsPage() {
           </TabsContent>
 
           <TabsContent value="media" className="outline-none focus:outline-none">
-            <Card className="border-slate-100 shadow-sm">
+            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
               <CardHeader>
                 <CardTitle>{language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}</CardTitle>
                 <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
@@ -1115,13 +1115,13 @@ export default function OfferDetailsPage() {
                     </h3>
                     <div className="space-y-2">
                       {offer.video3d && (
-                        <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
                           <span className="text-sm font-medium">3D Video</span>
                           <Download className="w-4 h-4" />
                         </a>
                       )}
                       {(offer.threeDVideos || []).map((video, index) => (
-                        <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
                           <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
                           <Download className="w-4 h-4" />
                         </a>
@@ -1138,7 +1138,7 @@ export default function OfferDetailsPage() {
                     </h3>
                     <div className="space-y-2">
                       {offer.propertyDocuments.map((doc, index) => (
-                        <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-slate-50">
+                        <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
                           <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
                           <Download className="w-4 h-4" />
                         </a>
@@ -1153,14 +1153,14 @@ export default function OfferDetailsPage() {
                       <Camera className="w-5 h-5" />
                       {language === 'ar' ? 'صورة الشيك' : 'Check image'}
                     </h3>
-                    <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-slate-50">
+                    <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-muted">
                       <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
                       <Download className="w-4 h-4" />
                     </a>
                   </div>
                 )}
                 {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
-                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-bold text-slate-400">
+                  <div className="rounded-2xl border border-dashed border bg-muted p-8 text-center text-sm font-bold text-slate-400">
                     {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
                   </div>
                 )}
@@ -1182,7 +1182,7 @@ export default function OfferDetailsPage() {
     const userIsSeller = isUserSeller();
 
     return (
-      <Card>
+      <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
@@ -1191,7 +1191,7 @@ export default function OfferDetailsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
               {seller?.profileImage ? (
                 <Image
                   src={seller.profileImage}
@@ -1280,7 +1280,7 @@ export default function OfferDetailsPage() {
                     </Button>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
+                <div className="rounded-xl border border bg-muted/80 p-3">
                   <div className="w-full [&>button]:w-full [&>button]:justify-center [&>button]:bg-slate-700 [&>button]:py-2.5 [&>button]:font-medium [&>button]:hover:bg-slate-800">
                     {offer.user ? (
                       <ChatButton
@@ -1292,7 +1292,7 @@ export default function OfferDetailsPage() {
                         userName={user.name || user.username || user.email}
                       />
                     ) : (
-                      <div className="rounded-lg bg-white px-4 py-3 text-center text-sm font-medium text-slate-500">
+                      <div className="rounded-lg bg-card px-4 py-3 text-center text-sm font-medium text-slate-500">
                         {language === 'ar' ? 'بيانات المعلن غير متوفرة لبدء المحادثة' : 'Advertiser data is not available for chat'}
                       </div>
                     )}
@@ -1351,7 +1351,7 @@ export default function OfferDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+      <div className="min-h-screen bg-muted p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {renderLoadingState()}
         </div>
@@ -1361,7 +1361,7 @@ export default function OfferDetailsPage() {
 
   if (error || !offer) {
     return (
-      <div className="min-h-screen bg-slate-50 p-4 md:p-6">
+      <div className="min-h-screen bg-muted p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {renderErrorState()}
         </div>
@@ -1370,7 +1370,7 @@ export default function OfferDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6" dir="rtl">
+    <div className="min-h-screen bg-muted p-4 md:p-6" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -1483,12 +1483,12 @@ export default function OfferDetailsPage() {
             {renderSellerInfo()}
 
             {/* Quick Actions */}
-            <Card>
+            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
               <CardHeader>
                 <CardTitle>خيارات سريعة</CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
-                <div className="rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-4">
+                <div className="rounded-2xl border border bg-gradient-to-br from-slate-50 to-white p-4">
                   <div className="flex items-center justify-between">
                     <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">طلب خدمة</p>
                     <span className="text-[11px] text-gray-400">اختر الخدمة المناسبة</span>
@@ -1507,10 +1507,10 @@ export default function OfferDetailsPage() {
                     <Button
                       key={svc.type}
                       variant="outline"
-                      className="h-14 w-full justify-start gap-3 rounded-2xl border-slate-200 bg-white text-sm text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md focus-visible:ring-2 focus-visible:ring-slate-300"
+                      className="h-14 w-full justify-start gap-3 rounded-2xl border bg-card text-sm text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-muted hover:shadow-md focus-visible:ring-2 focus-visible:ring-slate-300"
                       onClick={() => router.push(`/services/form?type=${svc.type}`)}
                     >
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-600">
                         {svc.icon}
                       </span>
                       <span className="font-semibold">{t(`services.${svc.type}`)}</span>
@@ -1521,7 +1521,7 @@ export default function OfferDetailsPage() {
             </Card>
 
             {/* Safety Tips */}
-            <Card>
+            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-green-600" />
@@ -1569,7 +1569,7 @@ export default function OfferDetailsPage() {
           {offer?.user && (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
                   <User className="w-6 h-6 text-gray-600" />
                 </div>
                 <div>

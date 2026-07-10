@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +19,10 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+};
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -36,6 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: appName,
       description,
+      manifest: "/manifest.json",
     };
   } catch {
     // Fall back to static metadata when the API is unavailable at build time.
@@ -44,6 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "الوساطة الرقمية",
     description: "الوساطة الرقمية - منصة عقارية شاملة",
+    manifest: "/manifest.json",
   };
 }
 
@@ -55,7 +61,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
         suppressHydrationWarning
       >
         <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none opacity-15">

@@ -174,7 +174,7 @@ export default function TransactionsPage() {
     const styles: Record<string, string> = {
       completed: "bg-green-100 text-green-700 hover:bg-green-100",
       failed: "bg-red-100 text-red-700 hover:bg-red-100",
-      cancelled: "bg-slate-100 text-slate-700 hover:bg-slate-100",
+      cancelled: "bg-muted text-slate-700 hover:bg-muted",
       pending: "bg-amber-100 text-amber-700 hover:bg-amber-100",
     };
     return <Badge className={styles[status] || styles.pending}>{status || "pending"}</Badge>;
@@ -302,7 +302,7 @@ export default function TransactionsPage() {
         <button
           type="button"
           onClick={() => { setEditingId(null); setForm(emptyForm); setIsModalOpen(true); }}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800 transition-colors self-start md:self-auto"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-stone-400/10 hover:bg-slate-800 transition-colors self-start md:self-auto"
         >
           <Plus className="h-4 w-4" />
           {isRtl ? "إضافة عملية" : "Add Transaction"}
@@ -315,27 +315,27 @@ export default function TransactionsPage() {
             placeholder={t("admin.search") || (isRtl ? "بحث" : "Search")}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className={`h-12 w-full rounded-2xl border border-slate-200 bg-white px-11 text-sm font-bold outline-none focus:border-slate-950`}
+            className={`h-12 w-full rounded-2xl border border bg-card px-11 text-sm font-bold outline-none focus:border-slate-950`}
           />
         </div>
-        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold">
           <option value="all">{isRtl ? "كل الأنواع" : "All types"}</option>
           {transactionTypes.map((type) => <option key={type} value={type}>{transactionTypeLabel(type)}</option>)}
         </select>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold">
           <option value="all">{isRtl ? "كل الحالات" : "All statuses"}</option>
           {transactionStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
         </select>
-        <select value={paymentMethodFilter} onChange={(e) => setPaymentMethodFilter(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold">
+        <select value={paymentMethodFilter} onChange={(e) => setPaymentMethodFilter(e.target.value)} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold">
           <option value="all">{isRtl ? "كل طرق الدفع" : "All payments"}</option>
           {paymentMethods.filter(Boolean).map((method) => <option key={method} value={method}>{method}</option>)}
           <option value="">{isRtl ? "غير محدد" : "None"}</option>
         </select>
-        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
-        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
-        <input type="number" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder={isRtl ? "أقل مبلغ" : "Min"} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
-        <input type="number" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder={isRtl ? "أعلى مبلغ" : "Max"} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-bold" />
-        <button type="button" onClick={() => { setSearch(""); setTypeFilter("all"); setStatusFilter("all"); setPaymentMethodFilter("all"); setDateFrom(""); setDateTo(""); setMinAmount(""); setMaxAmount(""); }} className="h-12 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-black">
+        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold" />
+        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold" />
+        <input type="number" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder={isRtl ? "أقل مبلغ" : "Min"} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold" />
+        <input type="number" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder={isRtl ? "أعلى مبلغ" : "Max"} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-bold" />
+        <button type="button" onClick={() => { setSearch(""); setTypeFilter("all"); setStatusFilter("all"); setPaymentMethodFilter("all"); setDateFrom(""); setDateTo(""); setMinAmount(""); setMaxAmount(""); }} className="h-12 rounded-2xl border border bg-card px-3 text-sm font-black">
           {isRtl ? "مسح" : "Clear"}
         </button>
         </div>
@@ -343,9 +343,9 @@ export default function TransactionsPage() {
 
    
 
-      <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
         <Table>
-          <TableHeader className="bg-slate-50/50">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="py-5 font-black text-slate-900">{isRtl ? "المعرف" : "ID"}</TableHead>
               <TableHead className="py-5 font-black text-slate-900">{isRtl ? "النوع" : "Type"}</TableHead>
@@ -372,11 +372,11 @@ export default function TransactionsPage() {
               </TableRow>
             ) : (
               filteredTransactions.map((tx) => (
-                <TableRow key={tx.id} className="whitespace-nowrap hover:bg-slate-50/50">
+                <TableRow key={tx.id} className="whitespace-nowrap hover:bg-muted/50">
                   <TableCell className="font-mono text-xs text-slate-500">#{String(tx.id).substring(0, 8)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                         {getTypeIcon(tx.type)}
                       </div>
                       <span className="font-bold capitalize text-slate-700">{transactionTypeLabel(tx.type)}</span>
@@ -407,11 +407,11 @@ export default function TransactionsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => setViewingTransaction(tx)} className="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300">
+                      <button type="button" onClick={() => setViewingTransaction(tx)} className="inline-flex h-9 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300">
                         <Eye className="h-3.5 w-3.5" />
                         {isRtl ? "عرض" : "View"}
                       </button>
-                      <button type="button" onClick={() => startEdit(tx)} className="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-100 px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300">
+                      <button type="button" onClick={() => startEdit(tx)} className="inline-flex h-9 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300">
                         <Edit2 className="h-3.5 w-3.5" />
                         {isRtl ? "تعديل" : "Edit"}
                       </button>
@@ -431,10 +431,10 @@ export default function TransactionsPage() {
       {/* Create / Edit Transaction Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
 
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+            <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {editingId ? (isRtl ? "تعديل عملية" : "Edit Transaction") : (isRtl ? "إضافة عملية جديدة" : "New Transaction")}
@@ -443,7 +443,7 @@ export default function TransactionsPage() {
                   {isRtl ? "أدخل بيانات العملية المالية" : "Fill in the transaction details below"}
                 </p>
               </div>
-              <button onClick={resetForm} className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all">
+              <button onClick={resetForm} className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -454,26 +454,26 @@ export default function TransactionsPage() {
                 {/* Type */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
-                  <select value={form.type} onChange={(e) => setForm((c) => ({ ...c, type: e.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                  <select value={form.type} onChange={(e) => setForm((c) => ({ ...c, type: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {transactionTypes.map((type) => <option key={type} value={type}>{transactionTypeLabel(type)}</option>)}
                   </select>
                 </div>
                 {/* Amount */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
-                  <input type="number" min="0" value={form.amount} onChange={(e) => setForm((c) => ({ ...c, amount: e.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" />
+                  <input type="number" min="0" value={form.amount} onChange={(e) => setForm((c) => ({ ...c, amount: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" />
                 </div>
                 {/* Status */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
-                  <select value={form.status} onChange={(e) => setForm((c) => ({ ...c, status: e.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                  <select value={form.status} onChange={(e) => setForm((c) => ({ ...c, status: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {transactionStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 {/* Payment Method */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "طريقة الدفع" : "Payment Method"}</span>
-                  <select value={form.paymentMethod} onChange={(e) => setForm((c) => ({ ...c, paymentMethod: e.target.value }))} className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
+                  <select value={form.paymentMethod} onChange={(e) => setForm((c) => ({ ...c, paymentMethod: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {paymentMethods.map((m) => <option key={m || "empty"} value={m}>{m || (isRtl ? "غير محدد" : "None")}</option>)}
                   </select>
                 </div>
@@ -494,7 +494,7 @@ export default function TransactionsPage() {
                       type={inputType}
                       value={form[key] || ""}
                       onChange={(e) => setForm((c) => ({ ...c, [key]: e.target.value }))}
-                      className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
+                      className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors"
                     />
                   </div>
                 ))}
@@ -502,8 +502,8 @@ export default function TransactionsPage() {
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end gap-3 border-t border-slate-50 bg-slate-50/30 px-8 py-5">
-              <button type="button" onClick={resetForm} className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-colors">
+            <div className="flex justify-end gap-3 border-t border bg-muted/30 px-8 py-5">
+              <button type="button" onClick={resetForm} className="inline-flex h-11 items-center justify-center rounded-xl border border bg-card px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-muted transition-colors">
                 {isRtl ? "إلغاء" : "Cancel"}
               </button>
               <button type="button" onClick={saveTransaction} disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50 hover:bg-slate-800 transition-colors">
@@ -518,9 +518,9 @@ export default function TransactionsPage() {
       {/* Viewing Transaction Details Modal */}
       {viewingTransaction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-50 bg-slate-50/50 px-8 py-6">
+            <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {isRtl ? "تفاصيل العملية المالية" : "Transaction Details"}
@@ -529,7 +529,7 @@ export default function TransactionsPage() {
               </div>
               <button
                 onClick={() => setViewingTransaction(null)}
-                className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -542,7 +542,7 @@ export default function TransactionsPage() {
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                       {getTypeIcon(viewingTransaction.type)}
                     </div>
                     <p className="text-sm font-bold text-slate-900">{transactionTypeLabel(viewingTransaction.type)}</p>
@@ -570,7 +570,7 @@ export default function TransactionsPage() {
                 </div>
 
                 {/* From User */}
-                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between">
+                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "من" : "From"}</span>
                     {viewingTransaction.fromUser ? (
@@ -598,7 +598,7 @@ export default function TransactionsPage() {
                 </div>
 
                 {/* To User */}
-                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-slate-50/50 border border-slate-100 flex items-center justify-between">
+                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إلى" : "To"}</span>
                     {viewingTransaction.toUser ? (
@@ -679,7 +679,7 @@ export default function TransactionsPage() {
                 {/* Description */}
                 <div className="sm:col-span-2 space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الوصف" : "Description"}</span>
-                  <p className="text-sm font-medium text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100 whitespace-pre-wrap">
+                  <p className="text-sm font-medium text-slate-700 bg-muted p-4 rounded-2xl border border whitespace-pre-wrap">
                     {viewingTransaction.description || (isRtl ? "لا يوجد وصف" : "No description")}
                   </p>
                 </div>
@@ -687,7 +687,7 @@ export default function TransactionsPage() {
             </div>
 
             {/* Footer */}
-            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-5 flex justify-end">
+            <div className="border-t border bg-muted/30 px-8 py-5 flex justify-end">
               <button
                 onClick={() => setViewingTransaction(null)}
                 className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 transition-colors"

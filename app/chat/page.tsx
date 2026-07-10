@@ -152,9 +152,9 @@ export default function NormalChatPage() {
   const unreadTotal = chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6" dir="rtl">
+    <div className="min-h-screen bg-muted px-4 py-6" dir="rtl">
       <div className="mx-auto max-w-5xl space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white">
@@ -166,11 +166,11 @@ export default function NormalChatPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+            <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
               <p className="text-2xl font-black tabular-nums text-slate-950">{chats.length.toLocaleString("ar-SA")}</p>
               <p className="text-[10px] font-black text-slate-400">محادثة</p>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+            <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
               <p className="text-2xl font-black tabular-nums text-slate-950">{unreadTotal.toLocaleString("ar-SA")}</p>
               <p className="text-[10px] font-black text-slate-400">غير مقروءة</p>
             </div>
@@ -193,13 +193,13 @@ export default function NormalChatPage() {
           placeholder="ابحث باسم العميل، البريد، أو اسم المحادثة..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-14 w-full rounded-xl border border-slate-200 bg-white pr-14 pl-4 text-sm font-bold shadow-sm outline-none transition-all focus:border-slate-950"
+          className="h-14 w-full rounded-xl border border bg-card pr-14 pl-4 text-sm font-bold shadow-sm outline-none transition-all focus:border-slate-950"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-3">
         {filteredChats.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-14 text-center shadow-sm">
+          <div className="rounded-2xl border border bg-card p-14 text-center shadow-sm">
             <MessageCircle className="mx-auto mb-4 h-16 w-16 text-slate-200" />
             <h3 className="text-lg font-black text-slate-800">لا توجد محادثات مطابقة</h3>
             <p className="mt-1 text-sm font-bold text-slate-400">جرّب بحثًا آخر أو ابدأ محادثة من صفحة العرض أو الطلب.</p>
@@ -210,12 +210,12 @@ export default function NormalChatPage() {
               key={chat.id}
               whileHover={{ y: -2, scale: 1.01 }}
               onClick={() => router.push(`/chat/${chat.id}`)}
-              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-white p-5 transition-all hover:border-slate-950 hover:shadow-sm ${
-                chat.unreadCount > 0 ? "border-slate-950" : "border-slate-200"
+              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-card p-5 transition-all hover:border-slate-950 hover:shadow-sm ${
+                chat.unreadCount > 0 ? "border-slate-950" : "border"
               }`}
             >
               <div className="relative shrink-0">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 transition-colors group-hover:bg-slate-950">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border bg-muted transition-colors group-hover:bg-slate-950">
                   <User className="h-7 w-7 text-slate-400 transition-colors group-hover:text-white" />
                 </div>
                 {chat.unreadCount > 0 && (

@@ -31,8 +31,8 @@ export function ConfirmDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
-        <div className="border-b border-slate-100 bg-gradient-to-br from-white via-slate-50 to-slate-100/80 px-6 pb-5 pt-6">
-          <div className="mb-4 inline-flex size-12 items-center justify-center rounded-2xl border border-white bg-white text-slate-950 shadow-sm">
+        <div className="border-b border bg-gradient-to-br from-white via-slate-50 to-slate-100/80 px-6 pb-5 pt-6">
+          <div className="mb-4 inline-flex size-12 items-center justify-center rounded-2xl border border-white bg-card text-slate-950 shadow-sm">
             {icon || <Sparkles className="h-5 w-5" />}
           </div>
           <DialogHeader>
@@ -42,7 +42,7 @@ export function ConfirmDialog({
         </div>
         <div className="px-6 pb-6 pt-5">
         <DialogFooter>
-          <Button type="button" variant="outline" className="h-11 rounded-2xl border-slate-200 px-5 font-bold" onClick={() => onOpenChange(false)} disabled={loading}>
+          <Button type="button" variant="outline" className="h-11 rounded-2xl border px-5 font-bold" onClick={() => onOpenChange(false)} disabled={loading}>
             {cancelLabel}
           </Button>
           <Button

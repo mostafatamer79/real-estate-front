@@ -145,7 +145,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
     setParty: React.Dispatch<React.SetStateAction<PartyInfo>>,
     label: string
   ) => (
-    <div className="space-y-4 p-6 bg-slate-50 rounded-lg">
+    <div className="space-y-4 p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -323,7 +323,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
           <div className="space-y-2">
             <p className="text-sm font-medium">{t('legal.filesUploaded')}:</p>
             {uploadedFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
                 <span className="text-sm truncate">{file.name}</span>
                 <button
                   type="button"

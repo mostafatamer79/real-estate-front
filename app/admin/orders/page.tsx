@@ -183,11 +183,11 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
     }
   };
 
-  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
   const pillBtn = (active: boolean) =>
     `h-10 px-4 rounded-2xl text-xs font-black transition-all border ${
-      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
+      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-card text-slate-500 border hover:border"
     }`;
 
   const selectRegisteredUser = (u: any) => {
@@ -207,7 +207,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-4xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -222,7 +222,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Client Selection Section */}
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
@@ -230,7 +230,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   اختر عميلًا مسجلًا أو أدخل بيانات عميل مجهول.
                 </p>
               </div>
-              <div className="flex p-1 bg-white rounded-2xl border border-slate-100 w-fit">
+              <div className="flex p-1 bg-card rounded-2xl border border w-fit">
                 <button
                   type="button"
                   className={pillBtn(clientMode === "registered")}
@@ -265,14 +265,14 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                         setUserSearch(v);
                         if (form.userId) setForm((f: any) => ({ ...f, userId: "" }));
                       }}
-                      className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl pr-10 pl-10 text-sm font-bold outline-none transition-all"
+                      className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl pr-10 pl-10 text-sm font-bold outline-none transition-all"
                       placeholder="ابحث بالاسم أو الجوال..."
                     />
                     {(userSearch || form.userId) && (
                       <button
                         type="button"
                         onClick={clearRegisteredUser}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-300 hover:text-slate-950 hover:bg-slate-50 transition-colors"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-300 hover:text-slate-950 hover:bg-muted transition-colors"
                         title="مسح"
                       >
                         <X className="w-4 h-4" />
@@ -281,7 +281,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   </div>
 
                   {userSearch && !form.userId && (
-                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                       {loadingUsers ? (
                         <div className="p-4 text-center text-[10px] font-bold text-slate-400">جارٍ التحميل...</div>
                       ) : filteredUsers.length > 0 ? (
@@ -290,7 +290,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                             key={u.id}
                             type="button"
                             onClick={() => selectRegisteredUser(u)}
-                            className="w-full px-4 py-3 text-right hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0"
+                            className="w-full px-4 py-3 text-right hover:bg-muted flex items-center justify-between border-b border last:border-0"
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <div className="w-8 h-8 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black shrink-0">
@@ -317,7 +317,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
                 <div className="space-y-1">
                   <label className={labelCls}>النتيجة</label>
-                  <div className="h-11 px-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                  <div className="h-11 px-4 rounded-xl border border bg-card flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-950 truncate">
                       {form.userId ? userSearch : "لم يتم اختيار عميل"}
                     </span>
@@ -336,8 +336,8 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   <input
                     value={form.clientName}
                     onChange={(e) => setForm((f: any) => ({ ...f, clientName: e.target.value }))}
-                    className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
-                    placeholder="مثال: محمد أحمد"
+                    className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                    placeholder=": محمد أحمد"
                   />
                 </div>
                 <div className="space-y-1">
@@ -345,7 +345,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   <input
                     value={form.clientPhone}
                     onChange={(e) => setForm((f: any) => ({ ...f, clientPhone: e.target.value }))}
-                    className="w-full h-11 bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                    className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
                     placeholder="05xxxxxxxx"
                     dir="ltr"
                   />
@@ -373,13 +373,13 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف الطلب</label>
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl h-11 items-center">
+                <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
                   <button
                     type="button"
                     onClick={() => handleCategoryChange("residential")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -390,7 +390,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     onClick={() => handleCategoryChange("commercial")}
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
-                        ? "bg-white text-slate-950 shadow-sm"
+                        ? "bg-card text-slate-950 shadow-sm"
                         : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
@@ -471,7 +471,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   value={form.propertyAge}
                   onChange={e => setForm((f: any) => ({ ...f, propertyAge: e.target.value }))}
                   className={inputCls}
-                  placeholder="مثال: جديد، أقل من 5 سنوات..."
+                  placeholder=": جديد، أقل من 5 سنوات..."
                 />
               </div>
               <div className="space-y-1">
@@ -569,7 +569,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-6">
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasGarage}
@@ -579,7 +579,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     <span className="text-xs font-bold text-slate-700">كراج</span>
                   </label>
 
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasPool}
@@ -589,7 +589,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     <span className="text-xs font-bold text-slate-700">مسبح</span>
                   </label>
 
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasElevator}
@@ -599,7 +599,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     <span className="text-xs font-bold text-slate-700">مصعد</span>
                   </label>
 
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasMaidRoom}
@@ -609,7 +609,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
                   </label>
 
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasRoof}
@@ -619,7 +619,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     <span className="text-xs font-bold text-slate-700">سطح</span>
                   </label>
 
-                  <label className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
                       checked={form.hasExternalAnnex}
@@ -639,12 +639,12 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
               value={form.additionalDetails}
               onChange={e => setForm((f: any) => ({ ...f, additionalDetails: e.target.value }))}
               rows={3}
-              className="w-full bg-slate-50 border border-transparent focus:border-slate-950 rounded-xl p-3 text-sm font-bold outline-none transition-all resize-none"
+              className="w-full bg-muted border border-transparent focus:border-slate-950 rounded-xl p-3 text-sm font-bold outline-none transition-all resize-none"
               placeholder="اكتب أي متطلبات خاصة أخرى..."
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-slate-950 text-white hover:bg-slate-900 text-sm font-black shadow-xl shadow-slate-900/10">
+          <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-slate-950 text-white hover:bg-slate-900 text-sm font-black shadow-xl shadow-stone-400/10">
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (initialData ? "تحديث الطلب" : "إرسال الطلب")}
           </Button>
         </form>
@@ -686,7 +686,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-md rounded-2xl p-8 shadow-2xl relative">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-md rounded-2xl p-8 shadow-2xl relative">
                 <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
                 
                 <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2">
@@ -696,10 +696,10 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
-                        <Button onClick={() => handleAssign(currentUser?.id)} variant="outline" className="h-12 rounded-xl border-slate-100 hover:border-slate-950 font-bold gap-2">
+                        <Button onClick={() => handleAssign(currentUser?.id)} variant="outline" className="h-12 rounded-xl border hover:border-slate-950 font-bold gap-2">
                             <UserIcon className="w-4 h-4" /> أنا (Me)
                         </Button>
-                        <Button onClick={() => handleAssign(null)} variant="outline" className="h-12 rounded-xl border-slate-100 hover:border-slate-950 font-bold gap-2">
+                        <Button onClick={() => handleAssign(null)} variant="outline" className="h-12 rounded-xl border hover:border-slate-950 font-bold gap-2">
                             <EyeOff className="w-4 h-4" /> مجهول (None)
                         </Button>
                     </div>
@@ -710,7 +710,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
                             value={search} 
                             onChange={e => setSearch(e.target.value)} 
                             placeholder="ابحث عن موظف أو عميل..." 
-                            className="pr-10 h-12 rounded-xl bg-slate-50 border-transparent focus:border-slate-950" 
+                            className="pr-10 h-12 rounded-xl bg-muted border-transparent focus:border-slate-950" 
                         />
                     </div>
 
@@ -719,7 +719,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
                             <button 
                                 key={u.id} 
                                 onClick={() => handleAssign(u.id)}
-                                className="w-full p-3 rounded-xl hover:bg-slate-50 border border-slate-50 flex items-center justify-between transition-all group"
+                                className="w-full p-3 rounded-xl hover:bg-muted border border flex items-center justify-between transition-all group"
                             >
                                 <div className="text-right">
                                     <p className="text-sm font-bold text-slate-900">{u.firstName} {u.lastName}</p>
@@ -878,15 +878,15 @@ export default function OrdersPage() {
       case 'in_progress': return <Badge className="bg-blue-50 text-blue-600 border-blue-100 font-bold px-3 py-1 rounded-full ring-1 ring-blue-200/50">قيد المعالجة</Badge>;
       case 'completed': return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-bold px-3 py-1 rounded-full ring-1 ring-emerald-200/50">مكتمل</Badge>;
       case 'cancelled': return <Badge className="bg-rose-50 text-rose-600 border-rose-100 font-bold px-3 py-1 rounded-full ring-1 ring-rose-200/50">ملغي</Badge>;
-      default: return <Badge className="bg-slate-50 text-slate-400 border-slate-100 font-bold px-3 py-1 rounded-full">{status}</Badge>;
+      default: return <Badge className="bg-muted text-slate-400 border font-bold px-3 py-1 rounded-full">{status}</Badge>;
     }
   };
 
   const stats = [
-    { label: "إجمالي الطلبات", value: orders.length, icon: ShoppingBag, color: "bg-slate-100 text-slate-700" },
-    { label: "طلبات معلقة", value: orders.filter(o => o.status === 'pending').length, icon: Clock, color: "bg-slate-100 text-slate-700" },
-    { label: "قيد العمل", value: orders.filter(o => o.status === 'in_progress').length, icon: Play, color: "bg-slate-100 text-slate-700" },
-    { label: "طلبات مكتملة", value: orders.filter(o => o.status === 'completed').length, icon: CheckCircle, color: "bg-slate-100 text-slate-700" },
+    { label: "إجمالي الطلبات", value: orders.length, icon: ShoppingBag, color: "bg-muted text-slate-700" },
+    { label: "طلبات معلقة", value: orders.filter(o => o.status === 'pending').length, icon: Clock, color: "bg-muted text-slate-700" },
+    { label: "قيد العمل", value: orders.filter(o => o.status === 'in_progress').length, icon: Play, color: "bg-muted text-slate-700" },
+    { label: "طلبات مكتملة", value: orders.filter(o => o.status === 'completed').length, icon: CheckCircle, color: "bg-muted text-slate-700" },
   ];
 
   return (
@@ -908,7 +908,7 @@ export default function OrdersPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((s, i) => (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="bg-card p-5 rounded-2xl border border shadow-sm flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl ${s.color} flex items-center justify-center shrink-0`}>
                     <s.icon className="w-6 h-6" />
                 </div>
@@ -921,45 +921,45 @@ export default function OrdersPage() {
       </div>
 
       {/* Filters & Table */}
-      <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-50 grid grid-cols-1 gap-3 md:grid-cols-4 xl:grid-cols-7">
+      <div className="bg-card border border rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-4 xl:grid-cols-7">
             <div className="relative w-full md:col-span-2">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-white border-slate-100 focus:border-slate-950" />
+                <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-card border focus:border-slate-950" />
             </div>
             <div className="flex items-center gap-3 w-full md:col-span-2">
-                <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl">
+                <div className="flex items-center gap-2 p-1.5 bg-muted rounded-2xl">
                     {['all', 'pending', 'in_progress', 'completed'].map(s => (
-                        <button key={s} onClick={() => setStatusFilter(s)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${statusFilter === s ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                        <button key={s} onClick={() => setStatusFilter(s)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${statusFilter === s ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                             {s === 'all' ? 'الكل' : s === 'pending' ? 'المعلق' : s === 'in_progress' ? 'قيد العمل' : 'المكتمل'}
                         </button>
                     ))}
                 </div>
             </div>
-            <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
+            <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold cursor-pointer">
               <option value="all">الكل (سكني/تجاري)</option>
               <option value="residential">سكني</option>
               <option value="commercial">تجاري</option>
             </select>
-            <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
+            <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold cursor-pointer">
               <option value="all">كل الطلبات</option>
               <option value="my_orders">طلباتي فقط</option>
             </select>
-            <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold cursor-pointer">
+            <select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold cursor-pointer">
               <option value="all">كل التعيينات</option>
               <option value="assigned">معين</option>
               <option value="unassigned">غير معين</option>
             </select>
-            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
-            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-bold" />
-            <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="h-11 rounded-xl border border-slate-100 bg-white px-3 text-sm font-black">
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold" />
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-11 rounded-xl border border bg-card px-3 text-sm font-bold" />
+            <button type="button" onClick={() => { setSearch(""); setStatusFilter("all"); setPropertyTypeFilter("all"); setPublisherFilter("all"); setAssignmentFilter("all"); setDateFrom(""); setDateTo(""); }} className="h-11 rounded-xl border border bg-card px-3 text-sm font-black">
               مسح
             </button>
         </div>
 
         <div className="overflow-x-auto">
             <Table>
-                <TableHeader className="bg-slate-50/50">
+                <TableHeader className="bg-muted/50">
                     <TableRow>
                         <TableHead className="w-20 text-center font-black py-6">ID</TableHead>
                         <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">نوع العقار</TableHead>
@@ -977,11 +977,11 @@ export default function OrdersPage() {
                     ) : filteredOrders.length === 0 ? (
                         <TableRow><TableCell colSpan={8} className="py-20 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</TableCell></TableRow>
                     ) : paginatedOrders.map(order => (
-                        <TableRow key={order.id} className="group hover:bg-slate-50/50 transition-colors">
+                        <TableRow key={order.id} className="group hover:bg-muted/50 transition-colors">
                             <TableCell className="text-center font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-slate-950 transition-all border border-transparent group-hover:border-slate-100">
+                                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-400 group-hover:bg-card group-hover:text-slate-950 transition-all border border-transparent group-hover:border">
                                         <Building className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -1005,7 +1005,7 @@ export default function OrdersPage() {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 italic">
-                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-300">
+                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-300">
                                             <UserIcon className="w-4 h-4" />
                                         </div>
                                         <div className="text-right">
@@ -1022,8 +1022,8 @@ export default function OrdersPage() {
                                         {order.city} • {order.neighborhood}
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">{order.area} م²</span>
-                                        {order.rooms > 0 && <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
+                                        <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
+                                        {order.rooms > 0 && <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
                                     </div>
                                 </div>
                             </TableCell>
@@ -1048,11 +1048,11 @@ export default function OrdersPage() {
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100">
+                                        <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-muted">
                                             <MoreVertical className="w-5 h-5 text-slate-400" />
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border-slate-100">
+                                    <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border">
                                         {(order.user?.id || order.userId) && (
                                             <DropdownMenuItem onClick={() => handleOpenChat(order.user?.id || order.userId)} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
                                                 <MessageSquare className="w-4 h-4" /> مراسلة العميل
@@ -1067,7 +1067,7 @@ export default function OrdersPage() {
                                         <DropdownMenuItem onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="rounded-xl font-bold py-3 text-slate-700 gap-3">
                                             <UserCheck className="w-4 h-4" /> تغيير المسؤول
                                         </DropdownMenuItem>
-                                        <DropdownMenuSeparator className="bg-slate-50 my-1" />
+                                        <DropdownMenuSeparator className="bg-muted my-1" />
                                         <div className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
                                         {['pending', 'in_progress', 'completed', 'cancelled'].map(s => (
                                             <DropdownMenuItem key={s} onClick={() => handleUpdateStatus(order.id, s)} className="rounded-xl font-bold py-2 text-slate-600 hover:text-slate-950 gap-3">
@@ -1076,7 +1076,7 @@ export default function OrdersPage() {
                                                 {order.status === s && <Check className="w-4 h-4 ms-auto text-slate-950" />}
                                             </DropdownMenuItem>
                                         ))}
-                                        <DropdownMenuSeparator className="bg-slate-50 my-1" />
+                                        <DropdownMenuSeparator className="bg-muted my-1" />
                                         <DropdownMenuItem onClick={() => handleDelete(order.id)} className="rounded-xl font-bold py-3 text-rose-600 hover:bg-rose-50 gap-3">
                                             <Trash2 className="w-4 h-4" /> حذف الطلب
                                         </DropdownMenuItem>

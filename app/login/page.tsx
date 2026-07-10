@@ -177,7 +177,7 @@ export default function SignIn({ onClose }: SignInProps) {
                       disabled={isLoading}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
                         !isPhoneMode
-                          ? "bg-white/10 text-white shadow-lg"
+                          ? "bg-card/10 text-white shadow-lg"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
@@ -193,7 +193,7 @@ export default function SignIn({ onClose }: SignInProps) {
                       disabled={isLoading}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
                         isPhoneMode
-                          ? "bg-white/10 text-white shadow-lg"
+                          ? "bg-card/10 text-white shadow-lg"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
@@ -274,7 +274,7 @@ export default function SignIn({ onClose }: SignInProps) {
                 className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all ${
                   isFormValid && !isLoading
                     ? "bg-slate-600 hover:bg-slate-500 text-white shadow-xl shadow-blue-600/20"
-                    : "bg-white/5 text-white/20 cursor-not-allowed"
+                    : "bg-card/5 text-white/20 cursor-not-allowed"
                 }`}
               >
                 <div className="relative z-10 flex items-center justify-center gap-2">

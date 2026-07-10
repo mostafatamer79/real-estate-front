@@ -43,13 +43,13 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                             scale: [1, 1.05, 1]
                         }}
                         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-24 h-24 rounded-[2.5rem] bg-slate-900/50 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative z-10"
+                        className="w-24 h-24 rounded-[1rem] bg-slate-900/50 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative z-10"
                     >
                         <Clock className="w-10 h-10 text-indigo-400" />
                     </motion.div>
                     {/* Radial glows around icon */}
                     <div className="absolute -inset-4 bg-indigo-500/20 blur-3xl rounded-full -z-10" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/40 to-transparent blur-xl rounded-[2.5rem] opacity-50" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/40 to-transparent blur-xl rounded-[1rem] opacity-50" />
                 </div>
 
                 {/* Text Content */}
@@ -82,7 +82,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm pt-4">
                     <Link
                         href="/details"
-                        className="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-sm font-black transition-all group backdrop-blur-md"
+                        className="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-card/5 hover:bg-card/10 border border-white/10 hover:border-white/20 text-white text-sm font-black transition-all group backdrop-blur-md"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" />
                         {language === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}

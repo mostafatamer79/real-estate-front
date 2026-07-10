@@ -82,7 +82,7 @@ export default function ReportsManager() {
                 <Card>
                     <CardHeader><CardTitle>التقارير الضريبية</CardTitle></CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="p-4 bg-slate-50 rounded-lg mb-4">
+                        <div className="p-4 bg-muted rounded-lg mb-4">
                             <p className="text-sm text-blue-800 font-bold mb-1">الرصيد الضريبي المستحق (تقديري)</p>
                             <p className="text-2xl font-bold text-blue-900"><SaudiRiyalAmount amount={0} locale="ar-SA" /></p>
                             <p className="text-xs text-blue-600 mt-1">يتم احتسابه بناءً على العمليات المسجلة</p>

@@ -367,7 +367,7 @@ export default function AdminServicesManagementPage() {
         <button 
           onClick={() => setConfirmSaveOpen(true)}
           disabled={saving}
-          className="bg-slate-950 text-white px-8 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-2xl shadow-slate-950/20 disabled:opacity-50"
+          className="bg-slate-950 text-white px-8 py-4 rounded-[1rem] text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-2xl shadow-stone-400/20 disabled:opacity-50"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           حفظ جميع التغييرات
@@ -390,14 +390,14 @@ export default function AdminServicesManagementPage() {
               type="button"
               onClick={() => setActivePanel(panel.id as "requests" | "pricing" | "availability")}
               className={`rounded-2xl border p-5 text-right transition-all ${
-                active ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/10" : "border-slate-100 bg-white text-slate-600 hover:border-slate-300"
+                active ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-stone-400/10" : "border bg-card text-slate-600 hover:border-slate-300"
               }`}
             >
               <div className="flex items-start justify-between gap-4">
-                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-white/10 text-white" : "bg-slate-50 text-slate-400"}`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-card/10 text-white" : "bg-muted text-slate-400"}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-black ${active ? "bg-white text-slate-950" : "bg-slate-50 text-slate-500"}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-black ${active ? "bg-card text-slate-950" : "bg-muted text-slate-500"}`}>
                   {panel.count}
                 </span>
               </div>
@@ -410,7 +410,7 @@ export default function AdminServicesManagementPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className={`lg:col-span-2 space-y-8 ${activePanel !== "availability" ? "hidden" : ""}`}>
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-3 border-b border pb-4">
             <LayoutGrid className="w-5 h-5 text-slate-400" />
             <h2 className="text-lg font-black text-slate-900">أقسام الخدمات وتوفرها</h2>
           </div>
@@ -419,9 +419,9 @@ export default function AdminServicesManagementPage() {
             {visibleServiceCategories.map((cat) => {
               const status = localModuleFlags[`services_${cat.id}`] || 'enabled';
               return (
-                <div key={cat.id} className="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
+                <div key={cat.id} className="p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-100">
+                    <div className="w-14 h-14 rounded-2xl bg-muted text-slate-600 flex items-center justify-center border border">
                       <cat.icon className="w-7 h-7" />
                     </div>
                     <div>
@@ -433,13 +433,13 @@ export default function AdminServicesManagementPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleToggleModule(cat.id, 'enabled')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-slate-950 text-white border-slate-950' : 'bg-muted text-slate-400 border hover:border'}`}
                     >
                       نشط
                     </button>
                     <button
                       onClick={() => handleToggleModule(cat.id, 'soon')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-muted text-slate-400 border hover:border'}`}
                       style={
                         status === 'soon'
                           ? {
@@ -454,7 +454,7 @@ export default function AdminServicesManagementPage() {
                     </button>
                     <button
                       onClick={() => handleToggleModule(cat.id, 'disabled')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-muted text-slate-400 border hover:border'}`}
                     >
                       معطل
                     </button>
@@ -466,7 +466,7 @@ export default function AdminServicesManagementPage() {
         </div>
 
         <div className={`lg:col-span-3 space-y-6 ${activePanel !== "pricing" ? "hidden" : ""}`}>
-          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="rounded-[1.25rem] border border bg-card p-6 shadow-sm">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
@@ -479,11 +479,11 @@ export default function AdminServicesManagementPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
+                <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
                   <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
                   <p className="text-[10px] font-black text-slate-400">خدمة</p>
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
+                <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
                   <p className="text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount}</p>
                   <p className="text-[10px] font-black text-slate-400">مسعرة</p>
                 </div>
@@ -496,14 +496,14 @@ export default function AdminServicesManagementPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 md:flex-row md:items-center md:justify-between">
+            <div className="mt-6 flex flex-col gap-3 border-t border pt-5 md:flex-row md:items-center md:justify-between">
               <div className="relative w-full md:max-w-md">
                 <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   value={priceSearchTerm}
                   onChange={(event) => setPriceSearchTerm(event.target.value)}
                   placeholder="ابحث عن خدمة لتعديل سعرها..."
-                  className="h-12 w-full rounded-2xl border border-slate-100 bg-slate-50 pr-11 pl-4 text-sm font-bold outline-none transition-all focus:border-slate-950 focus:bg-white"
+                  className="h-12 w-full rounded-2xl border border bg-muted pr-11 pl-4 text-sm font-bold outline-none transition-all focus:border-slate-950 focus:bg-card"
                 />
               </div>
               <button
@@ -523,21 +523,21 @@ export default function AdminServicesManagementPage() {
               const value = localServicePrices[key] || "";
               const hasPrice = Number(value || 0) > 0;
               return (
-                <div key={key} className="rounded-[1.75rem] border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+                <div key={key} className="rounded-[1.25rem] border border bg-card p-5 shadow-sm transition-all hover:border-slate-300">
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <span className="mb-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-400">
+                      <span className="mb-2 inline-flex rounded-full bg-muted px-2.5 py-1 text-[10px] font-black text-slate-400">
                         خدمة {String(index + 1).padStart(2, "0")}
                       </span>
                       <h3 className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{service}</h3>
                     </div>
-                    <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-400"}`}>
+                    <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-muted text-slate-400"}`}>
                       {hasPrice ? "مسعر" : "بدون سعر"}
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-2">
-                    <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2">
+                  <div className="rounded-2xl border border bg-muted p-2">
+                    <div className="flex items-center gap-2 rounded-xl bg-card px-3 py-2">
                       <input
                         type="number"
                         min="0"
@@ -555,14 +555,14 @@ export default function AdminServicesManagementPage() {
           </div>
 
           {filteredPricingServices.length === 0 && (
-            <div className="rounded-[2rem] border border-dashed border-slate-200 bg-white p-12 text-center">
+            <div className="rounded-[1.25rem] border border-dashed border bg-card p-12 text-center">
               <p className="text-sm font-black text-slate-400">لا توجد خدمة مطابقة للبحث</p>
             </div>
           )}
         </div>
       </div>
 
-      <section className={`space-y-6 border-t border-slate-100 pt-10 ${activePanel !== "requests" ? "hidden" : ""}`}>
+      <section className={`space-y-6 border-t border pt-10 ${activePanel !== "requests" ? "hidden" : ""}`}>
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white">
@@ -583,7 +583,7 @@ export default function AdminServicesManagementPage() {
             <button
               onClick={loadRequests}
               disabled={loadingRequests}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[10px] font-black uppercase tracking-widest text-slate-600"
+              className="inline-flex h-11 items-center gap-2 rounded-2xl border border bg-card px-5 text-[10px] font-black uppercase tracking-widest text-slate-600"
             >
               {loadingRequests ? <Loader2 className="h-4 w-4 animate-spin" /> : <Filter className="h-4 w-4" />}
               تحديث
@@ -599,12 +599,12 @@ export default function AdminServicesManagementPage() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="بحث باسم العميل، الجوال، المدينة أو الخدمة"
-              className="h-12 w-full rounded-2xl border border-slate-100 bg-white pr-11 pl-4 text-sm font-bold outline-none focus:border-slate-950"
+              className="h-12 w-full rounded-2xl border border bg-card pr-11 pl-4 text-sm font-bold outline-none focus:border-slate-950"
             />
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
           {loadingRequests ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-slate-900" />
@@ -614,7 +614,7 @@ export default function AdminServicesManagementPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[1100px] text-right">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/70">
+                  <tr className="border-b border bg-muted/70">
                     <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">العميل</th>
                     <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الخدمة</th>
                     <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الحالة</th>
@@ -629,7 +629,7 @@ export default function AdminServicesManagementPage() {
                   {visibleServiceRequests.map((request) => {
                     const draft = getRequestDraft(request);
                     return (
-                      <tr key={request.id} className="align-top hover:bg-slate-50/50">
+                      <tr key={request.id} className="align-top hover:bg-muted/50">
                         <td className="px-5 py-4">
                           <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
                           <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
@@ -643,7 +643,7 @@ export default function AdminServicesManagementPage() {
                           <select
                             value={draft.status}
                             onChange={(event) => updateRequestDraft(request, "status", event.target.value)}
-                            className="h-10 w-36 rounded-xl border border-slate-100 bg-white px-3 text-xs font-black outline-none"
+                            className="h-10 w-36 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
                           >
                             <option value="pending">قيد الانتظار</option>
                             <option value="assigned">تم التعيين</option>
@@ -656,7 +656,7 @@ export default function AdminServicesManagementPage() {
                           <select
                             value={draft.targetDepartment}
                             onChange={(event) => updateRequestDraft(request, "targetDepartment", event.target.value)}
-                            className="h-10 w-36 rounded-xl border border-slate-100 bg-white px-3 text-xs font-black outline-none"
+                            className="h-10 w-36 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
                           >
                             <option value="real_estate">الأملاك</option>
                             <option value="marketing">التسويق</option>
@@ -671,14 +671,14 @@ export default function AdminServicesManagementPage() {
                             min="0"
                             value={draft.price}
                             onChange={(event) => updateRequestDraft(request, "price", event.target.value)}
-                            className="h-10 w-28 rounded-xl border border-slate-100 bg-white px-3 text-xs font-black outline-none"
+                            className="h-10 w-28 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
                           />
                         </td>
                         <td className="px-5 py-4">
                           <textarea
                             value={draft.description}
                             onChange={(event) => updateRequestDraft(request, "description", event.target.value)}
-                            className="h-20 w-56 resize-none rounded-xl border border-slate-100 bg-white px-3 py-2 text-xs font-bold leading-5 outline-none"
+                            className="h-20 w-56 resize-none rounded-xl border border bg-card px-3 py-2 text-xs font-bold leading-5 outline-none"
                           />e
                         </td>
                         <td className="px-5 py-4">
@@ -688,7 +688,7 @@ export default function AdminServicesManagementPage() {
                               min="0"
                               value={invoiceDrafts[request.id] ?? draft.price}
                               onChange={(event) => setInvoiceDrafts((current) => ({ ...current, [request.id]: event.target.value }))}
-                              className="h-10 w-28 rounded-xl border border-slate-100 bg-white px-3 text-xs font-black outline-none"
+                              className="h-10 w-28 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
                             />
                             <button
                               disabled={saving}
@@ -713,7 +713,7 @@ export default function AdminServicesManagementPage() {
                             <button
                               disabled={saving}
                               onClick={() => openRequestChat(request.id)}
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-100 bg-white px-3 text-[9px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-50"
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border bg-card px-3 text-[9px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-50"
                             >
                               <ExternalLink className="h-3.5 w-3.5" />
                               رد على العميل
@@ -749,7 +749,7 @@ export default function AdminServicesManagementPage() {
             <button
               disabled={requestPage <= 1}
               onClick={() => setRequestPage((page) => Math.max(1, page - 1))}
-              className="h-10 rounded-xl border border-slate-100 bg-white px-4 text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-40"
+              className="h-10 rounded-xl border border bg-card px-4 text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-40"
             >
               السابق
             </button>
@@ -772,7 +772,7 @@ export default function AdminServicesManagementPage() {
       )}
 
       <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
-        <DialogContent className="max-w-md rounded-[2rem] border border-slate-100 bg-white p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
           <div className="p-7">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
               <AlertTriangle className="h-7 w-7" />
@@ -783,7 +783,7 @@ export default function AdminServicesManagementPage() {
                 سيتم حفظ أسعار وإعدادات الخدمات الحالية. الأسعار الجديدة ستؤثر على الطلبات الجديدة في المنصة.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <div className="mt-6 rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
                 <span>{pricedServicesCount} خدمة مسعرة</span>
@@ -794,7 +794,7 @@ export default function AdminServicesManagementPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setConfirmSaveOpen(false)}
-                className="h-12 rounded-2xl border-slate-200 text-xs font-black text-slate-600"
+                className="h-12 rounded-2xl border text-xs font-black text-slate-600"
               >
                 إلغاء
               </Button>
@@ -815,7 +815,7 @@ export default function AdminServicesManagementPage() {
       </Dialog>
 
       <Dialog open={savePopupOpen} onOpenChange={setSavePopupOpen}>
-        <DialogContent className="max-w-md rounded-[2rem] border border-slate-100 bg-white p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
           <div className="p-7 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
               <CheckCircle className="h-8 w-8" />
@@ -826,7 +826,7 @@ export default function AdminServicesManagementPage() {
                 تم تحديث إعدادات الخدمات والأسعار بنجاح. ستظهر الأسعار الجديدة على الطلبات الجديدة في المنصة.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <div className="mt-6 rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
                 <span>{pricedServicesCount} خدمة مسعرة</span>
@@ -954,11 +954,11 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
     }
   };
 
-  const inputCls = "w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
   const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
   const pillBtn = (active: boolean) =>
     `h-10 px-4 rounded-2xl text-xs font-black transition-all border ${
-      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
+      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-card text-slate-500 border hover:border"
     }`;
 
   return (
@@ -966,7 +966,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="bg-card w-full max-w-2xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
       >
         <button
           onClick={onClose}
@@ -987,7 +987,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
 
         <form onSubmit={handleSubmit} className="space-y-6 text-right" dir="rtl">
           {/* Client Selection Section */}
-          <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
@@ -995,7 +995,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                   اختر عميلاً مسجلاً أو أدخل بيانات عميل مجهول.
                 </p>
               </div>
-              <div className="flex p-1 bg-white rounded-2xl border border-slate-100 w-fit">
+              <div className="flex p-1 bg-card rounded-2xl border border w-fit">
                 <button
                   type="button"
                   className={pillBtn(clientMode === "registered")}
@@ -1037,13 +1037,13 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                     <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-slate-400" />
                   )}
                   {userSearch && !form.userId && filteredUsers.length > 0 && (
-                    <div className="absolute right-0 left-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto p-2">
+                    <div className="absolute right-0 left-0 top-full mt-2 bg-card border border rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto p-2">
                       {filteredUsers.map((u) => (
                         <button
                           key={u.id}
                           type="button"
                           onClick={() => selectRegisteredUser(u)}
-                          className="w-full text-right p-3 hover:bg-slate-50 rounded-xl transition-all flex items-center justify-between group"
+                          className="w-full text-right p-3 hover:bg-muted rounded-xl transition-all flex items-center justify-between group"
                         >
                           <div>
                             <div className="text-sm font-black text-slate-800">
@@ -1070,7 +1070,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                     value={form.clientName}
                     onChange={(e) => setForm({ ...form, clientName: e.target.value })}
                     className={inputCls}
-                    placeholder="مثال: محمد أحمد"
+                    placeholder=": محمد أحمد"
                   />
                 </div>
                 <div>
@@ -1095,7 +1095,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
               <select
                 value={form.category}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                className="w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
               >
                 <option value="postPurchase">خدمات ما بعد الشراء</option>
                 <option value="legal">الخدمات القانونية</option>
@@ -1109,7 +1109,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
               <select
                 value={form.serviceType}
                 onChange={(e) => setForm({ ...form, serviceType: e.target.value })}
-                className="w-full h-11 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
+                className="w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
               >
                 {(modalServiceTypes[form.category] || []).map((type) => (
                   <option key={type} value={type}>
@@ -1173,13 +1173,13 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full h-28 bg-slate-50 border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
+              className="w-full h-28 bg-muted border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
               placeholder="اكتب هنا أي تفاصيل أو ملاحظات إضافية حول الخدمة المطلوبة..."
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="flex gap-4 pt-4 border-t border-slate-100">
+          <div className="flex gap-4 pt-4 border-t border">
             <button
               type="submit"
               disabled={loading}
@@ -1195,7 +1195,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
             <button
               type="button"
               onClick={onClose}
-              className="px-6 border border-slate-200 hover:bg-slate-50 text-slate-600 h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+              className="px-6 border border hover:bg-muted text-slate-600 h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
             >
               إلغاء
             </button>
