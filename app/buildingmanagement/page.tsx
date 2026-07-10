@@ -62,6 +62,7 @@ import {
   Loader2,
   CreditCard,
   SaudiRiyalIcon,
+  Menu,
 } from "lucide-react";
 import {
   offersApi,
@@ -408,6 +409,7 @@ function BuildingManagementContent() {
   } | null>(null);
 
   const isAdmin = user?.role === Role.ADMIN;
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Fetch subscription status on mount
   useEffect(() => {
@@ -5773,12 +5775,32 @@ function BuildingManagementContent() {
 
 
       <div className="flex h-screen overflow-hidden bg-muted/50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        {/* Mobile Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          className={`fixed top-4 z-50 lg:hidden w-12 h-12 bg-slate-900 text-white rounded-xl shadow-xl flex items-center justify-center transition-all ${language === 'ar' ? 'right-4' : 'left-4'}`}
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        {/* Mobile Backdrop */}
+        {isMobileSidebarOpen && (
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setIsMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          />
+        )}
+
         {/* Fixed Sidebar - PREMIUM GLASSMORPHISM */}
-        <motion.div 
-          initial={{ x: language === 'ar' ? 100 : -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-          className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20 hidden lg:block"
+        <div 
+          className={`
+            fixed top-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-50 transition-transform duration-300
+            ${language === 'ar' ? 'right-0' : 'left-0'}
+            ${isMobileSidebarOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          `}
         >
           <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-3 md:gap-6">
             <div className="space-y-6">
@@ -5901,10 +5923,10 @@ function BuildingManagementContent() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Main Workspace - Adjusted for sidebar */}
-        <div className="flex-1 lg:mr-[25rem] relative overflow-hidden">
+        <div className={`flex-1 overflow-hidden relative w-full ${language === 'ar' ? 'lg:mr-[25rem]' : 'lg:ml-[25rem]'}`}>
           <main className="h-full overflow-y-auto overflow-x-hidden p-4 sm:p-5 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div
