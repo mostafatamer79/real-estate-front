@@ -268,7 +268,7 @@ export default function NewSubscriptionPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 rounded-[1rem] border border bg-card p-2 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-[1rem] border border bg-card p-2 shadow-sm">
           <button
             type="button"
             onClick={() => {
@@ -331,7 +331,7 @@ export default function NewSubscriptionPage() {
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                   {ALL_ADMINISTRATIONS.map((department) => {
                     const checked = selectedDepartments.includes(department);
                     const monthly = Number(globalPricing.departmentPrices?.[department]?.monthly || 0);
@@ -377,14 +377,14 @@ export default function NewSubscriptionPage() {
                 </div>
                 <div className="rounded-3xl border border p-5">
                   <div className="text-sm font-black text-slate-950">سعر كل موظف في إدارة الموظفين</div>
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-xs font-black text-slate-600">
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-black text-slate-600">
                     <div className="rounded-2xl bg-muted p-3">شهري <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatMonthlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
                     <div className="rounded-2xl bg-muted p-3">سنوي <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatYearlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 {packages.map((pkg) => {
                   const isSelected = pkg.id === selectedPackageId;
                   const currentPrice = subscriptionType === "سنوي" ? Number(pkg.yearlyPrice) : Number(pkg.monthlyPrice);
@@ -451,7 +451,7 @@ export default function NewSubscriptionPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-black text-slate-500">{t("sub.public.duration")}</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {(["شهري", "سنوي"] as const).map((type) => (
                   <button
                     key={type}

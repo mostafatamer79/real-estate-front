@@ -180,7 +180,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
           ) : availablePackages.length === 0 ? (
             <div className="py-14 text-center text-slate-400 font-bold">لا توجد باقات مفعلة لهذه الإدارة</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               {availablePackages.map((pkg) => {
                 const isSelected = pkg.id === formData.packageId;
                 const amount = Number(formData.subscriptionType === "سنوي" ? pkg.yearlyPrice : pkg.monthlyPrice) *
@@ -222,7 +222,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
           <div className="space-y-2">
             <label className="text-xs font-black text-slate-500">نوع الاشتراك</label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {["شهري", "سنوي"].map((type) => (
                 <button
                   key={type}

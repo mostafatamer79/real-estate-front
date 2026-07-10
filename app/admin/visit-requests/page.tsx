@@ -173,7 +173,8 @@ export default function VisitRequestsPage() {
       </div>
 
       <div className="bg-card border border rounded-[1.25rem] overflow-hidden shadow-sm">
-        <Table>
+        <div className="overflow-x-auto w-full">
+<Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="py-5 font-black text-slate-900">ID</TableHead>
@@ -257,6 +258,7 @@ export default function VisitRequestsPage() {
             )}
           </TableBody>
         </Table>
+</div>
       </div>
     </div>
   );

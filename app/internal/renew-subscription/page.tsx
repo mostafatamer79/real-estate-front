@@ -151,7 +151,7 @@ export default function RenewSubscriptionPage() {
                 <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
                   {statusCopy.title}
                 </h1>
-                <p className="max-w-2xl text-sm font-bold leading-7 text-slate-500">
+                <p className="w-[95vw] sm:max-w-2xl text-sm font-bold leading-7 text-slate-500">
                   {statusCopy.desc}
                 </p>
               </div>
@@ -211,7 +211,7 @@ export default function RenewSubscriptionPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {actionCards.map((card) => {
             const Icon = card.icon;
             return (

@@ -68,7 +68,7 @@ export function PropertyPortfolio({
       </div>
 
       {loading ? (
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map(i => (
                <div key={i} className="h-72 bg-muted rounded-[1.25rem] animate-pulse border border" />
             ))}
@@ -90,7 +90,7 @@ export function PropertyPortfolio({
             )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProperties.map(property => (
             <Card 
                 key={property.id} 

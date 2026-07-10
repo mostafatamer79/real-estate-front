@@ -117,7 +117,7 @@ export default function SimpleChatModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" dir="rtl">
-      <div className="bg-card rounded-xl w-full max-w-md h-[600px] flex flex-col shadow-2xl">
+      <div className="bg-card rounded-xl w-full w-[95vw] sm:max-w-md h-[600px] flex flex-col shadow-2xl">
         {/* Header */}
         <div className="p-4 border-b flex justify-between items-center bg-muted rounded-t-xl">
           <div>

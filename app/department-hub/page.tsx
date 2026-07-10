@@ -229,7 +229,7 @@ function DepartmentHubContent() {
       </motion.div>
 
       {/* Stat cards */}
-      <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {(loading ? new Array(4).fill(0) : statCards).map((c: any, idx: number) => {
           if (loading)
             return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
@@ -258,7 +258,7 @@ function DepartmentHubContent() {
       </motion.div>
 
       {/* Departments + Quick actions */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
         {/* Department cards */}
         <div className="bg-card rounded-[1rem] border border p-6 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-6">
@@ -327,7 +327,7 @@ function DepartmentHubContent() {
               <h2 className="text-sm font-black text-slate-950">{isRtl ? "روابط سريعة" : "Quick Links"}</h2>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Quick actions</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
               <Link
                 href="/chat"
                 className="group rounded-2xl border border bg-muted hover:bg-card transition-colors p-4 flex items-center justify-between"

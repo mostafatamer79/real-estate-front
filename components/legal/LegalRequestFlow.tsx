@@ -250,7 +250,7 @@ export default function LegalRequestFlow({
           <div key={p.key}>
             <SectionDivider label={p.title} />
             <div className={`mt-4 ${CARD}`}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   { label: "الاسم الكامل", field: "name", placeholder: "اسم البائع / المشتري / الوسيط" },
                   { label: "رقم الهوية",   field: "idNumber", placeholder: "أدخل رقم الهوية" },
@@ -296,7 +296,7 @@ export default function LegalRequestFlow({
 
         <div className="space-y-4">
           <SectionDivider label="نوع النزاع (اختياري)" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className={LBL}>اختر نوع النزاع</label>
               <select
@@ -348,7 +348,7 @@ export default function LegalRequestFlow({
     return (
       <div className="space-y-6">
         {/* Contract Type */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className={LBL}>نوع العقد</label>
             <select className={INP + " appearance-none cursor-pointer"} value={contractData.type} onChange={(e) => setContractData({ ...contractData, type: e.target.value })}>
@@ -375,7 +375,7 @@ export default function LegalRequestFlow({
               <div key={p.key} className="space-y-4">
                 <SectionDivider label={p.title} />
                 <div className={CARD}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Name */}
                     <div className="space-y-1.5 md:col-span-2">
                       <label className={LBL}>الاسم (اسم العميل / اسم الشركة) *</label>
@@ -421,7 +421,7 @@ export default function LegalRequestFlow({
                   {/* Agent */}
                   <div className="space-y-4 pt-4 border-t border-white/[0.05]">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">بيانات الوكيل</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className={LBL}>اسم الوكيل</label>
                         <input className={INP} value={(contractData as any)[p.key].agent.name} onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], agent: { ...(contractData as any)[p.key].agent, name: e.target.value } } })} placeholder="اسم الوكيل بالكامل" />
@@ -447,7 +447,7 @@ export default function LegalRequestFlow({
             <div className="space-y-4">
               <SectionDivider label="تفاصيل العقد" />
               <div className={CARD}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5 md:col-span-2">
                     <label className={LBL}>وصف الخدمات</label>
                     <textarea className={INP + " h-24 py-3 resize-none"} value={contractData.details.services} onChange={(e) => setContractData({ ...contractData, details: { ...contractData.details, services: e.target.value } })} placeholder="ما هي الخدمات التي سيتم تقديمها، وما هي طبيعة الالتزامات." />
@@ -477,7 +477,7 @@ export default function LegalRequestFlow({
         {/* Applicant Role */}
         <div className="space-y-4">
           <SectionDivider label="صفة مقدم الطلب" />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[{ id: "party1", label: "الطرف الأول" }, { id: "party2", label: "الطرف الثاني" }, { id: "agent", label: "الوكيل" }].map(role => (
               <button
                 key={role.id}
@@ -501,7 +501,7 @@ export default function LegalRequestFlow({
   // ─── Documentation Form ─────────────────────────────────────────────────────
   const renderDocumentationForm = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
         {[{ key: "party1", title: "الطرف الأول" }, { key: "party2", title: "الطرف الثاني" }].map((p) => (
           <div key={p.key} className={CARD}>
             <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">{p.title}</p>
@@ -534,7 +534,7 @@ export default function LegalRequestFlow({
         <UploadRow label="ارفاق صك الملكية" sub="PDF أو صورة واضحة (يقبل كذا صيغة)" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
             <label className={LBL}>مبلغ البيع</label>
             <div className="relative">
@@ -563,7 +563,7 @@ export default function LegalRequestFlow({
       <div className="space-y-6">
         <div className="space-y-1.5">
           <label className={LBL}>نوع الخدمة</label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {types.map((t) => (
               <button
                 key={t.id}
@@ -582,7 +582,7 @@ export default function LegalRequestFlow({
         </div>
 
         <div className={CARD}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             {otherData.type === "أخرى" && (
                 <div className="space-y-1.5 md:col-span-2 animate-in slide-in-from-top-2 duration-300">
                     <label className={LBL}>نوع الخدمة المخصص</label>
@@ -656,7 +656,7 @@ export default function LegalRequestFlow({
 	    <div className="w-full" dir="rtl">
 	      {!selectedCategory ? (
 	        /* Category Selection Grid */
-	        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+	        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
 	          {legalCategories.map((cat) => {
 	            const moduleKey =
 	              cat.id === 'documentation' ? 'legal_documentation' :

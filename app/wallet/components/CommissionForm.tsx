@@ -229,7 +229,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* Name and License Fields */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                             <Input
@@ -259,7 +259,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         {/* Owner/Seller Section */}
                         <div className="bg-muted p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.ownerData')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                                     <Input
@@ -331,7 +331,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         {/* Buyer Section */}
                         <div className="bg-muted p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.buyerData')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                                     <Input
@@ -479,7 +479,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     {/* 4. Property Data Section */}
                     <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.propertyData')}</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                              <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.propertyType')}</label>
                                 <Select
@@ -600,7 +600,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     {/* 5. Contract Values Section */}
                      <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.contractValues')}</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.totalAmount')}</label>
                                 <Input 

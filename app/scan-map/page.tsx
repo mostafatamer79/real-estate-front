@@ -311,7 +311,7 @@ export default function ScanMapPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {generatingReport && (
         <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6">
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-8 text-center">
+          <div className="w-full w-[95vw] sm:max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-8 text-center">
             <div className="mx-auto mb-5 h-16 w-16 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 flex items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-emerald-300" />
             </div>
@@ -327,7 +327,7 @@ export default function ScanMapPage() {
       )}
       {isDisclaimerOpen && (
         <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl max-h-[88vh] overflow-hidden rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
+          <div className="w-full w-[95vw] sm:max-w-3xl max-h-[88vh] overflow-hidden rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
 
 
             <div className="border-t border bg-card px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
@@ -385,7 +385,7 @@ export default function ScanMapPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Left Column - Controls & Info */}
         <div className="lg:col-span-1 space-y-6">
           {/* Location Card */}
@@ -518,7 +518,7 @@ export default function ScanMapPage() {
 
               <div className="space-y-4">
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="bg-slate-900/80 p-4 rounded-xl text-center">
                     <div className="text-2xl font-bold text-emerald-400">{places.length}</div>
                     <div className="text-sm text-slate-400">{t('scan.placesCount')}</div>

@@ -289,7 +289,7 @@ export default function InternalChatRoomPage() {
 
       {/* Input */}
       <div className="p-4 border-t border bg-card/50 backdrop-blur-md">
-        <div className="flex items-end gap-2 max-w-3xl mx-auto">
+        <div className="flex items-end gap-2 w-[95vw] sm:max-w-3xl mx-auto">
           <div className="flex-1 relative">
             <textarea
               value={message}

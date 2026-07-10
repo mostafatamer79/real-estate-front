@@ -103,7 +103,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md rounded-[1rem] p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">
@@ -121,7 +121,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
                   setSelectedInstallment(null);
                 }
               }}
-              className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all group ${
+              className={`w-full flex items-center justify-between p-4 sm:p-5 rounded-2xl border-2 transition-all group ${
                 selectedMethod === method.id 
                   ? 'border-indigo-600 bg-indigo-50/50' 
                   : 'border hover:border bg-card'
@@ -148,10 +148,10 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         </div>
 
         {selectedMethod === 'installments' && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
             <button
               onClick={() => setSelectedInstallment('tamara')}
-              className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+              className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tamara'
                   ? 'border-pink-500 bg-pink-50/70'
                   : 'border hover:border bg-card'
@@ -174,7 +174,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
             <button
               onClick={() => setSelectedInstallment('tabby')}
-              className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+              className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tabby'
                   ? 'border-emerald-500 bg-emerald-50/70'
                   : 'border hover:border bg-card'

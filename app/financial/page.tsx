@@ -129,7 +129,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                             <TabsContent value="transactions" className="m-0"><TransactionsSection /></TabsContent>
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
-                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white">
+                                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 text-white">
                                          <div className="bg-slate-900 p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
                                              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                                <PieChart className="w-20 h-20" />
@@ -221,14 +221,14 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     ];
 
     if (loading) return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[1,2,3,4,5,6].map(i => <div key={i} className="h-32 rounded-3xl bg-muted animate-pulse" />)}
       </div>
     );
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {kpis.map((kpi, idx) => (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}

@@ -438,7 +438,7 @@ export default function AdminUserDetailsPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-10 w-64 rounded-xl bg-muted" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((item) => <div key={item} className="h-28 rounded-2xl bg-muted" />)}
         </div>
         <div className="h-96 rounded-2xl bg-muted" />
@@ -489,7 +489,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {userCards.map((card) => (
           <div key={card.label} className="rounded-2xl border border bg-card p-5 shadow-sm">
             <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-950">
@@ -501,7 +501,7 @@ export default function AdminUserDetailsPage() {
         ))}
       </section>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <UserIcon className="h-5 w-5" />
@@ -576,7 +576,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2">
         <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
@@ -939,7 +939,7 @@ export default function AdminUserDetailsPage() {
 
       {/* Subscription Duration Selector Modal */}
       <Dialog open={showSubModal} onOpenChange={setShowSubModal}>
-        <DialogContent className="max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+        <DialogContent className="w-[95vw] sm:max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إدارة الاشتراك" : "Manage Subscription"}
@@ -1024,7 +1024,7 @@ export default function AdminUserDetailsPage() {
 
       {/* Subscription Cancellation Modal */}
       <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <DialogContent className="max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+        <DialogContent className="w-[95vw] sm:max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إلغاء الاشتراك" : "Cancel Subscription"}

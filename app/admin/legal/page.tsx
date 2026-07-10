@@ -668,7 +668,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             exit={{ opacity: 0, y: -10 }}
             className="rounded-2xl border border bg-card p-5 shadow-sm"
           >
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-5">
               {legalServiceTabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -723,7 +723,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           {selectedRequest && (
             <div className="py-4">
               <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                   <TabsTrigger value="details"  className="py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
                   <TabsTrigger value="visits"   className="py-2 rounded-lg font-bold">{t("admin.service_requests.customer_visits")}</TabsTrigger>
                   <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t("admin.service_requests.customer_invoices")}</TabsTrigger>
@@ -743,7 +743,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   </div>
 
                   {/* Info grid */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       { label: t("admin.service_requests.service_type"), value: selectedRequest.serviceType },
                       { label: t("admin.service_requests.target_dept"),  value: t(`admin.trans.dept.${selectedRequest.targetDepartment}`) },
@@ -782,7 +782,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                              {t('legal.party.first')}
                             </p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase">الاسم</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.name}</p>
@@ -799,7 +799,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
                                {t('legal.party.second')}
                             </p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase">الاسم</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.name}</p>

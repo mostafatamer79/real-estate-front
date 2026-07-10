@@ -154,7 +154,7 @@ export default function PhotographyFlow() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div className="space-y-3">
                                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.date')}</Label>
                                 <Input 

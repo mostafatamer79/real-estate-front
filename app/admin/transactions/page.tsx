@@ -307,7 +307,7 @@ export default function TransactionsPage() {
           <Plus className="h-4 w-4" />
           {isRtl ? "إضافة عملية" : "Add Transaction"}
         </button>
-        <div className="grid w-full gap-3 md:max-w-5xl md:grid-cols-4 xl:grid-cols-7">
+        <div className="grid w-full gap-3 md:max-w-5xl md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         <div className="relative md:col-span-2">
           <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
           <input
@@ -344,7 +344,8 @@ export default function TransactionsPage() {
    
 
       <div className="overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
-        <Table>
+        <div className="overflow-x-auto w-full">
+<Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="py-5 font-black text-slate-900">{isRtl ? "المعرف" : "ID"}</TableHead>
@@ -426,12 +427,13 @@ export default function TransactionsPage() {
             )}
           </TableBody>
         </Table>
+</div>
       </div>
 
       {/* Create / Edit Transaction Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
@@ -450,7 +452,7 @@ export default function TransactionsPage() {
 
             {/* Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2">
                 {/* Type */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
@@ -518,7 +520,7 @@ export default function TransactionsPage() {
       {/* Viewing Transaction Details Modal */}
       {viewingTransaction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -537,7 +539,7 @@ export default function TransactionsPage() {
 
             {/* Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" dir={isRtl ? "rtl" : "ltr"}>
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6" dir={isRtl ? "rtl" : "ltr"}>
                 {/* Type */}
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>

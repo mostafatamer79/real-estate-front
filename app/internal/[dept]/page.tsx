@@ -365,7 +365,7 @@ export default function DepartmentDashboard() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {(mgrLoading ? new Array(4).fill(0) : filteredCards).map((c: any, idx: number) => {
             if (mgrLoading) {
               return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
@@ -388,13 +388,13 @@ export default function DepartmentDashboard() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
           {/* Quick services */}
           <div className="rounded-[1.25rem] bg-slate-950 text-white p-6 shadow-xl border border-slate-900">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-black uppercase tracking-widest">خدمات سريعة</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
               {filteredQuick.map((q) => {
                 const status = moduleStatus(q.moduleKey);
                 if (!isAdmin && (status === 'disabled' || !mods[q.moduleKey])) return null;
@@ -529,7 +529,7 @@ export default function DepartmentDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <StatCard label="طلبات معلقة" value={stats.pending} icon={Clock} color="text-slate-500" />
         </motion.div>
@@ -549,7 +549,7 @@ export default function DepartmentDashboard() {
         className="bg-card rounded-[1.25rem] border border p-6 space-y-4"
       >
         <h2 className="text-sm font-black text-slate-950 uppercase tracking-widest">الإجراءات السريعة</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
           <Link
             href={`/internal/${dept}/requests`}
             className="flex items-center justify-between gap-4 p-4 bg-muted rounded-2xl hover:bg-muted transition-colors group"

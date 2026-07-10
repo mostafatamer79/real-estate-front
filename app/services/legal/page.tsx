@@ -47,7 +47,7 @@ export default function LegalServiceSelectionPage() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[-0.03em] leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
               {isRtl ? "الخدمات القانونية" : "Legal services"}
             </h1>
-            <p className="text-white/40 text-sm max-w-lg leading-relaxed">
+            <p className="text-white/40 text-sm w-[95vw] sm:max-w-lg leading-relaxed">
               {isRtl ? "اختر نوع الخدمة القانونية، ثم أكمل تفاصيل الطلب في النموذج." : "Choose a legal service, then complete its request form."}
             </p>
           </motion.div>

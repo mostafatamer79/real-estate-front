@@ -376,7 +376,7 @@ export default function AdminServicesManagementPage() {
 
 
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {[
           { id: "requests", label: "الطلبات", desc: "عرض كامل، رد على العميل، تسعير الطلب وإرسال الفاتورة", icon: FileText, count: filteredServiceRequests.length },
           { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: SaudiRiyalIcon, count: activeCategoryServices.length },
@@ -408,7 +408,7 @@ export default function AdminServicesManagementPage() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         <div className={`lg:col-span-2 space-y-8 ${activePanel !== "availability" ? "hidden" : ""}`}>
           <div className="flex items-center gap-3 border-b border pb-4">
             <LayoutGrid className="w-5 h-5 text-slate-400" />
@@ -478,7 +478,7 @@ export default function AdminServicesManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
                   <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
                   <p className="text-[10px] font-black text-slate-400">خدمة</p>
@@ -497,7 +497,7 @@ export default function AdminServicesManagementPage() {
             </div>
 
             <div className="mt-6 flex flex-col gap-3 border-t border pt-5 md:flex-row md:items-center md:justify-between">
-              <div className="relative w-full md:max-w-md">
+              <div className="relative w-full md:w-[95vw] sm:max-w-md">
                 <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   value={priceSearchTerm}
@@ -517,7 +517,7 @@ export default function AdminServicesManagementPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
             {filteredPricingServices.map((service, index) => {
               const key = makeServicePriceKey(activeServiceCategory, service);
               const value = localServicePrices[key] || "";
@@ -772,7 +772,7 @@ export default function AdminServicesManagementPage() {
       )}
 
       <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
-        <DialogContent className="max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
           <div className="p-7">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
               <AlertTriangle className="h-7 w-7" />
@@ -789,7 +789,7 @@ export default function AdminServicesManagementPage() {
                 <span>{pricedServicesCount} خدمة مسعرة</span>
               </div>
             </div>
-            <DialogFooter className="mt-6 grid grid-cols-2 gap-3">
+            <DialogFooter className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
               <Button
                 type="button"
                 variant="outline"
@@ -815,7 +815,7 @@ export default function AdminServicesManagementPage() {
       </Dialog>
 
       <Dialog open={savePopupOpen} onOpenChange={setSavePopupOpen}>
-        <DialogContent className="max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
           <div className="p-7 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
               <CheckCircle className="h-8 w-8" />
@@ -966,7 +966,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-full max-w-2xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="bg-card w-full w-[95vw] sm:max-w-2xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
       >
         <button
           onClick={onClose}
@@ -1061,7 +1061,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>اسم العميل المجهول</label>
                   <input
@@ -1089,7 +1089,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
           </div>
 
           {/* Service Classification & Type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>تصنيف الخدمة</label>
               <select
@@ -1121,7 +1121,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
           </div>
 
           {/* Location Details & Price & Quantity */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className={labelCls}>المدينة</label>
               <input

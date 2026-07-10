@@ -344,7 +344,7 @@ export function CustomerServicePage() {
                   {language === "ar" ? "لا توجد رسائل بعد" : "No messages yet"}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-1 md:grid-cols-2">
                   {tickets.map((ticket) => (
                     <button
                       type="button"
@@ -385,7 +385,7 @@ export function CustomerServicePage() {
           )}
 
           <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
-            <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-[1.25rem] p-0">
+            <DialogContent className="max-h-[85vh] w-[95vw] sm:max-w-2xl overflow-y-auto rounded-[1.25rem] p-0">
               {selectedTicket && (
                 <>
                   <DialogHeader className="border-b border p-6 text-start">
@@ -524,7 +524,7 @@ export function CustomerServicePage() {
                           >
                             {language === 'ar' ? 'نوع الرسالة' : 'Message Type'}
                           </Label>
-                          <div className="grid grid-cols-3 gap-2 bg-muted p-1.5 rounded-xl border border">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 bg-muted p-1.5 rounded-xl border border">
                               <button
                                   type="button"
                                   onClick={() => setType("inquiry")}
@@ -571,7 +571,7 @@ export function CustomerServicePage() {
                           >
                             طريقة التواصل المفضلة
                           </Label>
-                          <div className="grid grid-cols-2 gap-2 bg-muted p-1.5 rounded-xl border border">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-muted p-1.5 rounded-xl border border">
                               <button
                                   type="button"
                                   onClick={() => setContactMethod("email")}

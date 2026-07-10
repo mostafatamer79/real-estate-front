@@ -231,7 +231,7 @@ export default function ServiceRequestsPage() {
                         className="space-y-6"
                     >
                         {/* List Actions */}
-                        <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-4 xl:grid-cols-8">
+                        <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
                             <div className="relative w-full group md:col-span-2">
                                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                                 <input 
@@ -395,7 +395,7 @@ export default function ServiceRequestsPage() {
                     {selectedRequest && (
                         <div className="py-4">
                             <Tabs defaultValue="details" className="w-full">
-                                <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                                     <TabsTrigger value="details" className="py-2 rounded-lg font-bold">{t('common.details')}</TabsTrigger>
                                     <TabsTrigger value="visits" className="py-2 rounded-lg font-bold">{t('admin.service_requests.customer_visits')}</TabsTrigger>
                                     <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t('admin.service_requests.customer_invoices')}</TabsTrigger>
@@ -423,7 +423,7 @@ export default function ServiceRequestsPage() {
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</label>
                                             <p className="text-sm font-bold text-slate-900">{selectedRequest.serviceType}</p>
@@ -461,7 +461,7 @@ export default function ServiceRequestsPage() {
                                             {selectedRequest.firstParty && (
                                                 <div className="p-4 bg-muted rounded-2xl border border">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
-                                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
                                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.name}</p>
@@ -490,7 +490,7 @@ export default function ServiceRequestsPage() {
                                             {selectedRequest.secondParty && (
                                                 <div className="p-4 bg-muted rounded-2xl border border">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
-                                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
                                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.name}</p>

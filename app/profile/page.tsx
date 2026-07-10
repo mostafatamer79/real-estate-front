@@ -239,7 +239,7 @@ export default function ProfilePage() {
             </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Sidebar / User Card */}
             <div className="md:col-span-1 space-y-6">
                 <div className="bg-card rounded-xl shadow-sm border border p-6 flex flex-col items-center text-center">
@@ -397,7 +397,7 @@ export default function ProfilePage() {
 
                                 <div className="space-y-4">
                                     <h5 className="text-sm font-semibold text-gray-950 font-semibold text-gray-900 mb-2">{t('profile.license.fal')}</h5>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.license.falNum')} <span className="text-red-500">*</span></label>
                                             <input
@@ -491,7 +491,7 @@ export default function ProfilePage() {
                                 <div className="w-1 h-4 bg-slate-500 rounded-full"></div>
                                 {t('profile.contactInfo')}
                             </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-500 text-start">{t('profile.mobile')}</label>
                                     <div className="w-full px-3 py-2 bg-muted border border rounded-lg text-slate-500 text-start cursor-not-allowed">
@@ -513,7 +513,7 @@ export default function ProfilePage() {
                                 <MapPin className="w-4 h-4" />
                                 {t('profile.nationalAddress.title')}
                             </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.postal')}</label>
                                     <input

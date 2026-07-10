@@ -269,7 +269,7 @@ export default function AdminInfoContentPage() {
                 <div className="text-sm font-black text-slate-800 mb-3">
                   {editingTabId ? (t("admin.info_content.editTab") || (isRtl ? "تعديل تبويب" : "Edit tab")) : (t("admin.info_content.addTab") || (isRtl ? "إضافة تبويب" : "Add tab"))}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs font-black text-slate-500">Key (Identifier)</Label>
                     <Input value={tabForm.key} onChange={(e) => setTabForm((p) => ({ ...p, key: e.target.value }))} dir="ltr" className="bg-card" />
@@ -298,7 +298,7 @@ export default function AdminInfoContentPage() {
 
         {/* Tab Focus: Editor & Preview */}
         {selectedTabId && !editingTabId && selectedTab && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left: Editor (Blocks List + Form) */}
             <Card className="border">
               <CardContent className="p-4 sm:p-6 space-y-6">
@@ -317,7 +317,7 @@ export default function AdminInfoContentPage() {
                   <div className="text-sm font-black text-slate-800">
                     {editingBlockId ? (isRtl ? "تعديل البند" : "Edit Block") : (isRtl ? "إضافة بند جديد" : "Add New Block")}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-black text-slate-500">Label (AR) - اختياري</Label>
                       <Input value={blockForm.labelAr} onChange={(e) => setBlockForm((p) => ({ ...p, labelAr: e.target.value }))} className="bg-card" />
@@ -447,7 +447,7 @@ export default function AdminInfoContentPage() {
                 <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-6 lg:p-8 z-10 bg-transparent">
                   
                   {/* Preview Content matching Modal */}
-                  <div className="max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
+                  <div className="w-[95vw] sm:max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
                     <div className="text-center mb-8">
                       <h1 className="text-2xl font-black text-slate-900 mb-2">
                         {isRtl ? selectedTab.titleAr : selectedTab.titleEn}

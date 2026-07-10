@@ -106,7 +106,7 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
         </div>
 
         {/* Legend */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-3 w-full max-w-xs px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 w-full max-w-xs px-2">
           {chartData.map((type, index) => {
             const seg = segments[index];
             return (

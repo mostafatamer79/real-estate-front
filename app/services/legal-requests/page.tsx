@@ -96,7 +96,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
       {/* Sticky header — Adjusted for global header */}
       {!embedded && (
       <div className="sticky top-16 z-20 bg-slate-950 border-b border-white/10">
-        <div className="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+        <div className="w-[95vw] sm:max-w-3xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link href="/services" className="w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors">
               <ArrowLeft className={`w-3.5 h-3.5 text-white/50 ${isRtl ? "rotate-180" : ""}`} />
@@ -231,7 +231,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
                           <div className="border-t border-white/[0.06] px-5 py-5 space-y-4">
                             {/* Parties */}
                             {(req.firstParty || req.secondParty) && (
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
                                 {[req.firstParty && { label: t("disputes.firstParty"), party: req.firstParty }, req.secondParty && { label: t("disputes.secondParty"), party: req.secondParty }]
                                   .filter(Boolean).map((item: any) => (
                                   <div key={item.label} className="p-4 bg-card/[0.02] rounded-2xl border border-white/[0.06]">

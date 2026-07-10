@@ -179,7 +179,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  className="max-w-3xl mx-auto"
+                  className="w-[95vw] sm:max-w-3xl mx-auto"
                 >
                   <div className="text-center mb-8">
                     <h1 className="text-2xl font-black text-slate-900 mb-2">
@@ -207,7 +207,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  className="max-w-3xl mx-auto text-center text-slate-500 py-10"
+                  className="w-[95vw] sm:max-w-3xl mx-auto text-center text-slate-500 py-10"
                 >
                   لا يوجد محتوى متاح حالياً.
                 </motion.div>

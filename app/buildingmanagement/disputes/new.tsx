@@ -351,7 +351,7 @@ export default function BuildingManagement() {
             {files.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-medium text-gray-700 mb-2">الملفات المرفوعة:</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {files.map((file, index) => (
                     <div key={index} className="relative border rounded-lg p-3">
                       <button
@@ -377,7 +377,7 @@ export default function BuildingManagement() {
           {/* معلومات العقار الأساسية */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">معلومات العقار الأساسية</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
               {/* نوع العقار */}
               <div>
                 <label className="block text-gray-700 mb-2">
@@ -506,7 +506,7 @@ export default function BuildingManagement() {
                 <label className="block text-gray-700 mb-2">
                   المدينة – الحي <span className="text-red-500">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <input
                     type="text"
                     name="city"
@@ -591,7 +591,7 @@ export default function BuildingManagement() {
           {showDetails && (
             <div className="mb-8 p-6 bg-muted rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">بيانات تفصيلية</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* عدد الغرف */}
                 <div>
                   <label className="block text-gray-700 mb-2">عدد الغرف</label>

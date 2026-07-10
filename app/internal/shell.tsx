@@ -421,7 +421,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   if (subStatus && !subStatus.active && !isRenewSubscriptionPage) {
     return (
       <Dialog open={true} onOpenChange={() => {}}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="w-[95vw] sm:max-w-lg">
           <div className="px-6 pt-6 pb-5">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black text-slate-950">

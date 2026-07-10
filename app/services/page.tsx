@@ -74,7 +74,7 @@ export default function Services() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[-0.03em] leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
             {t("services.title") || "خدماتنا"}
           </h1>
-          <p className="text-white/40 text-sm max-w-lg leading-relaxed">
+          <p className="text-white/40 text-sm w-[95vw] sm:max-w-lg leading-relaxed">
             نقدم مجموعة متكاملة من الخدمات العقارية لتسهيل رحلتك في السوق.
           </p>
         </motion.div>

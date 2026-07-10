@@ -127,7 +127,7 @@ export default function AdminTrendsPage() {
         </h1>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <div key={card.label} className="rounded-2xl border border bg-card p-6 shadow-sm">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
@@ -229,7 +229,7 @@ export default function AdminTrendsPage() {
       </section>
 
       <section className="rounded-2xl border border bg-card p-6 shadow-sm">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
               {isRtl ? "عنوان التحليل" : "Analysis title"}

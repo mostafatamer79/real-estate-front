@@ -67,7 +67,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             <h2 className="text-3xl font-black leading-[1.25] text-white sm:text-4xl lg:text-[3.2rem]">
               تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
             </h2>
-            <p className="max-w-2xl text-base font-bold leading-9 text-white/66">
+            <p className="w-[95vw] sm:max-w-2xl text-base font-bold leading-9 text-white/66">
               هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها بالذكاء الاصطناعي إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة.
             </p>
           </motion.div>
@@ -141,7 +141,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //   return (
 //     <section ref={containerRef} className="relative border-y border-white/10 bg-card/[0.014] px-5 py-24 sm:px-8 lg:px-12">
 //       <div className="mx-auto max-w-7xl">
-//         <div className="mb-14 max-w-3xl space-y-4">
+//         <div className="mb-14 w-[95vw] sm:max-w-3xl space-y-4">
 //           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Full Operating Flow</p>
 //           <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">كل إدارة تتحرك في نفس النظام، لكن لكل واحدة مسارها الخاص.</h2>
 //           <p className="text-base font-bold leading-8 text-white/65">
@@ -337,7 +337,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-1 md:grid-cols-2">
           {capabilities.map((item, index) => (
             <motion.article
               key={item.title}
@@ -403,7 +403,7 @@ export default function AboutPage() {
       </section> */}
 
       {/* <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
-        <div className="mb-12 max-w-3xl space-y-4">
+        <div className="mb-12 w-[95vw] sm:max-w-3xl space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Operations</p>
           <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">الإدارة ترى الصورة كاملة.</h2>
           <p className="text-base font-bold leading-8 text-white/65">
@@ -411,7 +411,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-1 md:grid-cols-2">
           {operations.map((item, index) => (
             <motion.div
               key={item.title}
@@ -442,7 +442,7 @@ export default function AboutPage() {
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
           <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
-          <p className="relative z-10 mx-auto mt-6 max-w-3xl text-base font-bold leading-9 text-white/75">
+          <p className="relative z-10 mx-auto mt-6 w-[95vw] sm:max-w-3xl text-base font-bold leading-9 text-white/75">
             تجمع الوساطة الرقمية الأدوات التي يحتاجها المستفيد ومقدم الخدمة في منصة واحدة؛ لتتحول العملية العقارية من صفحات منفصلة إلى تجربة تشغيل واضحة ومتكاملة.
           </p>
         </motion.div>

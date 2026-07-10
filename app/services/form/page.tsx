@@ -222,7 +222,7 @@ function ServiceFormContent() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
           <h1 className="text-3xl sm:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
-          <p className="text-slate-600 text-sm max-w-md leading-relaxed">{config.description}</p>
+          <p className="text-slate-600 text-sm w-[95vw] sm:max-w-md leading-relaxed">{config.description}</p>
         </motion.div>
       </div>
 
@@ -247,7 +247,7 @@ function ServiceFormContent() {
             <div className="relative space-y-7">
               {/* Personal Info */}
               <motion.div variants={itemVariants}>{sectionDivider("البيانات الشخصية")}</motion.div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5">
                 {[
                   { label: "الاسم بالكامل", field: "name", placeholder: "الاسم الثلاثي أو الرباعي", dir: "rtl" },
                   { label: "رقم الجوال",    field: "phone", placeholder: "05xxxxxxxx",               dir: "ltr" },
@@ -282,7 +282,7 @@ function ServiceFormContent() {
                       <ChevronLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 -rotate-90 text-slate-400 pointer-events-none" />
                     </div>
                   </motion.div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[
                       { label: "كود الوحدة (PRP)", field: "propertyId", icon: Hash, type: "text", placeholder: "PRP-X" },
                       { label: "تاريخ الجلسة", field: "appointmentDate", icon: Calendar, type: "date", placeholder: "" },
@@ -299,7 +299,7 @@ function ServiceFormContent() {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5">
                   <motion.div variants={itemVariants} className="space-y-2">
                     <label className={labelClass}>نوع الخدمة المطلوبة</label>
                     <div className="relative">
@@ -333,7 +333,7 @@ function ServiceFormContent() {
               {serviceType === "visit" && formData.service === "تصوير العقار" && (
                 <motion.div variants={itemVariants} className="space-y-2">
                     <label className={labelClass}>نوع التصوير</label>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[
                             { id: 'video', label: 'فيديو' },
                             { id: 'live', label: 'لايف' }

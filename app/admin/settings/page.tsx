@@ -240,7 +240,7 @@ function SettingsPageInner() {
                 </button>
             </header>
 
-            <nav className="grid w-full grid-cols-2 gap-3 rounded-[1.25rem] border border-/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
+            <nav className="grid w-full grid-cols-1 md:grid-cols-2 gap-3 rounded-[1.25rem] border border-/70 bg-[linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:flex md:w-fit md:flex-wrap md:items-center">
                 {[
                     { id: 'appearance', label: t('admin.settings.tab.appearance') },
                     { id: 'text', label: t('admin.settings.tab.text') },
@@ -318,7 +318,7 @@ function SettingsPageInner() {
             </main>
 
             {activeTab === 'pricing' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                     <div onClick={() => setIsLogsModalOpen(true)} className="p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
@@ -383,7 +383,7 @@ function PricingTab({
             <div className="space-y-10">
                 <div className="space-y-6">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الإعدادات المالية العامة</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <div className="relative">
                                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
@@ -424,7 +424,7 @@ function PricingTab({
                                 <ChevronDown className={`w-4 h-4 transition-transform ${collapsedCategories[group.category] ? '' : 'rotate-180'}`} />
                             </button>
                             {!collapsedCategories[group.category] && (
-                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-card">
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 bg-card">
                                     {group.services.map((service) => {
                                         const key = `service_price_${group.category}_${service}`.replace(/\s+/g, '_').toLowerCase();
                                         return (
@@ -509,7 +509,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
                     <ImageIcon className="w-3 h-3" /> إدارة الشعار
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* White Logo */}
                     <div className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-4">
                         <p className="text-[11px] font-black text-white/60 uppercase tracking-widest">الشعار الأبيض (على الخلفيات الداكنة)</p>
@@ -603,7 +603,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <span>كبير 120px</span>
                     </div>
                     {/* Live preview */}
-                    <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="rounded-2xl bg-slate-900 flex items-center justify-center p-4" style={{ minHeight: `${Number(localSettings.logoHeight || 40) + 32}px` }}>
                             {localSettings.logoWhiteUrl && <img src={resolveAssetUrl(localSettings.logoWhiteUrl)} alt="preview" style={{ height: `${localSettings.logoHeight || 40}px` }} className="object-contain w-auto" />}
                         </div>
@@ -635,7 +635,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-8">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الألوان الأساسية</h4>
                     <div className="grid grid-cols-1 gap-6">
@@ -677,7 +677,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-5 bg-muted rounded-3xl border border space-y-3">
                             <div className="flex items-center justify-between">
                                 <label className="text-[11px] font-black text-slate-600">استدارة المربعات</label>
@@ -757,7 +757,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             <label className="text-[11px] font-black text-slate-600">وصف النظام في شاشة البداية</label>
                             <input type="text" value={localSettings.description || ''} onChange={(e) => updateSettings({ description: e.target.value })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="وصف مختصر يظهر تحت الشعار..." />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">حجم الخط في المنصة</label>
                                 <div className="bg-muted border border rounded-2xl p-4">
@@ -792,7 +792,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                                 </select>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-[11px] font-black text-slate-600">لاحقة العنوان (Badge)</label>
                                 <input type="text" value={(localSettings.texts || {})['admin_badge'] || 'ADMIN'} onChange={(e) => updateSettings({ texts: { ...(localSettings.texts || {}), 'admin_badge': e.target.value } })} className="w-full bg-muted border border rounded-2xl py-3 px-4 text-xs font-bold outline-none focus:border-slate-900" placeholder="ADMIN..." />
@@ -1502,7 +1502,7 @@ function TextTab({
 
             {/* View Mode 1: Structured Management */}
             {viewMode === 'structured' && (
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Left Sidebar: Structured Categories & Subcategories */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-4 space-y-4 shadow-sm">
@@ -1566,7 +1566,7 @@ function TextTab({
                                     </div>
 
                                     {/* Settings Controls Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                                         {currentSubcategory.controls?.map((ctrl) => {
                                             const currentValue = localSettings[ctrl.key] !== undefined ? localSettings[ctrl.key] : ctrl.default;
                                             return (
@@ -1801,7 +1801,7 @@ function TextTab({
                                                     )}
                                                 </div>
 
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-1.5">
                                                         <label className="text-[10px] font-black text-slate-400 uppercase">العربية</label>
                                                         <input
@@ -1833,7 +1833,7 @@ function TextTab({
 
             {/* View Mode 2: Traditional Full List Search */}
             {viewMode === 'traditional' && (
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Categories and Subcategories Selection */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1.25rem] p-4 space-y-2 shadow-sm">
@@ -1955,7 +1955,7 @@ function TextTab({
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5">
                                                 <div className="space-y-1.5">
                                                     <div className="flex justify-between items-center px-1">
                                                         <label className="text-[10px] font-black text-slate-400 uppercase">العربية</label>
@@ -2303,7 +2303,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {/* Sidebar Hierarchy (Same as TextTab) */}
                 <div className="lg:col-span-1 space-y-4">
                     {!query && STRUCTURED_SECTIONS.filter(section => section.subcategories.some(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id))).map((section) => {
@@ -2449,7 +2449,7 @@ function LogsModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: boolean)
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full max-w-2xl p-8 shadow-2xl overflow-hidden">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-2xl p-8 shadow-2xl overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">سجل التغييرات</h3>
                     <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>
@@ -2475,7 +2475,7 @@ function CommissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: bo
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full max-w-lg p-8 shadow-2xl">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-lg p-8 shadow-2xl">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">إدارة العمولات</h3>
                     <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>

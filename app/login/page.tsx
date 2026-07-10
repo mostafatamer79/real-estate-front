@@ -127,7 +127,7 @@ export default function SignIn({ onClose }: SignInProps) {
       {/* Decorative Lines */}
       <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full w-[95vw] sm:max-w-md relative z-10">
         {/* Header/Back Link */}
         <div className="flex justify-between items-center mb-8">
           <button

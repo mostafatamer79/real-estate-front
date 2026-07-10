@@ -273,7 +273,7 @@ export default function AdminPackagesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border bg-card p-1 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-2xl border border bg-card p-1 shadow-sm">
         <button
           type="button"
           onClick={() => setActiveTab("packages")}
@@ -299,7 +299,7 @@ export default function AdminPackagesPage() {
             <Loader2 className="w-8 h-8 animate-spin text-slate-900" />
         </div>
       ) : activeTab === "packages" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg) => (
             <div key={pkg.id} className="bg-card rounded-2xl p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
                 {!pkg.isActive && (
@@ -365,11 +365,11 @@ export default function AdminPackagesPage() {
           </div>
 
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                 {AVAILABLE_ADMINISTRATIONS.map((admin) => (
                   <div key={admin} className="rounded-2xl border border bg-muted p-4">
                     <div className="mb-3 text-sm font-black text-slate-950">{t(admin)}</div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري" : "Monthly"}</label>
                         <input
@@ -399,7 +399,7 @@ export default function AdminPackagesPage() {
 
                 <div className="rounded-2xl border border bg-muted p-4">
                   <div className="mb-3 text-sm font-black text-slate-950">{isRtl ? "سعر كل موظف" : "Employee Seat Price"}</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري لكل موظف" : "Monthly per employee"}</label>
                       <input
@@ -461,7 +461,7 @@ export default function AdminPackagesPage() {
               </div>
               
               <form onSubmit={handleSubmit} className="p-6 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.info')}</h3>
                          <div className="space-y-2">
@@ -475,7 +475,7 @@ export default function AdminPackagesPage() {
                                 placeholder={t('admin.packages.form.namePlaceholder')}
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">{t('admin.packages.form.yearlyPrice')}</label>
                                 <input
@@ -529,7 +529,7 @@ export default function AdminPackagesPage() {
                         {/* Administrations */}
                         <div className="space-y-3">
                             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.administrations')}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
                                 {AVAILABLE_ADMINISTRATIONS.map(admin => (
                                     <div 
                                         key={admin}

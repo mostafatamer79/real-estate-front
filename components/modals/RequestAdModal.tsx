@@ -98,7 +98,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <DialogContent className="sm:w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
         <DialogHeader className="sr-only">
           <DialogTitle>{isRtl ? 'طلب إضافة إعلان' : 'Request Ad'}</DialogTitle>
           <DialogDescription>
@@ -125,7 +125,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
         {/* Modal Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
@@ -168,7 +168,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   {isRtl ? 'تفاصيل ومواصفات العقار للإعلان' : 'Ad Property Specifications'}
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
                     <div className="flex bg-card p-1 rounded-xl border border gap-1">
@@ -215,7 +215,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                     <input
@@ -239,7 +239,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
                     <input

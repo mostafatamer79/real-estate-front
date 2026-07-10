@@ -39,7 +39,7 @@ export function NewPropertyModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border border-gray-800 rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="bg-slate-900 border border-gray-800 rounded-3xl w-[95vw] sm:max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Header */}
         <div className="relative p-6 border-b border-gray-800 bg-slate-900/50">
           <div className="flex justify-between items-center">
@@ -76,7 +76,7 @@ export function NewPropertyModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Property Type */}
             <div className="space-y-2">
               <Label className="text-gray-300 flex items-center gap-2 ml-1">
@@ -128,7 +128,7 @@ export function NewPropertyModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Price */}
             <div className="space-y-2">
               <Label className="text-gray-300 flex items-center gap-2 ml-1">

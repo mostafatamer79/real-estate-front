@@ -245,7 +245,8 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                     </div>
 
                     <div className='rounded-2xl border border overflow-hidden'>
-                        <Table>
+                        <div className="overflow-x-auto w-full">
+<Table>
                             <TableHeader className='bg-muted/50'>
                                 <TableRow>
                                     <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.invoiceNo')}</TableHead>
@@ -337,6 +338,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                 ))}
                             </TableBody>
                         </Table>
+</div>
                     </div>
                 </div> 
             </Card>
@@ -355,7 +357,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Add Balance Dialog */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogContent className="max-w-md rounded-[1.25rem] p-8" dir="rtl">
+                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-8" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
                     </DialogHeader>
@@ -379,7 +381,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
                         <div className="space-y-4 pt-4 border-t border">
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('wallet.balance.paymentMethod') || 'طريقة الدفع'}</p>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-4 rounded-2xl border-2 border-slate-900 bg-muted flex items-center gap-3">
                                     <CreditCard className="w-6 h-6 text-slate-900" />
                                     <span className="font-bold text-slate-900">بطاقة صراف</span>
@@ -407,7 +409,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Withdraw Balance Dialog */}
             <Dialog open={showWithdrawDialog} onOpenChange={setShowWithdrawDialog}>
-                <DialogContent className="max-w-md rounded-[1.25rem] p-8" dir="rtl">
+                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-8" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-2xl font-black text-slate-900">{t('wallet.balance.withdrawTitle') || 'طلب سحب رصيد'}</DialogTitle>
                     </DialogHeader>

@@ -107,7 +107,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
             <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-6'}`}>
                 <Tabs defaultValue="advertising" className="w-full space-y-10" onValueChange={setActiveTab} dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <div className="flex flex-col items-center gap-6 w-full">
-                        <div className="w-full max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
+                        <div className="w-full w-[95vw] sm:max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
                             <TabsList className="inline-flex h-20 items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400">
                                 <TabsTrigger value="advertising" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
                                     <span>{t('marketing.tab.ads')}</span>

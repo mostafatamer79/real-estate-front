@@ -1806,7 +1806,7 @@ function BuildingManagementContent() {
               <h4 className="font-medium text-slate-800">{t('bm.form.firstParty')}</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 mb-2">{t('bm.form.name')} *</label>
                 <input
@@ -1942,7 +1942,7 @@ function BuildingManagementContent() {
             </div>
 
             {legalDisputeForm.firstPartyAgent && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-gray-700 mb-2">{t('bm.form.agentName')} *</label>
                   <input
@@ -1994,7 +1994,7 @@ function BuildingManagementContent() {
               <h4 className="font-medium text-green-800">{t('bm.form.secondParty')}</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 mb-2">{t('bm.form.name')} *</label>
                 <input
@@ -2131,7 +2131,7 @@ function BuildingManagementContent() {
             </div>
 
             {legalDisputeForm.secondPartyAgent && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-gray-700 mb-2">{t('bm.form.agentName')} *</label>
                   <input
@@ -2180,7 +2180,7 @@ function BuildingManagementContent() {
         <div>
           <h2 className="text-base font-semibold text-gray-800 mb-4">{details.title}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700 mb-2">{details.typeLabel} *</label>
               <select
@@ -2497,7 +2497,7 @@ function BuildingManagementContent() {
   // Render New Tenant Modal
   const renderNewTenantModal = () => (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all animate-in fade-in" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="bg-card rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all animate-in zoom-in-95 duration-300">
+        <div className="bg-card rounded-2xl w-[95vw] sm:max-w-lg w-full shadow-2xl overflow-hidden transform transition-all animate-in zoom-in-95 duration-300">
             {/* Header */}
             <div className={`p-6 border-b border flex justify-between items-center bg-gradient-to-r ${language === 'ar' ? 'from-slate-50 to-transparent' : 'from-transparent to-slate-50'}`}>
                 <div className="flex items-center gap-3">
@@ -2519,7 +2519,7 @@ function BuildingManagementContent() {
 
             <form onSubmit={handleCreateTenant} className="p-5 space-y-6">
                 {/* Tenant Name & ID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
                             <User className="w-4 h-4 text-slate-600" />
@@ -2548,7 +2548,7 @@ function BuildingManagementContent() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Phone Number */}
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
@@ -2580,7 +2580,7 @@ function BuildingManagementContent() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Tenant Type */}
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
@@ -2840,7 +2840,7 @@ function BuildingManagementContent() {
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
               {activeReportsSubTab === 'roi' ? (
                   <div className="p-10 space-y-10">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
                                 <p className="text-3xl font-black text-slate-900 tracking-tight">
@@ -3219,7 +3219,7 @@ function BuildingManagementContent() {
       <h1 className="text-lg font-bold text-gray-800 mb-4">{t('bm.title.users')}</h1>
       
       <Tabs value={activeUserTab} onValueChange={(v) => setActiveUserTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
           <TabsTrigger value="new">{t('bm.users.newTitle')}</TabsTrigger>
           <TabsTrigger value="list">{t('bm.users.title')}</TabsTrigger>
         </TabsList>
@@ -3240,7 +3240,7 @@ function BuildingManagementContent() {
             {/* Classification Section */}
             <div className="bg-muted p-4 rounded-xl border border">
               <h3 className="text-sm font-semibold text-gray-800 mb-3">{t('bm.users.classification')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-700 mb-1">{t('bm.users.classification')} *</label>
                   <div className="flex gap-3">
@@ -3282,7 +3282,7 @@ function BuildingManagementContent() {
                 </div>
               </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+               <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
                   <div>
                     <label className="block text-xs text-gray-700 mb-1">{t('profile.nameLabel')} ({t('common.firstName')}) *</label>
                     <input
@@ -3326,7 +3326,7 @@ function BuildingManagementContent() {
             <div className="bg-muted p-6 rounded-xl border border">
               <h3 className="text-base font-semibold text-gray-800 mb-4">{t('bm.users.financial')}</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                    <label className="block text-gray-700 mb-2">{t('bm.users.financial.type')}</label>
                    <select
@@ -3648,7 +3648,7 @@ function BuildingManagementContent() {
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                         {/* Client Info */}
                         <div className="space-y-4">
                           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
@@ -3687,7 +3687,7 @@ function BuildingManagementContent() {
                             <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
                             {t('admin.service_requests.service_details')}
                           </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="space-y-2">
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.category')}</label>
                               <div className="relative">
@@ -3725,7 +3725,7 @@ function BuildingManagementContent() {
                             {srFormData.serviceCategory === 'other' && (
                               <div className="space-y-2 md:col-span-3 pb-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.target_dept')}</label>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                                   {srDepartments.map(dept => {
                                     const sel = srFormData.targetDepartment === dept.id;
                                     return (
@@ -3855,7 +3855,7 @@ function BuildingManagementContent() {
                     return (
                       <div className="py-4">
                         <T defaultValue="details" className="w-full">
-                          <TL className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                          <TL className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                             <TT value="details" className="py-2 rounded-lg font-bold">{t('common.details')}</TT>
                           
                           </TL>
@@ -3869,7 +3869,7 @@ function BuildingManagementContent() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</label>
                                 <p className="text-sm font-bold text-slate-900">{srSelectedRequest.serviceType}</p>
@@ -3899,7 +3899,7 @@ function BuildingManagementContent() {
                                 {srSelectedRequest.firstParty && (
                                   <div className="p-4 bg-muted rounded-2xl border border">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
-                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.firstParty.name}</p></div>
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الهوية</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.firstParty.idNumber}</p></div>
                                       {srSelectedRequest.firstParty.phone && <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الجوال</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.firstParty.phone}</p></div>}
@@ -3909,7 +3909,7 @@ function BuildingManagementContent() {
                                 {srSelectedRequest.secondParty && (
                                   <div className="p-4 bg-muted rounded-2xl border border">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
-                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.secondParty.name}</p></div>
                                       <div><p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الهوية</p><p className="text-xs font-bold text-slate-900">{srSelectedRequest.secondParty.idNumber}</p></div>
                                     </div>
@@ -4239,7 +4239,7 @@ function BuildingManagementContent() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label className="font-bold text-gray-700">{t('pm.field.amount')}</Label>
               <Input 
@@ -4275,7 +4275,7 @@ function BuildingManagementContent() {
   const renderFinancial = () => (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           {/* Header Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
                         <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-stone-400">
@@ -4470,7 +4470,7 @@ function BuildingManagementContent() {
             </div>
 
             <Tabs value={activeOrderTab} onValueChange={(v) => setActiveOrderTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
                     <TabsTrigger value="new">{t('bm.quick.new')}</TabsTrigger>
                     <TabsTrigger value="list">{t('chat.all')}</TabsTrigger>
                 </TabsList>
@@ -4485,7 +4485,7 @@ function BuildingManagementContent() {
                             </RadioGroup>
                         </div>
                         
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                               <div className="space-y-2">
                                  <Label>{t('orders.propType')}</Label>
                                  <Select value={orderFormData.propertyType} onValueChange={(v) => setOrderFormData((p: any) => ({...p, propertyType: v}))}>
@@ -4532,7 +4532,7 @@ function BuildingManagementContent() {
                                 <hr className="my-6" />
                          <h3 className="text-base font-semibold mb-4">{t('bm.offer.detailed')}</h3>
                          
-                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                         <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="space-y-2">
                                 <Label>{t('orders.rooms')}</Label>
                                 <Input type="number" name="rooms" value={orderFormData.rooms || ''} onChange={handleOrderChange} />
@@ -4563,7 +4563,7 @@ function BuildingManagementContent() {
                             </div>
                          </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                             <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasMaidRoom" checked={!!orderFormData.hasMaidRoom} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasMaidRoom: !!c}))} />
                                 <label htmlFor="order_hasMaidRoom" className="text-xs font-medium">{t('orders.maid')}</label>
@@ -4619,7 +4619,7 @@ function BuildingManagementContent() {
                        <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                            <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
                            <Tabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-[300px]">
-                                <TabsList className="grid w-full grid-cols-2">
+                                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
                                     <TabsTrigger value="all">{t('offers.allOfferss')}</TabsTrigger>
                                     <TabsTrigger value="my">{t('offers.myOfferss')}</TabsTrigger>
                                 </TabsList>
@@ -4738,7 +4738,7 @@ function BuildingManagementContent() {
     return (
       <div className="p-6">
         <Tabs value={activeOfferTab} onValueChange={(v) => setActiveOfferTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
                 <TabsTrigger value="new">{t('bm.quick.new.offer')}</TabsTrigger>
                 <TabsTrigger value="list">{t('chat.all.offer')}</TabsTrigger>
             </TabsList>
@@ -4758,7 +4758,7 @@ function BuildingManagementContent() {
         {/* Tabs for Sale / Rent */}
         <div className="mb-6">
             <Tabs defaultValue="sale" dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full" onValueChange={(val) => setDealType(val as "sale" | "rent")}>
-            <TabsList className="grid w-full grid-cols-2 h-10 bg-muted p-1 rounded-xl">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 h-10 bg-muted p-1 rounded-xl">
                 <TabsTrigger value="sale" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
                     {t('bm.offer.dealSale')}
                 </TabsTrigger>
@@ -4772,7 +4772,7 @@ function BuildingManagementContent() {
         {/* Main Category Selection */}
         <div className="mb-6">
             <Label className="block text-xs font-bold text-gray-700 mb-3">{t('bm.offer.category')}</Label>
-            <RadioGroup defaultValue="residential" className="grid grid-cols-1 md:grid-cols-2 gap-3" onValueChange={(val) => handleCategoryChange(val as "residential" | "commercial")}>
+            <RadioGroup defaultValue="residential" className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3" onValueChange={(val) => handleCategoryChange(val as "residential" | "commercial")}>
                 <div 
                     onClick={() => handleCategoryChange('residential')}
                     className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'residential' ? 'border-slate-500 bg-muted/50' : 'border hover:border hover:bg-muted'}`}
@@ -4816,7 +4816,7 @@ function BuildingManagementContent() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                  {/* Image Upload */}
                  <div 
                     onClick={() => fileInputRef.current?.click()}
@@ -4890,7 +4890,7 @@ function BuildingManagementContent() {
               </CardTitle>
               <CardDescription>{t('bm.offer.basicSub')}</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5">
+            <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5 p-5">
               <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.propertyType')} <span className="text-red-500">*</span></Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('propertyType', val)} value={formData.propertyType}>
@@ -5049,7 +5049,7 @@ function BuildingManagementContent() {
                 </CardTitle>
                 <CardDescription>{t('bm.offer.detailedDesc')}</CardDescription>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-5 p-5">
+                <CardContent className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 p-5">
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offers.filter.rooms')}</Label>
                         <Input type="number" name="rooms" value={formData.rooms} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
@@ -5079,7 +5079,7 @@ function BuildingManagementContent() {
                         <Input type="number" name="buildingArea" value={formData.buildingArea} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
 
-                    <div className="col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+                    <div className="col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
                         <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasMaidRoom" checked={!!formData.hasMaidRoom} onCheckedChange={(c) => handleOfferCheckboxChange('hasMaidRoom', c as boolean)} />
                             <Label htmlFor="hasMaidRoom" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.maid')}</Label>
@@ -5132,7 +5132,7 @@ function BuildingManagementContent() {
                 <CardDescription>{t('bm.offer.attachmentsDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Property Papers */}
                     <div className="border p-4 rounded-xl bg-muted">
                         <Label className="block mb-3 font-semibold">{t('bm.offer.paperReq')}</Label>
@@ -5181,14 +5181,14 @@ function BuildingManagementContent() {
            <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
                <Tabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-[300px]">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
                         <TabsTrigger value="all">{t('offers.allOffers')}</TabsTrigger>
                         <TabsTrigger value="my">{t('offers.myOffers')}</TabsTrigger>
                     </TabsList>
                </Tabs>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loadingAllOffers ? (
                     <div className="col-span-full text-center py-12">
                         <Loader2 className="w-8 h-8 animate-spin text-slate-600 mx-auto" />
@@ -5471,7 +5471,7 @@ function BuildingManagementContent() {
                       {loadingPackages ? (
                           <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-slate-600"/></div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {packages.map((pkg) => (
                                 <div 
                                     key={pkg.id} 
@@ -5684,7 +5684,7 @@ function BuildingManagementContent() {
   if (!isAdmin && subStatus && !subStatus.active && !isRenewSubscriptionPage) {
     return (
       <Dialog open={true} onOpenChange={() => {}}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="w-[95vw] sm:max-w-lg">
           <div className="px-6 pt-6 pb-5">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black text-slate-950">
@@ -5980,7 +5980,7 @@ function BuildingManagementContent() {
                   </div>
 
                   {/* Info grid */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       { label: t("admin.service_requests.service_type"), value: selectedServiceRequest.serviceType || selectedServiceRequest.type },
                       { label: t("admin.service_requests.target_dept"),  value: t(`admin.trans.dept.${selectedServiceRequest.targetDepartment}`) },
@@ -5995,7 +5995,7 @@ function BuildingManagementContent() {
                   </div>
 
                   {/* Status & Department (Legal overrides) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border">
                     <div className="space-y-2">
                         {t("bm.users.status")}
                       <select
@@ -6025,7 +6025,7 @@ function BuildingManagementContent() {
                         {selectedServiceRequest.firstParty && (
                           <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('legal.party.first')}</p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase">{t('legal.party.name')}</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedServiceRequest.firstParty.name}</p>
@@ -6040,7 +6040,7 @@ function BuildingManagementContent() {
                         {selectedServiceRequest.secondParty && (
                           <div className="p-4 bg-muted rounded-xl border border">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('legal.party.second')}</p>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
                                 <p className="text-[9px] font-black text-slate-400 uppercase">{t('legal.party.name')}</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedServiceRequest.secondParty.name}</p>

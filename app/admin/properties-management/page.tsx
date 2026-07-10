@@ -459,7 +459,7 @@ export default function AdminPropertiesManagementPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border bg-card p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
           <p className="mt-1 text-3xl font-black text-slate-950">{properties.length}</p>
@@ -637,7 +637,7 @@ export default function AdminPropertiesManagementPage() {
 
       {viewingRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -656,7 +656,7 @@ export default function AdminPropertiesManagementPage() {
 
             {/* Modal Body */}
             <div className="max-h-[70vh] overflow-y-auto px-8 py-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
                 {formFields.map(([key, label]) => {
                   const val = viewingRecord[String(key)];
                   return (
@@ -671,7 +671,7 @@ export default function AdminPropertiesManagementPage() {
               </div>
               
               {/* Additional fields not in formFields, like dates & relationship objects */}
-              <div className="border-t border pt-4 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="border-t border pt-4 mt-4 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
                 {viewingRecord.createdAt && (
                   <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -774,7 +774,7 @@ export default function AdminPropertiesManagementPage() {
       {/* Standard Create/Edit Form Modal */}
       {(isCreateOpen || editingId !== null) && (activeTab !== "properties" || editingId !== null) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -798,7 +798,7 @@ export default function AdminPropertiesManagementPage() {
 
             {/* Modal Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
                 {formFields.map(([key, label, type]) => {
                   const typeString = String(type);
                   if (typeString.startsWith("select:")) {

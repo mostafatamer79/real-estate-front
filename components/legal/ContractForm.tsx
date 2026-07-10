@@ -232,7 +232,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
     <div className="space-y-4 p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>{t('legal.contract.partyName')} *</Label>
           <Input
@@ -339,7 +339,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         </div>
 
         {hasAgent && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-card rounded border">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-card rounded border">
             <div>
               <Label>{t('legal.contract.agentName')} *</Label>
               <Input
@@ -461,7 +461,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <Label>{t('legal.contract.paymentAmount')}</Label>
                 <Input

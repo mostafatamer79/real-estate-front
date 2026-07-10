@@ -469,7 +469,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
               {user?.id && (
                 <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full md:w-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  <TabsList className="grid w-full grid-cols-2 lg:w-[450px]">
+                  <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:w-[450px]">
                     <TabsTrigger value="all" className="flex items-center gap-2"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</TabsTrigger>
                     <TabsTrigger value="appointments" className="flex items-center gap-2"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</TabsTrigger>
                   </TabsList>
@@ -480,7 +480,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
             {activeTab === "appointments" && user?.id && (incomingBookings.length > 0 || myBookings.length > 0) && (
               <div className="mb-10 bg-card border border rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><Calendar className="w-5 h-5 text-blue-600" /></div><div><h3 className="font-bold text-slate-900">{language === 'ar' ? 'المواعيد القادمة' : 'Upcoming Appointments'}</h3><p className="text-xs text-slate-500">{language === 'ar' ? `لديك ${incomingBookings.length + myBookings.length} موعد` : `You have ${incomingBookings.length + myBookings.length} appointments`}</p></div></div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[...incomingBookings, ...myBookings].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0,3).map((booking) => {
                     const isIncoming = incomingBookings.some(ib => ib.id === booking.id);
                     return (

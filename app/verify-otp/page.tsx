@@ -228,7 +228,7 @@ export default function VerifyOtpPage() {
 
   return (
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 pt-4">
-      <div className="w-full max-w-md">
+      <div className="w-full w-[95vw] sm:max-w-md">
         <button
           onClick={() => router.back()}
           className="mb-8 flex items-center gap-2 text-white/80 hover:text-white"

@@ -18,7 +18,7 @@ export default function DetailsPage() {
           <div className="mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-white">الموقع</h2>
             <div className="flex justify-center">
-              <div className="w-full max-w-2xl">
+              <div className="w-full w-[95vw] sm:max-w-2xl">
                 <Map
                   center={propertyLocation}
                   zoom={15}

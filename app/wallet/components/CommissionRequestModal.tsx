@@ -23,7 +23,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl p-0 overflow-hidden bg-card">
+            <DialogContent className="w-[95vw] sm:max-w-2xl p-0 overflow-hidden bg-card">
                 <div className="bg-slate-900 px-8 py-8 text-center relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full -mr-32 -mt-32 blur-3xl" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-card/5 rounded-full -ml-24 -mb-24 blur-2xl" />
@@ -38,7 +38,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                 </div>
 
                 <div className="p-8 space-y-8">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
                             <div className="flex items-center gap-4 mb-3">
                                 <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-blue-50 transition-colors">

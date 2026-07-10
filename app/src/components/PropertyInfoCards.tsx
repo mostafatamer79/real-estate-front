@@ -71,7 +71,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="w-full grid grid-cols-1 md:grid-cols-2 gap-6"
+        className="w-full grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6"
         dir={language === 'ar' ? 'rtl' : 'ltr'}
       >
         {/* ── Operations Card ── */}

@@ -175,7 +175,7 @@ export default function CommissionManager() {
                     </Select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <Label className="mb-1 block">الاسم</Label>
                         <Input value={commissionForm.name} onChange={(e) => setCommissionForm(prev => ({ ...prev, name: e.target.value }))} className="text-right" />
@@ -193,7 +193,7 @@ export default function CommissionManager() {
                     {/* Owner/Seller Section */}
                     <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المالك أو البائع</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.ownerName} onChange={(e) => setCommissionForm(prev => ({...prev, ownerName: e.target.value}))} className="text-right"/></div>
                             <div><Label>رقم الهوية</Label><Input value={commissionForm.ownerId} onChange={(e) => setCommissionForm(prev => ({...prev, ownerId: e.target.value}))} className="text-right"/></div>
                         </div>
@@ -202,7 +202,7 @@ export default function CommissionManager() {
                     {/* Buyer Section */}
                     <div className="bg-muted p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">المشتري</h4>
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>الاسم</Label><Input value={commissionForm.buyerName} onChange={(e) => setCommissionForm(prev => ({...prev, buyerName: e.target.value}))} className="text-right"/></div>
                             <div><Label>رقم الهوية</Label><Input value={commissionForm.buyerId} onChange={(e) => setCommissionForm(prev => ({...prev, buyerId: e.target.value}))} className="text-right"/></div>
                         </div>
@@ -252,7 +252,7 @@ export default function CommissionManager() {
             {showBrokerModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowBrokerModal(false)} dir="rtl">
-                    <div className="bg-card border border rounded-xl shadow-2xl w-full max-w-md mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">إضافة وسيط</h2>
                         <div className="space-y-4">
                             <div><Label>الاسم</Label><Input value={brokerForm.name} onChange={(e) => setBrokerForm({...brokerForm, name: e.target.value})} /></div>

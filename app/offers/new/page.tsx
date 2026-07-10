@@ -102,7 +102,7 @@ export default function NewOfferPage() {
 
   return (
     <section className="min-h-screen bg-muted py-10" dir={isArabic ? "rtl" : "ltr"}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="w-[95vw] sm:max-w-3xl mx-auto px-4 sm:px-6">
         <button
           onClick={() => router.push("/offers")}
           className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
@@ -131,7 +131,7 @@ export default function NewOfferPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
             <label className="text-sm text-gray-700">
               {isArabic ? "نوع العقار" : "Property Type"} *
               <input className="mt-1 w-full border rounded-lg px-3 py-2" value={form.propertyType} onChange={(e) => onChange("propertyType", e.target.value)} />

@@ -405,7 +405,7 @@ export default function OrderDetailsPage() {
             {/* Basic Specifications Card */}
             <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">المواصفات الأساسية</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                 <InfoRow label="نوع العقار"   value={order.propertyType}  icon={Building2} />
                 <InfoRow label="المدينة"       value={order.city}          icon={MapPin} />
                 <InfoRow label="الحي"          value={order.neighborhood}  icon={MapPin} />
@@ -421,7 +421,7 @@ export default function OrderDetailsPage() {
             {(order.rooms || order.bathrooms || order.livingRooms || order.kitchens || order.floors || order.apartments || order.buildingArea) && (
               <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-6">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">التفاصيل الهيكلية</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                   <InfoRow label="عدد الغرف"        value={order.rooms}        icon={BedDouble} />
                   <InfoRow label="دورات المياه"      value={order.bathrooms}    icon={Bath} />
                   <InfoRow label="غرف المعيشة"       value={(order as any).livingRooms}  icon={Sofa} />

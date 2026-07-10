@@ -174,7 +174,7 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-8 animate-pulse">
         <div className="h-10 w-56 rounded-xl bg-muted" />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((item) => (
             <div key={item} className="h-32 rounded-2xl bg-muted" />
           ))}
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         </h1>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
           {requestBuckets.map((bucket, index) => (
             <motion.div
               key={bucket.label}

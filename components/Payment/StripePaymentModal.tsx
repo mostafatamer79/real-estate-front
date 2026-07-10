@@ -61,7 +61,7 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, invoice
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="sm:w-[95vw] sm:max-w-md" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle>{t('payment.title')}</DialogTitle>
           <DialogDescription>

@@ -178,7 +178,7 @@ export default function DisputesPage() {
             </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[1.25rem] bg-muted/50 animate-pulse" />)}
           </div>
         ) : filteredDisputes.length === 0 ? (
@@ -189,7 +189,7 @@ export default function DisputesPage() {
               <p className="text-xl font-black uppercase tracking-widest opacity-40">{t('disputes.empty')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
               {filteredDisputes.map((dispute, idx) => {
                 const status = getStatusConfig(dispute.status);

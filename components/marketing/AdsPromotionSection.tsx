@@ -177,7 +177,7 @@ export default function AdsPromotionSection() {
             {/* Overview Grid */}
             {view === 'overview' && (
                 <div className="space-y-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[
                             { 
                                 id: 'campaign', 
@@ -371,7 +371,7 @@ export default function AdsPromotionSection() {
 
             {/* Email Wizard Modal */}
             <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
-                <DialogContent className="max-w-2xl bg-card rounded-[1.25rem] p-0 overflow-hidden border-none shadow-3xl">
+                <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1.25rem] p-0 overflow-hidden border-none shadow-3xl">
                     <div className="bg-slate-900 p-10 text-white">
                         <div className="flex justify-between items-center mb-8">
                             <span className="px-4 py-2 bg-blue-500 rounded-xl text-[10px] font-black uppercase tracking-widest">
@@ -403,7 +403,7 @@ export default function AdsPromotionSection() {
                                 >
                                     <div className="space-y-4">
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.category')}</label>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                             {[
                                                 { id: 'offers', labelAr: 'العروض', labelEn: 'Offers' },
                                                 { id: 'orders', labelAr: 'الطلبات', labelEn: 'Orders' },
@@ -425,7 +425,7 @@ export default function AdsPromotionSection() {
 
                                     <div className="space-y-6 pt-4 border-t border">
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.linkResource')}</label>
-                                        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
                                             {[
                                                 { id: 'none', label: t('marketing.wizard.noLink') },
                                                 { id: 'order', label: t('marketing.wizard.linkOrder') },
@@ -539,7 +539,7 @@ export default function AdsPromotionSection() {
                                 >
                                     <div className="space-y-4">
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.frequency')}</label>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {[
                                                 { id: 'daily', labelAr: 'يومي', labelEn: 'Daily', icon: '📅' },
                                                 { id: 'every_2_days', labelAr: 'كل يومين', labelEn: 'Every 2 Days', icon: '📆' },
@@ -572,7 +572,7 @@ export default function AdsPromotionSection() {
                                 >
                                     <div className="p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
                                         <h4 className="font-black text-xl text-slate-900 border-b border pb-4">{t('marketing.wizard.review.summary')}</h4>
-                                        <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.category')}</p>
                                                 <p className="font-black text-slate-800 uppercase">{emailWizardData.category}</p>
@@ -653,7 +653,7 @@ export default function AdsPromotionSection() {
                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{selectedCampaign.category}</p>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
                             { label: t('marketing.stats.sent'), value: '2,840', trend: '+100%', color: 'text-blue-600' },
                             { label: t('marketing.stats.openRate'), value: '38.4%', trend: '+5.2%', color: 'text-emerald-600' },

@@ -253,7 +253,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
             </div>
 
             {clientMode === "registered" ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-1 relative">
                   <label className={labelCls}>ابحث عن عميل</label>
                   <div className="relative">
@@ -330,7 +330,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-1">
                   <label className={labelCls}>اسم العميل المجهول</label>
                   <input
@@ -358,7 +358,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">تفاصيل الطلب الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>نوع الطلب</label>
                 <select
@@ -425,7 +425,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input
@@ -464,7 +464,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>عمر العقار المفضل</label>
                 <input
@@ -556,7 +556,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>مساحة البناء (م²)</label>
                   <input
@@ -568,7 +568,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-6">
+                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-6">
                   <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
@@ -686,7 +686,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-md rounded-2xl p-8 shadow-2xl relative">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-md rounded-2xl p-8 shadow-2xl relative">
                 <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
                 
                 <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2">
@@ -695,7 +695,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
                 </h2>
 
                 <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <Button onClick={() => handleAssign(currentUser?.id)} variant="outline" className="h-12 rounded-xl border hover:border-slate-950 font-bold gap-2">
                             <UserIcon className="w-4 h-4" /> أنا (Me)
                         </Button>
@@ -906,7 +906,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((s, i) => (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="bg-card p-5 rounded-2xl border border shadow-sm flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl ${s.color} flex items-center justify-center shrink-0`}>
@@ -922,7 +922,7 @@ export default function OrdersPage() {
 
       {/* Filters & Table */}
       <div className="bg-card border border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-4 xl:grid-cols-7">
+        <div className="p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             <div className="relative w-full md:col-span-2">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-card border focus:border-slate-950" />

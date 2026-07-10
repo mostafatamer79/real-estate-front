@@ -143,7 +143,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                                             </Badge>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-muted rounded-lg p-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-muted rounded-lg p-3">
                                             <div className="flex items-center gap-2.5 text-slate-600">
                                                 <Phone className="w-4 h-4 text-slate-400" />
                                                 <span>{booking.user?.phone || (language === 'ar' ? 'غير متوفر' : 'Not available')}</span>

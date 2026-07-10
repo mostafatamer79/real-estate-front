@@ -39,7 +39,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 py-6">
                     {/* Basic Info */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{t('bm.legal.serviceDesc')}</h3>
@@ -81,7 +81,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                                             <Building className="w-4 h-4 text-blue-600" />
                                             <p className="font-bold text-blue-900 text-sm">{lease.unit?.property?.name || '---'} - Unit {lease.unit?.unitNumber}</p>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                                             <div>
                                                 <p className="text-blue-500 font-bold uppercase">{t('pm.field.rentAmount')}</p>
                                                 <p className="font-black text-blue-800">{lease.annualRent != null ? <SaudiRiyalAmount amount={lease.annualRent} locale="en-US" /> : null}</p>

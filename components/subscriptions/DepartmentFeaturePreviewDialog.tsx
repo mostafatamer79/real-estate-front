@@ -315,7 +315,7 @@ export default function DepartmentFeaturePreviewDialog({
                   {language === "ar" ? currentSection.descriptionAr : currentSection.descriptionEn}
                 </p>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid gap-3 sm:grid-cols-1 md:grid-cols-2">
                   {[1, 2, 3, 4].map((index) => (
                     <div key={index} className="rounded-2xl border border bg-muted p-4">
                       <div className="text-xs font-black text-slate-400">

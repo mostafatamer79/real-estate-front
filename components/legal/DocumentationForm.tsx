@@ -160,7 +160,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
     <div className="space-y-4 p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <Label>{t('legal.doc.name')} *</Label>
           <Input
@@ -295,7 +295,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       <div className="space-y-4 p-6 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold text-gray-800">{t('legal.doc.saleAmount')}</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label>{t('legal.doc.saleAmount')}</Label>
             <Input

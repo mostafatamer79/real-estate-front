@@ -297,7 +297,7 @@ export function AddPropertyWizard({
                         >
                             {/* --- TAB 1: ASSETS --- */}
                             <TabsContent value="assets" className="mt-0 space-y-8 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                      {/* Property Details Card */}
                                      <Card className="bg-card border shadow-sm md:col-span-2">
                                         <CardContent className="p-6 space-y-6">
@@ -306,7 +306,7 @@ export function AddPropertyWizard({
                                                 <h4 className="text-lg font-bold text-gray-900">{t('pm.details.title')}</h4>
                                             </div>
                                             
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
                                                     <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">{t('pm.field.propertyName')}</Label>
                                                     <Input 
@@ -393,7 +393,7 @@ export function AddPropertyWizard({
                                                 </h4>
                                             </div>
                                             
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                                 <div className="space-y-2">
                                                     <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
                                                         {isRtl ? "القسم الرئيسي" : "Main Category"}
@@ -911,7 +911,7 @@ export function AddPropertyWizard({
 
                             {/* --- TAB 2: TENANTS --- */}
                             <TabsContent value="tenants" className="space-y-6 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {/* Units List for Selection */}
                                     <div className="md:col-span-1 space-y-3">
                                         <h4 className="text-lg font-bold text-gray-900 mb-4">{t('pm.tab.units')}</h4>
@@ -950,7 +950,7 @@ export function AddPropertyWizard({
                                                         <span className="text-sm font-medium text-gray-500">{t('pm.unit')} {propertyData.units?.[editingUnitIndex].unitNumber}</span>
                                                     </div>
 
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5">
                                                         <div className="space-y-2">
                                                             <Label className="text-gray-700 text-xs font-bold">{t('pm.tenant.name')}</Label>
                                                             <Input 
@@ -1037,8 +1037,8 @@ export function AddPropertyWizard({
                                             <CreditCard className="w-10 h-10 text-blue-600" />
                                         </div>
                                         <h4 className="text-xl font-bold text-gray-900">{t('pm.financial.management')}</h4>
-                                        <p className="text-gray-500 max-w-md">{t('pm.financial.desc')}</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg mt-8">
+                                        <p className="text-gray-500 w-[95vw] sm:max-w-md">{t('pm.financial.desc')}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 w-full w-[95vw] sm:max-w-lg mt-8">
                                             <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
                                                 <div className="w-2 h-2 rounded-full bg-green-500" />
                                                 <span className="font-medium text-gray-700">{t('pm.financial.autoInvoice')}</span>
@@ -1054,7 +1054,7 @@ export function AddPropertyWizard({
 
                             {/* --- TAB 4: REPORTS (Placeholder) --- */}
                             <TabsContent value="reports" className="space-y-6 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                                     <Card className="bg-card border shadow-sm">
                                         <CardContent className="p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.roi')}</h4>

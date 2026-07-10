@@ -175,7 +175,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                     ) : order ? (
                         <>
                             {/* Main Stats */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-6 rounded-[1.25rem] bg-muted border border flex flex-col justify-center gap-1 group hover:bg-slate-900 hover:border-slate-800 transition-all duration-500">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-8 h-8 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:bg-slate-800 transition-colors">
@@ -236,7 +236,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.specs')}</span>
                                     <div className="h-0.5 flex-1 bg-muted"></div>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                     <SpecItem icon={MeterIcon} label={t('bm.prop.area')} value={`${order.area} م²`} />
                                     <SpecItem icon={Home} label={t('orders.rooms')} value={order.rooms} />
                                     <SpecItem icon={Bath} label={t('orders.baths')} value={order.bathrooms} />

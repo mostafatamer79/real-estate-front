@@ -211,7 +211,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
@@ -262,7 +262,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
 
               {!form.userId ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className={labelCls}>اسم العميل</label>
                     <input 
@@ -293,7 +293,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
                 <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
@@ -348,7 +348,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input 
@@ -376,7 +376,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المساحة (م²)</label>
                 <input 
@@ -419,7 +419,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>السعر</label>
                 <input 
@@ -472,7 +472,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>حالة العقار</label>
                 <select 
@@ -503,7 +503,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
             <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الغرف</label>
                   <input
@@ -546,7 +546,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الأدوار</label>
                   <input
@@ -660,7 +660,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>صور العقار</label>
                 <input
@@ -702,7 +702,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className={labelCls}>حالة العرض</label>
               <select 
@@ -896,7 +896,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
@@ -947,7 +947,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
 
               {!form.userId ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className={labelCls}>اسم العميل</label>
                     <input 
@@ -978,7 +978,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
                 <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
@@ -1033,7 +1033,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input 
@@ -1061,7 +1061,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المساحة (م²)</label>
                 <input 
@@ -1104,7 +1104,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>السعر</label>
                 <input 
@@ -1157,7 +1157,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>حالة العقار</label>
                 <select 
@@ -1188,7 +1188,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
             <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الغرف</label>
                   <input
@@ -1231,7 +1231,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الأدوار</label>
                   <input
@@ -1345,7 +1345,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط الجديدة (اختياري)</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>إضافة صور جديدة للعقار</label>
                 <input
@@ -1387,7 +1387,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className={labelCls}>حالة العرض</label>
               <select 
@@ -1660,7 +1660,7 @@ export default function AdminOffersPage() {
           </p>
         </div>
         
-        <div className="grid w-full gap-3 md:w-auto md:grid-cols-4 xl:grid-cols-7">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-stone-400/20"
@@ -1711,7 +1711,7 @@ export default function AdminOffersPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
          <div className="p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
@@ -1763,7 +1763,7 @@ export default function AdminOffersPage() {
             لا توجد بلاغات في هذه الحالة
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-4">
             {reports.map((report) => (
               <div key={report.id} className="rounded-3xl border border bg-muted/60 p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">

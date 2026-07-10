@@ -192,7 +192,7 @@ export default function CompleteProfilePage() {
                                 <User className="w-5 h-5 text-blue-400" />
                                 {t('profile.personalInfo')}
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-300">{t('login.placeholder.firstName') || "First Name"}</label>
                                     <input
@@ -225,7 +225,7 @@ export default function CompleteProfilePage() {
                                 {t('profile.accountType')}
                             </h2>
                             <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.USER ? 'bg-slate-600/10 border-blue-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
                                         <input 
                                             type="radio" 
@@ -354,7 +354,7 @@ export default function CompleteProfilePage() {
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-300">{t('city.name')}</label>
                                         <select

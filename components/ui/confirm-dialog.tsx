@@ -30,7 +30,7 @@ export function ConfirmDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[95vw] sm:max-w-md">
         <div className="border-b border bg-gradient-to-br from-white via-slate-50 to-slate-100/80 px-6 pb-5 pt-6">
           <div className="mb-4 inline-flex size-12 items-center justify-center rounded-2xl border border-white bg-card text-slate-950 shadow-sm">
             {icon || <Sparkles className="h-5 w-5" />}

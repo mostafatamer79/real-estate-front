@@ -234,7 +234,7 @@ export default function HomePage() {
         ) : settings.sectionFlags.financial === 'hidden' && user?.role !== 'admin' ? null : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
           <ComingSoonInline sectionName={t('details.charts.title')} message={settings.sectionMessages.financial} />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
             {[
               <PriceTrendChart key="price" data={priceData} labels={chartLabels} />,
               <PropertyDistributionChart key="dist" data={propertyTypes} />
@@ -257,7 +257,7 @@ export default function HomePage() {
       content: detailsPartStatus('ads') === 'soon' ? (
         <ComingSoonInline sectionName={language === 'ar' ? 'الإعلانات' : 'Ads'} message={settings.detailsPartMessages?.ads} />
       ) : marketingRequests.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {marketingRequests.slice(0, 6).map((request: any, index: number) => {
             const isOffer = request.category === 'offers';
             const priceVal = request.price ? Number(request.price) : 0;
@@ -286,7 +286,7 @@ export default function HomePage() {
                     </div>
 
                     {isOffer && (priceVal > 0 || areaVal > 0 || request.city || request.neighborhood) && (
-                      <div className="grid grid-cols-2 gap-3 mt-3 bg-slate-950/40 p-3 rounded-xl border border-slate-800/50 text-[11px] font-bold text-slate-300 text-right" dir="rtl">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 bg-slate-950/40 p-3 rounded-xl border border-slate-800/50 text-[11px] font-bold text-slate-300 text-right" dir="rtl">
                         {priceVal > 0 && (
                           <div>
                             <span className="text-[9px] font-black text-slate-500 block uppercase tracking-wider">{language === 'ar' ? 'السعر' : 'Price'}</span>

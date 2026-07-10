@@ -33,7 +33,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                 initial={{ opacity: 0, y: 40, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 flex flex-col items-center gap-10 text-center max-w-lg w-full"
+                className="relative z-10 flex flex-col items-center gap-10 text-center w-[95vw] sm:max-w-lg w-full"
             >
                 {/* Icon Assembly */}
                 <div className="relative">

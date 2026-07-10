@@ -141,7 +141,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
       </div>
 
       {/* Common Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label>{t('legal.other.name')} *</Label>
           <Input
@@ -206,7 +206,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
         <div className="space-y-4 p-6 bg-muted rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800">{t('legal.other.report')}</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>{t('legal.other.role')} *</Label>
               <Select value={role} onValueChange={setRole}>

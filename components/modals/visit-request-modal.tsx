@@ -332,7 +332,7 @@ export default function VisitRequestModal({
                     <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                     </p>
-                    <div className="grid grid-cols-4 gap-1.5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
                         {timeSlots.map(t => (
                             <button
                                 key={t}
@@ -372,7 +372,7 @@ export default function VisitRequestModal({
                         onValueChange={v => { setVisitMode(v as VisitMode); resetAll(); }}
                         className="mt-3"
                     >
-                        <TabsList className="grid w-full grid-cols-2 bg-muted rounded-xl p-1">
+                        <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 bg-muted rounded-xl p-1">
                             <TabsTrigger value="proxy" className="rounded-lg flex items-center gap-1.5 text-xs font-bold data-[state=active]:bg-slate-900 data-[state=active]:text-white">
                                 <UserCheck className="w-3.5 h-3.5" />
                                 {T.proxyTab}
@@ -447,7 +447,7 @@ export default function VisitRequestModal({
                                             ? 'اختر طريقة توثيق الزيارة (اختيار واحد فقط)'
                                             : 'Choose how the visit will be documented (select one)'}
                                     </p>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {([
                                             { id: 'video', label: T.videoRec, icon: Video, desc: isAr ? 'تسجيل الزيارة وإرسالها لاحقاً' : 'Visit recorded and sent to you' },
                                             { id: 'live',  label: T.liveStream, icon: Radio, desc: isAr ? 'مشاهدة الزيارة مباشرة' : 'Watch the visit in real time' },
@@ -578,7 +578,7 @@ export default function VisitRequestModal({
                                         <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
                                             <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                                         </p>
-                                        <div className="grid grid-cols-4 gap-1.5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
                                             {timeSlots.map(t => (
                                                 <button
                                                     key={t}

@@ -470,7 +470,7 @@ export default function AdminCustomerServicePage() {
       </div>
 
       {tab === "faqs" && (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Categories */}
           <Card 
             className="xl:col-span-1 border"
@@ -692,7 +692,7 @@ export default function AdminCustomerServicePage() {
               {!selectedCategoryId ? (
                 <div className="text-sm font-medium text-slate-500">{t("common.selectFirst") || (isRtl ? "اختر تصنيفاً أولاً." : "Select a category first.")}</div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Form */}
                   <div className="space-y-3">
                     <div className="text-xs font-black text-slate-600" style={{ color: settings.csTextColor || undefined }}>

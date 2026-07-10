@@ -365,7 +365,7 @@ export default function InternalChatPage() {
               initial={{ opacity: 0, scale: 0.95 }} 
               animate={{ opacity: 1, scale: 1 }} 
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card w-full max-w-md rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col max-h-[80vh]"
+              className="bg-card w-full w-[95vw] sm:max-w-md rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col max-h-[80vh]"
             >
               <button 
                 onClick={() => setIsNewChatModalOpen(false)} 

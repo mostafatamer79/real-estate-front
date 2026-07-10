@@ -228,7 +228,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                              {t('offer.basic')}
                              <div className="h-[1px] flex-1 bg-muted" />
                         </h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <SpecItem icon={Calendar} label={t('offer.age')} value={activeOffer.propertyAge} />
                             <SpecItem icon={Compass} label={t('offer.direction')} value={activeOffer.direction} />
                             <SpecItem icon={Tag} label={t('offer.deed')} value={activeOffer.deedType} />
@@ -246,7 +246,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 {t('offer.facilities')}
                                 <div className="h-[1px] flex-1 bg-muted" />
                             </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <SpecItem icon={Home} label={t('offer.rooms')} value={activeOffer.rooms} />
                                 <SpecItem icon={Home} label={t('offer.baths')} value={activeOffer.bathrooms} />
                                 <SpecItem icon={Home} label={t('offer.living')} value={activeOffer.livingRooms} />

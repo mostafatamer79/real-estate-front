@@ -149,7 +149,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-lg rounded-[1rem] p-8 shadow-2xl relative overflow-hidden">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-lg rounded-[1rem] p-8 shadow-2xl relative overflow-hidden">
         <button onClick={onClose} className="absolute left-6 top-6 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -165,7 +165,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-[11px] font-bold flex items-center gap-2"><AlertCircle className="w-4 h-4" />{error}</div>}
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الاسم الأول</label>
               <input value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} onBlur={() => touch('firstName')} className={fieldCls('firstName')} placeholder="محمد" />
@@ -199,7 +199,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الصلاحية</label>
               <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} className="w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all appearance-none">
@@ -228,7 +228,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           {form.role !== Role.USER && (
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-2">
                 {DEPARTMENTS.map(dept => {
                   const isSelected = form.department.includes(dept.value);
                   return (

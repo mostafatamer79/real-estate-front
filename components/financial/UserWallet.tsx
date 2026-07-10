@@ -148,7 +148,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-full max-w-md mx-4 text-black p-6"
+                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 text-black p-6"
                         onClick={(e) => e.stopPropagation()}
                     >
                          <h2 className="text-xl font-bold mb-4">طلب سحب رصيد</h2>
@@ -179,7 +179,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-full max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200"
+                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between p-6 border-b border">
@@ -191,7 +191,7 @@ export default function UserWallet() {
                                 <X className="h-6 w-6 text-gray-400" />
                             </button>
                         </div>
-                        <div className="p-6 grid grid-cols-2 gap-4">
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <span className="font-semibold">الدفع من الرصيد</span>
                                 <Wallet className="h-5 w-5" />

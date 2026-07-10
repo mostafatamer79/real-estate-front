@@ -329,7 +329,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <DialogHeader className="p-8 bg-slate-950 text-white flex flex-row items-center justify-between">
                         <div>
                             <DialogTitle className="text-2xl font-black">{selectedRequest?.serviceType}</DialogTitle>
@@ -342,7 +342,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                     {selectedRequest && (
                         <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>

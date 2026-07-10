@@ -421,7 +421,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1rem] p-8 shadow-2xl relative">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1rem] p-8 shadow-2xl relative">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -472,7 +472,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="grid grid-cols-2 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
                   >
                     {/* User Selection */}
                     <div className="space-y-1 relative col-span-2 sm:col-span-1">
@@ -530,7 +530,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     transition={{ duration: 0.15 }}
                     className="space-y-4 p-5 rounded-[1.25rem] bg-muted border border-/80"
                   >
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className={labelCls}>الاسم الأول</label>
                         <input
@@ -553,7 +553,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className={labelCls}>البريد الإلكتروني</label>
                         <input
@@ -576,7 +576,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className={labelCls}>الصلاحية / الدور</label>
                         <select
@@ -631,7 +631,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                             </div>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                             {visibleDepartments.map(dept => {
                               const isSelected = newUserForm.department.includes(dept.value);
                               return (
@@ -729,7 +729,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className={labelCls}>نوع الاشتراك</label>
               <select value={form.subscriptionType} onChange={e => updatePackageAmount({ subscriptionType: e.target.value })} className={inputCls}>
@@ -868,7 +868,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className={labelCls}>طريقة الدفع</label>
               <select value={form.paymentMethod} onChange={e => setForm(f => ({...f, paymentMethod: e.target.value}))} className={inputCls}>
@@ -1073,7 +1073,7 @@ export default function AdminSubscriptionsPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
          {[
            { label: 'إجمالي المشتركين', val: subscriptions.length, icon: UserIcon, bg: 'bg-muted', color: 'text-slate-950' },
            { label: 'اشتراكات نشطة', val: subscriptions.filter(s => normalizeStatus(s.status) === 'active').length, icon: Zap, bg: 'bg-emerald-50', color: 'text-emerald-600' },

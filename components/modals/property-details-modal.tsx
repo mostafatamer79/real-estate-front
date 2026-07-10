@@ -157,7 +157,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                 </DialogHeader>
 
                 <div className="overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
-                    <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                         <div className="rounded-[1rem] border border bg-muted px-4 py-4">
                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>
@@ -175,7 +175,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                     </div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6 w-full">
-                        <TabsList className="grid h-auto w-full grid-cols-2 rounded-2xl bg-muted p-1">
+                        <TabsList className="grid h-auto w-full grid-cols-1 md:grid-cols-2 rounded-2xl bg-muted p-1">
                             <TabsTrigger value="units" className="rounded-[1rem] py-3 font-black">{t('pm.tab.units')}</TabsTrigger>
                             <TabsTrigger value="details" className="rounded-[1rem] py-3 font-black">{t('offer.details')}</TabsTrigger>
                         </TabsList>
@@ -194,7 +194,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                     </div>
                                 </div>
 
-                                <div className="grid gap-4 md:grid-cols-4">
+                                <div className="grid gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                                     <div>
                                         <Label className="mb-2 block text-base font-bold">{t('pm.unit.number')}</Label>
                                         <Input
@@ -303,7 +303,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                                 </span>
                                             </div>
 
-                                            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                                            <div className="mt-5 grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                                                 <div className="rounded-2xl bg-muted px-4 py-3">
                                                     <div className="flex items-center gap-2 text-slate-400">
                                                         <BedDouble className="h-4 w-4" />
@@ -333,7 +333,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                         </TabsContent>
 
                         <TabsContent value="details" className="pt-5">
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                                 <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>

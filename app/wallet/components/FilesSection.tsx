@@ -82,7 +82,8 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                 </div>
 
                 <div className='rounded-2xl border border overflow-hidden'>
-                    <Table>
+                    <div className="overflow-x-auto w-full">
+<Table>
                         <TableHeader className='bg-muted/50'>
                             <TableRow>
                                 <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
@@ -145,6 +146,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                             )}
                         </TableBody>
                     </Table>
+</div>
                 </div>
             </div>
 
