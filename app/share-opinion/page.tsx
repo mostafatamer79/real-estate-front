@@ -95,7 +95,7 @@ export default function ShareOpinionPage() {
             <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 mb-2">شكراً لمشاركتنا رأيك!</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">شكراً لمشاركتنا رأيك!</h2>
             <p className="text-slate-500 font-bold mb-8">نحن نقدر وقتك واهتمامك، رأيك يساعدنا على تحسين خدماتنا باستمرار.</p>
           </motion.div>
         ) : (

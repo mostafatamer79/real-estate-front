@@ -123,7 +123,7 @@ const handleGoBack = () => {
 
   if (!isOpen) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center p-6">
+      <div className="min-h-screen bg-muted flex items-center justify-center p-3 sm:p-6">
         <ComingSoonOverlay sectionName={language === "ar" ? "الأسئلة الشائعة" : "FAQ"} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -138,7 +138,7 @@ const handleGoBack = () => {
         fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined,
       }}
     >
-      <section className="bg-card border-b border mb-12 p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
+      <section className="bg-card border-b border mb-12 p-4 sm:p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
         <div className="max-w-7xl mx-auto relative z-10">
           <button
             type="button"
@@ -148,7 +148,7 @@ const handleGoBack = () => {
             {language === "ar" ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             {language === "ar" ? "العودة لخدمة العملاء" : "Back to customer service"}
           </button>
-          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-slate-950">
+          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-2xl sm:text-4xl font-black tracking-tight leading-tight text-slate-950">
             {language === "ar" ? "الأسئلة الشائعة" : "Frequently Asked Questions"}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-3 text-slate-500 font-medium text-sm md:text-base leading-relaxed">
@@ -171,7 +171,7 @@ const handleGoBack = () => {
             </Button>
           </div>
 
-          <div className="glass p-6 md:p-10 rounded-[1.25rem] bg-card/60 border-none shadow-2xl shadow-stone-400 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
+          <div className="glass p-3 sm:p-6 md:p-10 rounded-[1.25rem] bg-card/60 border-none shadow-2xl shadow-stone-400 space-y-8" style={{ backgroundColor: settings.csCardBg ? `${settings.csCardBg}99` : undefined }}>
             {faqsError && (
               <div className="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
                 {language === "ar" ? "تعذر تحميل الأسئلة من الخادم، سيتم عرض البيانات الافتراضية." : "Failed to load FAQs from server; showing default data."}

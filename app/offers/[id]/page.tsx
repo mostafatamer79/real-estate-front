@@ -256,7 +256,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
   if (!currentUser) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm border border rounded-3xl p-6 text-center space-y-2 shadow-sm">
+      <div className="bg-card/80 backdrop-blur-sm border border rounded-3xl p-3 sm:p-6 text-center space-y-2 shadow-sm">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
         <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
       </div>
@@ -266,7 +266,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
   // A seller looking at their own offer doesn't chat with themselves
   if (currentUser.id === sellerId) {
     return (
-      <div className="bg-muted border border rounded-3xl p-6 text-center space-y-2">
+      <div className="bg-muted border border rounded-3xl p-3 sm:p-6 text-center space-y-2">
         <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-bounce" />
         <p className="text-xs font-black text-slate-500">
           {isRtl 
@@ -279,7 +279,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
   if (loading) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-8 flex items-center justify-center min-h-[300px]">
+      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-4 sm:p-8 flex items-center justify-center min-h-[300px]">
         <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -937,7 +937,7 @@ export default function OfferDetailsPage() {
       <div className="space-y-6">
         <Card className="bg-card/80 backdrop-blur-sm overflow-hidden border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-2xl">
+            <CardTitle className="text-xl sm:text-2xl">
               {offer.propertyType} في {offer.city}
               {offer.neighborhood && ` - حي ${offer.neighborhood}`}
             </CardTitle>
@@ -1160,7 +1160,7 @@ export default function OfferDetailsPage() {
                   </div>
                 )}
                 {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
-                  <div className="rounded-2xl border border-dashed border bg-muted p-8 text-center text-sm font-bold text-slate-400">
+                  <div className="rounded-2xl border border-dashed border bg-muted p-4 sm:p-8 text-center text-sm font-bold text-slate-400">
                     {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
                   </div>
                 )}
@@ -1334,7 +1334,7 @@ export default function OfferDetailsPage() {
   const renderErrorState = () => (
     <div className="text-center py-12">
       <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('offer.error')}</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('offer.error')}</h2>
       <p className="text-gray-600 mb-6">{error || t('offer.errorLoad')}</p>
       <div className="flex gap-3 justify-center">
         <Button onClick={fetchOfferDetails}>
@@ -1388,7 +1388,7 @@ export default function OfferDetailsPage() {
                 <span>تفاصيل العرض</span>
               </div>
 
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              <h1 className="text-2xl md:text-xl sm:text-3xl font-bold text-gray-800">
                 {offer.propertyType} في {offer.city}
               </h1>
 

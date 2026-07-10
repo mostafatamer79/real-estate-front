@@ -161,7 +161,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20">
                             <div className="relative">
@@ -176,25 +176,25 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                         <>
                             {/* Main Stats */}
                             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-6 rounded-[1.25rem] bg-muted border border flex flex-col justify-center gap-1 group hover:bg-slate-900 hover:border-slate-800 transition-all duration-500">
+                                <div className="p-3 sm:p-6 rounded-[1.25rem] bg-muted border border flex flex-col justify-center gap-1 group hover:bg-slate-900 hover:border-slate-800 transition-all duration-500">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-8 h-8 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:bg-slate-800 transition-colors">
                                             <Building className="w-4 h-4 text-slate-600 group-hover:text-slate-300" />
                                         </div>
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-500">{t('bm.offer.propertyType')}</span>
                                     </div>
-                                    <p className="text-2xl font-black text-slate-900 group-hover:text-white transition-colors">{order.propertyType}</p>
+                                    <p className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-white transition-colors">{order.propertyType}</p>
                                 </div>
                                 
-                                <div className="p-6 rounded-[1.25rem] bg-slate-900 border border-slate-800 flex flex-col justify-center gap-1">
+                                <div className="p-3 sm:p-6 rounded-[1.25rem] bg-slate-900 border border-slate-800 flex flex-col justify-center gap-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-8 h-8 rounded-xl bg-card/10 flex items-center justify-center shadow-sm">
                                             <SaudiRiyalIcon className="w-4 h-4 text-white" />
                                         </div>
                                         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{t('common.price')}</span>
                                     </div>
-                                    <p className="text-2xl font-black text-white">
-                                        <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-5 w-5 text-white/40" className="text-2xl font-black text-white" />
+                                    <p className="text-xl sm:text-2xl font-black text-white">
+                                        <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-5 w-5 text-white/40" className="text-xl sm:text-2xl font-black text-white" />
                                     </p>
                                 </div>
                             </div>
@@ -262,7 +262,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                         </div>
                                         <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">{t('bm.offer.notes')}</h4>
                                     </div>
-                                    <div className="p-6 rounded-[1.25rem] bg-muted border border text-sm text-slate-600 leading-relaxed italic">
+                                    <div className="p-3 sm:p-6 rounded-[1.25rem] bg-muted border border text-sm text-slate-600 leading-relaxed italic">
                                         "{order.additionalDetails}"
                                     </div>
                                 </div>
@@ -288,7 +288,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                 </div>
 
                 {/* Sticky Footer Actions */}
-                <div className="shrink-0 p-8 border-t border bg-card flex flex-col sm:flex-row gap-4">
+                <div className="shrink-0 p-4 sm:p-8 border-t border bg-card flex flex-col sm:flex-row gap-4">
                     <Button 
                         variant="ghost" 
                         onClick={onClose} 

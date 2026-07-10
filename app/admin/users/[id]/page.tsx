@@ -465,7 +465,7 @@ export default function AdminUserDetailsPage() {
             <ArrowRight className="h-4 w-4" />
             {isRtl ? "العودة للمستخدمين" : "Back to users"}
           </Link>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">{user.firstName} {user.lastName}</h1>
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">{user.firstName} {user.lastName}</h1>
           <p className="text-xs font-bold text-slate-400">{user.email || user.phone || user.id}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -502,7 +502,7 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <UserIcon className="h-5 w-5" />
             {isRtl ? "بيانات الحساب" : "Account details"}
@@ -524,7 +524,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <CreditCard className="h-5 w-5" />
             {isRtl ? "الاشتراك" : "Subscription"}
@@ -555,7 +555,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <Shield className="h-5 w-5" />
             {isRtl ? "نطاق العمل" : "Scope"}
@@ -577,7 +577,7 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2">
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <Layers3 className="h-5 w-5" />
@@ -625,7 +625,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <BriefcaseBusiness className="h-5 w-5" />
@@ -668,7 +668,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <MessageSquare className="h-5 w-5" />
           {isRtl ? "محادثات المستخدم" : "User chats"}
@@ -700,7 +700,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
@@ -909,7 +909,7 @@ export default function AdminUserDetailsPage() {
         )}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <Calendar className="h-5 w-5" />
           {isRtl ? "الطلبات والحجوزات" : "Requests & bookings"}
@@ -939,7 +939,7 @@ export default function AdminUserDetailsPage() {
 
       {/* Subscription Duration Selector Modal */}
       <Dialog open={showSubModal} onOpenChange={setShowSubModal}>
-        <DialogContent className="w-[95vw] sm:max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+        <DialogContent className="w-[95vw] sm:max-w-md p-3 sm:p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إدارة الاشتراك" : "Manage Subscription"}
@@ -1024,7 +1024,7 @@ export default function AdminUserDetailsPage() {
 
       {/* Subscription Cancellation Modal */}
       <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <DialogContent className="w-[95vw] sm:max-w-md p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
+        <DialogContent className="w-[95vw] sm:max-w-md p-3 sm:p-6 rounded-3xl" dir={isRtl ? "rtl" : "ltr"}>
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إلغاء الاشتراك" : "Cancel Subscription"}

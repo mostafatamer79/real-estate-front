@@ -81,7 +81,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <motion.h1
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm md:text-3xl font-black tracking-tight text-slate-950"
+                  className="text-sm md:text-xl sm:text-3xl font-black tracking-tight text-slate-950"
                 >
                   {t('fin.title')}
                 </motion.h1>
@@ -130,8 +130,8 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
                                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 text-white">
-                                         <div className="bg-slate-900 p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
-                                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                                         <div className="bg-slate-900 p-4 sm:p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
+                                             <div className="absolute top-0 right-0 p-3 sm:p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                                <PieChart className="w-20 h-20" />
                                              </div>
                                              <h4 className="text-lg font-black mb-5 flex items-center gap-3">
@@ -149,7 +149,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                                                  </div>
                                              </div>
                                          </div>
-                                         <div className="bg-card p-8 rounded-[1.25rem] border border flex flex-col justify-center items-center text-center group">
+                                         <div className="bg-card p-4 sm:p-8 rounded-[1.25rem] border border flex flex-col justify-center items-center text-center group">
                                             <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-slate-400 mb-5 group-hover:rotate-6 transition-all border border">
                                               <TrendingUp className="w-8 h-8" />
                                             </div>
@@ -235,7 +235,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                       key={idx}
-                      className="p-6 rounded-3xl bg-card border border hover:border-slate-300 transition-all duration-300 group"
+                      className="p-3 sm:p-6 rounded-3xl bg-card border border hover:border-slate-300 transition-all duration-300 group"
                     >
                         <div className="flex items-center gap-4">
                             <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-`}>
@@ -253,7 +253,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
-                <div className="bg-card rounded-3xl border border p-6">
+                <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between gap-3 mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">أداء آخر 6 أشهر</h3>
@@ -294,7 +294,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                     </div>
                 </div>
 
-                <div className="bg-card rounded-3xl border border p-6">
+                <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">حالة الفواتير</h3>
@@ -325,7 +325,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6">
-                <div className="bg-card rounded-3xl border border p-6">
+                <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">المصروفات حسب الفئة</h3>
@@ -352,7 +352,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                     </div>
                 </div>
 
-                <div className="bg-card rounded-3xl border border p-6">
+                <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h3 className="text-lg font-black text-slate-950">آخر النشاطات المالية</h3>
@@ -402,7 +402,7 @@ function TransactionsSection() {
 
     return (
         <div className="rounded-3xl overflow-hidden border border">
-            <div className="p-8 border-b border flex justify-between items-center bg-card">
+            <div className="p-4 sm:p-8 border-b border flex justify-between items-center bg-card">
                 <div>
                    <h4 className="text-xl font-black text-slate-900">{t('fin.tab.transactions')}</h4>
                    <p className="text-[10px] text-slate-400 font-black mt-1 uppercase tracking-widest">{t('fin.transactions.desc')}</p>

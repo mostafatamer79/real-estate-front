@@ -145,7 +145,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
     setParty: React.Dispatch<React.SetStateAction<PartyInfo>>,
     label: string
   ) => (
-    <div className="space-y-4 p-6 bg-muted rounded-lg">
+    <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
@@ -250,7 +250,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="rounded-xl border border-red-100 bg-red-50 p-5">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('legal.dispute.new')}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('legal.dispute.new')}</h2>
         <p className="text-gray-600">{t('legal.dispute.partyInfo')}</p>
       </div>
 
@@ -304,7 +304,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
       <div className="space-y-4">
         <Label>{t('legal.dispute.documents')}</Label>
         <p className="text-xs text-gray-500">الصيغ المسموحة: Word, PDF, صور</p>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-6 text-center">
           <input
             type="file"
             multiple

@@ -215,7 +215,7 @@ export default function HomePage() {
           <ComingSoonInline sectionName={t('details.stats.title')} message={settings.sectionMessages.financial} />
         ) : (
           <div className="space-y-8">
-            <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-900/70 rounded-3xl border border-slate-700/50 shadow-[0_4px_32px_rgba(0,0,0,0.4)] p-6 overflow-hidden">
+            <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-900/70 rounded-3xl border border-slate-700/50 shadow-[0_4px_32px_rgba(0,0,0,0.4)] p-3 sm:p-6 overflow-hidden">
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/40 to-transparent" />
               <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
               <PropertyInfoCards operations={operations} marketingRequests={marketingRequests} userRole={user?.role} />

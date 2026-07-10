@@ -18,13 +18,13 @@ export default function PriceTrendChart({
 
   if (!hasData) {
     return (
-      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
+      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
         <div className="flex items-start justify-between mb-6">
           <div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
               {t('chart.monthly_trend')}
             </p>
-            <p className="mt-2 text-2xl font-black text-slate-100">
+            <p className="mt-2 text-xl sm:text-2xl font-black text-slate-100">
               {language === 'ar' ? 'لا توجد بيانات' : 'No data'}
             </p>
           </div>
@@ -60,7 +60,7 @@ export default function PriceTrendChart({
   const isUp = latest >= (previous ?? latest);
 
   return (
-    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full font-sans border border-slate-700/40">
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -68,7 +68,7 @@ export default function PriceTrendChart({
             {t('chart.monthly_trend')}
           </p>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-3xl font-black text-slate-100 tracking-tighter">
+            <span className="text-xl sm:text-3xl font-black text-slate-100 tracking-tighter">
               {latest?.toLocaleString()}
             </span>
             <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${

@@ -357,9 +357,9 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Add Balance Dialog */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-8" dir="rtl">
+                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8" dir="rtl">
                     <DialogHeader className="mb-6">
-                        <DialogTitle className="text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
+                        <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
                     </DialogHeader>
                     
                     <div className="space-y-6">
@@ -370,7 +370,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     type="number"
                                     value={addAmount}
                                     onChange={(e) => setAddAmount(e.target.value)}
-                                    className="h-16 text-2xl font-black rounded-2xl border-2 border focus:border-slate-900 transition-all pl-12"
+                                    className="h-16 text-xl sm:text-2xl font-black rounded-2xl border-2 border focus:border-slate-900 transition-all pl-12"
                                     placeholder="0.00"
                                 />
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
@@ -409,16 +409,16 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Withdraw Balance Dialog */}
             <Dialog open={showWithdrawDialog} onOpenChange={setShowWithdrawDialog}>
-                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-8" dir="rtl">
+                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8" dir="rtl">
                     <DialogHeader className="mb-6">
-                        <DialogTitle className="text-2xl font-black text-slate-900">{t('wallet.balance.withdrawTitle') || 'طلب سحب رصيد'}</DialogTitle>
+                        <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.withdrawTitle') || 'طلب سحب رصيد'}</DialogTitle>
                     </DialogHeader>
                     
                     <div className="space-y-6">
-                        <div className="p-6 bg-slate-900 rounded-[1.25rem] text-white">
+                        <div className="p-3 sm:p-6 bg-slate-900 rounded-[1.25rem] text-white">
                             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">{t('wallet.balance.availableForWithdraw') || 'الرصيد القابل للسحب'}</p>
                             <div className="flex items-baseline gap-2">
-                                <h3 className="text-4xl font-black">{Number(balance).toLocaleString()}</h3>
+                                <h3 className="text-2xl sm:text-4xl font-black">{Number(balance).toLocaleString()}</h3>
                                 <SaudiRiyalSymbol className="text-slate-400" iconClassName="h-3.5 w-3.5" />
                             </div>
                         </div>
@@ -430,7 +430,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     type="number"
                                     value={withdrawAmount}
                                     onChange={(e) => setWithdrawAmount(e.target.value)}
-                                    className="h-16 text-2xl font-black rounded-2xl border-2 border focus:border-slate-900 transition-all pl-12"
+                                    className="h-16 text-xl sm:text-2xl font-black rounded-2xl border-2 border focus:border-slate-900 transition-all pl-12"
                                     placeholder="0.00"
                                 />
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>

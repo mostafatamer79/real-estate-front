@@ -67,7 +67,7 @@ export default function UserWallet() {
     };
 
     if (loading) {
-        return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;
+        return <div className="flex justify-center p-4 sm:p-8"><Loader2 className="animate-spin" /></div>;
     }
 
     return (
@@ -148,7 +148,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 text-black p-6"
+                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 text-black p-3 sm:p-6"
                         onClick={(e) => e.stopPropagation()}
                     >
                          <h2 className="text-xl font-bold mb-4">طلب سحب رصيد</h2>
@@ -182,8 +182,8 @@ export default function UserWallet() {
                         className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex items-center justify-between p-6 border-b border">
-                            <h2 className="text-2xl font-bold">طرق الدفع</h2>
+                        <div className="flex items-center justify-between p-3 sm:p-6 border-b border">
+                            <h2 className="text-xl sm:text-2xl font-bold">طرق الدفع</h2>
                             <button
                                 onClick={() => setShowPaymentModal(false)}
                                 className="p-2 hover:bg-muted rounded-full transition-colors"
@@ -202,7 +202,7 @@ export default function UserWallet() {
                                 <CreditCard className="h-5 w-5" />
                             </button>
                         </div>
-                        <div className="p-6 pt-0">
+                        <div className="p-3 sm:p-6 pt-0">
                             <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <div className="text-right">
                                     <div className="font-semibold">دفع من تابي وتمارا</div>

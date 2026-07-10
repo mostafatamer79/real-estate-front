@@ -387,7 +387,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
     <section className="w-full min-h-screen bg-muted flex" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Sidebar - Adjusted for fixed header */}
       <div className="fixed top-16 right-0 h-[calc(100vh-64px)] w-80 bg-card border-l border shadow-lg overflow-y-auto">
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           <div className="my-4 space-y-4">
             <button onClick={() => router.push('/details')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-muted px-3 py-2 rounded-lg w-full">
               <ArrowRight className={`w-5 h-5 transform ${language === 'en' ? 'rotate-180' : ''}`} />
@@ -478,7 +478,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
             </div>
 
             {activeTab === "appointments" && user?.id && (incomingBookings.length > 0 || myBookings.length > 0) && (
-              <div className="mb-10 bg-card border border rounded-2xl p-6 shadow-sm">
+              <div className="mb-10 bg-card border border rounded-2xl p-3 sm:p-6 shadow-sm">
                 <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><Calendar className="w-5 h-5 text-blue-600" /></div><div><h3 className="font-bold text-slate-900">{language === 'ar' ? 'المواعيد القادمة' : 'Upcoming Appointments'}</h3><p className="text-xs text-slate-500">{language === 'ar' ? `لديك ${incomingBookings.length + myBookings.length} موعد` : `You have ${incomingBookings.length + myBookings.length} appointments`}</p></div></div>
                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[...incomingBookings, ...myBookings].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0,3).map((booking) => {
@@ -500,7 +500,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
               {filteredOffers.length > 0 ? filteredOffers.map((offer) => {
                 const sellerName = offer.user ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() : t('offers.owner');
                 return (
-                  <div key={offer.id} className="bg-card border border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div key={offer.id} className="bg-card border border rounded-lg p-3 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
                     <h2 className="text-lg font-bold text-gray-800 mb-3">{offer.address}</h2>
                     <div className="flex items-center gap-2 mb-3 text-sm"><span className="font-semibold text-gray-700">{sellerName}</span><span className="text-gray-400 mr-auto">•</span><span className="text-gray-500">{offer.timeAgo}</span></div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">{offer.description}</p>

@@ -35,7 +35,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
   const { settings } = useSettings();
   return (
     <section className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
-      <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-card/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-8 lg:p-10">
+      <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-card/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-4 sm:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.09),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
         {!reduceMotion && (
           <>
@@ -64,7 +64,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6"
           >
-            <h2 className="text-3xl font-black leading-[1.25] text-white sm:text-4xl lg:text-[3.2rem]">
+            <h2 className="text-3xl font-black leading-[1.25] text-white sm:text-2xl sm:text-4xl lg:text-[3.2rem]">
               تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
             </h2>
             <p className="w-[95vw] sm:max-w-2xl text-base font-bold leading-9 text-white/66">
@@ -171,7 +171,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //                 transition={{ duration: reduceMotion ? 0 : 0.65, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
 //                 className={`relative grid gap-5 md:grid-cols-2 md:items-center ${index % 2 === 0 ? "" : "md:[&>div:first-child]:col-start-2"}`}
 //               >
-//                 <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/78 p-6 shadow-2xl shadow-black/20 [will-change:transform]">
+//                 <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/78 p-3 sm:p-6 shadow-2xl shadow-black/20 [will-change:transform]">
 //                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-card/[0.04]">
 //                     <item.icon className="h-5 w-5 text-white/65" />
 //                   </div>
@@ -284,7 +284,7 @@ export default function AboutPage() {
             <motion.h1
               animate={reduceMotion ? undefined : { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              className="text-3xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-4xl lg:text-5xl drop-shadow-sm"
+              className="text-3xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-2xl sm:text-4xl lg:text-5xl drop-shadow-sm"
               style={{ backgroundSize: "200% auto" }}
             >
               من نحن
@@ -346,14 +346,14 @@ export default function AboutPage() {
               viewport={{ once: true, margin: "-90px" }}
               transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
+              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
             >
               <div className="mb-6 flex items-center justify-between gap-4">
                 <span className="text-sm font-black text-blue-200/85">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="text-2xl font-black text-white">{item.title}</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-white">{item.title}</h3>
               <p className="mt-4 text-sm font-bold leading-8 text-white/65">{item.text}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {item.points.map((point) => (
@@ -420,7 +420,7 @@ export default function AboutPage() {
               viewport={{ once: true, margin: "-110px" }}
               transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
+              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
             >
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65 transition-colors duration-300 group-hover:border-blue-500/30 group-hover:text-blue-400 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                 <item.icon className="h-5 w-5" />

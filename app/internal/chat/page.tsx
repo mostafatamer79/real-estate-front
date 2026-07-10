@@ -291,7 +291,7 @@ export default function InternalChatPage() {
             <div key={i} className="h-16 bg-card rounded-xl border border animate-pulse" />
           ))
         ) : filteredChats.length === 0 ? (
-          <div className="bg-card rounded-2xl border border p-8 text-center shadow-sm">
+          <div className="bg-card rounded-2xl border border p-4 sm:p-8 text-center shadow-sm">
             <MessageSquare className="w-12 h-12 text-slate-200 mx-auto mb-3" />
             <h3 className="text-base font-black text-slate-700">{t("internal.chat.emptyTitle")}</h3>
             <p className="text-xs text-slate-400 mt-1">{t("internal.chat.emptySubtitle")}</p>

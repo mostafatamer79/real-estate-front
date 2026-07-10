@@ -197,7 +197,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         `}
       >
         {/* Logo Section */}
-        <div className="p-6 border-b border-white/5 flex items-center gap-3">
+        <div className="p-3 sm:p-6 border-b border-white/5 flex items-center gap-3">
           <Image
             src={settings.logoWhiteUrl || '/icons/white.png'}
             alt="Logo"

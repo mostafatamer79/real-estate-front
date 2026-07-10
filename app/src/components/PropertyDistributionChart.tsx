@@ -21,12 +21,12 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
   const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
   if (totalValue <= 0) {
     return (
-      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
+      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
         <div className="flex flex-col mb-6">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
             {t('chart.property_dist_title')}
           </p>
-          <p className="mt-2 text-2xl font-black text-slate-100">
+          <p className="mt-2 text-xl sm:text-2xl font-black text-slate-100">
             {language === 'ar' ? 'لا توجد بيانات' : 'No data'}
           </p>
         </div>
@@ -50,14 +50,14 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
   });
 
   return (
-    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-6 h-full font-sans border border-slate-700/40">
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40">
       {/* Header */}
       <div className="flex flex-col mb-6">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
           {t('chart.property_dist_title')}
         </p>
         <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-3xl font-black text-slate-100 tracking-tighter">
+          <span className="text-xl sm:text-3xl font-black text-slate-100 tracking-tighter">
             {totalValue.toLocaleString()}
           </span>
           <span className="text-[10px] text-slate-500 font-bold">Total Volume MTD</span>
@@ -99,7 +99,7 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
           {/* Center label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Total</span>
-            <span className="text-2xl font-black text-slate-100 tracking-tighter leading-tight">
+            <span className="text-xl sm:text-2xl font-black text-slate-100 tracking-tighter leading-tight">
               {totalValue.toLocaleString()}
             </span>
           </div>

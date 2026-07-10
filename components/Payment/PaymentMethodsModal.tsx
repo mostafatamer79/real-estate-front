@@ -103,9 +103,9 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
-          <DialogTitle className="text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">
              {t('payment.amountRequired')}: <span className="text-slate-900 font-black">{price.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span>
           </DialogDescription>

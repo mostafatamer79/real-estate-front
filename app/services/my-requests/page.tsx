@@ -131,14 +131,14 @@ export default function MyServiceRequestsPage() {
           </Button>
 
           <Card className="overflow-hidden border shadow-xl rounded-2xl">
-            <CardHeader className="bg-card border-b border p-8">
+            <CardHeader className="bg-card border-b border p-4 sm:p-8">
               <div className="flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl border border bg-card flex items-center justify-center text-slate-600">
                     <Package className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-900">{selectedRequest.serviceType}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{selectedRequest.serviceType}</h2>
                     <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
                       <span className="font-semibold text-slate-600">#{selectedRequest.id.substring(0, 8)}</span>
                       <span>•</span>
@@ -159,7 +159,7 @@ export default function MyServiceRequestsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8">
               <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                 <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الموقع' : 'Location'}</p>
@@ -270,7 +270,7 @@ export default function MyServiceRequestsPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
               <Package className="w-6 h-6 text-slate-600" />
               {t('chat.myRequests')}
             </h1>

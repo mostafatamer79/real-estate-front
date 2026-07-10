@@ -464,7 +464,7 @@ export default function DepartmentRequests() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black tracking-tight text-slate-950">طلبات الخدمات</h1>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">طلبات الخدمات</h1>
           <p className="text-slate-400 text-xs font-bold">{DEPT_LABELS[dept] ?? dept}</p>
         </div>
         <button

@@ -255,7 +255,7 @@ export default function NewSubscriptionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted p-6" dir="rtl">
+    <div className="min-h-screen bg-muted p-3 sm:p-6" dir="rtl">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-start">
           <button
@@ -299,7 +299,7 @@ export default function NewSubscriptionPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-6">
-          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6">
+          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
             <div className="flex items-center gap-2 mb-5">
               {planMode === "custom" ? <SlidersHorizontal className="w-5 h-5 text-slate-700" /> : <Building2 className="w-5 h-5 text-slate-700" />}
               <h2 className="text-xl font-black text-slate-950">
@@ -429,7 +429,7 @@ export default function NewSubscriptionPage() {
                       </div>
 
                       <div className="flex items-end gap-2 mb-3">
-                        <div className="text-3xl font-black text-slate-950">{finalPrice.toFixed(2)}</div>
+                        <div className="text-xl sm:text-3xl font-black text-slate-950">{finalPrice.toFixed(2)}</div>
                         <div className="text-sm font-bold text-slate-500 pb-1"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></div>
                         {Number(pkg.discount || 0) > 0 && (
                           <div className="text-xs font-black text-emerald-600 pb-1">{t("sub.public.discount")} {Number(pkg.discount)}%</div>
@@ -446,7 +446,7 @@ export default function NewSubscriptionPage() {
             )}
           </div>
 
-          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6 space-y-5">
+          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6 space-y-5">
             <h2 className="text-lg font-black text-slate-950">{t("sub.public.detailsTitle")}</h2>
 
             <div className="space-y-2">
@@ -594,7 +594,7 @@ export default function NewSubscriptionPage() {
               )}
               <div className="pt-2 border-t border">
                 <div className="text-xs font-black text-slate-500">{t("sub.public.total")}</div>
-                <div className="text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
+                <div className="text-xl sm:text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
                 <div className="text-xs font-bold text-slate-400 mt-2">{t("sub.public.afterPayment")}</div>
               </div>
             </div>
@@ -611,7 +611,7 @@ export default function NewSubscriptionPage() {
           </div>
         </div>
 
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6">
+        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
           <h2 className="text-lg font-black text-slate-950 mb-4">{t("sub.public.previousSubscriptions")}</h2>
           {subscriptions.length === 0 ? (
             <div className="py-10 text-center text-slate-400 font-bold">{t("sub.public.noPreviousSubscriptions")}</div>

@@ -71,7 +71,7 @@ export default function WorkflowSection() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-card/80 backdrop-blur-xl rounded-[1rem] overflow-hidden border border-white/60 shadow-2xl shadow-stone-400"
         >
-            <div className="p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-6 bg-card/50">
+            <div className="p-4 sm:p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-6 bg-card/50">
                 <div>
                     <h4 className="text-xl font-black text-slate-900 flex items-center gap-3">
                       {t('marketing.history.title')}
@@ -187,8 +187,8 @@ export default function WorkflowSection() {
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <DialogHeader className="p-8 bg-slate-950 text-white">
-                        <DialogTitle className="text-2xl font-black">
+                    <DialogHeader className="p-4 sm:p-8 bg-slate-950 text-white">
+                        <DialogTitle className="text-xl sm:text-2xl font-black">
                             {selectedRequest && t(`marketing.type.${selectedRequest.type}`)}
                         </DialogTitle>
                         <p className="text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
@@ -197,7 +197,7 @@ export default function WorkflowSection() {
                     </DialogHeader>
 
                     {selectedRequest && (
-                        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                        <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">

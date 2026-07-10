@@ -56,7 +56,7 @@ export default function AdminMapControlPage() {
             <Map className="h-3.5 w-3.5" />
             {isRtl ? "الخريطة" : "Map"}
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {isRtl ? "إدارة الخريطة والتقارير" : "Map & Reports Control"}
           </h1>
         </div>
@@ -71,17 +71,17 @@ export default function AdminMapControlPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2">
         {controls.map((item) => (
-          <div key={item.label} className="rounded-2xl border border bg-card p-6 shadow-sm">
+          <div key={item.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <item.icon className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
-            <p className="mt-1 text-2xl font-black text-slate-950">{item.value}</p>
+            <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{item.value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-3">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">

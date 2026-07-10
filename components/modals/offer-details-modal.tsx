@@ -168,7 +168,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 {activeOffer.propertyType}
                             </span>
                         </div>
-                        <h2 className="text-3xl font-black text-white mb-2 tracking-tight">
+                        <h2 className="text-xl sm:text-3xl font-black text-white mb-2 tracking-tight">
                             {activeOffer.propertyType} {t('offer.in')} {activeOffer.city}
                         </h2>
                         <div className="flex items-center gap-4 text-slate-300">
@@ -192,28 +192,28 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Body Content - Scrollable */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 space-y-10 custom-scrollbar bg-card">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 space-y-10 custom-scrollbar bg-card">
                     {/* Price & Primary Stats */}
                     <div className="flex flex-col sm:flex-row gap-6">
-                        <div className="flex-1 p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
+                        <div className="flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Tag className="w-12 h-12 text-slate-900" />
                             </div>
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.price')}</p>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                                <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tighter">
                                 {activeOffer.price.toLocaleString()}
                                 </span>
                                 <span className="text-sm font-black text-slate-400 uppercase tracking-widest"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                         </div>
-                        <div className="flex-1 p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
+                        <div className="flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Maximize className="w-12 h-12 text-slate-900" />
                             </div>
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.area')}</p>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                                <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tighter">
                                     {activeOffer.area}
                                 </span>
                                 <span className="text-sm font-black text-slate-400 uppercase tracking-widest">m²</span>
@@ -300,7 +300,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
                     {/* Description */}
                     {activeOffer.additionalNotes && (
-                        <section className="bg-muted/50 p-6 rounded-[1.25rem] border border-/50">
+                        <section className="bg-muted/50 p-3 sm:p-6 rounded-[1.25rem] border border-/50">
                             <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">{t('marketing.field.description')}</h3>
                             <p className="text-sm text-slate-600 leading-[1.8] font-medium italic">
                                 "{activeOffer.additionalNotes}"
@@ -310,7 +310,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Footer Section - Sticky */}
-                <div className="p-6 sm:p-8 bg-card border-t border flex flex-col sm:flex-row gap-4 shrink-0">
+                <div className="p-6 sm:p-4 sm:p-8 bg-card border-t border flex flex-col sm:flex-row gap-4 shrink-0">
                     <Button 
                         onClick={handleChat}
                         disabled={isChatLoading || isLoadingDetails}

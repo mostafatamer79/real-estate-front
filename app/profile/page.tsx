@@ -229,7 +229,7 @@ export default function ProfilePage() {
         
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
             <button 
                 onClick={() => router.push('/')}
                 className="px-4 py-2 text-slate-600 hover:bg-muted rounded-lg transition-colors"
@@ -242,7 +242,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Sidebar / User Card */}
             <div className="md:col-span-1 space-y-6">
-                <div className="bg-card rounded-xl shadow-sm border border p-6 flex flex-col items-center text-center">
+                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6 flex flex-col items-center text-center">
                     <div className="relative group">
                         <div className="w-32 h-32 bg-muted rounded-full flex items-center justify-center overflow-hidden mb-4 border-4 border-white shadow-md">
                             {user.profileImage ? (
@@ -304,7 +304,7 @@ export default function ProfilePage() {
 
             {/* Main Form */}
             <div className="md:col-span-2">
-                <div className="bg-card rounded-xl shadow-sm border border p-6">
+                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6">
                     <h3 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4 text-start">{t('profile.accountInfo')}</h3>
                     
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -628,7 +628,7 @@ export default function ProfilePage() {
                         value={otpCode} 
                         onChange={(e) => setOtpCode(e.target.value)} 
                         maxLength={6} 
-                        className="text-center text-2xl tracking-widest" 
+                        className="text-center text-xl sm:text-2xl tracking-widest" 
                         placeholder="______"
                     />
                     <div className="text-xs text-center text-slate-400">

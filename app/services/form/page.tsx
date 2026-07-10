@@ -221,7 +221,7 @@ function ServiceFormContent() {
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-12 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
+          <h1 className="text-3xl sm:text-2xl sm:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
           <p className="text-slate-600 text-sm w-[95vw] sm:max-w-md leading-relaxed">{config.description}</p>
         </motion.div>
       </div>
@@ -374,7 +374,7 @@ function ServiceFormContent() {
                     key={formData.service}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-6 rounded-2xl bg-muted border border space-y-3"
+                    className="p-3 sm:p-6 rounded-2xl bg-muted border border space-y-3"
                   >
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">سعر الخدمة التقديري</span>

@@ -149,7 +149,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-lg rounded-[1rem] p-8 shadow-2xl relative overflow-hidden">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
         <button onClick={onClose} className="absolute left-6 top-6 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -597,7 +597,7 @@ export default function UsersPage() {
                         <Users className="w-4 h-4" />
                         {t('admin.users.directory')}
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight text-slate-950">{t('admin.users.title')}</h1>
+                    <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">{t('admin.users.title')}</h1>
                     <p className="text-slate-400 text-xs font-bold">{t('admin.users.desc')}</p>
                 </div>
 

@@ -194,7 +194,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -879,7 +879,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -1640,7 +1640,7 @@ export default function AdminOffersPage() {
   };
 
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="space-y-8 p-6 lg:p-4 sm:p-8">
       <AnimatePresence>
         {isModalOpen && <CreateOfferModal onClose={() => setIsModalOpen(false)} onSuccess={fetchOffers} />}
         {editingOffer && <EditOfferModal offer={editingOffer} onClose={() => setEditingOffer(null)} onSuccess={fetchOffers} />}
@@ -1652,7 +1652,7 @@ export default function AdminOffersPage() {
             <Tag className="w-3 h-3" />
             إدارة المحتوى
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {t('admin.offers.title') || "إدارة العروض العقارية"}
           </h1>
           <p className="text-slate-500 font-medium text-sm">
@@ -1712,25 +1712,25 @@ export default function AdminOffersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
+         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
-            <p className="text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
+            <p className="text-xl sm:text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
          </div>
-         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
+         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">عروض نشطة</p>
-            <p className="text-3xl font-black text-emerald-600 tabular-nums">{offers.filter(o => o.status === 'published' || o.status === 'active').length}</p>
+            <p className="text-xl sm:text-3xl font-black text-emerald-600 tabular-nums">{offers.filter(o => o.status === 'published' || o.status === 'active').length}</p>
          </div>
-         <div className="p-6 bg-card border border rounded-3xl shadow-sm">
+         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">بانتظار المراجعة</p>
-            <p className="text-3xl font-black text-amber-600 tabular-nums">{offers.filter(o => o.status === 'draft').length}</p>
+            <p className="text-xl sm:text-3xl font-black text-amber-600 tabular-nums">{offers.filter(o => o.status === 'draft').length}</p>
          </div>
-         <div className="p-6 bg-card border border-red-100 rounded-3xl shadow-sm">
+         <div className="p-3 sm:p-6 bg-card border border-red-100 rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">بلاغات العروض</p>
-            <p className="text-3xl font-black text-red-600 tabular-nums">{reports.length}</p>
+            <p className="text-xl sm:text-3xl font-black text-red-600 tabular-nums">{reports.length}</p>
          </div>
       </div>
 
-      <div className="bg-card border border rounded-[1.25rem] p-6 shadow-sm">
+      <div className="bg-card border border rounded-[1.25rem] p-3 sm:p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">

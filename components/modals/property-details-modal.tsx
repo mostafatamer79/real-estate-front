@@ -142,7 +142,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                             <Building className="h-7 w-7" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <DialogTitle className="flex flex-wrap items-center gap-3 text-2xl">
+                            <DialogTitle className="flex flex-wrap items-center gap-3 text-xl sm:text-2xl">
                                 <span className="truncate">{property.name}</span>
                                 <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-card px-3 py-1 text-sm font-bold text-slate-500 shadow-sm ring-1 ring-slate-200">
                                     <FileText className="h-4 w-4 shrink-0 text-blue-600" />

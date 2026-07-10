@@ -765,7 +765,7 @@ export default function LegalRequestFlow({
           </button>
 
           {/* Form card */}
-          <div className="bg-card/80 backdrop-blur-sm shadow-sm border border rounded-[1rem] p-8 relative overflow-hidden">
+          <div className="bg-card/80 backdrop-blur-sm shadow-sm border border rounded-[1rem] p-4 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             {selectedCategory === "disputes"      && renderDisputesForm()}

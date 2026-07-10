@@ -126,11 +126,11 @@ export default function MarketingPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-6">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 uppercase tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-slate-900 flex items-center gap-3 uppercase tracking-tight">
             <div className="p-2 bg-muted rounded-2xl text-slate-700">
               <Mail className="w-8 h-8" />
             </div>
@@ -209,7 +209,7 @@ export default function MarketingPage() {
           </div>
         ) : campaigns.length === 0 ? (
           <div className="p-20 text-center flex flex-col items-center justify-center space-y-4">
-            <div className="p-6 bg-muted rounded-full">
+            <div className="p-3 sm:p-6 bg-muted rounded-full">
               <Mail className="w-16 h-16 text-slate-200" />
             </div>
             <div>

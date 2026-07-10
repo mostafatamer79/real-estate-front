@@ -98,7 +98,7 @@ export default function CommissionManager() {
                 </CardHeader>
                 <CardContent>
                     {loading ? (
-                        <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
+                        <div className="flex justify-center p-4 sm:p-8"><Loader2 className="animate-spin" /></div>
                     ) : (
                         <div className='overflow-x-auto'>
                             <Table className='bg-card border border text-black shadow-sm'>
@@ -148,7 +148,7 @@ export default function CommissionManager() {
     return (
         <Card className='bg-card rounded-xl shadow-lg border-0'>
             <CardHeader className="flex flex-row items-center justify-between pb-6">
-                <CardTitle className="text-2xl font-bold text-black">نموذج طلب سعي</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl font-bold text-black">نموذج طلب سعي</CardTitle>
                 <button
                     onClick={() => setView('list')}
                     className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
@@ -252,7 +252,7 @@ export default function CommissionManager() {
             {showBrokerModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowBrokerModal(false)} dir="rtl">
-                    <div className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 p-3 sm:p-6" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">إضافة وسيط</h2>
                         <div className="space-y-4">
                             <div><Label>الاسم</Label><Input value={brokerForm.name} onChange={(e) => setBrokerForm({...brokerForm, name: e.target.value})} /></div>

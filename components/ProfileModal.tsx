@@ -98,7 +98,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" dir="rtl">
       <div className="bg-slate-800 rounded-xl w-full w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-white">تعديل الملف الشخصي</h2>
             <button

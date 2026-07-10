@@ -207,7 +207,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -686,7 +686,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-md rounded-2xl p-8 shadow-2xl relative">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-md rounded-2xl p-4 sm:p-8 shadow-2xl relative">
                 <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
                 
                 <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2">
@@ -894,7 +894,7 @@ export default function OrdersPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-950 mb-1">إدارة الطلبات العقارية</h1>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 mb-1">إدارة الطلبات العقارية</h1>
           <p className="text-slate-400 text-xs font-bold">إضافة، تعديل، وتعيين الطلبات للوسطاء والموظفين</p>
         </div>
         <Button 
@@ -913,7 +913,7 @@ export default function OrdersPage() {
                     <s.icon className="w-6 h-6" />
                 </div>
                 <div>
-                    <p className="text-2xl font-black text-slate-950">{s.value}</p>
+                    <p className="text-xl sm:text-2xl font-black text-slate-950">{s.value}</p>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{s.label}</p>
                 </div>
             </motion.div>
@@ -922,7 +922,7 @@ export default function OrdersPage() {
 
       {/* Filters & Table */}
       <div className="bg-card border border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        <div className="p-3 sm:p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             <div className="relative w-full md:col-span-2">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-card border focus:border-slate-950" />

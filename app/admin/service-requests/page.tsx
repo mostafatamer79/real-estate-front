@@ -210,11 +210,11 @@ export default function ServiceRequestsPage() {
     });
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6">
+        <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-3 sm:p-6">
             {/* Header Section */}
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
                         {t('admin.service_requests.title')}
                     </h1>
                     <p className="text-slate-500 font-medium flex items-center gap-2 text-sm">
@@ -375,7 +375,7 @@ export default function ServiceRequestsPage() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
-                                    <div className="p-8 rounded-[1rem] bg-muted">
+                                    <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
                                         <Briefcase className="w-16 h-16 text-slate-200" />
                                     </div>
                                     <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>

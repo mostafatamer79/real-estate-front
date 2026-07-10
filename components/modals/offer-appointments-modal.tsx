@@ -71,8 +71,8 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
-                <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                <DialogHeader className="p-3 sm:p-6 pb-2">
+                    <DialogTitle className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                         <Calendar className="w-6 h-6 text-slate-700" />
                         {language === 'ar' ? 'مواعيد العقار' : 'Property Appointments'}
                     </DialogTitle>

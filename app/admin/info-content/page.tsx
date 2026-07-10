@@ -186,14 +186,14 @@ export default function AdminInfoContentPage() {
   };
 
   return (
-    <div className="p-6 lg:p-8 space-y-8" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="p-6 lg:p-4 sm:p-8 space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <Scale className="w-3 h-3" />
             {t("admin.info_content.title") || (isRtl ? "المحتوى القانوني" : "Legal / Info Content")}
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">
             {t("admin.info_content.subtitle") || (isRtl ? "إدارة صفحة المعلومات" : "Manage /info page")}
           </h1>
         </div>
@@ -444,12 +444,12 @@ export default function AdminInfoContentPage() {
                 }}
               >
                 <div className="absolute inset-0 bg-card/20 pointer-events-none z-0" />
-                <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-6 lg:p-8 z-10 bg-transparent">
+                <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-6 lg:p-4 sm:p-8 z-10 bg-transparent">
                   
                   {/* Preview Content matching Modal */}
-                  <div className="w-[95vw] sm:max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
+                  <div className="w-[95vw] sm:max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-4 sm:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
                     <div className="text-center mb-8">
-                      <h1 className="text-2xl font-black text-slate-900 mb-2">
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
                         {isRtl ? selectedTab.titleAr : selectedTab.titleEn}
                       </h1>
                     </div>

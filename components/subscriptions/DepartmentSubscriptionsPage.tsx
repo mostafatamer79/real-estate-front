@@ -142,14 +142,14 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6">
+      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 rounded-full bg-muted text-slate-700 px-3 py-1 text-[11px] font-black">
               <Shield className="w-4 h-4" />
               {DEPT_LABELS[deptSlug]}
             </div>
-            <h1 className="text-2xl font-black text-slate-950">الباقات المتاحة</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-950">الباقات المتاحة</h1>
             <p className="text-sm font-bold text-slate-500">اختر باقة الإدارة ثم أكمل الدفع من المحفظة، ويمكنك استعراض خصائص القسم بدون إنشاء أي بيانات.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-6">
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6">
+        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
           <h2 className="text-lg font-black text-slate-950 mb-5">اختر الباقة</h2>
           {loading ? (
             <div className="py-14 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-slate-700" /></div>
@@ -201,7 +201,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
                       </div>
                       {isSelected && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
                     </div>
-                    <div className="text-2xl font-black text-slate-900 mb-3"><SaudiRiyalAmount amount={amount} locale="ar-SA" /></div>
+                    <div className="text-xl sm:text-2xl font-black text-slate-900 mb-3"><SaudiRiyalAmount amount={amount} locale="ar-SA" /></div>
                     <div className="space-y-2">
                       {(pkg.features || []).slice(0, 4).map((feature, index) => (
                         <div key={index} className="text-sm text-slate-600 font-bold flex items-center gap-2">
@@ -217,7 +217,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
           )}
         </div>
 
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6 space-y-5">
+        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6 space-y-5">
           <h2 className="text-lg font-black text-slate-950">تفاصيل الاشتراك</h2>
 
           <div className="space-y-2">
@@ -262,7 +262,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
           <div className="rounded-2xl bg-muted border border p-4 space-y-2">
             <div className="text-xs font-black text-slate-500">الإجمالي الحالي</div>
-            <div className="text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
+            <div className="text-xl sm:text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
             <div className="text-xs font-bold text-slate-400">سيتم إنشاء الاشتراك بحالة معلّق ثم تحويلك إلى المحفظة لإتمام الدفع.</div>
           </div>
 
@@ -278,7 +278,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
         </div>
       </div>
 
-      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-6">
+      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
         <h2 className="text-lg font-black text-slate-950 mb-4">اشتراكاتي في هذه الإدارة</h2>
         {subscriptions.length === 0 ? (
           <div className="py-10 text-center text-slate-400 font-bold">لا توجد اشتراكات سابقة لهذه الإدارة</div>

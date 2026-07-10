@@ -36,10 +36,10 @@ export function PropertyPortfolio({
   return (
     <div className="space-y-6">
       {/* Header & Search */}
-      <div className="bg-card p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
+      <div className="bg-card p-4 sm:p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
         <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
             <div>
-                 <h2 className="text-3xl font-black text-slate-900 mb-1 tracking-tight">{t('pm.tab.portfolio')}</h2>
+                 <h2 className="text-xl sm:text-3xl font-black text-slate-900 mb-1 tracking-tight">{t('pm.tab.portfolio')}</h2>
                  <p className="text-slate-500 text-sm font-medium">{t('pm.properties')}</p>
             </div>
           
@@ -98,7 +98,7 @@ export function PropertyPortfolio({
                 onClick={() => onView(property)}
             >
               <CardContent className="p-0">
-                 <div className="p-8 pb-5">
+                 <div className="p-4 sm:p-8 pb-5">
                      <div className="flex justify-between items-start mb-6">
                         <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 shadow-sm">
                             <Building className="w-7 h-7" />
@@ -132,7 +132,7 @@ export function PropertyPortfolio({
                         </div>
                      </div>
                      
-                     <h3 className="font-black text-2xl text-slate-900 mb-2 line-clamp-1 tracking-tight">{property.name}</h3>
+                     <h3 className="font-black text-xl sm:text-2xl text-slate-900 mb-2 line-clamp-1 tracking-tight">{property.name}</h3>
                      <div className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-bold">
                         <span className="bg-muted px-3 py-1 rounded-lg text-slate-900 border border font-black tracking-wider">
                             {property.deedNumber || '-'}
@@ -141,7 +141,7 @@ export function PropertyPortfolio({
                      </div>
                  </div>
 
-                 <div className="bg-muted/50 p-6 px-8 border-t border flex justify-between items-center text-[11px] font-black uppercase tracking-widest">
+                 <div className="bg-muted/50 p-3 sm:p-6 px-8 border-t border flex justify-between items-center text-[11px] font-black uppercase tracking-widest">
                     <div className="text-slate-400 group-hover:text-slate-900 transition-colors">
                         <span className="text-slate-900">{property.units?.length || 0}</span> {t('pm.tab.units')}
                     </div>

@@ -49,7 +49,7 @@ export default function AdminOpinionsPage() {
   const totalPages = Math.ceil(opinions.length / itemsPerPage);
 
   return (
-    <div className="p-6 md:p-10 space-y-8" dir="rtl">
+    <div className="p-3 sm:p-6 md:p-10 space-y-8" dir="rtl">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-3xl border border shadow-sm">
         <div className="flex items-center gap-4">
@@ -57,7 +57,7 @@ export default function AdminOpinionsPage() {
             <MessageSquareHeart className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-900">آراء العملاء</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900">آراء العملاء</h1>
             <p className="text-sm font-bold text-slate-500 mt-1">
               اطلع على آراء ومقترحات العملاء التي تم إرسالها عبر الموقع
             </p>

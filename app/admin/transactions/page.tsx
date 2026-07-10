@@ -289,10 +289,10 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="space-y-8 p-6 lg:p-8" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="space-y-8 p-6 lg:p-4 sm:p-8" dir={isRtl ? "rtl" : "ltr"}>
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="mb-2 text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {label("admin.transactions.title", "إدارة العمليات", "Transactions Management")}
           </h1>
           <p className="font-medium text-slate-500">

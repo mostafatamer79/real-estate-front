@@ -114,7 +114,7 @@ function StatCard({
         <Icon className="w-6 h-6" />
       </div>
       <div>
-        <p className="text-2xl font-black text-slate-900">{value}</p>
+        <p className="text-xl sm:text-2xl font-black text-slate-900">{value}</p>
         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
       </div>
     </motion.div>
@@ -251,7 +251,7 @@ function RequestsTable({
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-40">
-            <div className="p-6 rounded-2xl bg-muted">
+            <div className="p-3 sm:p-6 rounded-2xl bg-muted">
               <Scale className="w-12 h-12 text-slate-200" />
             </div>
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -532,7 +532,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 <Scale className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   {t('pm.legal')}
                 </h1>
                 <p className="text-slate-400 text-xs font-bold mt-0.5">
@@ -615,7 +615,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             </div>
 
             {/* Recent Legal Requests */}
-            <div className="bg-card rounded-2xl border border shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border shadow-sm p-3 sm:p-6">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 {t('admin.legal.recent_requests')}

@@ -32,34 +32,34 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl ring-4 ring-green-400/30 animate-in zoom-in duration-500">
                             <CheckCircle2 className="w-10 h-10 text-white" />
                         </div>
-                        <DialogTitle className="text-3xl font-black text-white mb-2 tracking-tight">{t('wallet.requestSent')}</DialogTitle>
+                        <DialogTitle className="text-xl sm:text-3xl font-black text-white mb-2 tracking-tight">{t('wallet.requestSent')}</DialogTitle>
                         <DialogDescription className="text-slate-300 font-medium text-lg">{t('wallet.commissionRequest')}</DialogDescription>
                     </div>
                 </div>
 
-                <div className="p-8 space-y-8">
+                <div className="p-4 sm:p-8 space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
+                        <div className="p-3 sm:p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
                             <div className="flex items-center gap-4 mb-3">
                                 <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-blue-50 transition-colors">
                                     <FileText className="w-6 h-6 text-blue-600" />
                                 </div>
                                 <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('wallet.commission.table.number')}</span>
                             </div>
-                            <p className="text-2xl font-black text-slate-900 font-mono tracking-tight">{requestNumber}</p>
+                            <p className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-tight">{requestNumber}</p>
                         </div>
-                        <div className="p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
+                        <div className="p-3 sm:p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
                             <div className="flex items-center gap-4 mb-3">
                                 <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-purple-50 transition-colors">
                                     <Calendar className="w-6 h-6 text-purple-600" />
                                 </div>
                                 <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('wallet.table.date')}</span>
                             </div>
-                            <p className="text-2xl font-black text-slate-900 font-mono tracking-tight">{requestDate}</p>
+                            <p className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-tight">{requestDate}</p>
                         </div>
                     </div>
 
-                    <div className="bg-card border rounded-2xl p-6 shadow-sm">
+                    <div className="bg-card border rounded-2xl p-3 sm:p-6 shadow-sm">
                         <div className="flex items-center justify-between mb-6 pb-6 border-b border">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-muted rounded-lg">

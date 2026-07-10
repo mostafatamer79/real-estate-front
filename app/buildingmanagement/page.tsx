@@ -279,7 +279,7 @@ function StatCard({ label, value, icon: Icon, color }: any) {
         <Icon className="w-6 h-6" />
       </div>
       <div>
-        <p className="text-2xl font-black text-slate-900">{value}</p>
+        <p className="text-xl sm:text-2xl font-black text-slate-900">{value}</p>
         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
       </div>
     </div>
@@ -1781,7 +1781,7 @@ function BuildingManagementContent() {
     const Icon = details.icon;
 
     return (
-    <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
+    <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 mb-6">
       <div className="flex items-center gap-3 mb-8">
         <div className={`p-2 rounded-lg ${details.colorClass.split(" ")[0]}`}>
           <Icon className={`w-6 h-6 ${details.colorClass.split(" ")[1]}`} />
@@ -1798,7 +1798,7 @@ function BuildingManagementContent() {
           <h2 className="text-base font-semibold text-gray-800 mb-4">{t('bm.form.parties')}</h2>
 
           {/* الطرف الأول */}
-          <div className="bg-muted border border rounded-xl p-6 mb-6">
+          <div className="bg-muted border border rounded-xl p-3 sm:p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 bg-muted rounded-lg">
                 <User className="w-5 h-5 text-slate-600" />
@@ -1915,7 +1915,7 @@ function BuildingManagementContent() {
           </div>
 
           {/* First Party Agent */}
-          <div className="bg-muted border border rounded-xl p-6 mb-6">
+          <div className="bg-muted border border rounded-xl p-3 sm:p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <input
                 type="checkbox"
@@ -1986,7 +1986,7 @@ function BuildingManagementContent() {
             )}
           </div>
           {/* الطرف الثاني - Similar structure */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+          <div className="bg-green-50 border border-green-200 rounded-xl p-3 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2 bg-green-100 rounded-lg">
                 <User className="w-5 h-5 text-green-600" />
@@ -2104,7 +2104,7 @@ function BuildingManagementContent() {
           </div>
 
            {/* Second Party Agent */}
-           <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+           <div className="bg-green-50 border border-green-200 rounded-xl p-3 sm:p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <input
                 type="checkbox"
@@ -2376,7 +2376,7 @@ function BuildingManagementContent() {
               <Building className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">{t('pm.properties')}</h1>
+              <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">{t('pm.properties')}</h1>
               <p className="text-slate-500 font-medium text-sm">{t('action.assetManagement')}</p>
             </div>
           </div>
@@ -2711,7 +2711,7 @@ function BuildingManagementContent() {
                   <Users className="w-7 h-7 text-slate-900" />
               </div>
               <div>
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">{t('pm.tenants')}</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">{t('pm.tenants')}</h2>
                   <p className="text-slate-500 text-sm font-medium">{t('pm.tenants.desc')}</p>
               </div>
           </div>
@@ -2753,10 +2753,10 @@ function BuildingManagementContent() {
                 <table className="w-full text-start">
                     <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                         <tr>
-                            <th className="p-6 text-start">{t('pm.field.tenantName')}</th>
-                            <th className="p-6 text-start">{t('bm.offer.phone')}</th>
-                            <th className="p-6 text-start">{t('pm.tenant.type')}</th>
-                            <th className="p-6 text-center">{t('common.actions')}</th>
+                            <th className="p-3 sm:p-6 text-start">{t('pm.field.tenantName')}</th>
+                            <th className="p-3 sm:p-6 text-start">{t('bm.offer.phone')}</th>
+                            <th className="p-3 sm:p-6 text-start">{t('pm.tenant.type')}</th>
+                            <th className="p-3 sm:p-6 text-center">{t('common.actions')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -2767,7 +2767,7 @@ function BuildingManagementContent() {
                           })
                           .map(tenant => (
                             <tr key={tenant.id} className="hover:bg-muted/30 transition-all group">
-                                <td className="p-6">
+                                <td className="p-3 sm:p-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-stone-400 group-hover:scale-110 transition-transform duration-500">
                                             {tenant.fullName.substring(0, 2)}
@@ -2778,8 +2778,8 @@ function BuildingManagementContent() {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="p-6 text-slate-600 font-black text-sm tracking-tight">{tenant.phoneNumber || '-'}</td>
-                                 <td className="p-6">
+                                <td className="p-3 sm:p-6 text-slate-600 font-black text-sm tracking-tight">{tenant.phoneNumber || '-'}</td>
+                                 <td className="p-3 sm:p-6">
                                     <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                                         tenant.type === 'company' 
                                             ? 'bg-card text-slate-900 border shadow-sm' 
@@ -2788,7 +2788,7 @@ function BuildingManagementContent() {
                                         {tenant.type === 'company' ? t('pm.tenant.company') : t('pm.tenant.individual')}
                                     </span>
                                 </td>
-                                <td className="p-6">
+                                <td className="p-3 sm:p-6">
                                     <div className="flex gap-2 justify-center opacity-30 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
                                         <button 
                                             onClick={() => { setSelectedTenant(tenant); setShowTenantDetails(true); }}
@@ -2843,13 +2843,13 @@ function BuildingManagementContent() {
                       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
-                                <p className="text-3xl font-black text-slate-900 tracking-tight">
+                                <p className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
                                     <SaudiRiyalAmount amount={selectedProperty ? (selectedProperty.purchasePrice || 0) : properties.reduce((acc, p) => acc + (p.purchasePrice || 0), 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
                           <div className="bg-slate-900 p-5 rounded-[1.25rem] shadow-xl shadow-stone-400 group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2 opacity-60">{t('pm.roi.annualIncome')}</p>
-                                <p className="text-3xl font-black text-white tracking-tight">
+                                <p className="text-xl sm:text-3xl font-black text-white tracking-tight">
                                     <SaudiRiyalAmount amount={(payments
                                         .filter(p => p.status === 'paid' && (!selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id))
                                         .reduce((acc, p) => acc + p.amount, 0))} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
@@ -2857,7 +2857,7 @@ function BuildingManagementContent() {
                           </div>
                           <div className="bg-card p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-red-400 font-black uppercase tracking-widest mb-2">{t('pm.roi.annualExpenses')}</p>
-                                <p className="text-3xl font-black text-red-900 tracking-tight">
+                                <p className="text-xl sm:text-3xl font-black text-red-900 tracking-tight">
                                     <SaudiRiyalAmount amount={0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" />
                                 </p>
                           </div>
@@ -2890,11 +2890,11 @@ function BuildingManagementContent() {
                            <table className="w-full text-start">
                                <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                                    <tr>
-                                       <th className="p-6 text-start">{t('pm.field.status')}</th>
-                                       <th className="p-6 text-start">{t('pm.maintenance.faultDesc')}</th>
-                                       <th className="p-6 text-start">{t('pm.field.amount')}</th>
-                                       <th className="p-6 text-start">{t('pm.maintenance.technician')}</th>
-                                       <th className="p-6 text-center">{t('pm.maintenance.completionDate')}</th>
+                                       <th className="p-3 sm:p-6 text-start">{t('pm.field.status')}</th>
+                                       <th className="p-3 sm:p-6 text-start">{t('pm.maintenance.faultDesc')}</th>
+                                       <th className="p-3 sm:p-6 text-start">{t('pm.field.amount')}</th>
+                                       <th className="p-3 sm:p-6 text-start">{t('pm.maintenance.technician')}</th>
+                                       <th className="p-3 sm:p-6 text-center">{t('pm.maintenance.completionDate')}</th>
                                    </tr>
                                </thead>
                                <tbody className="divide-y divide-slate-50">
@@ -2919,7 +2919,7 @@ function BuildingManagementContent() {
                                         .filter(log => !selectedProperty || log.propertyId === selectedProperty.id)
                                         .map(log => (
                                            <tr key={log.id} className="hover:bg-muted/30 transition-all group">
-                                               <td className="p-6">
+                                               <td className="p-3 sm:p-6">
                                                    <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                                                        log.status === 'completed' ? 'bg-card text-green-600 border-green-100 shadow-sm shadow-green-50' :
                                                        log.status === 'in_progress' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-stone-400' :
@@ -2928,17 +2928,17 @@ function BuildingManagementContent() {
                                                        {t(`pm.status.${log.status}`) || log.status}
                                                    </span>
                                                </td>
-                                               <td className="p-6 font-black text-slate-900 text-base tracking-tight">{log.description}</td>
-                                               <td className="p-6 font-black text-slate-900 text-lg">
+                                               <td className="p-3 sm:p-6 font-black text-slate-900 text-base tracking-tight">{log.description}</td>
+                                               <td className="p-3 sm:p-6 font-black text-slate-900 text-lg">
                                                    <SaudiRiyalAmount amount={log.cost || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-30" />
                                                </td>
-                                               <td className="p-6">
+                                               <td className="p-3 sm:p-6">
                                                    <div className="flex flex-col px-4 py-2 border border rounded-xl bg-muted group-hover:bg-card group-hover:border transition-all">
                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('pm.maintenance.technician')}</span>
                                                        <span className="text-sm font-black text-slate-900">{log.technicianName || '-'}</span>
                                                    </div>
                                                </td>
-                                               <td className="p-6 text-center text-slate-400 font-bold text-xs uppercase tracking-widest">
+                                               <td className="p-3 sm:p-6 text-center text-slate-400 font-bold text-xs uppercase tracking-widest">
                                                    <div className="flex flex-col items-center">
                                                        <Calendar className="w-4 h-4 mb-2 opacity-20" />
                                                        {log.completedDate ? new Date(log.completedDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US') : '-'}
@@ -2959,7 +2959,7 @@ function BuildingManagementContent() {
   // Render Contracts List (similar to disputes)
   const renderContractsList = () => (
     <div className="space-y-6">
-      <div className="bg-card p-6 rounded-xl shadow-sm border border">
+      <div className="bg-card p-3 sm:p-6 rounded-xl shadow-sm border border">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative mb-6">
@@ -2986,7 +2986,7 @@ function BuildingManagementContent() {
 
   const renderAllServicesList = () => (
       <div className="space-y-6">
-          <div className="bg-card p-6 rounded-xl shadow-sm border border">
+          <div className="bg-card p-3 sm:p-6 rounded-xl shadow-sm border border">
                <h3 className="text-base font-bold mb-4">{t('bm.requests.all')}</h3>
                <div className="space-y-4">
                    {allServices.length === 0 && !loading.stats ? (
@@ -3323,7 +3323,7 @@ function BuildingManagementContent() {
             </div>
 
             {/* Financial Agreement Section */}
-            <div className="bg-muted p-6 rounded-xl border border">
+            <div className="bg-muted p-3 sm:p-6 rounded-xl border border">
               <h3 className="text-base font-semibold text-gray-800 mb-4">{t('bm.users.financial')}</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
@@ -3362,7 +3362,7 @@ function BuildingManagementContent() {
             </div>
 
             {/* Permissions Section */}
-            <div className="bg-muted p-6 rounded-xl border border">
+            <div className="bg-muted p-3 sm:p-6 rounded-xl border border">
                <h3 className="text-base font-semibold text-gray-800 mb-2">{t('bm.users.permissions')}</h3>
                <p className="text-gray-500 text-xs mb-6">{t('bm.users.permissions.desc')}</p>
 
@@ -3528,7 +3528,7 @@ function BuildingManagementContent() {
               <StatCard label={t('bm.status.completed')} value={completed}            icon={CheckCircle} color="bg-emeslaterald-100 text-slate-700" />
             </div>
 
-            <div className="bg-card rounded-2xl border border shadow-sm p-6">
+            <div className="bg-card rounded-2xl border border shadow-sm p-3 sm:p-6">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 {t('bm.recent.title')}
@@ -3601,7 +3601,7 @@ function BuildingManagementContent() {
               {/* Header + Tab Switcher */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900">{t('admin.service_requests.title')}</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900">{t('admin.service_requests.title')}</h2>
                   <p className="text-slate-500 text-sm font-medium flex items-center gap-2 mt-1">
                     <Briefcase className="w-4 h-4 text-slate-400" />
                     {t('admin.service_requests.subtitle')}
@@ -4283,7 +4283,7 @@ function BuildingManagementContent() {
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{t('pm.financial.income')}</p>
-                            <p className="text-2xl font-black text-slate-900 tracking-tight">
+                            <p className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 <SaudiRiyalAmount amount={payments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-50" />
                             </p>
                         </div>
@@ -4299,7 +4299,7 @@ function BuildingManagementContent() {
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{t('pm.tab.leases')}</p>
-                            <p className="text-2xl font-black text-slate-900 tracking-tight">
+                            <p className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 {leases.filter(l => !selectedProperty || l.unit?.propertyId === selectedProperty.id).length}
                             </p>
                         </div>
@@ -4315,7 +4315,7 @@ function BuildingManagementContent() {
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{t('pm.status.pending')}</p>
-                            <p className="text-2xl font-black text-slate-900 tracking-tight">
+                            <p className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 {payments.filter(p => p.status === 'pending').length}
                             </p>
                         </div>
@@ -4331,7 +4331,7 @@ function BuildingManagementContent() {
                         </div>
                         <div>
                             <p className="text-[10px] text-red-400 font-black uppercase tracking-widest mb-1">{t('pm.status.overdue')}</p>
-                            <p className="text-2xl font-black text-red-900 tracking-tight">
+                            <p className="text-xl sm:text-2xl font-black text-red-900 tracking-tight">
                                 {payments.filter(p => p.status === 'overdue').length}
                             </p>
                         </div>
@@ -4379,11 +4379,11 @@ function BuildingManagementContent() {
                     <table className="w-full text-start">
                         <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                             <tr>
-                                <th className="p-6 text-start">{t('pm.field.dueDate')}</th>
-                                <th className="p-6 text-start">{t('pm.field.amount')}</th>
-                                <th className="p-6 text-start">{t('pm.field.paymentStatus')}</th>
-                                <th className="p-6 text-start">{t('pm.field.paymentMethod')}</th>
-                                <th className="p-6 text-center">{t('common.actions')}</th>
+                                <th className="p-3 sm:p-6 text-start">{t('pm.field.dueDate')}</th>
+                                <th className="p-3 sm:p-6 text-start">{t('pm.field.amount')}</th>
+                                <th className="p-3 sm:p-6 text-start">{t('pm.field.paymentStatus')}</th>
+                                <th className="p-3 sm:p-6 text-start">{t('pm.field.paymentMethod')}</th>
+                                <th className="p-3 sm:p-6 text-center">{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -4401,9 +4401,9 @@ function BuildingManagementContent() {
                                 .filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id)
                                 .map(payment => (
                                     <tr key={payment.id} className="hover:bg-muted/30 transition-all group">
-                                        <td className="p-6 font-black text-slate-900 text-sm">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
-                                        <td className="p-6 font-black text-slate-900 text-base"><SaudiRiyalAmount amount={payment.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" /></td>
-                                        <td className="p-6">
+                                        <td className="p-3 sm:p-6 font-black text-slate-900 text-sm">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
+                                        <td className="p-3 sm:p-6 font-black text-slate-900 text-base"><SaudiRiyalAmount amount={payment.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" /></td>
+                                        <td className="p-3 sm:p-6">
                                             <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                                                 payment.status === 'paid' ? 'bg-card text-green-600 border-green-100 shadow-sm shadow-green-50' : 
                                                 payment.status === 'overdue' ? 'bg-red-900 text-white border-red-900 shadow-lg shadow-red-200' : 
@@ -4412,8 +4412,8 @@ function BuildingManagementContent() {
                                                 {t(`pm.status.${payment.status || 'pending'}`)}
                                             </span>
                                         </td>
-                                        <td className="p-6 text-slate-500 font-bold text-xs uppercase tracking-wider">{t(`pm.cashflow.method.${payment.method || 'bank'}`)}</td>
-                                        <td className="p-6">
+                                        <td className="p-3 sm:p-6 text-slate-500 font-bold text-xs uppercase tracking-wider">{t(`pm.cashflow.method.${payment.method || 'bank'}`)}</td>
+                                        <td className="p-3 sm:p-6">
                                             <div className="flex justify-center transition-all duration-300">
                                                 <button 
                                                     onClick={() => { setSelectedTenant(payment.lease?.tenant || null); setShowTenantDetails(true); }}
@@ -4459,7 +4459,7 @@ function BuildingManagementContent() {
     const showOrderDetailedFields = ["فيلا", "قصر", "شقة"].includes(orderFormData.propertyType);
     return (
       <div className="space-y-6">
-        <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 mb-6">
             <div className="flex items-center gap-3 mb-8">
                 <div className="p-2 bg-muted rounded-lg">
                     <FileText className="w-6 h-6 text-slate-600" />
@@ -4736,7 +4736,7 @@ function BuildingManagementContent() {
   const renderOffersSection = () => {
     // Offer Form
     return (
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         <Tabs value={activeOfferTab} onValueChange={(v) => setActiveOfferTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
             <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
                 <TabsTrigger value="new">{t('bm.quick.new.offer')}</TabsTrigger>
@@ -5397,7 +5397,7 @@ function BuildingManagementContent() {
       return (
         <div className="space-y-6">
 
-          <div className="bg-card rounded-lg shadow-lg p-6">
+          <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2 bg-muted rounded-lg">
                 <Home className="w-6 h-6 text-slate-700" />
@@ -5629,7 +5629,7 @@ function BuildingManagementContent() {
 
        return (
         <div className="space-y-6">
-          <div className="bg-card rounded-lg shadow-lg p-6 mb-6">
+          <div className="bg-card rounded-lg shadow-lg p-3 sm:p-6 mb-6">
             <div className="flex items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
               <div className="p-2 bg-muted rounded-lg">
@@ -5669,7 +5669,7 @@ function BuildingManagementContent() {
      const sidebarItem = sidebarItems.find((item) => item.id === selectedSection);
      if (sidebarItem && selectedSection !== "offers") {
        return (
-         <div className="p-6 bg-muted rounded-lg border border">
+         <div className="p-3 sm:p-6 bg-muted rounded-lg border border">
            <h2 className="text-lg font-bold text-gray-800 mb-2">{sidebarItem.label}</h2>
            <p className="text-gray-600">{t('bm.form.devDesc')} {sidebarItem.label}</p>
          </div>
@@ -5687,7 +5687,7 @@ function BuildingManagementContent() {
         <DialogContent className="w-[95vw] sm:max-w-lg">
           <div className="px-6 pt-6 pb-5">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black text-slate-950">
+              <DialogTitle className="text-xl sm:text-2xl font-black text-slate-950">
                 {language === 'ar' ? 'انتهى اشتراكك' : 'Subscription inactive'}
               </DialogTitle>
               <DialogDescription>
@@ -5780,7 +5780,7 @@ function BuildingManagementContent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20"
         >
-          <div className="bg-card/90 backdrop-blur-3xl p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
+          <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
             <div className="space-y-6">
               <motion.button 
                 whileHover={{ x: language === 'ar' ? -5 : 5 }}

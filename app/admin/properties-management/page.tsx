@@ -427,7 +427,7 @@ export default function AdminPropertiesManagementPage() {
             <Building2 className="h-3.5 w-3.5" />
             {isRtl ? "الإدارات" : "Departments"}
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {isRtl ? "إدارة الأملاك" : "Properties Management"}
           </h1>
           <p className="text-sm font-bold text-slate-400">
@@ -460,15 +460,15 @@ export default function AdminPropertiesManagementPage() {
       </header>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
-          <p className="mt-1 text-3xl font-black text-slate-950">{properties.length}</p>
+          <p className="mt-1 text-xl sm:text-3xl font-black text-slate-950">{properties.length}</p>
         </div>
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "نتائج البحث" : "Filtered"}</p>
-          <p className="mt-1 text-3xl font-black text-slate-950">{filteredProperties.length}</p>
+          <p className="mt-1 text-xl sm:text-3xl font-black text-slate-950">{filteredProperties.length}</p>
         </div>
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "صفحة التحكم" : "Control page"}</p>
           <p className="mt-1 text-lg font-black text-slate-950">{isRtl ? "إدارية فقط" : "Admin only"}</p>
         </div>

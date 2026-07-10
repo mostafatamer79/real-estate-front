@@ -1,7 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
 import { WalletTab } from './types'
@@ -35,7 +34,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
         },
         {
             icon: '/icons/files-documents.png',
-            label: 'الملفات والمستندات',
+            label: 'الملفات',
             description: t('wallet.desc.files') || 'المستندات والعقود',
             id: 'files' as WalletTab
         },
@@ -49,6 +48,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
 
     return (
         <>
+            {/* Desktop Sidebar */}
             <motion.div 
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -122,30 +122,27 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 </div>
             </motion.div>
 
-            {/* Mobile Navigation */}
-            <div className='lg:hidden fixed top-0 left-0 right-0 z-20 bg-card/80 backdrop-blur-xl border-b border p-3.5'>
-                <div className='flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none'>
-                    {leftSectionItems.map((item, index) => {
-                        return (
+            {/* Mobile Navigation - Clean Bottom Tab Bar */}
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/98 backdrop-blur-xl border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]'>
+                <div className='flex items-stretch justify-around'>
+                    {leftSectionItems.map((item, index) => (
                         <button
                             key={index}
                             onClick={() => onTabChange(item.id)}
-                            className={`
-                                whitespace-nowrap px-4.5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5
-                                ${activeTab === item.id 
-                                    ? 'bg-slate-950 text-white shadow-md shadow-stone-400/10' 
-                                    : 'bg-muted text-slate-600 hover:bg-muted'
-                                }
-                            `}
+                            className='flex flex-col items-center justify-center gap-1.5 flex-1 py-2.5 px-1 transition-all'
                         >
-                            <img
-                                src={item.icon}
-                                alt={item.label}
-                                className={`h-10 w-10 scale-[1.3] object-contain ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
-                            />
-                            {item.label}
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${activeTab === item.id ? 'bg-slate-950 shadow-md' : 'bg-slate-100'}`}>
+                                <img
+                                    src={item.icon}
+                                    alt={item.label}
+                                    className={`h-4 w-4 object-contain transition-all ${activeTab === item.id ? 'brightness-0 invert' : 'opacity-50'}`}
+                                />
+                            </div>
+                            <span className={`text-[9px] font-black leading-none text-center transition-colors ${activeTab === item.id ? 'text-slate-900' : 'text-slate-400'}`}>
+                                {item.label}
+                            </span>
                         </button>
-                    )})}
+                    ))}
                 </div>
             </div>
         </>

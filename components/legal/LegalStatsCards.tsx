@@ -81,7 +81,7 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statCards.map((card, index) => (
-        <div key={index} className="bg-card p-6 rounded-2xl border border hover:shadow-md transition-all">
+        <div key={index} className="bg-card p-3 sm:p-6 rounded-2xl border border hover:shadow-md transition-all">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-500">{card.title}</h3>
             <div className={`p-2.5 rounded-xl ${getColorClasses(card.color).split(" ")[0]}`}>
@@ -89,7 +89,7 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
             </div>
           </div>
           
-          <div className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="text-xl sm:text-3xl font-bold text-gray-900 mb-4">
             {loading ? (
               <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
             ) : (

@@ -70,7 +70,7 @@ export default function StripePaymentModal({ isOpen, onClose, bookingId, invoice
         </DialogHeader>
         
         {loading ? (
-           <div className="flex justify-center p-8">
+           <div className="flex justify-center p-4 sm:p-8">
              <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
            </div>
         ) : error ? (

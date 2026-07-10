@@ -49,25 +49,25 @@ export default function AdminOperationsPage() {
           <BarChart3 className="h-3.5 w-3.5" />
           {isRtl ? "الإحصائيات والعمليات" : "Stats & Operations"}
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-slate-950">
+        <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
           {isRtl ? "إحصائيات وعمليات المنصة" : "Platform Stats & Operations"}
         </h1>
       </header>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border bg-card p-6 shadow-sm">
+          <div key={card.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <card.icon className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
-            <p className="mt-1 text-2xl font-black text-slate-950">{loading ? "..." : card.value}</p>
+            <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{loading ? "..." : card.value}</p>
           </div>
         ))}
       </section>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-1 md:grid-cols-2">
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "آخر الطلبات" : "Recent orders"}</h2>
           <div className="divide-y divide-slate-100">
             {orders.slice(0, 8).map((order, index) => (
@@ -82,7 +82,7 @@ export default function AdminOperationsPage() {
           </Link>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "آخر المعاملات" : "Recent transactions"}</h2>
           <div className="divide-y divide-slate-100">
             {transactions.slice(0, 8).map((transaction, index) => (

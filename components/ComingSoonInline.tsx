@@ -15,7 +15,7 @@ export default function ComingSoonInline({ message, sectionName }: ComingSoonInl
     const displayMsg = message || t('coming_soon_global') || "هذه الخدمة ستتوفر قريباً جداً في نظامنا المطور.";
 
     return (
-        <div className="relative w-full h-full min-h-[300px] bg-slate-950/40 backdrop-blur-xl rounded-[1.25rem] border border-white/5 flex flex-col items-center justify-center p-8 overflow-hidden group" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="relative w-full h-full min-h-[300px] bg-slate-950/40 backdrop-blur-xl rounded-[1.25rem] border border-white/5 flex flex-col items-center justify-center p-4 sm:p-8 overflow-hidden group" dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {/* Background effects */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[80px] animate-pulse" />

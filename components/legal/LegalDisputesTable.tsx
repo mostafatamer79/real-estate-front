@@ -45,7 +45,7 @@ export function LegalDisputesTable({
   return (
     <div className="space-y-6">
       {/* Header & Search */}
-      <div className="bg-card p-6 rounded-2xl border border shadow-sm">
+      <div className="bg-card p-3 sm:p-6 rounded-2xl border border shadow-sm">
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
@@ -72,7 +72,7 @@ export function LegalDisputesTable({
       {/* Table */}
       <div className="bg-card rounded-2xl border border overflow-hidden shadow-sm">
         {loading ? (
-          <div className="p-8 space-y-4">
+          <div className="p-4 sm:p-8 space-y-4">
             {Array(5).fill(0).map((_, index) => (
               <div key={index} className="h-12 bg-muted animate-pulse rounded-lg"></div>
             ))}

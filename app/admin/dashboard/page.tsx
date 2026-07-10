@@ -191,7 +191,7 @@ export default function AdminDashboard() {
           <Activity className="h-3 w-3" />
           {isRtl ? "الرئيسية" : "Home"}
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-slate-950">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">
           {isRtl ? "لوح التحكم" : "Admin Dashboard"}
         </h1>
       </header>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
                 <stat.icon className="h-4.5 w-4.5" />
               </div>
               <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
-              <p className="text-2xl font-black tabular-nums text-slate-950">{stat.value}</p>
+              <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{stat.value}</p>
             </Link>
           </motion.div>
         ))}
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                     <p className={`text-xs font-black ${bucket.value > 0 ? "text-white" : "text-slate-700"}`}>{bucket.label}</p>
                     <p className={`mt-1 line-clamp-2 text-[10px] font-bold leading-4 ${bucket.value > 0 ? "text-white/60" : "text-slate-400"}`}>{bucket.description}</p>
                   </div>
-                  <p className="shrink-0 text-2xl font-black tabular-nums">{bucket.value.toLocaleString("en-US")}</p>
+                  <p className="shrink-0 text-xl sm:text-2xl font-black tabular-nums">{bucket.value.toLocaleString("en-US")}</p>
                 </div>
               </Link>
             </motion.div>

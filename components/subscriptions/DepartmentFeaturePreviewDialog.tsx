@@ -209,7 +209,7 @@ export default function DepartmentFeaturePreviewDialog({
       <DialogContent className="max-w-5xl rounded-[1.25rem] border border bg-card p-0 overflow-hidden" dir={direction}>
         <div className="border-b border bg-slate-950 px-6 py-5 text-white">
           <DialogHeader className="space-y-2 text-right">
-            <DialogTitle className="text-2xl font-black">
+            <DialogTitle className="text-xl sm:text-2xl font-black">
               {language === "ar" ? "معاينة الأقسام قبل الاشتراك" : "Department Preview Before Subscription"}
             </DialogTitle>
             <DialogDescription className="text-sm font-bold text-white/70">
@@ -254,11 +254,11 @@ export default function DepartmentFeaturePreviewDialog({
             </div>
           </aside>
 
-          <div className="p-6">
+          <div className="p-3 sm:p-6">
             <div className="rounded-[1rem] border border bg-muted p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2 text-right">
-                  <div className="text-2xl font-black text-slate-950">
+                  <div className="text-xl sm:text-2xl font-black text-slate-950">
                     {language === "ar" ? currentDepartment.titleAr : currentDepartment.titleEn}
                   </div>
                   <p className="text-sm font-bold text-slate-500">

@@ -203,7 +203,7 @@ function DepartmentHubContent() {
       {/* Welcome card */}
       <motion.div
         variants={item}
-        className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-8 shadow-sm"
+        className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-4 sm:p-8 shadow-sm"
       >
         <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
@@ -213,7 +213,7 @@ function DepartmentHubContent() {
               <Sparkles className="w-4 h-4" />
               {isRtl ? "مركز الإدارات" : "Department Hub"}
             </div>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-950 tracking-tight">
+            <h1 className="text-3xl md:text-2xl sm:text-4xl font-black text-slate-950 tracking-tight">
               {isRtl ? "أهلاً،" : "Welcome,"}{" "}
               <span className="font-black">{user?.firstName || (isRtl ? "بك" : "back")}</span>
             </h1>
@@ -232,7 +232,7 @@ function DepartmentHubContent() {
       <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {(loading ? new Array(4).fill(0) : statCards).map((c: any, idx: number) => {
           if (loading)
-            return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
+            return <div key={idx} className="bg-card rounded-2xl border border p-3 sm:p-6 h-[110px] animate-pulse" />;
           const Icon = c.Icon;
           return (
             <motion.div
@@ -240,11 +240,11 @@ function DepartmentHubContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.25 }}
-              className="bg-card rounded-2xl border border p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl border border p-3 sm:p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
             >
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
-                <p className="text-2xl font-black text-slate-950 tabular-nums">
+                <p className="text-xl sm:text-2xl font-black text-slate-950 tabular-nums">
                   {c.key === "income" ? Number(c.value || 0).toLocaleString("en-US") : c.value}
                   {c.key === "income" ? <SaudiRiyalSymbol className="ml-2 text-slate-400" iconClassName="h-3 w-3" /> : c.unit ? <span className="text-[10px] font-black text-slate-400 ml-2">{c.unit}</span> : null}
                 </p>
@@ -260,10 +260,10 @@ function DepartmentHubContent() {
       {/* Departments + Quick actions */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
         {/* Department cards */}
-        <div className="bg-card rounded-[1rem] border border p-6 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-[1rem] border border p-3 sm:p-6 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-black text-slate-950">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-950">
                 {isRtl ? "الأقسام" : "Departments"}
               </h2>
               <div className="mt-2 h-1 w-14 rounded-full bg-slate-950" />
@@ -322,7 +322,7 @@ function DepartmentHubContent() {
         {/* Quick actions + Latest requests */}
         <div className="space-y-6">
           {/* Quick actions */}
-          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-3 sm:p-6 shadow-sm">
             <div className="mb-4">
               <h2 className="text-sm font-black text-slate-950">{isRtl ? "روابط سريعة" : "Quick Links"}</h2>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Quick actions</p>
@@ -356,7 +356,7 @@ function DepartmentHubContent() {
           </div>
 
           {/* Latest requests */}
-          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-3 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-sm font-black text-slate-950">{isRtl ? "آخر الطلبات" : "Latest Requests"}</h2>

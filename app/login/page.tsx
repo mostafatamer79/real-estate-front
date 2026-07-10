@@ -118,7 +118,7 @@ export default function SignIn({ onClose }: SignInProps) {
   return (
     <div
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-8 md:pt-16 p-6 z-[60] overflow-hidden"
+      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-8 md:pt-16 p-3 sm:p-6 z-[60] overflow-hidden"
     >
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-600/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -145,7 +145,7 @@ export default function SignIn({ onClose }: SignInProps) {
 
         {/* Login Card */}
         <div 
-          className="bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative"
+          className="bg-slate-900 border border-white/10 rounded-3xl p-4 sm:p-8 shadow-2xl relative"
         >
             {onClose && (
               <button
@@ -159,7 +159,7 @@ export default function SignIn({ onClose }: SignInProps) {
 
             <div className="text-center mb-10">
        
-                <h1 className="text-2xl font-bold mb-2">
+                <h1 className="text-xl sm:text-2xl font-bold mb-2">
                   {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
                 </h1>
                 <p className="text-white/60 text-sm">

@@ -168,7 +168,7 @@ export function CustomerServicePage() {
 
   if (!isOpen) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center p-6">
+      <div className="min-h-screen bg-muted flex items-center justify-center p-3 sm:p-6">
         <ComingSoonOverlay sectionName={t('cs.title')} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -218,7 +218,7 @@ export function CustomerServicePage() {
       </AnimatePresence>
 
       {/* Premium Header Container */}
-      <section className="bg-card border-b border mb-12 p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
+      <section className="bg-card border-b border mb-12 p-4 sm:p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
           <div className="max-w-7xl mx-auto relative z-10">
               <button
                 type="button"
@@ -240,7 +240,7 @@ export function CustomerServicePage() {
                       <motion.h1
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="text-2xl md:text-4xl font-black tracking-tight leading-tight text-slate-950"
+                          className="text-2xl md:text-2xl sm:text-4xl font-black tracking-tight leading-tight text-slate-950"
                       >
                           {t('cs.title')}
                       </motion.h1>
@@ -276,7 +276,7 @@ export function CustomerServicePage() {
                     key={item.id}
                     whileHover={{ y: -5 }}
                     href={item.href}
-                    className="group flex-1 min-w-[250px] max-w-[350px] p-8 rounded-3xl bg-card border border shadow-sm flex flex-col items-center text-center transition-all"
+                    className="group flex-1 min-w-[250px] max-w-[350px] p-4 sm:p-8 rounded-3xl bg-card border border shadow-sm flex flex-col items-center text-center transition-all"
                     style={{ backgroundColor: settings.csCardBg || undefined }}
                   >
                     <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>
@@ -291,7 +291,7 @@ export function CustomerServicePage() {
           )}
 
           {!isAuthenticated && (
-            <section className="mb-12 rounded-[1.25rem] border border bg-card p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
+            <section className="mb-12 rounded-[1.25rem] border border bg-card p-4 sm:p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className="w-14 h-14 rounded-2xl bg-muted text-slate-400 flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-slate-700" />
               </div>
@@ -314,7 +314,7 @@ export function CustomerServicePage() {
           )}
 
           {isAuthenticated && (
-            <section className="mb-12 rounded-[1.25rem] border border bg-card p-6 shadow-sm" style={{ backgroundColor: settings.csCardBg || undefined }}>
+            <section className="mb-12 rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm" style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-lg font-black text-slate-900" style={{ color: settings.csTextColor || undefined, fontFamily: settings.csFontFamily || undefined }}>
@@ -388,7 +388,7 @@ export function CustomerServicePage() {
             <DialogContent className="max-h-[85vh] w-[95vw] sm:max-w-2xl overflow-y-auto rounded-[1.25rem] p-0">
               {selectedTicket && (
                 <>
-                  <DialogHeader className="border-b border p-6 text-start">
+                  <DialogHeader className="border-b border p-3 sm:p-6 text-start">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <DialogTitle className="text-lg font-black text-slate-950 flex items-center gap-2">
@@ -407,7 +407,7 @@ export function CustomerServicePage() {
                     </div>
                   </DialogHeader>
 
-                  <div className="space-y-4 p-6">
+                  <div className="space-y-4 p-3 sm:p-6">
                     <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-muted p-4">
                       <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "أنت" : "You"}</p>
                       <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.question}</p>
@@ -428,7 +428,7 @@ export function CustomerServicePage() {
                   </div>
 
                   {selectedTicket.status !== "resolved" && (
-                    <DialogFooter className="border-t border p-6">
+                    <DialogFooter className="border-t border p-3 sm:p-6">
                       <div className="w-full rounded-2xl bg-muted p-3">
                         <Textarea
                           value={ticketReplyDrafts[selectedTicket.id] || ""}
@@ -488,7 +488,7 @@ export function CustomerServicePage() {
                   </h2>
                   <form 
                     onSubmit={handleSubmit} 
-                    className="bg-card p-8 rounded-3xl border border shadow-sm space-y-6" 
+                    className="bg-card p-4 sm:p-8 rounded-3xl border border shadow-sm space-y-6" 
                     style={{ 
                       backgroundColor: settings.csCardBg || undefined,
                       color: settings.csTextColor || undefined,

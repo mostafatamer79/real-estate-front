@@ -215,7 +215,7 @@ export default function AdsPromotionSection() {
                                 transition={{ delay: i * 0.1 }}
                                 whileHover={{ y: -5, scale: 1.01 }}
                                 onClick={item.action}
-                                className="group bg-card border border rounded-[1rem] p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-xl shadow-stone-400 relative overflow-hidden"
+                                className="group bg-card border border rounded-[1rem] p-4 sm:p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-xl shadow-stone-400 relative overflow-hidden"
                             >
                                 <div className="flex justify-between items-start mb-6">
                                     <div className={`w-14 h-14 rounded-2xl ${item.color} text-white flex items-center justify-center shadow-lg`}>
@@ -243,7 +243,7 @@ export default function AdsPromotionSection() {
                                 <Mail className="w-8 h-8 text-blue-400" />
                             </div>
                             <div>
-                                <h4 className="text-2xl font-black">{t('marketing.campaign.overview')}</h4>
+                                <h4 className="text-xl sm:text-2xl font-black">{t('marketing.campaign.overview')}</h4>
                                 <p className="text-white/40 text-xs font-bold mt-1">{t('marketing.history.desc')}</p>
                             </div>
                         </div>
@@ -252,7 +252,7 @@ export default function AdsPromotionSection() {
                                 <div key={i} className="space-y-1">
                                     <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
                                     <div className="flex items-baseline gap-3">
-                                        <span className="text-2xl font-black">{stat.value}</span>
+                                        <span className="text-xl sm:text-2xl font-black">{stat.value}</span>
                                         <span className={`text-[10px] font-bold ${stat.color}`}>{stat.trend}</span>
                                     </div>
                                 </div>
@@ -286,7 +286,7 @@ export default function AdsPromotionSection() {
 
                     <div className="bg-card rounded-[1.25rem] overflow-hidden border border shadow-2xl shadow-stone-400">
                         <div className="p-10 border-b border bg-muted/30">
-                            <h4 className="text-2xl font-black text-slate-900">{t('marketing.history.title')}</h4>
+                            <h4 className="text-xl sm:text-2xl font-black text-slate-900">{t('marketing.history.title')}</h4>
                             <p className="text-slate-400 text-xs font-bold mt-1">{t('marketing.ads.performance')}</p>
                         </div>
                         <div className="overflow-x-auto">
@@ -305,7 +305,7 @@ export default function AdsPromotionSection() {
                                         <TableRow>
                                             <TableCell colSpan={5} className='text-center py-32'>
                                                 <div className="flex flex-col items-center gap-6 opacity-20">
-                                                    <div className="p-8 bg-muted rounded-full">
+                                                    <div className="p-4 sm:p-8 bg-muted rounded-full">
                                                         <Mail className="w-12 h-12 text-slate-400" />
                                                     </div>
                                                     <p className="font-black text-sm uppercase tracking-[0.3em] text-slate-500">{t('marketing.noRequests')}</p>
@@ -383,7 +383,7 @@ export default function AdsPromotionSection() {
                                 ))}
                             </div>
                         </div>
-                        <DialogTitle className="text-3xl font-black tracking-tight text-white">
+                        <DialogTitle className="text-xl sm:text-3xl font-black tracking-tight text-white">
                             {t('marketing.ads.create')}
                         </DialogTitle>
                         <DialogDescription className="text-white/40 text-xs font-bold mt-2">
@@ -521,7 +521,7 @@ export default function AdsPromotionSection() {
                                         <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.body')}</label>
                                         <Textarea 
                                             placeholder={t('marketing.wizard.placeholder.body')}
-                                            className="min-h-[150px] rounded-[1.25rem] border font-bold bg-muted p-6 text-right"
+                                            className="min-h-[150px] rounded-[1.25rem] border font-bold bg-muted p-3 sm:p-6 text-right"
                                             value={emailWizardData.content}
                                             onChange={(e) => setEmailWizardData({...emailWizardData, content: e.target.value})}
                                         />
@@ -554,7 +554,7 @@ export default function AdsPromotionSection() {
                                                         emailWizardData.frequency === freq.id ? 'border-blue-600 bg-blue-50/50 text-blue-600' : 'border hover:border'
                                                     }`}
                                                 >
-                                                    <span className="text-2xl">{freq.icon}</span>
+                                                    <span className="text-xl sm:text-2xl">{freq.icon}</span>
                                                     <span className="font-black text-sm">{language === 'ar' ? freq.labelAr : freq.labelEn}</span>
                                                 </button>
                                             ))}
@@ -570,7 +570,7 @@ export default function AdsPromotionSection() {
                                     animate={{ opacity: 1, x: 0 }} 
                                     className="space-y-8"
                                 >
-                                    <div className="p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
+                                    <div className="p-4 sm:p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
                                         <h4 className="font-black text-xl text-slate-900 border-b border pb-4">{t('marketing.wizard.review.summary')}</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                             <div className="space-y-1">
@@ -660,10 +660,10 @@ export default function AdsPromotionSection() {
                             { label: t('marketing.stats.clickRate'), value: '12.1%', trend: '+2.1%', color: 'text-purple-600' },
                             { label: t('marketing.stats.delivery'), value: '99.8%', trend: 'Optimum', color: 'text-blue-400' },
                         ].map((stat, i) => (
-                            <div key={i} className="bg-card p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
+                            <div key={i} className="bg-card p-4 sm:p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">{stat.label}</p>
                                 <div className="flex items-baseline gap-4">
-                                    <span className="text-3xl font-black text-slate-900">{stat.value}</span>
+                                    <span className="text-xl sm:text-3xl font-black text-slate-900">{stat.value}</span>
                                     <span className="text-[10px] font-bold text-emerald-500">{stat.trend}</span>
                                 </div>
                             </div>

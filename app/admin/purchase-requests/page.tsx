@@ -123,10 +123,10 @@ export default function PurchaseRequestsPage() {
   };
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 p-4 sm:p-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950 mb-2">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950 mb-2">
             {t('admin.purchase.title') || "Purchase Requests"}
           </h1>
           <p className="text-slate-500 font-medium">

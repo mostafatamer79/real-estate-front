@@ -421,7 +421,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1rem] p-8 shadow-2xl relative">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1rem] p-4 sm:p-8 shadow-2xl relative">
         <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
@@ -1030,7 +1030,7 @@ export default function AdminSubscriptionsPage() {
   };
 
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="space-y-8 p-6 lg:p-4 sm:p-8">
       <AnimatePresence>
         {isModalOpen && (
           <CreateSubscriptionModal
@@ -1047,7 +1047,7 @@ export default function AdminSubscriptionsPage() {
             <CreditCard className="w-3 h-3" />
             إدارة الاشتراكات
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {t('admin.subscriptions.title') || "إدارة اشتراكات المستخدمين"}
           </h1>
           <p className="text-slate-500 font-medium text-sm">
@@ -1085,7 +1085,7 @@ export default function AdminSubscriptionsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
             key={i} 
-            className="p-6 bg-card border border rounded-3xl shadow-sm"
+            className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm"
            >
               <div className={`w-10 h-10 rounded-xl ${card.bg} ${card.color} flex items-center justify-center mb-4`}>
                 <card.icon className="w-5 h-5" />

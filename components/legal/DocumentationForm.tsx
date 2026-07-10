@@ -157,7 +157,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
     setParty: React.Dispatch<React.SetStateAction<PartyInfo>>,
     label: string
   ) => (
-    <div className="space-y-4 p-6 bg-muted rounded-lg">
+    <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -201,7 +201,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="rounded-xl border border-blue-100 bg-muted p-5">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('legal.doc.new')}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('legal.doc.new')}</h2>
         <p className="text-gray-600">{t('legal.doc.partyInfo')}</p>
       </div>
 
@@ -244,7 +244,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       </div>
 
       {/* Ownership Deed */}
-      <div className="space-y-4 p-6 bg-muted rounded-lg">
+      <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold text-gray-800">{t('legal.doc.ownershipDeed')}</h3>
         <p className="text-sm text-gray-600">
           صك الملكية: الأصل المحدث والصادر من وزارة العدل، ويكون خالياً من أي موانع تمنع الإفراغ، مثل الرهن أو الحجز.
@@ -253,7 +253,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
         <div>
           <Label>{t('legal.doc.uploadDeed')}</Label>
           <p className="text-xs text-gray-500 mb-2">الصيغ المسموحة: PDF, صور</p>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-6 text-center">
             <input
               type="file"
               accept=".pdf,image/*"
@@ -292,7 +292,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       </div>
 
       {/* Sale Amount */}
-      <div className="space-y-4 p-6 bg-muted rounded-lg">
+      <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold text-gray-800">{t('legal.doc.saleAmount')}</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
@@ -342,7 +342,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
       <div className="space-y-4">
         <Label>{t('legal.doc.otherDocs')}</Label>
         <p className="text-xs text-gray-500">الصيغ المسموحة: PDF, DOC, DOCX, صور</p>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-6 text-center">
           <input
             type="file"
             multiple

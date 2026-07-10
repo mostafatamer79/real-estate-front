@@ -141,7 +141,7 @@ export default function CompleteProfilePage() {
             {/* Left Column: Title & Info */}
             <div className="lg:col-span-4 space-y-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                    <h1 className="text-3xl md:text-2xl sm:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                         {t('profile.complete.title')}
                     </h1>
                     <p className="text-slate-400 leading-relaxed">
@@ -149,7 +149,7 @@ export default function CompleteProfilePage() {
                     </p>
                 </div>
                 
-                <div className="slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div className="slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-3 sm:p-6 space-y-4">
                     <div className="flex items-start gap-4">
                         <div className="p-3 bg-slate-500/10 rounded-xl text-blue-400">
                             <User className="w-6 h-6" />
@@ -174,7 +174,7 @@ export default function CompleteProfilePage() {
 
             {/* Right Column: Form */}
             <div className="lg:col-span-8">
-                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 md:p-4 sm:p-8 shadow-2xl relative overflow-hidden">
                      {/* Glass effect highlight */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
 

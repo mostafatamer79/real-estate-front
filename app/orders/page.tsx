@@ -230,7 +230,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               {t('common.back')}
           </Button>
           <div className="mb-8 text-center">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('orders.title')}</h1>
+              <h1 className="text-xl sm:text-3xl font-bold text-gray-800 mb-2">{t('orders.title')}</h1>
               <p className="text-gray-500">{t('orders.subtitle')}</p>
           </div>
 

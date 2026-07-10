@@ -197,7 +197,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         <div className="space-y-6">
             {(title || subtitle) && (
                 <div className="px-4 space-y-1">
-                    {title && <h2 className="text-2xl font-black text-slate-900">{title}</h2>}
+                    {title && <h2 className="text-xl sm:text-2xl font-black text-slate-900">{title}</h2>}
                     {subtitle && (
                         <p className="text-slate-500 font-medium flex items-center gap-2 text-sm">
                             <Briefcase className="w-4 h-4 text-slate-400" />
@@ -319,7 +319,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
-                        <div className="p-8 rounded-[1rem] bg-muted">
+                        <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
                             <Briefcase className="w-16 h-16 text-slate-200" />
                         </div>
                         <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('common.noData')}</p>
@@ -330,9 +330,9 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <DialogHeader className="p-8 bg-slate-950 text-white flex flex-row items-center justify-between">
+                    <DialogHeader className="p-4 sm:p-8 bg-slate-950 text-white flex flex-row items-center justify-between">
                         <div>
-                            <DialogTitle className="text-2xl font-black">{selectedRequest?.serviceType}</DialogTitle>
+                            <DialogTitle className="text-xl sm:text-2xl font-black">{selectedRequest?.serviceType}</DialogTitle>
                             <p className="text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
                                 {t(`admin.service_requests.category.${selectedRequest?.category}`) || selectedRequest?.category}
                             </p>
@@ -341,7 +341,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                     </DialogHeader>
 
                     {selectedRequest && (
-                        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                        <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">

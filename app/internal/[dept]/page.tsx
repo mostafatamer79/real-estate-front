@@ -111,7 +111,7 @@ function StatCard({ label, value, icon: Icon, color }: {
       </div>
       <div>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
-        <p className="text-2xl font-black text-slate-950 tabular-nums">{value}</p>
+        <p className="text-xl sm:text-2xl font-black text-slate-950 tabular-nums">{value}</p>
       </div>
     </div>
   );
@@ -355,7 +355,7 @@ export default function DepartmentDashboard() {
       <div className="space-y-8" dir="rtl">
         <div className="flex items-start justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-black text-slate-950 tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
               اهلا وسهلا بك، <span className="font-black">{user?.firstName || 'مرحباً'}</span>
             </h1>
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -368,14 +368,14 @@ export default function DepartmentDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {(mgrLoading ? new Array(4).fill(0) : filteredCards).map((c: any, idx: number) => {
             if (mgrLoading) {
-              return <div key={idx} className="bg-card rounded-2xl border border p-6 h-[110px] animate-pulse" />;
+              return <div key={idx} className="bg-card rounded-2xl border border p-3 sm:p-6 h-[110px] animate-pulse" />;
             }
             const Icon = c.icon;
             return (
-              <div key={c.key} className="bg-card rounded-2xl border border p-6 flex items-center justify-between shadow-sm">
+              <div key={c.key} className="bg-card rounded-2xl border border p-3 sm:p-6 flex items-center justify-between shadow-sm">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{c.label}</p>
-                  <p className="text-2xl font-black text-slate-950 tabular-nums">
+                  <p className="text-xl sm:text-2xl font-black text-slate-950 tabular-nums">
                     {c.key === 'income' ? `${Number(c.value || 0).toLocaleString('en-US')}` : c.value}
                     {c.key === 'income' && <span className="text-[10px] font-black text-slate-400 ml-2"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>}
                   </p>
@@ -390,7 +390,7 @@ export default function DepartmentDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
           {/* Quick services */}
-          <div className="rounded-[1.25rem] bg-slate-950 text-white p-6 shadow-xl border border-slate-900">
+          <div className="rounded-[1.25rem] bg-slate-950 text-white p-3 sm:p-6 shadow-xl border border-slate-900">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-black uppercase tracking-widest">خدمات سريعة</h2>
             </div>
@@ -438,7 +438,7 @@ export default function DepartmentDashboard() {
           </div>
 
           {/* Latest orders */}
-          <div className="bg-card rounded-[1.25rem] border border p-6 shadow-sm">
+          <div className="bg-card rounded-[1.25rem] border border p-3 sm:p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-black text-slate-950">أحدث الطلبات</h2>
               {mods.orders && moduleStatus('orders') === 'enabled' && (
@@ -491,7 +491,7 @@ export default function DepartmentDashboard() {
         <div className="relative z-10 flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-white/70 text-sm font-bold">{greeting}،</p>
-            <h1 className="text-3xl font-black tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight">
               {user?.firstName ?? 'مرحباً'} 👋
             </h1>
             <p className="text-white/80 text-sm max-w-sm leading-relaxed mt-2">
@@ -546,7 +546,7 @@ export default function DepartmentDashboard() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="bg-card rounded-[1.25rem] border border p-6 space-y-4"
+        className="bg-card rounded-[1.25rem] border border p-3 sm:p-6 space-y-4"
       >
         <h2 className="text-sm font-black text-slate-950 uppercase tracking-widest">الإجراءات السريعة</h2>
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">

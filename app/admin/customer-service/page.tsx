@@ -365,7 +365,7 @@ export default function AdminCustomerServicePage() {
 
   return (
     <div 
-      className="p-6 lg:p-8 min-h-screen space-y-8" 
+      className="p-6 lg:p-4 sm:p-8 min-h-screen space-y-8" 
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundColor: settings.csBg || undefined,
@@ -386,7 +386,7 @@ export default function AdminCustomerServicePage() {
             {t("admin.customer_service.title") || (isRtl ? "خدمة العملاء" : "Customer Service")}
           </div>
           <h1 
-            className="text-2xl font-black tracking-tight"
+            className="text-xl sm:text-2xl font-black tracking-tight"
             style={{
               color: settings.csTextColor || undefined,
               fontSize: settings.csFontSize ? `${parseInt(settings.csFontSize) + 8}px` : undefined,
@@ -479,7 +479,7 @@ export default function AdminCustomerServicePage() {
               color: settings.csTextColor || undefined,
             }}
           >
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-3 sm:p-6 space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="font-black text-slate-950" style={{ color: settings.csTextColor || undefined }}>{t("admin.customer_service.categories") || (isRtl ? "التصنيفات" : "Categories")}</div>
                 <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={loadCategories} disabled={loadingCategories}>
@@ -678,7 +678,7 @@ export default function AdminCustomerServicePage() {
               color: settings.csTextColor || undefined,
             }}
           >
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-3 sm:p-6 space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="font-black text-slate-950" style={{ color: settings.csTextColor || undefined }}>
                   {isRtl ? "أسئلة التصنيف" : "Category FAQs"}{" "}
@@ -933,7 +933,7 @@ export default function AdminCustomerServicePage() {
             color: settings.csTextColor || undefined,
           }}
         >
-          <CardContent className="p-6 space-y-4">
+          <CardContent className="p-3 sm:p-6 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div className="font-black" style={{ color: settings.csTextColor || undefined }}>{t("admin.customer_service.customerFeedback") || (isRtl ? "رسائل العملاء" : "Customer Feedback")}</div>
               <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={loadFeedback} disabled={loadingFeedback}>

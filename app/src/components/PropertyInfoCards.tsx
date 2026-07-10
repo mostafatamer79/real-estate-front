@@ -350,7 +350,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               {/* Modal top shimmer */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-500/60 to-transparent" />
 
-              <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+              <div className="flex items-center justify-between p-3 sm:p-6 border-b border-slate-700/50">
                 <h2 className="text-xl font-bold text-slate-100">{getCardTitle(selectedCard)}</h2>
                 <button
                   onClick={handleCloseModal}
@@ -360,7 +360,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                 </button>
               </div>
 
-              <div className="p-6 max-h-[70vh] overflow-y-auto">
+              <div className="p-3 sm:p-6 max-h-[70vh] overflow-y-auto">
                 {selectedCard === "operations" && (
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">{t('cards.details')}</h3>

@@ -119,7 +119,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
               <Scale className="w-6 h-6 text-white" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-black text-white tracking-tight">السياسات والأحكام</DialogTitle>
+              <DialogTitle className="text-xl sm:text-2xl font-black text-white tracking-tight">السياسات والأحكام</DialogTitle>
               <DialogDescription className="text-xs font-bold text-slate-400 mt-1">منصة الوساطة الرقمية</DialogDescription>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
           <div className="absolute inset-0 bg-card/20 pointer-events-none z-0" />
           
           {/* Scrollable Content Area */}
-          <div className="p-8 pb-10 max-h-[70vh] overflow-y-auto w-full custom-scrollbar relative z-10 bg-transparent">
+          <div className="p-4 sm:p-8 pb-10 max-h-[70vh] overflow-y-auto w-full custom-scrollbar relative z-10 bg-transparent">
             <AnimatePresence mode="wait">
               {loading ? (
                 <div className="flex justify-center py-20">
@@ -182,7 +182,7 @@ export function TermsPrivacyModal({ isOpen, onClose, defaultTab = "terms", hideT
                   className="w-[95vw] sm:max-w-3xl mx-auto"
                 >
                   <div className="text-center mb-8">
-                    <h1 className="text-2xl font-black text-slate-900 mb-2">
+                    <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
                       {currentTab?.titleAr || (activeTab === "terms" ? "شروط الاستخدام" : "سياسة الخصوصية")}
                     </h1>
                   </div>

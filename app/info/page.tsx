@@ -170,7 +170,7 @@ function InfoPageContent() {
                     <ExternalLink className="w-4 h-4" />
                   </button>
                 ) : tab.key === "contact" ? (
-                  <div className="bg-card/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <div className="bg-card/5 border border-white/5 rounded-3xl p-4 sm:p-8 space-y-6">
                     <div className="p-4 bg-slate-700/30 rounded-2xl w-fit">
                       <Handshake className="w-8 h-8 text-slate-400" />
                     </div>
@@ -232,7 +232,7 @@ function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-card/10" }
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }}
       exit={{ opacity: 0, y: -15, transition: { duration: 0.2 } }}
-      className="bg-card/5 border border-white/5 rounded-[1.25rem] p-8 md:p-12 space-y-10 relative overflow-hidden"
+      className="bg-card/5 border border-white/5 rounded-[1.25rem] p-4 sm:p-8 md:p-12 space-y-10 relative overflow-hidden"
     >
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className={cn("absolute -top-32 -right-32 w-96 h-96 rounded-full blur-[120px]", bgColor)} />
@@ -242,7 +242,7 @@ function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-card/10" }
         <div className="p-5 bg-card/5 border border-white/10 rounded-2xl">
           {icon}
         </div>
-        <h2 className="text-2xl md:text-3xl font-black tracking-tight">{title}</h2>
+        <h2 className="text-2xl md:text-xl sm:text-3xl font-black tracking-tight">{title}</h2>
       </div>
 
       <div className="space-y-8 relative z-10">

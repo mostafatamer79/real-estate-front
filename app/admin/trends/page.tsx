@@ -122,24 +122,24 @@ export default function AdminTrendsPage() {
           <LineChart className="h-3.5 w-3.5" />
           {isRtl ? "تحليلات والاتجاهات" : "Analytics & Trends"}
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-slate-950">
+        <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
           {isRtl ? "تحليلات واتجاهات المنصة" : "Platform Analytics & Trends"}
         </h1>
       </header>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border bg-card p-6 shadow-sm">
+          <div key={card.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <TrendingUp className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
-            <p className="mt-1 text-2xl font-black text-slate-950">{card.value}</p>
+            <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{card.value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "الاتجاه الشهري" : "Monthly trend"}</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
           {monthlyTotals.slice(-6).map((item: any, index: number) => (
@@ -156,7 +156,7 @@ export default function AdminTrendsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
@@ -228,7 +228,7 @@ export default function AdminTrendsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">

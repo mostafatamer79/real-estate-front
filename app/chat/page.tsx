@@ -154,24 +154,24 @@ export default function NormalChatPage() {
   return (
     <div className="min-h-screen bg-muted px-4 py-6" dir="rtl">
       <div className="mx-auto max-w-5xl space-y-6">
-      <div className="rounded-2xl border border bg-card p-6 shadow-sm">
+      <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white">
               <MessageCircle className="h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-950">محادثاتي</h1>
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">محادثاتي</h1>
               <p className="mt-1 text-sm font-bold text-slate-500">متابعة المحادثات والردود من مكان واحد.</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
-              <p className="text-2xl font-black tabular-nums text-slate-950">{chats.length.toLocaleString("ar-SA")}</p>
+              <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{chats.length.toLocaleString("ar-SA")}</p>
               <p className="text-[10px] font-black text-slate-400">محادثة</p>
             </div>
             <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
-              <p className="text-2xl font-black tabular-nums text-slate-950">{unreadTotal.toLocaleString("ar-SA")}</p>
+              <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{unreadTotal.toLocaleString("ar-SA")}</p>
               <p className="text-[10px] font-black text-slate-400">غير مقروءة</p>
             </div>
             <button

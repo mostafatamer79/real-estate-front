@@ -424,7 +424,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         <DialogContent className="w-[95vw] sm:max-w-lg">
           <div className="px-6 pt-6 pb-5">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black text-slate-950">
+              <DialogTitle className="text-xl sm:text-2xl font-black text-slate-950">
                 {language === "ar" ? "انتهى اشتراكك" : "Subscription inactive"}
               </DialogTitle>
               <DialogDescription>
@@ -475,7 +475,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   /* ─── coming soon ─── */
   if (!isHub && !isOpen) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-3 sm:p-6">
         <ComingSoonOverlay sectionName={dept?.nameAr || "لوحة الإدارة"} message={message} isAdmin={isAdmin} />
       </div>
     );

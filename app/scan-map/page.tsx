@@ -310,8 +310,8 @@ export default function ScanMapPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {generatingReport && (
-        <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6">
-          <div className="w-full w-[95vw] sm:max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-8 text-center">
+        <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+          <div className="w-full w-[95vw] sm:max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-4 sm:p-8 text-center">
             <div className="mx-auto mb-5 h-16 w-16 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 flex items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-emerald-300" />
             </div>
@@ -377,7 +377,7 @@ export default function ScanMapPage() {
           {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
           {language === 'ar' ? 'رجوع' : 'Back'}
         </button>
-        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-slate-400">
+        <h1 className="text-2xl md:text-xl sm:text-3xl font-bold text-center mb-2 text-slate-400">
            {t('scan.title')}
         </h1>
         <p className="text-slate-400 text-center text-sm md:text-base">
@@ -520,11 +520,11 @@ export default function ScanMapPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="bg-slate-900/80 p-4 rounded-xl text-center">
-                    <div className="text-2xl font-bold text-emerald-400">{places.length}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-emerald-400">{places.length}</div>
                     <div className="text-sm text-slate-400">{t('scan.placesCount')}</div>
                   </div>
                   <div className="bg-slate-900/80 p-4 rounded-xl text-center">
-                    <div className="text-2xl font-bold text-blue-400">{uniqueTypes}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-blue-400">{uniqueTypes}</div>
                     <div className="text-sm text-slate-400">{t('scan.typesCount')}</div>
                   </div>
                 </div>

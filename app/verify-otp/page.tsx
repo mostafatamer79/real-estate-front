@@ -227,7 +227,7 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 pt-4">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-3 sm:p-6 pt-4">
       <div className="w-full w-[95vw] sm:max-w-md">
         <button
           onClick={() => router.back()}
@@ -237,7 +237,7 @@ export default function VerifyOtpPage() {
           {t('common.back')}
         </button>
 
-        <h1 className="text-2xl font-bold mb-2 text-center">{t('otp.title')}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-2 text-center">{t('otp.title')}</h1>
         <p className="text-white/60 text-center mb-8">
           {t('otp.sentTo')}{" "}
           <span className="text-white font-medium">{email}</span>
@@ -258,7 +258,7 @@ export default function VerifyOtpPage() {
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onFocus={() => setInputIndex(index)}
                   disabled={isLoading}
-                  className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
+                  className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-xl sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
                   dir="ltr" // Keep LTR for numbers
                   autoComplete="one-time-code"
                   style={{

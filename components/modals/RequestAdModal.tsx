@@ -124,7 +124,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
             
             <div className="space-y-2 md:col-span-2">

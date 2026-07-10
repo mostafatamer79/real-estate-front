@@ -198,7 +198,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
             <Card className='bg-card rounded-xl shadow-lg p-6 overflow-y-auto max-h-[calc(100vh-2rem)]'>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-black">{t('wallet.commission.title')}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-black">{t('wallet.commission.title')}</h2>
                     <button
                         onClick={onClose}
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-800"

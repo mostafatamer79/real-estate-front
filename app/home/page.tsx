@@ -12,11 +12,11 @@ export default function DetailsPage() {
   return (
     <div className="w-full min-h-screen bg-slate-950 p-4 ">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">تفاصيل العقار</h1>
+        <h1 className="text-xl sm:text-3xl font-bold mb-6 text-center text-white">تفاصيل العقار</h1>
         
         {settings.sectionFlags.map !== 'hidden' && settings.sectionFlags.map !== 'closed' && (
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-white">الموقع</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-white">الموقع</h2>
             <div className="flex justify-center">
               <div className="w-full w-[95vw] sm:max-w-2xl">
                 <Map

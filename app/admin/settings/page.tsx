@@ -228,7 +228,7 @@ function SettingsPageInner() {
         <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                         <Settings2 className="w-8 h-8" />
                         {t('admin.settings.title')}
                     </h1>
@@ -319,7 +319,7 @@ function SettingsPageInner() {
 
             {activeTab === 'pricing' && (
                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
-                    <div onClick={() => setIsLogsModalOpen(true)} className="p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
+                    <div onClick={() => setIsLogsModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
                             <div>
@@ -329,7 +329,7 @@ function SettingsPageInner() {
                         </div>
                         <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" />
                     </div>
-                    <div onClick={() => setIsCommissionModalOpen(true)} className="p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
+                    <div onClick={() => setIsCommissionModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-900 flex items-center justify-center"><DollarSign className="w-8 h-8" /></div>
                             <div>
@@ -369,7 +369,7 @@ function PricingTab({
     servicePrices, setServicePrices, collapsedCategories, setCollapsedCategories
 }: PricingTabProps) {
     return (
-        <div className="p-8 space-y-10">
+        <div className="p-4 sm:p-8 space-y-10">
             <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Sparkles className="w-6 h-6" />
@@ -418,13 +418,13 @@ function PricingTab({
                         <div key={group.category} className="border border rounded-3xl overflow-hidden mb-4">
                             <button
                                 onClick={() => setCollapsedCategories(prev => ({ ...prev, [group.category]: !prev[group.category] }))}
-                                className="w-full flex items-center justify-between p-6 bg-muted hover:bg-muted transition-colors"
+                                className="w-full flex items-center justify-between p-3 sm:p-6 bg-muted hover:bg-muted transition-colors"
                             >
                                 <span className="text-[11px] font-black uppercase tracking-widest">{group.label}</span>
                                 <ChevronDown className={`w-4 h-4 transition-transform ${collapsedCategories[group.category] ? '' : 'rotate-180'}`} />
                             </button>
                             {!collapsedCategories[group.category] && (
-                                <div className="p-6 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 bg-card">
+                                <div className="p-3 sm:p-6 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 bg-card">
                                     {group.services.map((service) => {
                                         const key = `service_price_${group.category}_${service}`.replace(/\s+/g, '_').toLowerCase();
                                         return (
@@ -493,7 +493,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
     const setThemeValue = (key: string, value: string) => updateSettings({ [key]: value } as any);
 
     return (
-        <div className="p-8 space-y-10">
+        <div className="p-4 sm:p-8 space-y-10">
             <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Palette className="w-6 h-6" />
@@ -511,7 +511,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* White Logo */}
-                    <div className="p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-4">
+                    <div className="p-3 sm:p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-4">
                         <p className="text-[11px] font-black text-white/60 uppercase tracking-widest">الشعار الأبيض (على الخلفيات الداكنة)</p>
                         <div className="flex items-center justify-center h-20">
                             {localSettings.logoWhiteUrl ? (
@@ -534,7 +534,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         />
                     </div>
                     {/* Black Logo */}
-                    <div className="p-6 bg-muted rounded-3xl border border space-y-4">
+                    <div className="p-3 sm:p-6 bg-muted rounded-3xl border border space-y-4">
                         <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">الشعار الأسود (على الخلفيات الفاتحة)</p>
                         <div className="flex items-center justify-center h-20">
                             {localSettings.logoBlackUrl ? (
@@ -558,7 +558,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </div>
                 </div>
 
-                <div className="p-6 bg-card rounded-3xl border border space-y-4">
+                <div className="p-3 sm:p-6 bg-card rounded-3xl border border space-y-4">
                     <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">غلاف تقارير مسح الخريطة PDF</p>
                     <div className="flex items-center justify-center h-36 rounded-2xl bg-muted overflow-hidden">
                         {localSettings.reportCoverUrl ? (
@@ -584,10 +584,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </p>
                 </div>
                 {/* Size Slider */}
-                <div className="p-6 bg-muted rounded-3xl border border space-y-4">
+                <div className="p-3 sm:p-6 bg-muted rounded-3xl border border space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-[11px] font-black text-slate-600 uppercase tracking-widest">حجم الشعار في كل الصفحات</label>
-                        <span className="text-2xl font-black text-slate-900">{localSettings.logoHeight || 40}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
+                        <span className="text-xl sm:text-2xl font-black text-slate-900">{localSettings.logoHeight || 40}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
                     </div>
                     <input
                         type="range"
@@ -614,10 +614,10 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 </div>
 
                 {/* Quick Actions Icon Size Slider */}
-                <div className="p-6 bg-muted rounded-3xl border border space-y-4">
+                <div className="p-3 sm:p-6 bg-muted rounded-3xl border border space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-[11px] font-black text-slate-600 uppercase tracking-widest">حجم أيقونات الوصول السريع (الرئيسية)</label>
-                        <span className="text-2xl font-black text-slate-900">{localSettings.quickActionsIconSize || '40'}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
+                        <span className="text-xl sm:text-2xl font-black text-slate-900">{localSettings.quickActionsIconSize || '40'}<span className="text-[11px] text-slate-400 ml-1">px</span></span>
                     </div>
                     <input
                         type="range"
@@ -646,7 +646,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'foreground', label: 'لون الخط العام', value: localSettings.foreground, fallback: '#0f172a' },
                             { id: 'sidebar', label: 'لون القائمة الجانبية', value: localSettings.sidebar, fallback: '#ffffff' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value as string }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -666,7 +666,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'iconBg', label: 'خلفية الأيقونات', value: (localSettings as any).iconBg || '#f8fafc', fallback: '#f8fafc' },
                             { id: 'iconColor', label: 'لون الأيقونات', value: (localSettings as any).iconColor || '#0f172a', fallback: '#0f172a' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -716,7 +716,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'soonBadgeBg', label: 'خلفية الشارة', value: (localSettings as any).soonBadgeBg || '#ffffff' },
                             { id: 'soonBadgeText', label: 'لون النص', value: (localSettings as any).soonBadgeText || '#000000' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div
                                     className="h-8 px-3 rounded-xl border border shadow-inner flex items-center justify-center text-[10px] font-black uppercase tracking-widest flex-shrink-0"
                                     style={{
@@ -825,7 +825,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                         <div className="pt-6">
                             <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4">معاينة شكل المنصة</h4>
                             <div
-                                className="p-6 border space-y-5"
+                                className="p-3 sm:p-6 border space-y-5"
                                 style={{
                                     backgroundColor: localSettings.background,
                                     color: localSettings.foreground,
@@ -1451,7 +1451,7 @@ function TextTab({
     }, [currentSubcategory, getActiveSectionKeys]);
 
     return (
-        <div className="p-8 space-y-6">
+        <div className="p-4 sm:p-8 space-y-6">
             {/* Header section with Stats & Mode Switcher */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
@@ -1552,7 +1552,7 @@ function TextTab({
                         {currentSubcategory && (
                             <div className="space-y-6">
                                 {/* Component Customizer & Settings Card */}
-                                <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                                <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-4 sm:p-8 space-y-6 shadow-sm">
                                     <div className="flex items-center justify-between border-b border pb-4">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2.5 bg-slate-900/5 text-slate-900 rounded-xl">
@@ -1659,7 +1659,7 @@ function TextTab({
                                     </div>
 
                                     {/* Live Preview Card */}
-                                    <div className="border border rounded-3xl p-6 bg-card space-y-4">
+                                    <div className="border border rounded-3xl p-3 sm:p-6 bg-card space-y-4">
                                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border pb-2">
                                             <Eye className="w-3.5 h-3.5" />
                                             <span>معاينة حية للمكون المتأثر</span>
@@ -1667,7 +1667,7 @@ function TextTab({
 
                                         {activeSection === 'welcome_screen' && (
                                             <div
-                                                className="flex flex-col items-center justify-center p-8 rounded-2xl min-h-[160px] text-center transition-all"
+                                                className="flex flex-col items-center justify-center p-4 sm:p-8 rounded-2xl min-h-[160px] text-center transition-all"
                                                 style={{
                                                     backgroundColor: localSettings.welcomeBg || '#0f172a',
                                                     color: localSettings.welcomeColor || '#ffffff',
@@ -1693,7 +1693,7 @@ function TextTab({
 
                                         {activeSection === 'login_screen' && (
                                             <div
-                                                className="p-6 rounded-2xl border transition-all text-right space-y-4"
+                                                className="p-3 sm:p-6 rounded-2xl border transition-all text-right space-y-4"
                                                 style={{
                                                     backgroundColor: localSettings.loginBg || '#ffffff',
                                                     color: localSettings.loginColor || '#0f172a',
@@ -1740,7 +1740,7 @@ function TextTab({
 
                                         {activeSection === 'customer_service' && (
                                             <div
-                                                className="p-6 rounded-2xl border transition-all space-y-3"
+                                                className="p-3 sm:p-6 rounded-2xl border transition-all space-y-3"
                                                 style={{
                                                     backgroundColor: localSettings.csBg || '#f8fafc',
                                                     color: localSettings.csTextColor || '#0f172a',
@@ -1766,7 +1766,7 @@ function TextTab({
 
                                         {/* Fallback Preview */}
                                         {!['welcome_screen', 'login_screen', 'customer_service'].includes(activeSection) && (
-                                            <div className="p-6 rounded-2xl border bg-muted text-slate-400 text-xs text-center font-bold">
+                                            <div className="p-3 sm:p-6 rounded-2xl border bg-muted text-slate-400 text-xs text-center font-bold">
                                                 المكون نشط ومربوط بـ {currentSectionKeys.length} نصوص رئيسية.
                                             </div>
                                         )}
@@ -1774,7 +1774,7 @@ function TextTab({
                                 </div>
 
                                 {/* Associated Texts Editing Section */}
-                                <div className="bg-card border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                                <div className="bg-card border border rounded-[1rem] p-6 md:p-4 sm:p-8 space-y-6 shadow-sm">
                                     <div className="border-b border pb-4">
                                         <h4 className="text-base font-black text-slate-950">النصوص والمسميات المرتبطة</h4>
                                         <p className="text-[10px] font-bold text-slate-400 mt-0.5">تعديل نصوص الترجمة الخاصة بهذا القسم مباشرة</p>
@@ -1782,7 +1782,7 @@ function TextTab({
 
                                     <div className="space-y-6">
                                         {currentSectionKeys.map((key) => (
-                                            <div key={key} className="p-6 bg-muted/50 rounded-2xl border border space-y-4">
+                                            <div key={key} className="p-3 sm:p-6 bg-muted/50 rounded-2xl border border space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-[10px] font-mono font-black text-slate-400 select-all">{key}</span>
                                                     {(textOverrides['ar_' + key] !== undefined || textOverrides['en_' + key] !== undefined) && (
@@ -1910,7 +1910,7 @@ function TextTab({
 
                     {/* Traditional Inputs Display */}
                     <div className="lg:col-span-3 space-y-6">
-                        <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-8 space-y-6 shadow-sm">
+                        <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-4 sm:p-8 space-y-6 shadow-sm">
                             <div className="flex flex-wrap items-center gap-2 border-b border pb-4">
                                 <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-white">
                                     {selectedCategory === 'admin' ? 'الإدارة' : 'الموقع العام'}
@@ -1921,7 +1921,7 @@ function TextTab({
                             </div>
 
                             {paginatedKeys.length === 0 ? (
-                                <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-8">
+                                <div className="min-h-[300px] flex flex-col items-center justify-center text-center p-4 sm:p-8">
                                     <Languages className="w-12 h-12 text-slate-300 mb-4 stroke-[1.5]" />
                                     <h4 className="text-base font-black text-slate-700">{t('admin.settings.noTexts') || 'لم يتم العثور على أي نصوص'}</h4>
                                     <p className="text-slate-400 text-xs mt-1">{t('admin.settings.noTextsDesc') || 'جرب تغيير كلمة البحث أو اختيار تصنيف فرعي آخر'}</p>
@@ -1929,7 +1929,7 @@ function TextTab({
                             ) : (
                                 <div className="space-y-6">
                                     {paginatedKeys.map((key) => (
-                                        <div key={key} className="p-6 md:p-8 bg-card rounded-[1.25rem] border border transition-all hover:border-slate-900/20 group shadow-sm">
+                                        <div key={key} className="p-6 md:p-4 sm:p-8 bg-card rounded-[1.25rem] border border transition-all hover:border-slate-900/20 group shadow-sm">
                                             <div className="flex items-center justify-between mb-5">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-black text-slate-600">
@@ -2273,7 +2273,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     };
 
     return (
-        <div className="p-8 space-y-6">
+        <div className="p-4 sm:p-8 space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
@@ -2350,7 +2350,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                 {/* Main Content Area */}
                 <div className="lg:col-span-3">
-                    <div className="rounded-[1rem] border border bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] p-6 shadow-xl space-y-8 min-h-[500px]">
+                    <div className="rounded-[1rem] border border bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] p-3 sm:p-6 shadow-xl space-y-8 min-h-[500px]">
 
                         {!query && currentSubcategory && (
                             <div className="flex items-center gap-4 mb-8 pb-6 border-b border">
@@ -2358,7 +2358,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                                     <currentSubcategory.icon className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-slate-900">{currentSubcategory.title}</h2>
+                                    <h2 className="text-xl sm:text-2xl font-black text-slate-900">{currentSubcategory.title}</h2>
                                     <p className="text-xs font-bold text-slate-400 mt-1">تفعيل وتعطيل العناصر داخل هذا القسم</p>
                                 </div>
                             </div>
@@ -2396,7 +2396,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
                         {/* Quick Actions Global Settings shown only on "quick_access_main" */}
                         {currentSubcategory?.id === 'quick_access_main' && !query && (
-                            <div className="mt-12 rounded-[1.25rem] border border bg-card p-6 shadow-sm">
+                            <div className="mt-12 rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm">
                                 <h4 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
                                     <Settings2 className="w-4 h-4 text-slate-400" /> إعدادات الإجراءات السريعة العامة
                                 </h4>
@@ -2449,7 +2449,7 @@ function LogsModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: boolean)
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-2xl p-8 shadow-2xl overflow-hidden">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-2xl p-4 sm:p-8 shadow-2xl overflow-hidden">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">سجل التغييرات</h3>
                     <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>
@@ -2475,7 +2475,7 @@ function CommissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: (v: bo
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div onClick={() => onClose(false)} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-lg p-8 shadow-2xl">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-card rounded-[1rem] w-full w-[95vw] sm:max-w-lg p-4 sm:p-8 shadow-2xl">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black">إدارة العمولات</h3>
                     <button onClick={() => onClose(false)} className="w-10 h-10 rounded-xl hover:bg-muted flex items-center justify-center"><X className="w-5 h-5" /></button>

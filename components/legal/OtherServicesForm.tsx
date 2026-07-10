@@ -121,7 +121,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="rounded-xl border border-amber-100 bg-amber-50 p-5">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('legal.other.new')}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('legal.other.new')}</h2>
         <p className="text-gray-600 text-sm">اختر نوع الخدمة: استشارة قانونية أو تقرير قانوني.</p>
       </div>
 
@@ -175,7 +175,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
 
       {/* Consultation Fields */}
       {serviceType === "استشارات قانونية" && (
-        <div className="space-y-4 p-6 bg-muted rounded-lg">
+        <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800">{t('legal.other.consultation')}</h3>
           
           <div>
@@ -203,7 +203,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
 
       {/* Legal Report Fields */}
       {serviceType === "تقارير قانونية" && (
-        <div className="space-y-4 p-6 bg-muted rounded-lg">
+        <div className="space-y-4 p-3 sm:p-6 bg-muted rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800">{t('legal.other.report')}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,7 +280,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
       <div className="space-y-4">
         <Label>{t('legal.other.uploadDocs')}</Label>
         <p className="text-xs text-gray-500">الصيغ المسموحة: كل الصيغ الشائعة (PDF, DOC, DOCX, صور)</p>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-6 text-center">
           <input
             type="file"
             multiple

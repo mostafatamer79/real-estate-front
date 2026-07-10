@@ -349,14 +349,14 @@ export default function AdminServicesManagementPage() {
   );
 
   return (
-    <div className="space-y-10 p-6 lg:p-8 pb-20">
+    <div className="space-y-10 p-6 lg:p-4 sm:p-8 pb-20">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <Settings2 className="w-3 h-3" />
             تكوين الخدمات
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {t('admin.services_mgmt.title') === 'admin.services_mgmt.title' ? "إدارة الخدمات والتسعير" : t('admin.services_mgmt.title')}
           </h1>
           <p className="text-slate-500 font-medium text-sm">
@@ -419,7 +419,7 @@ export default function AdminServicesManagementPage() {
             {visibleServiceCategories.map((cat) => {
               const status = localModuleFlags[`services_${cat.id}`] || 'enabled';
               return (
-                <div key={cat.id} className="p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
+                <div key={cat.id} className="p-3 sm:p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-muted text-slate-600 flex items-center justify-center border border">
                       <cat.icon className="w-7 h-7" />
@@ -466,25 +466,25 @@ export default function AdminServicesManagementPage() {
         </div>
 
         <div className={`lg:col-span-3 space-y-6 ${activePanel !== "pricing" ? "hidden" : ""}`}>
-          <div className="rounded-[1.25rem] border border bg-card p-6 shadow-sm">
+          <div className="rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
                   <SaudiRiyalIcon className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-slate-950">تسعير {activeCategoryConfig.label}</h2>
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">تسعير {activeCategoryConfig.label}</h2>
                   <p className="mt-1 text-sm font-bold text-slate-500">حدد سعر كل خدمة كما سيظهر في الطلبات الجديدة والفواتير.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
+                  <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
                   <p className="text-[10px] font-black text-slate-400">خدمة</p>
                 </div>
                 <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount}</p>
+                  <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount}</p>
                   <p className="text-[10px] font-black text-slate-400">مسعرة</p>
                 </div>
                 <div className="col-span-2 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-right sm:col-span-1">
@@ -569,7 +569,7 @@ export default function AdminServicesManagementPage() {
               <Wrench className="h-3 w-3" />
               إدارة طلبات الخدمات
             </div>
-            <h2 className="text-2xl font-black tracking-tight text-slate-950">طلبات {activeCategoryConfig.label}</h2>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">طلبات {activeCategoryConfig.label}</h2>
             <p className="text-sm font-medium text-slate-500">كل طلبات هذا القسم في مكان واحد: تعديل الحالة، تسعير الطلب، إرسال الفاتورة، والرد على العميل.</p>
           </div>
           <div className="flex gap-2">
@@ -966,7 +966,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-full w-[95vw] sm:max-w-2xl rounded-[1rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="bg-card w-full w-[95vw] sm:max-w-2xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
       >
         <button
           onClick={onClose}

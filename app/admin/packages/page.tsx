@@ -252,7 +252,7 @@ export default function AdminPackagesPage() {
             <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
             {isRtl ? "رجوع" : "Back"}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{t('admin.packages.title')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('admin.packages.title')}</h1>
           <p className="text-gray-500 mt-1">{t('admin.packages.subtitle')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -301,7 +301,7 @@ export default function AdminPackagesPage() {
       ) : activeTab === "packages" ? (
         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg) => (
-            <div key={pkg.id} className="bg-card rounded-2xl p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div key={pkg.id} className="bg-card rounded-2xl p-3 sm:p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
                 {!pkg.isActive && (
                     <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold">{t('admin.packages.inactive')}</div>
                 )}
@@ -354,7 +354,7 @@ export default function AdminPackagesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border bg-card p-6 shadow-sm">
+        <div className="rounded-3xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-6">
             <div>
               <h2 className="text-xl font-black text-slate-950">{isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}</h2>
@@ -453,14 +453,14 @@ export default function AdminPackagesPage() {
               exit={{ scale: 0.95, opacity: 0 }}
               className="bg-card rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl"
             >
-              <div className="p-6 border-b border flex justify-between items-center sticky top-0 bg-card z-10">
+              <div className="p-3 sm:p-6 border-b border flex justify-between items-center sticky top-0 bg-card z-10">
                 <h2 className="text-xl font-bold">{editingPackage ? t('admin.packages.modal.edit') : t('admin.packages.modal.new')}</h2>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-muted rounded-full">
                   <X className="w-5 h-5" />
                 </button>
               </div>
               
-              <form onSubmit={handleSubmit} className="p-6 space-y-8">
+              <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.info')}</h3>

@@ -298,7 +298,7 @@ export default function BuildingManagement() {
   const renderMainContent = () => {
     if (selectedSection !== "offers") {
       return (
-        <div className="p-6 bg-muted rounded-lg border border">
+        <div className="p-3 sm:p-6 bg-muted rounded-lg border border">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
             {sidebarItems.find((item) => item.id === selectedSection)?.label}
           </h2>
@@ -310,13 +310,13 @@ export default function BuildingManagement() {
     }
 
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-lg shadow-lg p-6 mb-6">
+      <div className="bg-card/80 backdrop-blur-sm rounded-lg shadow-lg p-3 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 bg-muted rounded-lg">
             <Home className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">إنشاء عرض جديد</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">إنشاء عرض جديد</h1>
             <p className="text-gray-600">أضف تفاصيل العرض العقاري</p>
           </div>
         </div>
@@ -325,7 +325,7 @@ export default function BuildingManagement() {
           {/* صور و فيديو ثلاثي الابعاد */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">صور و فيديو ثلاثي الابعاد</h2>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-8 text-center">
               <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-2">اسحب وأفلت الملفات هنا أو انقر للتحميل</p>
               <p className="text-sm text-gray-500 mb-4">يدعم الصور والفيديو بجميع الصيغ</p>
@@ -589,7 +589,7 @@ export default function BuildingManagement() {
 
           {/* بيانات تفصيلية */}
           {showDetails && (
-            <div className="mb-8 p-6 bg-muted rounded-lg">
+            <div className="mb-8 p-3 sm:p-6 bg-muted rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">بيانات تفصيلية</h2>
               <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* عدد الغرف */}
@@ -869,8 +869,8 @@ export default function BuildingManagement() {
 
       <div className="w-full min-h-screen bg-card flex" dir="rtl">
         {/* Fixed Sidebar */}
-        <div className="fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-6 overflow-y-auto">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">إدارة الاملاك</h1>
+        <div className="fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-3 sm:p-6 overflow-y-auto">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6">إدارة الاملاك</h1>
 
           <div className="space-y-3">
             {sidebarItems.map((item) => {
@@ -897,7 +897,7 @@ export default function BuildingManagement() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 mr-80 p-6">
+        <div className="flex-1 mr-80 p-3 sm:p-6">
           <div className="max-w-5xl">
             {renderMainContent()}
           </div>

@@ -285,7 +285,7 @@ export function AddPropertyWizard({
                 </div>
 
                 {/* Tab Panels Container - Scrollable */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 bg-muted/30 w-full relative">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-4 sm:p-8 bg-muted/30 w-full relative">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeTab}
@@ -300,7 +300,7 @@ export function AddPropertyWizard({
                                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                      {/* Property Details Card */}
                                      <Card className="bg-card border shadow-sm md:col-span-2">
-                                        <CardContent className="p-6 space-y-6">
+                                        <CardContent className="p-3 sm:p-6 space-y-6">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="p-2 rounded-lg bg-muted text-blue-600"><Building className="w-5 h-5" /></div>
                                                 <h4 className="text-lg font-bold text-gray-900">{t('pm.details.title')}</h4>
@@ -383,7 +383,7 @@ export function AddPropertyWizard({
 
                                      {/* Offer Alignment Details Card */}
                                      <Card className="bg-card border shadow-sm md:col-span-2">
-                                        <CardContent className="p-6 space-y-6">
+                                        <CardContent className="p-3 sm:p-6 space-y-6">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
                                                     <LayoutDashboard className="w-5 h-5" />
@@ -940,7 +940,7 @@ export function AddPropertyWizard({
                                     <div className="md:col-span-2">
                                         {editingUnitIndex !== null ? (
                                             <Card className="bg-card border shadow-sm h-full">
-                                                <CardContent className="p-6 space-y-6">
+                                                <CardContent className="p-3 sm:p-6 space-y-6">
                                                     <div className="flex items-center justify-between border-b border pb-4">
                                                         <h4 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                                                             <User className="w-5 h-5 text-blue-600" />
@@ -1056,7 +1056,7 @@ export function AddPropertyWizard({
                             <TabsContent value="reports" className="space-y-6 focus-visible:outline-none">
                                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                                     <Card className="bg-card border shadow-sm">
-                                        <CardContent className="p-6">
+                                        <CardContent className="p-3 sm:p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.roi')}</h4>
                                             <p className="text-gray-500 text-sm mb-6">{t('pm.roi.desc')}</p>
                                             <div className="space-y-4">
@@ -1073,10 +1073,10 @@ export function AddPropertyWizard({
                                     </Card>
 
                                     <Card className="bg-card border shadow-sm">
-                                        <CardContent className="p-6">
+                                        <CardContent className="p-3 sm:p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.maintenance')}</h4>
                                             <p className="text-gray-500 text-sm mb-6">{t('pm.maintenance.newPropDesc')}</p>
-                                            <div className="flex items-center justify-center p-8 bg-muted rounded-2xl border border-dashed border">
+                                            <div className="flex items-center justify-center p-4 sm:p-8 bg-muted rounded-2xl border border-dashed border">
                                                 <p className="text-gray-400 text-sm font-medium">{t('pm.maintenance.empty')}</p>
                                             </div>
                                         </CardContent>
@@ -1088,7 +1088,7 @@ export function AddPropertyWizard({
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="p-6 bg-card border-t border flex justify-between items-center z-10">
+                <div className="p-3 sm:p-6 bg-card border-t border flex justify-between items-center z-10">
                     <Button 
                         variant="outline" 
                         onClick={onClose}

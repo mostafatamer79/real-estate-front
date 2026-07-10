@@ -138,7 +138,7 @@ export default function RenewSubscriptionPage() {
           </div>
         </div>
 
-        <section className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-6 shadow-sm sm:p-8">
+        <section className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-6 shadow-sm sm:p-4 sm:p-8">
           <div className="absolute -top-28 -left-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
           <div className="absolute -bottom-28 -right-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
@@ -148,7 +148,7 @@ export default function RenewSubscriptionPage() {
                 {isRtl ? "تجديد الاشتراك" : "Renew Subscription"}
               </div>
               <div className="space-y-3">
-                <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-2xl sm:text-4xl">
                   {statusCopy.title}
                 </h1>
                 <p className="w-[95vw] sm:max-w-2xl text-sm font-bold leading-7 text-slate-500">

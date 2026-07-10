@@ -252,7 +252,7 @@ export default function PhotographyFlow() {
                                exit={{ opacity: 0, scale: 0.9 }}
                                transition={{ delay: i * 0.05 }}
                                key={req.id} 
-                               className="group bg-card border border rounded-[1.25rem] p-5 lg:p-6 flex flex-col md:flex-row justify-between items-center hover:border-slate-900 hover:shadow-xl hover:shadow-stone-400 transition-all cursor-default relative overflow-hidden text-right"
+                               className="group bg-card border border rounded-[1.25rem] p-5 lg:p-3 sm:p-6 flex flex-col md:flex-row justify-between items-center hover:border-slate-900 hover:shadow-xl hover:shadow-stone-400 transition-all cursor-default relative overflow-hidden text-right"
                                dir={language === 'ar' ? 'rtl' : 'ltr'}
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-muted rounded-full -mr-12 -mt-12 group-hover:bg-muted transition-colors -z-10" />
