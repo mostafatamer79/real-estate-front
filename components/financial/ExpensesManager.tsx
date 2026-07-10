@@ -177,7 +177,7 @@ export default function ExpensesManager() {
                             <Loader2 className="animate-spin" />
                         </div>
                     ) : (
-                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 w-full">
+                        <div className="overflow-x-auto w-full">
 <Table>
                             <TableHeader>
                                 <TableRow>

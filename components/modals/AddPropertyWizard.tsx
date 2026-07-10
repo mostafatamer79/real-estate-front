@@ -260,7 +260,7 @@ export function AddPropertyWizard({
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col w-full min-h-0">
                 
                 {/* Steps Indicator / Tabs List */}
-                <div className="bg-card border-b border px-6 py-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 shrink-0 transition-all">
+                <div className="bg-card border-b border px-6 py-4 overflow-x-auto shrink-0 transition-all">
                     <TabsList className="bg-transparent p-0 h-auto justify-start gap-4 inline-flex w-full min-w-max">
                         {tabItems.map((item, idx) => (
                             <TabsTrigger 
@@ -297,7 +297,7 @@ export function AddPropertyWizard({
                         >
                             {/* --- TAB 1: ASSETS --- */}
                             <TabsContent value="assets" className="mt-0 space-y-8 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
                                      {/* Property Details Card */}
                                      <Card className="bg-card border shadow-sm md:col-span-2">
                                         <CardContent className="p-3 sm:p-6 space-y-6">
@@ -1127,7 +1127,7 @@ export function AddPropertyWizard({
                             <Button 
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="h-12 px-4 sm:px-10 bg-slate-600 text-white hover:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
+                                className="h-12 px-10 bg-slate-600 text-white hover:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
                             >
                                 {loading && <Loader2 className="w-5 h-5 me-2 animate-spin" />}
                                 {t('common.save')}

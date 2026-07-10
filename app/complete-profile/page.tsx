@@ -125,7 +125,7 @@ export default function CompleteProfilePage() {
           <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 py-8 md:py-6 sm:py-12">
+      <div className="relative max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
             <button
@@ -137,7 +137,7 @@ export default function CompleteProfilePage() {
             </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column: Title & Info */}
             <div className="lg:col-span-4 space-y-6">
                 <div>

@@ -173,7 +173,7 @@ export default function VisitRequestsPage() {
       </div>
 
       <div className="bg-card border border rounded-[1.25rem] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 w-full">
+        <div className="overflow-x-auto w-full">
 <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>

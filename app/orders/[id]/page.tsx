@@ -365,7 +365,7 @@ export default function OrderDetailsPage() {
         </button>
 
         {/* Amazon-style Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT COLUMN: Clean details (8 grid-cols) */}
           <div className="lg:col-span-8 space-y-6">

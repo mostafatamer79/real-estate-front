@@ -65,7 +65,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                     </motion.div>
 
                     <div className="space-y-2">
-                        <h1 className="text-4xl md:text-3xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+                        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
                             {sectionName || "الخدمة"}
                             <span className="block bg-gradient-to-r from-indigo-400 via-blue-400 to-slate-400 bg-clip-text text-transparent mt-2">
                                 {language === 'ar' ? 'قريباً جداً' : 'Coming Soon'}

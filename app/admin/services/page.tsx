@@ -349,7 +349,7 @@ export default function AdminServicesManagementPage() {
   );
 
   return (
-    <div className="space-y-5 sm:space-y-10 p-6 lg:p-4 sm:p-8 pb-20">
+    <div className="space-y-10 p-6 lg:p-4 sm:p-8 pb-20">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
@@ -611,8 +611,8 @@ export default function AdminServicesManagementPage() {
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">جاري تحميل الطلبات</p>
             </div>
           ) : visibleServiceRequests.length ? (
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-              <table className="w-full min-w-0 text-right">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1100px] text-right">
                 <thead>
                   <tr className="border-b border bg-muted/70">
                     <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">العميل</th>

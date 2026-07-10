@@ -347,7 +347,7 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
       </div>
 
       <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+        <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead>
               <tr className="border-b border bg-muted/50">
@@ -2749,7 +2749,7 @@ function BuildingManagementContent() {
           </div>
         ) : (
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+            <div className="overflow-x-auto">
                 <table className="w-full text-start">
                     <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                         <tr>
@@ -2839,7 +2839,7 @@ function BuildingManagementContent() {
 
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
               {activeReportsSubTab === 'roi' ? (
-                  <div className="p-10 space-y-5 sm:space-y-10">
+                  <div className="p-10 space-y-10">
                       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
@@ -2873,7 +2873,7 @@ function BuildingManagementContent() {
                   </div>
               ) : (
                    <div className="p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="p-5 px-4 sm:px-10 border-b border flex justify-between items-center bg-muted/30">
+                      <div className="p-5 px-10 border-b border flex justify-between items-center bg-muted/30">
                           <div>
                               <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">{t('pm.maintenance.log')}</h3>
                               <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">{t('common.history') || 'History'}</p>
@@ -2886,7 +2886,7 @@ function BuildingManagementContent() {
                               {t('bm.offer.new')}
                           </button>
                       </div>
-                      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                      <div className="overflow-x-auto">
                            <table className="w-full text-start">
                                <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                                    <tr>
@@ -2908,7 +2908,7 @@ function BuildingManagementContent() {
                                    ) : maintenanceLogs.filter(log => !selectedProperty || log.propertyId === selectedProperty.id).length === 0 ? (
                                        <tr>
                                            <td colSpan={5} className="p-32 text-center">
-                                               <div className="flex flex-col items-center gap-3 sm:gap-6 opacity-20">
+                                               <div className="flex flex-col items-center gap-6 opacity-20">
                                                    <Activity className="w-16 h-16" />
                                                    <p className="font-black uppercase tracking-widest text-[10px]">{t('bm.list.empty')}</p>
                                                </div>
@@ -2974,7 +2974,7 @@ function BuildingManagementContent() {
         </div>
       </div>
 
-      <div className="text-center py-6 sm:py-12">
+      <div className="text-center py-12">
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
           <FileText className="w-8 h-8 text-gray-400" />
         </div>
@@ -3451,7 +3451,7 @@ function BuildingManagementContent() {
             ) : users.length === 0 ? (
               <div className="text-center py-10 text-gray-500">{t('wallet.noData')}</div>
             ) : (
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+              <div className="overflow-x-auto">
                 <table className="w-full text-xs text-start">
                   <thead className="bg-muted text-gray-700 uppercase">
                     <tr>
@@ -3518,7 +3518,7 @@ function BuildingManagementContent() {
       case "dashboard":
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
               <StatCard label={t('bm.all.title')}       value={allServices.length}   icon={Layers}   color="bg-muted text-slate-700" />
               <StatCard label={t('bm.disputes.title')}   value={disputes.length}      icon={Scale}    color="bg-muted text-slate-700" />
               <StatCard label={t('bm.contracts.title')}  value={contracts.length}     icon={FileText} color="bg-muted text-slate-700"   />
@@ -3534,11 +3534,11 @@ function BuildingManagementContent() {
                 {t('bm.recent.title')}
               </h2>
               {loading.stats || loading.disputes ? (
-                <div className="flex justify-center py-6 sm:py-12">
+                <div className="flex justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
                 </div>
               ) : allServices.length === 0 ? (
-                <div className="text-center py-6 sm:py-12 opacity-40">
+                <div className="text-center py-12 opacity-40">
                   <Scale className="w-10 h-10 text-slate-200 mx-auto mb-3" />
                   <p className="text-xs font-bold text-slate-400">{t('bm.list.empty')}</p>
                 </div>
@@ -3597,7 +3597,7 @@ function BuildingManagementContent() {
             req.phone?.includes(srSearchTerm)
           );
           return (
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
+            <div className="max-w-5xl mx-auto space-y-6">
               {/* Header + Tab Switcher */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
@@ -3752,7 +3752,7 @@ function BuildingManagementContent() {
                       </div>
 
                       <div className="flex justify-end pt-4">
-                        <button disabled={srIsSubmitting} type="submit" className="bg-slate-950 text-white px-4 sm:px-10 py-5 rounded-[1.25rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 disabled:opacity-50 shadow-2xl shadow-stone-400/20 hover:bg-slate-800 transition-all active:scale-95">
+                        <button disabled={srIsSubmitting} type="submit" className="bg-slate-950 text-white px-10 py-5 rounded-[1.25rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 disabled:opacity-50 shadow-2xl shadow-stone-400/20 hover:bg-slate-800 transition-all active:scale-95">
                           {srIsSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" />{t('admin.service_requests.submitting')}</> : <>{t('admin.service_requests.submit')}<Send className="w-5 h-5" /></>}
                         </button>
                       </div>
@@ -3777,7 +3777,7 @@ function BuildingManagementContent() {
                           <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                         </div>
                       ) : srFiltered.length > 0 ? (
-                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                        <div className="overflow-x-auto">
                           <table className="w-full text-right border-collapse">
                             <thead>
                               <tr className="bg-muted/50 border-b border">
@@ -3833,7 +3833,7 @@ function BuildingManagementContent() {
                           </table>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-32 gap-3 sm:gap-6 opacity-40">
+                        <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
                           <div className="p-5 rounded-[1rem] bg-muted"><Briefcase className="w-16 h-16 text-slate-200" /></div>
                           <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
                         </div>
@@ -4004,7 +4004,7 @@ function BuildingManagementContent() {
 
                           <TC value="visits" className="space-y-4">
                             {srIsLoadingRelated ? (
-                              <div className="py-6 sm:py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>
+                              <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>
                             ) : srUserBookings.length > 0 ? (
                               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                 {srUserBookings.map((b: any) => (
@@ -4022,13 +4022,13 @@ function BuildingManagementContent() {
                                 ))}
                               </div>
                             ) : (
-                              <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2"><Calendar className="w-8 h-8 opacity-50" /><p className="text-xs font-bold">{t('admin.service_requests.no_visits')}</p></div>
+                              <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2"><Calendar className="w-8 h-8 opacity-50" /><p className="text-xs font-bold">{t('admin.service_requests.no_visits')}</p></div>
                             )}
                           </TC>
 
                           <TC value="invoices" className="space-y-4">
                             {srIsLoadingRelated ? (
-                              <div className="py-6 sm:py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>
+                              <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>
                             ) : srUserInvoices.length > 0 ? (
                               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                 {srUserInvoices.map((inv: any) => (
@@ -4045,7 +4045,7 @@ function BuildingManagementContent() {
                                 ))}
                               </div>
                             ) : (
-                              <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2"><Receipt className="w-8 h-8 opacity-50" /><p className="text-xs font-bold">{t('admin.service_requests.no_invoices')}</p></div>
+                              <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2"><Receipt className="w-8 h-8 opacity-50" /><p className="text-xs font-bold">{t('admin.service_requests.no_invoices')}</p></div>
                             )}
                           </TC>
                         </T>
@@ -4059,7 +4059,7 @@ function BuildingManagementContent() {
         })();
       default:
         return (
-          <div className="text-center py-6 sm:py-12">
+          <div className="text-center py-12">
             <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
               <Scale className="w-8 h-8 text-gray-400" />
             </div>
@@ -4365,7 +4365,7 @@ function BuildingManagementContent() {
 
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
              {loadingFinancial ? (
-                 <div className="p-32 text-center flex flex-col items-center gap-3 sm:gap-6">
+                 <div className="p-32 text-center flex flex-col items-center gap-6">
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border border-t-slate-900 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -4375,7 +4375,7 @@ function BuildingManagementContent() {
                     <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{t('common.loading')}</p>
                  </div>
              ) : activeFinancialSubTab === 'payments' ? (
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                <div className="overflow-x-auto">
                     <table className="w-full text-start">
                         <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                             <tr>
@@ -4430,7 +4430,7 @@ function BuildingManagementContent() {
                     </table>
                 </div>
              ) : (
-                 <div className="p-32 text-center flex flex-col items-center gap-3 sm:gap-6 animate-in zoom-in duration-500">
+                 <div className="p-32 text-center flex flex-col items-center gap-6 animate-in zoom-in duration-500">
                      <div className="w-24 h-24 bg-muted rounded-[1.25rem] flex items-center justify-center shadow-inner">
                         <Landmark className="w-10 h-10 text-slate-200" />
                      </div>
@@ -5190,11 +5190,11 @@ function BuildingManagementContent() {
            
            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loadingAllOffers ? (
-                    <div className="col-span-full text-center py-6 sm:py-12">
+                    <div className="col-span-full text-center py-12">
                         <Loader2 className="w-8 h-8 animate-spin text-slate-600 mx-auto" />
                     </div>
                 ) : filteredOffers.length === 0 ? (
-                    <div className="col-span-full text-center py-6 sm:py-12 bg-muted rounded-xl">
+                    <div className="col-span-full text-center py-12 bg-muted rounded-xl">
                         <p className="text-gray-500">{t('bm.list.empty')}</p>
                     </div>
                 ) : (
@@ -5552,7 +5552,7 @@ function BuildingManagementContent() {
             ) : (
               <div className="space-y-4">
                 {subscriptions.length === 0 ? (
-                  <div className="text-center py-6 sm:py-12 bg-muted rounded-xl">
+                  <div className="text-center py-12 bg-muted rounded-xl">
                     <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500 mb-4">{t('sub.list.empty')}</p>
                     <Button 
@@ -5563,7 +5563,7 @@ function BuildingManagementContent() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                  <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead className="bg-muted border-b border">
                         <tr>
@@ -5780,7 +5780,7 @@ function BuildingManagementContent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20 hidden lg:block"
         >
-          <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-3 sm:gap-6">
+          <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
             <div className="space-y-6">
               <motion.button 
                 whileHover={{ x: language === 'ar' ? -5 : 5 }}
@@ -5913,7 +5913,7 @@ function BuildingManagementContent() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+                className="w-full max-w-7xl mx-auto"
               >
        
                 <div className="mt-8">
@@ -6155,7 +6155,7 @@ function BuildingManagementContent() {
                 {/* ── Visits tab ───────────────────────────────────────── */}
                 <TabsContent value="visits" className="space-y-4">
                   {srIsLoadingRelated ? (
-                    <div className="py-6 sm:py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
+                    <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
                   ) : srUserBookings.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 text-start">
                       {srUserBookings.map((booking: any) => (
@@ -6172,7 +6172,7 @@ function BuildingManagementContent() {
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Calendar className="w-8 h-8" /><p className="text-xs font-bold">{t("admin.service_requests.no_visits")}</p>
                     </div>
                   )}
@@ -6181,7 +6181,7 @@ function BuildingManagementContent() {
                 {/* ── Invoices tab ─────────────────────────────────────── */}
                 <TabsContent value="invoices" className="space-y-4">
                   {srIsLoadingRelated ? (
-                    <div className="py-6 sm:py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
+                    <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
                   ) : srUserInvoices.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 text-start">
                       {srUserInvoices.map((inv: any) => (
@@ -6201,7 +6201,7 @@ function BuildingManagementContent() {
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Receipt className="w-8 h-8" /><p className="text-xs font-bold">{t("admin.service_requests.no_invoices")}</p>
                     </div>
                   )}

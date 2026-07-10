@@ -76,7 +76,7 @@ export default function ShareOpinionPage() {
           <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center mb-6 shadow-md">
             <MessageSquareHeart className="w-6 h-6" />
           </div>
-          <h1 className="text-4xl sm:text-3xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">
             شاركنا رأيك
           </h1>
           <p className="text-slate-600 text-sm w-[95vw] sm:max-w-md leading-relaxed font-bold">

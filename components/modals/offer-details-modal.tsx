@@ -192,7 +192,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Body Content - Scrollable */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 space-y-5 sm:space-y-10 custom-scrollbar bg-card">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 space-y-10 custom-scrollbar bg-card">
                     {/* Price & Primary Stats */}
                     <div className="flex flex-col sm:flex-row gap-6">
                         <div className="flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">

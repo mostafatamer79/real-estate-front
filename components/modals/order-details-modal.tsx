@@ -206,7 +206,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.location')}</span>
                                     <div className="h-0.5 flex-1 bg-muted"></div>
                                 </div>
-                                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+                                <div className="flex flex-wrap items-center justify-center gap-6">
                                     <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border">
                                             <MapIcon className="w-4 h-4 text-slate-400" />

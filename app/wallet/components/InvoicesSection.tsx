@@ -245,7 +245,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                     </div>
 
                     <div className='rounded-2xl border border overflow-hidden'>
-                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 w-full">
+                        <div className="overflow-x-auto w-full">
 <Table>
                             <TableHeader className='bg-muted/50'>
                                 <TableRow>

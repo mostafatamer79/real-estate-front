@@ -11,7 +11,7 @@ export default function DetailsPage() {
 
   return (
     <div className="w-full min-h-screen bg-slate-950 p-4 ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-xl sm:text-3xl font-bold mb-6 text-center text-white">تفاصيل العقار</h1>
         
         {settings.sectionFlags.map !== 'hidden' && settings.sectionFlags.map !== 'closed' && (

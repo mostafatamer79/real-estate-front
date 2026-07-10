@@ -139,7 +139,7 @@ const handleGoBack = () => {
       }}
     >
       <section className="bg-card border-b border mb-12 p-4 sm:p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <button
             type="button"
             onClick={() => handleGoBack()}

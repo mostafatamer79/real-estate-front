@@ -68,7 +68,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
       {!embedded && (
       <section className="relative overflow-hidden mb-10 pb-10 border-b border bg-card">
         <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-4 sm:gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8">
             <div className="space-y-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -99,7 +99,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-3 sm:gap-6"
+              className="flex items-center gap-6"
             >
 
             </motion.div>

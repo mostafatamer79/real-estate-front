@@ -624,7 +624,7 @@ export default function ScanMapPage() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 max-h-[500px]">
+              <div className="overflow-x-auto max-h-[500px]">
                 <table className="w-full">
                   <thead className="bg-slate-800/80 sticky top-0">
                     <tr>

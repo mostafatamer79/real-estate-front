@@ -210,7 +210,7 @@ export default function ServiceRequestsPage() {
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-3 sm:p-6">
+        <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 p-3 sm:p-6">
             {/* Header Section */}
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -281,7 +281,7 @@ export default function ServiceRequestsPage() {
                                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                                 </div>
                             ) : filteredRequests.length > 0 ? (
-                                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                                <div className="overflow-x-auto">
                                     <table className="w-full text-right border-collapse">
                                         <thead>
                                             <tr className="bg-muted/50 border-b border">
@@ -374,7 +374,7 @@ export default function ServiceRequestsPage() {
                                     </table>
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center py-32 gap-3 sm:gap-6 opacity-40">
+                                <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
                                     <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
                                         <Briefcase className="w-16 h-16 text-slate-200" />
                                     </div>
@@ -706,7 +706,7 @@ export default function ServiceRequestsPage() {
 
                                 <TabsContent value="visits" className="space-y-4">
                                     {isLoadingRelated ? (
-                                        <div className="py-6 sm:py-12 flex justify-center">
+                                        <div className="py-12 flex justify-center">
                                             <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
                                         </div>
                                     ) : userBookings.length > 0 ? (
@@ -736,7 +736,7 @@ export default function ServiceRequestsPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+                                        <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2">
                                             <Calendar className="w-8 h-8 opacity-50" />
                                             <p className="text-xs font-bold">{t('admin.service_requests.no_visits')}</p>
                                         </div>
@@ -745,7 +745,7 @@ export default function ServiceRequestsPage() {
 
                                 <TabsContent value="invoices" className="space-y-4">
                                     {isLoadingRelated ? (
-                                        <div className="py-6 sm:py-12 flex justify-center">
+                                        <div className="py-12 flex justify-center">
                                             <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
                                         </div>
                                     ) : userInvoices.length > 0 ? (
@@ -771,7 +771,7 @@ export default function ServiceRequestsPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+                                        <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2">
                                             <Receipt className="w-8 h-8 opacity-50" />
                                             <p className="text-xs font-bold">{t('admin.service_requests.no_invoices')}</p>
                                         </div>

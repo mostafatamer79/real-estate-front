@@ -271,11 +271,11 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                             </div>
 
                             {loadingUnits ? (
-                                <div className="rounded-[1.25rem] border border bg-card py-8 sm:py-16 text-center">
+                                <div className="rounded-[1.25rem] border border bg-card py-16 text-center">
                                     <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-500" />
                                 </div>
                             ) : units.length === 0 ? (
-                                <div className="rounded-[1.25rem] border border-dashed border bg-muted py-8 sm:py-16 text-center text-xl font-medium text-slate-500">
+                                <div className="rounded-[1.25rem] border border-dashed border bg-muted py-16 text-center text-xl font-medium text-slate-500">
                                     {t('bm.list.empty')}
                                 </div>
                             ) : (

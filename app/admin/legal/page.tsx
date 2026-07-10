@@ -259,7 +259,7 @@ function RequestsTable({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <div className="overflow-x-auto">
             <table className="w-full text-right">
               <thead>
                 <tr className="bg-muted/60 border-b border">
@@ -605,7 +605,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             className="space-y-6"
           >
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <StatCard label={t("admin.legal.all")}       value={allLegal.length}   icon={Layers}   color="bg-muted text-slate-700" />
               <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-muted text-slate-700" />
               <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-muted text-slate-700"   />
@@ -621,11 +621,11 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 {t('admin.legal.recent_requests')}
               </h2>
               {isLoading ? (
-                <div className="flex justify-center py-6 sm:py-12">
+                <div className="flex justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
                 </div>
               ) : allLegal.length === 0 ? (
-                <div className="text-center py-6 sm:py-12 opacity-40">
+                <div className="text-center py-12 opacity-40">
                   <Scale className="w-10 h-10 text-slate-200 mx-auto mb-3" />
                   <p className="text-xs font-bold text-slate-400">{t('common.noData')}</p>
                 </div>
@@ -964,7 +964,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 {/* ── Visits tab ───────────────────────────────────────── */}
                 <TabsContent value="visits" className="space-y-4">
                   {isLoadingRelated ? (
-                    <div className="py-6 sm:py-12 flex justify-center">
+                    <div className="py-12 flex justify-center">
                       <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
                     </div>
                   ) : userBookings.length > 0 ? (
@@ -987,7 +987,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Calendar className="w-8 h-8" />
                       <p className="text-xs font-bold">{t("admin.service_requests.no_visits")}</p>
                     </div>
@@ -997,7 +997,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 {/* ── Invoices tab ─────────────────────────────────────── */}
                 <TabsContent value="invoices" className="space-y-4">
                   {isLoadingRelated ? (
-                    <div className="py-6 sm:py-12 flex justify-center">
+                    <div className="py-12 flex justify-center">
                       <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
                     </div>
                   ) : userInvoices.length > 0 ? (
@@ -1027,7 +1027,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 sm:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Receipt className="w-8 h-8" />
                       <p className="text-xs font-bold">{t("admin.service_requests.no_invoices")}</p>
                     </div>
