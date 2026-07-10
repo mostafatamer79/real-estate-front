@@ -79,7 +79,7 @@ function DepartmentHubContent() {
 
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedSection, setSelectedSection] = useState("dashboard");
 
   // ── Module status helper ──────────────────────────────────────────────────
@@ -435,10 +435,28 @@ function DepartmentHubContent() {
       )}
 
       {/* ── Sidebar ──────────────────────────────────────────────────────── */}
+      {/* Mobile overlay backdrop */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
       <aside
-        className={`${
-          isSidebarOpen ? "w-64" : "w-20"
-        } fixed right-0 lg:static inset-y-0 z-40 bg-slate-950 text-white transition-all duration-300 ease-in-out flex flex-col shadow-xl shadow-black/20 lg:shadow-none`}
+        className={`
+          fixed inset-y-0 z-40 bg-slate-950 text-white flex flex-col shadow-xl shadow-black/20
+          transition-all duration-300 ease-in-out
+          ${isRtl ? 'right-0' : 'left-0'}
+          lg:static lg:flex lg:shadow-none
+          ${isSidebarOpen ? 'w-64 translate-x-0' : 'lg:w-20 -translate-x-full lg:translate-x-0'}
+          ${isRtl ? (isSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') : ''}
+        `}
       >
         {/* Sidebar header */}
         <div className="p-5 border-b border-white/5">
@@ -514,7 +532,7 @@ function DepartmentHubContent() {
       {/* ── Main area ────────────────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top header */}
-        <header className="h-16 bg-card border-b border flex items-center justify-between px-8 shrink-0">
+        <header className="h-16 bg-card border-b border flex items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -548,7 +566,7 @@ function DepartmentHubContent() {
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-[1600px] mx-auto py-8 px-6 lg:px-8">
+          <div className="max-w-[1600px] mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedSection}
