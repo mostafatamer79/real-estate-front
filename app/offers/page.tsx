@@ -126,6 +126,7 @@ export default function OffersPage() {
   const [incomingBookings, setIncomingBookings] = useState<Booking[]>([]);
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Constants
   const propertyAges = [
@@ -385,8 +386,31 @@ const MeterIcon = ({ className }: { className?: string }) => (
   // Final Render
   return (
     <section className="w-full min-h-screen bg-muted flex" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Sidebar - Adjusted for fixed header */}
-      <div className="fixed top-16 right-0 h-[calc(100vh-64px)] w-80 bg-card border-l border shadow-lg overflow-y-auto">
+      {/* Mobile filter toggle button */}
+      <button
+        onClick={() => setIsFilterOpen(!isFilterOpen)}
+        className="fixed bottom-6 right-6 z-50 lg:hidden w-12 h-12 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center"
+      >
+        <TableOfContents className="w-5 h-5" />
+      </button>
+
+      {/* Mobile backdrop */}
+      {isFilterOpen && (
+        <button
+          type="button"
+          aria-label="Close filters"
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setIsFilterOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Filters */}
+      <div className={`
+        fixed top-16 h-[calc(100vh-64px)] w-80 bg-card border-l border shadow-lg overflow-y-auto z-40 transition-transform duration-300
+        ${language === 'ar' ? 'left-0 border-r' : 'right-0 border-l'}
+        ${isFilterOpen ? 'translate-x-0' : language === 'ar' ? '-translate-x-full lg:translate-x-0' : 'translate-x-full lg:translate-x-0'}
+        lg:translate-x-0
+      `}>
         <div className="p-3 sm:p-6">
           <div className="my-4 space-y-4">
             <button onClick={() => router.push('/details')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-muted px-3 py-2 rounded-lg w-full">
@@ -460,7 +484,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
         </div>
       </div>
 
-      <div className="flex-1 mr-80">
+      <div className="flex-1 lg:mr-80 w-full">
         {loading && <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div></div>}
         {error && !loading && <div className="flex items-center justify-center h-screen text-center"><AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" /><h3 className="text-lg font-semibold text-gray-700 mb-2">حدث خطأ</h3><p className="text-gray-500 mb-4">{error}</p><button onClick={fetchOffers} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">محاولة مرة أخرى</button></div>}
         

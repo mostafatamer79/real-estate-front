@@ -366,7 +366,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         }`}
       >
         {/* Top Header */}
-        <header className="h-16 bg-card border-b border flex items-center justify-between px-8 shrink-0">
+        <header className="h-16 bg-card border-b border flex items-center justify-between px-4 sm:px-8 shrink-0">
            <div className="flex items-center gap-4">
              <Image
                src={settings.logoBlackUrl || '/icons/black.png'}
@@ -381,7 +381,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto bg-muted/50">
-          <div className="max-w-7xl mx-auto py-8 px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
             {children}
           </div>
         </div>

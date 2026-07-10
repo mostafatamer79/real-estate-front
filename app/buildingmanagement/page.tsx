@@ -5778,7 +5778,7 @@ function BuildingManagementContent() {
           initial={{ x: language === 'ar' ? 100 : -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-          className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20"
+          className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20 hidden lg:block"
         >
           <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
             <div className="space-y-6">
@@ -5904,8 +5904,8 @@ function BuildingManagementContent() {
         </motion.div>
 
         {/* Main Workspace - Adjusted for sidebar */}
-        <div className="flex-1 mr-[22rem] lg:mr-[25rem] relative overflow-hidden">
-          <main className="h-full overflow-y-auto overflow-x-hidden p-5 lg:p-12">
+        <div className="flex-1 lg:mr-[25rem] relative overflow-hidden">
+          <main className="h-full overflow-y-auto overflow-x-hidden p-4 sm:p-5 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedSection}

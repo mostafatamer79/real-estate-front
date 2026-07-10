@@ -13,6 +13,7 @@ import {
   X,
   AlertCircle,
   SaudiRiyalIcon,
+  Menu,
 } from "lucide-react";
 import { offersApi, uploadFile, prepareOfferData } from "@/lib/api";
 import { useOffers } from "@/hooks/useOffers";
@@ -88,6 +89,7 @@ interface FormData {
 export default function BuildingManagement() {
   const router = useRouter();
   const [selectedSection, setSelectedSection] = useState<string>("offers");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [propertyType, setPropertyType] = useState<string>("");
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -866,10 +868,31 @@ export default function BuildingManagement() {
 
   return (
     <>
+      {/* Mobile sidebar toggle */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="fixed top-4 right-4 z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg shadow-lg flex items-center justify-center"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile backdrop */}
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       <div className="w-full min-h-screen bg-card flex" dir="rtl">
         {/* Fixed Sidebar */}
-        <div className="fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-3 sm:p-6 overflow-y-auto">
+        <div className={`
+          fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-3 sm:p-6 overflow-y-auto z-40
+          transition-transform duration-300
+          ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+        `}>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6">إدارة الاملاك</h1>
 
           <div className="space-y-3">
@@ -897,7 +920,7 @@ export default function BuildingManagement() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 mr-80 p-3 sm:p-6">
+        <div className="flex-1 lg:mr-80 p-3 sm:p-6">
           <div className="max-w-5xl">
             {renderMainContent()}
           </div>
