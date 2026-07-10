@@ -892,7 +892,7 @@ export default function OrdersPage() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 mb-1">إدارة الطلبات العقارية</h1>
           <p className="text-slate-400 text-xs font-bold">إضافة، تعديل، وتعيين الطلبات للوسطاء والموظفين</p>
@@ -906,7 +906,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {stats.map((s, i) => (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="bg-card p-5 rounded-2xl border border shadow-sm flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl ${s.color} flex items-center justify-center shrink-0`}>

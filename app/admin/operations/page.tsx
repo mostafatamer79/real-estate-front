@@ -66,7 +66,7 @@ export default function AdminOperationsPage() {
         ))}
       </section>
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-1 md:grid-cols-2">
+      <section className="grid grid-cols-1 gap-3 md:gap-6 lg:grid-cols-1 md:grid-cols-2">
         <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "آخر الطلبات" : "Recent orders"}</h2>
           <div className="divide-y divide-slate-100">

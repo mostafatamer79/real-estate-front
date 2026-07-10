@@ -219,7 +219,7 @@ export function CustomerServicePage() {
 
       {/* Premium Header Container */}
       <section className="bg-card border-b border mb-12 p-4 sm:p-8 md:p-12 rounded-b-[1.25rem] text-slate-900 shadow-sm relative overflow-hidden" style={{ backgroundColor: settings.csCardBg || undefined }}>
-          <div className="max-w-7xl mx-auto relative z-10">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
               <button
                 type="button"
                 onClick={handleBack}
@@ -228,7 +228,7 @@ export function CustomerServicePage() {
                 {language === 'ar' ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 {language === 'ar' ? 'رجوع' : 'Back'}
               </button>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6">
                   <div className="space-y-3">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -262,7 +262,7 @@ export function CustomerServicePage() {
       <div className="max-w-7xl mx-auto px-6">
           {/* Contact Channels Grid */}
           {settings.uiFlags?.show_cs_channels !== false && (
-            <div className="flex flex-wrap justify-center gap-6 mb-12">
+            <div className="flex flex-wrap justify-center gap-3 md:gap-6 mb-12">
               {[
                 settings.contactPhone?.trim()
                   ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-muted', title: t('cs.contactNum'), val: settings.contactPhone }
@@ -291,7 +291,7 @@ export function CustomerServicePage() {
           )}
 
           {!isAuthenticated && (
-            <section className="mb-12 rounded-[1.25rem] border border bg-card p-4 sm:p-8 shadow-sm flex flex-col items-center text-center justify-center py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
+            <section className="mb-12 rounded-[1.25rem] border border bg-card p-4 sm:p-8 shadow-sm flex flex-col items-center text-center justify-center py-6 md:py-12" style={{ backgroundColor: settings.csCardBg || undefined }}>
               <div className="w-14 h-14 rounded-2xl bg-muted text-slate-400 flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-slate-700" />
               </div>

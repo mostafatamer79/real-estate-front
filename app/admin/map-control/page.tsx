@@ -82,7 +82,7 @@ export default function AdminMapControlPage() {
       </section>
 
       <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-1 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:gap-6 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-3">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
               {isRtl ? "حالة الخريطة" : "Map status"}

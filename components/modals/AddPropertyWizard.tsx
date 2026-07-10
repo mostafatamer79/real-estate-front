@@ -297,7 +297,7 @@ export function AddPropertyWizard({
                         >
                             {/* --- TAB 1: ASSETS --- */}
                             <TabsContent value="assets" className="mt-0 space-y-8 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                      {/* Property Details Card */}
                                      <Card className="bg-card border shadow-sm md:col-span-2">
                                         <CardContent className="p-3 sm:p-6 space-y-6">
@@ -306,7 +306,7 @@ export function AddPropertyWizard({
                                                 <h4 className="text-lg font-bold text-gray-900">{t('pm.details.title')}</h4>
                                             </div>
                                             
-                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                                                 <div className="space-y-2">
                                                     <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">{t('pm.field.propertyName')}</Label>
                                                     <Input 
@@ -393,7 +393,7 @@ export function AddPropertyWizard({
                                                 </h4>
                                             </div>
                                             
-                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                                                 <div className="space-y-2">
                                                     <Label className="text-gray-700 font-bold text-sm uppercase tracking-wide">
                                                         {isRtl ? "القسم الرئيسي" : "Main Category"}
@@ -911,7 +911,7 @@ export function AddPropertyWizard({
 
                             {/* --- TAB 2: TENANTS --- */}
                             <TabsContent value="tenants" className="space-y-6 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                                     {/* Units List for Selection */}
                                     <div className="md:col-span-1 space-y-3">
                                         <h4 className="text-lg font-bold text-gray-900 mb-4">{t('pm.tab.units')}</h4>
@@ -1054,7 +1054,7 @@ export function AddPropertyWizard({
 
                             {/* --- TAB 4: REPORTS (Placeholder) --- */}
                             <TabsContent value="reports" className="space-y-6 focus-visible:outline-none">
-                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                                     <Card className="bg-card border shadow-sm">
                                         <CardContent className="p-3 sm:p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.roi')}</h4>
@@ -1127,7 +1127,7 @@ export function AddPropertyWizard({
                             <Button 
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="h-12 px-10 bg-slate-600 text-white hover:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
+                                className="h-12 px-4 md:px-10 bg-slate-600 text-white hover:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
                             >
                                 {loading && <Loader2 className="w-5 h-5 me-2 animate-spin" />}
                                 {t('common.save')}

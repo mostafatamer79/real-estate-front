@@ -39,7 +39,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-6">
                     {/* Basic Info */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{t('bm.legal.serviceDesc')}</h3>

@@ -220,7 +220,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
   return (
       <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <Button 
             variant="ghost" 
             onClick={() => router.push('/details')} 
@@ -252,7 +252,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               <CardHeader>
                 <CardTitle className="text-xl">{t('orders.details')}</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 
                 <div className="space-y-2">
                   <Label className="text-slate-900 font-bold">{t('orders.type')}</Label>
@@ -363,7 +363,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               {showDetailedFields && (
                 <div className="md:col-span-2 pt-6 border-t">
                   <h3 className="text-lg font-semibold mb-6">{t('bm.offer.detailed')}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                     <div className="space-y-2">
                       <Label className="text-slate-900 font-bold">{t('orders.rooms')}</Label>
                       <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.rooms || ''} onChange={(e) => handleChange("rooms", Number(e.target.value))} placeholder="0" />
@@ -471,11 +471,11 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
       <TabsContent value="my-orders">
         {loadingMyOrders ? (
-          <div className="flex justify-center py-12">
+          <div className="flex justify-center py-6 md:py-12">
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           </div>
         ) : myOrders.length === 0 ? (
-          <div className="text-center py-12 bg-muted rounded-xl border border-dashed border">
+          <div className="text-center py-6 md:py-12 bg-muted rounded-xl border border-dashed border">
             <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
             <Button variant="link" onClick={() => setActiveTab("create")}>
               {t('orders.createOrder')}

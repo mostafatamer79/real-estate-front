@@ -207,7 +207,7 @@ function DepartmentHubContent() {
       >
         <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
-        <div className="relative flex items-start justify-between gap-6">
+        <div className="relative flex items-start justify-between gap-3 md:gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest">
               <Sparkles className="w-4 h-4" />
@@ -258,7 +258,7 @@ function DepartmentHubContent() {
       </motion.div>
 
       {/* Departments + Quick actions */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
         {/* Department cards */}
         <div className="bg-card rounded-[1rem] border border p-3 sm:p-6 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-6">

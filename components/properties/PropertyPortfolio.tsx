@@ -37,7 +37,7 @@ export function PropertyPortfolio({
     <div className="space-y-6">
       {/* Header & Search */}
       <div className="bg-card p-4 sm:p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-6 justify-between items-center">
             <div>
                  <h2 className="text-xl sm:text-3xl font-black text-slate-900 mb-1 tracking-tight">{t('pm.tab.portfolio')}</h2>
                  <p className="text-slate-500 text-sm font-medium">{t('pm.properties')}</p>
@@ -68,7 +68,7 @@ export function PropertyPortfolio({
       </div>
 
       {loading ? (
-         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1, 2, 3].map(i => (
                <div key={i} className="h-72 bg-muted rounded-[1.25rem] animate-pulse border border" />
             ))}
@@ -90,7 +90,7 @@ export function PropertyPortfolio({
             )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredProperties.map(property => (
             <Card 
                 key={property.id} 

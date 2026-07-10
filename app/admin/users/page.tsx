@@ -591,7 +591,7 @@ export default function UsersPage() {
 
         <div className="space-y-8">
             {/* Header Section */}
-            <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <section className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
                 <div className="space-y-1.5">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-slate-500 text-[9px] font-black uppercase tracking-widest border border">
                         <Users className="w-4 h-4" />
@@ -618,7 +618,7 @@ export default function UsersPage() {
                     <input 
                         type="text"
                         placeholder={t('admin.users.searchPlaceholder')}
-                        className="w-full h-11 bg-muted rounded-2xl px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
+                        className="w-full h-11 bg-muted rounded-2xl px-4 md:px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />

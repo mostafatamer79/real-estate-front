@@ -98,7 +98,7 @@ export default function RecentActivity() {
                         );
                     })
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-12 px-6 bg-slate-900/20 border border-slate-800/40 rounded-[1rem] border-dashed">
+                    <div className="flex flex-col items-center justify-center py-6 md:py-12 px-6 bg-slate-900/20 border border-slate-800/40 rounded-[1rem] border-dashed">
                         <AlertCircle className="w-8 h-8 text-slate-700 mb-4" />
                         <p className="text-slate-500 text-sm font-medium">
                             {language === 'ar' ? 'لا توجد عمليات حالياً' : 'No previous operations found'}

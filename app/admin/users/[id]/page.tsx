@@ -501,7 +501,7 @@ export default function AdminUserDetailsPage() {
         ))}
       </section>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-3 md:gap-6 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <UserIcon className="h-5 w-5" />
@@ -576,7 +576,7 @@ export default function AdminUserDetailsPage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-1 md:grid-cols-2">
+      <section className="grid grid-cols-1 gap-3 md:gap-6 xl:grid-cols-1 md:grid-cols-2">
         <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">

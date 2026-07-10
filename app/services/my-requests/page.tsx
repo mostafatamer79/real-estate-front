@@ -132,7 +132,7 @@ export default function MyServiceRequestsPage() {
 
           <Card className="overflow-hidden border shadow-xl rounded-2xl">
             <CardHeader className="bg-card border-b border p-4 sm:p-8">
-              <div className="flex flex-col md:flex-row justify-between gap-6">
+              <div className="flex flex-col md:flex-row justify-between gap-3 md:gap-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl border border bg-card flex items-center justify-center text-slate-600">
                     <Package className="w-5 h-5" />
@@ -160,7 +160,7 @@ export default function MyServiceRequestsPage() {
               </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
                 <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الموقع' : 'Location'}</p>
                   <p className="font-bold text-slate-800">{selectedRequest.city}, {selectedRequest.district}</p>
@@ -311,7 +311,7 @@ export default function MyServiceRequestsPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {requests.map((request) => (
               <div
                 key={request.id}

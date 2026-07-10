@@ -71,7 +71,7 @@ export default function WorkflowSection() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-card/80 backdrop-blur-xl rounded-[1rem] overflow-hidden border border-white/60 shadow-2xl shadow-stone-400"
         >
-            <div className="p-4 sm:p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-6 bg-card/50">
+            <div className="p-4 sm:p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 bg-card/50">
                 <div>
                     <h4 className="text-xl font-black text-slate-900 flex items-center gap-3">
                       {t('marketing.history.title')}
@@ -198,7 +198,7 @@ export default function WorkflowSection() {
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</label>

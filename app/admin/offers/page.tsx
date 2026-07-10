@@ -1646,7 +1646,7 @@ export default function AdminOffersPage() {
         {editingOffer && <EditOfferModal offer={editingOffer} onClose={() => setEditingOffer(null)} onSuccess={fetchOffers} />}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <Tag className="w-3 h-3" />
@@ -1711,7 +1711,7 @@ export default function AdminOffersPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
          <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-xl sm:text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>

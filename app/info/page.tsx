@@ -238,7 +238,7 @@ function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-card/10" }
         <div className={cn("absolute -top-32 -right-32 w-96 h-96 rounded-full blur-[120px]", bgColor)} />
       </div>
 
-      <div className="flex items-center gap-6 relative z-10">
+      <div className="flex items-center gap-3 md:gap-6 relative z-10">
         <div className="p-5 bg-card/5 border border-white/10 rounded-2xl">
           {icon}
         </div>

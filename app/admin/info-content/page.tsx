@@ -298,7 +298,7 @@ export default function AdminInfoContentPage() {
 
         {/* Tab Focus: Editor & Preview */}
         {selectedTabId && !editingTabId && selectedTab && (
-          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             {/* Left: Editor (Blocks List + Form) */}
             <Card className="border">
               <CardContent className="p-4 sm:p-6 space-y-6">

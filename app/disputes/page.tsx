@@ -97,8 +97,8 @@ export default function DisputesPage() {
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-slate-600 rounded-full blur-[100px]" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
         </div>
-          <div className="max-w-7xl mx-auto relative z-10">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6">
                   <div className="space-y-3">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -163,7 +163,7 @@ export default function DisputesPage() {
                     <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors`} />
                     <input
                         placeholder="ابحث عن قضية..."
-                        className="h-12 w-full rounded-xl border border bg-card px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
+                        className="h-12 w-full rounded-xl border border bg-card px-4 md:px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -178,7 +178,7 @@ export default function DisputesPage() {
             </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[1.25rem] bg-muted/50 animate-pulse" />)}
           </div>
         ) : filteredDisputes.length === 0 ? (
@@ -189,7 +189,7 @@ export default function DisputesPage() {
               <p className="text-xl font-black uppercase tracking-widest opacity-40">{t('disputes.empty')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             <AnimatePresence mode="popLayout">
               {filteredDisputes.map((dispute, idx) => {
                 const status = getStatusConfig(dispute.status);

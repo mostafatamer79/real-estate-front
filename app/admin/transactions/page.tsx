@@ -290,7 +290,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="space-y-8 p-6 lg:p-4 sm:p-8" dir={isRtl ? "rtl" : "ltr"}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-3 md:gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="mb-2 text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {label("admin.transactions.title", "إدارة العمليات", "Transactions Management")}
@@ -539,7 +539,7 @@ export default function TransactionsPage() {
 
             {/* Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6" dir={isRtl ? "rtl" : "ltr"}>
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6" dir={isRtl ? "rtl" : "ltr"}>
                 {/* Type */}
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>

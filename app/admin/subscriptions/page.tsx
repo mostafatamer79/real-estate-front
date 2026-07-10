@@ -472,7 +472,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6"
                   >
                     {/* User Selection */}
                     <div className="space-y-1 relative col-span-2 sm:col-span-1">
@@ -729,7 +729,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             <div className="space-y-1">
               <label className={labelCls}>نوع الاشتراك</label>
               <select value={form.subscriptionType} onChange={e => updatePackageAmount({ subscriptionType: e.target.value })} className={inputCls}>
@@ -868,7 +868,7 @@ function CreateSubscriptionModal({ onClose, onSuccess, subscription }: { onClose
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             <div className="space-y-1">
               <label className={labelCls}>طريقة الدفع</label>
               <select value={form.paymentMethod} onChange={e => setForm(f => ({...f, paymentMethod: e.target.value}))} className={inputCls}>
@@ -1041,7 +1041,7 @@ export default function AdminSubscriptionsPage() {
         )}
       </AnimatePresence>
 
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <CreditCard className="w-3 h-3" />
@@ -1073,7 +1073,7 @@ export default function AdminSubscriptionsPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
          {[
            { label: 'إجمالي المشتركين', val: subscriptions.length, icon: UserIcon, bg: 'bg-muted', color: 'text-slate-950' },
            { label: 'اشتراكات نشطة', val: subscriptions.filter(s => normalizeStatus(s.status) === 'active').length, icon: Zap, bg: 'bg-emerald-50', color: 'text-emerald-600' },

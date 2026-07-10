@@ -172,7 +172,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-3 md:gap-6">
         <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
           <h2 className="text-lg font-black text-slate-950 mb-5">اختر الباقة</h2>
           {loading ? (

@@ -128,7 +128,7 @@ export default function QuickActions() {
     >
       {/* ── Main Quick Actions ── */}
       <div className="
-        w-full flex items-center justify-between gap-3 md:gap-6
+        w-full flex items-center justify-between gap-3 md:gap-3 md:gap-6
         px-6 py-6
         bg-gradient-to-b from-slate-800 to-slate-900
         border border-slate-700/60

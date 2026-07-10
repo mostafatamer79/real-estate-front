@@ -68,7 +68,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
       {!embedded && (
       <section className="relative overflow-hidden mb-10 pb-10 border-b border bg-card">
         <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-4 md:gap-8">
             <div className="space-y-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -99,7 +99,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-6"
+              className="flex items-center gap-3 md:gap-6"
             >
 
             </motion.div>
@@ -129,7 +129,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                             <TabsContent value="transactions" className="m-0"><TransactionsSection /></TabsContent>
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
-                                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 text-white">
+                                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 text-white">
                                          <div className="bg-slate-900 p-4 sm:p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
                                              <div className="absolute top-0 right-0 p-3 sm:p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                                <PieChart className="w-20 h-20" />
@@ -221,14 +221,14 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     ];
 
     if (loading) return (
-      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {[1,2,3,4,5,6].map(i => <div key={i} className="h-32 rounded-3xl bg-muted animate-pulse" />)}
       </div>
     );
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {kpis.map((kpi, idx) => (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
@@ -252,7 +252,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-3 md:gap-6">
                 <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between gap-3 mb-5">
                         <div>
@@ -324,7 +324,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-3 md:gap-6">
                 <div className="bg-card rounded-3xl border border p-3 sm:p-6">
                     <div className="flex items-center justify-between mb-5">
                         <div>

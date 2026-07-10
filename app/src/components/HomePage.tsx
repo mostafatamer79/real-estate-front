@@ -54,7 +54,7 @@ export default function HomePage() {
 
       {/* Splash — shown while not logged in and sign-in not yet shown */}
       {!isLoggedIn && !showSignIn && (
-        <div className="flex flex-col items-center gap-6 animate-in fade-in duration-700 relative z-10">
+        <div className="flex flex-col items-center gap-3 md:gap-6 animate-in fade-in duration-700 relative z-10">
           {isLoading ? (
             <span className="inline-block w-48 h-16 bg-card/5 rounded-2xl animate-pulse" />
           ) : (

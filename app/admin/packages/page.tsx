@@ -295,11 +295,11 @@ export default function AdminPackagesPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
+        <div className="flex justify-center py-6 md:py-12">
             <Loader2 className="w-8 h-8 animate-spin text-slate-900" />
         </div>
       ) : activeTab === "packages" ? (
-        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {packages.map((pkg) => (
             <div key={pkg.id} className="bg-card rounded-2xl p-3 sm:p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
                 {!pkg.isActive && (
@@ -461,7 +461,7 @@ export default function AdminPackagesPage() {
               </div>
               
               <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('admin.packages.info')}</h3>
                          <div className="space-y-2">

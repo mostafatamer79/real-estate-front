@@ -277,7 +277,7 @@ export default function AdminDashboard() {
         </div>
 
         {activities.length === 0 ? (
-          <div className="py-12 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">
+          <div className="py-6 md:py-12 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">
             {isRtl ? "لا توجد نشاطات" : "No activities"}
           </div>
         ) : (

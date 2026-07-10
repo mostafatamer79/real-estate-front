@@ -379,7 +379,7 @@ export default function BuildingManagement() {
           {/* معلومات العقار الأساسية */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">معلومات العقار الأساسية</h2>
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               {/* نوع العقار */}
               <div>
                 <label className="block text-gray-700 mb-2">
@@ -593,7 +593,7 @@ export default function BuildingManagement() {
           {showDetails && (
             <div className="mb-8 p-3 sm:p-6 bg-muted rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">بيانات تفصيلية</h2>
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {/* عدد الغرف */}
                 <div>
                   <label className="block text-gray-700 mb-2">عدد الغرف</label>

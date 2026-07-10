@@ -38,7 +38,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                 </div>
 
                 <div className="p-4 sm:p-8 space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <div className="p-3 sm:p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
                             <div className="flex items-center gap-4 mb-3">
                                 <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-blue-50 transition-colors">

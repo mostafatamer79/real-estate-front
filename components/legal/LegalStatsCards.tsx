@@ -79,7 +79,7 @@ export function LegalStatsCards({ stats, loading }: LegalStatsCardsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
       {statCards.map((card, index) => (
         <div key={index} className="bg-card p-3 sm:p-6 rounded-2xl border border hover:shadow-md transition-all">
           <div className="flex items-center justify-between mb-4">

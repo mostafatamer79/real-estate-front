@@ -318,7 +318,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         </table>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
+                    <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
                         <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
                             <Briefcase className="w-16 h-16 text-slate-200" />
                         </div>
@@ -342,7 +342,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>

@@ -350,7 +350,7 @@ export default function AdminServicesManagementPage() {
 
   return (
     <div className="space-y-10 p-6 lg:p-4 sm:p-8 pb-20">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
             <Settings2 className="w-3 h-3" />

@@ -225,8 +225,8 @@ function SettingsPageInner() {
     );
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
                 <div className="space-y-1">
                     <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                         <Settings2 className="w-8 h-8" />
@@ -318,9 +318,9 @@ function SettingsPageInner() {
             </main>
 
             {activeTab === 'pricing' && (
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                     <div onClick={() => setIsLogsModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 md:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.logs')}</h4>
@@ -330,7 +330,7 @@ function SettingsPageInner() {
                         <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" />
                     </div>
                     <div onClick={() => setIsCommissionModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 md:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-900 flex items-center justify-center"><DollarSign className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.commissions')}</h4>
@@ -383,7 +383,7 @@ function PricingTab({
             <div className="space-y-10">
                 <div className="space-y-6">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الإعدادات المالية العامة</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                         <div className="space-y-2">
                             <div className="relative">
                                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-muted border border rounded-2xl py-4 px-6 text-sm font-bold outline-none focus:border-slate-900 transition-all pr-16" placeholder="0.00" />
@@ -424,7 +424,7 @@ function PricingTab({
                                 <ChevronDown className={`w-4 h-4 transition-transform ${collapsedCategories[group.category] ? '' : 'rotate-180'}`} />
                             </button>
                             {!collapsedCategories[group.category] && (
-                                <div className="p-3 sm:p-6 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6 bg-card">
+                                <div className="p-3 sm:p-6 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 bg-card">
                                     {group.services.map((service) => {
                                         const key = `service_price_${group.category}_${service}`.replace(/\s+/g, '_').toLowerCase();
                                         return (
@@ -509,7 +509,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
                     <ImageIcon className="w-3 h-3" /> إدارة الشعار
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     {/* White Logo */}
                     <div className="p-3 sm:p-6 bg-slate-900 rounded-3xl border border-white/5 space-y-4">
                         <p className="text-[11px] font-black text-white/60 uppercase tracking-widest">الشعار الأبيض (على الخلفيات الداكنة)</p>
@@ -638,7 +638,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-8">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الألوان الأساسية</h4>
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-3 md:gap-6">
                         {[
                             { id: 'primary', label: 'اللون الأساسي', value: localSettings.primary },
                             { id: 'accent', label: 'لون التمييز', value: localSettings.accent },
@@ -646,7 +646,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'foreground', label: 'لون الخط العام', value: localSettings.foreground, fallback: '#0f172a' },
                             { id: 'sidebar', label: 'لون القائمة الجانبية', value: localSettings.sidebar, fallback: '#ffffff' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 md:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value as string }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -658,7 +658,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </div>
 
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] pt-6">المربعات والأيقونات</h4>
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-3 md:gap-6">
                         {[
                             { id: 'cardBg', label: 'خلفية المربعات', value: (localSettings as any).cardBg || '#ffffff', fallback: '#ffffff' },
                             { id: 'cardText', label: 'لون نص المربعات', value: (localSettings as any).cardText || '#0f172a', fallback: '#0f172a' },
@@ -666,7 +666,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'iconBg', label: 'خلفية الأيقونات', value: (localSettings as any).iconBg || '#f8fafc', fallback: '#f8fafc' },
                             { id: 'iconColor', label: 'لون الأيقونات', value: (localSettings as any).iconColor || '#0f172a', fallback: '#0f172a' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 md:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -711,12 +711,12 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                     </div>
 
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] pt-6">شارة "قريباً"</h4>
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-3 md:gap-6">
                         {[
                             { id: 'soonBadgeBg', label: 'خلفية الشارة', value: (localSettings as any).soonBadgeBg || '#ffffff' },
                             { id: 'soonBadgeText', label: 'لون النص', value: (localSettings as any).soonBadgeText || '#000000' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 md:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div
                                     className="h-8 px-3 rounded-xl border border shadow-inner flex items-center justify-center text-[10px] font-black uppercase tracking-widest flex-shrink-0"
                                     style={{
@@ -1453,7 +1453,7 @@ function TextTab({
     return (
         <div className="p-4 sm:p-8 space-y-6">
             {/* Header section with Stats & Mode Switcher */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-900 rounded-2xl text-white">
                         <Languages className="w-6 h-6" />
@@ -1502,7 +1502,7 @@ function TextTab({
 
             {/* View Mode 1: Structured Management */}
             {viewMode === 'structured' && (
-                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {/* Left Sidebar: Structured Categories & Subcategories */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-4 space-y-4 shadow-sm">
@@ -1566,7 +1566,7 @@ function TextTab({
                                     </div>
 
                                     {/* Settings Controls Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                                         {currentSubcategory.controls?.map((ctrl) => {
                                             const currentValue = localSettings[ctrl.key] !== undefined ? localSettings[ctrl.key] : ctrl.default;
                                             return (
@@ -1833,7 +1833,7 @@ function TextTab({
 
             {/* View Mode 2: Traditional Full List Search */}
             {viewMode === 'traditional' && (
-                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {/* Categories and Subcategories Selection */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1.25rem] p-4 space-y-2 shadow-sm">
@@ -2275,7 +2275,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     return (
         <div className="p-4 sm:p-8 space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border pb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 border-b border pb-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-slate-900 rounded-2xl text-white">
                         <ShieldAlert className="w-6 h-6" />
@@ -2303,7 +2303,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 {/* Sidebar Hierarchy (Same as TextTab) */}
                 <div className="lg:col-span-1 space-y-4">
                     {!query && STRUCTURED_SECTIONS.filter(section => section.subcategories.some(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id))).map((section) => {

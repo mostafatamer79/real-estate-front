@@ -177,7 +177,7 @@ export default function AdsPromotionSection() {
             {/* Overview Grid */}
             {view === 'overview' && (
                 <div className="space-y-12">
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                         {[
                             { 
                                 id: 'campaign', 
@@ -238,7 +238,7 @@ export default function AdsPromotionSection() {
 
                     {/* Quick Stats Banner */}
                     <div className="bg-slate-900 rounded-[1.25rem] p-10 flex flex-wrap gap-12 items-center justify-between text-white shadow-2xl shadow-blue-900/20">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 md:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-card/10 flex items-center justify-center">
                                 <Mail className="w-8 h-8 text-blue-400" />
                             </div>
@@ -293,18 +293,18 @@ export default function AdsPromotionSection() {
                             <Table>
                                 <TableHeader className="bg-muted/50">
                                     <TableRow className="hover:bg-transparent border">
-                                        <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.title')}</TableHead>
-                                        <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.photo.type')}</TableHead>
-                                        <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('orders.rooms')}</TableHead>
-                                        <TableHead className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.status')}</TableHead>
-                                        <TableHead className="px-10 py-6 text-right"></TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.title')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.photo.type')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('orders.rooms')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.status')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-right"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {campaigns.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={5} className='text-center py-32'>
-                                                <div className="flex flex-col items-center gap-6 opacity-20">
+                                                <div className="flex flex-col items-center gap-3 md:gap-6 opacity-20">
                                                     <div className="p-4 sm:p-8 bg-muted rounded-full">
                                                         <Mail className="w-12 h-12 text-slate-400" />
                                                     </div>
@@ -314,7 +314,7 @@ export default function AdsPromotionSection() {
                                         </TableRow>
                                     ) : campaigns.map((camp, i) => (
                                         <TableRow key={camp.id} className="hover:bg-blue-50/20 transition-all group border text-center">
-                                            <TableCell className="px-10 py-8">
+                                            <TableCell className="px-4 md:px-10 py-8">
                                                 <div className="text-right">
                                                     <p className="font-black text-slate-900 text-sm mb-0.5">{camp.subject || 'Weekly Newsletter'}</p>
                                                     <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
@@ -322,7 +322,7 @@ export default function AdsPromotionSection() {
                                                     </p>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="px-10 py-8">
+                                            <TableCell className="px-4 md:px-10 py-8">
                                                 <span className="text-slate-900 font-black text-xs uppercase tracking-widest">{
                                                     ({
                                                         offers: language === 'ar' ? 'عروض' : 'Offers',
@@ -331,7 +331,7 @@ export default function AdsPromotionSection() {
                                                     } as Record<string, string>)[camp.category] || camp.category
                                                 }</span>
                                             </TableCell>
-                                            <TableCell className="px-10 py-8">
+                                            <TableCell className="px-4 md:px-10 py-8">
                                                 <span className="font-black text-slate-900 text-sm">{
                                                     ({
                                                         daily: language === 'ar' ? 'يومي' : 'Daily',
@@ -341,13 +341,13 @@ export default function AdsPromotionSection() {
                                                     } as Record<string, string>)[camp.frequency] || camp.frequency
                                                 }</span>
                                             </TableCell>
-                                            <TableCell className="px-10 py-8">
+                                            <TableCell className="px-4 md:px-10 py-8">
                                                 <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border
                                                     ${camp.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-muted text-slate-400 border'}`}>
                                                     {camp.isActive ? t('marketing.status.active') : t('marketing.status.cancelled')}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="px-10 py-8 text-right">
+                                            <TableCell className="px-4 md:px-10 py-8 text-right">
                                                 <Button 
                                                     variant="ghost" 
                                                     size="icon"
@@ -653,7 +653,7 @@ export default function AdsPromotionSection() {
                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{selectedCampaign.category}</p>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                         {[
                             { label: t('marketing.stats.sent'), value: '2,840', trend: '+100%', color: 'text-blue-600' },
                             { label: t('marketing.stats.openRate'), value: '38.4%', trend: '+5.2%', color: 'text-emerald-600' },
@@ -683,7 +683,7 @@ export default function AdsPromotionSection() {
                                 </div>
                             </div>
                         </div>
-                        <div className="h-72 w-full bg-muted/50 rounded-3xl flex items-end justify-between p-10 gap-6">
+                        <div className="h-72 w-full bg-muted/50 rounded-3xl flex items-end justify-between p-10 gap-3 md:gap-6">
                             {[60, 85, 45, 95, 75, 80, 70].map((h, i) => (
                                 <div key={i} className="flex-1 flex flex-col justify-end gap-1 group h-full">
                                     <div className="flex items-end gap-1 h-full">

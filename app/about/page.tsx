@@ -143,7 +143,7 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 //       <div className="mx-auto max-w-7xl">
 //         <div className="mb-14 w-[95vw] sm:max-w-3xl space-y-4">
 //           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Full Operating Flow</p>
-//           <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">كل إدارة تتحرك في نفس النظام، لكن لكل واحدة مسارها الخاص.</h2>
+//           <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">كل إدارة تتحرك في نفس النظام، لكن لكل واحدة مسارها الخاص.</h2>
 //           <p className="text-base font-bold leading-8 text-white/65">
 //             الصفحة توضح كيف ترتبط الأقسام ببعضها بدون تكرار أو ضياع بيانات: الخريطة، الطلبات، التسويق، القانونية، المحفظة، وخدمة العملاء.
 //           </p>
@@ -331,7 +331,7 @@ export default function AboutPage() {
 
       <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-4xl space-y-4">
-          <h2 className="text-3xl font-black leading-[1.35] text-white sm:text-5xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
+          <h2 className="text-3xl font-black leading-[1.35] text-white sm:text-3xl md:text-5xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
           <p className="text-base font-bold leading-9 text-white/65">
             صُممت المنصة لتكامل أقسامها وترابطها، بما يضمن ربط كافة الإجراءات والعمليات بسياقها التنظيمي داخل النظام، لتوفير تجربة شاملة تمكّن المستفيدين عبر الأقسام التالية:
           </p>
@@ -375,7 +375,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="space-y-5">
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">How It Works</p>
-            <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">من أول نقرة حتى إغلاق العملية.</h2>
+            <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">من أول نقرة حتى إغلاق العملية.</h2>
             <p className="text-base font-bold leading-8 text-white/65">
               المنصة مبنية حول خط تشغيل واضح. لا يضيع الطلب بين الصفحات، ولا تنفصل الفاتورة عن الخدمة، ولا تصبح المحادثة خارج سياق العملية.
             </p>
@@ -405,7 +405,7 @@ export default function AboutPage() {
       {/* <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
         <div className="mb-12 w-[95vw] sm:max-w-3xl space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Operations</p>
-          <h2 className="text-3xl font-black leading-tight text-white sm:text-5xl">الإدارة ترى الصورة كاملة.</h2>
+          <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">الإدارة ترى الصورة كاملة.</h2>
           <p className="text-base font-bold leading-8 text-white/65">
             لوحة الإدارة ليست مجرد قوائم. هي مساحة تشغيل تسمح بالتحكم في الخدمات، الأسعار، الأقسام، حالة الطلبات، المحادثات، الملفات، والفواتير.
           </p>
@@ -441,7 +441,7 @@ export default function AboutPage() {
           className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
-          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
+          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
           <p className="relative z-10 mx-auto mt-6 w-[95vw] sm:max-w-3xl text-base font-bold leading-9 text-white/75">
             تجمع الوساطة الرقمية الأدوات التي يحتاجها المستفيد ومقدم الخدمة في منصة واحدة؛ لتتحول العملية العقارية من صفحات منفصلة إلى تجربة تشغيل واضحة ومتكاملة.
           </p>
