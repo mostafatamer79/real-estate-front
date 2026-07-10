@@ -137,7 +137,7 @@ export default function DisputesPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-6">
-        <Tabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
+        <Tabs defaultValue="disputes" className="w-full space-y-5 sm:space-y-10" onValueChange={(v) => console.log(v)}>
           <div className="flex justify-center mb-8 w-full">
             <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
               <TabsTrigger value="disputes" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
@@ -156,7 +156,7 @@ export default function DisputesPage() {
 
           </div>
 
-          <TabsContent value="disputes" className="m-0 space-y-10">
+          <TabsContent value="disputes" className="m-0 space-y-5 sm:space-y-10">
             {/* Search & Filter Bar */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="relative w-full md:w-80 group">

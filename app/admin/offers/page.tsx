@@ -1829,7 +1829,7 @@ export default function AdminOffersPage() {
       </div>
 
       <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>

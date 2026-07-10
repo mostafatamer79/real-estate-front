@@ -218,7 +218,7 @@ export default function MarketingPage() {
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
             <table className="w-full text-left" dir="auto">
               <thead>
                 <tr className="bg-muted/50 border-b border">

@@ -173,10 +173,10 @@ export default function AdsPromotionSection() {
     ];
 
     return (
-        <div className="space-y-12 pb-20">
+        <div className="space-y-6 sm:space-y-12 pb-20">
             {/* Overview Grid */}
             {view === 'overview' && (
-                <div className="space-y-12">
+                <div className="space-y-6 sm:space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[
                             { 
@@ -238,7 +238,7 @@ export default function AdsPromotionSection() {
 
                     {/* Quick Stats Banner */}
                     <div className="bg-slate-900 rounded-[1.25rem] p-10 flex flex-wrap gap-12 items-center justify-between text-white shadow-2xl shadow-blue-900/20">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-card/10 flex items-center justify-center">
                                 <Mail className="w-8 h-8 text-blue-400" />
                             </div>
@@ -289,7 +289,7 @@ export default function AdsPromotionSection() {
                             <h4 className="text-xl sm:text-2xl font-black text-slate-900">{t('marketing.history.title')}</h4>
                             <p className="text-slate-400 text-xs font-bold mt-1">{t('marketing.ads.performance')}</p>
                         </div>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                             <Table>
                                 <TableHeader className="bg-muted/50">
                                     <TableRow className="hover:bg-transparent border">
@@ -304,7 +304,7 @@ export default function AdsPromotionSection() {
                                     {campaigns.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={5} className='text-center py-32'>
-                                                <div className="flex flex-col items-center gap-6 opacity-20">
+                                                <div className="flex flex-col items-center gap-3 sm:gap-6 opacity-20">
                                                     <div className="p-4 sm:p-8 bg-muted rounded-full">
                                                         <Mail className="w-12 h-12 text-slate-400" />
                                                     </div>
@@ -683,7 +683,7 @@ export default function AdsPromotionSection() {
                                 </div>
                             </div>
                         </div>
-                        <div className="h-72 w-full bg-muted/50 rounded-3xl flex items-end justify-between p-10 gap-6">
+                        <div className="h-72 w-full bg-muted/50 rounded-3xl flex items-end justify-between p-10 gap-3 sm:gap-6">
                             {[60, 85, 45, 95, 75, 80, 70].map((h, i) => (
                                 <div key={i} className="flex-1 flex flex-col justify-end gap-1 group h-full">
                                     <div className="flex items-end gap-1 h-full">

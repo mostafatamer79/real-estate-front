@@ -347,7 +347,7 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
       </div>
 
       <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
           <table className="w-full text-right">
             <thead>
               <tr className="border-b border bg-muted/50">
@@ -2749,7 +2749,7 @@ function BuildingManagementContent() {
           </div>
         ) : (
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                 <table className="w-full text-start">
                     <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                         <tr>
@@ -2839,7 +2839,7 @@ function BuildingManagementContent() {
 
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
               {activeReportsSubTab === 'roi' ? (
-                  <div className="p-10 space-y-10">
+                  <div className="p-10 space-y-5 sm:space-y-10">
                       <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
@@ -2886,7 +2886,7 @@ function BuildingManagementContent() {
                               {t('bm.offer.new')}
                           </button>
                       </div>
-                      <div className="overflow-x-auto">
+                      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                            <table className="w-full text-start">
                                <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                                    <tr>
@@ -2908,7 +2908,7 @@ function BuildingManagementContent() {
                                    ) : maintenanceLogs.filter(log => !selectedProperty || log.propertyId === selectedProperty.id).length === 0 ? (
                                        <tr>
                                            <td colSpan={5} className="p-32 text-center">
-                                               <div className="flex flex-col items-center gap-6 opacity-20">
+                                               <div className="flex flex-col items-center gap-3 sm:gap-6 opacity-20">
                                                    <Activity className="w-16 h-16" />
                                                    <p className="font-black uppercase tracking-widest text-[10px]">{t('bm.list.empty')}</p>
                                                </div>
@@ -3451,7 +3451,7 @@ function BuildingManagementContent() {
             ) : users.length === 0 ? (
               <div className="text-center py-10 text-gray-500">{t('wallet.noData')}</div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                 <table className="w-full text-xs text-start">
                   <thead className="bg-muted text-gray-700 uppercase">
                     <tr>
@@ -3777,7 +3777,7 @@ function BuildingManagementContent() {
                           <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                         </div>
                       ) : srFiltered.length > 0 ? (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                           <table className="w-full text-right border-collapse">
                             <thead>
                               <tr className="bg-muted/50 border-b border">
@@ -3833,7 +3833,7 @@ function BuildingManagementContent() {
                           </table>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
+                        <div className="flex flex-col items-center justify-center py-32 gap-3 sm:gap-6 opacity-40">
                           <div className="p-5 rounded-[1rem] bg-muted"><Briefcase className="w-16 h-16 text-slate-200" /></div>
                           <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
                         </div>
@@ -4365,7 +4365,7 @@ function BuildingManagementContent() {
 
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
              {loadingFinancial ? (
-                 <div className="p-32 text-center flex flex-col items-center gap-6">
+                 <div className="p-32 text-center flex flex-col items-center gap-3 sm:gap-6">
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border border-t-slate-900 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -4375,7 +4375,7 @@ function BuildingManagementContent() {
                     <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{t('common.loading')}</p>
                  </div>
              ) : activeFinancialSubTab === 'payments' ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                     <table className="w-full text-start">
                         <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                             <tr>
@@ -4430,7 +4430,7 @@ function BuildingManagementContent() {
                     </table>
                 </div>
              ) : (
-                 <div className="p-32 text-center flex flex-col items-center gap-6 animate-in zoom-in duration-500">
+                 <div className="p-32 text-center flex flex-col items-center gap-3 sm:gap-6 animate-in zoom-in duration-500">
                      <div className="w-24 h-24 bg-muted rounded-[1.25rem] flex items-center justify-center shadow-inner">
                         <Landmark className="w-10 h-10 text-slate-200" />
                      </div>
@@ -5563,7 +5563,7 @@ function BuildingManagementContent() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                     <table className="w-full">
                       <thead className="bg-muted border-b border">
                         <tr>
@@ -5780,7 +5780,7 @@ function BuildingManagementContent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="fixed top-0 right-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-20 hidden lg:block"
         >
-          <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6">
+          <div className="bg-card/90 backdrop-blur-3xl p-3 sm:p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-3 sm:gap-6">
             <div className="space-y-6">
               <motion.button 
                 whileHover={{ x: language === 'ar' ? -5 : 5 }}

@@ -259,7 +259,7 @@ function RequestsTable({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
             <table className="w-full text-right">
               <thead>
                 <tr className="bg-muted/60 border-b border">

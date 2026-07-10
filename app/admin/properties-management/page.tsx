@@ -475,7 +475,7 @@ export default function AdminPropertiesManagementPage() {
       </section>
 
       <section className="rounded-2xl border border bg-card p-2 shadow-sm">
-        <div className="flex gap-2 overflow-x-auto">
+        <div className="flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
           {propertyTabs.map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -499,8 +499,8 @@ export default function AdminPropertiesManagementPage() {
       </section>
 
       <section className="overflow-hidden rounded-2xl border border bg-card shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-right">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <table className="w-full min-w-0 text-right">
             <thead className="bg-muted/70">
               <tr>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل" : "Record"}</th>

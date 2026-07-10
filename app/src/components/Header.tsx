@@ -324,7 +324,7 @@ export default function Header() {
 
       {/* Mobile Navigation Drawer */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-3 sm:p-6 gap-6 z-40 animate-in slide-in-from-top duration-300">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-3 sm:p-6 gap-3 sm:gap-6 z-40 animate-in slide-in-from-top duration-300">
              {settings.sectionFlags.customerservice !== 'hidden' && (
                <Link
                   href="/customerservice"

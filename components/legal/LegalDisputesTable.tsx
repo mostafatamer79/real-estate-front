@@ -90,7 +90,7 @@ export function LegalDisputesTable({
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
             <table className="w-full text-right">
               <thead className="bg-muted/50 border-b border">
                 <tr>

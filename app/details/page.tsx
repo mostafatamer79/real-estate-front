@@ -364,11 +364,11 @@ export default function HomePage() {
         </div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          className="w-full max-w-7xl mx-auto px-6 lg:px-4 sm:px-12 relative z-10">
+          className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
   
 
-          <div className="space-y-10">
+          <div className="space-y-5 sm:space-y-10">
             {orderedSections.map((sectionId) => {
               const section = sectionCards[sectionId];
               if (!section || detailsPartStatus(sectionId as any) === 'hidden') return null;

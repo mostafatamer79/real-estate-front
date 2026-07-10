@@ -320,7 +320,7 @@ function SettingsPageInner() {
             {activeTab === 'pricing' && (
                 <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                     <div onClick={() => setIsLogsModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.logs')}</h4>
@@ -330,7 +330,7 @@ function SettingsPageInner() {
                         <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 transition-transform" />
                     </div>
                     <div onClick={() => setIsCommissionModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-900 flex items-center justify-center"><DollarSign className="w-8 h-8" /></div>
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 mb-1">{t('admin.settings.commissions')}</h4>
@@ -369,7 +369,7 @@ function PricingTab({
     servicePrices, setServicePrices, collapsedCategories, setCollapsedCategories
 }: PricingTabProps) {
     return (
-        <div className="p-4 sm:p-8 space-y-10">
+        <div className="p-4 sm:p-8 space-y-5 sm:space-y-10">
             <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Sparkles className="w-6 h-6" />
@@ -380,7 +380,7 @@ function PricingTab({
                 </div>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-5 sm:space-y-10">
                 <div className="space-y-6">
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">الإعدادات المالية العامة</h4>
                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -493,7 +493,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
     const setThemeValue = (key: string, value: string) => updateSettings({ [key]: value } as any);
 
     return (
-        <div className="p-4 sm:p-8 space-y-10">
+        <div className="p-4 sm:p-8 space-y-5 sm:space-y-10">
             <div className="flex items-center gap-4 border-b border pb-6">
                 <div className="p-3 bg-slate-900 rounded-2xl text-white">
                     <Palette className="w-6 h-6" />
@@ -646,7 +646,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'foreground', label: 'لون الخط العام', value: localSettings.foreground, fallback: '#0f172a' },
                             { id: 'sidebar', label: 'لون القائمة الجانبية', value: localSettings.sidebar, fallback: '#ffffff' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 sm:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value as string }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -666,7 +666,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'iconBg', label: 'خلفية الأيقونات', value: (localSettings as any).iconBg || '#f8fafc', fallback: '#f8fafc' },
                             { id: 'iconColor', label: 'لون الأيقونات', value: (localSettings as any).iconColor || '#0f172a', fallback: '#0f172a' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 sm:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl shadow-inner flex-shrink-0" style={{ backgroundColor: color.value }} />
                                 <div className="flex-grow">
                                     <label className="text-[11px] font-black text-slate-600 block mb-1">{color.label}</label>
@@ -716,7 +716,7 @@ function AppearanceTab({ localSettings, updateSettings, t }: TabProps) {
                             { id: 'soonBadgeBg', label: 'خلفية الشارة', value: (localSettings as any).soonBadgeBg || '#ffffff' },
                             { id: 'soonBadgeText', label: 'لون النص', value: (localSettings as any).soonBadgeText || '#000000' },
                         ].map((color) => (
-                            <div key={color.id} className="flex items-center gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
+                            <div key={color.id} className="flex items-center gap-3 sm:gap-6 p-3 sm:p-6 bg-muted rounded-3xl border border group transition-all hover:bg-card hover:shadow-xl">
                                 <div
                                     className="h-8 px-3 rounded-xl border border shadow-inner flex items-center justify-center text-[10px] font-black uppercase tracking-widest flex-shrink-0"
                                     style={{

@@ -353,7 +353,7 @@ export default function DepartmentDashboard() {
 
     return (
       <div className="space-y-8" dir="rtl">
-        <div className="flex items-start justify-between gap-6">
+        <div className="flex items-start justify-between gap-3 sm:gap-6">
           <div className="space-y-1">
             <h1 className="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
               اهلا وسهلا بك، <span className="font-black">{user?.firstName || 'مرحباً'}</span>
@@ -503,7 +503,7 @@ export default function DepartmentDashboard() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-6 pt-6 border-t border-white/20 flex items-center gap-6">
+        <div className="relative z-10 mt-6 pt-6 border-t border-white/20 flex items-center gap-3 sm:gap-6">
           <div>
             <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">الإدارة</p>
             <p className="text-white font-black text-sm mt-0.5">{config.nameAr}</p>

@@ -126,7 +126,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-40 gap-6">
+          <div className="flex flex-col items-center justify-center py-40 gap-3 sm:gap-6">
             <div className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center">
               <Scale className="w-7 h-7 text-white/10" />
             </div>

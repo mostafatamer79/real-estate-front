@@ -235,7 +235,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                     </div>
                 ) : filteredRequests.length > 0 ? (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                         <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
                             <thead>
                                 <tr className="bg-muted/50 border-b border">
@@ -318,7 +318,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         </table>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-32 gap-6 opacity-40">
+                    <div className="flex flex-col items-center justify-center py-32 gap-3 sm:gap-6 opacity-40">
                         <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
                             <Briefcase className="w-16 h-16 text-slate-200" />
                         </div>

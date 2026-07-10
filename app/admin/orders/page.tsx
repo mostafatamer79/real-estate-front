@@ -957,7 +957,7 @@ export default function OrdersPage() {
             </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
             <Table>
                 <TableHeader className="bg-muted/50">
                     <TableRow>

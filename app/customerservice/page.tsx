@@ -262,7 +262,7 @@ export function CustomerServicePage() {
       <div className="max-w-7xl mx-auto px-6">
           {/* Contact Channels Grid */}
           {settings.uiFlags?.show_cs_channels !== false && (
-            <div className="flex flex-wrap justify-center gap-6 mb-12">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-12">
               {[
                 settings.contactPhone?.trim()
                   ? { id: 'phone', href: `tel:${settings.contactPhone}`, icon: Phone, color: 'text-slate-900', bg: 'bg-muted', title: t('cs.contactNum'), val: settings.contactPhone }

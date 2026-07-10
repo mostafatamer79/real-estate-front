@@ -212,7 +212,7 @@ export default function CommissionManager() {
                 {/* 3. Brokers Data Section */}
                 <div className="space-y-4">
                     <h3 className="text-xl font-bold text-right border-b pb-2">بيانات الوسطاء</h3>
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
                         <Table className="border border">
                             <TableHeader>
                                 <TableRow>

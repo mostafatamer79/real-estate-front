@@ -207,7 +207,7 @@ function DepartmentHubContent() {
       >
         <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-slate-950/5 blur-3xl" />
-        <div className="relative flex items-start justify-between gap-6">
+        <div className="relative flex items-start justify-between gap-3 sm:gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest">
               <Sparkles className="w-4 h-4" />

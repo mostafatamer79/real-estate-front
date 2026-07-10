@@ -260,7 +260,7 @@ export function AddPropertyWizard({
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col w-full min-h-0">
                 
                 {/* Steps Indicator / Tabs List */}
-                <div className="bg-card border-b border px-6 py-4 overflow-x-auto shrink-0 transition-all">
+                <div className="bg-card border-b border px-6 py-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 shrink-0 transition-all">
                     <TabsList className="bg-transparent p-0 h-auto justify-start gap-4 inline-flex w-full min-w-max">
                         {tabItems.map((item, idx) => (
                             <TabsTrigger 

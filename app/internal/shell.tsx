@@ -827,7 +827,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       {/* ══ Main content ══ */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Slim top bar */}
-        <div className="h-16 bg-card border-b border flex items-center justify-between px-8 gap-3 shrink-0">
+        <div className="h-16 bg-card border-b border flex items-center justify-between px-4 sm:px-8 gap-3 shrink-0">
           <div className="lg:hidden w-8" /> {/* spacer for hamburger */}
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-muted transition-colors">
@@ -887,7 +887,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <div className={isChat ? "h-full flex flex-col" : `${currentView === "dashboard" || isHub ? "max-w-5xl" : "max-w-[1400px]"} mx-auto py-8 px-6 lg:px-8`}>
+          <div className={isChat ? "h-full flex flex-col" : `${currentView === "dashboard" || isHub ? "max-w-5xl" : "max-w-[1400px]"} mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8`}>
             {children}
           </div>
         </div>

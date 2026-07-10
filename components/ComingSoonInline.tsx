@@ -25,7 +25,7 @@ export default function ComingSoonInline({ message, sectionName }: ComingSoonInl
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative z-10 flex flex-col items-center gap-6 text-center max-w-sm"
+                className="relative z-10 flex flex-col items-center gap-3 sm:gap-6 text-center max-w-sm"
             >
                 <div className="relative">
                     <motion.div 

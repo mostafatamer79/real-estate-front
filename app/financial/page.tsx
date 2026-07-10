@@ -99,7 +99,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-6"
+              className="flex items-center gap-3 sm:gap-6"
             >
 
             </motion.div>
