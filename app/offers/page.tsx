@@ -484,7 +484,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
         </div>
       </div>
 
-      <div className="flex-1 lg:mr-80 w-full">
+      <div className={`flex-1 w-full ${language === 'ar' ? 'lg:ml-80' : 'lg:mr-80'}`}>
         {loading && <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div></div>}
         {error && !loading && <div className="flex items-center justify-center h-screen text-center"><AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" /><h3 className="text-lg font-semibold text-gray-700 mb-2">حدث خطأ</h3><p className="text-gray-500 mb-4">{error}</p><button onClick={fetchOffers} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">محاولة مرة أخرى</button></div>}
         
