@@ -256,7 +256,7 @@ export default function NewSubscriptionPage() {
 
   return (
     <div className="min-h-screen bg-muted p-3 sm:p-6" dir="rtl">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex justify-start">
           <button
             type="button"
@@ -308,11 +308,11 @@ export default function NewSubscriptionPage() {
             </div>
 
             {loading ? (
-              <div className="py-16 flex justify-center">
+              <div className="py-8 sm:py-16 flex justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-slate-700" />
               </div>
             ) : packages.length === 0 ? (
-              <div className="py-16 text-center text-slate-400 font-bold">{t("sub.public.emptyPackages")}</div>
+              <div className="py-8 sm:py-16 text-center text-slate-400 font-bold">{t("sub.public.emptyPackages")}</div>
             ) : planMode === "custom" ? (
               <div className="space-y-4">
                 <div className="rounded-3xl border border bg-muted p-5">

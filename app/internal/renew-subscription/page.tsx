@@ -141,7 +141,7 @@ export default function RenewSubscriptionPage() {
         <section className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-6 shadow-sm sm:p-4 sm:p-8">
           <div className="absolute -top-28 -left-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
           <div className="absolute -bottom-28 -right-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
-          <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
+          <div className="relative grid gap-4 sm:gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
             <div className="space-y-5">
               <div className="inline-flex h-9 items-center gap-2 rounded-full bg-slate-950 px-4 text-[11px] font-black text-white">
                 <ShieldCheck className="h-4 w-4" />

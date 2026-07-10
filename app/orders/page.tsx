@@ -220,7 +220,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
   return (
       <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Button 
             variant="ghost" 
             onClick={() => router.push('/details')} 
@@ -471,11 +471,11 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
       <TabsContent value="my-orders">
         {loadingMyOrders ? (
-          <div className="flex justify-center py-12">
+          <div className="flex justify-center py-6 sm:py-12">
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
           </div>
         ) : myOrders.length === 0 ? (
-          <div className="text-center py-12 bg-muted rounded-xl border border-dashed border">
+          <div className="text-center py-6 sm:py-12 bg-muted rounded-xl border border-dashed border">
             <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
             <Button variant="link" onClick={() => setActiveTab("create")}>
               {t('orders.createOrder')}

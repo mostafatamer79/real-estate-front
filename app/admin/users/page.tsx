@@ -618,7 +618,7 @@ export default function UsersPage() {
                     <input 
                         type="text"
                         placeholder={t('admin.users.searchPlaceholder')}
-                        className="w-full h-11 bg-muted rounded-2xl px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
+                        className="w-full h-11 bg-muted rounded-2xl px-4 sm:px-12 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />

@@ -225,7 +225,7 @@ function SettingsPageInner() {
     );
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
@@ -318,7 +318,7 @@ function SettingsPageInner() {
             </main>
 
             {activeTab === 'pricing' && (
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                     <div onClick={() => setIsLogsModalOpen(true)} className="p-4 sm:p-8 rounded-[1rem] bg-card border border shadow-md hover:border-slate-900 transition-all group flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-muted text-slate-600 flex items-center justify-center"><History className="w-8 h-8" /></div>
@@ -1502,7 +1502,7 @@ function TextTab({
 
             {/* View Mode 1: Structured Management */}
             {viewMode === 'structured' && (
-                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
                     {/* Left Sidebar: Structured Categories & Subcategories */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-4 space-y-4 shadow-sm">
@@ -1833,7 +1833,7 @@ function TextTab({
 
             {/* View Mode 2: Traditional Full List Search */}
             {viewMode === 'traditional' && (
-                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
                     {/* Categories and Subcategories Selection */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1.25rem] p-4 space-y-2 shadow-sm">
@@ -2303,7 +2303,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
                 {/* Sidebar Hierarchy (Same as TextTab) */}
                 <div className="lg:col-span-1 space-y-4">
                     {!query && STRUCTURED_SECTIONS.filter(section => section.subcategories.some(sub => CONTROL_ITEMS.some(c => c.subcategoryId === sub.id))).map((section) => {

@@ -342,7 +342,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>

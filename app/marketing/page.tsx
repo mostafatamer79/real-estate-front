@@ -56,7 +56,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
             <section className="relative overflow-hidden mb-12 pb-12 border-b border-white/20 bg-card/50 backdrop-blur-3xl">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 via-white/80 to-slate-100/80 opacity-50 pointer-events-none" />
                 <div className="max-w-7xl mx-auto px-6 pt-12 relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-8">
+                    <div className="flex flex-col md:flex-row justify-between items-end gap-4 sm:gap-8">
                         <div className="space-y-4">
                             <motion.div 
                                initial={{ opacity: 0, scale: 0.9 }}
@@ -70,7 +70,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                                 <motion.h1 
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="text-4xl md:text-6xl font-black tracking-tighter text-slate-900"
+                                    className="text-4xl md:text-3xl sm:text-6xl font-black tracking-tighter text-slate-900"
                                 >
                                     {t('marketing.title')}
                                 </motion.h1>

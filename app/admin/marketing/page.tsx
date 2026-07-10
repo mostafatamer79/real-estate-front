@@ -126,7 +126,7 @@ export default function MarketingPage() {
   };
 
   return (
-    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

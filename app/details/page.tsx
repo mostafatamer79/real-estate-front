@@ -234,7 +234,7 @@ export default function HomePage() {
         ) : settings.sectionFlags.financial === 'hidden' && user?.role !== 'admin' ? null : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
           <ComingSoonInline sectionName={t('details.charts.title')} message={settings.sectionMessages.financial} />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 lg:gap-10 items-stretch">
             {[
               <PriceTrendChart key="price" data={priceData} labels={chartLabels} />,
               <PropertyDistributionChart key="dist" data={propertyTypes} />
@@ -364,7 +364,7 @@ export default function HomePage() {
         </div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          className="w-full max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          className="w-full max-w-7xl mx-auto px-6 lg:px-4 sm:px-12 relative z-10">
 
   
 

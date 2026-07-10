@@ -166,7 +166,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-8 items-center">
+        <div className="hidden md:flex gap-4 sm:gap-8 items-center">
             
          
               {settings.sectionFlags.customerservice !== 'hidden' && (

@@ -295,7 +295,7 @@ export default function AdminPackagesPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
+        <div className="flex justify-center py-6 sm:py-12">
             <Loader2 className="w-8 h-8 animate-spin text-slate-900" />
         </div>
       ) : activeTab === "packages" ? (
