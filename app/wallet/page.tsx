@@ -51,7 +51,8 @@ const WalletPage = () => {
                     invoice: inv.id.substring(0, 8).toUpperCase(),
                     originalStatus: inv.status,
                     id: inv.id,
-                    isPendingDecision: false
+                    isPendingDecision: false,
+                    raw: inv
                 }));
             }
 
@@ -75,7 +76,8 @@ const WalletPage = () => {
                     originalDecision: req.clientDecision.toLowerCase(),
                     id: req.id,
                     isPendingDecision: req.invoiceSent && (req.clientDecision === 'PENDING' || req.clientDecision === 'REJECTED'),
-                    isUnderReview: !req.invoiceSent
+                    isUnderReview: !req.invoiceSent,
+                    raw: req
                 }));
                 mappedInvoices = [...mappedServiceInvoices, ...mappedInvoices];
             }
@@ -93,6 +95,7 @@ const WalletPage = () => {
                     isSubscription: true,
                     isSubscriptionActive: sub.status === 'نشط',
                     subscriptionId: sub.id,
+                    raw: sub
                 }));
                 mappedInvoices = [...mappedSubscriptions, ...mappedInvoices];
             }

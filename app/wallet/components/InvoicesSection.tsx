@@ -105,37 +105,39 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
     };
 
     const mapToServiceRequest = (invoice: any) => {
+        const raw = invoice.raw || {};
         return {
             id: invoice.id,
             invoiceNumber: invoice.invoice,
             createdAt: invoice.date,
-            clientName: 'N/A',
-            phone: 'N/A',
-            city: 'N/A',
-            district: 'N/A',
-            serviceType: invoice.service,
-            category: 'other',
-            quantity: 1,
-            price: parseFloat(invoice.amount.replace(/,/g, '')),
-            description: invoice.service,
-            status: 'completed',
-            paymentStatus: invoice.originalStatus === 'paid' ? 'paid' : 'unpaid',
-            estimatedCost: 0,
-            finalCost: 0,
-            assignedAgentId: null,
-            assignedAt: null,
-            completedAt: null,
+            clientName: raw.clientName || raw.user?.name || 'غير متوفر',
+            phone: raw.phone || raw.user?.phone || 'غير متوفر',
+            city: raw.city || 'غير متوفر',
+            district: raw.district || 'غير متوفر',
+            serviceType: raw.serviceType || invoice.service,
+            category: raw.category || 'other',
+            quantity: raw.quantity || 1,
+            price: raw.price || parseFloat(String(invoice.amount).replace(/,/g, '')) || 0,
+            description: raw.description || invoice.service,
+            status: raw.status || 'completed',
+            paymentStatus: raw.paymentStatus || (invoice.originalStatus === 'paid' ? 'paid' : 'unpaid'),
+            estimatedCost: raw.estimatedCost || 0,
+            finalCost: raw.finalCost || 0,
+            assignedAgentId: raw.assignedAgentId || null,
+            assignedAt: raw.assignedAt || null,
+            completedAt: raw.completedAt || null,
             invoiceGenerated: true,
-            userId: '',
-            updatedAt: '',
-            isPendingDecision: invoice.isPendingDecision
+            userId: raw.userId || '',
+            updatedAt: raw.updatedAt || '',
+            isPendingDecision: invoice.isPendingDecision,
+            ...raw
         };
     };
 
     const handleViewInvoice = (invoice: any) => {
-        setSelectedInvoice(mapToServiceRequest(invoice));
+        setSelectedInvoice(invoice.raw || invoice);
         setShowInvoiceModal(true);
-    }
+    };
 
     // Sync selectedInvoice when invoices prop changes (e.g. after refresh)
     React.useEffect(() => {
@@ -249,22 +251,22 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 <Table>
                             <TableHeader className='bg-muted/50'>
                                 <TableRow>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.invoiceNo')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.service')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.date')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.amount')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.table.status')}</TableHead>
-                                    <TableHead className='text-left py-5 font-black text-slate-900 whitespace-nowrap'>{t('wallet.commission.actions')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.date')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.amount')}</TableHead>
+                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.status')}</TableHead>
+                                    <TableHead className='text-left py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.commission.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice, index) => (
                                     <TableRow key={index} className='hover:bg-muted/50 transition-colors group'>
-                                        <TableCell className='font-bold text-slate-700 py-4 whitespace-nowrap'>{invoice.invoice}</TableCell>
-                                        <TableCell className='font-medium text-slate-600 py-4 whitespace-nowrap'>{invoice.service}</TableCell>
-                                        <TableCell className='text-slate-500 py-4 whitespace-nowrap'>{invoice.date}</TableCell>
-                                        <TableCell className='font-black text-slate-900 py-4 whitespace-nowrap'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
-                                        <TableCell className="py-4 text-center whitespace-nowrap">
+                                        <TableCell className='font-bold text-slate-700 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
+                                        <TableCell className='font-medium text-slate-600 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
+                                        <TableCell className='text-slate-500 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
+                                        <TableCell className='font-black text-slate-900 py-4 whitespace-nowrap max-w-[200px] truncate'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
+                                        <TableCell className="py-4 text-center whitespace-nowrap max-w-[200px] truncate">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                                                 invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
                                                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
