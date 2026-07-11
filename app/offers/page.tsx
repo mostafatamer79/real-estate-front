@@ -385,7 +385,10 @@ const MeterIcon = ({ className }: { className?: string }) => (
 
   // Final Render
   return (
-    <section className="w-full min-h-screen bg-muted flex" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="offers-page-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12 flex" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
+      <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
+      <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       {/* Mobile filter toggle button */}
       <button
         onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -484,7 +487,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
         </div>
       </div>
 
-      <div className={`flex-1 w-full ${language === 'ar' ? 'lg:mr-80' : 'lg:ml-80'}`}>
+      <div className={`flex-1 w-full relative z-10 ${language === 'ar' ? 'lg:mr-80' : 'lg:ml-80'}`}>
         {loading && <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div></div>}
         {error && !loading && <div className="flex items-center justify-center h-screen text-center"><AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" /><h3 className="text-lg font-semibold text-gray-700 mb-2">حدث خطأ</h3><p className="text-gray-500 mb-4">{error}</p><button onClick={fetchOffers} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">محاولة مرة أخرى</button></div>}
         

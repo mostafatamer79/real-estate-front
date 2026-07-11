@@ -23,8 +23,8 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="w-[95vw] sm:max-w-2xl p-0 overflow-hidden bg-card">
-                <div className="bg-slate-900 px-8 py-8 text-center relative overflow-hidden">
+            <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-2xl p-0 overflow-hidden bg-white/70 backdrop-blur-xl border border-white/50">
+                <div className="bg-slate-900/85 backdrop-blur-md px-8 py-8 text-center relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-card/5 rounded-full -mr-32 -mt-32 blur-3xl" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-card/5 rounded-full -ml-24 -mb-24 blur-2xl" />
                     
@@ -39,18 +39,18 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
                 <div className="p-4 sm:p-8 space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-                        <div className="p-3 sm:p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
+                        <div className="p-3 sm:p-6 bg-white/20 border border-white/25 rounded-2xl transition-all hover:shadow-md group">
                             <div className="flex items-center gap-4 mb-3">
-                                <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-blue-50 transition-colors">
+                                <div className="p-3 bg-white/30 border border-white/30 rounded-xl shadow-sm group-hover:bg-blue-50/10 transition-colors">
                                     <FileText className="w-6 h-6 text-blue-600" />
                                 </div>
                                 <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('wallet.commission.table.number')}</span>
                             </div>
                             <p className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-tight">{requestNumber}</p>
                         </div>
-                        <div className="p-3 sm:p-6 bg-muted rounded-2xl border border transition-all hover:shadow-md hover:border group">
+                        <div className="p-3 sm:p-6 bg-white/20 border border-white/25 rounded-2xl transition-all hover:shadow-md group">
                             <div className="flex items-center gap-4 mb-3">
-                                <div className="p-3 bg-card rounded-xl shadow-sm group-hover:bg-purple-50 transition-colors">
+                                <div className="p-3 bg-white/30 border border-white/30 rounded-xl shadow-sm group-hover:bg-purple-50/10 transition-colors">
                                     <Calendar className="w-6 h-6 text-purple-600" />
                                 </div>
                                 <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('wallet.table.date')}</span>
@@ -59,10 +59,10 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                         </div>
                     </div>
 
-                    <div className="bg-card border rounded-2xl p-3 sm:p-6 shadow-sm">
-                        <div className="flex items-center justify-between mb-6 pb-6 border-b border">
+                    <div className="bg-white/20 border border-white/25 rounded-2xl p-3 sm:p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/20">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-muted rounded-lg">
+                                <div className="p-2 bg-white/10 rounded-lg">
                                     <Clock className="w-5 h-5 text-slate-600" />
                                 </div>
                                 <span className="font-bold text-slate-700">{t('wallet.table.status')}</span>

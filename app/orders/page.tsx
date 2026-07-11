@@ -219,38 +219,47 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
   }
 
   return (
-      <div className="container mx-auto px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <div className="orders-page-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
+        <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
+        <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pt-8 relative z-10">
           <Button 
             variant="ghost" 
             onClick={() => router.push('/details')} 
-            className="mb-4 flex items-center gap-2 hover:bg-muted"
+            className="mb-4 flex items-center gap-2 hover:bg-slate-950/5 text-slate-800 font-bold"
           >
               <ArrowRight className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
               {t('common.back')}
           </Button>
           <div className="mb-8 text-center">
-              <h1 className="text-xl sm:text-3xl font-bold text-gray-800 mb-2">{t('orders.title')}</h1>
-              <p className="text-gray-500">{t('orders.subtitle')}</p>
+              <h1 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-950 via-slate-800 to-indigo-950 tracking-tight mb-2">{t('orders.title')}</h1>
+              <p className="text-slate-500 font-bold">{t('orders.subtitle')}</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-8">
-              <TabsTrigger value="create" className="flex items-center gap-2">
-                <PlusCircle className="w-4 h-4" />
+            <TabsList className="grid w-full grid-cols-2 mb-8 !bg-slate-950/5 backdrop-blur-md border !border-slate-950/10 p-1.5 rounded-2xl h-auto gap-1">
+              <TabsTrigger 
+                value="create" 
+                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5"
+              >
+                <PlusCircle className="w-4.5 h-4.5" />
                 {t('orders.createOrder')}
               </TabsTrigger>
-              <TabsTrigger value="my-orders" className="flex items-center gap-2">
-                <List className="w-4 h-4" />
+              <TabsTrigger 
+                value="my-orders" 
+                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5"
+              >
+                <List className="w-4.5 h-4.5" />
                 {t('orders.myOrders')}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="create">
               <form onSubmit={handleSubmit}>
-            <Card>
+            <Card className="bg-card shadow-xl rounded-[1.25rem] overflow-hidden">
               <CardHeader>
-                <CardTitle className="text-xl">{t('orders.details')}</CardTitle>
+                <CardTitle className="text-xl font-bold text-slate-900">{t('orders.details')}</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 
@@ -452,7 +461,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                 <div className="md:col-span-2 pt-4">
                   <Button 
                     type="submit" 
-                    className="w-full bg-slate-900 hover:bg-slate-800 h-12 text-lg"
+                    className="w-full bg-slate-950 hover:bg-slate-900 h-13 text-base font-black rounded-2xl transition-all active:scale-95 shadow-lg shadow-slate-950/10 flex items-center justify-center gap-2"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -484,7 +493,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
         ) : (
           <div className="grid gap-4">
             {myOrders.map((order) => (
-              <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow">
+              <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow bg-card shadow-xl rounded-[1.25rem]">
                 <CardHeader className="bg-muted/50 pb-3">
                   <div className="flex justify-between items-start">
                     <div>

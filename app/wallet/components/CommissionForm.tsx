@@ -195,7 +195,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
 
     return (
         <div className='flex-1'>
-            <Card className='bg-card rounded-xl shadow-lg p-6 overflow-y-auto max-h-[calc(100vh-2rem)]'>
+            <Card className='wallet-form-container !bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-xl p-6 overflow-y-auto max-h-[calc(100vh-2rem)]'>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl sm:text-2xl font-bold text-black">{t('wallet.commission.title')}</h2>
@@ -257,7 +257,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         <h3 className="text-xl font-bold text-right border-b pb-2">{t('wallet.commission.form.party')}</h3>
                         
                         {/* Owner/Seller Section */}
-                        <div className="bg-muted p-4 rounded-lg space-y-3">
+                        <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.ownerData')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -329,7 +329,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         </div>
 
                         {/* Buyer Section */}
-                        <div className="bg-muted p-4 rounded-lg space-y-3">
+                        <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.buyerData')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -395,8 +395,8 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold text-right border-b pb-2">{t('wallet.commission.brokersData')}</h3>
                         <div className="overflow-x-auto">
-                            <Table className="border border">
-                                <TableHeader>
+                            <Table className="bg-transparent border border-white/20">
+                                <TableHeader className="bg-slate-900/5">
                                     <TableRow>
                                         <TableHead className="text-right">{t('wallet.commission.form.name')}</TableHead>
                                         <TableHead className="text-right">{t('wallet.commission.falLicense')}</TableHead>
@@ -408,7 +408,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                 </TableHeader>
                                 <TableBody>
                                     {brokers.map((broker) => (
-                                        <TableRow key={broker.id}>
+                                        <TableRow key={broker.id} className="hover:bg-white/30 border-b border-slate-200/10 transition-colors">
                                             <TableCell>{broker.name}</TableCell>
                                             <TableCell>{broker.license}</TableCell>
                                             <TableCell>{broker.percentage}%</TableCell>
@@ -477,7 +477,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* 4. Property Data Section */}
-                    <div className="bg-muted p-4 rounded-lg space-y-3">
+                    <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.propertyData')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                              <div>
@@ -598,7 +598,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* 5. Contract Values Section */}
-                     <div className="bg-muted p-4 rounded-lg space-y-3">
+                     <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.contractValues')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div>

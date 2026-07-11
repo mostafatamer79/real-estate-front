@@ -153,7 +153,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
         <div className='flex flex-col gap-6 w-full'>
             {/* Balance Card - Keeping it here or moving to a separate component? Assuming Invoices section includes balance for now based on layout */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <Card className='md:col-span-2 relative overflow-hidden bg-slate-900 border-none shadow-xl rounded-[1.25rem] p-6'>
+                <Card className='md:col-span-2 relative overflow-hidden bg-slate-900/85 backdrop-blur-xl border border-white/10 shadow-xl rounded-[1.25rem] p-6'>
                     {/* Background Gradients */}
                     <div className='absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2' />
                     <div className='absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2' />
@@ -176,7 +176,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     <Button 
                                         onClick={() => setShowAddDialog(true)}
                                         disabled
-                                        className='flex-1 md:flex-none h-10 px-5 bg-card text-slate-900 hover:bg-muted font-bold rounded-xl text-xs shadow-lg shadow-white/5 transition-transform hover:-translate-y-0.5'
+                                        className='flex-1 md:flex-none h-10 px-5 bg-white text-slate-900 hover:bg-slate-100 font-bold rounded-xl text-xs shadow-lg shadow-white/5 transition-transform hover:-translate-y-0.5'
                                     >
                                         <ArrowDownCircle className='mr-1.5 h-4 w-4' />
                                         {t('wallet.balance.add')}
@@ -194,7 +194,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     <Button 
                                         onClick={() => setShowWithdrawDialog(true)}
                                         disabled
-                                        className='flex-1 md:flex-none h-10 px-5 bg-card/10 text-white hover:bg-card/20 font-bold rounded-xl text-xs backdrop-blur-md border border-white/10 transition-transform hover:-translate-y-0.5'
+                                        className='flex-1 md:flex-none h-10 px-5 bg-white/10 text-white hover:bg-white/20 font-bold rounded-xl text-xs backdrop-blur-md border border-white/10 transition-transform hover:-translate-y-0.5'
                                     >
                                         <ArrowUpCircle className='mr-1.5 h-4 w-4' />
                                         {t('wallet.balance.withdraw')}
@@ -216,7 +216,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                         <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-8'>
                             <div className='space-y-1 pl-4 pb-2'>
                                 <div className='flex items-center gap-2 mb-2'>
-                                    <div className='p-2 bg-card/10 rounded-xl backdrop-blur-md border border-white/10'>
+                                    <div className='p-2 bg-white/10 rounded-xl backdrop-blur-md border border-white/10'>
                                         <Wallet className='h-5 w-5 text-white' />
                                     </div>
                                     <span className='text-slate-400 font-medium text-sm tracking-wide'>{t('wallet.balance.label')}</span>
@@ -235,7 +235,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
             </div>
 
             {/* Invoices Table */}
-            <Card className='bg-card border-0 shadow-lg rounded-[1.25rem] overflow-hidden'>
+            <Card className='!bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
                <div className='p-8'>
                     <div className='flex items-center justify-between mb-8'>
                         <div>
@@ -246,10 +246,10 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
             
                     </div>
 
-                    <div className='rounded-2xl border border overflow-hidden'>
+                    <div className='rounded-2xl border border-white/30 overflow-hidden'>
                         <div className="overflow-x-auto w-full">
 <Table>
-                            <TableHeader className='bg-muted/50'>
+                            <TableHeader className='bg-slate-900/5'>
                                 <TableRow>
                                     <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
                                     <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
@@ -261,7 +261,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice, index) => (
-                                    <TableRow key={index} className='hover:bg-muted/50 transition-colors group'>
+                                    <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
                                         <TableCell className='font-bold text-slate-700 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
                                         <TableCell className='font-medium text-slate-600 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
                                         <TableCell className='text-slate-500 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
@@ -359,7 +359,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Add Balance Dialog */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8" dir="rtl">
+                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
                     </DialogHeader>
@@ -411,7 +411,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Withdraw Balance Dialog */}
             <Dialog open={showWithdrawDialog} onOpenChange={setShowWithdrawDialog}>
-                <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8" dir="rtl">
+                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.withdrawTitle') || 'طلب سحب رصيد'}</DialogTitle>
                     </DialogHeader>

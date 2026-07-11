@@ -41,7 +41,7 @@ const BrokerModal: React.FC<BrokerModalProps> = ({ open, onOpenChange, editingBr
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="wallet-dialog-content sm:max-w-[425px] bg-white/70 backdrop-blur-xl border border-white/50">
                 <DialogHeader>
                     <DialogTitle className="text-right">
                         {editingBroker ? t('common.edit') : t('wallet.broker.addNew')}

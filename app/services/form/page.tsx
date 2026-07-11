@@ -65,6 +65,28 @@ function ServiceFormContent() {
   const searchParams = useSearchParams();
   const { user, token, isAuthenticated } = useAuth();
   const { settings } = useSettings();
+  
+  const [formData, setFormData] = useState({
+    name: "", phone: "", city: "", district: "",
+    service: "", otherService: "", quantity: "1", description: "",
+    propertyId: "", appointmentDate: "", appointmentTime: "",
+    visitPhotographyType: "", // "video" | "live"
+    termsAccepted: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user && isAuthenticated) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : prev.name,
+        phone: user.phone || prev.phone,
+        city: user.city || prev.city,
+        district: user.district || prev.district,
+      }));
+    }
+  }, [user, isAuthenticated]);
+
   const serviceType = (searchParams.get("type") || "postPurchase") as ServiceType;
   const legalCategory = searchParams.get("category");
   const config = serviceConfig[serviceType];
@@ -97,27 +119,6 @@ function ServiceFormContent() {
     const price = settings.servicePrices[key];
     return price !== undefined ? price : null;
   };
-
-  const [formData, setFormData] = useState({
-    name: "", phone: "", city: "", district: "",
-    service: "", otherService: "", quantity: "1", description: "",
-    propertyId: "", appointmentDate: "", appointmentTime: "",
-    visitPhotographyType: "", // "video" | "live"
-    termsAccepted: false,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (user && isAuthenticated) {
-      setFormData(prev => ({
-        ...prev,
-        name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : prev.name,
-        phone: user.phone || prev.phone,
-        city: user.city || prev.city,
-        district: user.district || prev.district,
-      }));
-    }
-  }, [user, isAuthenticated]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -198,7 +199,11 @@ function ServiceFormContent() {
   return (
 
 
-    <section className="w-full min-h-screen bg-slate-45 text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-muted" dir="rtl">
+    <section className="services-form-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden flex flex-col font-sans selection:bg-muted" dir="rtl">
+      {/* Ambient Background Glows */}
+      <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
+      <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
+      <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
 
       {/* Back nav */}
       <motion.div

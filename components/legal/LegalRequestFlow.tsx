@@ -29,9 +29,9 @@ const initialContractPartyState = {
 };
 
 // ─── Shared style tokens — navbar palette ───────────────────────────────────
-const INP = "w-full h-13 bg-card border border hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
+const INP = "w-full h-13 !bg-white/45 backdrop-blur-sm border !border-white/50 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
 const LBL = "text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-2 block";
-const CARD = "bg-card/80 backdrop-blur-sm border border rounded-[1.25rem] p-6 space-y-4 shadow-sm";
+const CARD = "!bg-white/20 backdrop-blur-md border !border-white/25 rounded-[1.25rem] p-6 space-y-4 shadow-sm";
 
 const SectionDivider = ({ label }: { label: string }) => (
   <div className="flex items-center gap-4 py-1">
@@ -765,7 +765,7 @@ export default function LegalRequestFlow({
           </button>
 
           {/* Form card */}
-          <div className="bg-card/80 backdrop-blur-sm shadow-sm border border rounded-[1rem] p-4 sm:p-8 relative overflow-hidden">
+          <div className="!bg-white/30 backdrop-blur-md shadow-sm border !border-white/35 rounded-[1rem] p-4 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             {selectedCategory === "disputes"      && renderDisputesForm()}

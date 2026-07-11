@@ -103,7 +103,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 !bg-white/80 backdrop-blur-xl border !border-white/30 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">
@@ -124,7 +124,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-4 sm:p-5 rounded-2xl border-2 transition-all group ${
                 selectedMethod === method.id 
                   ? 'border-indigo-600 bg-indigo-50/50' 
-                  : 'border hover:border bg-card'
+                  : '!border-white/20 hover:border-indigo-600 !bg-white/40 backdrop-blur-md'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -154,7 +154,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tamara'
                   ? 'border-pink-500 bg-pink-50/70'
-                  : 'border hover:border bg-card'
+                  : '!border-white/20 hover:border-pink-500 !bg-white/40 backdrop-blur-md'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
                 selectedInstallment === 'tabby'
                   ? 'border-emerald-500 bg-emerald-50/70'
-                  : 'border hover:border bg-card'
+                  : '!border-white/20 hover:border-emerald-500 !bg-white/40 backdrop-blur-md'
               }`}
             >
               <div className="flex items-center gap-3">

@@ -23,7 +23,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
 
     return (
         <div className='flex-1'>
-            <Card className='bg-card rounded-xl shadow-lg p-6'>
+            <Card className='bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-xl p-6'>
                 <CardHeader className='pb-6'>
                     <div className='flex items-center justify-between'>
                         <CardTitle className='text-2xl font-bold text-black text-right'>{t('wallet.commission.title')}</CardTitle>
@@ -36,8 +36,8 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                     </div>
                 </CardHeader>
                 <div className='overflow-x-auto'>
-                    <Table className='bg-card border border text-black shadow-lg'>
-                        <TableHeader>
+                    <Table className='bg-transparent border border-white/20 text-black'>
+                        <TableHeader className='bg-slate-900/5'>
                             <TableRow>
                                 <TableHead className='text-right'>{t('wallet.commission.table.number')}</TableHead>
                                 <TableHead className='text-right'>{t('wallet.date')}</TableHead>
@@ -48,7 +48,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                         </TableHeader>
                         <TableBody>
                             {commissions.map((commission) => (
-                                <TableRow key={commission.id}>
+                                <TableRow key={commission.id} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
                                     <TableCell className='text-right font-medium'>{commission.commissionNumber}</TableCell>
                                     <TableCell className='text-right'>
                                         {commission.createdAt ? new Date(commission.createdAt).toLocaleDateString('en-CA') : '-'}

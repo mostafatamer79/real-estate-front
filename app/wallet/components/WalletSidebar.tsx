@@ -55,13 +55,13 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 transition={{ type: 'spring', damping: 20, stiffness: 100 }}
                 className='fixed top-0 right-0 h-screen w-80 lg:w-[360px] p-5 z-10 hidden lg:block'
             >
-                <div className='bg-card/90 backdrop-blur-2xl p-6 h-full rounded-[1.25rem] border border-white/50 shadow-2xl flex flex-col gap-6'>
+                <div className='bg-white/10 backdrop-blur-2xl p-6 h-full rounded-[1.25rem] border border-white/20 shadow-2xl flex flex-col gap-6'>
                     <div className='space-y-4'>
                         <motion.button 
                             whileHover={{ x: -5 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => router.push('/')}
-                            className="flex items-center gap-2.5 text-slate-400 hover:text-slate-900 transition-colors bg-muted/50 px-4.5 py-2.5 rounded-xl w-full border border-/50"
+                            className="flex items-center gap-2.5 text-slate-400 hover:text-slate-900 transition-colors bg-white/5 hover:bg-white/10 px-4.5 py-2.5 rounded-xl w-full border border-white/10"
                         >
                             <ArrowRight className="w-4 h-4 transform rotate-180" />
                             <span className="font-bold text-[10px] uppercase tracking-widest">{t('wallet.backToHome')}</span>
@@ -74,28 +74,32 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
 
                     <div className='flex flex-col gap-3.5 flex-1 overflow-y-auto pr-1 hide-scrollbar'>
                         {leftSectionItems.map((item, index) => {
+                            const isActive = activeTab === item.id;
                             return (
                             <motion.button
                                 key={index}
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 + (index * 0.1) }}
-                                whileHover={{ scale: 1.015, backgroundColor: 'rgba(248, 250, 252, 1)' }}
+                                whileHover={{ scale: 1.015, backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
                                 whileTap={{ scale: 0.985 }}
                                 onClick={() => onTabChange(item.id)}
                                 className={`
-                                    group relative p-3 bg-card border border rounded-2xl 
-                                    hover:border-slate-950 shadow-sm hover:shadow-md text-slate-900
+                                    group relative p-3 border rounded-2xl 
+                                    shadow-sm hover:shadow-md text-slate-900
                                     transition-all duration-300 flex items-center gap-3 text-right
-                                    ${activeTab === item.id ? 'border-slate-950 bg-muted ring-1 ring-slate-950/5' : ''}
+                                    ${isActive 
+                                        ? 'bg-white/40 border-slate-950/30 ring-1 ring-slate-950/5' 
+                                        : 'bg-white/15 border-white/20 hover:border-slate-950/20'
+                                    }
                                 `}
                             >
                                 {/* Icon Container */}
-                                <div className={`h-12 w-12 shrink-0 rounded-xl shadow-sm transition-all duration-500 flex items-center justify-center ${activeTab === item.id ? 'bg-slate-950 shadow-stone-400/20 rotate-6 scale-105' : 'bg-muted group-hover:bg-muted group-hover:-rotate-3'}`}>
+                                <div className={`h-12 w-12 shrink-0 rounded-xl shadow-sm transition-all duration-500 flex items-center justify-center ${isActive ? 'bg-slate-950 shadow-stone-400/20 rotate-6 scale-105' : 'bg-white/20 group-hover:bg-white/40 group-hover:-rotate-3'}`}>
                                     <img
                                         src={item.icon}
                                         alt={item.label}
-                                        className={`w-full h-full scale-[3] object-contain transition-all duration-300 ${activeTab === item.id ? 'brightness-0 invert' : ''}`}
+                                        className={`w-full h-full scale-[3] object-contain transition-all duration-300 ${isActive ? 'brightness-0 invert' : ''}`}
                                     />
                                 </div>
                                 
@@ -115,7 +119,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 </div>
 
                                 {/* Arrow Indicator */}
-                                <ArrowRight className={`w-4 h-4 shrink-0 transform rotate-180 transition-all group-hover:-translate-x-1 ${activeTab === item.id ? 'text-slate-950' : 'text-slate-300 group-hover:text-slate-950'}`} />
+                                <ArrowRight className={`w-4 h-4 shrink-0 transform rotate-180 transition-all group-hover:-translate-x-1 ${isActive ? 'text-slate-950' : 'text-slate-300 group-hover:text-slate-950'}`} />
                             </motion.button>
                         )})}
                     </div>
@@ -123,7 +127,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             </motion.div>
 
             {/* Mobile Navigation - Clean Bottom Tab Bar */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/40 backdrop-blur-xl border-t border-white/30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
                 <div className='flex items-end justify-around py-2 px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
@@ -139,7 +143,8 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                         width: isActive ? '48px' : '40px',
                                         height: isActive ? '48px' : '40px',
                                         borderRadius: isActive ? '50%' : '12px',
-                                        backgroundColor: isActive ? '#0f172a' : '#f1f5f9',
+                                        backgroundColor: isActive ? '#0f172a' : 'rgba(255, 255, 255, 0.3)',
+                                        border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.4)',
                                         boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
                                         transform: isActive ? 'translateY(-4px)' : 'none',
                                     }}

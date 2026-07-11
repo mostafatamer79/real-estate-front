@@ -74,17 +74,17 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     }
 
     return (
-        <Card className='bg-card border-0 shadow-lg rounded-[1.25rem] overflow-hidden'>
+        <Card className='bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
             <div className='p-8'>
                 <div className='mb-8'>
                     <h2 className='text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
                     <p className='text-slate-500 font-bold text-sm'>{t('wallet.desc.files')}</p>
                 </div>
 
-                <div className='rounded-2xl border border overflow-hidden'>
+                <div className='rounded-2xl border border-white/30 overflow-hidden'>
                     <div className="overflow-x-auto w-full">
 <Table>
-                        <TableHeader className='bg-muted/50'>
+                        <TableHeader className='bg-slate-900/5'>
                             <TableRow>
                                 <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
                                 <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.commission.propertyType')}</TableHead>
@@ -94,7 +94,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                         </TableHeader>
                         <TableBody>
                             {files.map((file, index) => (
-                                <TableRow key={index} className='hover:bg-muted/50 transition-colors group'>
+                                <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
                                     <TableCell className='py-4'>
                                         <div className='flex items-center gap-3'>
                                             <div className='p-2 bg-blue-50 text-blue-600 rounded-lg'>

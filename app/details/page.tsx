@@ -234,7 +234,7 @@ export default function HomePage() {
         ) : settings.sectionFlags.financial === 'hidden' && user?.role !== 'admin' ? null : settings.sectionFlags.financial === 'closed' && user?.role !== 'admin' ? (
           <ComingSoonInline sectionName={t('details.charts.title')} message={settings.sectionMessages.financial} />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-stretch">
             {[
               <PriceTrendChart key="price" data={priceData} labels={chartLabels} />,
               <PropertyDistributionChart key="dist" data={propertyTypes} />

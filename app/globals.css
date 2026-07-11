@@ -296,3 +296,290 @@
   animation: floatParticle var(--duration, 30s) linear infinite;
   animation-delay: var(--delay, 0s);
 }
+
+/* Glassmorphic Input & Select Trigger Overrides in Wallet Dashboard */
+.wallet-page-root input:not([type="submit"]):not([type="button"]),
+.wallet-page-root textarea,
+.wallet-page-root button[role="combobox"],
+.wallet-form-container input,
+.wallet-form-container textarea,
+.wallet-form-container button[role="combobox"],
+.wallet-dialog-content input,
+.wallet-dialog-content textarea,
+.wallet-dialog-content button[role="combobox"] {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(8px) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #0f172a !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.wallet-page-root input:focus,
+.wallet-page-root textarea:focus,
+.wallet-page-root button[role="combobox"]:focus,
+.wallet-form-container input:focus,
+.wallet-form-container textarea:focus,
+.wallet-form-container button[role="combobox"]:focus,
+.wallet-dialog-content input:focus,
+.wallet-dialog-content textarea:focus,
+.wallet-dialog-content button[role="combobox"]:focus {
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  border-color: rgba(15, 23, 42, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Glassmorphic Overrides - Unified services form, orders, offers, subscriptions, wallet, and internal pages */
+.services-form-root .bg-card,
+.services-form-root .bg-card\/80,
+.services-form-root [class*="bg-card"],
+.wallet-page-root .bg-card:not([class*="bg-slate-900"]),
+.wallet-page-root .bg-card\/80,
+.wallet-page-root [class*="bg-card"]:not([class*="bg-slate-900"]),
+.wallet-form-container .bg-card,
+.wallet-dialog-content .bg-card:not([class*="bg-slate-900"]),
+.orders-page-root .bg-card,
+.orders-page-root [class*="bg-card"],
+.offers-page-root .bg-card,
+.offers-page-root [class*="bg-card"],
+.subscriptions-page-root .bg-card,
+.subscriptions-page-root [class*="bg-card"],
+.internal-page-root .bg-card,
+.internal-page-root [class*="bg-card"] {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-top-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 1.25rem !important;
+}
+
+.services-form-root .bg-muted,
+.services-form-root .bg-muted\/50,
+.services-form-root [class*="bg-muted"],
+.wallet-page-root .bg-muted,
+.wallet-page-root [class*="bg-muted"],
+.orders-page-root .bg-muted,
+.orders-page-root [class*="bg-muted"],
+.offers-page-root .bg-muted,
+.offers-page-root [class*="bg-muted"],
+.subscriptions-page-root .bg-muted,
+.subscriptions-page-root [class*="bg-muted"],
+.internal-page-root .bg-muted,
+.internal-page-root [class*="bg-muted"] {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Premium Inputs, Selects, and Textareas */
+.services-form-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.services-form-root textarea,
+.services-form-root select,
+.services-form-root button[role="combobox"],
+.services-form-root [class*="bg-background"],
+.orders-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.orders-page-root textarea,
+.orders-page-root button[role="combobox"],
+.orders-page-root [class*="bg-background"],
+.subscriptions-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.subscriptions-page-root textarea,
+.subscriptions-page-root button[role="combobox"],
+.subscriptions-page-root [class*="bg-background"],
+.offers-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.offers-page-root textarea,
+.offers-page-root select,
+.offers-page-root button[role="combobox"],
+.offers-page-root [class*="bg-background"],
+.internal-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.internal-page-root textarea,
+.internal-page-root select,
+.internal-page-root button[role="combobox"],
+.internal-page-root [class*="bg-background"] {
+  width: 100% !important;
+  height: 3.25rem !important;
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  color: #0f172a !important;
+  border-radius: 1rem !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+.services-form-root textarea,
+.orders-page-root textarea,
+.subscriptions-page-root textarea,
+.offers-page-root textarea,
+.internal-page-root textarea {
+  height: auto !important;
+  min-height: 120px !important;
+  padding-top: 0.875rem !important;
+  padding-bottom: 0.875rem !important;
+}
+
+.services-form-root input:focus,
+.services-form-root textarea:focus,
+.services-form-root select:focus,
+.services-form-root button[role="combobox"]:focus,
+.services-form-root [class*="bg-background"]:focus,
+.orders-page-root input:focus,
+.orders-page-root textarea:focus,
+.orders-page-root button[role="combobox"]:focus,
+.orders-page-root [class*="bg-background"]:focus,
+.subscriptions-page-root input:focus,
+.subscriptions-page-root textarea:focus,
+.subscriptions-page-root button[role="combobox"]:focus,
+.subscriptions-page-root [class*="bg-background"]:focus,
+.offers-page-root input:focus,
+.offers-page-root textarea:focus,
+.offers-page-root select:focus,
+.offers-page-root button[role="combobox"]:focus,
+.offers-page-root [class*="bg-background"]:focus,
+.internal-page-root input:focus,
+.internal-page-root textarea:focus,
+.internal-page-root select:focus,
+.internal-page-root button[role="combobox"]:focus,
+.internal-page-root [class*="bg-background"]:focus {
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  border-color: rgba(15, 23, 42, 0.25) !important;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* ============================================================
+   FIX: Tabs (TabsList + TabsTrigger) scoped to glass-themed pages only
+   ============================================================ */
+.services-form-root [role="tablist"],
+.orders-page-root [role="tablist"],
+.subscriptions-page-root [role="tablist"],
+.offers-page-root [role="tablist"],
+.internal-page-root [role="tablist"],
+.wallet-page-root [role="tablist"] {
+  background-color: rgba(226, 232, 240, 0.6) !important;
+  border: 1px solid rgba(203, 213, 225, 0.5) !important;
+  border-radius: 0.875rem !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  padding: 4px !important;
+}
+
+.services-form-root [role="tab"],
+.orders-page-root [role="tab"],
+.subscriptions-page-root [role="tab"],
+.offers-page-root [role="tab"],
+.internal-page-root [role="tab"],
+.wallet-page-root [role="tab"] {
+  color: #475569 !important;
+  font-weight: 600 !important;
+  border-radius: 0.625rem !important;
+  transition: all 0.2s ease-in-out !important;
+  background-color: transparent !important;
+}
+
+.services-form-root [role="tab"][data-state="active"],
+.orders-page-root [role="tab"][data-state="active"],
+.subscriptions-page-root [role="tab"][data-state="active"],
+.offers-page-root [role="tab"][data-state="active"],
+.internal-page-root [role="tab"][data-state="active"],
+.wallet-page-root [role="tab"][data-state="active"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.services-form-root [role="tab"]:hover,
+.orders-page-root [role="tab"]:hover,
+.subscriptions-page-root [role="tab"]:hover,
+.offers-page-root [role="tab"]:hover,
+.internal-page-root [role="tab"]:hover,
+.wallet-page-root [role="tab"]:hover {
+  color: #0f172a !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ============================================================
+   FIX: Radix SelectTrigger (button[role="combobox"]) — hover/focus/span
+   ============================================================ */
+.services-form-root button[role="combobox"],
+.orders-page-root button[role="combobox"],
+.subscriptions-page-root button[role="combobox"],
+.offers-page-root button[role="combobox"],
+.internal-page-root button[role="combobox"],
+.wallet-page-root button[role="combobox"],
+.wallet-form-container button[role="combobox"],
+.wallet-dialog-content button[role="combobox"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(200, 213, 228, 0.7) !important;
+}
+
+.services-form-root button[role="combobox"]:hover,
+.orders-page-root button[role="combobox"]:hover,
+.subscriptions-page-root button[role="combobox"]:hover,
+.offers-page-root button[role="combobox"]:hover,
+.internal-page-root button[role="combobox"]:hover,
+.wallet-page-root button[role="combobox"]:hover,
+.wallet-form-container button[role="combobox"]:hover,
+.wallet-dialog-content button[role="combobox"]:hover {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(15, 23, 42, 0.2) !important;
+}
+
+/* SelectTrigger placeholder & value text color */
+.services-form-root button[role="combobox"] span,
+.orders-page-root button[role="combobox"] span,
+.subscriptions-page-root button[role="combobox"] span,
+.offers-page-root button[role="combobox"] span,
+.internal-page-root button[role="combobox"] span,
+.wallet-page-root button[role="combobox"] span,
+.wallet-form-container button[role="combobox"] span,
+.wallet-dialog-content button[role="combobox"] span {
+  color: #0f172a !important;
+}
+
+/* SelectContent dropdown panel */
+.services-form-root [data-radix-popper-content-wrapper] > div,
+.orders-page-root [data-radix-popper-content-wrapper] > div,
+.subscriptions-page-root [data-radix-popper-content-wrapper] > div,
+.offers-page-root [data-radix-popper-content-wrapper] > div,
+.internal-page-root [data-radix-popper-content-wrapper] > div,
+.wallet-page-root [data-radix-popper-content-wrapper] > div,
+.wallet-form-container [data-radix-popper-content-wrapper] > div {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid rgba(226, 232, 240, 0.85) !important;
+  border-radius: 1rem !important;
+  backdrop-filter: blur(24px) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+/* Checkbox Toggle Cards */
+.orders-page-root .flex.items-center.gap-2.border.p-3.rounded-lg,
+.offers-page-root .flex.items-center.gap-2.border.p-3.rounded-lg,
+.internal-page-root .flex.items-center.gap-2.border.p-3.rounded-lg {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 1rem !important;
+  padding: 1.1rem !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer;
+}
+
+.orders-page-root .flex.items-center.gap-2.border.p-3.rounded-lg:hover,
+.offers-page-root .flex.items-center.gap-2.border.p-3.rounded-lg:hover,
+.internal-page-root .flex.items-center.gap-2.border.p-3.rounded-lg:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-1px);
+}
