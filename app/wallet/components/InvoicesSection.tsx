@@ -170,7 +170,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     <span className="inline-block h-2 w-2 rounded-full opacity-70" style={{ backgroundColor: "var(--soon-badge-text, #000000)" }} />
                                     {t("common.soon") || "قريباً"}
                                 </div>
-                                <div className='flex gap-2 w-full md:w-auto'>
+                                <div className='flex flex-col sm:flex-row gap-2 w-full md:w-auto mt-3 md:mt-0'>
                                     <Button 
                                         onClick={() => setShowAddDialog(true)}
                                         disabled
@@ -179,7 +179,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                         <ArrowDownCircle className='mr-1.5 h-4 w-4' />
                                         {t('wallet.balance.add')}
                                         <span
-                                            className="ml-2 text-[9px] font-black uppercase tracking-wider border rounded-full px-2 py-0.5"
+                                            className="ml-2 text-[8px] sm:text-[9px] font-black uppercase tracking-wider border rounded-full px-1.5 py-0.5"
                                             style={{
                                                 backgroundColor: "var(--soon-badge-bg, #ffffff)",
                                                 color: "var(--soon-badge-text, #000000)",
@@ -197,7 +197,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                         <ArrowUpCircle className='mr-1.5 h-4 w-4' />
                                         {t('wallet.balance.withdraw')}
                                         <span
-                                            className="ml-2 text-[9px] font-black uppercase tracking-wider border rounded-full px-2 py-0.5"
+                                            className="ml-2 text-[8px] sm:text-[9px] font-black uppercase tracking-wider border rounded-full px-1.5 py-0.5"
                                             style={{
                                                 backgroundColor: "var(--soon-badge-bg, #ffffff)",
                                                 color: "var(--soon-badge-text, #000000)",

@@ -131,14 +131,14 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                             onClick={() => onTabChange(item.id)}
                             className='flex flex-col items-center justify-center gap-1.5 flex-1 py-2.5 px-1 transition-all'
                         >
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${activeTab === item.id ? 'bg-slate-950 shadow-md' : 'bg-slate-100'}`}>
+                            <div className={`relative flex items-center justify-center transition-all duration-300 ${activeTab === item.id ? 'w-11 h-11 rounded-full bg-slate-950 shadow-lg -translate-y-1' : 'w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100'}`}>
                                 <img
                                     src={item.icon}
                                     alt={item.label}
-                                    className={`h-4 w-4 object-contain transition-all ${activeTab === item.id ? 'brightness-0 invert' : 'opacity-50'}`}
+                                    className={`absolute inset-0 m-auto h-5 w-5 object-contain transition-all duration-300 scale-[1.5] ${activeTab === item.id ? 'brightness-0 invert' : 'opacity-40 grayscale group-hover:opacity-60'}`}
                                 />
                             </div>
-                            <span className={`text-[9px] font-black leading-none text-center transition-colors ${activeTab === item.id ? 'text-slate-900' : 'text-slate-400'}`}>
+                            <span className={`text-[10px] font-black leading-none text-center transition-all duration-300 ${activeTab === item.id ? 'text-slate-900 translate-y-0.5' : 'text-slate-400'}`}>
                                 {item.label}
                             </span>
                         </button>
