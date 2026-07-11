@@ -902,7 +902,10 @@ export default function BuildingManagement() {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setSelectedSection(item.id)}
+                  onClick={() => {
+                    setSelectedSection(item.id);
+                    setIsSidebarOpen(false);
+                  }}
                   className={`w-full p-4 rounded-lg text-right transition-colors ${
                     isSelected
                       ? "bg-slate-700 text-white"

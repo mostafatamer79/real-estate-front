@@ -393,7 +393,13 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
   );
 }
 
-function BuildingManagementContent() {
+function BuildingManagementContent({ 
+  initialSection, 
+  initialFinancialTab 
+}: { 
+  initialSection?: string, 
+  initialFinancialTab?: string 
+} = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -531,7 +537,7 @@ function BuildingManagementContent() {
   };
   const [selectedOrder, setSelectedOrder] = useState<any>(null); // For detail view
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedSection, setSelectedSection] = useState<string>("offers");
+  const [selectedSection, setSelectedSection] = useState<string>(initialSection || "offers");
   const [activeLegalTab, setActiveLegalTab] = useState<string>("dashboard");
 
   // Handle Query Params
@@ -5330,7 +5336,7 @@ function BuildingManagementContent() {
       return renderOrdersSection();
     }
     if (selectedSection === "financial") {
-      return <FinancialPage />;
+      return <FinancialPage embedded initialTab={initialFinancialTab || "dashboard"} />;
     }
     if (selectedSection === "marketing") {
       return <MarketingPage />;
@@ -5835,6 +5841,7 @@ function BuildingManagementContent() {
                         if (item.id === "legal") {
                           setActiveLegalTab("dashboard");
                         }
+                        setIsMobileSidebarOpen(false);
                   }}
                   className={`
                     group relative p-3 lg:p-4 bg-card border rounded-[1rem] 
@@ -5927,7 +5934,7 @@ function BuildingManagementContent() {
 
         {/* Main Workspace - Adjusted for sidebar */}
         <div className={`flex-1 overflow-hidden relative w-full ${language === 'ar' ? 'lg:mr-[25rem]' : 'lg:ml-[25rem]'}`}>
-          <main className="h-full overflow-y-auto overflow-x-hidden p-4 sm:p-5 lg:p-12">
+          <main className="h-full overflow-y-auto overflow-x-hidden p-4 pt-20 sm:p-5 sm:pt-20 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedSection}
@@ -6237,14 +6244,20 @@ function BuildingManagementContent() {
   );
 }
 
-export default function BuildingManagement() {
+export default function BuildingManagement({ 
+  initialSection, 
+  initialFinancialTab 
+}: { 
+  initialSection?: string, 
+  initialFinancialTab?: string 
+} = {}) {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-slate-600" />
       </div>
     }>
-      <BuildingManagementContent />
+      <BuildingManagementContent initialSection={initialSection} initialFinancialTab={initialFinancialTab} />
     </Suspense>
   );
 } 

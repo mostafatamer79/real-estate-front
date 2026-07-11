@@ -233,7 +233,7 @@ export default function DepartmentDashboard() {
       service_requests: 'service_requests',
     };
     const financeTab = financialTabMap[searchParams.get('section') || 'financial'] || 'dashboard';
-    return <FinancialPage embedded initialTab={financeTab} />;
+    return <BuildingManagementPage initialSection="financial" initialFinancialTab={financeTab} />;
   }
 
   if (['properties', 'marketing', 'legal', 'employees'].includes(dept)) {
@@ -262,7 +262,7 @@ export default function DepartmentDashboard() {
           service_requests: 'service_requests',
         };
         const financeTab = financialTabMap[searchParams.get('section') || 'financial'] || 'dashboard';
-        return <FinancialPage embedded initialTab={financeTab} />;
+        return <BuildingManagementPage initialSection="financial" initialFinancialTab={financeTab} />;
       }
 
       const section = searchParams.get('section') || '';
