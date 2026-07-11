@@ -191,11 +191,11 @@ export default function HomePage() {
                 hover:from-slate-780 hover:to-slate-820
                 border border-slate-700/60 hover:border-slate-600/80
                 text-slate-300 hover:text-slate-100
-                py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.4em]
+                py-4 sm:py-5 rounded-2xl font-black text-sm uppercase tracking-normal sm:tracking-wide
                 shadow-[0_4px_24px_rgba(0,0,0,0.4)]
                 hover:shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(99,102,241,0.07)]
                 transition-all duration-300
-                flex items-center justify-center gap-4 group cursor-pointer overflow-hidden"
+                flex items-center justify-center gap-3 sm:gap-4 group cursor-pointer overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
               {t('home.scan')}
