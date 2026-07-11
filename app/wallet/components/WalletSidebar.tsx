@@ -123,26 +123,51 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             </motion.div>
 
             {/* Mobile Navigation - Clean Bottom Tab Bar */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/98 backdrop-blur-xl border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]'>
-                <div className='flex items-stretch justify-around'>
-                    {leftSectionItems.map((item, index) => (
-                        <button
-                            key={index}
-                            onClick={() => onTabChange(item.id)}
-                            className='flex flex-col items-center justify-center gap-1.5 flex-1 py-2.5 px-1 transition-all'
-                        >
-                            <div className={`relative flex items-center justify-center transition-all duration-300 ${activeTab === item.id ? 'w-11 h-11 rounded-full bg-slate-950 shadow-lg -translate-y-1' : 'w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100'}`}>
-                                <img
-                                    src={item.icon}
-                                    alt={item.label}
-                                    className={`absolute inset-0 m-auto h-5 w-5 object-contain transition-all duration-300 scale-[1.5] ${activeTab === item.id ? 'brightness-0 invert' : 'opacity-40 grayscale group-hover:opacity-60'}`}
-                                />
-                            </div>
-                            <span className={`text-[10px] font-black leading-none text-center transition-all duration-300 ${activeTab === item.id ? 'text-slate-900 translate-y-0.5' : 'text-slate-400'}`}>
-                                {item.label}
-                            </span>
-                        </button>
-                    ))}
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+                <div className='flex items-end justify-around py-2 px-2'>
+                    {leftSectionItems.map((item, index) => {
+                        const isActive = activeTab === item.id;
+                        return (
+                            <button
+                                key={index}
+                                onClick={() => onTabChange(item.id)}
+                                className='flex flex-col items-center justify-end gap-1 flex-1 pb-1 pt-1 transition-all'
+                            >
+                                <div
+                                    className='flex items-center justify-center transition-all duration-300'
+                                    style={{
+                                        width: isActive ? '48px' : '40px',
+                                        height: isActive ? '48px' : '40px',
+                                        borderRadius: isActive ? '50%' : '12px',
+                                        backgroundColor: isActive ? '#0f172a' : '#f1f5f9',
+                                        boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
+                                        transform: isActive ? 'translateY(-4px)' : 'none',
+                                    }}
+                                >
+                                    <img
+                                        src={item.icon}
+                                        alt={item.label}
+                                        style={{
+                                            width: '28px',
+                                            height: '28px',
+                                            objectFit: 'contain',
+                                            filter: isActive ? 'brightness(0) invert(1)' : 'opacity(0.45) grayscale(1)',
+                                        }}
+                                    />
+                                </div>
+                                <span
+                                    className='leading-none text-center font-black transition-all duration-300'
+                                    style={{
+                                        fontSize: '10px',
+                                        color: isActive ? '#0f172a' : '#94a3b8',
+                                        marginTop: isActive ? '2px' : '0',
+                                    }}
+                                >
+                                    {item.label}
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
         </>
