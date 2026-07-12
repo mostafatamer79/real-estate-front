@@ -127,45 +127,46 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             </motion.div>
 
             {/* Mobile Navigation - Clean Bottom Tab Bar */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/40 backdrop-blur-xl border-t border-white/30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-                <div className='flex items-end justify-around py-2 px-2'>
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/50 backdrop-blur-xl border-t border-white/40 shadow-[0_-4px_24px_rgba(0,0,0,0.06)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+                <div className='flex items-end justify-around py-2 px-1 sm:px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         return (
                             <button
                                 key={index}
                                 onClick={() => onTabChange(item.id)}
-                                className='flex flex-col items-center justify-end gap-1 flex-1 pb-1 pt-1 transition-all'
+                                className='flex flex-col items-center justify-end gap-1.5 flex-1 pb-1.5 pt-2 transition-all min-w-0'
                             >
                                 <div
                                     className='flex items-center justify-center transition-all duration-300'
                                     style={{
-                                        width: isActive ? '48px' : '40px',
-                                        height: isActive ? '48px' : '40px',
-                                        borderRadius: isActive ? '50%' : '12px',
-                                        backgroundColor: isActive ? '#0f172a' : 'rgba(255, 255, 255, 0.3)',
-                                        border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.4)',
-                                        boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.25)' : 'none',
-                                        transform: isActive ? 'translateY(-4px)' : 'none',
+                                        width: isActive ? '68px' : '60px',
+                                        height: isActive ? '68px' : '60px',
+                                        borderRadius: isActive ? '50%' : '20px',
+                                        backgroundColor: isActive ? '#0f172a' : 'rgba(255, 255, 255, 0.6)',
+                                        border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.7)',
+                                        boxShadow: isActive ? '0 12px 28px rgba(0,0,0,0.35)' : 'none',
+                                        transform: isActive ? 'translateY(-14px)' : 'none',
                                     }}
                                 >
                                     <img
                                         src={item.icon}
                                         alt={item.label}
                                         style={{
-                                            width: '28px',
-                                            height: '28px',
+                                            width: isActive ? '52px' : '48px',
+                                            height: isActive ? '52px' : '48px',
                                             objectFit: 'contain',
-                                            filter: isActive ? 'brightness(0) invert(1)' : 'opacity(0.45) grayscale(1)',
+                                            filter: isActive ? 'brightness(0) invert(1)' : 'opacity(0.9) grayscale(0)',
+                                            transform: 'scale(1.2)',
                                         }}
                                     />
                                 </div>
                                 <span
-                                    className='leading-none text-center font-black transition-all duration-300'
+                                    className='leading-none text-center font-black transition-all duration-300 truncate w-full px-1'
                                     style={{
-                                        fontSize: '10px',
-                                        color: isActive ? '#0f172a' : '#94a3b8',
-                                        marginTop: isActive ? '2px' : '0',
+                                        fontSize: '12px',
+                                        color: isActive ? '#0f172a' : '#334155',
+                                        marginTop: isActive ? '8px' : '4px',
                                     }}
                                 >
                                     {item.label}

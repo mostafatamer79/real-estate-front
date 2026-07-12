@@ -118,7 +118,7 @@ export default function SignIn({ onClose }: SignInProps) {
   return (
     <div
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-8 md:pt-16 p-3 sm:p-6 z-[60] overflow-hidden"
+      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-6 md:pt-12 p-3 sm:p-6 z-[60] overflow-hidden"
     >
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-600/20 rounded-full blur-[120px] animate-pulse"></div>
@@ -127,14 +127,14 @@ export default function SignIn({ onClose }: SignInProps) {
       {/* Decorative Lines */}
       <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
 
-      <div className="w-full w-[95vw] sm:max-w-md relative z-10">
+      <div className="w-full max-w-md relative z-10">
         {/* Header/Back Link */}
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
           >
-            <ArrowLeft className={`w-4 h-4 ${language === 'en' ? '' : 'rotate-180'}`} />
+            <ArrowLeft className={`w-5 h-5 sm:w-4 sm:h-4 ${language === 'en' ? '' : 'rotate-180'}`} />
             <span className="text-sm font-medium">{t('common.back')}</span>
           </button>
 
@@ -145,7 +145,7 @@ export default function SignIn({ onClose }: SignInProps) {
 
         {/* Login Card */}
         <div 
-          className="bg-slate-900 border border-white/10 rounded-3xl p-4 sm:p-8 shadow-2xl relative"
+          className="bg-slate-900 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative"
         >
             {onClose && (
               <button
@@ -157,9 +157,9 @@ export default function SignIn({ onClose }: SignInProps) {
               </button>
             )}
 
-            <div className="text-center mb-10">
+            <div className="text-center mb-8">
        
-                <h1 className="text-xl sm:text-2xl font-bold mb-2">
+                <h1 className="text-xl sm:text-2xl font-bold mb-2 leading-snug">
                   {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
                 </h1>
                 <p className="text-white/60 text-sm">
@@ -169,7 +169,7 @@ export default function SignIn({ onClose }: SignInProps) {
 
             {/* Mode Switcher */}
             {(loginConfig.emailEnabled || loginConfig.phoneEnabled) && (
-              <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-8 border border-white/5">
+              <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-6 border border-white/5">
                   {/* Email tab */}
                   {loginConfig.emailEnabled && (
                     <button
@@ -181,7 +181,7 @@ export default function SignIn({ onClose }: SignInProps) {
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
-                      <Mail className="w-4 h-4" />
+                      <Mail className="w-5 h-5 sm:w-4 sm:h-4" />
                       <span className="text-sm font-semibold">{t('login.tab.email')}</span>
                     </button>
                   )}
@@ -197,13 +197,13 @@ export default function SignIn({ onClose }: SignInProps) {
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-5 h-5 sm:w-4 sm:h-4" />
                       <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
                     </button>
                   ) : (
                     <div className="relative flex-1">
                       <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-white/20 cursor-not-allowed select-none">
-                        <Phone className="w-4 h-4" />
+                        <Phone className="w-5 h-5 sm:w-4 sm:h-4" />
                         <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
                       </div>
                       {loginConfig.phoneLabel && (
@@ -216,16 +216,16 @@ export default function SignIn({ onClose }: SignInProps) {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
               <div className="space-y-1">
                 <div className="relative group">
                   <div className={`absolute inset-0 bg-slate-600/20 rounded-2xl blur-md opacity-0 group-focus-within:opacity-100 transition-opacity`}></div>
-                  <div className="relative flex items-center bg-slate-900/80 border border-white/10 rounded-2xl p-4 focus-within:border-blue-500/50 transition-all">
+                  <div className="relative flex items-center bg-slate-900/80 border border-white/10 rounded-2xl p-3.5 sm:p-4 focus-within:border-blue-500/50 transition-all">
                     {isPhoneMode ? (
                       <>
                         <div className="flex items-center gap-2 border-l border-white/10 pl-3">
                           <span className="text-lg">🇸🇦</span>
-                          <ChevronDown className="w-4 h-4 text-white/40" />
+                          <ChevronDown className="w-5 h-5 sm:w-4 sm:h-4 text-white/40" />
                         </div>
                         <input
                           type="tel"
@@ -239,7 +239,7 @@ export default function SignIn({ onClose }: SignInProps) {
                       </>
                     ) : (
                       <>
-                        <Mail className="w-5 h-5 text-white/40 mr-3" />
+                        <Mail className="w-6 h-6 sm:w-5 sm:h-5 text-white/40 mr-3" />
                         <input
                           type="email"
                           value={email}
@@ -262,7 +262,7 @@ export default function SignIn({ onClose }: SignInProps) {
               )}
 
               <div className="flex items-start gap-3 px-1 text-white/40">
-                <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                <Info className="w-5 h-5 sm:w-4 sm:h-4 mt-0.5 shrink-0" />
                 <p className="text-[11px] leading-relaxed">
                   {isPhoneMode ? t('login.note.phone') : t('login.note.email')}
                 </p>
@@ -286,7 +286,7 @@ export default function SignIn({ onClose }: SignInProps) {
                   ) : (
                     <>
                       <span>{t('login.submit')}</span>
-                      <ArrowLeft className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
+                      <ArrowLeft className={`w-5 h-5 sm:w-4 sm:h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
                     </>
                   )}
                 </div>

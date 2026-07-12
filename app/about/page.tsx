@@ -5,9 +5,12 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import {
   ArrowUp,
   ChevronDown,
+  ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
+import { useRouter } from "next/navigation";
 
 const capabilities = [
   {
@@ -34,8 +37,8 @@ const capabilities = [
 function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
   const { settings } = useSettings();
   return (
-    <section className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
-      <div className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-card/[0.028] p-5 shadow-2xl shadow-black/30 [contain:paint] sm:p-4 sm:p-8 lg:p-10">
+    <section className="relative mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-12">
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-card/[0.028] p-4 shadow-2xl shadow-black/30 [contain:paint] sm:p-6 lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.09),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
         {!reduceMotion && (
           <>
@@ -64,25 +67,25 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6"
           >
-            <h2 className="text-3xl font-black leading-[1.25] text-white sm:text-2xl sm:text-4xl lg:text-[3.2rem]">
+            <h2 className="text-xl font-black leading-[1.4] text-white sm:text-2xl lg:text-3xl">
               تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
             </h2>
-            <p className="w-[95vw] sm:max-w-2xl text-base font-bold leading-9 text-white/66">
+            <p className="w-[95vw] sm:max-w-2xl text-xs font-bold leading-relaxed text-white/66">
               هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها بالذكاء الاصطناعي إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة.
             </p>
           </motion.div>
 
-          <div className="relative min-h-[560px] overflow-hidden rounded-[2.25rem] border border-white/10 bg-slate-950/70 p-4 sm:p-6">
+          <div className="relative min-h-[340px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-3 sm:p-5">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:46px_46px] opacity-35" />
             <motion.div
               animate={reduceMotion ? undefined : { rotate: -360 }}
               transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-              className="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/12 [will-change:transform]"
+              className="absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/12 [will-change:transform]"
             />
             <motion.div
               animate={reduceMotion ? undefined : { scale: [1, 1.08, 1], opacity: [0.35, 0.78, 0.35] }}
               transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/2 top-1/2 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-card/[0.025] [will-change:transform,opacity]"
+              className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-card/[0.025] [will-change:transform,opacity]"
             />
             {!reduceMotion && (
               <motion.div
@@ -93,32 +96,32 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
               />
             )}
 
-            <div className="relative flex min-h-[520px] items-center justify-center">
+            <div className="relative flex min-h-[300px] items-center justify-center">
 
               {/* Glowing animated orb background */}
               <motion.div
                 animate={reduceMotion ? undefined : { scale: [1, 1.2, 1], filter: ["blur(20px)", "blur(40px)", "blur(20px)"], opacity: [0.4, 0.7, 0.4] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute h-40 w-40 rounded-full bg-blue-600/40"
+                className="absolute h-28 w-28 rounded-full bg-blue-600/40"
               />
               <motion.div
                 animate={reduceMotion ? undefined : { rotate: 360, scale: [1, 1.05, 1] }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute h-[300px] w-[300px] rounded-full border border-dashed border-blue-400/40"
+                className="absolute h-[200px] w-[200px] rounded-full border border-dashed border-blue-400/40"
               />
               <motion.div
                 animate={reduceMotion ? undefined : { rotate: -360, scale: [1, 1.1, 1] }}
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="absolute h-[420px] w-[420px] rounded-full border border-dotted border-indigo-400/30"
+                className="absolute h-[280px] w-[280px] rounded-full border border-dotted border-indigo-400/30"
               />
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="relative z-10 flex h-52 w-52 items-center justify-center rounded-full border border-white/10 bg-slate-950/80 shadow-[0_0_60px_rgba(59,130,246,0.35)] backdrop-blur-xl"
+                className="relative z-10 flex h-36 w-36 items-center justify-center rounded-full border border-white/10 bg-slate-950/80 shadow-[0_0_40px_rgba(59,130,246,0.35)] backdrop-blur-xl"
               >
-                <img src={settings?.logoWhiteUrl || '/icons/white.png'} alt="شعار المنصة" className="w-32 object-contain" />
+                <img src={settings?.logoWhiteUrl || '/icons/white.png'} alt="شعار المنصة" className="w-20 object-contain" />
               </motion.div>
 
             </div>
@@ -202,7 +205,9 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
 // }
 
 export default function AboutPage() {
+  const router = useRouter();
   const { language } = useLanguage();
+  const { settings } = useSettings();
   const isRtl = language === "ar";
   const reduceMotion = Boolean(useReducedMotion());
   const { scrollYProgress } = useScroll();
@@ -274,7 +279,17 @@ export default function AboutPage() {
       )}
 
       <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-28 sm:px-8 lg:px-12 lg:pt-32">
-        <div className="space-y-8 text-center max-w-4xl mx-auto">
+        <div className="absolute top-24 sm:top-28 z-20">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 text-xs font-black text-white/70 transition-all hover:bg-white/10 hover:text-white backdrop-blur-md shadow-lg"
+          >
+            {isRtl ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+            {isRtl ? "العودة" : "Go Back"}
+          </button>
+        </div>
+        <div className="space-y-8 text-center max-w-4xl mx-auto mt-12">
           <motion.div
             initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -284,12 +299,12 @@ export default function AboutPage() {
             <motion.h1
               animate={reduceMotion ? undefined : { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              className="text-3xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-2xl sm:text-4xl lg:text-5xl drop-shadow-sm"
+              className="text-3xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-4xl lg:text-5xl drop-shadow-sm"
               style={{ backgroundSize: "200% auto" }}
             >
               من نحن
             </motion.h1>
-            <p className="mx-auto max-w-4xl text-base font-bold leading-9 text-white/75 sm:text-lg">
+            <p className="mx-auto max-w-4xl text-sm font-bold leading-loose text-white/75 sm:text-base">
               نحن منصة "الوساطة الرقمية" منصة سعودية متخصصة في قطاع تكنولوجيا العقار انطلقنا لنقدم نموذجاً متطوراً يجمع بين الحلول التقنية المبتكرة والالتزام بالأنظمة، حيث نوفر بيئة رقمية متكاملة لخدمات الوساطة وإدارة العقارات، تهدف إلى تسهيل التعاملات العقارية، وتسريع إجراءاتها، ورفع كفاءتها، بما يضمن حقوق جميع الأطراف ويوفر تجربة مستخدم آمنة وموثوقة.
               <br /><br />
               ونعتمد في أعمالنا على بنية تحتية تقنية متقدمة تحمي البيانات وتضمن سرية المعلومات، مع التزامنا الكامل باللوائح والتشريعات التي تنظم القطاع العقاري في المملكة العربية السعودية، لنكون الشريك الرقمي الموثوق في تطوير التعاملات العقارية وتنظيمها.
@@ -330,9 +345,9 @@ export default function AboutPage() {
 
 
       <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
-        <div className="mb-12 max-w-4xl space-y-4">
-          <h2 className="text-3xl font-black leading-[1.35] text-white sm:text-3xl md:text-5xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
-          <p className="text-base font-bold leading-9 text-white/65">
+        <div className="mb-12 space-y-4">
+          <h2 className="text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
+          <p className="text-xs sm:text-sm font-bold leading-loose text-white/65 lg:whitespace-nowrap">
             صُممت المنصة لتكامل أقسامها وترابطها، بما يضمن ربط كافة الإجراءات والعمليات بسياقها التنظيمي داخل النظام، لتوفير تجربة شاملة تمكّن المستفيدين عبر الأقسام التالية:
           </p>
         </div>
@@ -353,8 +368,8 @@ export default function AboutPage() {
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white">{item.title}</h3>
-              <p className="mt-4 text-sm font-bold leading-8 text-white/65">{item.text}</p>
+              <h3 className="text-lg sm:text-xl font-black text-white">{item.title}</h3>
+              <p className="mt-4 text-xs font-bold leading-relaxed text-white/65">{item.text}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {item.points.map((point) => (
                   <span key={point} className="rounded-full bg-card/[0.055] px-3 py-1.5 text-[10px] font-black text-white/55">
@@ -441,10 +456,29 @@ export default function AboutPage() {
           className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
-          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
-          <p className="relative z-10 mx-auto mt-6 w-[95vw] sm:max-w-3xl text-base font-bold leading-9 text-white/75">
+          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
+          <p className="relative z-10 mx-auto mt-6 text-xs sm:text-sm font-bold leading-loose text-white/75 lg:whitespace-nowrap">
             تجمع الوساطة الرقمية الأدوات التي يحتاجها المستفيد ومقدم الخدمة في منصة واحدة؛ لتتحول العملية العقارية من صفحات منفصلة إلى تجربة تشغيل واضحة ومتكاملة.
           </p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative z-10 mx-auto mt-10 flex justify-center relative group"
+          >
+            <motion.div
+              animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 mx-auto w-32 h-32 bg-blue-500/20 blur-[40px] rounded-full"
+            />
+            <motion.img 
+              src={settings?.logoWhiteUrl || '/icons/white.png'} 
+              alt="شعار المنصة" 
+              className="h-24 sm:h-32 w-auto object-contain relative z-10" 
+              animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.div>
         </motion.div>
       </section>
     </main>

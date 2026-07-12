@@ -73,8 +73,8 @@ export default function ShareOpinionPage() {
       {/* Hero */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-12 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center mb-6 shadow-md">
-            <MessageSquareHeart className="w-6 h-6" />
+          <div className="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center mb-6 shadow-md">
+            <MessageSquareHeart className="w-4.5 h-4.5" />
           </div>
           <h1 className="text-4xl sm:text-3xl md:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">
             شاركنا رأيك

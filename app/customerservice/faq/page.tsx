@@ -33,8 +33,7 @@ export default function CustomerServiceFaqPage() {
   const [faqCategories, setFaqCategories] = useState<CustomerServiceFaqCategory[] | null>(null);
   const [faqsLoading, setFaqsLoading] = useState(false);
   const [faqsError, setFaqsError] = useState<string | null>(null);
-const handleGoBack = () => {
-    const handleBack = () => {
+  const handleGoBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
       return;
@@ -245,5 +244,4 @@ const handleGoBack = () => {
       </div>
     </div>
   );
-}
 }

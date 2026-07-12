@@ -13,7 +13,8 @@ import {
   Info,
   HelpCircle,
   Send,
-  ArrowUp
+  ArrowUp,
+  MessageSquareHeart
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -61,7 +62,7 @@ export default function Footer() {
 
   const supportLinks = [
     { label: "الأسئلة الشائعة", href: "/customerservice/faq", icon: HelpCircle },
-    { label: "شاركنا رأيك", href: "/share-opinion", icon: Send },
+    { label: "شاركنا رأيك", href: "/share-opinion", icon: MessageSquareHeart },
     { label: "تواصل معنا", href: "/customerservice/contact", icon: MessageCircle },
   ];
 
@@ -90,8 +91,27 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16 mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-16"
         >
+          {/* Brand */}
+          <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1">
+            <Link href="/" className="inline-block mb-2 relative group">
+              <motion.div
+                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full"
+              />
+              <motion.img 
+                src={settings?.logoWhiteUrl || '/icons/white.png'} 
+                alt="شعار المنصة" 
+                className="h-32 sm:h-40 w-auto object-contain relative z-10" 
+                animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </Link>
+          
+          </motion.div>
+
           {/* Platform */}
           <motion.div variants={itemVariants} className="space-y-6">
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
@@ -152,11 +172,14 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="border-t border-white/10 pt-8 flex items-center justify-center"
+          className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
         >
-          <p className="text-center text-slate-500 text-xs font-medium">
-            كافة الحقوق محفوظة لمنصة الوساطة الرقمية 2026
+          <p className="text-center md:text-right text-slate-500 text-sm font-medium">
+            كافة الحقوق محفوظة لمنصة الوساطة الرقمية © 2026
           </p>
+          <div className="flex items-center gap-4 text-slate-400 text-sm font-bold">
+            <span>صنع بشغف لخدمة القطاع العقاري</span>
+          </div>
         </motion.div>
       </div>
     </footer>

@@ -149,6 +149,78 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
         }
     }, [invoices]);
 
+    const StatusBadge = ({ invoice }: { invoice: any }) => (
+        <span className={`px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+            invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
+            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+            : invoice.isUnderReview
+                ? 'bg-muted text-slate-500 border border'
+            : invoice.isPendingDecision && (invoice.status !== t('wallet.paid') && invoice.status !== 'مدفوع' && invoice.status !== 'تم الدفع')
+                ? 'bg-amber-50 text-amber-600 border border-amber-100'
+                : invoice.status === t('wallet.paid') || invoice.status === 'تم الدفع' || invoice.status === 'مدفوع'
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                    : 'bg-rose-50 text-rose-600 border border-rose-100'
+        }`}>
+            {invoice.status}
+        </span>
+    );
+
+    const ActionButtons = ({ invoice }: { invoice: any }) => (
+        <div className='flex justify-end gap-2 transition-opacity flex-wrap sm:flex-nowrap'>
+            <Button 
+                size='sm' 
+                variant='ghost' 
+                className='text-slate-500 hover:text-slate-900 font-bold'
+                onClick={() => handleViewInvoice(invoice)}
+            >
+                {t('common.view')}
+            </Button>
+            {invoice.isSubscriptionActive ? (
+                <span className="text-[10px] font-bold text-emerald-600 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100">نشط</span>
+            ) : invoice.isUnderReview ? (
+                <span className="text-[10px] font-bold text-slate-400 px-3 py-1.5 bg-muted rounded-lg border border">بانتظار التسعير</span>
+            ) : (invoice.isPendingDecision && invoice.status !== t('wallet.paid') && invoice.status !== 'دفع') ? (
+                <div className="flex gap-2">
+                    <Button 
+                        size='sm' 
+                        className='bg-emerald-600 text-white hover:bg-emerald-700 font-bold rounded-lg'
+                        onClick={(e) => { e.stopPropagation(); handleDecision(invoice.id, 'accepted', {
+                            ...invoice,
+                            amount: invoice.amount
+                        }); }}
+                        disabled={processingId === invoice.id}
+                    >
+                        {t('legal.decision.accept')}
+                    </Button>
+                    {invoice.originalDecision !== 'rejected' && (
+                        <Button 
+                            size='sm' 
+                            className='bg-rose-100 text-rose-700 hover:bg-rose-200 font-bold rounded-lg'
+                            onClick={(e) => { e.stopPropagation(); handleDecision(invoice.id, 'rejected'); }}
+                            disabled={processingId === invoice.id}
+                        >
+                            {t('legal.decision.reject')}
+                        </Button>
+                    )}
+                </div>
+            ) : (
+                (invoice.status !== t('wallet.paid') && invoice.status !== 'مدفوع') && (
+                    <Button 
+                        size='sm' 
+                        className='bg-slate-900 text-white hover:bg-slate-800 font-bold rounded-lg'
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setPaymentInvoice(invoice);
+                            setIsPaymentModalOpen(true);
+                        }}
+                    >
+                        {invoice.isSubscription ? 'دفع الاشتراك' : t('wallet.pay')}
+                    </Button>
+                )
+            )}
+        </div>
+    );
+
     return (
         <div className='flex flex-col gap-6 w-full'>
             {/* Balance Card - Keeping it here or moving to a separate component? Assuming Invoices section includes balance for now based on layout */}
@@ -217,7 +289,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                             <div className='space-y-1 pl-4 pb-2'>
                                 <div className='flex items-center gap-2 mb-2'>
                                     <div className='p-2 bg-white/10 rounded-xl backdrop-blur-md border border-white/10'>
-                                        <Wallet className='h-5 w-5 text-white' />
+                                        <Wallet className='h-8 w-8 sm:h-5 sm:w-5 text-white' />
                                     </div>
                                     <span className='text-slate-400 font-medium text-sm tracking-wide'>{t('wallet.balance.label')}</span>
                                 </div>
@@ -236,7 +308,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Invoices Table */}
             <Card className='!bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
-               <div className='p-8'>
+               <div className='p-4 sm:p-8'>
                     <div className='flex items-center justify-between mb-8'>
                         <div>
                             <h2 className='text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.invoices.title')}</h2>
@@ -246,101 +318,74 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
             
                     </div>
 
-                    <div className='rounded-2xl border border-white/30 overflow-hidden'>
+                    <div className='hidden md:block rounded-2xl border border-white/30 overflow-hidden'>
                         <div className="overflow-x-auto w-full">
 <Table>
                             <TableHeader className='bg-slate-900/5'>
                                 <TableRow>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.date')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.amount')}</TableHead>
-                                    <TableHead className='text-right py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.status')}</TableHead>
-                                    <TableHead className='text-left py-5 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.commission.actions')}</TableHead>
+                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
+                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
+                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.date')}</TableHead>
+                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.amount')}</TableHead>
+                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.status')}</TableHead>
+                                    <TableHead className='text-left py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.commission.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice, index) => (
                                     <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
-                                        <TableCell className='font-bold text-slate-700 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
-                                        <TableCell className='font-medium text-slate-600 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
-                                        <TableCell className='text-slate-500 py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
-                                        <TableCell className='font-black text-slate-900 py-4 whitespace-nowrap max-w-[200px] truncate'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
-                                        <TableCell className="py-4 text-center whitespace-nowrap max-w-[200px] truncate">
-                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                                                invoice.isSubscriptionActive || invoice.status === t('wallet.paid') || invoice.status === 'مدفوع' 
-                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
-                                                : invoice.isUnderReview
-                                                    ? 'bg-muted text-slate-500 border border'
-                                                : invoice.isPendingDecision && (invoice.status !== t('wallet.paid') && invoice.status !== 'مدفوع' && invoice.status !== 'تم الدفع')
-                                                    ? 'bg-amber-50 text-amber-600 border border-amber-100'
-                                                    : invoice.status === t('wallet.paid') || invoice.status === 'تم الدفع' || invoice.status === 'مدفوع'
-                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                                                        : 'bg-rose-50 text-rose-600 border border-rose-100'
-                                            }`}>
-                                                {invoice.status}
-                                            </span>
+                                        <TableCell className='font-bold text-slate-700 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
+                                        <TableCell className='font-medium text-slate-600 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
+                                        <TableCell className='text-slate-500 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
+                                        <TableCell className='font-black text-slate-900 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
+                                        <TableCell className="py-3 sm:py-4 px-2 sm:px-4 text-center whitespace-nowrap max-w-[200px] truncate">
+                                            <StatusBadge invoice={invoice} />
                                         </TableCell>
-                                        <TableCell className='py-4'>
-                                            <div className='flex justify-end gap-2 transition-opacity'>
-                                                <Button 
-                                                    size='sm' 
-                                                    variant='ghost' 
-                                                    className='text-slate-500 hover:text-slate-900 font-bold'
-                                                    onClick={() => handleViewInvoice(invoice)}
-                                                >
-                                                    {t('common.view')}
-                                                </Button>
-                                                {invoice.isSubscriptionActive ? (
-                                                    <span className="text-[10px] font-bold text-emerald-600 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100">نشط</span>
-                                                ) : invoice.isUnderReview ? (
-                                                    <span className="text-[10px] font-bold text-slate-400 px-3 py-1.5 bg-muted rounded-lg border border">بانتظار التسعير</span>
-                                                ) : (invoice.isPendingDecision && invoice.status !== t('wallet.paid') && invoice.status !== 'دفع') ? (
-                                                    <div className="flex gap-2">
-                                                        <Button 
-                                                            size='sm' 
-                                                            className='bg-emerald-600 text-white hover:bg-emerald-700 font-bold rounded-lg'
-                                                            onClick={(e) => { e.stopPropagation(); handleDecision(invoice.id, 'accepted', {
-                                                                ...invoice,
-                                                                amount: invoice.amount // Passing amount for modal price
-                                                            }); }}
-                                                            disabled={processingId === invoice.id}
-                                                        >
-                                                            {t('legal.decision.accept')}
-                                                        </Button>
-                                                        {invoice.originalDecision !== 'rejected' && (
-                                                            <Button 
-                                                                size='sm' 
-                                                                className='bg-rose-100 text-rose-700 hover:bg-rose-200 font-bold rounded-lg'
-                                                                onClick={(e) => { e.stopPropagation(); handleDecision(invoice.id, 'rejected'); }}
-                                                                disabled={processingId === invoice.id}
-                                                            >
-                                                                {t('legal.decision.reject')}
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    (invoice.status !== t('wallet.paid') && invoice.status !== 'مدفوع') && (
-                                                        <Button 
-                                                            size='sm' 
-                                                            className='bg-slate-900 text-white hover:bg-slate-800 font-bold rounded-lg'
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setPaymentInvoice(invoice);
-                                                                setIsPaymentModalOpen(true);
-                                                            }}
-                                                        >
-                                                            {invoice.isSubscription ? 'دفع الاشتراك' : t('wallet.pay')}
-                                                        </Button>
-                                                    )
-                                                )}
-                                            </div>
+                                        <TableCell className='py-3 sm:py-4 px-2 sm:px-4'>
+                                            <ActionButtons invoice={invoice} />
                                         </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
 </div>
+                    </div>
+
+                    {/* Mobile invoice cards */}
+                    <div className='md:hidden mt-4 space-y-3'>
+                        {invoices.map((invoice, index) => (
+                            <div key={index} className='bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-4 shadow-sm'>
+                                <div className='flex items-start justify-between gap-3 mb-3'>
+                                    <div className='min-w-0'>
+                                        <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.table.invoiceNo')}</p>
+                                        <p className='font-bold text-slate-900 truncate'>{invoice.invoice}</p>
+                                    </div>
+                                    <StatusBadge invoice={invoice} />
+                                </div>
+                                <div className='grid grid-cols-2 gap-3 mb-3'>
+                                    <div className='min-w-0'>
+                                        <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.table.service')}</p>
+                                        <p className='text-sm font-medium text-slate-700 truncate'>{invoice.service}</p>
+                                    </div>
+                                    <div className='min-w-0'>
+                                        <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.table.date')}</p>
+                                        <p className='text-sm text-slate-600'>{invoice.date}</p>
+                                    </div>
+                                    <div className='min-w-0'>
+                                        <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.table.amount')}</p>
+                                        <p className='text-sm font-black text-slate-900'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></p>
+                                    </div>
+                                </div>
+                                <div className='flex justify-end'>
+                                    <ActionButtons invoice={invoice} />
+                                </div>
+                            </div>
+                        ))}
+                        {invoices.length === 0 && (
+                            <div className='rounded-2xl bg-white/30 border border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400'>
+                                {t('common.noData')}
+                            </div>
+                        )}
                     </div>
                 </div> 
             </Card>

@@ -928,7 +928,7 @@ export default function OfferDetailsPage() {
 
     const highlights = [
       { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: SaudiRiyalIcon },
-      { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: MeterIcon },
+      { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: Ruler },
       { key: 'type', label: t('offer.type'), value: offer.propertyType, icon: Building },
       { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
     ];
@@ -950,7 +950,7 @@ export default function OfferDetailsPage() {
               {highlights.map((item) => (
                 <div key={item.key} className="rounded-2xl border border bg-muted px-4 py-5 text-center">
                   <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-card shadow-sm">
-                    {item.key === 'area' ? <MeterIcon className="w-10 h-10 text-slate-600" /> : <item.icon className="w-5 h-5 text-slate-600" />}
+                    <item.icon className="w-5 h-5 text-slate-600" />
                   </div>
                   <div className="text-lg font-black text-slate-900 break-words">{item.value}</div>
                   <p className="mt-1 text-xs font-bold text-slate-500">{item.label}</p>
