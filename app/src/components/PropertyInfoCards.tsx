@@ -205,20 +205,20 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               transition-all duration-500
             "
             onClick={() => {
-              if (settings.sectionFlags.marketing === 'hidden' || settings.sectionFlags.marketing === 'closed') return;
+              if (settings.sectionFlags.offers === 'hidden' || settings.sectionFlags.offers === 'closed') return;
               handleCardClick("ads");
             }}
           >
-            {settings.sectionFlags.marketing === 'hidden' ? null : settings.sectionFlags.marketing === 'closed' ? (
+            {settings.sectionFlags.offers === 'hidden' ? null : settings.sectionFlags.offers === 'closed' ? (
               <div className="absolute inset-0 z-50">
                 <ComingSoonInline 
                   sectionName={t('cards.dealsAds')} 
-                  message={settings.sectionMessages.marketing} 
+                  message={settings.sectionMessages.offers} 
                 />
               </div>
             ) : null}
             {/* Soon Badge */}
-            {settings.sectionFlags.marketing === 'hidden' ? null : settings.sectionFlags.marketing === 'closed' && (
+            {settings.sectionFlags.offers === 'hidden' ? null : settings.sectionFlags.offers === 'closed' && (
               <div
                 className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
                 style={{

@@ -2087,6 +2087,14 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         { id: 'show_quick_actions', label: 'إظهار قسم الإجراءات السريعة', type: 'uiFlag', subcategoryId: 'quick_access_main' },
         { id: 'quick_actions', label: 'الوصول السريع (التفاصيل)', type: 'detailsPart', subcategoryId: 'quick_access_main' },
 
+        { id: 'show_quickaction_subscriptions', label: 'إظهار أيقونة الاشتراكات والباقات', type: 'uiFlag', subcategoryId: 'quick_subscriptions' },
+        { id: 'subscriptions', label: 'الاشتراكات (الواجهة)', type: 'section', subcategoryId: 'quick_subscriptions' },
+        { id: 'subscriptions', label: 'الاشتراكات (لوحة التحكم)', type: 'module', subcategoryId: 'quick_subscriptions' },
+
+        { id: 'show_quickaction_offers', label: 'إظهار أيقونة العروض السريعة', type: 'uiFlag', subcategoryId: 'quick_offers' },
+        { id: 'offers', label: 'العروض العقارية (الواجهة)', type: 'section', subcategoryId: 'quick_offers' },
+        { id: 'offers', label: 'العروض (لوحة التحكم)', type: 'module', subcategoryId: 'quick_offers' },
+
         { id: 'show_quickaction_wallet', label: 'إظهار أيقونة المحفظة', type: 'uiFlag', subcategoryId: 'quick_wallet' },
         { id: 'wallet', label: 'المحفظة المالية (الواجهة)', type: 'section', subcategoryId: 'quick_wallet' },
         { id: 'wallet', label: 'المحفظة (لوحة التحكم)', type: 'module', subcategoryId: 'quick_wallet' },
@@ -2097,7 +2105,8 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
         { id: 'show_quickaction_services', label: 'إظهار أيقونة الخدمات', type: 'uiFlag', subcategoryId: 'quick_services' },
         { id: 'services', label: 'الخدمات (الواجهة)', type: 'section', subcategoryId: 'quick_services' },
-        { id: 'service_requests', label: 'طلبات الخدمات', type: 'module', subcategoryId: 'quick_services' },
+        { id: 'services_marketing', label: 'الخدمات: خدمات التسويق', type: 'module', subcategoryId: 'quick_services' },
+        { id: 'services_legal', label: 'الخدمات: الخدمات القانونية', type: 'module', subcategoryId: 'quick_services' },
         { id: 'services_postPurchase', label: 'الخدمات: ما بعد الشراء', type: 'module', subcategoryId: 'quick_services' },
         { id: 'services_construction', label: 'الخدمات: البناء والمقاولات', type: 'module', subcategoryId: 'quick_services' },
         { id: 'services_other', label: 'الخدمات: أخرى', type: 'module', subcategoryId: 'quick_services' },

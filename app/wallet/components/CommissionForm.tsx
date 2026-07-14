@@ -480,20 +480,15 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.propertyData')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
-                             <div>
+                            <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.propertyType')}</label>
-                                <Select
+                                <Input
+                                    type="text"
                                     value={commissionForm.propertyType}
-                                    onValueChange={(value) => setCommissionForm(prev => ({ ...prev, propertyType: value }))}
-                                >
-                                    <SelectTrigger className="w-full text-right">
-                                        <SelectValue placeholder={t('wallet.commission.select')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="سكني">{t('wallet.commission.type.residential')}</SelectItem>
-                                        <SelectItem value="تجاري">{t('wallet.commission.type.commercial')}</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    onChange={(e) => setCommissionForm(prev => ({ ...prev, propertyType: e.target.value }))}
+                                    placeholder={t('wallet.commission.placeholder.typeProperty') || t('wallet.commission.propertyType')}
+                                    className="text-right"
+                                />
                             </div>
                             <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.city')}</label>

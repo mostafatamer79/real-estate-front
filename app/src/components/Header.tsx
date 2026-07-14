@@ -324,11 +324,18 @@ export default function Header() {
 
       {/* Mobile Navigation Drawer */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-3 sm:p-6 gap-3 md:gap-6 z-40 animate-in slide-in-from-top duration-300">
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 top-16 bg-black/40 z-30"
+            onClick={() => setIsMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-4 gap-3 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in slide-in-from-top duration-300">
              {settings.sectionFlags.customerservice !== 'hidden' && (
                <Link
                   href="/customerservice"
-                  className={`flex items-center gap-3 text-white/80 text-lg font-medium ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                  className={`flex items-center gap-3 text-white/80 text-base sm:text-lg font-medium ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                    <Headset className="w-5 h-5" />
@@ -339,7 +346,7 @@ export default function Header() {
 
              <button
                 onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
-                className="flex items-center gap-3 text-white/80 text-lg font-medium uppercase"
+                className="flex items-center gap-3 text-white/80 text-base sm:text-lg font-medium uppercase"
              >
                 <Languages className="w-5 h-5" />
                 {language === 'ar' ? 'English' : 'العربية'}
@@ -349,7 +356,7 @@ export default function Header() {
                <>
                  <Link
                     href="/profile"
-                    className="flex items-center gap-3 text-white text-lg font-medium"
+                    className="flex items-center gap-3 text-white text-base sm:text-lg font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="w-5 h-5" />
@@ -358,7 +365,7 @@ export default function Header() {
 
                   <Link
                     href="/chat"
-                    className="flex items-center gap-3 text-white text-lg font-medium relative"
+                    className="flex items-center gap-3 text-white text-base sm:text-lg font-medium relative"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <div className="relative">
@@ -374,7 +381,7 @@ export default function Header() {
 
                   <Link
                     href="/services/my-requests"
-                    className="flex items-center gap-3 text-white text-lg font-medium"
+                    className="flex items-center gap-3 text-white text-base sm:text-lg font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Image
@@ -391,7 +398,7 @@ export default function Header() {
                     <>
                       <Link
                         href="/admin/dashboard"
-                        className="flex items-center gap-3 text-emerald-400 text-lg font-medium"
+                        className="flex items-center gap-3 text-emerald-400 text-base sm:text-lg font-medium"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -399,7 +406,7 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/internal"
-                        className="flex items-center gap-3 text-blue-400 text-lg font-medium"
+                        className="flex items-center gap-3 text-blue-400 text-base sm:text-lg font-medium"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -412,7 +419,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/marketing"
-                        className={`flex items-center gap-3 text-orange-400 text-lg font-medium ${settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 text-orange-400 text-base sm:text-lg font-medium ${settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -430,7 +437,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/disputes"
-                        className={`flex items-center gap-3 text-blue-400 text-lg font-medium ${settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 text-blue-400 text-base sm:text-lg font-medium ${settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -448,7 +455,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/financial"
-                        className={`flex items-center gap-3 text-emerald-400 text-lg font-medium ${settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 text-emerald-400 text-base sm:text-lg font-medium ${settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -466,7 +473,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/buildingmanagement"
-                        className={`flex items-center gap-3 text-purple-400 text-lg font-medium ${settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 text-purple-400 text-base sm:text-lg font-medium ${settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -482,7 +489,7 @@ export default function Header() {
 
                   <button
                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                    className="flex items-center gap-3 text-red-400 text-lg font-medium mt-4"
+                    className="flex items-center gap-3 text-red-400 text-base sm:text-lg font-medium mt-4"
                   >
                     <LogOut className="w-5 h-5" />
                     {t('header.logout')}
@@ -491,13 +498,13 @@ export default function Header() {
              ) : (
                 <button
                   onClick={() => { router.push('/login'); setIsMenuOpen(false); }}
-                  className="w-full py-3 bg-slate-600 text-white text-lg font-semibold rounded-xl shadow-lg"
+                  className="w-full py-3 bg-slate-600 text-white text-base sm:text-lg font-semibold rounded-xl shadow-lg"
                 >
                   {t('header.login')}
                 </button>
              )}
         </div>
-      )}
+      </>)}
       
       <TermsPrivacyModal 
         isOpen={isTermsModalOpen}

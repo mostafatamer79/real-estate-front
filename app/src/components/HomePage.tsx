@@ -63,8 +63,8 @@ export default function HomePage() {
               alt={settings.appName}
               width={480}
               height={Number(settings.splashLogoHeight || 120)}
-              className="object-contain w-auto"
-              style={{ height: `${settings.splashLogoHeight || 120}px` }}
+              className="object-contain w-auto h-24 sm:h-32 md:h-40"
+              style={settings.splashLogoHeight ? { height: `${settings.splashLogoHeight}px` } : undefined}
               priority
             />
           )}

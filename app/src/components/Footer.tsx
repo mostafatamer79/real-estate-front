@@ -85,7 +85,7 @@ export default function Footer() {
         </button>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -172,13 +172,13 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
+          className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4"
         >
           <p className="text-center md:text-right text-slate-500 text-sm font-medium">
             كافة الحقوق محفوظة لمنصة الوساطة الرقمية © 2026
           </p>
-          <div className="flex items-center gap-4 text-slate-400 text-sm font-bold">
-            <span>صنع بشغف لخدمة القطاع العقاري</span>
+          <div className="flex items-center gap-2 sm:gap-4 text-slate-500 text-sm font-medium">
+            <span className="text-sm">صنع بشغف لخدمة القطاع العقاري</span>
           </div>
         </motion.div>
       </div>

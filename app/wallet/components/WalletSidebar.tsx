@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
+import { useSettings } from '@/context/SettingsContext'
 import { WalletTab } from './types'
 
 interface WalletSidebarProps {
@@ -13,36 +14,42 @@ interface WalletSidebarProps {
 const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange }) => {
     const router = useRouter()
     const { t } = useLanguage()
+    const { settings } = useSettings()
 
     const leftSectionItems: {
         icon: string;
         label: string;
         description: string;
         id: WalletTab;
+        flagKey: string;
     }[] = [
         {
             icon: '/icons/الفواتير.png',
             label: t('wallet.invoices') || 'الفواتير',
             description: t('wallet.desc.invoices') || 'إدارة الفواتير والمدفوعات',
-            id: 'invoices' as WalletTab
+            id: 'invoices' as WalletTab,
+            flagKey: 'wallet_invoices'
         },
         {
             icon: '/icons/العمولات.png',
             label: t('wallet.commission') || 'العمولات',
             description: t('wallet.desc.commission') || 'إدارة رسوم السعي',
-            id: 'commission' as WalletTab
+            id: 'commission' as WalletTab,
+            flagKey: 'wallet_commissions'
         },
         {
             icon: '/icons/files-documents.png',
             label: 'الملفات',
             description: t('wallet.desc.files') || 'المستندات والعقود',
-            id: 'files' as WalletTab
+            id: 'files' as WalletTab,
+            flagKey: 'wallet_files'
         },
         {
             icon: '/icons/الاستثمارات.png',
             label: t('wallet.invest') || 'الاستثمارات',
             description: t('wallet.desc.invest') || 'المحفظة الاستثمارية',
-            id: 'invest' as WalletTab
+            id: 'invest' as WalletTab,
+            flagKey: 'wallet_investments'
         }
     ];
 
@@ -75,23 +82,29 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                     <div className='flex flex-col gap-3.5 flex-1 overflow-y-auto pr-1 hide-scrollbar'>
                         {leftSectionItems.map((item, index) => {
                             const isActive = activeTab === item.id;
+                            const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
+                            const isClosed = settings.moduleFlags[item.flagKey] === 'disabled';
+                            
+                            if (isClosed) return null;
+
                             return (
                             <motion.button
                                 key={index}
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 + (index * 0.1) }}
-                                whileHover={{ scale: 1.015, backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
-                                whileTap={{ scale: 0.985 }}
-                                onClick={() => onTabChange(item.id)}
+                                whileHover={!isSoon ? { scale: 1.015, backgroundColor: 'rgba(255, 255, 255, 0.25)' } : {}}
+                                whileTap={!isSoon ? { scale: 0.985 } : {}}
+                                onClick={() => !isSoon && onTabChange(item.id)}
                                 className={`
                                     group relative p-3 border rounded-2xl 
-                                    shadow-sm hover:shadow-md text-slate-900
+                                    shadow-sm text-slate-900
                                     transition-all duration-300 flex items-center gap-3 text-right
                                     ${isActive 
                                         ? 'bg-white/40 border-slate-950/30 ring-1 ring-slate-950/5' 
-                                        : 'bg-white/15 border-white/20 hover:border-slate-950/20'
+                                        : 'bg-white/15 border-white/20'
                                     }
+                                    ${isSoon ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:border-slate-950/20 hover:shadow-md cursor-pointer'}
                                 `}
                             >
                                 {/* Icon Container */}
@@ -107,9 +120,9 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 <div className='flex-1 space-y-0.5 min-w-0'>
                                     <div className='flex items-center gap-2'>
                                         <h3 className='font-black text-sm tracking-tight text-slate-900 truncate'>{item.label}</h3>
-                                        {item.id === 'invest' && (
+                                        {isSoon && (
                                             <span className='px-1 py-0.5 bg-orange-50 text-orange-600 text-[8px] font-black rounded-md border border-orange-100 uppercase tracking-tighter shrink-0'>
-                                                {t('common.soon')}
+                                                {t('common.soon') || 'قريباً'}
                                             </span>
                                         )}
                                     </div>
@@ -131,11 +144,16 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 <div className='flex items-end justify-around py-2 px-1 sm:px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
+                        const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
+                        const isClosed = settings.moduleFlags[item.flagKey] === 'disabled';
+                        
+                        if (isClosed) return null;
+
                         return (
                             <button
                                 key={index}
-                                onClick={() => onTabChange(item.id)}
-                                className='flex flex-col items-center justify-end gap-1.5 flex-1 pb-1.5 pt-2 transition-all min-w-0'
+                                onClick={() => !isSoon && onTabChange(item.id)}
+                                className={`flex flex-col items-center justify-end gap-1.5 flex-1 pb-1.5 pt-2 transition-all min-w-0 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 <div
                                     className='flex items-center justify-center transition-all duration-300'
@@ -162,7 +180,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                     />
                                 </div>
                                 <span
-                                    className='leading-none text-center font-black transition-all duration-300 truncate w-full px-1'
+                                    className='leading-none text-center font-black transition-all duration-300 truncate w-full px-1 relative'
                                     style={{
                                         fontSize: '12px',
                                         color: isActive ? '#0f172a' : '#334155',

@@ -584,7 +584,7 @@ export default function AdminCustomerServicePage() {
                               <div className="mt-1 text-slate-400 cursor-grab active:cursor-grabbing">
                                 <GripVertical className="w-4 h-4" />
                               </div>
-                              <button type="button" className="flex-1 text-left" onClick={() => setSelectedCategoryId(c.id)}>
+                              <button type="button" className="flex-1 text-start" onClick={() => setSelectedCategoryId(c.id)}>
                                 <div className="flex items-center gap-2">
                                   <div className="min-w-0 flex-1">
                                     <div 

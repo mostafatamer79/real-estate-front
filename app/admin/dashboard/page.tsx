@@ -3,11 +3,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Building2, CreditCard, FileText, Headphones, LineChart, LockKeyhole, MapPinned, Megaphone, Receipt, Scale, Settings, ShoppingBag, Trash2, Users, Wrench } from "lucide-react";
+import { Activity, AlertTriangle, BarChart3, Building2, CreditCard, FileText, Headphones, LineChart, LockKeyhole, MapPinned, Megaphone, Receipt, Scale, Settings, ShoppingBag, Trash2, Users, Wrench } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { arSA } from "date-fns/locale";
 import api, { activitiesApi, financialApi, usersApi } from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
+import { toast } from "sonner";
 
 const isClosedUser = (user: any) => user?.isActive === false || user?.status === "closed";
 const isDeletedUser = (user: any) => Boolean(user?.deletedAt || user?.isDeleted || user?.status === "deleted");
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [serviceRequests, setServiceRequests] = useState<any[]>([]);
+  const [isWiping, setIsWiping] = useState(false);
   const isRtl = language === "ar";
   const dashboardNavigation = [
     { href: "/admin/users", label: isRtl ? "المستخدمين" : "Users", icon: Users },
@@ -170,6 +172,26 @@ export default function AdminDashboard() {
     return activity.title || activity.titleAr || activity.type || "Activity";
   };
 
+  const handleWipe = async () => {
+    const confirmed = window.confirm(
+      isRtl
+        ? "تحذير: سيتم حذف جميع بيانات المنصة (مستخدمين، عقارات، طلبات، إلخ) ويبقى حساب الأدمن فقط. هل أنت متأكد؟"
+        : "Warning: This will delete all platform data (users, properties, requests, etc.) and keep only admin accounts. Are you sure?"
+    );
+    if (!confirmed) return;
+
+    setIsWiping(true);
+    try {
+      const res = await api.post("/wipe/all-data");
+      toast?.success?.(res.data?.message || (isRtl ? "تم حذف البيانات بنجاح" : "Data wiped successfully"));
+      window.location.reload();
+    } catch (err: any) {
+      toast?.error?.(err?.response?.data?.message || (isRtl ? "فشل حذف البيانات" : "Failed to wipe data"));
+    } finally {
+      setIsWiping(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-8 animate-pulse">
@@ -305,6 +327,46 @@ export default function AdminDashboard() {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="rounded-2xl border border-red-200 bg-red-50/50 p-5 shadow-sm">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-100 text-red-600">
+            <AlertTriangle className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <h2 className="text-base font-black text-red-900">{isRtl ? "منطقة الخطر" : "Danger Zone"}</h2>
+            <p className="text-[11px] font-bold text-red-600/80">
+              {isRtl ? "عمليات لا يمكن التراجع عنها. استخدمها بحذر." : "Irreversible actions. Use with caution."}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-red-200 bg-white p-4">
+          <div>
+            <p className="text-sm font-black text-slate-950">{isRtl ? "حذف جميع بيانات المنصة" : "Wipe all platform data"}</p>
+            <p className="text-[11px] font-bold text-slate-400">
+              {isRtl ? "يحذف كل شيء ويبقي حساب الأدمن فقط. مثالي قبل نشر نسخة تجريبية." : "Deletes everything and keeps only admin accounts. Ideal before publishing a demo."}
+            </p>
+          </div>
+          <button
+            onClick={handleWipe}
+            disabled={isWiping}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-black text-white shadow-sm transition-all hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed shrink-0"
+          >
+            {isWiping ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                {isRtl ? "جارٍ الحذف..." : "Wiping..."}
+              </>
+            ) : (
+              <>
+                <Trash2 className="h-4 w-4" />
+                {isRtl ? "حذف البيانات" : "Wipe Data"}
+              </>
+            )}
+          </button>
+        </div>
       </section>
     </div>
   );
