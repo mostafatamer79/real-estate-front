@@ -180,7 +180,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                       transition-all duration-200 text-sm
                       flex items-center justify-center gap-2
                     "
-                    onClick={(e) => { e.stopPropagation(); handleCardClick("operations"); }}
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (settings.sectionFlags.wallet === 'hidden' || settings.sectionFlags.wallet === 'closed') return;
+                      handleCardClick("operations"); 
+                    }}
                   >
                     {t('cards.viewAll')}
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -303,7 +307,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                       transition-all duration-200 text-sm
                       flex items-center justify-center gap-2
                     "
-                    onClick={(e) => { e.stopPropagation(); handleCardClick("ads"); }}
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (settings.sectionFlags.offers === 'hidden' || settings.sectionFlags.offers === 'closed') return;
+                      handleCardClick("ads"); 
+                    }}
                   >
                     {t('cards.viewAll')}
                     <ExternalLink className="h-3.5 w-3.5" />

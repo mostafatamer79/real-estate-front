@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { WalletTab, Commission, Invoice } from './components/types'
 import WalletSidebar from './components/WalletSidebar'
 import CommissionForm from './components/CommissionForm'
@@ -8,6 +8,7 @@ import InvoicesSection from './components/InvoicesSection'
 import FilesSection from './components/FilesSection'
 import InvestmentSection from './components/InvestmentSection'
 import { useLanguage } from '@/context/LanguageContext'
+import { useSettings } from '@/context/SettingsContext'
 import { financialApi } from '@/lib/api'
 import { apiClient } from '@/lib/client'
 import { useSectionGuard } from '@/hooks/useSectionGuard'
@@ -15,14 +16,42 @@ import ComingSoonOverlay from '@/components/ComingSoonOverlay'
 
 const WalletPage = () => {
     const { t } = useLanguage()
+    const { settings } = useSettings()
     const { isOpen, message, isAdmin } = useSectionGuard('wallet')
-    const [activeTab, setActiveTab] = useState<WalletTab>('invoices')
+    
+    // Determine the first available tab to act as default
+    const getFirstAvailableTab = (): WalletTab => {
+        const order: { id: WalletTab, key: string }[] = [
+            { id: 'invoices', key: 'wallet_invoices' },
+            { id: 'commission', key: 'wallet_commissions' },
+            { id: 'files', key: 'wallet_files' },
+            { id: 'invest', key: 'wallet_investments' }
+        ];
+        for (const item of order) {
+            const flag = settings.moduleFlags[item.key];
+            if (flag !== 'soon' && flag !== 'disabled') {
+                return item.id;
+            }
+        }
+        return 'invoices'; // Fallback
+    };
+
+    const [activeTab, setActiveTab] = useState<WalletTab>(getFirstAvailableTab())
     const [isCommissionFormOpen, setIsCommissionFormOpen] = useState(false)
     const [invoices, setInvoices] = useState<Invoice[]>([])
     const [commissions, setCommissions] = useState<Commission[]>([])
     const [files, setFiles] = useState<any[]>([])
     const [balance, setBalance] = useState<number>(0)
     const [isLoading, setIsLoading] = useState(true)
+
+    // Ensure active tab is updated if settings load later
+    useEffect(() => {
+        const flagKey = `wallet_${activeTab === 'commission' ? 'commissions' : activeTab === 'invest' ? 'investments' : activeTab}`;
+        const flag = settings.moduleFlags[flagKey];
+        if (flag === 'soon' || flag === 'disabled') {
+            setActiveTab(getFirstAvailableTab());
+        }
+    }, [settings.moduleFlags]);
 
     const fetchData = async () => {
         setIsLoading(true);
