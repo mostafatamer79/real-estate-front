@@ -55,6 +55,21 @@ export interface Commission {
     totalAmount: number | string;
     commissionAmount: number | string;
     createdAt: string;
+    owner?: {
+        name: string;
+        idNumber: string;
+    };
+    buyer?: {
+        name: string;
+        idNumber: string;
+    };
+    propertyType?: string;
+    city?: string;
+    neighborhood?: string;
+    area?: string | number;
+    deedNumber?: string;
+    specifications?: string;
+    commissionPercentage?: string | number;
 }
 
 export interface Invoice {
