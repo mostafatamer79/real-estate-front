@@ -135,7 +135,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
 "wallet.commission.contractValues": "قيم العقد",
 "wallet.commission.totalAmount": "المبلغ الإجمالي",
-"wallet.commission.amountAfterDiscount": "المبلغ بعد الخصم",
+"wallet.commission.amountAfterDiscount": "المبلغ بعد خصم الضريبة",
 "wallet.commission.calc.after15": "القيمة بعد خصم 15٪",
 
 "wallet.commission.commissionPercentage": "نسبة السعي",
@@ -143,7 +143,10 @@ export const translations: Record<Language, Record<string, string>> = {
 "wallet.commission.commissionValue": "قيمة السعي",
 "wallet.commission.enterCommissionValue": "أدخل قيمة السعي",
 
-"wallet.commission.submit": "حفظ الطلب"
+"wallet.commission.submit": "حفظ الطلب",
+"common.download": "تنزيل",
+"wallet.commission.trackRequest": "متابعة الطلب",
+"status.draft": "مسودة"
 ,
     // Legal Invoice Workflow
     "legal.invoice.sendBtn": "إرسال الفاتورة للعميل",

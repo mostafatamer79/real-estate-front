@@ -2,288 +2,311 @@ import React, { useRef, useState } from 'react';
 import { Commission } from './types';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, QrCode, BadgeCheck } from 'lucide-react';
 import { toJpeg } from 'html-to-image';
 import jsPDF from 'jspdf';
-import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
-import { WATERMARK_BASE64, COVER_BASE64, LOGO_BASE64 } from './pdfAssets';
+import { WATERMARK_BASE64, COVER_BASE64 } from './pdfAssets';
 
 interface CommissionPdfGeneratorProps {
     commission: Commission;
 }
 
+/* ─────────── Tiny helper components ─────────── */
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+    <span style={{ fontSize: '8.5px', color: '#64748b', display: 'block', marginBottom: '3px', fontWeight: 600, letterSpacing: '0.2px' }}>
+        {children}
+    </span>
+);
+
+const Value = ({ children, mono }: { children?: React.ReactNode; mono?: boolean }) => (
+    <span style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', fontFamily: mono ? 'monospace' : 'inherit', display: 'block', lineHeight: 1.4 }}>
+        {children || '—'}
+    </span>
+);
+
+const Cell = ({ label, value, mono, span }: { label: string; value?: string | number; mono?: boolean; span?: boolean }) => (
+    <div style={{
+        background: '#ffffff',
+        border: '1px solid rgba(226,232,240,0.8)',
+        borderRadius: '8px',
+        padding: '8px 10px',
+        gridColumn: span ? 'span 2' : undefined,
+        boxShadow: '0 1px 2px rgba(15,23,42,0.02)',
+    }}>
+        <Label>{label}</Label>
+        <Value mono={mono}>{value}</Value>
+    </div>
+);
+
+const SectionHeading = ({ children, icon }: { children: React.ReactNode; icon?: React.ReactNode }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ width: '4px', height: '16px', background: 'linear-gradient(180deg, #0ea5e9, #2563eb)', borderRadius: '4px', flexShrink: 0 }} />
+        {icon && <span style={{ color: '#0ea5e9' }}>{icon}</span>}
+        <span style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', letterSpacing: '0.3px' }}>{children}</span>
+        <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, rgba(226,232,240,0), rgba(226,232,240,1))' }} />
+    </div>
+);
+
+const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+    <div style={{
+        background: 'rgba(255,255,255,0.92)',
+        border: '1px solid rgba(203,213,225,0.6)',
+        borderRadius: '14px',
+        padding: '14px 16px',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 12px rgba(15,23,42,0.03)',
+        ...style,
+    }}>
+        {children}
+    </div>
+);
+
+/* ─────────── Main component ─────────── */
+
 const CommissionPdfGenerator: React.FC<CommissionPdfGeneratorProps> = ({ commission }) => {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const pdfRef = useRef<HTMLDivElement>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+
+    const fmt = (v?: number | string) =>
+        Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const fmtDate = (v?: string) =>
+        v ? new Date(v).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
 
     const handleDownload = async () => {
         if (!pdfRef.current) return;
         setIsGenerating(true);
-        
         try {
             pdfRef.current.style.display = 'block';
-            
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            
+            const W = pdf.internal.pageSize.getWidth();
+            const H = pdf.internal.pageSize.getHeight();
             const pages = pdfRef.current.querySelectorAll('.pdf-page');
-            
             for (let i = 0; i < pages.length; i++) {
                 if (i > 0) pdf.addPage();
-                
-                const page = pages[i] as HTMLElement;
-                const dataUrl = await toJpeg(page, { 
-                    quality: 0.95,
-                    pixelRatio: 2, // Equivalent to scale: 2
-                    backgroundColor: '#ffffff'
-                });
-                pdf.addImage(dataUrl, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                const img = await toJpeg(pages[i] as HTMLElement, { quality: 0.98, pixelRatio: 2, backgroundColor: '#ffffff' });
+                pdf.addImage(img, 'JPEG', 0, 0, W, H);
             }
-            
             pdf.save(`commission_${commission.commissionNumber}.pdf`);
-        } catch (error) {
-            console.error('Error generating PDF', error);
+        } catch (e) {
+            console.error('PDF error', e);
         } finally {
-            if (pdfRef.current) {
-                pdfRef.current.style.display = 'none';
-            }
+            if (pdfRef.current) pdfRef.current.style.display = 'none';
             setIsGenerating(false);
         }
     };
 
     return (
         <>
+            {/* ── Download button ── */}
             <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-                disabled={isGenerating}
+                variant="outline" size="sm"
+                onClick={handleDownload} disabled={isGenerating}
                 className="text-slate-800 border-blue-200 hover:bg-blue-50 hover:text-blue-800 transition-all flex items-center gap-2 rounded-lg font-bold"
             >
                 <Download className="w-4 h-4" />
-                {isGenerating ? t('common.loading') || 'جاري التنزيل...' : t('common.download') || 'تنزيل'}
+                {isGenerating ? (t('common.loading') || 'جاري التنزيل…') : (t('common.download') || 'تنزيل')}
             </Button>
 
-            {/* Hidden PDF Content */}
-            
-                
+            {/* ══════════════ Hidden PDF canvas ══════════════ */}
+            <div ref={pdfRef} style={{ display: 'none', position: 'absolute', top: '-9999px', left: '-9999px', width: '210mm', direction: 'rtl' }}>
 
-            <div 
-                ref={pdfRef} 
-                style={{ 
-                    display: 'none', 
-                    position: 'absolute', 
-                    top: '-9999px', 
-                    left: '-9999px', 
-                    width: '210mm', 
-                    direction: 'rtl'
-                }}
-            >
-                {/* Page 1: Main Content */}
-                <div 
-                    className="pdf-page relative overflow-hidden" 
-                    style={{ 
-                        width: '210mm', 
-                        height: '297mm', 
-                        backgroundColor: '#ffffff'
-                    }}
-                >
-                    {/* Full page background watermark */}
-                    <div 
-                        className="absolute inset-0 opacity-10"
-                        style={{
-                            backgroundImage: `url(${WATERMARK_BASE64})`,
-                            backgroundSize: '150mm',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'repeat',
-                            zIndex: 0
-                        }}
-                    />
-                    
-                    {/* Header Decoration */}
-                    <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 z-10" />
-                    
-                    <div className="relative z-10 p-12 h-full flex flex-col">
-                        {/* Header */}
-                        <div className="flex justify-between items-center pb-8 border-b-2 border-slate-200 mb-8 mt-4">
-                            <div className="flex items-center gap-4">
-                                <img src={LOGO_BASE64} alt="Logo" className="w-20 h-20 object-contain drop-shadow-md" />
+                {/* ══ PAGE 1 – Contract details ══ */}
+                <div className="pdf-page relative overflow-hidden" style={{ width: '210mm', height: '297mm', backgroundColor: '#f8fafc' }}>
+
+                    {/* Background: cover template */}
+                    <div className="absolute inset-0" style={{ backgroundImage: `url(${COVER_BASE64})`, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 0 }} />
+
+                    {/* Watermark */}
+                    <div className="absolute inset-0" style={{ backgroundImage: `url(${WATERMARK_BASE64})`, backgroundSize: '160mm', backgroundPosition: 'center', backgroundRepeat: 'repeat', opacity: 0.02, zIndex: 1 }} />
+
+                    {/* ── Content ── starts below template header */}
+                    <div className="relative" style={{ zIndex: 2, padding: '70mm 14mm 12mm 14mm', height: '100%', display: 'flex', flexDirection: 'column', gap: '6mm' }}>
+
+                        {/* ── Header row ── */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '6mm', borderBottom: '2px solid rgba(15,23,42,0.08)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                {/* Fake QR Code for "Official" look */}
+                                <div style={{ width: '46px', height: '46px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <QrCode style={{ width: '100%', height: '100%', color: '#0f172a' }} />
+                                </div>
                                 <div>
-                                    <h1 className="text-3xl font-black text-slate-900 mb-1">عقد وساطة عقارية</h1>
-                                    <p className="text-slate-700 font-semibold text-lg tracking-wide">الوساطة الرقمية</p>
+                                    <h1 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', margin: '0 0 2px', lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+                                        وثيقة إثبات سعي
+                                    </h1>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <BadgeCheck style={{ width: '12px', height: '12px', color: '#10b981' }} />
+                                        <p style={{ fontSize: '10px', color: '#10b981', fontWeight: 700, margin: 0, letterSpacing: '0.3px' }}>
+                                            موثق إلكترونياً
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="text-left bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm">
-                                <div className="text-slate-500 font-medium mb-1 text-sm">رقم الطلب</div>
-                                <div className="font-mono text-xl font-bold text-slate-900 mb-2">{commission.commissionNumber}</div>
-                                <div className="text-slate-500 font-medium mb-1 text-sm">التاريخ</div>
-                                <div className="font-semibold text-slate-800">{commission.createdAt ? new Date(commission.createdAt).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}</div>
-                            </div>
-                        </div>
-                        
-                        {/* Content Sections */}
-                        <div className="space-y-6 flex-1">
                             
-                            {/* Parties */}
-                            <div className="bg-white/80  border border-slate-200 rounded-2xl p-6 shadow-sm">
-                                <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
-                                    <div className="w-2 h-6 bg-slate-800 rounded-full" />
-                                    <h2 className="text-xl font-bold text-slate-800">بيانات الأطراف</h2>
+                            {/* Request badge */}
+                            <div style={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.1)', borderRadius: '12px', padding: '8px 14px', textAlign: 'left', minWidth: '120px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: 600, marginBottom: '2px', letterSpacing: '0.2px' }}>الرقم المرجعي</div>
+                                <div style={{ fontSize: '14px', fontWeight: 900, color: '#0f172a', fontFamily: 'monospace', letterSpacing: '0.5px' }}>
+                                    {commission.commissionNumber}
                                 </div>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
-                                        <div className="text-slate-800 font-bold mb-3 flex items-center gap-2">
-                                            <span className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-700">1</span>
-                                            المالك / البائع
-                                        </div>
-                                        <div className="space-y-3">
-                                            <div><span className="text-slate-500 block text-sm">الاسم</span><span className="font-bold text-lg">{commission.owner?.name}</span></div>
-                                            <div><span className="text-slate-500 block text-sm">رقم الهوية</span><span className="font-mono font-medium">{commission.owner?.idNumber}</span></div>
-                                        </div>
+                                <div style={{ marginTop: '2px', fontSize: '9px', color: '#94a3b8', fontWeight: 600 }}>{fmtDate(commission.createdAt)}</div>
+                            </div>
+                        </div>
+
+                        {/* ── Parties ── */}
+                        <Card>
+                            <SectionHeading>بيانات الأطراف المعنية</SectionHeading>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                {/* Owner */}
+                                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                        <span style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#e0f2fe', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, color: '#0369a1', flexShrink: 0 }}>١</span>
+                                        <span style={{ fontSize: '13px', fontWeight: 900, color: '#1e293b' }}>المالك / البائع</span>
                                     </div>
-                                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
-                                        <div className="text-slate-800 font-bold mb-3 flex items-center gap-2">
-                                            <span className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-700">2</span>
-                                            المشتري
-                                        </div>
-                                        <div className="space-y-3">
-                                            <div><span className="text-slate-500 block text-sm">الاسم</span><span className="font-bold text-lg">{commission.buyer?.name}</span></div>
-                                            <div><span className="text-slate-500 block text-sm">رقم الهوية</span><span className="font-mono font-medium">{commission.buyer?.idNumber}</span></div>
-                                        </div>
+                                    <div style={{ marginBottom: '6px' }}>
+                                        <Label>الاسم الكامل</Label>
+                                        <Value>{commission.owner?.name}</Value>
+                                    </div>
+                                    <div>
+                                        <Label>رقم الهوية</Label>
+                                        <Value mono>{commission.owner?.idNumber}</Value>
+                                    </div>
+                                </div>
+                                {/* Buyer */}
+                                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                        <span style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#dbeafe', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, color: '#1d4ed8', flexShrink: 0 }}>٢</span>
+                                        <span style={{ fontSize: '13px', fontWeight: 900, color: '#1e293b' }}>المشتري</span>
+                                    </div>
+                                    <div style={{ marginBottom: '6px' }}>
+                                        <Label>الاسم الكامل</Label>
+                                        <Value>{commission.buyer?.name}</Value>
+                                    </div>
+                                    <div>
+                                        <Label>رقم الهوية</Label>
+                                        <Value mono>{commission.buyer?.idNumber}</Value>
                                     </div>
                                 </div>
                             </div>
+                        </Card>
 
-                            {/* Property */}
-                            <div className="bg-white/80  border border-slate-200 rounded-2xl p-6 shadow-sm">
-                                <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
-                                    <div className="w-2 h-6 bg-slate-800 rounded-full" />
-                                    <h2 className="text-xl font-bold text-slate-800">بيانات العقار</h2>
+                        {/* ── Property ── */}
+                        <Card>
+                            <SectionHeading>تفاصيل العقار المبرم عليه العقد</SectionHeading>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                                <Cell label="نوع العقار" value={commission.propertyType} />
+                                <Cell label="المدينة" value={commission.city} />
+                                <Cell label="الحي" value={commission.neighborhood} />
+                                <Cell label="المساحة" value={commission.area ? `${commission.area} م²` : undefined} />
+                                <Cell label="رقم الصك" value={commission.deedNumber} mono span />
+                            </div>
+                        </Card>
+
+                        {/* ── Financial ── */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                            borderRadius: '16px',
+                            padding: '18px 20px',
+                            color: '#fff',
+                            boxShadow: '0 8px 25px rgba(15,23,42,0.2)',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}>
+                            {/* Decorative background element */}
+                            <div style={{ position: 'absolute', top: '-20px', left: '-20px', width: '120px', height: '120px', background: 'rgba(255,255,255,0.03)', borderRadius: '50%', zIndex: 0 }} />
+                            <div style={{ position: 'absolute', bottom: '-40px', right: '10%', width: '180px', height: '180px', background: 'rgba(255,255,255,0.02)', borderRadius: '50%', zIndex: 0 }} />
+                            
+                            <div style={{ position: 'relative', zIndex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                                    <div style={{ width: '4px', height: '16px', background: '#38bdf8', borderRadius: '4px' }} />
+                                    <span style={{ fontSize: '13px', fontWeight: 900, color: '#f8fafc', letterSpacing: '0.3px' }}>التفاصيل المالية لعملية الوساطة</span>
                                 </div>
-                                <div className="grid grid-cols-3 gap-6">
-                                    <div className="bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">نوع العقار</span>
-                                        <span className="font-bold text-slate-800">{commission.propertyType}</span>
+
+                                {/* Stats Row */}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                                    <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '10px', padding: '10px' }}>
+                                        <span style={{ fontSize: '9px', color: '#94a3b8', display: 'block', marginBottom: '4px', textTransform: 'uppercase' }}>المبلغ الإجمالي</span>
+                                        <span style={{ fontSize: '16px', fontWeight: 800, color: '#fff', lineHeight: 1 }}>{fmt(commission.totalAmount)} <span style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>ر.س</span></span>
                                     </div>
-                                    <div className="bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">المدينة</span>
-                                        <span className="font-bold text-slate-800">{commission.city}</span>
+                                    <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '10px', padding: '10px' }}>
+                                        <span style={{ fontSize: '9px', color: '#94a3b8', display: 'block', marginBottom: '4px', textTransform: 'uppercase' }}>النسبة المتفق عليها</span>
+                                        <span style={{ fontSize: '16px', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>{commission.commissionPercentage || 0}%</span>
                                     </div>
-                                    <div className="bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">الحي</span>
-                                        <span className="font-bold text-slate-800">{commission.neighborhood}</span>
-                                    </div>
-                                    <div className="bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">المساحة</span>
-                                        <span className="font-bold text-slate-800">{commission.area} م²</span>
-                                    </div>
-                                    <div className="bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">رقم الصك</span>
-                                        <span className="font-mono font-bold text-slate-800">{commission.deedNumber}</span>
+                                    <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '10px', padding: '10px' }}>
+                                        <span style={{ fontSize: '9px', color: '#94a3b8', display: 'block', marginBottom: '4px', textTransform: 'uppercase' }}>نوع العملية</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#fff', lineHeight: 1 }}>{commission.type === 'sale' ? 'بيع' : commission.type === 'rent' ? 'تأجير' : commission.type || '—'}</span>
                                     </div>
                                 </div>
-                                {commission.specifications && (
-                                    <div className="mt-4 bg-slate-50 p-4 rounded-xl">
-                                        <span className="text-slate-500 block text-sm mb-1">المواصفات</span>
-                                        <span className="font-medium text-slate-800">{commission.specifications}</span>
+
+                                {/* Commission highlight */}
+                                <div style={{
+                                    background: 'rgba(255,255,255,0.1)',
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    borderRadius: '12px',
+                                    padding: '14px 18px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    backdropFilter: 'blur(5px)'
+                                }}>
+                                    <div>
+                                        <span style={{ fontSize: '11px', color: '#e2e8f0', display: 'block', marginBottom: '2px', fontWeight: 800 }}>قيمة السعي المستحقة</span>
+                                        <span style={{ fontSize: '9px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#10b981' }}/>
+                                            شاملة ضريبة القيمة المضافة (١٥٪)
+                                        </span>
                                     </div>
-                                )}
+                                    <div style={{ textAlign: 'left' }}>
+                                        <span style={{ fontSize: '26px', fontWeight: 900, color: '#ffffff', letterSpacing: '-0.5px' }}>
+                                            {fmt(commission.commissionAmount)}
+                                        </span>
+                                        <span style={{ fontSize: '12px', color: '#94a3b8', marginRight: '6px', fontWeight: 700 }}>ر.س</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        {/* Footer Page 1 */}
-                        <div className="pt-6 border-t border-slate-200 mt-auto text-center">
-                            <p className="text-slate-400 text-sm font-medium">هذه الوثيقة صادرة من منصة الوساطة الرقمية وموثقة إلكترونياً.</p>
-                            <p className="text-slate-300 text-xs mt-1">digitalbrokerage.sa</p>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Page 2: Financial Content */}
-                <div 
-                    className="pdf-page relative overflow-hidden" 
-                    style={{ 
-                        width: '210mm', 
-                        height: '297mm', 
-                        backgroundColor: '#ffffff'
-                    }}
-                >
-                    {/* Full page background watermark */}
-                    <div 
-                        className="absolute inset-0 z-0 opacity-5"
-                        style={{
-                            backgroundImage: `url(${WATERMARK_BASE64})`,
-                            backgroundSize: '150mm',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'repeat',
-                            zIndex: 0
-                        }}
-                    />
-                    
-                    {/* Header Decoration */}
-                    <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 z-10" />
-                    
-                    <div className="relative z-10 p-12 h-full flex flex-col">
-                        {/* Header */}
-                        <div className="flex justify-between items-center pb-8 border-b-2 border-slate-200 mb-8 mt-4">
-                            <div className="flex items-center gap-4">
-                                <img src={LOGO_BASE64} alt="Logo" className="w-20 h-20 object-contain drop-shadow-md" />
+                        {/* ── Signatures ── */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: 'auto' }}>
+                            {['إقرار وتوقيع المالك / البائع', 'إقرار وتوقيع المشتري'].map(lbl => (
+                                <div key={lbl} style={{
+                                    background: 'rgba(248,250,252,0.6)',
+                                    border: '1.5px dashed rgba(203,213,225,0.8)',
+                                    borderRadius: '12px',
+                                    padding: '12px',
+                                    minHeight: '60px',
+                                    position: 'relative'
+                                }}>
+                                    <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 700, position: 'absolute', top: '12px', right: '12px' }}>{lbl}</span>
+                                    {/* Fake signature line */}
+                                    <div style={{ position: 'absolute', bottom: '16px', left: '20px', right: '20px', height: '1px', background: 'rgba(203,213,225,0.6)' }} />
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* ── Footer ── */}
+                        <div style={{ paddingTop: '5mm', borderTop: '1px solid rgba(15,23,42,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '24px', height: '24px', borderRadius: '4px', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <span style={{ color: '#fff', fontSize: '12px', fontWeight: 900 }}>D</span>
+                                </div>
                                 <div>
-                                    <h1 className="text-3xl font-black text-slate-900 mb-1">عقد وساطة عقارية</h1>
-                                    <p className="text-slate-700 font-semibold text-lg tracking-wide">الوساطة الرقمية</p>
+                                    <p style={{ fontSize: '9px', color: '#475569', margin: '0 0 2px', fontWeight: 700 }}>الوساطة الرقمية العقارية</p>
+                                    <p style={{ fontSize: '7.5px', color: '#94a3b8', margin: 0 }}>مُعتمد وموثق برقم ترخيص ١٢٠٠٠٠</p>
                                 </div>
                             </div>
-                            <div className="text-left bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm">
-                                <div className="text-slate-500 font-medium mb-1 text-sm">رقم الطلب</div>
-                                <div className="font-mono text-xl font-bold text-slate-900 mb-2">{commission.commissionNumber}</div>
+                            <div style={{ textAlign: 'left' }}>
+                                <p style={{ fontSize: '9px', color: '#0f172a', margin: '0 0 2px', fontWeight: 800, fontFamily: 'monospace' }}>digitalbrokerage.sa</p>
+                                <p style={{ fontSize: '7.5px', color: '#94a3b8', margin: 0 }}>المملكة العربية السعودية</p>
                             </div>
-                        </div>
-
-                        <div className="space-y-6 flex-1 mt-8">
-
-                            {/* Financial */}
-                            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 shadow-lg text-white">
-                                <div className="flex items-center gap-3 mb-5 pb-3 border-b border-white/20">
-                                    <div className="w-2 h-6 bg-slate-400 rounded-full" />
-                                    <h2 className="text-xl font-bold">البيانات المالية</h2>
-                                </div>
-                                <div className="grid grid-cols-3 gap-6 mb-6">
-                                    <div>
-                                        <span className="text-slate-300 block text-sm mb-1">المبلغ الإجمالي</span>
-                                        <span className="font-bold text-2xl">{Number(commission.totalAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-sm font-normal">ر.س</span></span>
-                                    </div>
-                                    <div>
-                                        <span className="text-slate-300 block text-sm mb-1">نسبة السعي</span>
-                                        <span className="font-bold text-2xl">{commission.commissionPercentage || 0}%</span>
-                                    </div>
-                                </div>
-                                <div className="bg-white/10 rounded-xl p-5 border border-white/20 flex justify-between items-center">
-                                    <span className="text-lg font-medium text-slate-200">قيمة السعي (شامل الضريبة)</span>
-                                    <span className="font-black text-3xl text-white">{Number(commission.commissionAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-lg font-normal">ر.س</span></span>
-                                </div>
-                            </div>
-
-                        </div>
-                        
-                        {/* Footer Page 2 */}
-                        <div className="pt-6 border-t border-slate-200 mt-auto text-center">
-                            <p className="text-slate-400 text-sm font-medium">هذه الوثيقة صادرة من منصة الوساطة الرقمية وموثقة إلكترونياً.</p>
-                            <p className="text-slate-300 text-xs mt-1">digitalbrokerage.sa</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Page 3: Cover / Thank You (ends.jpeg) */}
-                <div 
-                    className="pdf-page relative overflow-hidden flex flex-col justify-center items-center" 
-                    style={{ 
-                        width: '210mm', 
-                        height: '297mm', 
-                        backgroundColor: '#0a0f1d'
-                    }}
-                >
+                {/* ══ PAGE 2 – Thank You ══ */}
+                <div className="pdf-page relative overflow-hidden" style={{ width: '210mm', height: '297mm', backgroundColor: '#0a0f1d' }}>
                     <img src="/ends.jpeg" alt="Thank You" className="absolute inset-0 w-full h-full object-cover" />
                 </div>
 
