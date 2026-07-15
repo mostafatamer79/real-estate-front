@@ -12,13 +12,16 @@ import {
 import { useLanguage } from '@/context/LanguageContext'
 import { Commission } from './types'
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal'
+import CommissionPdfGenerator from './CommissionPdfGenerator'
+import { FileSearch } from 'lucide-react'
 
 interface CommissionListProps {
     onNewRequest: () => void;
     commissions: Commission[];
+    onTrackRequest?: (commission: Commission) => void;
 }
 
-const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissions }) => {
+const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissions, onTrackRequest }) => {
     const { t, language } = useLanguage()
 
     return (
@@ -44,6 +47,7 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                                 <TableHead className='text-right'>{t('wallet.commission.table.service')}</TableHead>
                                 <TableHead className='text-right'>{t('financial.status')}</TableHead>
                                 <TableHead className='text-right'>{t('wallet.commission.commissionValue')}</TableHead>
+                                <TableHead className='text-center'>{t('common.actions') || 'الإجراءات'}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -70,11 +74,25 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
                                     <TableCell className='text-right font-bold text-slate-900'>
                                         <SaudiRiyalAmount amount={Number(commission.commissionAmount)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
                                     </TableCell>
+                                    <TableCell className='text-center'>
+                                        <div className='flex items-center justify-center gap-2'>
+                                            <CommissionPdfGenerator commission={commission} />
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                className="text-slate-600 hover:text-slate-800 flex items-center gap-2"
+                                                onClick={() => onTrackRequest && onTrackRequest(commission)}
+                                            >
+                                                <FileSearch className="w-4 h-4" />
+                                                {t('wallet.commission.trackRequest') || 'متابعة الطلب'}
+                                            </Button>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                             {commissions.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={5} className='text-center text-gray-500 py-10'>
+                                    <TableCell colSpan={6} className='text-center text-gray-500 py-10'>
                                         {t('common.noData')}
                                     </TableCell>
                                 </TableRow>

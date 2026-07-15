@@ -4,6 +4,7 @@ import { WalletTab, Commission, Invoice } from './components/types'
 import WalletSidebar from './components/WalletSidebar'
 import CommissionForm from './components/CommissionForm'
 import CommissionList from './components/CommissionList'
+import CommissionRequestModal from './components/CommissionRequestModal'
 import InvoicesSection from './components/InvoicesSection'
 import FilesSection from './components/FilesSection'
 import InvestmentSection from './components/InvestmentSection'
@@ -43,6 +44,7 @@ const WalletPage = () => {
     const [files, setFiles] = useState<any[]>([])
     const [balance, setBalance] = useState<number>(0)
     const [isLoading, setIsLoading] = useState(true)
+    const [trackingCommission, setTrackingCommission] = useState<Commission | null>(null)
 
     // Ensure active tab is updated if settings load later
     useEffect(() => {
@@ -198,6 +200,7 @@ const WalletPage = () => {
                             <CommissionList 
                                 commissions={commissions} 
                                 onNewRequest={() => setIsCommissionFormOpen(true)} 
+                                onTrackRequest={(commission) => setTrackingCommission(commission)}
                             />
                         )
                     )}
@@ -211,6 +214,13 @@ const WalletPage = () => {
                     )}
                 </div>
             </div>
+            <CommissionRequestModal 
+                open={!!trackingCommission} 
+                onOpenChange={(open) => !open && setTrackingCommission(null)} 
+                requestNumber={trackingCommission?.commissionNumber || ''} 
+                requestDate={trackingCommission?.createdAt ? new Date(trackingCommission.createdAt).toLocaleDateString('ar-SA') : ''} 
+                requestStatus={trackingCommission?.status as any || 'pending'} 
+            />
         </div>
     )
 }

@@ -73,6 +73,7 @@ export const translations: Record<Language, Record<string, string>> = {
 "wallet.invoices.desc": "إدارة الفواتير والمدفوعات",
 
 "wallet.commission.title": "العمولات",
+"wallet.commission.type.sale": "بيع",
 "wallet.commission.desc": "إدارة رسوم السعي",
 
 "wallet.files.title": "الملفات",
@@ -1296,6 +1297,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "bm.role.agent": "الوكيل",
 
     "bm.status.pending": "قيد الانتظار",
+    "bm.status.draft": "مسودة",
     "bm.status.processing": "قيد المعالجة",
     "bm.status.completed": "مكتملة",
     "bm.status.cancelled": "ملغاة",
@@ -3432,6 +3434,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Offer Details
     // Wallet & Commission
     "wallet.commission.title": "Commission Form",
+    "wallet.commission.type.sale": "Sale",
     "wallet.commission.request": "Request Commission",
     "wallet.commission.table.number": "Commission Number",
     "wallet.commission.table.service": "Service Type",
@@ -3600,6 +3603,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "role.label": "Role *",
     "role.user": "User (Property Seeker)",
     "bm.status.pending": "Pending",
+    "bm.status.draft": "Draft",
     "bm.status.processing": "Processing",
     "bm.status.completed": "Completed",
     "bm.status.cancelled": "Cancelled",

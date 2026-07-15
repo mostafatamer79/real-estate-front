@@ -101,15 +101,15 @@ export default function Footer() {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full"
               />
-              <motion.img 
-                src={settings?.logoWhiteUrl || '/icons/white.png'} 
-                alt="شعار المنصة" 
-                className="h-32 sm:h-40 w-auto object-contain relative z-10" 
+              <motion.img
+                src={settings?.logoWhiteUrl || '/icons/white.png'}
+                alt="شعار المنصة"
+                className="h-32 sm:h-40 w-auto object-contain relative z-10"
                 animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
             </Link>
-          
+
           </motion.div>
 
           {/* Platform */}
