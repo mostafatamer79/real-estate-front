@@ -169,7 +169,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     onSuccess();
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Submission failed:", error); console.error("Response data:", error.response?.data); toast.error(error.response?.data?.message || "حدث خطأ أثناء إرسال الطلب");
             toast.error(t('common.error') || 'حدث خطأ أثناء إرسال الطلب');
         } finally {
