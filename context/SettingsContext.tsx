@@ -247,6 +247,8 @@ const defaultSettings: GlobalSettings = {
         show_cs_faq: true,
         show_cs_channels: true,
         show_cs_form: true,
+        show_agents_all_departments_access: false,
+        enable_global_free_trial: false,
     },
     detailsPartFlags: {},
     detailsPartMessages: {},
@@ -341,8 +343,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                         loginConfig.phoneEnabled = s.value === 'true';
                     } else if (s.key === "login_phone_label") {
                         loginConfig.phoneLabel = s.value;
-                    } else if (s.key.startsWith("ui_show_")) {
-                        const uiKey = s.key.replace("ui_show_", "show_");
+                    } else if (s.key.startsWith("ui_")) {
+                        const uiKey = s.key.replace("ui_", "");
                         uiFlags[uiKey] = s.value === 'true';
                     } else if (s.key.startsWith("details_part_") && !s.key.endsWith("_message")) {
                         const partKey = s.key.replace("details_part_", "");
@@ -523,8 +525,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
             // UI flags
             Object.entries(current.uiFlags).forEach(([key, value]) => {
-                // key is like "show_map_section", persist as "ui_show_map_section"
-                const persistKey = key.startsWith('show_') ? `ui_${key}` : key;
+                const persistKey = `ui_${key}`;
                 entries.push({ key: persistKey, value: String(value), description: `UI flag: ${key}` });
             });
 

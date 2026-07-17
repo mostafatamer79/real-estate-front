@@ -121,6 +121,7 @@ import { ar } from "date-fns/locale";
 import { enUS } from "date-fns/locale";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
 import { LegalStatsCards } from "@/components/legal/LegalStatsCards";
 import { LegalDisputesTable } from "@/components/legal/LegalDisputesTable";
 import { ContractForm, DocumentationForm, LegalDisputeForm, OtherServicesForm } from "@/components/legal";
@@ -405,6 +406,7 @@ function BuildingManagementContent({
   const searchParams = useSearchParams();
   const { user, token } = useAuth();
   const { t, language } = useLanguage();
+  const { settings } = useSettings();
 
   // ─── Subscription guard state ───────────────────────────────────────────
   const [subStatus, setSubStatus] = useState<{
@@ -514,21 +516,57 @@ function BuildingManagementContent({
       label: t('bm.users.title'),
       icon: User,
     },
-    {
-      id: "subscriptions",
-      label: t('pm.subscriptions'),
-      icon: Home,
-      image: "/icons/sub.png"
-    },
+    // {
+    //   id: "subscriptions",
+    //   label: t('pm.subscriptions'),
+    //   icon: Home,
+    //   image: "/icons/sub.png"
+    // },
   ];
 
   // ─── Subscription-aware sidebar filter ──────────────────────────────────
   // Non-admin users with an inactive subscription only see "offers" (the first
   // section) until they renew. Admins always see everything.
-  const subscriptionActive = isAdmin || !subStatus || subStatus.active;
-  const sidebarItems: SidebarItem[] = subscriptionActive
+  const bypassSubscription = settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || isAdmin || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access);
+  const subscriptionActive = bypassSubscription || !subStatus || subStatus.active;
+
+  const canAccessSection = (sectionId: string) => {
+    if (isAdmin) return true;
+    if (!user) return false;
+    
+    const canonical = sectionId === 'financial' ? 'finance' : sectionId === 'users' ? 'employees' : sectionId;
+    
+    // Agent bypass check
+    if (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access) {
+      const allowedDeptsStr = settings.textOverrides?.agents_accessible_departments;
+      if (allowedDeptsStr) {
+        const allowedDepts = allowedDeptsStr.split(',').map((d: string) => d.trim()).filter(Boolean);
+        if (allowedDepts.includes(canonical)) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    
+    const allowed = new Set((Array.isArray(user.departments) ? user.departments : []).map((d: any) => d.toLowerCase()));
+    const perms = (user as any).departmentPermissions || {};
+    const perm  = perms[canonical];
+    const alias = canonical === "finance" ? perms.financial : canonical === "employees" ? perms.employee :
+                  canonical === "properties" ? (perms.property || perms.property_management || perms.pm) : undefined;
+    const hasDirectAccess = allowed.has(canonical) || (perm && perm !== "none") || (alias && alias !== "none");
+    if (canonical === "properties") {
+      return hasDirectAccess || allowed.has("offers") || allowed.has("orders") ||
+        (perms.offers && perms.offers !== "none") ||
+        (perms.orders && perms.orders !== "none");
+    }
+    return hasDirectAccess;
+  };
+
+  const sidebarItems: SidebarItem[] = (subscriptionActive
     ? allSidebarItems
-    : allSidebarItems.filter(item => item.id === 'offers');
+    : allSidebarItems.filter(item => item.id === 'offers'))
+    .filter(item => canAccessSection(item.id));
 
   // Add Back Button Handler
   const handleBack = () => {
@@ -5689,7 +5727,7 @@ function BuildingManagementContent({
 
   // ─── Subscription guard: block access if inactive ─────────────────────
   const isRenewSubscriptionPage = pathname === '/internal/renew-subscription';
-  if (!isAdmin && subStatus && !subStatus.active && !isRenewSubscriptionPage) {
+  if (!bypassSubscription && subStatus && !subStatus.active && !isRenewSubscriptionPage) {
     return (
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent className="w-[95vw] sm:max-w-lg">
@@ -5902,15 +5940,21 @@ function BuildingManagementContent({
 
             {/* Sidebar Footer: Subscription badge for non-admins */}
             {!isAdmin && subStatus && (
-              <div className={`mt-2 rounded-2xl border px-4 py-3 flex items-center gap-3 transition-all ${
-                subStatus.noExpiry
+              <div className={`mt-auto mb-2 p-3 rounded-[1.25rem] flex items-center gap-3 transition-all cursor-pointer ${
+                subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access))
+                  ? 'bg-blue-50 border-blue-200'
+                  : subStatus.noExpiry
                   ? 'bg-muted border'
                   : subStatus.daysLeft <= 7
                   ? 'bg-red-50 border-red-200 animate-pulse'
                   : 'bg-muted border'
               }`}>
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'bg-red-100 text-red-600' : 'bg-muted text-slate-500'
+                  subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access))
+                    ? 'bg-blue-100 text-blue-600'
+                    : subStatus.daysLeft <= 7 && !subStatus.noExpiry 
+                    ? 'bg-red-100 text-red-600' 
+                    : 'bg-muted text-slate-500'
                 }`}>
                   <Clock className="w-4 h-4" />
                 </div>
@@ -5919,12 +5963,14 @@ function BuildingManagementContent({
                     {language === 'ar' ? 'الاشتراك' : 'Subscription'}
                   </p>
                   <p className={`text-[11px] font-black truncate ${
-                    subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'text-red-600' : 'text-slate-700'
+                    subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access))
+                      ? 'text-blue-600'
+                      : subStatus.daysLeft <= 7 && !subStatus.noExpiry ? 'text-red-600' : 'text-slate-700'
                   }`}>
                     {subStatus.noExpiry
                       ? (language === 'ar' ? 'غير محدود' : 'Open-ended')
                       : subStatus.daysLeft <= 0
-                      ? (language === 'ar' ? 'منتهي' : 'Expired')
+                      ? ((settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') : (language === 'ar' ? 'منتهي' : 'Expired'))
                       : language === 'ar'
                       ? `${subStatus.daysLeft} يوم متبقي`
                       : `${subStatus.daysLeft} days left`}

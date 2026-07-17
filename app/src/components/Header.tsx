@@ -279,7 +279,7 @@ export default function Header() {
                     </>
                   )}
 
-                  {user && user.departments && user.departments.length > 0 && user.role !== Role.ADMIN && (
+                  {user && ((user.departments && user.departments.length > 0) || (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && user.role !== Role.ADMIN && (
                     <Link
                       href={`/internal`}
                       className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium text-sm transition-colors"
@@ -413,6 +413,17 @@ export default function Header() {
                           {language === 'ar' ? "الإدارات" : 'Internal'}
                       </Link>
                     </>
+                  )}
+
+                  {user && ((user.departments && user.departments.length > 0) || (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && user.role !== Role.ADMIN && (
+                    <Link
+                      href="/internal"
+                      className="flex items-center gap-3 text-blue-400 text-base sm:text-lg font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                        <LayoutDashboard className="w-5 h-5" />
+                        {language === 'ar' ? "الادارات" : 'My Departments'}
+                    </Link>
                   )}
 
                    {(user?.role === Role.ADMIN || user?.role === Role.MARKETING) && settings.sectionFlags.marketing !== 'hidden' && (

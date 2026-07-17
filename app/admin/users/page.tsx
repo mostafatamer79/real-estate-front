@@ -81,6 +81,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
     role: user?.role || 'employee',
     department: (user?.departments as string[]) || [],
     parentId: user?.parentId || '',
+    hasFreeTrial: user?.hasFreeTrial || false,
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -123,6 +124,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
         role: form.role,
         departments: form.department,
         parentId: form.role === 'employee' ? form.parentId : undefined,
+        hasFreeTrial: form.hasFreeTrial,
       };
       if (!user?.id && form.email) payload.email = form.email;
       if (form.phone) payload.phone = form.phone;
@@ -204,6 +206,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الصلاحية</label>
               <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} className="w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all appearance-none">
                 <option value={Role.VIEWER}>{language === 'ar' ? 'مشاهد (Viewer)' : 'Viewer'}</option>
+                <option value={Role.AGENT}>{language === 'ar' ? 'مقدم خدمة (Agent)' : 'Agent'}</option>
                 <option value={Role.MANGER}>{language === 'ar' ? 'مدير (Manager)' : 'Manager'}</option>
                 <option value={Role.EMPLOYEE}>{language === 'ar' ? 'موظف (Employee)' : 'Employee'}</option>
                 <option value={Role.LEGAL}>{language === 'ar' ? 'محامي (Lawyer)' : 'Lawyer'}</option>
@@ -223,6 +226,24 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                 </select>
               </div>
             )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 rounded-xl border bg-muted/50 mt-4">
+            <div className="space-y-0.5">
+              <label className="text-xs font-black text-slate-900">
+                {language === 'ar' ? 'تجربة مجانية' : 'Free Trial'}
+              </label>
+              <p className="text-[9px] font-bold text-slate-500">
+                {language === 'ar' ? 'يسمح للمستخدم بالدخول وتجاوز قيود الاشتراك' : 'Allows user to bypass subscription limits'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, hasFreeTrial: !f.hasFreeTrial }))}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.hasFreeTrial ? 'bg-blue-600' : 'bg-slate-300'}`}
+            >
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.hasFreeTrial ? (language === 'ar' ? '-translate-x-6' : 'translate-x-6') : 'translate-x-1'}`} />
+            </button>
           </div>
 
           {form.role !== Role.USER && (
@@ -771,6 +792,12 @@ export default function UsersPage() {
                                             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 bg-muted border border">
                                                 <div className="w-1 h-1 rounded-full bg-slate-300 animate-pulse" />
                                                 {t('admin.users.status.pending')}
+                                            </div>
+                                        )}
+                                        {user.hasFreeTrial && (
+                                            <div className="mt-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-200">
+                                                <div className="w-1 h-1 rounded-full bg-blue-600" />
+                                                {language === 'ar' ? 'تجربة مجانية' : 'Free Trial'}
                                             </div>
                                         )}
                                     </td>

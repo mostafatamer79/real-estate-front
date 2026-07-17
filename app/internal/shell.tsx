@@ -333,8 +333,23 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   const canAccess = (dSlug: string) => {
     if (!user) return false;
     if (user.role === Role.ADMIN) return true;
-    const allowed = new Set((Array.isArray(user.departments) ? user.departments : []).map((d: any) => canonicalDeptSlug(d)));
+    
     const canonical = canonicalDeptSlug(dSlug);
+    
+    // Agent bypass check
+    if (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access) {
+      const allowedDeptsStr = settings.textOverrides?.agents_accessible_departments;
+      if (allowedDeptsStr) {
+        const allowedDepts = allowedDeptsStr.split(',').map((d: string) => canonicalDeptSlug(d.trim())).filter(Boolean);
+        if (allowedDepts.includes(canonical)) {
+          return true;
+        }
+      } else {
+        return true; // Default to all if flag is ON but no departments selected
+      }
+    }
+    
+    const allowed = new Set((Array.isArray(user.departments) ? user.departments : []).map((d: any) => canonicalDeptSlug(d)));
     const perms = user.departmentPermissions || {};
     const perm  = perms[canonical];
     const alias = canonical === "finance" ? perms.financial : canonical === "employees" ? perms.employee :
@@ -418,7 +433,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   }
 
   /* ─── subscription guard ─── */
-  if (subStatus && !subStatus.active && !isRenewSubscriptionPage) {
+  const bypassSubscription = settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || user?.role === Role.ADMIN || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access);
+  if (subStatus && !subStatus.active && !isRenewSubscriptionPage && !bypassSubscription) {
     return (
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent className="w-[95vw] sm:max-w-lg">
@@ -487,14 +503,17 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   /* ─── Subscription Badge ─── */
   const SubscriptionBadge = () => {
     if (!subStatus) return null;
-    const isLow = subStatus.daysLeft <= 7 && !subStatus.noExpiry;
+    const isFreeTrial = subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access));
+    const isLow = subStatus.daysLeft <= 7 && !subStatus.noExpiry && !isFreeTrial;
     return (
       <div className={`mb-2 rounded-lg border px-3 py-2 transition-all ${
+        isFreeTrial ? 'bg-blue-500/10 border-blue-300/20' :
         subStatus.noExpiry ? 'bg-card/5 border-white/10' :
         isLow ? 'bg-red-500/10 border-red-300/20 animate-pulse' : 'bg-card/5 border-white/10'
       }`}>
         <div className="flex items-center justify-between gap-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+            isFreeTrial ? 'bg-blue-500/15 text-blue-200' :
             subStatus.noExpiry ? 'bg-card/10 text-white/70' :
             isLow ? 'bg-red-500/15 text-red-200' : 'bg-card/10 text-white/70'
           }`}>
@@ -502,8 +521,9 @@ export default function InternalShell({ children }: { children: React.ReactNode 
           </div>
           <div className="flex-1 text-right">
             <p className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">{subscriptionStatusLabel}</p>
-            <p className={`text-[11px] font-black ${isLow ? 'text-red-200' : 'text-white/80'}`}>
-              {subStatus.noExpiry ? openEndedLabel : 
+            <p className={`text-[11px] font-black ${isFreeTrial ? 'text-blue-200' : isLow ? 'text-red-200' : 'text-white/80'}`}>
+              {isFreeTrial ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') :
+               subStatus.noExpiry ? openEndedLabel : 
                subStatus.daysLeft <= 0 ? expiredLabel : 
                daysLeftLabel(subStatus.daysLeft)}
             </p>
@@ -571,8 +591,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
 
               <div className="rounded-[1.25rem] border border bg-muted p-5">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{subscriptionStatusLabel}</p>
-                <p className="text-xl font-black text-slate-950">
-                  {!subStatus ? loadingText : subStatus.noExpiry ? openEndedLabel : subStatus.daysLeft <= 0 ? expiredLabel : daysLeftLabel(subStatus.daysLeft)}
+                <p className={`text-xl font-black ${(settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && subStatus?.daysLeft <= 0 ? 'text-blue-600' : 'text-slate-950'}`}>
+                  {!subStatus ? loadingText : subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') : subStatus.noExpiry ? openEndedLabel : subStatus.daysLeft <= 0 ? expiredLabel : daysLeftLabel(subStatus.daysLeft)}
                 </p>
                 {subStatus?.subscription?.endDate && (
                   <p className="text-sm text-slate-500 mt-2">

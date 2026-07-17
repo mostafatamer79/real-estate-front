@@ -77,4 +77,5 @@ export interface User {
   brokerType?: 'individual' | 'office';
   departments?: Department[];
   departmentPermissions?: Record<string, any>;
+  hasFreeTrial?: boolean;
 }
