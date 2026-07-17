@@ -414,6 +414,7 @@ function BuildingManagementContent({
     daysLeft: number;
     noExpiry: boolean;
     subscription?: any;
+    hasFreeTrial?: boolean;
   } | null>(null);
 
   const isAdmin = user?.role === Role.ADMIN;

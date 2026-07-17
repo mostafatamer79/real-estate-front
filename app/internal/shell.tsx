@@ -120,7 +120,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [subStatus, setSubStatus] = useState<{ active: boolean; daysLeft: number; noExpiry: boolean; subscription?: any } | null>(null);
+  const [subStatus, setSubStatus] = useState<{ active: boolean; daysLeft: number; noExpiry: boolean; subscription?: any; hasFreeTrial?: boolean } | null>(null);
   const { settings } = useSettings();
   const isRtl = language === "ar";
   const exactBuildingManagementPaths = new Set([
