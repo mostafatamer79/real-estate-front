@@ -356,6 +356,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 });
 
                 next.servicePrices = services;
+                console.log("FETCHED SETTINGS textOverrides:", texts);
                 next.textOverrides = texts;
                 next.sectionFlags = sectionFlags;
                 next.sectionMessages = sectionMessages;

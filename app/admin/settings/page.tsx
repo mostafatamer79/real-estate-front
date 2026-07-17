@@ -138,6 +138,7 @@ function SettingsPageInner() {
 
     useEffect(() => {
         if (!isLoading && settings) {
+            console.log("SETTINGS PAGE RECEIVED settings.textOverrides:", settings.textOverrides);
             setPrice(settings.appointmentPrice.toString());
             setPurchaseFee(settings.purchaseFeePercentage.toString());
             setTaxPercentage(settings.taxPercentage.toString());

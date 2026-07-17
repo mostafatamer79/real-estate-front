@@ -503,8 +503,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   /* ─── Subscription Badge ─── */
   const SubscriptionBadge = () => {
     if (!subStatus) return null;
-    const isFreeTrial = subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access));
-    const isLow = subStatus.daysLeft <= 7 && !subStatus.noExpiry && !isFreeTrial;
+    const isFreeTrial = (subStatus?.daysLeft ?? 999) <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access));
+    const isLow = (subStatus?.daysLeft ?? 999) <= 7 && !subStatus.noExpiry && !isFreeTrial;
     return (
       <div className={`mb-2 rounded-lg border px-3 py-2 transition-all ${
         isFreeTrial ? 'bg-blue-500/10 border-blue-300/20' :
@@ -524,8 +524,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             <p className={`text-[11px] font-black ${isFreeTrial ? 'text-blue-200' : isLow ? 'text-red-200' : 'text-white/80'}`}>
               {isFreeTrial ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') :
                subStatus.noExpiry ? openEndedLabel : 
-               subStatus.daysLeft <= 0 ? expiredLabel : 
-               daysLeftLabel(subStatus.daysLeft)}
+               (subStatus?.daysLeft ?? 0) <= 0 ? expiredLabel : 
+               daysLeftLabel(subStatus?.daysLeft ?? 0)}
             </p>
           </div>
         </div>
@@ -591,8 +591,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
 
               <div className="rounded-[1.25rem] border border bg-muted p-5">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{subscriptionStatusLabel}</p>
-                <p className={`text-xl font-black ${(settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && subStatus?.daysLeft <= 0 ? 'text-blue-600' : 'text-slate-950'}`}>
-                  {!subStatus ? loadingText : subStatus.daysLeft <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') : subStatus.noExpiry ? openEndedLabel : subStatus.daysLeft <= 0 ? expiredLabel : daysLeftLabel(subStatus.daysLeft)}
+                <p className={`text-xl font-black ${(settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && (subStatus?.daysLeft ?? 999) <= 0 ? 'text-blue-600' : 'text-slate-950'}`}>
+                  {!subStatus ? loadingText : (subStatus?.daysLeft ?? 999) <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') : subStatus.noExpiry ? openEndedLabel : (subStatus?.daysLeft ?? 0) <= 0 ? expiredLabel : daysLeftLabel(subStatus?.daysLeft ?? 0)}
                 </p>
                 {subStatus?.subscription?.endDate && (
                   <p className="text-sm text-slate-500 mt-2">
