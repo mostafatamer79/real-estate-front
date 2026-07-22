@@ -89,6 +89,20 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewDepartment, setPreviewDepartment] = useState<PreviewDepartmentKey>("properties");
 
+  // Sync form state when user prop changes
+  useEffect(() => {
+    setForm({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      role: user?.role || 'employee',
+      department: (user?.departments as string[]) || [],
+      parentId: user?.parentId || '',
+      hasFreeTrial: user?.hasFreeTrial || false,
+    });
+  }, [user]);
+
   // Specialist roles auto-department
   useEffect(() => {
     if (form.role === 'legal') setForm(f => ({ ...f, department: ['legal'] }));
@@ -101,10 +115,15 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   const phoneRegex = /^05\d{8}$/;
 
   const fieldErrors: Record<string, string> = {};
-  if (!form.firstName.trim()) fieldErrors.firstName = 'الاسم الأول مطلوب';
-  if (!form.email && !form.phone) fieldErrors.email = 'يجب إدخال البريد أو الجوال';
-  if (form.email && !emailRegex.test(form.email)) fieldErrors.email = 'صيغة البريد الإلكتروني غير صحيحة';
-  if (form.phone && !phoneRegex.test(form.phone)) fieldErrors.phone = 'الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام';
+  if (!user?.id) {
+    if (!form.firstName.trim()) fieldErrors.firstName = 'الاسم الأول مطلوب';
+    if (!form.email && !form.phone) fieldErrors.email = 'يجب إدخال البريد أو الجوال';
+    if (form.email && !emailRegex.test(form.email)) fieldErrors.email = 'صيغة البريد الإلكتروني غير صحيحة';
+    if (form.phone && !phoneRegex.test(form.phone)) fieldErrors.phone = 'الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام';
+  } else {
+    // When updating, we do not require firstName, email, or phone. We only validate phone if it is filled.
+    if (form.phone && !phoneRegex.test(form.phone)) fieldErrors.phone = 'الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام';
+  }
   if (form.role === 'employee' && form.department.length === 0) fieldErrors.department = 'يجب اختيار الإدارة';
 
   const isValid = Object.keys(fieldErrors).length === 0;
