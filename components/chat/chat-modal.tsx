@@ -117,7 +117,7 @@ export default function SimpleChatModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" dir="rtl">
-      <div className="bg-card rounded-xl w-full w-[95vw] sm:max-w-md h-[600px] flex flex-col shadow-2xl">
+      <div className="bg-card rounded-xl w-[95vw] sm:max-w-md h-[600px] max-h-[90dvh] flex flex-col shadow-2xl">
         {/* Header */}
         <div className="p-4 border-b flex justify-between items-center bg-muted rounded-t-xl">
           <div>
@@ -129,7 +129,7 @@ export default function SimpleChatModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-muted rounded-full transition-colors"
+            className="p-2.5 sm:p-1 hover:bg-muted rounded-full transition-colors"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
@@ -185,7 +185,7 @@ export default function SimpleChatModal({
             <button
               type="submit"
               disabled={!newMessage.trim()}
-              className="p-2 bg-slate-600 text-white rounded-full hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-3 sm:p-2 bg-slate-600 text-white rounded-full hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-5 h-5" />
             </button>

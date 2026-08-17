@@ -133,7 +133,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="relative h-24 shrink-0 bg-slate-900 flex items-center px-8">
+                <div className="relative h-24 shrink-0 bg-slate-900 flex items-center px-4 sm:px-8">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-card/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
                     <div className="absolute bottom-0 left-0 w-24 h-24 bg-card/5 rounded-full -ml-12 -mb-12 blur-2xl"></div>
                     

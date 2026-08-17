@@ -67,7 +67,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
              {/* Optimized Premium Header */}
       {!embedded && (
       <section className="relative overflow-hidden mb-10 pb-10 border-b border bg-card">
-        <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end gap-4 md:gap-8">
             <div className="space-y-4">
               <motion.div
@@ -109,7 +109,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
       )}
 
 
-            <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-6'}`}>
+            <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-4 sm:px-6'}`}>
                 <Tabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
                     {/* Scrollable Premium Tabs */}
                     <div className="overflow-x-auto pb-2 hide-scrollbar">
@@ -402,7 +402,7 @@ function TransactionsSection() {
 
     return (
         <div className="rounded-3xl overflow-hidden border border">
-            <div className="p-4 sm:p-8 border-b border flex justify-between items-center bg-card">
+            <div className="p-4 sm:p-8 border-b border flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-card">
                 <div>
                    <h4 className="text-xl font-black text-slate-900">{t('fin.tab.transactions')}</h4>
                    <p className="text-[10px] text-slate-400 font-black mt-1 uppercase tracking-widest">{t('fin.transactions.desc')}</p>
@@ -470,7 +470,7 @@ function TransactionsSection() {
 function PlaceholderSection({ title }: { title: string }) {
     const { t } = useLanguage();
     return (
-        <div className="p-20 rounded-[1rem] bg-card flex flex-col items-center justify-center text-center border border">
+        <div className="p-6 sm:p-20 rounded-[1rem] bg-card flex flex-col items-center justify-center text-center border border">
             <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-slate-300 mb-6 border border">
               <Rocket className="w-8 h-8" />
             </div>

@@ -68,13 +68,13 @@ export function PropertyPortfolio({
       </div>
 
       {loading ? (
-         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1, 2, 3].map(i => (
                <div key={i} className="h-72 bg-muted rounded-[1.25rem] animate-pulse border border" />
             ))}
          </div>
       ) : filteredProperties.length === 0 ? (
-        <div className="text-center py-24 bg-muted/30 rounded-[1.25rem] border-2 border-dashed border">
+        <div className="text-center py-12 sm:py-24 bg-muted/30 rounded-[1.25rem] border-2 border-dashed border">
             <div className="w-24 h-24 bg-card shadow-xl shadow-stone-400 rounded-3xl flex items-center justify-center mx-auto mb-6">
                 <Building className="w-10 h-10 text-slate-200" />
             </div>
@@ -90,11 +90,12 @@ export function PropertyPortfolio({
             )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          {filteredProperties.map(property => (
-            <Card 
-                key={property.id} 
-                className="bg-card border hover:border hover:shadow-2xl hover:shadow-stone-400 hover:-translate-y-2 transition-all duration-500 rounded-[1rem] overflow-hidden cursor-pointer shadow-xl shadow-stone-400 group border-0"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          {filteredProperties.map((property, index) => (
+            <Card
+                key={property.id}
+                className="animate-card-in bg-card border hover:border hover:shadow-2xl hover:shadow-stone-400 hover:-translate-y-2 transition-all duration-500 rounded-[1rem] overflow-hidden cursor-pointer shadow-xl shadow-stone-400 group border-0"
+                style={{ "--stagger-delay": `${Math.min(index, 8) * 60}ms` } as React.CSSProperties}
                 onClick={() => onView(property)}
             >
               <CardContent className="p-0">
@@ -109,7 +110,7 @@ export function PropertyPortfolio({
                             </span>
                               {onExportOffer && (
                               <button 
-                                 className="w-8 h-8 flex items-center justify-center bg-card border border rounded-lg shadow-sm hover:bg-indigo-50 hover:border-indigo-100 hover:text-indigo-600 transition-all opacity-40 group-hover:opacity-100" 
+                                 className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center bg-card border border rounded-lg shadow-sm hover:bg-indigo-50 hover:border-indigo-100 hover:text-indigo-600 transition-all opacity-100 sm:opacity-40 sm:group-hover:opacity-100" 
                                  title={t("pm.action.exportOffer")}
                                  onClick={(e) => { e.stopPropagation(); onExportOffer(property); }}
                              >
@@ -118,7 +119,7 @@ export function PropertyPortfolio({
                              )}
                              {onToggleActive && (
                              <button 
-                                className={`w-8 h-8 flex items-center justify-center bg-card border rounded-lg shadow-sm transition-all opacity-40 group-hover:opacity-100 ${
+                                className={`w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center bg-card border rounded-lg shadow-sm transition-all opacity-100 sm:opacity-40 sm:group-hover:opacity-100 ${
                                   property.isActive 
                                     ? 'hover:bg-muted hover:border hover:text-slate-900 border text-slate-900' 
                                     : 'hover:bg-amber-50 hover:border-amber-100 hover:text-amber-600 border text-slate-300'

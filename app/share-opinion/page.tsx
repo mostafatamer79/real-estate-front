@@ -63,7 +63,7 @@ export default function ShareOpinionPage() {
           onClick={() => router.back()}
           className="group flex items-center gap-3 text-slate-500 hover:text-slate-950 transition-colors text-[10px] font-black uppercase tracking-[0.25em]"
         >
-          <div className="w-8 h-8 rounded-full border border group-hover:border-slate-400 flex items-center justify-center transition-colors">
+          <div className="w-10 h-10 sm:w-8 sm:h-8 rounded-full border border group-hover:border-slate-400 flex items-center justify-center transition-colors">
             <ChevronRight className="w-3.5 h-3.5" />
           </div>
           العودة
@@ -76,10 +76,10 @@ export default function ShareOpinionPage() {
           <div className="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center mb-6 shadow-md">
             <MessageSquareHeart className="w-4.5 h-4.5" />
           </div>
-          <h1 className="text-4xl sm:text-3xl md:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">
+          <h1 className="text-3xl md:text-5xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">
             شاركنا رأيك
           </h1>
-          <p className="text-slate-600 text-sm w-[95vw] sm:max-w-md leading-relaxed font-bold">
+          <p className="text-slate-600 text-sm w-full sm:max-w-md leading-relaxed font-bold">
             ملاحظاتك ومقترحاتك تهمنا لتطوير تجربة أفضل لك ولجميع عملائنا في المنصة.
           </p>
         </motion.div>
@@ -90,7 +90,7 @@ export default function ShareOpinionPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-card p-12 rounded-[1rem] border border shadow-sm text-center flex flex-col items-center"
+            className="bg-card p-6 sm:p-12 rounded-[1rem] border border shadow-sm text-center flex flex-col items-center"
           >
             <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 className="w-10 h-10" />
@@ -103,7 +103,7 @@ export default function ShareOpinionPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative bg-card border border rounded-[1rem] p-8 sm:p-12 overflow-hidden shadow-sm"
+            className="relative bg-card border border rounded-[1rem] p-6 sm:p-12 overflow-hidden shadow-sm"
           >
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 

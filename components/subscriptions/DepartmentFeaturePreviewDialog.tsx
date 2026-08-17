@@ -206,8 +206,8 @@ export default function DepartmentFeaturePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl rounded-[1.25rem] border border bg-card p-0 overflow-hidden" dir={direction}>
-        <div className="border-b border bg-slate-950 px-6 py-5 text-white">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-[1.25rem] border border bg-card p-0" dir={direction}>
+        <div className="border-b border bg-slate-950 px-4 py-4 sm:px-6 sm:py-5 text-white">
           <DialogHeader className="space-y-2 text-right">
             <DialogTitle className="text-xl sm:text-2xl font-black">
               {language === "ar" ? "معاينة الأقسام قبل الاشتراك" : "Department Preview Before Subscription"}
@@ -221,8 +221,8 @@ export default function DepartmentFeaturePreviewDialog({
         </div>
 
         <div className="grid gap-0 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <aside className="border-b border bg-muted p-4 lg:border-b-0 lg:border-l">
-            <div className="space-y-2">
+          <aside className="border-b border bg-muted p-3 sm:p-4 lg:border-b-0 lg:border-l">
+            <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
               {PREVIEW_DEPARTMENTS.map((department) => {
                 const Icon = department.icon;
                 const active = department.id === currentDepartment.id;
@@ -231,7 +231,7 @@ export default function DepartmentFeaturePreviewDialog({
                     key={department.id}
                     type="button"
                     onClick={() => setActiveDepartment(department.id)}
-                    className={`w-full rounded-2xl border px-4 py-3 text-right transition-colors ${
+                    className={`shrink-0 min-w-[11rem] lg:w-full lg:min-w-0 rounded-2xl border px-4 py-3 text-right transition-colors ${
                       active
                         ? "border-slate-900 bg-slate-900 text-white"
                         : "border bg-card text-slate-700 hover:bg-muted"

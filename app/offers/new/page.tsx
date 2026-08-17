@@ -101,7 +101,7 @@ export default function NewOfferPage() {
   };
 
   return (
-    <section className="min-h-screen bg-muted py-10" dir={isArabic ? "rtl" : "ltr"}>
+    <section className="min-h-dvh-safe bg-muted py-6 sm:py-10" dir={isArabic ? "rtl" : "ltr"}>
       <div className="w-[95vw] sm:max-w-3xl mx-auto px-4 sm:px-6">
         <button
           onClick={() => router.push("/offers")}
@@ -111,7 +111,7 @@ export default function NewOfferPage() {
           {isArabic ? "العودة إلى العروض" : "Back to offers"}
         </button>
 
-        <div className="bg-card border border rounded-2xl p-6 sm:p-4 sm:p-8 shadow-sm">
+        <div className="bg-card border border rounded-2xl p-6 sm:p-8 shadow-sm">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             {isArabic ? "إنشاء عرض جديد" : "Create New Offer"}
           </h1>

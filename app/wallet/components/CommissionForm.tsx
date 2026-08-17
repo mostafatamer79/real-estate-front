@@ -195,7 +195,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
 
     return (
         <div className='flex-1'>
-            <Card className='wallet-form-container !bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-xl p-6 overflow-y-auto max-h-[calc(100vh-2rem)]'>
+            <Card className='wallet-form-container !bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-xl p-4 sm:p-6 overflow-y-auto max-h-[calc(100dvh-2rem)]'>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl sm:text-2xl font-bold text-black">{t('wallet.commission.title')}</h2>

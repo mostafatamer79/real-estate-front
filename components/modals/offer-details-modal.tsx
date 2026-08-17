@@ -133,7 +133,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[750px] max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
-                <div className="h-72 w-full bg-slate-950 relative shrink-0">
+                <div className="h-56 sm:h-72 w-full bg-slate-950 relative shrink-0">
                     {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (
                         <div className="w-full h-full relative">
                             <img 
@@ -159,7 +159,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     </button>
 
                     {/* Content Overlay */}
-                    <div className="absolute bottom-8 left-8 right-8 z-10">
+                    <div className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8 z-10">
                         <div className="flex items-center gap-2 mb-3">
                             <span className="px-3 py-1 bg-slate-800/80 backdrop-blur-md text-white text-[10px] font-black rounded-lg uppercase tracking-widest border border-slate-700/50">
                                 {activeOffer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
@@ -310,7 +310,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 </div>
 
                 {/* Footer Section - Sticky */}
-                <div className="p-6 sm:p-4 sm:p-8 bg-card border-t border flex flex-col sm:flex-row gap-4 shrink-0">
+                <div className="p-4 sm:p-8 bg-card border-t border flex flex-col sm:flex-row gap-4 shrink-0">
                     <Button 
                         onClick={handleChat}
                         disabled={isChatLoading || isLoadingDetails}

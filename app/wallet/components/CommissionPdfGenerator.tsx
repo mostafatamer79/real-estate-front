@@ -90,7 +90,7 @@ const CommissionPdfGenerator: React.FC<CommissionPdfGeneratorProps> = ({ commiss
                 size="sm"
                 onClick={handleDownload}
                 disabled={isGenerating}
-                className="text-slate-800 border-blue-200 hover:bg-blue-50 hover:text-blue-800 transition-all flex items-center gap-1.5 rounded-lg font-bold shrink-0"
+                className="text-slate-800 border-blue-200 hover:bg-blue-50 hover:text-blue-800 transition-all flex items-center gap-1.5 rounded-lg font-bold shrink-0 h-10 px-3 sm:h-8"
             >
                 <Download className="w-4 h-4 shrink-0" />
                 <span className="hidden sm:inline">

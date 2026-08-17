@@ -46,7 +46,10 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   }, [pathname]);
 
   return (
-    <main className={shouldAddPadding ? "pt-16" : ""}>
+    <main
+      key={pathname}
+      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""}`}
+    >
       {children}
     </main>
   );

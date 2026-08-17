@@ -870,7 +870,7 @@ export function AddPropertyWizard({
                                                     initial={{ opacity: 0, scale: 0.98 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     key={idx} 
-                                                    className="bg-card p-4 rounded-2xl border border flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
+                                                    className="bg-card p-4 rounded-2xl border border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between shadow-sm hover:shadow-md transition-shadow"
                                                 >
                                                     <div className="flex items-center gap-4">
                                                         <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-blue-600 font-bold">
@@ -1032,13 +1032,13 @@ export function AddPropertyWizard({
                             {/* --- TAB 3: FINANCIAL (Placeholder) --- */}
                             <TabsContent value="financial" className="space-y-6 focus-visible:outline-none">
                                 <Card className="bg-card border shadow-sm">
-                                    <CardContent className="p-10 flex flex-col items-center justify-center text-center space-y-4">
+                                    <CardContent className="p-6 sm:p-10 flex flex-col items-center justify-center text-center space-y-4">
                                         <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-2">
                                             <CreditCard className="w-10 h-10 text-blue-600" />
                                         </div>
                                         <h4 className="text-xl font-bold text-gray-900">{t('pm.financial.management')}</h4>
-                                        <p className="text-gray-500 w-[95vw] sm:max-w-md">{t('pm.financial.desc')}</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 w-full w-[95vw] sm:max-w-lg mt-8">
+                                        <p className="text-gray-500 w-full sm:max-w-md">{t('pm.financial.desc')}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 w-full sm:max-w-lg mt-8">
                                             <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
                                                 <div className="w-2 h-2 rounded-full bg-green-500" />
                                                 <span className="font-medium text-gray-700">{t('pm.financial.autoInvoice')}</span>

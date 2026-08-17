@@ -46,10 +46,10 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-xl p-0 overflow-hidden bg-white/95 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-3xl" dir="rtl">
+            <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-3xl" dir="rtl">
                 
                 {/* Premium Header */}
-                <div className={`relative px-8 pt-12 pb-24 text-center overflow-hidden bg-gradient-to-br ${statusConfig.color}`}>
+                <div className={`relative px-6 pt-8 pb-24 sm:px-8 sm:pt-12 text-center overflow-hidden bg-gradient-to-br ${statusConfig.color}`}>
                     <div className="absolute inset-0 bg-[url('/watermark.png')] opacity-10 mix-blend-overlay background-size-cover"></div>
                     <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl mix-blend-overlay animate-pulse"></div>
                     <div className="absolute -top-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-2xl mix-blend-overlay"></div>
@@ -58,7 +58,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                         <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 shadow-2xl border border-white/30 transform rotate-3 hover:rotate-0 transition-transform duration-500">
                             {statusConfig.icon}
                         </div>
-                        <DialogTitle className="text-3xl font-black text-white mb-2 tracking-tight drop-shadow-md">
+                        <DialogTitle className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight drop-shadow-md">
                             {isAccepted ? 'تم الموافقة على الطلب' : isRejected ? 'تم رفض الطلب' : 'الطلب قيد المراجعة'}
                         </DialogTitle>
                         <DialogDescription className="text-white/80 font-medium text-lg">
@@ -84,24 +84,24 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
                         {/* Request Details Grid */}
                         <div className="grid grid-cols-2 gap-4 mb-8">
-                            <div className="group bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
+                            <div className="group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
                                 <div className="flex items-center gap-3 mb-2 text-slate-500">
                                     <div className="p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
                                         <FileText className="w-4 h-4" />
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wider">{t('wallet.commission.table.number') || 'رقم الطلب'}</span>
                                 </div>
-                                <p className="text-lg font-black text-slate-900 font-mono tracking-tight group-hover:text-slate-800 transition-colors">{requestNumber}</p>
+                                <p className="text-base sm:text-lg font-black text-slate-900 font-mono tracking-tight break-all group-hover:text-slate-800 transition-colors">{requestNumber}</p>
                             </div>
                             
-                            <div className="group bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
+                            <div className="group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
                                 <div className="flex items-center gap-3 mb-2 text-slate-500">
                                     <div className="p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wider">{t('wallet.table.date') || 'التاريخ'}</span>
                                 </div>
-                                <p className="text-lg font-black text-slate-900 font-mono tracking-tight group-hover:text-slate-800 transition-colors">{requestDate}</p>
+                                <p className="text-base sm:text-lg font-black text-slate-900 font-mono tracking-tight break-all group-hover:text-slate-800 transition-colors">{requestDate}</p>
                             </div>
                         </div>
 

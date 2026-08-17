@@ -257,7 +257,7 @@ export default function HomePage() {
       content: detailsPartStatus('ads') === 'soon' ? (
         <ComingSoonInline sectionName={language === 'ar' ? 'الإعلانات' : 'Ads'} message={settings.detailsPartMessages?.ads} />
       ) : marketingRequests.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {marketingRequests.slice(0, 6).map((request: any, index: number) => {
             const isOffer = request.category === 'offers';
             const priceVal = request.price ? Number(request.price) : 0;
@@ -324,7 +324,7 @@ export default function HomePage() {
           })}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-slate-800 bg-slate-950/60 p-10 text-center text-slate-400">
+        <div className="rounded-3xl border border-dashed border-slate-800 bg-slate-950/60 p-6 sm:p-10 text-center text-slate-400">
           {language === 'ar' ? 'لا توجد بيانات إعلانات حالياً' : 'No ads data available yet'}
         </div>
       ),
@@ -353,7 +353,7 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="w-full min-h-screen bg-slate-950 pt-12 pb-12 relative overflow-hidden"
+      <div className="w-full min-h-dvh-safe bg-slate-950 pt-12 pb-12 relative overflow-hidden"
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
         {/* Ambient background glows */}
@@ -364,7 +364,7 @@ export default function HomePage() {
         </div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          className="w-full max-w-7xl mx-auto px-6 lg:px-4 md:px-12 relative z-10">
+          className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 relative z-10">
 
   
 

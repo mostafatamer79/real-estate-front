@@ -71,7 +71,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="w-full grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6"
+        className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6"
         dir={language === 'ar' ? 'rtl' : 'ltr'}
       >
         {/* ── Operations Card ── */}
@@ -260,7 +260,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); setIsRequestAdModalOpen(true); }}
-                className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-colors"
+                className="p-2.5 text-slate-400 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-colors"
                 title={language === 'ar' ? 'إضافة إعلان جديد' : 'Request New Ad'}
               >
                 <PlusCircle className="h-5 w-5" />

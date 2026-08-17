@@ -39,7 +39,7 @@ export function NewPropertyModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border border-gray-800 rounded-3xl w-[95vw] sm:max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="bg-slate-900 border border-gray-800 rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Header */}
         <div className="relative p-3 sm:p-6 border-b border-gray-800 bg-slate-900/50">
           <div className="flex justify-between items-center">

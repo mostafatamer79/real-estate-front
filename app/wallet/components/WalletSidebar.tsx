@@ -60,7 +60,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-                className='fixed top-0 right-0 h-screen w-80 lg:w-[360px] p-5 z-10 hidden lg:block'
+                className='fixed top-0 right-0 h-dvh-safe w-80 lg:w-[360px] p-5 z-10 hidden lg:block'
             >
                 <div className='bg-white/10 backdrop-blur-2xl p-6 h-full rounded-[1.25rem] border border-white/20 shadow-2xl flex flex-col gap-6'>
                     <div className='space-y-4'>

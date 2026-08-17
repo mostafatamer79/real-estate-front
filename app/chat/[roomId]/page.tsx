@@ -228,8 +228,8 @@ export default function NormalChatRoomPage() {
     : roomDetails?.name || 'محادثة';
 
   return (
-    <div className="min-h-screen bg-muted px-4 py-5" dir="rtl">
-      <div className="mx-auto flex h-[calc(100vh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm">
+    <div className="min-h-dvh-safe bg-muted px-4 py-5" dir="rtl">
+      <div className="mx-auto flex h-[calc(100dvh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm">
         
         {/* Header */}
         <div className="border-b border bg-card px-5 py-4">
@@ -242,15 +242,15 @@ export default function NormalChatRoomPage() {
             >
               <ArrowRight className="h-5 w-5" />
             </button>
-            <div className="flex items-center gap-3">
-              <div className="relative">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="relative shrink-0">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-white">
                   {otherParticipantName.charAt(0)}
                 </div>
                 <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${isOnline ? 'bg-emerald-500' : 'bg-slate-300'}`} />
               </div>
-              <div>
-                <h1 className="text-lg font-black leading-tight text-slate-950">{otherParticipantName}</h1>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-black leading-tight text-slate-950">{otherParticipantName}</h1>
                 <p className={`mt-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${isOnline ? 'text-emerald-600' : 'text-slate-400'}`}>
                   {isOnline ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
                   {isOnline ? 'متصل الآن' : 'غير متصل'}

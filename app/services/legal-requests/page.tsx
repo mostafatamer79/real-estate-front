@@ -96,9 +96,9 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
       {/* Sticky header — Adjusted for global header */}
       {!embedded && (
       <div className="sticky top-16 z-20 bg-slate-950 border-b border-white/10">
-        <div className="w-[95vw] sm:max-w-3xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+        <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Link href="/services" className="w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors">
+            <Link href="/services" className="w-10 h-10 sm:w-8 sm:h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors">
               <ArrowLeft className={`w-3.5 h-3.5 text-white/50 ${isRtl ? "rotate-180" : ""}`} />
             </Link>
             <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-40 gap-3 md:gap-6">
+          <div className="flex flex-col items-center justify-center py-20 sm:py-40 gap-3 md:gap-6">
             <div className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center">
               <Scale className="w-7 h-7 text-white/10" />
             </div>
@@ -136,7 +136,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
 
         {/* Error */}
         {!isLoading && error && (
-          <div className="flex flex-col items-center justify-center py-40 gap-4">
+          <div className="flex flex-col items-center justify-center py-20 sm:py-40 gap-4">
             <div className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center">
               <AlertCircle className="w-7 h-7 text-white/20" />
             </div>
@@ -149,7 +149,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
 
         {/* Empty */}
         {!isLoading && !error && requests.length === 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-40 gap-4 md:gap-8 text-center">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 sm:py-40 gap-4 md:gap-8 text-center">
             <div className="w-24 h-24 rounded-[1.25rem] border border-white/10 bg-card/[0.02] flex items-center justify-center">
               <Scale className="w-10 h-10 text-white/10" />
             </div>
@@ -209,7 +209,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
                         </span>
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : req.id)}
-                          className="w-7 h-7 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors"
+                          className="w-10 h-10 sm:w-7 sm:h-7 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors"
                         >
                           {isExpanded
                             ? <ChevronUp className="w-3.5 h-3.5 text-white/40" />

@@ -34,7 +34,7 @@ export default function HomePage() {
 
   return (
     <section 
-      className='w-full h-screen flex flex-col items-center justify-center relative overflow-hidden' 
+      className='w-full h-dvh-safe flex flex-col items-center justify-center relative overflow-hidden' 
       dir="rtl"
       style={{ 
         // backgroundImage: "url('/cover.jpeg')",

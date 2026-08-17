@@ -69,7 +69,7 @@ export default function ChatButton({
       <button
         onClick={openChat}
         disabled={isLoading}
-        className="flex items-center gap-2 bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50"
+        className="flex items-center gap-2 bg-slate-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50"
       >
         {isLoading ? (
           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

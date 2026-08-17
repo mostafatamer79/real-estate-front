@@ -118,7 +118,7 @@ export default function SignIn({ onClose }: SignInProps) {
   return (
     <div
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-6 md:pt-12 p-3 sm:p-6 z-[60] overflow-hidden"
+      className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start pt-6 md:pt-12 p-3 sm:p-6 z-[60] overflow-y-auto"
     >
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-600/20 rounded-full blur-[120px] animate-pulse"></div>

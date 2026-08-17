@@ -225,7 +225,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
         <div className='flex flex-col gap-6 w-full'>
             {/* Balance Card - Keeping it here or moving to a separate component? Assuming Invoices section includes balance for now based on layout */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <Card className='md:col-span-2 relative overflow-hidden bg-slate-900/85 backdrop-blur-xl border border-white/10 shadow-xl rounded-[1.25rem] p-6'>
+                <Card className='md:col-span-2 relative overflow-hidden bg-slate-900/85 backdrop-blur-xl border border-white/10 shadow-xl rounded-[1.25rem] p-4 sm:p-6'>
                     {/* Background Gradients */}
                     <div className='absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2' />
                     <div className='absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2' />
@@ -294,7 +294,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                                     <span className='text-slate-400 font-medium text-sm tracking-wide'>{t('wallet.balance.label')}</span>
                                 </div>
                                 <div className='flex items-baseline gap-2'>
-                                    <h2 className='text-4xl font-black text-white tracking-tighter'>
+                                    <h2 className='text-3xl sm:text-4xl font-black text-white tracking-tighter'>
                                         {Number(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </h2>
                                     <SaudiRiyalSymbol className='text-slate-400' iconClassName='h-4 w-4' />
@@ -404,7 +404,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Add Balance Dialog */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
+                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
                     </DialogHeader>
@@ -456,7 +456,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 
             {/* Withdraw Balance Dialog */}
             <Dialog open={showWithdrawDialog} onOpenChange={setShowWithdrawDialog}>
-                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
+                <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.withdrawTitle') || 'طلب سحب رصيد'}</DialogTitle>
                     </DialogHeader>

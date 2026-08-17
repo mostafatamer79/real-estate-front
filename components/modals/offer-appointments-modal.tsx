@@ -112,7 +112,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                             </p>
                         </div>
                     ) : (
-                        <div className="flex-1 overflow-y-auto px-6 py-4">
+                        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
                             <div className="space-y-4 pb-6">
                                 {bookings.map((booking) => (
                                     <div 

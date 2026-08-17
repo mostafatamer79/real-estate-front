@@ -275,11 +275,11 @@ export default function VisitRequestModal({
 
             {/* Month nav */}
             <div className="flex items-center justify-between">
-                <Button variant="ghost" size="sm" onClick={prevFn}>
+                <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={prevFn}>
                     {isAr ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </Button>
                 <h3 className="font-bold text-sm text-slate-800">{calHeaderLabel()}</h3>
-                <Button variant="ghost" size="sm" onClick={nextFn}>
+                <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={nextFn}>
                     {isAr ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </Button>
             </div>
@@ -332,7 +332,7 @@ export default function VisitRequestModal({
                     <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
+                    <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
                         {timeSlots.map(t => (
                             <button
                                 key={t}
@@ -536,13 +536,13 @@ export default function VisitRequestModal({
                             {/* Calendar (no Hijri toggle for self) */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Button variant="ghost" size="sm" onClick={() => setSelfCurrentMonth(subMonths(selfCurrentMonth, 1))}>
+                                    <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(subMonths(selfCurrentMonth, 1))}>
                                         {isAr ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                                     </Button>
                                     <h3 className="font-bold text-sm text-slate-800">
                                         {format(selfCurrentMonth, 'MMMM yyyy', { locale })}
                                     </h3>
-                                    <Button variant="ghost" size="sm" onClick={() => setSelfCurrentMonth(addMonths(selfCurrentMonth, 1))}>
+                                    <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(addMonths(selfCurrentMonth, 1))}>
                                         {isAr ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                     </Button>
                                 </div>
@@ -578,7 +578,7 @@ export default function VisitRequestModal({
                                         <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
                                             <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                                         </p>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
+                                        <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
                                             {timeSlots.map(t => (
                                                 <button
                                                     key={t}

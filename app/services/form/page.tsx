@@ -227,7 +227,7 @@ function ServiceFormContent() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
           <h1 className="text-3xl sm:text-2xl sm:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
-          <p className="text-slate-600 text-sm w-[95vw] sm:max-w-md leading-relaxed">{config.description}</p>
+          <p className="text-slate-600 text-sm w-full sm:max-w-md leading-relaxed">{config.description}</p>
         </motion.div>
       </div>
 
@@ -245,7 +245,7 @@ function ServiceFormContent() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="relative bg-card border border rounded-[1rem] p-8 sm:p-12 overflow-hidden shadow-sm"
+            className="relative bg-card border border rounded-[1rem] p-5 sm:p-12 overflow-hidden shadow-sm"
           >
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 

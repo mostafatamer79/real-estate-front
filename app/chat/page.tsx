@@ -230,7 +230,7 @@ export default function NormalChatPage() {
                     {chat.otherParticipant ? getFullName(chat.otherParticipant.firstName, chat.otherParticipant.lastName) : chat.name}
                   </h4>
                   {chat.lastMessage && (
-                    <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <span className="flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
                       <Clock className="h-3 w-3" />
                       {formatTime(chat.lastMessage.createdAt)}
                     </span>

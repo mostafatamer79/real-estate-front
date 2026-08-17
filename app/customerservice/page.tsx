@@ -168,7 +168,7 @@ export function CustomerServicePage() {
 
   if (!isOpen) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center p-3 sm:p-6">
+      <div className="min-h-dvh-safe bg-muted flex items-center justify-center p-3 sm:p-6">
         <ComingSoonOverlay sectionName={t('cs.title')} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -176,7 +176,7 @@ export function CustomerServicePage() {
 
   return (
     <div 
-      className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" 
+      className="min-h-dvh-safe bg-muted/50 pb-12 overflow-x-hidden" 
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={{
         backgroundColor: settings.csBg || undefined,
@@ -208,7 +208,7 @@ export function CustomerServicePage() {
               <button
                 type="button"
                 onClick={() => setSubmitNotice(null)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-muted hover:text-slate-700"
+                className="flex h-10 w-10 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-muted hover:text-slate-700"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -259,7 +259,7 @@ export function CustomerServicePage() {
           </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {/* Contact Channels Grid */}
           {settings.uiFlags?.show_cs_channels !== false && (
             <div className="flex flex-wrap justify-center gap-3 md:gap-6 mb-12">

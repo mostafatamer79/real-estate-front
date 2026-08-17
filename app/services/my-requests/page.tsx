@@ -303,7 +303,7 @@ export default function MyServiceRequestsPage() {
             <h3 className="text-lg font-bold text-slate-900 mb-2">
               {language === 'ar' ? 'لا توجد طلبات حتى الآن' : 'No requests yet'}
             </h3>
-            <p className="text-sm text-slate-500 mb-6 w-[95vw] sm:max-w-md mx-auto">
+            <p className="text-sm text-slate-500 mb-6 w-full sm:max-w-md mx-auto">
               {language === 'ar' ? 'ابدأ بطلب أول خدمة لك، وسيقوم فريقنا بمراجعتها وتقديم العروض المناسبة.' : 'Start by requesting your first service, and our team will review it and provide suitable offers.'}
             </p>
             <Button onClick={() => router.push('/services')} variant="outline" className="h-10 px-5 rounded-lg font-bold border">

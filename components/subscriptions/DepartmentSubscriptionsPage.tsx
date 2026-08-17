@@ -143,7 +143,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
   return (
     <div className="space-y-6" dir="rtl">
       <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 rounded-full bg-muted text-slate-700 px-3 py-1 text-[11px] font-black">
               <Shield className="w-4 h-4" />
@@ -285,7 +285,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
         ) : (
           <div className="space-y-3">
             {subscriptions.map((sub) => (
-              <div key={sub.id} className="rounded-2xl border border bg-muted px-4 py-4 flex items-center justify-between gap-4">
+              <div key={sub.id} className="rounded-2xl border border bg-muted px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="min-w-0">
                   <div className="text-sm font-black text-slate-950">{sub.managementPackage?.name || "باقة اشتراك"}</div>
                   <div className="text-xs font-bold text-slate-500 mt-1">

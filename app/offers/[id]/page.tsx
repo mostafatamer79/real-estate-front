@@ -310,7 +310,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
         {roomId && (
           <button
             onClick={() => router.push(`/chat/${roomId}`)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted hover:bg-muted text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
+            className="flex items-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-xl bg-muted hover:bg-muted text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
             title="الانتقال إلى صفحة المحادثة الكاملة"
           >
             <MessageSquare className="w-3.5 h-3.5" />
@@ -372,7 +372,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
           <button
             onClick={sendMessage}
             disabled={!message.trim()}
-            className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
+            className="w-10 h-10 sm:w-8 sm:h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
           >
             <Send className="w-3.5 h-3.5 -rotate-45 ml-0.5 mb-0.5" />
           </button>
@@ -1351,8 +1351,8 @@ export default function OfferDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-muted p-4 md:p-6">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <div className="min-h-dvh-safe bg-muted p-4 md:p-6">
+        <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
           {renderLoadingState()}
         </div>
       </div>
@@ -1361,8 +1361,8 @@ export default function OfferDetailsPage() {
 
   if (error || !offer) {
     return (
-      <div className="min-h-screen bg-muted p-4 md:p-6">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <div className="min-h-dvh-safe bg-muted p-4 md:p-6">
+        <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
           {renderErrorState()}
         </div>
       </div>
@@ -1370,8 +1370,8 @@ export default function OfferDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted p-4 md:p-6" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+    <div className="min-h-dvh-safe bg-muted p-4 md:p-6" dir="rtl">
+      <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -1413,6 +1413,7 @@ export default function OfferDetailsPage() {
                       <Button
                         size="sm"
                         variant="outline"
+                        className="h-10 w-10 sm:h-8 sm:w-auto"
                         onClick={() => setIsShareModalOpen(true)}
                       >
                         <Share2 className="w-4 h-4" />
@@ -1425,7 +1426,7 @@ export default function OfferDetailsPage() {
                 {isOwner && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" className="h-10 w-10 sm:h-8 sm:w-auto">
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -1451,7 +1452,7 @@ export default function OfferDetailsPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="h-10 sm:h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={() => setIsReportModalOpen(true)}
                   >
                     <Flag className="w-4 h-4" />
@@ -1462,7 +1463,7 @@ export default function OfferDetailsPage() {
 
               <Button
                 onClick={handleBack}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 h-10 sm:h-9"
               >
                 <ArrowRight className="w-5 h-5" />
                 <span className="hidden md:inline">رجوع</span>
@@ -1558,7 +1559,7 @@ export default function OfferDetailsPage() {
 
       {/* Contact Modal */}
       <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>معلومات الاتصال</DialogTitle>
             <DialogDescription>
@@ -1626,7 +1627,7 @@ export default function OfferDetailsPage() {
 
       {/* Share Modal */}
       <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>مشاركة العرض</DialogTitle>
             <DialogDescription>
@@ -1664,7 +1665,7 @@ export default function OfferDetailsPage() {
 
       {/* Report Modal */}
       <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>الإبلاغ عن مخالفة</DialogTitle>
             <DialogDescription>

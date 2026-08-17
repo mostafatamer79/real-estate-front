@@ -87,8 +87,8 @@ export default function CommissionManager() {
     if (view === 'list') {
         return (
             <Card className='bg-card rounded-xl shadow-lg border-0'>
-                <CardHeader className='flex flex-row items-center justify-between pb-6'>
-                    <CardTitle className='text-2xl font-bold text-black text-right'>إدارة العمولات (السعي)</CardTitle>
+                <CardHeader className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-6'>
+                    <CardTitle className='text-xl sm:text-2xl font-bold text-black text-right'>إدارة العمولات (السعي)</CardTitle>
                     <Button
                         onClick={() => setView('form')}
                         className='px-6 py-2 text-white bg-slate-800 hover:bg-slate-700 rounded-lg'
@@ -252,7 +252,7 @@ export default function CommissionManager() {
             {showBrokerModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowBrokerModal(false)} dir="rtl">
-                    <div className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 p-3 sm:p-6" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 p-3 sm:p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">إضافة وسيط</h2>
                         <div className="space-y-4">
                             <div><Label>الاسم</Label><Input value={brokerForm.name} onChange={(e) => setBrokerForm({...brokerForm, name: e.target.value})} /></div>

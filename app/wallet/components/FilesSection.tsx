@@ -75,8 +75,8 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
 
     return (
         <Card className='bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
-            <div className='p-8'>
-                <div className='mb-8'>
+            <div className='p-4 sm:p-8'>
+                <div className='mb-6 sm:mb-8'>
                     <h2 className='text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
                     <p className='text-slate-500 font-bold text-sm'>{t('wallet.desc.files')}</p>
                 </div>
@@ -123,12 +123,12 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                     </TableCell>
                                     <TableCell className='text-center py-4'>
                                         <div className='flex items-center justify-center gap-2'>
-                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
                                                 onClick={() => handleViewFile(file)}
                                             >
                                                 <Eye className='w-4 h-4' />
                                             </Button>
-                                            <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
                                                 onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
                                             >
                                                 <Download className='w-4 h-4' />

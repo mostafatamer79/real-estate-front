@@ -219,7 +219,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
   }
 
   return (
-      <div className="orders-page-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="orders-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
         <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
         <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
@@ -261,7 +261,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-slate-900">{t('orders.details')}</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 
                 <div className="space-y-2">
                   <Label className="text-slate-900 font-bold">{t('orders.type')}</Label>
@@ -372,7 +372,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               {showDetailedFields && (
                 <div className="md:col-span-2 pt-6 border-t">
                   <h3 className="text-lg font-semibold mb-6">{t('bm.offer.detailed')}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                     <div className="space-y-2">
                       <Label className="text-slate-900 font-bold">{t('orders.rooms')}</Label>
                       <Input className="placeholder:text-slate-900 text-slate-900 font-bold" type="number" value={formData.rooms || ''} onChange={(e) => handleChange("rooms", Number(e.target.value))} placeholder="0" />
@@ -403,7 +403,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
                     <div className="flex items-center gap-2 border p-3 rounded-lg bg-muted/50">
                       <Checkbox id="maid" checked={formData.hasMaidRoom} onCheckedChange={(val) => handleChange("hasMaidRoom", !!val)} />
                       <Label htmlFor="maid" className="cursor-pointer">{t('orders.maid')}</Label>

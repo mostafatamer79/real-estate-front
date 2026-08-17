@@ -277,7 +277,7 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
           <button
             onClick={sendMessage}
             disabled={!message.trim()}
-            className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
+            className="w-10 h-10 sm:w-8 sm:h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
           >
             <Send className="w-3.5 h-3.5 -rotate-45 ml-0.5 mb-0.5" />
           </button>
@@ -352,7 +352,7 @@ export default function OrderDetailsPage() {
   const assignedTo = (order as any).assignedTo;
 
   return (
-    <div className="min-h-screen bg-muted/50 pb-12" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-dvh-safe bg-muted/50 pb-12" dir={isRtl ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
         {/* Back Button */}
@@ -405,7 +405,7 @@ export default function OrderDetailsPage() {
             {/* Basic Specifications Card */}
             <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">المواصفات الأساسية</h3>
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                 <InfoRow label="نوع العقار"   value={order.propertyType}  icon={Building2} />
                 <InfoRow label="المدينة"       value={order.city}          icon={MapPin} />
                 <InfoRow label="الحي"          value={order.neighborhood}  icon={MapPin} />
@@ -421,7 +421,7 @@ export default function OrderDetailsPage() {
             {(order.rooms || order.bathrooms || order.livingRooms || order.kitchens || order.floors || order.apartments || order.buildingArea) && (
               <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">التفاصيل الهيكلية</h3>
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                   <InfoRow label="عدد الغرف"        value={order.rooms}        icon={BedDouble} />
                   <InfoRow label="دورات المياه"      value={order.bathrooms}    icon={Bath} />
                   <InfoRow label="غرف المعيشة"       value={(order as any).livingRooms}  icon={Sofa} />

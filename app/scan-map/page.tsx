@@ -308,10 +308,10 @@ export default function ScanMapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-dvh-safe bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {generatingReport && (
         <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
-          <div className="w-full w-[95vw] sm:max-w-md rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-4 sm:p-8 text-center">
+          <div className="w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-4 sm:p-8 text-center">
             <div className="mx-auto mb-5 h-16 w-16 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 flex items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-emerald-300" />
             </div>
@@ -327,7 +327,7 @@ export default function ScanMapPage() {
       )}
       {isDisclaimerOpen && (
         <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full w-[95vw] sm:max-w-3xl max-h-[88vh] overflow-hidden rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
+          <div className="w-[95vw] sm:max-w-3xl max-h-[88vh] overflow-y-auto rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
 
 
             <div className="border-t border bg-card px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
@@ -401,7 +401,7 @@ export default function ScanMapPage() {
                   <span className="text-slate-400 text-sm">{t('scan.coordinates')}:</span>
                   <button
                     onClick={() => setIsSelectingLocation(!isSelectingLocation)}
-                    className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                    className={`text-xs px-3 py-2.5 sm:py-1.5 rounded-lg transition-colors ${
                       isSelectingLocation
                         ? 'bg-yellow-600 hover:bg-yellow-700'
                         : 'bg-slate-700 hover:bg-slate-600'
@@ -617,7 +617,7 @@ export default function ScanMapPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowTable(false)}
-                    className="text-sm bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-sm bg-slate-700 hover:bg-slate-600 px-3 py-2.5 sm:py-1.5 rounded-lg transition-colors"
                   >
                     {t('scan.table.close')}
                   </button>

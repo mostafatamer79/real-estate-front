@@ -103,7 +103,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 !bg-white/80 backdrop-blur-xl border !border-white/30 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 max-h-[90vh] overflow-y-auto !bg-white/80 backdrop-blur-xl border !border-white/30 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
           <DialogDescription className="text-slate-500 font-bold">

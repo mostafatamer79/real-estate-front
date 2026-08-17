@@ -134,7 +134,7 @@ export default function QuickActions() {
         border border-slate-700/60
         rounded-[1rem]
         shadow-[0_4px_32px_rgba(0,0,0,0.4)]
-        relative overflow-hidden
+        relative overflow-hidden overflow-x-auto hide-scrollbar
       ">
         {/* Top shimmer */}
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/60 to-transparent" />
@@ -146,7 +146,8 @@ export default function QuickActions() {
           if (settings.sectionFlags[flagKey] === 'hidden') return null;
 
           return (
-            <Tooltip key={action.id}>
+            <div key={action.id} className="flex flex-col items-center shrink-0">
+            <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
                   variants={item}
@@ -203,6 +204,8 @@ export default function QuickActions() {
                 {action.title}
               </TooltipContent>
             </Tooltip>
+            <span className="text-xs mt-1 md:hidden text-slate-200 text-center">{action.title}</span>
+            </div>
           );
         })}
       </div>
