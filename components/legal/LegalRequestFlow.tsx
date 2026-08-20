@@ -29,7 +29,7 @@ const initialContractPartyState = {
 };
 
 // ─── Shared style tokens — navbar palette ───────────────────────────────────
-const INP = "w-full h-13 !bg-white/45 backdrop-blur-sm border !border-white/50 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
+const INP = "w-full min-h-[56px] py-3 !bg-white/45 backdrop-blur-sm border !border-white/50 hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-400 focus:outline-none transition-all duration-200 shadow-sm";
 const LBL = "text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-2 block";
 const CARD = "!bg-white/20 backdrop-blur-md border !border-white/25 rounded-[1.25rem] p-6 space-y-4 shadow-sm";
 
@@ -386,7 +386,7 @@ export default function LegalRequestFlow({
                       <label className={LBL}>الهوية / الإقامة / السجل التجاري *</label>
                       <div className="flex gap-2">
                         <select
-                          className="w-40 h-13 bg-card border border rounded-2xl px-4 text-xs font-bold text-slate-700 text-slate-900 focus:outline-none focus:border-slate-400 hover:border-slate-300 transition-all appearance-none"
+                          className="w-40 min-h-[56px] py-3 bg-card border border rounded-2xl px-4 text-xs font-bold text-slate-700 text-slate-900 focus:outline-none focus:border-slate-400 hover:border-slate-300 transition-all appearance-none"
                           value={(contractData as any)[p.key].idType}
                           onChange={(e) => setContractData({ ...contractData, [p.key]: { ...(contractData as any)[p.key], idType: e.target.value } })}
                         >
@@ -433,7 +433,7 @@ export default function LegalRequestFlow({
                     </div>
                     <div className="space-y-2">
                         <label className={LBL}>مرفق الوكالة</label>
-                        <button className="w-full h-13 bg-card border border-dashed border-slate-300 hover:border-slate-400 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
+                        <button className="w-full min-h-[56px] py-3 bg-card border border-dashed border-slate-300 hover:border-slate-400 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                         <Upload className="w-4 h-4" />
                         ارفاق الوكالة (صورة أو PDF)
                         </button>
@@ -569,7 +569,7 @@ export default function LegalRequestFlow({
                 key={t.id}
                 type="button"
                 onClick={() => setOtherData({ ...otherData, type: t.label })}
-                className={`h-13 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
+                className={`min-h-[56px] py-3 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${
                   otherData.type === t.label
                     ? "bg-slate-950 text-white border-slate-950"
                     : "bg-card shadow-sm border text-slate-500 hover:border-slate-300 hover:text-slate-900"

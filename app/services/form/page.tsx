@@ -41,7 +41,7 @@ const serviceOptions: Record<ServiceType, string[]> = {
 };
 
 // Premium white background inputs
-const inputClass = "w-full h-13 bg-card border border hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-900 focus:outline-none transition-all duration-200 shadow-sm";
+const inputClass = "w-full min-h-[56px] py-3 bg-card border border hover:border-slate-350 focus:border-slate-400 focus:ring-2 focus:ring-slate-950/5 rounded-2xl px-5 text-slate-900 text-sm font-bold placeholder:text-slate-900 focus:outline-none transition-all duration-200 shadow-sm";
 const labelClass = "text-[9px] font-black text-slate-900 uppercase tracking-[0.22em] mb-2 block";
 
 const sectionDivider = (label: string) => (
@@ -265,7 +265,7 @@ function ServiceFormContent() {
                     <label className={labelClass}>{f.label}</label>
                     <input
                       className={inputClass}
-                      style={{ height: "3.25rem" }}
+                      
                       value={(formData as any)[f.field]}
                       onChange={(e) => handleInputChange(f.field, e.target.value)}
                       placeholder={f.placeholder}
@@ -283,7 +283,7 @@ function ServiceFormContent() {
                   <motion.div variants={itemVariants} className="space-y-2">
                     <label className={labelClass}>نوع الخدمة التسويقية</label>
                     <div className="relative">
-                      <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
+                      <select className={inputClass + " appearance-none cursor-pointer"}  value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
                         {serviceOptions.marketing.map((s, i) => <option key={i} value={s} className="bg-card text-slate-900">{s}</option>)}
                       </select>
                       <ChevronLeft className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 -rotate-90 text-slate-400 pointer-events-none" />
@@ -299,7 +299,7 @@ function ServiceFormContent() {
                         <label className={labelClass}>{f.label}</label>
                         <div className="relative">
                           <f.icon className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                          <input type={f.type} className={inputClass + " pr-10"} style={{ height: "3.25rem" }} value={(formData as any)[f.field]} onChange={(e) => handleInputChange(f.field, e.target.value)} placeholder={f.placeholder} dir="ltr" />
+                          <input type={f.type} className={inputClass + " pr-10"}  value={(formData as any)[f.field]} onChange={(e) => handleInputChange(f.field, e.target.value)} placeholder={f.placeholder} dir="ltr" />
                         </div>
                       </motion.div>
                     ))}
@@ -310,7 +310,7 @@ function ServiceFormContent() {
                   <motion.div variants={itemVariants} className="space-y-2">
                     <label className={labelClass}>نوع الخدمة المطلوبة</label>
                     <div className="relative">
-                      <select className={inputClass + " appearance-none cursor-pointer"} style={{ height: "3.25rem" }} value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
+                      <select className={inputClass + " appearance-none cursor-pointer"}  value={formData.service} onChange={(e) => handleInputChange("service", e.target.value)}>
                         <option value="" disabled className="bg-card text-slate-900">اختر من القائمة...</option>
                         {serviceOptions[serviceType].map((s, i) => <option key={i} value={s} className="bg-card text-slate-900">{s}</option>)}
                       </select>
@@ -318,7 +318,7 @@ function ServiceFormContent() {
                   </motion.div>
                   <motion.div variants={itemVariants} className="space-y-2">
                     <label className={labelClass}>الكمية / العدد</label>
-                    <input type="number" className={inputClass} style={{ height: "3.25rem" }} value={formData.quantity} onChange={(e) => handleInputChange("quantity", e.target.value)} min="1" />
+                    <input type="number" className={inputClass}  value={formData.quantity} onChange={(e) => handleInputChange("quantity", e.target.value)} min="1" />
                   </motion.div>
                   {formData.service === "أخرى" && (
                     <motion.div variants={itemVariants} className="space-y-2 md:col-span-2 animate-in slide-in-from-top-2 duration-300">
@@ -326,7 +326,7 @@ function ServiceFormContent() {
                       <input
                         type="text"
                         className={inputClass}
-                        style={{ height: "3.25rem" }}
+                        
                         value={formData.otherService}
                         onChange={(e) => handleInputChange("otherService", e.target.value)}
                         placeholder="ما هي الخدمة التي تحتاجها؟"

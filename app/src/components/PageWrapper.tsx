@@ -80,7 +80,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   return (
     <main
       key={pathname}
-      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[80px] md:pb-0" : ""}`}
+      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[80px] pb-nav-safe md:pb-0" : ""}`}
     >
       {children}
     </main>

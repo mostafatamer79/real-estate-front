@@ -114,6 +114,7 @@
     font-size: 15px;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -425,7 +426,7 @@
 .internal-page-root button[role="combobox"],
 .internal-page-root [class*="bg-background"] {
   width: 100% !important;
-  height: 3.25rem !important;
+  min-height: 3.5rem !important;
   background-color: rgba(255, 255, 255, 0.45) !important;
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
   backdrop-filter: blur(8px) !important;
@@ -434,6 +435,8 @@
   border-radius: 1rem !important;
   padding-left: 1.25rem !important;
   padding-right: 1.25rem !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
   font-size: 0.875rem !important;
   font-weight: 700 !important;
   transition: all 0.2s ease-in-out !important;
@@ -704,21 +707,46 @@ nav.fixed[class*="bottom"] {
 }
 
 /* Mobile App Optimizations */
-* {
-  -webkit-tap-highlight-color: transparent;
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  body {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+  }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+/* iOS Input Zoom Prevention */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select, 
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
-body {
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+/* Safe area padding for bottom nav */
+@media (max-width: 768px) {
+  .pb-nav-safe {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
 }

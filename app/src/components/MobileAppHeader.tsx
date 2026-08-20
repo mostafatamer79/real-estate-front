@@ -23,7 +23,10 @@ export default function MobileAppHeader({ title, theme = 'dark' }: MobileAppHead
   const btnClass = theme === 'dark' ? 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200';
 
   return (
-    <div className={`flex md:hidden items-center justify-between px-4 h-14 border-b backdrop-blur-md sticky top-0 z-[99] ${bgClass}`}>
+    <div 
+      className={`flex md:hidden items-center justify-between px-4 pb-2 border-b backdrop-blur-md sticky top-0 z-[99] ${bgClass}`}
+      style={{ paddingTop: 'calc(0.5rem + env(safe-area-inset-top))' }}
+    >
       <div className="flex items-center gap-3">
         <button 
           onClick={() => router.back()} 

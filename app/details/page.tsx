@@ -357,7 +357,7 @@ export default function HomePage() {
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
         {/* Mobile App Bar */}
-        <div className="flex md:hidden items-center justify-between px-4 sm:px-6 pt-4 pb-2 relative z-50">
+        <div className="flex md:hidden items-center justify-between px-4 sm:px-6 pb-2 relative z-50" style={{ paddingTop: "calc(1rem + env(safe-area-inset-top))" }}>
           <button 
             onClick={() => router.back()} 
             className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white transition-colors"

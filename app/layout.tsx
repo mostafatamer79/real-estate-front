@@ -23,8 +23,6 @@ const geistSans = Geist({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
   themeColor: "#0f172a",
 };
@@ -47,6 +45,14 @@ export async function generateMetadata(): Promise<Metadata> {
       title: appName,
       description,
       manifest: "/manifest.json",
+      icons: {
+        apple: "/icons/icon-512x512.png",
+      },
+      appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: appName,
+      },
     };
   } catch {
     // Fall back to static metadata when the API is unavailable at build time.
@@ -56,6 +62,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "الوساطة الرقمية",
     description: "الوساطة الرقمية - منصة عقارية شاملة",
     manifest: "/manifest.json",
+    icons: {
+      apple: "/icons/icon-512x512.png",
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "الوساطة الرقمية",
+    },
   };
 }
 

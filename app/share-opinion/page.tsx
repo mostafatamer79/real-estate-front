@@ -49,7 +49,7 @@ export default function ShareOpinionPage() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
-  const inputClass = "w-full h-14 rounded-2xl border border bg-muted focus:bg-card focus:border-slate-900 px-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none";
+  const inputClass = "w-full min-h-[56px] py-3 rounded-2xl border border bg-muted focus:bg-card focus:border-slate-900 px-5 text-sm font-bold text-slate-900 placeholder:text-slate-900 transition-all outline-none";
   const labelClass = "text-[10px] font-black uppercase tracking-widest text-slate-900 px-1";
 
   return (
@@ -157,7 +157,7 @@ export default function ShareOpinionPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !name.trim() || !message.trim()}
-                  className="h-14 px-8 bg-slate-950 hover:bg-slate-800 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="min-h-[56px] py-3 px-8 bg-slate-950 hover:bg-slate-800 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "جاري الإرسال..." : "إرسال الرأي"}
                   {!isSubmitting && <Send className="w-4 h-4 rtl:-scale-x-100" />}
