@@ -31,6 +31,7 @@ import toast from 'react-hot-toast';
 import Header from '@/app/src/components/Header';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
+import MobileAppHeader from '@/app/src/components/MobileAppHeader';
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -120,6 +121,7 @@ export default function MyServiceRequestsPage() {
     return (
       <div className="min-h-screen bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Header />
+      <MobileAppHeader title={language === 'ar' ? 'تفاصيل الطلب' : 'Request Details'} theme="light" />
         <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
           <Button
             variant="ghost"
@@ -257,6 +259,7 @@ export default function MyServiceRequestsPage() {
   return (
     <div className="min-h-screen bg-card" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <Header />
+      <MobileAppHeader title={language === 'ar' ? 'طلباتي' : 'My Requests'} theme="light" />
 
       <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
         <Button

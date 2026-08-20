@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -63,6 +64,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
 
     return (
         <div className={`${embedded ? '' : 'min-h-screen bg-card pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            {!embedded && <MobileAppHeader theme="light" title={t('admin.settings.financial') || 'المالية'} />}
             {/* Premium Header Container */}
              {/* Optimized Premium Header */}
       {!embedded && (

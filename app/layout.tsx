@@ -7,6 +7,7 @@ import { ConfirmDialogProvider } from "@/components/ui/confirm-dialog-provider";
 import Header from "./src/components/Header";
 import PageWrapper from "./src/components/PageWrapper";
 import AdminImpersonationReturn from "./src/components/AdminImpersonationReturn";
+import MobileBottomNav from "./src/components/MobileBottomNav";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -22,6 +23,8 @@ const geistSans = Geist({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
   themeColor: "#0f172a",
 };
@@ -64,7 +67,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overscroll-none`}
         suppressHydrationWarning
       >
         <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none opacity-15">
@@ -106,6 +109,7 @@ export default function RootLayout({
                       {children}
                     </PageWrapper>
                     <AdminImpersonationReturn />
+                    <MobileBottomNav />
                   </div>
                   <Toaster />
                   <SonnerToaster richColors position="top-center" />

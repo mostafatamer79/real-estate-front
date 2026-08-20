@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -90,6 +91,7 @@ export default function DisputesPage() {
 
   return (
     <div className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <MobileAppHeader theme="light" title={t('disputes.title')} />
 
       {/* Premium Header Container */}
       <section className="relative overflow-hidden mb-8 md:mb-12 p-3 sm:p-6 md:p-12 rounded-b-[1.25rem] bg-slate-950 text-white shadow-2xl">

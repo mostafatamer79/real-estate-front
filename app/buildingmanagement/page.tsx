@@ -1,4 +1,6 @@
 "use client";
+import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+
 
 import Image from "next/image";
 import React, { useState, useRef, useEffect, useMemo, Suspense, useCallback } from "react";

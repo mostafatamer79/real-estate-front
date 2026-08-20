@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -531,8 +532,9 @@ function DepartmentHubContent() {
 
       {/* ── Main area ────────────────────────────────────────────────────── */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <MobileAppHeader theme="light" title={isRtl ? "مركز الإدارات" : "Department Hub"} />
         {/* Top header */}
-        <header className="h-16 bg-card border-b border flex items-center justify-between px-4 sm:px-8 shrink-0">
+        <header className="hidden md:flex h-16 bg-card border-b border items-center justify-between px-4 sm:px-8 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}

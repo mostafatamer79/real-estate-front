@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -90,12 +91,13 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
   };
 
   return (
-    <div className={`${embedded ? '' : 'min-h-screen bg-slate-950 text-white'}`} dir={isRtl ? "rtl" : "ltr"}>
+    <div className={`${embedded ? '' : 'min-h-screen bg-slate-950 text-white pb-12'}`} dir={isRtl ? "rtl" : "ltr"}>
+      {!embedded && <MobileAppHeader theme="dark" title={t("legal.requests.title")} />}
       {!embedded && <div className="fixed inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% -5%, rgba(255,255,255,0.04) 0%, transparent 60%)" }} />}
 
       {/* Sticky header — Adjusted for global header */}
       {!embedded && (
-      <div className="sticky top-16 z-20 bg-slate-950 border-b border-white/10">
+      <div className="hidden md:flex sticky top-16 z-20 bg-slate-950 border-b border-white/10">
         <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link href="/services" className="w-10 h-10 sm:w-8 sm:h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center transition-colors">

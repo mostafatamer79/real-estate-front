@@ -56,10 +56,10 @@ export default function Services() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
           onClick={() => router.push("/details")}
-          className="group flex items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest mb-6 sm:mb-8"
+          className="group flex items-center gap-2 text-slate-400 hover:text-slate-300 transition-colors text-sm font-medium mb-4 sm:mb-8"
         >
-          <div className="w-6 h-6 rounded-full bg-card/[0.02] border border-white/[0.06] group-hover:bg-card/[0.05] flex items-center justify-center transition-all duration-200">
-            <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
+          <div className="w-8 h-8 rounded-full bg-card/[0.05] border border-white/[0.1] group-hover:bg-card/[0.1] flex items-center justify-center transition-all duration-200">
+            <ArrowLeft className={`w-4 h-4 ${isRtl ? "rotate-180" : ""}`} />
           </div>
           {t("common.back")}
         </motion.button>
@@ -67,14 +67,14 @@ export default function Services() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/5 border border-white/10 mb-3 flex-row-reverse">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" />
-            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
+            <p className="text-[10px] sm:text-xs font-medium text-white/70 uppercase">
               {t("services.platformServices") || "خدمات المنصة"}
             </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[-0.03em] leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
             {t("services.title") || "خدماتنا"}
           </h1>
-          <p className="text-white/40 text-sm w-full sm:max-w-lg leading-relaxed">
+          <p className="text-white/60 text-sm sm:text-base w-full sm:max-w-lg leading-relaxed">
             نقدم مجموعة متكاملة من الخدمات العقارية لتسهيل رحلتك في السوق.
           </p>
         </motion.div>
@@ -87,7 +87,7 @@ export default function Services() {
         initial="hidden"
         animate="show"
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
-        className="relative z-10 max-w-7xl w-full bg-slate-950 mx-auto px-4 sm:px-6 md:px-10 pb-12 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3"
+        className="relative z-10 max-w-7xl w-full bg-slate-950 mx-auto px-4 sm:px-6 md:px-10 pb-12 flex flex-col md:grid md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4"
       >
         {serviceCards.map((card) => {
           const Icon = card.icon;
@@ -119,7 +119,7 @@ export default function Services() {
                 if (disabled) return;
                 router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${card.id}`);
               }}
-              className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-card/[0.02] border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[140px] sm:min-h-[160px] overflow-hidden transition-all duration-300 ${
+              className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-card/[0.02] border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[100px] sm:min-h-[160px] overflow-hidden transition-all duration-300 ${
                 disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-white/20 hover:-translate-y-0.5'
               }`}
             >
@@ -146,7 +146,7 @@ export default function Services() {
                 </span>
               </div>
 
-              <div className="mt-auto pt-4 relative z-10 w-full flex flex-row items-end justify-between">
+              <div className="mt-2 sm:mt-auto pt-2 sm:pt-4 relative z-10 w-full flex flex-row items-center sm:items-end justify-between">
                 <h3 className="text-base sm:text-lg font-bold text-white/80 leading-tight group-hover:text-white transition-colors duration-200 pointer-events-none">
                   {t(`services.${card.id}`)}
                 </h3>

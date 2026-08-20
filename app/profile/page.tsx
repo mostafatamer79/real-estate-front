@@ -1,4 +1,6 @@
 "use client";
+import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -224,15 +226,16 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted p-4 md:p-10" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-muted pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <MobileAppHeader theme="light" title={t('profile.title')} />
+      <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
             <h1 className="text-xl sm:text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
             <button 
                 onClick={() => router.push('/')}
-                className="px-4 py-2 text-slate-600 hover:bg-muted rounded-lg transition-colors"
+                className="hidden md:block px-4 py-2 text-slate-600 hover:bg-muted rounded-lg transition-colors"
                 dir="ltr" 
             >
                 {t('profile.back')}

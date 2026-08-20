@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -255,13 +256,14 @@ export default function NewSubscriptionPage() {
   }
 
   return (
-    <div className="subscriptions-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-6 sm:pb-12 p-3 sm:p-6" dir="rtl">
+    <div className="subscriptions-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-6 sm:pb-12" dir="rtl">
+      <MobileAppHeader theme="light" title={t("subscriptions.management") || "الاشتراكات"} />
       <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
       <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 space-y-6 relative z-10">
-        <div className="flex justify-start">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 md:px-6 lg:px-8 space-y-6 relative z-10">
+        <div className="hidden md:flex justify-start">
           <button
             type="button"
             onClick={() => router.back()}

@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
@@ -365,8 +366,9 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             : isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
         }`}
       >
+        <MobileAppHeader theme="light" title={t('admin.dashboard.title') || 'لوحة التحكم'} />
         {/* Top Header */}
-        <header className="h-16 bg-card border-b border flex items-center justify-between px-4 sm:px-8 shrink-0">
+        <header className="hidden md:flex h-16 bg-card border-b border items-center justify-between px-4 sm:px-8 shrink-0">
            <div className="flex items-center gap-4">
              <Image
                src={settings.logoBlackUrl || '/icons/black.png'}

@@ -1,5 +1,6 @@
 "use client";
 
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import React, { useEffect, useState } from "react";
 import {
   Twitter, Mail, MessageCircle, Phone,
@@ -183,6 +184,7 @@ export function CustomerServicePage() {
         fontSize: settings.csFontSize ? `${settings.csFontSize}px` : undefined
       }}
     >
+      <MobileAppHeader theme="light" title={t('cs.title')} />
       <AnimatePresence>
         {submitNotice && (
           <motion.div

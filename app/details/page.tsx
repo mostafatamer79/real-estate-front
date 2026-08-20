@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { motion } from "framer-motion";
-import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
+import { ArrowLeft, Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator
@@ -353,8 +353,23 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="w-full min-h-dvh-safe bg-slate-950 pt-12 pb-12 relative overflow-hidden"
+      <div className="w-full min-h-dvh-safe bg-slate-950 pt-4 md:pt-12 pb-12 relative overflow-hidden"
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
+
+        {/* Mobile App Bar */}
+        <div className="flex md:hidden items-center justify-between px-4 sm:px-6 pt-4 pb-2 relative z-50">
+          <button 
+            onClick={() => router.back()} 
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white transition-colors"
+          >
+            <ArrowLeft className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
+          </button>
+          <div className="text-sm font-bold text-white tracking-widest uppercase">
+             {t("common.back") || "رجوع"}
+          </div>
+          <div className="w-10 h-10" />
+        </div>
+
 
         {/* Ambient background glows */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -120,6 +120,13 @@ export default function Header() {
   }, []);
 
   // Determine if the header should be hidden based on the current route
+  const isMobileHiddenRoute = React.useMemo(() => {
+    if (!pathname) return false;
+    const mobileOnlyHidden = ['/profile', '/orders', '/offers', '/chat'];
+    if (mobileOnlyHidden.some(p => pathname.startsWith(p))) return true;
+    return false;
+  }, [pathname]);
+
   const isHiddenRoute = React.useMemo(() => {
     if (!pathname) return false;
     const hiddenPatterns = [
@@ -144,7 +151,7 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 ${
+      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >

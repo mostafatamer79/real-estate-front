@@ -1,5 +1,6 @@
 "use client";
 
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import React, { useState, useEffect } from "react";
 import { Send, CheckCircle2, ChevronRight, MessageSquareHeart } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -52,12 +53,13 @@ export default function ShareOpinionPage() {
   const labelClass = "text-[10px] font-black uppercase tracking-widest text-slate-900 px-1";
 
   return (
-    <section className="w-full min-h-screen bg-muted text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-muted" dir="rtl">
+    <section className="w-full min-h-screen bg-muted text-slate-950 flex flex-col font-sans overflow-x-hidden selection:bg-muted pb-12" dir="rtl">
+      <MobileAppHeader theme="light" title="شارك رأيك" />
       {/* Back nav */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-10"
+        className="hidden md:flex relative z-10 max-w-7xl mx-auto w-full px-6 pt-10"
       >
         <button
           onClick={() => router.back()}

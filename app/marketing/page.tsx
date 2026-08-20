@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
@@ -51,6 +52,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
 
     return (
         <div className={`${embedded ? '' : 'min-h-screen bg-muted/50 pb-12 overflow-x-hidden'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            {!embedded && <MobileAppHeader theme="light" title={t('action.marketing') || 'التسويق'} />}
             {/* Optimized Premium Header - GLASSMORPHISM */}
             {!embedded && (
             <section className="relative overflow-hidden mb-12 pb-12 border-b border-white/20 bg-card/50 backdrop-blur-3xl">

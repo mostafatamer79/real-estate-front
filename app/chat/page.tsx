@@ -1,4 +1,6 @@
 "use client";
+import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +34,7 @@ interface ChatRoom {
 
 export default function NormalChatPage() {
   const router = useRouter();
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,8 +154,9 @@ export default function NormalChatPage() {
   const unreadTotal = chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-muted px-4 py-6" dir="rtl">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="min-h-screen bg-muted pb-12" dir="rtl">
+      <MobileAppHeader theme="light" title="محادثاتي" />
+      <div className="px-4 py-6 mx-auto max-w-5xl space-y-6">
       <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">

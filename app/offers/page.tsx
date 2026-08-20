@@ -1,4 +1,6 @@
 "use client";
+import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
@@ -385,7 +387,8 @@ const MeterIcon = ({ className }: { className?: string }) => (
 
   // Final Render
   return (
-    <section className="offers-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12 flex" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="offers-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12 flex flex-col lg:flex-row" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <MobileAppHeader theme="light" title={t('action.offers') || 'العروض'} />
       <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
       <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />

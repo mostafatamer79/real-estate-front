@@ -72,10 +72,15 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
     setShouldAddPadding(needsPadding);
   }, [pathname, settings, settingsLoading]);
 
+  const hiddenRoutes = ['/login', '/scan-map'];
+  const isHidden = hiddenRoutes.some(route => pathname?.startsWith(route));
+  const isChatRoom = pathname?.startsWith('/chat/') && pathname !== '/chat';
+  const hasBottomNav = !isHidden && !isChatRoom;
+
   return (
     <main
       key={pathname}
-      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""}`}
+      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[80px] md:pb-0" : ""}`}
     >
       {children}
     </main>

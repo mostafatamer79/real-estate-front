@@ -1,4 +1,5 @@
 "use client";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Scale } from "lucide-react";
@@ -12,7 +13,8 @@ export default function LegalServiceSelectionPage() {
   const isRtl = language === "ar";
 
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white overflow-x-hidden" dir={isRtl ? "rtl" : "ltr"}>
+    <section className="w-full min-h-screen bg-slate-950 text-white overflow-x-hidden pb-12" dir={isRtl ? "rtl" : "ltr"}>
+      <MobileAppHeader theme="dark" title="الخدمات القانونية" />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
         <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
@@ -25,7 +27,7 @@ export default function LegalServiceSelectionPage() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => router.push("/services")}
-            className="group flex items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest"
+            className="hidden md:flex group items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest"
           >
             <span className="w-6 h-6 rounded-full bg-card/[0.02] border border-white/[0.06] group-hover:bg-card/[0.05] flex items-center justify-center transition-all duration-200">
               <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />

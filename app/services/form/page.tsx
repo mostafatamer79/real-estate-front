@@ -1,6 +1,7 @@
 // app/service-form/page.tsx
 "use client";
 
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, CheckCircle2, ChevronLeft, Calendar, Clock, Hash } from "lucide-react";
@@ -199,7 +200,8 @@ function ServiceFormContent() {
   return (
 
 
-    <section className="services-form-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden flex flex-col font-sans selection:bg-muted" dir="rtl">
+    <section className="services-form-root w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden flex flex-col font-sans selection:bg-muted pb-12" dir="rtl">
+      <MobileAppHeader theme="light" title={config ? config.title : "طلب خدمة"} />
       {/* Ambient Background Glows */}
       <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
@@ -209,7 +211,7 @@ function ServiceFormContent() {
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-10"
+        className="hidden md:block relative z-10 max-w-7xl mx-auto w-full px-6 pt-10"
       >
         <button
           onClick={() => router.push("/services")}
