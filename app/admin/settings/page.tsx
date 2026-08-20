@@ -1224,17 +1224,17 @@ function TextTab({
     localSettings, updateSettings, t,
     searchTerm, setSearchTerm, textOverrides, setTextOverrides, language
 }: TextTabProps) {
-    const [viewMode, setViewMode] = useState<'structured' | 'traditional'>('structured');
+    const [viewMode, setViewMode] = useState<'structured' | 'traditional'>('traditional');
     const [activeSection, setActiveSection] = useState<string>('welcome_screen');
     const isRtl = language === 'ar';
 
     // Traditional search/lookup states
-    const [selectedCategory, setSelectedCategory] = useState<'admin' | 'public'>('admin');
+    const [selectedCategory, setSelectedCategory] = useState<'admin' | 'public' | 'all_platform'>('all_platform');
     const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
     const [selectedKeyGroup, setSelectedKeyGroup] = useState<string>('all');
     const [expandedSubcategory, setExpandedSubcategory] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const pageSize = 15;
+    const pageSize = 30;
 
     // Reset page on search or filter change in traditional mode
     useEffect(() => {
@@ -1247,8 +1247,10 @@ function TextTab({
     // Find the currently active subcategory config
     const currentSubcategory = STRUCTURED_SECTIONS.flatMap(s => s.subcategories).find(sub => sub.id === activeSection);
 
-    // Traditional lookup lists
-    const SUBCATEGORIES: Record<'admin' | 'public', { id: string; label: string }[]> = {
+    const SUBCATEGORIES: Record<'admin' | 'public' | 'all_platform', { id: string; label: string }[]> = {
+        all_platform: [
+            { id: 'all', label: 'الكل (بنفس ترتيب الملف)' }
+        ],
         admin: [
             { id: 'all', label: 'الكل' },
             { id: 'nav', label: 'القائمة الجانبية' },
@@ -1331,8 +1333,9 @@ function TextTab({
         const counts: Record<string, number> = {};
         allKeys.forEach((key) => {
             const { category, subcategory } = getTranslationKeyCategory(key);
-            if (category === selectedCategory) {
-                counts[subcategory] = (counts[subcategory] || 0) + 1;
+            if (selectedCategory === 'all_platform' || category === selectedCategory) {
+                const effectiveSub = selectedCategory === 'all_platform' ? 'all' : subcategory;
+                counts[effectiveSub] = (counts[effectiveSub] || 0) + 1;
                 counts['all'] = (counts['all'] || 0) + 1;
             }
         });
@@ -1341,10 +1344,10 @@ function TextTab({
 
     const categoryScopedKeys = React.useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();
-        return allKeys
+        const filtered = allKeys
             .filter((key) => {
                 const { category } = getTranslationKeyCategory(key);
-                if (category !== selectedCategory) return false;
+                if (selectedCategory !== 'all_platform' && category !== selectedCategory) return false;
 
                 const arValue = translations.ar[key as keyof typeof translations.ar] || "";
                 const enValue = translations.en[key as keyof typeof translations.en] || "";
@@ -1355,18 +1358,23 @@ function TextTab({
                     || enValue.toLowerCase().includes(normalizedSearch);
 
                 return matchesSearch;
-            })
-            .sort((a, b) => {
-                const aMeta = getTranslationKeyCategory(a);
-                const bMeta = getTranslationKeyCategory(b);
-                if (aMeta.subcategory !== bMeta.subcategory) {
-                    return (subcategoryLabelMap[aMeta.subcategory] || aMeta.subcategory).localeCompare(subcategoryLabelMap[bMeta.subcategory] || bMeta.subcategory, 'ar');
-                }
-                const aGroup = getKeyGroup(a, aMeta.subcategory);
-                const bGroup = getKeyGroup(b, bMeta.subcategory);
-                if (aGroup !== bGroup) return aGroup.localeCompare(bGroup, 'ar');
-                return a.localeCompare(b);
             });
+        
+        if (selectedCategory === 'all_platform') {
+            return filtered;
+        }
+
+        return filtered.sort((a, b) => {
+            const aMeta = getTranslationKeyCategory(a);
+            const bMeta = getTranslationKeyCategory(b);
+            if (aMeta.subcategory !== bMeta.subcategory) {
+                return (subcategoryLabelMap[aMeta.subcategory] || aMeta.subcategory).localeCompare(subcategoryLabelMap[bMeta.subcategory] || bMeta.subcategory, 'ar');
+            }
+            const aGroup = getKeyGroup(a, aMeta.subcategory);
+            const bGroup = getKeyGroup(b, bMeta.subcategory);
+            if (aGroup !== bGroup) return aGroup.localeCompare(bGroup, 'ar');
+            return a.localeCompare(b);
+        });
     }, [allKeys, searchTerm, selectedCategory, getTranslationKeyCategory, subcategoryLabelMap, getKeyGroup]);
 
     const visibleTranslationKeys = React.useMemo(() => {
@@ -1839,23 +1847,33 @@ function TextTab({
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1.25rem] p-4 space-y-2 shadow-sm">
                             {/* Scopes selector */}
-                            <div className="flex p-1 bg-muted rounded-2xl mb-4">
+                            <div className="flex flex-col gap-1 p-1 bg-muted rounded-2xl mb-4">
                                 <button
-                                    onClick={() => { setSelectedCategory('admin'); setSelectedSubcategory('all'); }}
-                                    className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
-                                        selectedCategory === 'admin' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400'
+                                    onClick={() => { setSelectedCategory('all_platform'); setSelectedSubcategory('all'); }}
+                                    className={`w-full py-2 text-center text-[11px] font-black rounded-xl transition-all ${
+                                        selectedCategory === 'all_platform' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-card/50'
                                     }`}
                                 >
-                                    لوحة التحكم
+                                    جميع نصوص المنصة
                                 </button>
-                                <button
-                                    onClick={() => { setSelectedCategory('public'); setSelectedSubcategory('all'); }}
-                                    className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
-                                        selectedCategory === 'public' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400'
-                                    }`}
-                                >
-                                    الموقع العام
-                                </button>
+                                <div className="flex gap-1">
+                                    <button
+                                        onClick={() => { setSelectedCategory('admin'); setSelectedSubcategory('all'); }}
+                                        className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
+                                            selectedCategory === 'admin' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-card/50'
+                                        }`}
+                                    >
+                                        لوحة التحكم
+                                    </button>
+                                    <button
+                                        onClick={() => { setSelectedCategory('public'); setSelectedSubcategory('all'); }}
+                                        className={`flex-1 py-2 text-center text-[11px] font-black rounded-xl transition-all ${
+                                            selectedCategory === 'public' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-card/50'
+                                        }`}
+                                    >
+                                        الموقع العام
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="rounded-[1rem] bg-slate-950 p-4 text-white mb-3">
@@ -1914,7 +1932,7 @@ function TextTab({
                         <div className="bg-[linear-gradient(180deg,#f9fafb_0%,#f8fafc_100%)] border border rounded-[1rem] p-6 md:p-4 sm:p-8 space-y-6 shadow-sm">
                             <div className="flex flex-wrap items-center gap-2 border-b border pb-4">
                                 <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black uppercase tracking-[0.25em] text-white">
-                                    {selectedCategory === 'admin' ? 'الإدارة' : 'الموقع العام'}
+                                    {selectedCategory === 'all_platform' ? 'جميع نصوص المنصة' : selectedCategory === 'admin' ? 'الإدارة' : 'الموقع العام'}
                                 </span>
                                 <span className="rounded-full border border bg-card px-3 py-1 text-[11px] font-bold text-slate-500">
                                     {selectedSubcategory === 'all' ? 'كل الفئات الفرعية' : (subcategoryLabelMap[selectedSubcategory] || selectedSubcategory)}
