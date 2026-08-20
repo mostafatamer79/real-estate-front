@@ -457,7 +457,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               </div>
             )}
           </div>
-          <DialogFooter className="px-6 pb-6 pt-0">
+          <DialogFooter className="px-6 pb-6 pt-0 flex flex-wrap gap-2">
             <Button
               type="button"
               variant="outline"
@@ -473,6 +473,14 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               onClick={() => router.push("/internal/renew-subscription")}
             >
               {language === "ar" ? "تجديد الاشتراك" : "Renew subscription"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-11 rounded-2xl px-5 font-bold text-slate-500"
+              onClick={() => router.push("/profile")}
+            >
+              {language === "ar" ? "تعديل الملف الشخصي" : "Edit Profile"}
             </Button>
             <Button
               type="button"

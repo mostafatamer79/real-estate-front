@@ -36,7 +36,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
           const parsedUser = JSON.parse(userStr);
           let needsProfileCompletion = false;
           if (parsedUser.role !== 'admin') {
-            const isProfileComplete = parsedUser.firstName && parsedUser.lastName && parsedUser.role !== 'user';
+            const isProfileComplete = !!parsedUser.firstName;
             const isAgentWithoutLicense = parsedUser.role === 'agent' && !parsedUser.agentLicenseNumber;
             needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
           }
