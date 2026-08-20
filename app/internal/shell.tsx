@@ -802,7 +802,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       {/* ══ Mobile: hamburger + drawer ══ */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className={`fixed top-4 z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-sm shadow-black/20 ${
+        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-sm shadow-black/20 ${
           isRtl ? "right-4" : "left-4"
         }`}
       >
@@ -826,7 +826,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               animate={{ x: 0 }}
               exit={{ x: isRtl ? "100%" : "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className={`fixed inset-y-0 z-50 w-64 bg-slate-950 text-white shadow-2xl lg:hidden overflow-hidden ${
+              className={`fixed inset-y-0 z-50 w-64 bg-slate-950 text-white shadow-2xl lg:hidden overflow-hidden pt-safe pb-safe ${
                 isRtl ? "right-0" : "left-0"
               }`}
             >

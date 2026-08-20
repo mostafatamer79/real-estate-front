@@ -86,7 +86,7 @@ export default function WorkflowSection() {
                         <FileDown className="w-3.5 h-3.5" />
                         {t('marketing.btn.export')}
                     </Button>
-                    <div className="flex bg-muted/80 p-1.5 rounded-xl gap-1 border border-/50">
+                    <div className="flex bg-muted/80 p-1.5 rounded-xl gap-1 border border-slate-200/50">
                       {['all', 'pending', 'completed'].map((f) => (
                         <button
                           key={f}
@@ -104,10 +104,10 @@ export default function WorkflowSection() {
                 <Table>
                         <TableHeader className="bg-muted/80">
                             <TableRow className="hover:bg-transparent border">
-                                <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.request')}</TableHead>
-                                <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</TableHead>
-                                <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</TableHead>
-                                <TableHead className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.actions')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.request')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y divide-slate-100/50">
@@ -124,7 +124,7 @@ export default function WorkflowSection() {
                                 </TableRow>
                             ) : filteredRequests.map((req, i) => (
                                 <TableRow key={req.id} className="hover:bg-muted/50 transition-colors group border">
-                                    <TableCell className="px-8 py-6">
+                                    <TableCell className="px-3 py-3 sm:px-6 sm:py-5">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs transition-transform group-hover:scale-110
                                                 ${req.type === 'photography_professional' ? 'bg-blue-100 text-blue-600' : 
@@ -137,7 +137,7 @@ export default function WorkflowSection() {
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="px-8 py-6">
+                                    <TableCell className="px-3 py-3 sm:px-6 sm:py-5">
                                         <div className="flex flex-col gap-1">
                                             <span className="text-xs font-black text-slate-900 flex items-center gap-1.5">
                                                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -146,7 +146,7 @@ export default function WorkflowSection() {
                                             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(req.createdAt).toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="px-8 py-6">
+                                    <TableCell className="px-3 py-3 sm:px-6 sm:py-5">
                                         <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm
                                             ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
                                               req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
@@ -155,7 +155,7 @@ export default function WorkflowSection() {
                                             {t('marketing.status.' + req.status)}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="px-8 py-6 text-center">
+                                    <TableCell className="px-3 py-3 sm:px-6 sm:py-5 text-center">
                                         <div className="flex items-center justify-center gap-2">
                                             <Button 
                                                 variant="outline" 
@@ -198,7 +198,7 @@ export default function WorkflowSection() {
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</label>

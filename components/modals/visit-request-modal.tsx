@@ -357,7 +357,7 @@ export default function VisitRequestModal({
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent
-                className="sm:max-w-[480px] bg-card rounded-2xl p-0 overflow-hidden gap-0"
+                className="w-[95vw] sm:max-w-[px] bg-card rounded-2xl p-0 overflow-hidden gap-0"
                 dir={isAr ? 'rtl' : 'ltr'}
             >
                 {/* Header */}

@@ -94,12 +94,12 @@ export function LegalDisputesTable({
             <table className="w-full text-right">
               <thead className="bg-muted/50 border-b border">
                 <tr>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.number')}</th>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.type')}</th>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.parties')}</th>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.status')}</th>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.date')}</th>
-                  <th className="px-6 py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.actions')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.number')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.type')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.parties')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.status')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.date')}</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-xs uppercase tracking-wider text-gray-500 font-semibold">{t('bm.list.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -109,30 +109,30 @@ export function LegalDisputesTable({
 
                   return (
                     <tr key={dispute.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <span className="font-mono text-blue-600 font-medium">{dispute.disputeNumber}</span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <span className="text-gray-900 font-medium">{dispute.disputeType}</span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
                            <User className="w-4 h-4 text-gray-400" />
                            {firstPartyName} <span className="text-gray-400">↔</span> {secondPartyName}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <span className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getStatusColor(dispute.status)}`}>
                           {dispute.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500 text-sm">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-500 text-sm">
                          <div className="flex items-center gap-2">
                              <Calendar className="w-3.5 h-3.5 text-gray-400" />
                              {new Date(dispute.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
                          </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <div className="flex items-center gap-2">
                           <button onClick={() => onView(dispute)} className="p-2 hover:bg-card rounded-lg text-blue-600 hover:text-blue-700 hover:shadow-sm border border-transparent hover:border-blue-100 transition-all">
                             <Eye className="w-4 h-4" />

@@ -20,7 +20,7 @@ export default function PurchaseModal({ isOpen, onClose, onConfirm, loading, pro
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[95vw] sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl">
                         {language === 'ar' ? 'تأكيد طلب الشراء' : 'Confirm Purchase Request'}
@@ -60,7 +60,7 @@ export default function PurchaseModal({ isOpen, onClose, onConfirm, loading, pro
                             {language === 'ar' ? 'إلغاء' : 'Cancel'}
                         </Button>
                         <Button 
-                            className="bg-slate-900 hover:bg-slate-800 text-white min-w-[120px]" 
+                            className="bg-slate-900 hover:bg-slate-800 text-white" 
                             onClick={onConfirm}
                             disabled={loading}
                         >

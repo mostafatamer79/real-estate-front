@@ -148,7 +148,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         </div>
 
         {selectedMethod === 'installments' && (
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
               onClick={() => setSelectedInstallment('tamara')}
               className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${

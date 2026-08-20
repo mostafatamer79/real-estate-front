@@ -276,7 +276,7 @@ export function CustomerServicePage() {
                     key={item.id}
                     whileHover={{ y: -5 }}
                     href={item.href}
-                    className="group flex-1 min-w-[250px] max-w-[350px] p-4 sm:p-8 rounded-3xl bg-card border border shadow-sm flex flex-col items-center text-center transition-all"
+                    className="group flex-1 w-full sm:max-w-[350px] p-4 sm:p-8 rounded-3xl bg-card border border shadow-sm flex flex-col items-center text-center transition-all"
                     style={{ backgroundColor: settings.csCardBg || undefined }}
                   >
                     <div className={`w-14 h-14 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center mb-4 transition-all`}>

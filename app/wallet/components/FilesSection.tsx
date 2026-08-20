@@ -81,21 +81,21 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                     <p className='text-slate-500 font-bold text-sm'>{t('wallet.desc.files')}</p>
                 </div>
 
-                <div className='rounded-2xl border border-white/30 overflow-hidden'>
+                <div className='hidden md:block rounded-2xl border border-white/30 overflow-hidden'>
                     <div className="overflow-x-auto w-full">
 <Table>
                         <TableHeader className='bg-slate-900/5'>
                             <TableRow>
-                                <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
-                                <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.commission.propertyType')}</TableHead>
-                                <TableHead className='text-right py-5 font-black text-slate-900'>{t('wallet.table.date')}</TableHead>
-                                <TableHead className='text-center py-5 font-black text-slate-900'>{t('wallet.commission.actions')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.commission.propertyType')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.table.date')}</TableHead>
+                                <TableHead className='text-center px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.commission.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {files.map((file, index) => (
                                 <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
-                                    <TableCell className='py-4'>
+                                    <TableCell className='px-3 py-3 sm:px-6 sm:py-4'>
                                         <div className='flex items-center gap-3'>
                                             <div className='p-2 bg-blue-50 text-blue-600 rounded-lg'>
                                                 <FileText className='w-5 h-5' />
@@ -113,15 +113,15 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className='text-right py-4'>
+                                    <TableCell className='text-right px-3 py-3 sm:px-6 sm:py-4'>
                                         <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
                                             {getFileTypeLabel(file)}
                                         </span>
                                     </TableCell>
-                                    <TableCell className='text-right text-slate-400 font-bold py-4'>
+                                    <TableCell className='text-right text-slate-400 font-bold px-3 py-3 sm:px-6 sm:py-4'>
                                         {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
                                     </TableCell>
-                                    <TableCell className='text-center py-4'>
+                                    <TableCell className='text-center px-3 py-3 sm:px-6 sm:py-4'>
                                         <div className='flex items-center justify-center gap-2'>
                                             <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
                                                 onClick={() => handleViewFile(file)}
@@ -139,7 +139,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                             ))}
                             {files.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={4} className='text-center py-8 text-slate-400'>
+                                    <TableCell colSpan={4} className='text-center px-3 py-3 sm:px-6 sm:py-4 text-slate-400'>
                                         {t('common.noData')}
                                     </TableCell>
                                 </TableRow>
@@ -147,6 +147,55 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                         </TableBody>
                     </Table>
 </div>
+                </div>
+
+                {/* Mobile file cards */}
+                <div className='md:hidden mt-4 space-y-3'>
+                    {files.map((file, index) => (
+                        <div key={index} className='bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-4 shadow-sm'>
+                            <div className='flex items-start gap-3 mb-3'>
+                                <div className='p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0'>
+                                    <FileText className='w-5 h-5' />
+                                </div>
+                                <div className='min-w-0 flex-1'>
+                                    <p className='font-bold text-slate-900 truncate'>{file.name}</p>
+                                    {file.locationName && (
+                                        <p className='text-[11px] font-bold text-slate-400 mt-1 truncate'>
+                                            اسم المكان: {file.locationName}
+                                        </p>
+                                    )}
+                                    {file.description && !file.locationName && (
+                                        <p className='text-[11px] font-bold text-slate-400 mt-1'>{file.description}</p>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='flex items-center justify-between gap-3 mb-3'>
+                                <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
+                                    {getFileTypeLabel(file)}
+                                </span>
+                                <span className='text-xs text-slate-400 font-bold'>
+                                    {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
+                                </span>
+                            </div>
+                            <div className='flex items-center justify-end gap-2'>
+                                <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                    onClick={() => handleViewFile(file)}
+                                >
+                                    <Eye className='w-4 h-4' />
+                                </Button>
+                                <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                    onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
+                                >
+                                    <Download className='w-4 h-4' />
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                    {files.length === 0 && (
+                        <div className='rounded-2xl bg-white/30 border border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400'>
+                            {t('common.noData')}
+                        </div>
+                    )}
                 </div>
             </div>
 

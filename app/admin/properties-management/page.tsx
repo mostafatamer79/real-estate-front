@@ -459,7 +459,7 @@ export default function AdminPropertiesManagementPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
           <p className="mt-1 text-xl sm:text-3xl font-black text-slate-950">{properties.length}</p>
@@ -499,15 +499,15 @@ export default function AdminPropertiesManagementPage() {
       </section>
 
       <section className="overflow-hidden rounded-2xl border border bg-card shadow-sm">
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full min-w-[900px] text-right">
             <thead className="bg-muted/70">
               <tr>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل" : "Record"}</th>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المالك/الطرف" : "Owner/Party"}</th>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "التفاصيل" : "Details"}</th>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة/التاريخ" : "Status/Date"}</th>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجراء" : "Action"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل" : "Record"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المالك/الطرف" : "Owner/Party"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "التفاصيل" : "Details"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة/التاريخ" : "Status/Date"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجراء" : "Action"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -537,7 +537,7 @@ export default function AdminPropertiesManagementPage() {
                         : [property.city, property.neighborhood, property.type || property.propertyType].filter(Boolean).join(" - ") || "—";
                   return (
                   <tr key={property.id} className="hover:bg-muted/50">
-                    <td className="px-6 py-5">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-500">
                           {activeTab === "tenants" ? <User className="h-5 w-5" /> : activeTab === "leases" ? <FileText className="h-5 w-5" /> : activeTab === "payments" ? <CreditCard className="h-5 w-5" /> : activeTab === "maintenance" ? <Wrench className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
@@ -548,19 +548,19 @@ export default function AdminPropertiesManagementPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
                         <User className="h-4 w-4 text-slate-300" />
                         {ownerName}
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
                         <MapPin className="h-4 w-4 text-slate-300" />
                         {details}
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       {isPropertyRow ? (
                         <div className="flex items-center gap-2">
                           <button
@@ -590,7 +590,7 @@ export default function AdminPropertiesManagementPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -618,6 +618,14 @@ export default function AdminPropertiesManagementPage() {
                           {t("pm.action.exportOffer")}
                         </button>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => deleteRecord(property.id)}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-red-100 bg-red-50/50 px-3 text-[10px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 hover:border-red-300"
+                      >
+                        <X className="h-4 w-4" />
+                        {isRtl ? "حذف" : "Delete"}
+                      </button>
                       </div>
                     </td>
                   </tr>
@@ -626,6 +634,118 @@ export default function AdminPropertiesManagementPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3 p-4">
+          {loading ? (
+            <div className="py-12 text-center">
+              <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-300" />
+            </div>
+          ) : paginatedProperties.length === 0 ? (
+            <p className="py-12 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+              {isRtl ? "لا توجد أملاك" : "No properties"}
+            </p>
+          ) : (
+            paginatedProperties.map((property) => {
+              const isPropertyRow = activeTab === "properties";
+              const title = property.name || property.title || property.fullName || property.tenant?.fullName || property.description || property.property?.name || property.id;
+              const ownerName = property.owner ? `${property.owner.firstName || ""} ${property.owner.lastName || ""}` : property.ownerId || property.tenantId || property.userId || "—";
+              const details = activeTab === "payments"
+                ? `${Number(property.amount || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")} - ${property.paymentMethod || property.type || "—"}`
+                : activeTab === "leases"
+                  ? `${property.unit?.name || property.unitId || "—"} - ${property.tenant?.fullName || property.tenantId || "—"}`
+                  : activeTab === "maintenance"
+                    ? `${property.property?.name || property.propertyId || "—"} - ${property.unit?.name || property.unitId || "—"}`
+                    : [property.city, property.neighborhood, property.type || property.propertyType].filter(Boolean).join(" - ") || "—";
+              return (
+                <div key={property.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-500">
+                      {activeTab === "tenants" ? <User className="h-5 w-5" /> : activeTab === "leases" ? <FileText className="h-5 w-5" /> : activeTab === "payments" ? <CreditCard className="h-5 w-5" /> : activeTab === "maintenance" ? <Wrench className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-slate-950">{title}</p>
+                      <p className="font-mono text-[10px] font-bold text-slate-400">#{String(property.id).slice(0, 8)}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-xs font-bold text-slate-600">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-slate-300" />
+                      {ownerName}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-slate-300" />
+                      {details}
+                    </div>
+                    {isPropertyRow ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleActive(property.id, property.isActive);
+                          }}
+                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            property.isActive ? "bg-slate-900" : "bg-muted"
+                          }`}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-card shadow ring-0 transition duration-200 ease-in-out ${
+                              property.isActive ? (isRtl ? "-translate-x-5" : "translate-x-5") : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                        <span>{property.isActive ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-xs font-black text-slate-700">
+                        <Calendar className="h-4 w-4 text-slate-300" />
+                        {property.status || property.paymentStatus || property.createdAt?.slice?.(0, 10) || "—"}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setViewingRecord(property)}
+                      className="inline-flex h-9 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {isRtl ? "عرض" : "View"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => startEdit(property)}
+                      className="inline-flex h-9 items-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-300"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                      {isRtl ? "تحديث" : "Update"}
+                    </button>
+                    {isPropertyRow && (
+                      <button
+                        type="button"
+                        onClick={() => handleExportToOffers(property)}
+                        className="inline-flex h-9 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50/50 px-3 text-[10px] font-black uppercase tracking-widest text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300"
+                      >
+                        <Share2 className="h-4 w-4" />
+                        {t("pm.action.exportOffer")}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => deleteRecord(property.id)}
+                      className="inline-flex h-9 items-center gap-2 rounded-xl border border-red-100 bg-red-50/50 px-3 text-[10px] font-black uppercase tracking-widest text-red-600 hover:bg-red-50 hover:border-red-300"
+                    >
+                      <X className="h-4 w-4" />
+                      {isRtl ? "حذف" : "Delete"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -637,7 +757,7 @@ export default function AdminPropertiesManagementPage() {
 
       {viewingRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -656,7 +776,7 @@ export default function AdminPropertiesManagementPage() {
 
             {/* Modal Body */}
             <div className="max-h-[70vh] overflow-y-auto px-8 py-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {formFields.map(([key, label]) => {
                   const val = viewingRecord[String(key)];
                   return (
@@ -671,7 +791,7 @@ export default function AdminPropertiesManagementPage() {
               </div>
               
               {/* Additional fields not in formFields, like dates & relationship objects */}
-              <div className="border-t border pt-4 mt-4 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border-t border pt-4 mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {viewingRecord.createdAt && (
                   <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -774,7 +894,7 @@ export default function AdminPropertiesManagementPage() {
       {/* Standard Create/Edit Form Modal */}
       {(isCreateOpen || editingId !== null) && (activeTab !== "properties" || editingId !== null) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -798,7 +918,7 @@ export default function AdminPropertiesManagementPage() {
 
             {/* Modal Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {formFields.map(([key, label, type]) => {
                   const typeString = String(type);
                   if (typeString.startsWith("select:")) {

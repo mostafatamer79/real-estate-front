@@ -16,6 +16,7 @@ export default function AdminMapControlPage() {
 
   const mapOpen = settings.sectionFlags?.map !== "closed";
   const reportPrice = settings.servicePrices?.service_price_scan_report || 0;
+  const isMapFree = settings.uiFlags?.is_map_free ?? false;
   const reportTitle = settings.textOverrides?.scan_report_title || "";
   const reportNote = settings.textOverrides?.scan_report_note || "";
 
@@ -28,11 +29,11 @@ export default function AdminMapControlPage() {
       },
       {
         label: isRtl ? "سعر التقرير" : "Report price",
-        value: <SaudiRiyalAmount amount={reportPrice} locale={isRtl ? "ar-SA" : "en-US"} />,
+        value: isMapFree ? (isRtl ? "مجاني" : "Free") : <SaudiRiyalAmount amount={reportPrice} locale={isRtl ? "ar-SA" : "en-US"} />,
         icon: FileText,
       },
     ],
-    [isRtl, mapOpen, reportPrice],
+    [isRtl, mapOpen, reportPrice, isMapFree],
   );
 
   const patchSettings = (patch: any) => updateSettings(patch);
@@ -101,6 +102,28 @@ export default function AdminMapControlPage() {
                 className={`h-11 flex-1 rounded-lg text-xs font-black ${!mapOpen ? "bg-slate-950 text-white" : "text-slate-500"}`}
               >
                 {isRtl ? "إغلاق المناطق" : "Close areas"}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              {isRtl ? "حالة الدفع للخدمة" : "Service Payment Status"}
+            </label>
+            <div className="flex rounded-xl bg-muted p-1">
+              <button
+                type="button"
+                onClick={() => patchSettings({ uiFlags: { ...settings.uiFlags, is_map_free: true } })}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${isMapFree ? "bg-slate-950 text-white" : "text-slate-500"}`}
+              >
+                {isRtl ? "مجاني" : "Free"}
+              </button>
+              <button
+                type="button"
+                onClick={() => patchSettings({ uiFlags: { ...settings.uiFlags, is_map_free: false } })}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${!isMapFree ? "bg-slate-950 text-white" : "text-slate-500"}`}
+              >
+                {isRtl ? "مدفوع" : "Paid"}
               </button>
             </div>
           </div>

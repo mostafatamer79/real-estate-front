@@ -208,10 +208,10 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
@@ -293,7 +293,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
                 <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
@@ -348,7 +348,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input 
@@ -376,7 +376,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المساحة (م²)</label>
                 <input 
@@ -419,7 +419,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>السعر</label>
                 <input 
@@ -472,7 +472,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>حالة العقار</label>
                 <select 
@@ -500,10 +500,10 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+            <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
-              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الغرف</label>
                   <input
@@ -546,7 +546,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الأدوار</label>
                   <input
@@ -657,10 +657,10 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           )}
 
           {/* Media upload section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>صور العقار</label>
                 <input
@@ -702,7 +702,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className={labelCls}>حالة العرض</label>
               <select 
@@ -893,10 +893,10 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
@@ -978,7 +978,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>تصنيف العقار</label>
                 <div className="flex gap-2 p-1 bg-muted rounded-xl h-11 items-center">
@@ -1033,7 +1033,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input 
@@ -1061,7 +1061,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المساحة (م²)</label>
                 <input 
@@ -1104,7 +1104,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>السعر</label>
                 <input 
@@ -1157,7 +1157,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>حالة العقار</label>
                 <select 
@@ -1185,10 +1185,10 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+            <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
               <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
-              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الغرف</label>
                   <input
@@ -1231,7 +1231,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>عدد الأدوار</label>
                   <input
@@ -1342,10 +1342,10 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           )}
 
           {/* Media upload section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط الجديدة (اختياري)</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>إضافة صور جديدة للعقار</label>
                 <input
@@ -1387,7 +1387,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className={labelCls}>حالة العرض</label>
               <select 
@@ -1660,7 +1660,7 @@ export default function AdminOffersPage() {
           </p>
         </div>
         
-        <div className="grid w-full gap-3 md:w-auto md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        <div className="grid w-full gap-3 md:w-auto md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-stone-400/20"
@@ -1711,7 +1711,7 @@ export default function AdminOffersPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
          <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-xl sm:text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
@@ -1829,16 +1829,16 @@ export default function AdminOffersPage() {
       </div>
 
       <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">العرض</TableHead>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">المعلن</TableHead>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">الموقع</TableHead>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">السعر</TableHead>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest">الحالة</TableHead>
-                <TableHead className="py-6 px-6 font-black text-slate-900 text-[10px] uppercase tracking-widest text-left">إجراءات</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest">العرض</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest">المعلن</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest">الموقع</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest">السعر</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest">الحالة</TableHead>
+                <TableHead className="px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 text-[10px] uppercase tracking-widest text-left">إجراءات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -1863,15 +1863,15 @@ export default function AdminOffersPage() {
               ) : (
                   paginatedOffers.map((offer) => (
                   <TableRow key={offer.id} className="hover:bg-muted/50 group transition-colors">
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                         <div className="flex flex-col">
                           <span className="font-black text-slate-900 text-sm">{offer.propertyType}</span>
                           <span className="font-mono text-[9px] text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-/50">
+                              <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-slate-200/50">
                                   {offer.user?.firstName?.[0] || <UserIcon className="w-4 h-4" />}
                               </div>
                               <div className="flex flex-col">
@@ -1880,13 +1880,13 @@ export default function AdminOffersPage() {
                               </div>
                           </div>
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex items-center gap-2">
                               <MapPin className="w-3.5 h-3.5 text-slate-400" />
                               <span className="font-bold text-slate-900 text-xs">{offer.city} - {offer.neighborhood}</span>
                           </div>
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex flex-col">
                             <span className="font-black text-slate-950 text-sm">
                               {new Intl.NumberFormat('ar-SA').format(offer.price)}
@@ -1894,10 +1894,10 @@ export default function AdminOffersPage() {
                             <span className="text-[9px] font-black text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
                           </div>
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                         {getStatusBadge(offer.status)}
                       </TableCell>
-                      <TableCell className="px-6 py-5 text-left">
+                      <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-left">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
@@ -1969,6 +1969,113 @@ export default function AdminOffersPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3 p-4">
+          {loading ? (
+            <div className="py-12 text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-400" />
+            </div>
+          ) : filteredOffers.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-sm font-bold text-slate-400">لا توجد عروض تطابق بحثك</p>
+            </div>
+          ) : (
+            paginatedOffers.map((offer) => (
+              <div key={offer.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <p className="font-black text-slate-900 text-sm">{offer.propertyType}</p>
+                    <p className="font-mono text-[9px] text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</p>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border">
+                      <DropdownMenuItem 
+                        onClick={() => window.open(`/offers/${offer.id}`, '_blank')}
+                        className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4" /> معاينة العرض
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => setEditingOffer(offer)}
+                        className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
+                      >
+                        <Edit2 className="w-4 h-4" /> تعديل البيانات
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="my-1 bg-muted" />
+                      {offer.status === 'published' || offer.status === 'active' ? (
+                        <DropdownMenuItem 
+                          onClick={() => handleUpdateStatus(offer.id, 'paused')}
+                          className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                        >
+                          <Pause className="w-4 h-4" /> إيقاف مؤقت
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem 
+                          onClick={() => handleUpdateStatus(offer.id, 'published')}
+                          className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                        >
+                          <Play className="w-4 h-4" /> تفعيل العرض
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        onClick={() => handleSetActive(offer.id, !offer.isActive)}
+                        className={`rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer ${
+                          offer.isActive
+                            ? "text-slate-600 hover:text-slate-800 hover:bg-muted"
+                            : "text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                        }`}
+                      >
+                        {offer.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {offer.isActive ? "إخفاء العرض" : "إظهار العرض"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleDelete(offer.id)}
+                        className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" /> حذف (أرشفة)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleDelete(offer.id, true)}
+                        className="rounded-xl px-3 py-2.5 text-[10px] font-black gap-3 cursor-pointer text-red-700 uppercase tracking-tighter"
+                      >
+                        حذف نهائي من النظام
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-slate-200/50">
+                      {offer.user?.firstName?.[0] || <UserIcon className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-700 text-xs">{offer.user?.firstName} {offer.user?.lastName}</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{offer.user?.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 font-bold text-slate-900">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    {offer.city} - {offer.neighborhood}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-black text-slate-950 text-sm">{new Intl.NumberFormat('ar-SA').format(offer.price)}</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></p>
+                    </div>
+                    {getStatusBadge(offer.status)}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

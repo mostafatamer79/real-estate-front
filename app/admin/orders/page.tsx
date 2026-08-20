@@ -222,7 +222,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Client Selection Section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
@@ -253,7 +253,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
             </div>
 
             {clientMode === "registered" ? (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-1 relative">
                   <label className={labelCls}>ابحث عن عميل</label>
                   <div className="relative">
@@ -330,7 +330,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-1">
                   <label className={labelCls}>اسم العميل المجهول</label>
                   <input
@@ -358,7 +358,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
           <div className="space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">تفاصيل الطلب الأساسية</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>نوع الطلب</label>
                 <select
@@ -425,7 +425,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>المدينة</label>
                 <input
@@ -464,7 +464,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className={labelCls}>عمر العقار المفضل</label>
                 <input
@@ -556,7 +556,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className={labelCls}>مساحة البناء (م²)</label>
                   <input
@@ -568,7 +568,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-6">
                   <label className="flex items-center gap-2 bg-muted border border rounded-xl px-3 py-2 cursor-pointer hover:bg-muted transition-colors">
                     <input
                       type="checkbox"
@@ -686,7 +686,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full w-[95vw] sm:max-w-md rounded-2xl p-4 sm:p-8 shadow-2xl relative">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-[95vw] sm:max-w-md rounded-2xl p-4 sm:p-8 shadow-2xl relative">
                 <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
                 
                 <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2">
@@ -922,7 +922,7 @@ export default function OrdersPage() {
 
       {/* Filters & Table */}
       <div className="bg-card border border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-3 sm:p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        <div className="p-3 sm:p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             <div className="relative w-full md:col-span-2">
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-card border focus:border-slate-950" />
@@ -957,18 +957,18 @@ export default function OrdersPage() {
             </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
             <Table>
                 <TableHeader className="bg-muted/50">
                     <TableRow>
-                        <TableHead className="w-20 text-center font-black py-6">ID</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">نوع العقار</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">العميل</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">التفاصيل</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">المسؤول</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">السعر</TableHead>
-                        <TableHead className="font-black text-slate-400 uppercase tracking-widest text-[10px]">الحالة</TableHead>
-                        <TableHead className="w-10"></TableHead>
+                        <TableHead className="w-20 text-center font-black px-3 py-3 sm:px-6 sm:py-4">ID</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">نوع العقار</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">العميل</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">التفاصيل</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">المسؤول</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">السعر</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">الحالة</TableHead>
+                        <TableHead className="w-10 px-3 py-3 sm:px-6 sm:py-4"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -978,8 +978,8 @@ export default function OrdersPage() {
                         <TableRow><TableCell colSpan={8} className="py-20 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</TableCell></TableRow>
                     ) : paginatedOrders.map(order => (
                         <TableRow key={order.id} className="group hover:bg-muted/50 transition-colors">
-                            <TableCell className="text-center font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-center font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-400 group-hover:bg-card group-hover:text-slate-950 transition-all border border-transparent group-hover:border">
                                         <Building className="w-5 h-5" />
@@ -992,7 +992,7 @@ export default function OrdersPage() {
                                     </div>
                                 </div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 {order.user ? (
                                     <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-[10px] font-black">
@@ -1015,7 +1015,7 @@ export default function OrdersPage() {
                                     </div>
                                 )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
                                         <MapPin className="w-3 h-3 text-slate-400" />
@@ -1027,7 +1027,7 @@ export default function OrdersPage() {
                                     </div>
                                 </div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 {order.assignedTo ? (
                                     <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
@@ -1041,11 +1041,11 @@ export default function OrdersPage() {
                                     </button>
                                 )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
                             </TableCell>
-                            <TableCell>{getStatusBadge(order.status)}</TableCell>
-                            <TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{getStatusBadge(order.status)}</TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-muted">
@@ -1088,6 +1088,124 @@ export default function OrdersPage() {
                 </TableBody>
             </Table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3 p-4">
+          {loading ? (
+            <div className="py-12 text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-200" />
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <p className="py-12 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</p>
+          ) : (
+            paginatedOrders.map(order => (
+              <div key={order.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-400 border border-transparent">
+                      <Building className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-950">{order.propertyType}</p>
+                      <p className={`text-[10px] font-black uppercase tracking-tighter ${order.orderType === 'buy' ? 'text-blue-500' : 'text-slate-400'}`}>
+                        {order.orderType === 'buy' ? 'شراء' : 'إيجار'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  {order.user ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-[10px] font-black">
+                        {order.user.firstName?.[0]}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">{order.user.firstName} {order.user.lastName}</p>
+                        <p className="text-[10px] text-slate-400 font-bold">{order.user.phone}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 italic">
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-300">
+                        <UserIcon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400">{order.clientName || 'مجهول'}</p>
+                        <p className="text-[10px] text-slate-300 font-bold">{order.clientPhone || 'بدون هاتف'}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                    <MapPin className="w-3 h-3 text-slate-400" />
+                    {order.city} • {order.neighborhood}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
+                    {order.rooms > 0 && <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <div>
+                      {order.assignedTo ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
+                            <UserCheck className="w-3 h-3" />
+                          </div>
+                          <span className="text-xs font-bold text-slate-700">{order.assignedTo.firstName}</span>
+                        </div>
+                      ) : (
+                        <button onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="text-[10px] font-black text-slate-300 hover:text-slate-950 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                          <UserCheck className="w-3 h-3" /> تعيين مسؤول
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
+                  </div>
+                  <div className="flex items-center justify-between pt-2">
+                    {getStatusBadge(order.status)}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-muted">
+                          <MoreVertical className="w-5 h-5 text-slate-400" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border">
+                        {(order.user?.id || order.userId) && (
+                          <DropdownMenuItem onClick={() => handleOpenChat(order.user?.id || order.userId)} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
+                            <MessageSquare className="w-4 h-4" /> مراسلة العميل
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem onClick={() => window.open(`/orders/${order.id}`, '_blank')} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
+                          <Eye className="w-4 h-4" /> معاينة الطلب
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSelectedOrder(order); setShowCreate(true); }} className="rounded-xl font-bold py-3 text-slate-700 gap-3">
+                          <Edit2 className="w-4 h-4" /> تعديل الطلب
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="rounded-xl font-bold py-3 text-slate-700 gap-3">
+                          <UserCheck className="w-4 h-4" /> تغيير المسؤول
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-muted my-1" />
+                        <div className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
+                        {['pending', 'in_progress', 'completed', 'cancelled'].map(s => (
+                          <DropdownMenuItem key={s} onClick={() => handleUpdateStatus(order.id, s)} className="rounded-xl font-bold py-2 text-slate-600 hover:text-slate-950 gap-3">
+                            <div className={`w-2 h-2 rounded-full ${s === 'pending' ? 'bg-amber-500' : s === 'in_progress' ? 'bg-blue-500' : s === 'completed' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                            {s === 'pending' ? 'قيد الانتظار' : s === 'in_progress' ? 'قيد العمل' : s === 'completed' ? 'مكتمل' : 'إلغاء الطلب'}
+                            {order.status === s && <Check className="w-4 h-4 ms-auto text-slate-950" />}
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator className="bg-muted my-1" />
+                        <DropdownMenuItem onClick={() => handleDelete(order.id)} className="rounded-xl font-bold py-3 text-rose-600 hover:bg-rose-50 gap-3">
+                          <Trash2 className="w-4 h-4" /> حذف الطلب
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

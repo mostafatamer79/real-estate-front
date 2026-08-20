@@ -109,7 +109,7 @@ export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSk
         
         {/* Center Modal */}
         <div className="fixed inset-0 flex items-center justify-center z-[101] p-4" dir="rtl">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl w-[95vw] sm:max-w-lg w-full p-4 sm:p-8 border-2 border-blue-500/30 animate-in fade-in zoom-in duration-300">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl w-[95vw] sm:max-w-lg p-4 sm:p-8 border-2 border-blue-500/30 animate-in fade-in zoom-in duration-300">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-slate-500/20 rounded-xl text-blue-400">

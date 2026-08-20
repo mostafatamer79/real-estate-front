@@ -229,7 +229,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* Name and License Fields */}
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                             <Input
@@ -259,7 +259,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         {/* Owner/Seller Section */}
                         <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.ownerData')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                                     <Input
@@ -331,7 +331,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         {/* Buyer Section */}
                         <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.buyerData')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-right text-sm mb-1">{t('wallet.commission.form.name')}</label>
                                     <Input
@@ -394,27 +394,27 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     {/* 3. Brokers Data Section */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold text-right border-b pb-2">{t('wallet.commission.brokersData')}</h3>
-                        <div className="overflow-x-auto">
+                        <div className="hidden md:block overflow-x-auto">
                             <Table className="bg-transparent border border-white/20">
                                 <TableHeader className="bg-slate-900/5">
                                     <TableRow>
-                                        <TableHead className="text-right">{t('wallet.commission.form.name')}</TableHead>
-                                        <TableHead className="text-right">{t('wallet.commission.falLicense')}</TableHead>
-                                        <TableHead className="text-right">{t('wallet.commission.percentage')}</TableHead>
-                                        <TableHead className="text-right">{t('wallet.commission.mobile')}</TableHead>
-                                        <TableHead className="text-right">{t('wallet.commission.email')}</TableHead>
-                                        <TableHead className="text-right">{t('wallet.commission.actions')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.form.name')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.falLicense')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.percentage')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.mobile')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.email')}</TableHead>
+                                        <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {brokers.map((broker) => (
                                         <TableRow key={broker.id} className="hover:bg-white/30 border-b border-slate-200/10 transition-colors">
-                                            <TableCell>{broker.name}</TableCell>
-                                            <TableCell>{broker.license}</TableCell>
-                                            <TableCell>{broker.percentage}%</TableCell>
-                                            <TableCell>{broker.mobile}</TableCell>
-                                            <TableCell>{broker.email}</TableCell>
-                                            <TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{broker.name}</TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{broker.license}</TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{broker.percentage}%</TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{broker.mobile}</TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{broker.email}</TableCell>
+                                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                                 <div className="flex gap-2 justify-end">
                                                     <Button
                                                         onClick={() => {
@@ -448,13 +448,77 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                     ))}
                                     {brokers.length === 0 && (
                                         <TableRow>
-                                            <TableCell colSpan={6} className="text-center text-gray-500">
+                                            <TableCell colSpan={6} className="text-center text-gray-500 px-3 py-3 sm:px-6 sm:py-4">
                                                 {t('wallet.brokers.empty')}
                                             </TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>
                             </Table>
+                        </div>
+
+                        {/* Mobile broker cards */}
+                        <div className='md:hidden mt-4 space-y-3'>
+                            {brokers.map((broker) => (
+                                <div key={broker.id} className='bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-4 shadow-sm'>
+                                    <div className='flex items-start justify-between gap-3 mb-3'>
+                                        <div className='min-w-0'>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.form.name')}</p>
+                                            <p className='font-bold text-slate-900 truncate'>{broker.name}</p>
+                                        </div>
+                                        <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
+                                            {broker.percentage}%
+                                        </span>
+                                    </div>
+                                    <div className='grid grid-cols-2 gap-3 mb-3'>
+                                        <div className='min-w-0'>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.falLicense')}</p>
+                                            <p className='text-sm font-medium text-slate-700 truncate'>{broker.license}</p>
+                                        </div>
+                                        <div className='min-w-0'>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.mobile')}</p>
+                                            <p className='text-sm text-slate-600 truncate'>{broker.mobile}</p>
+                                        </div>
+                                        <div className='min-w-0 col-span-2'>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.email')}</p>
+                                            <p className='text-sm text-slate-600 truncate'>{broker.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className='flex items-center justify-end gap-2'>
+                                        <Button
+                                            onClick={() => {
+                                                setEditingBroker(broker.id)
+                                                setBrokerForm({
+                                                    name: broker.name,
+                                                    license: broker.license,
+                                                    percentage: broker.percentage,
+                                                    mobile: broker.mobile,
+                                                    email: broker.email
+                                                })
+                                                setShowBrokerModal(true)
+                                            }}
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-blue-600 hover:text-blue-800"
+                                        >
+                                            {t('common.edit')}
+                                        </Button>
+                                        <Button
+                                            onClick={() => setBrokers(brokers.filter(b => b.id !== broker.id))}
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-red-600 hover:text-red-800"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                            {brokers.length === 0 && (
+                                <div className='rounded-2xl bg-white/30 border border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400'>
+                                    {t('wallet.brokers.empty')}
+                                </div>
+                            )}
                         </div>
                         <Button
                             onClick={() => {
@@ -479,7 +543,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     {/* 4. Property Data Section */}
                     <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.propertyData')}</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.propertyType')}</label>
                                 <Input
@@ -595,7 +659,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     {/* 5. Contract Values Section */}
                      <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.contractValues')}</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-right text-sm mb-1">{t('wallet.commission.totalAmount')}</label>
                                 <Input 

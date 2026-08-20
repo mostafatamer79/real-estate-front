@@ -231,7 +231,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
                           <div className="border-t border-white/[0.06] px-5 py-5 space-y-4">
                             {/* Parties */}
                             {(req.firstParty || req.secondParty) && (
-                              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {[req.firstParty && { label: t("disputes.firstParty"), party: req.firstParty }, req.secondParty && { label: t("disputes.secondParty"), party: req.secondParty }]
                                   .filter(Boolean).map((item: any) => (
                                   <div key={item.label} className="p-4 bg-card/[0.02] rounded-2xl border border-white/[0.06]">

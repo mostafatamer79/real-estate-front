@@ -56,17 +56,12 @@ export default function SignIn({ onClose }: SignInProps) {
     if (token) {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
-        const u = JSON.parse(storedUser);
-        const assignedDepartments = Array.isArray(u.departments) ? u.departments : [];
-        const permissionDepartments = Object.entries(u.departmentPermissions || {})
-          .filter(([, value]) => value === true || value === 'manage' || value === 'view')
-          .map(([key]) => key);
-        const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
-
-        router.push('/details');
+        router.push('/profile');
       }
     }
   }, [router]);
+
+  const isGlobalFreeTrial = settings.uiFlags['enable_global_free_trial'] === true;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,14 +170,14 @@ export default function SignIn({ onClose }: SignInProps) {
                     <button
                       onClick={() => setIsPhoneMode(false)}
                       disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all ${
                         !isPhoneMode
                           ? "bg-card/10 text-white shadow-lg"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
-                      <Mail className="w-5 h-5 sm:w-4 sm:h-4" />
-                      <span className="text-sm font-semibold">{t('login.tab.email')}</span>
+                      <Mail className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
+                      <span className="text-[11px] sm:text-sm font-semibold whitespace-nowrap">{t('login.tab.email')}</span>
                     </button>
                   )}
 
@@ -191,14 +186,14 @@ export default function SignIn({ onClose }: SignInProps) {
                     <button
                       onClick={() => setIsPhoneMode(true)}
                       disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all ${
                         isPhoneMode
                           ? "bg-card/10 text-white shadow-lg"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
-                      <Phone className="w-5 h-5 sm:w-4 sm:h-4" />
-                      <span className="text-sm font-semibold">{t('login.tab.phone')}</span>
+                      <Phone className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
+                      <span className="text-[11px] sm:text-sm font-semibold whitespace-nowrap">{t('login.tab.phone')}</span>
                     </button>
                   ) : (
                     <div className="relative flex-1">
@@ -223,9 +218,9 @@ export default function SignIn({ onClose }: SignInProps) {
                   <div className="relative flex items-center bg-slate-900/80 border border-white/10 rounded-2xl p-3.5 sm:p-4 focus-within:border-blue-500/50 transition-all">
                     {isPhoneMode ? (
                       <>
-                        <div className="flex items-center gap-2 border-l border-white/10 pl-3">
+                        <div className="flex items-center gap-2 border-l border-white/10 pl-3 shrink-0">
                           <span className="text-lg">🇸🇦</span>
-                          <ChevronDown className="w-5 h-5 sm:w-4 sm:h-4 text-white/40" />
+                          <ChevronDown className="w-5 h-5 sm:w-4 sm:h-4 text-white/40 shrink-0" />
                         </div>
                         <input
                           type="tel"
@@ -295,7 +290,17 @@ export default function SignIn({ onClose }: SignInProps) {
             </form>
         </div>
 
-        {/* Footer Info */}
+        {/* Footer Info — guest access during free trial */}
+        {isGlobalFreeTrial && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => router.push('/')}
+              className="text-white/50 hover:text-white/80 text-sm transition-colors underline underline-offset-4"
+            >
+              {t('login.continueWithoutLogin') || 'تصفح بدون تسجيل دخول'}
+            </button>
+          </div>
+        )}
 
       </div>
     </div>

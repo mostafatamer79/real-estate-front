@@ -158,33 +158,31 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 <div
                                     className='flex items-center justify-center transition-all duration-300'
                                     style={{
-                                        width: isActive ? '68px' : '60px',
-                                        height: isActive ? '68px' : '60px',
-                                        borderRadius: isActive ? '50%' : '20px',
+                                        width: isActive ? '48px' : '40px',
+                                        height: isActive ? '48px' : '40px',
+                                        borderRadius: isActive ? '50%' : '16px',
                                         backgroundColor: isActive ? '#0f172a' : 'rgba(255, 255, 255, 0.6)',
                                         border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.7)',
-                                        boxShadow: isActive ? '0 12px 28px rgba(0,0,0,0.35)' : 'none',
-                                        transform: isActive ? 'translateY(-14px)' : 'none',
+                                        boxShadow: isActive ? '0 8px 18px rgba(0,0,0,0.35)' : 'none',
+                                        transform: isActive ? 'translateY(-8px)' : 'none',
                                     }}
                                 >
                                     <img
                                         src={item.icon}
                                         alt={item.label}
                                         style={{
-                                            width: isActive ? '52px' : '48px',
-                                            height: isActive ? '52px' : '48px',
+                                            width: isActive ? '28px' : '24px',
+                                            height: isActive ? '28px' : '24px',
                                             objectFit: 'contain',
                                             filter: isActive ? 'brightness(0) invert(1)' : 'opacity(0.9) grayscale(0)',
-                                            transform: 'scale(1.2)',
                                         }}
                                     />
                                 </div>
                                 <span
-                                    className='leading-none text-center font-black transition-all duration-300 truncate w-full px-1 relative'
+                                    className='leading-none text-center font-black transition-all duration-300 line-clamp-1 w-full px-0.5 relative text-[10px] sm:text-xs'
                                     style={{
-                                        fontSize: '12px',
                                         color: isActive ? '#0f172a' : '#334155',
-                                        marginTop: isActive ? '8px' : '4px',
+                                        marginTop: isActive ? '6px' : '4px',
                                     }}
                                 >
                                     {item.label}

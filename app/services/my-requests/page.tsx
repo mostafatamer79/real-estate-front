@@ -160,7 +160,7 @@ export default function MyServiceRequestsPage() {
               </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
                 <div className="p-4 bg-muted rounded-xl border border">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الموقع' : 'Location'}</p>
                   <p className="font-bold text-slate-800">{selectedRequest.city}, {selectedRequest.district}</p>
@@ -311,7 +311,7 @@ export default function MyServiceRequestsPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {requests.map((request) => (
               <div
                 key={request.id}
@@ -361,7 +361,7 @@ export default function MyServiceRequestsPage() {
 
         {/* Pagination */}
         {!selectedRequest && totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-16">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-16">
             <Button
               variant="ghost"
               disabled={page === 1}
@@ -371,13 +371,13 @@ export default function MyServiceRequestsPage() {
               <ChevronLeft className={`w-5 h-5 me-2 ${language === 'ar' ? 'rotate-180' : ''}`} />
               {language === 'ar' ? 'السابق' : 'Previous'}
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <Button
                   key={p}
                   variant={page === p ? "default" : "ghost"}
                   onClick={() => setPage(p)}
-                  className={`w-10 h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
                 >
                   {p}
                 </Button>

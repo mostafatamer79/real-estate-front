@@ -20,12 +20,12 @@ export default function HomePage() {
         try {
           const u = JSON.parse(storedUser);
 
-           router.push('/details');
+           router.push('/profile');
         } catch (e) {
-          router.push('/details');
+          router.push('/profile');
         }
       } else {
-        router.push('/details');
+        router.push('/profile');
       }
     } else if (!showSignIn) {
       setShowSignIn(true);

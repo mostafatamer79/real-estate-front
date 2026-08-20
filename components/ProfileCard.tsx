@@ -48,7 +48,7 @@ export default function ProfileCard() {
             onClick={() => setIsOpen(false)}
           />
           
-          <div className="absolute top-full left-0 mt-2 w-80 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 overflow-hidden">
+          <div className="absolute top-full right-0 left-auto mt-2 w-72 sm:w-80 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 overflow-hidden">
             {/* Header */}
             <div className="p-4 border-b border-slate-700">
               <div className="flex items-center gap-3 mb-3">

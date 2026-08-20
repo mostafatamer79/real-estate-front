@@ -341,6 +341,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "login.note.phone": "سوف تتلقى رسالة نصية قصيرة برمز التحقق",
     "login.note.email": "سوف تتلقى رسالة بريد إلكتروني برمز التحقق",
     "login.error.generic": "حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.",
+    "login.continueWithoutLogin": "تصفح بدون تسجيل دخول",
     // Property Management
     "pm.offers": "ادارة العروض",
     "pm.orders": "ادارة الطلبات",
@@ -2850,6 +2851,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "login.note.phone": "You will receive an SMS with the code",
     "login.note.email": "You will receive an email with the code",
     "login.error.generic": "Registration error. Please try again.",
+    "login.continueWithoutLogin": "Browse without signing in",
     // Property Management
     "pm.offers": "Offers",
     "pm.orders": "Requests",

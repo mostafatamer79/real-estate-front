@@ -433,7 +433,7 @@ export default function TransactionsPage() {
       {/* Create / Edit Transaction Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
@@ -520,7 +520,7 @@ export default function TransactionsPage() {
       {/* Viewing Transaction Details Modal */}
       {viewingTransaction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -539,7 +539,7 @@ export default function TransactionsPage() {
 
             {/* Body */}
             <div className="max-h-[60vh] overflow-y-auto px-8 py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6" dir={isRtl ? "rtl" : "ltr"}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6" dir={isRtl ? "rtl" : "ltr"}>
                 {/* Type */}
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>

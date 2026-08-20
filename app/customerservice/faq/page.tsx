@@ -147,7 +147,7 @@ export default function CustomerServiceFaqPage() {
             {language === "ar" ? <ArrowRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             {language === "ar" ? "العودة لخدمة العملاء" : "Back to customer service"}
           </button>
-          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-2xl sm:text-4xl font-black tracking-tight leading-tight text-slate-950">
+          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-slate-950">
             {language === "ar" ? "الأسئلة الشائعة" : "Frequently Asked Questions"}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-3 text-slate-500 font-medium text-sm md:text-base leading-relaxed">
@@ -180,7 +180,7 @@ export default function CustomerServiceFaqPage() {
               {faqSections.map((section, idx) => {
                 const CategoryIcon = categoryIcons[section.category] ?? Sparkles;
                 return (
-                  <AccordionItem key={idx} value={`section-${idx}`} className="border-none glass bg-card/50 rounded-[1rem] px-6 md:px-8 transition-all hover:bg-card" style={{ backgroundColor: settings.csCardBg || undefined }}>
+                  <AccordionItem key={idx} value={`section-${idx}`} className="border-none glass bg-card/50 rounded-[1rem] px-4 sm:px-6 md:px-8 transition-all hover:bg-card" style={{ backgroundColor: settings.csCardBg || undefined }}>
                     <AccordionTrigger
                       className="font-black hover:no-underline text-right py-6 group"
                       style={{
@@ -203,7 +203,7 @@ export default function CustomerServiceFaqPage() {
                           <AccordionItem
                             key={itemIdx}
                             value={`item-${idx}-${itemIdx}`}
-                            className="border-none glass bg-card/40 rounded-3xl px-6 transition-all hover:bg-card"
+                            className="border-none glass bg-card/40 rounded-3xl px-4 sm:px-6 transition-all hover:bg-card"
                             style={{
                               backgroundColor: settings.csBg || undefined,
                               color: item.color || settings.csTextColor || undefined,

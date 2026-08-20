@@ -159,7 +159,7 @@ export default function Header() {
             alt={t('project.name')}
             width={280}
             height={settings.logoHeight || 40}
-            className="object-contain w-auto max-w-[60vw] sm:max-w-none h-auto group-hover:opacity-80 transition-opacity"
+            className="object-contain w-auto max-w-[50vw] h-8 sm:h-auto sm:max-w-none group-hover:opacity-80 transition-opacity"
             style={{ height: `${settings.logoHeight || 40}px` }}
             priority
           />

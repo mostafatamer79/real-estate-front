@@ -42,6 +42,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const [isSendingInvoice, setIsSendingInvoice] = useState(false);
     const [invoiceMessage, setInvoiceMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [statusValue, setStatusValue] = useState("pending");
+    const [targetDepartmentValue, setTargetDepartmentValue] = useState("");
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -112,6 +113,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const openDetails = (req: any) => {
         setSelectedRequest(req);
         setStatusValue(req.status || "pending");
+        setTargetDepartmentValue(req.targetDepartment || "");
         setInvoicePrice(req.invoicePrice || req.price || "");
         setInvoiceMessage(null);
         setIsDetailsOpen(true);
@@ -127,11 +129,11 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ status: statusValue })
+                body: JSON.stringify({ status: statusValue, targetDepartment: targetDepartmentValue })
             });
             if (!res.ok) throw new Error('Failed to update status');
             await fetchRequests();
-            setSelectedRequest({ ...selectedRequest, status: statusValue });
+            setSelectedRequest({ ...selectedRequest, status: statusValue, targetDepartment: targetDepartmentValue });
             setInvoiceMessage({ type: 'success', text: 'تم تحديث حالة الطلب' });
         } catch {
             setInvoiceMessage({ type: 'error', text: 'تعذر تحديث حالة الطلب' });
@@ -239,11 +241,11 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
                             <thead>
                                 <tr className="bg-muted/50 border-b border">
-                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -254,7 +256,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         animate={{ opacity: 1 }}
                                         className="group hover:bg-muted/50 transition-colors"
                                     >
-                                        <td className="px-8 py-6">
+                                        <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                                     <User className="w-5 h-5" />
@@ -265,13 +267,13 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             <div>
                                                 <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
                                                 <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             {(() => {
                                                 let label = t(`legal.status.${req.status}`) || (req.paymentStatus === 'PAID' ? t('admin.trans.paid') : t('admin.trans.unpaid'));
                                                 let variantClass = req.paymentStatus === 'PAID' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600';
@@ -296,7 +298,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                 );
                                             })()}
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             <div className="flex items-center gap-2 text-slate-400">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 <span className="text-[11px] font-bold">
@@ -304,7 +306,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-center">
+                                        <td className="px-3 py-3 sm:px-6 sm:py-5 text-center">
                                             <button 
                                                 onClick={() => openDetails(req)}
                                                 className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
@@ -342,7 +344,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>
@@ -441,7 +443,22 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                             </div>
 
                             <div className="space-y-3 pt-6 border-t border">
-                                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{language === 'ar' ? 'تعيين مزود الخدمة' : 'Assign Provider'}</label>
+                                        <select
+                                            value={targetDepartmentValue}
+                                            onChange={(e) => setTargetDepartmentValue(e.target.value)}
+                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+                                        >
+                                            <option value="">{language === 'ar' ? 'غير محدد' : 'Unassigned'}</option>
+                                            <option value="legal">{language === 'ar' ? 'الخدمات القانونية' : 'Legal Services'}</option>
+                                            <option value="marketing">{language === 'ar' ? 'خدمات التسويق' : 'Marketing Services'}</option>
+                                            <option value="real_estate">{language === 'ar' ? 'إدارة الأملاك' : 'Properties Management'}</option>
+                                            <option value="finance">{language === 'ar' ? 'الإدارة المالية' : 'Financial Management'}</option>
+                                            <option value="employees">{language === 'ar' ? 'إدارة الموظفين' : 'Employees Management'}</option>
+                                        </select>
+                                    </div>
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">حالة الطلب</label>
                                         <select

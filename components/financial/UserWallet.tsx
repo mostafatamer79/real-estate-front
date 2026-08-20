@@ -150,7 +150,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-md mx-4 text-black p-3 sm:p-6 max-h-[90vh] overflow-y-auto"
+                        className="bg-card border border rounded-xl shadow-2xl w-[95vw] sm:max-w-md mx-4 text-black p-3 sm:p-6 max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                          <h2 className="text-xl font-bold mb-4">طلب سحب رصيد</h2>
@@ -181,7 +181,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-full w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto"
+                        className="bg-card border border rounded-xl shadow-2xl w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between p-3 sm:p-6 border-b border">

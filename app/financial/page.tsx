@@ -81,7 +81,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <motion.h1
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm md:text-xl sm:text-3xl font-black tracking-tight text-slate-950"
+                  className="text-sm sm:text-xl md:text-3xl font-black tracking-tight text-slate-950"
                 >
                   {t('fin.title')}
                 </motion.h1>
@@ -113,7 +113,44 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <Tabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
                     {/* Scrollable Premium Tabs */}
                     <div className="overflow-x-auto pb-2 hide-scrollbar">
-       
+                        <TabsList className="inline-flex h-auto min-h-11 flex-nowrap sm:flex-wrap items-center gap-1.5 rounded-2xl bg-slate-950/5 p-1.5 border border-slate-950/10 w-full sm:w-auto">
+                            <TabsTrigger value="dashboard" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <LayoutDashboard className="w-3.5 h-3.5" />
+                                {t('fin.tab.dashboard')}
+                            </TabsTrigger>
+                            <TabsTrigger value="transactions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <Receipt className="w-3.5 h-3.5" />
+                                {t('fin.tab.transactions')}
+                            </TabsTrigger>
+                            <TabsTrigger value="commissions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <Calculator className="w-3.5 h-3.5" />
+                                {t('fin.tab.commissions')}
+                            </TabsTrigger>
+                            <TabsTrigger value="payments" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <CreditCard className="w-3.5 h-3.5" />
+                                {t('fin.tab.payments')}
+                            </TabsTrigger>
+                            <TabsTrigger value="expenses" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <Banknote className="w-3.5 h-3.5" />
+                                {t('fin.tab.expenses')}
+                            </TabsTrigger>
+                            <TabsTrigger value="reports" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <FileText className="w-3.5 h-3.5" />
+                                {t('fin.tab.reports')}
+                            </TabsTrigger>
+                            <TabsTrigger value="wallet" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <Wallet className="w-3.5 h-3.5" />
+                                {t('fin.tab.wallet')}
+                            </TabsTrigger>
+                            <TabsTrigger value="settlements" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                {t('fin.tab.settlements')}
+                            </TabsTrigger>
+                            <TabsTrigger value="service_requests" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                                <Briefcase className="w-3.5 h-3.5" />
+                                {t('fin.tab.service_requests')}
+                            </TabsTrigger>
+                        </TabsList>
                     </div>
 
                     <AnimatePresence mode="wait">
@@ -129,7 +166,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                             <TabsContent value="transactions" className="m-0"><TransactionsSection /></TabsContent>
                             <TabsContent value="commissions" className="m-0">
                                 <div className="space-y-8">
-                                     <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 text-white">
+                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 text-white">
                                          <div className="bg-slate-900 p-4 sm:p-8 rounded-[1.25rem] border border-blue-800 relative overflow-hidden group">
                                              <div className="absolute top-0 right-0 p-3 sm:p-6 opacity-5 group-hover:scale-110 transition-transform duration-700">
                                                <PieChart className="w-20 h-20" />
@@ -172,7 +209,6 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                                  <ServiceRequestsTable
                                     title={t('fin.tab.service_requests')}
                                     subtitle={t('fin.transactions.desc')}
-                                    department="finance"
                                  />
                              </TabsContent>
                         </motion.div>
@@ -221,14 +257,14 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
     ];
 
     if (loading) return (
-      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {[1,2,3,4,5,6].map(i => <div key={i} className="h-32 rounded-3xl bg-muted animate-pulse" />)}
       </div>
     );
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {kpis.map((kpi, idx) => (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}

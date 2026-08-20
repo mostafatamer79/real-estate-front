@@ -255,7 +255,7 @@ export default function NewSubscriptionPage() {
   }
 
   return (
-    <div className="subscriptions-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12 p-3 sm:p-6" dir="rtl">
+    <div className="subscriptions-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-6 sm:pb-12 p-3 sm:p-6" dir="rtl">
       <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
       <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
@@ -265,42 +265,44 @@ export default function NewSubscriptionPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 bg-card hover:bg-muted border border-/80 hover:border-slate-300 text-slate-800 px-5 py-2.5 rounded-2xl font-black text-xs transition-all duration-200 shadow-sm active:scale-95"
+            className="flex items-center gap-2 bg-card hover:bg-muted border border-slate-200/80 hover:border-slate-300 text-slate-800 px-5 py-2.5 rounded-2xl font-black text-xs transition-all duration-200 shadow-sm active:scale-95"
           >
             <ArrowRight className="w-4 h-4" />
             {t("common.back") || "رجوع"}
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-[1rem] border border bg-card p-2 shadow-sm">
-          <button
-            type="button"
-            onClick={() => {
-              setPlanMode("packages");
-              setSelectedDepartments([]);
-              setEmployeeSeats(0);
-            }}
-            className={`h-12 rounded-2xl text-sm font-black transition-colors ${
-              planMode === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
-            }`}
-          >
-            الباقات الجاهزة
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPlanMode("custom");
-              setSelectedPackageId("");
-              setSelectedDepartments([]);
-              setEmployeeSeats(0);
-            }}
-            className={`h-12 rounded-2xl text-sm font-black transition-colors ${
-              planMode === "custom" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
-            }`}
-          >
-            اشتراك مخصص
-          </button>
-        </div>
+        {(!loading && packages.length === 0 && planMode === "packages") ? null : (
+          <div className="grid grid-cols-2 gap-3 rounded-[1rem] border border bg-card p-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => {
+                setPlanMode("packages");
+                setSelectedDepartments([]);
+                setEmployeeSeats(0);
+              }}
+              className={`h-12 rounded-2xl text-sm font-black transition-colors ${
+                planMode === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
+              }`}
+            >
+              الباقات الجاهزة
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPlanMode("custom");
+                setSelectedPackageId("");
+                setSelectedDepartments([]);
+                setEmployeeSeats(0);
+              }}
+              className={`h-12 rounded-2xl text-sm font-black transition-colors ${
+                planMode === "custom" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
+              }`}
+            >
+              اشتراك مخصص
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-3 md:gap-6">
           <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
@@ -315,8 +317,23 @@ export default function NewSubscriptionPage() {
               <div className="py-8 md:py-16 flex justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-slate-700" />
               </div>
-            ) : packages.length === 0 ? (
-              <div className="py-8 md:py-16 text-center text-slate-400 font-bold">{t("sub.public.emptyPackages")}</div>
+            ) : packages.length === 0 && planMode === "packages" ? (
+              <div className="py-8 md:py-16 flex flex-col items-center gap-4 text-center">
+                <p className="text-slate-400 font-bold">{t("sub.public.emptyPackages")}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlanMode("custom");
+                    setSelectedPackageId("");
+                    setSelectedDepartments([]);
+                    setEmployeeSeats(0);
+                  }}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white transition-colors hover:bg-slate-800"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  اشتراك مخصص
+                </button>
+              </div>
             ) : planMode === "custom" ? (
               <div className="space-y-4">
                 <div className="rounded-3xl border border bg-muted p-5">
@@ -335,7 +352,7 @@ export default function NewSubscriptionPage() {
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {ALL_ADMINISTRATIONS.map((department) => {
                     const checked = selectedDepartments.includes(department);
                     const monthly = Number(globalPricing.departmentPrices?.[department]?.monthly || 0);
@@ -388,7 +405,7 @@ export default function NewSubscriptionPage() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {packages.map((pkg) => {
                   const isSelected = pkg.id === selectedPackageId;
                   const currentPrice = subscriptionType === "سنوي" ? Number(pkg.yearlyPrice) : Number(pkg.monthlyPrice);

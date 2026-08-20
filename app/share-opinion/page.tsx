@@ -108,7 +108,7 @@ export default function ShareOpinionPage() {
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             <form onSubmit={handleSubmit} className="relative space-y-7">
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <label className={labelClass}>
                     الاسم الكريم

@@ -70,7 +70,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                                 <motion.h1 
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="text-4xl md:text-3xl md:text-6xl font-black tracking-tighter text-slate-900"
+                                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900"
                                 >
                                     {t('marketing.title')}
                                 </motion.h1>
@@ -107,18 +107,18 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
             <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-6'}`}>
                 <Tabs defaultValue="advertising" className="w-full space-y-10" onValueChange={setActiveTab} dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <div className="flex flex-col items-center gap-3 md:gap-6 w-full">
-                        <div className="w-full w-[95vw] sm:max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
-                            <TabsList className="inline-flex h-20 items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400">
-                                <TabsTrigger value="advertising" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                        <div className="w-[95vw] sm:max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
+                            <TabsList className="inline-flex h-auto items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400">
+                                <TabsTrigger value="advertising" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.ads')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="photography" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="photography" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.photography')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="requests" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.requests')}</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="general_requests" className="flex-1 rounded-[1rem] h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs transition-all duration-300 px-6">
+                                <TabsTrigger value="general_requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.general_requests')}</span>
                                 </TabsTrigger>
                             </TabsList>

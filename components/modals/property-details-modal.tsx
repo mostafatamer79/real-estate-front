@@ -135,7 +135,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
+            <DialogContent className="w-[95vw] sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader className="border-b border bg-gradient-to-b from-white to-slate-50 px-6 py-5 sm:px-8">
                     <div className="flex items-start gap-4 pe-12">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-slate-700 shadow-sm">
@@ -194,7 +194,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                     </div>
                                 </div>
 
-                                <div className="grid gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                                     <div>
                                         <Label className="mb-2 block text-base font-bold">{t('pm.unit.number')}</Label>
                                         <Input

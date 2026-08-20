@@ -46,7 +46,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-3xl" dir="rtl">
+            <DialogContent className="wallet-dialog-content w-[calc(100vw-1.5rem)] sm:max-w-xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-3xl" dir="rtl">
                 
                 {/* Premium Header */}
                 <div className={`relative px-6 pt-8 pb-24 sm:px-8 sm:pt-12 text-center overflow-hidden bg-gradient-to-br ${statusConfig.color}`}>

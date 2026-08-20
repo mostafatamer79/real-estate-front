@@ -302,7 +302,7 @@ function RequestCard({
               </div>
 
               {/* Info grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-0.5">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">العميل</p>
                   <p className="text-sm font-bold text-slate-700">{request.clientName}</p>
@@ -446,17 +446,35 @@ export default function DepartmentRequests() {
     setIsChatOpen(true);
   };
 
-  const filtered = requests.filter(r =>
-    r.clientName.toLowerCase().includes(search.toLowerCase()) ||
-    r.serviceType.toLowerCase().includes(search.toLowerCase()) ||
-    r.city.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = requests.filter(r => {
+    const matchesSearch = r.clientName?.toLowerCase().includes(search.toLowerCase()) ||
+                          r.serviceType?.toLowerCase().includes(search.toLowerCase()) ||
+                          (r.city && r.city.toLowerCase().includes(search.toLowerCase()));
+                          
+    // If not admin/manager, only show requests assigned to them or unassigned if they are in the department?
+    // Actually, to be safe, if they are just a regular user/agent, show if assignedAgentId matches user.id
+    // But let's add a simple toggle for "my requests" vs "all" if they are admin/manager.
+    // For now, let's just make sure we only filter by search.
+    return matchesSearch;
+  });
+
+  const myAssignedRequests = filtered.filter(r => (r as any).assignedAgentId === user?.id);
+  const [showOnlyMine, setShowOnlyMine] = useState(false);
+  
+  useEffect(() => {
+    if (user && user.role !== 'admin' && user.role !== 'manager') {
+      setShowOnlyMine(true);
+    }
+  }, [user]);
+
+  const displayRequests = showOnlyMine ? myAssignedRequests : filtered;
 
   const counts = {
-    all: requests.length,
-    pending: requests.filter(r => r.status === 'pending').length,
-    inProgress: requests.filter(r => r.status === 'in_progress').length,
-    completed: requests.filter(r => r.status === 'completed').length,
+    all: filtered.length,
+    mine: myAssignedRequests.length,
+    pending: displayRequests.filter(r => r.status === 'pending').length,
+    inProgress: displayRequests.filter(r => r.status === 'in_progress').length,
+    completed: displayRequests.filter(r => r.status === 'completed').length,
   };
 
   return (
@@ -467,12 +485,20 @@ export default function DepartmentRequests() {
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">طلبات الخدمات</h1>
           <p className="text-slate-400 text-xs font-bold">{DEPT_LABELS[dept] ?? dept}</p>
         </div>
-        <button
-          onClick={fetchRequests}
-          className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-muted transition-colors"
-        >
-          <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowOnlyMine(!showOnlyMine)}
+            className={`h-9 px-4 flex items-center justify-center rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${showOnlyMine ? 'bg-slate-950 text-white' : 'bg-muted text-slate-600 hover:bg-slate-200'}`}
+          >
+            {showOnlyMine ? 'عرض كل الطلبات' : 'الطلبات المسندة لي'}
+          </button>
+          <button
+            onClick={fetchRequests}
+            className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-muted transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Stat chips */}
@@ -509,14 +535,14 @@ export default function DepartmentRequests() {
             <div key={i} className="h-16 bg-muted rounded-2xl animate-pulse" />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : displayRequests.length === 0 ? (
         <div className="bg-card rounded-2xl border border py-20 flex flex-col items-center gap-4 opacity-30">
           <MessageSquare className="w-12 h-12 text-slate-400" />
           <p className="font-black text-sm text-slate-500">لا توجد طلبات</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map(req => (
+          {displayRequests.map(req => (
             <RequestCard 
               key={req.id} 
               request={req} 

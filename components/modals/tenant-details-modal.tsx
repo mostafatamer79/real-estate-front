@@ -26,7 +26,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                         <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-blue-600">
@@ -39,7 +39,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-6">
                     {/* Basic Info */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-bold text-gray-900 border-b pb-2">{t('bm.legal.serviceDesc')}</h3>

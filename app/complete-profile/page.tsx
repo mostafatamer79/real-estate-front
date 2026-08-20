@@ -121,11 +121,11 @@ export default function CompleteProfilePage() {
     <div className="min-h-screen bg-[#0B1120] text-slate-200 relative overflow-hidden font-sans" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-slate-600/10 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
+          <div className="absolute top-[-10%] right-[-5%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-slate-600/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 py-8 md:py-6 md:py-12">
+      <div className="relative max-w-4xl mx-auto px-4 py-6 md:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
             <button
@@ -141,7 +141,7 @@ export default function CompleteProfilePage() {
             {/* Left Column: Title & Info */}
             <div className="lg:col-span-4 space-y-6">
                 <div>
-                    <h1 className="text-3xl md:text-2xl sm:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                         {t('profile.complete.title')}
                     </h1>
                     <p className="text-slate-400 leading-relaxed">
@@ -174,7 +174,7 @@ export default function CompleteProfilePage() {
 
             {/* Right Column: Form */}
             <div className="lg:col-span-8">
-                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-6 md:p-4 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl relative overflow-hidden">
                      {/* Glass effect highlight */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
 
@@ -192,7 +192,7 @@ export default function CompleteProfilePage() {
                                 <User className="w-5 h-5 text-blue-400" />
                                 {t('profile.personalInfo')}
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-300">{t('login.placeholder.firstName') || "First Name"}</label>
                                     <input
@@ -337,7 +337,7 @@ export default function CompleteProfilePage() {
                         <div className="space-y-4">
                              <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
                                 <MapPin className="w-5 h-5 text-emerald-400" />
-                                {t('profile.location')}
+                                {t('profile.location')} <span className="text-xs text-slate-400 font-normal mx-2">({language === 'ar' ? 'اختياري' : 'Optional'})</span>
                             </h2>
                             <div className="space-y-4">
                                  <div className="space-y-2">
@@ -354,7 +354,7 @@ export default function CompleteProfilePage() {
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-300">{t('city.name')}</label>
                                         <select

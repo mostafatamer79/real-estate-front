@@ -121,6 +121,28 @@ function StatCard({
   );
 }
 
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+function getRequestStatusLabel(req: any, t: (k: string) => string) {
+  let statusKey = req.status;
+  let label = t(`legal.status.${req.status}`) || req.status;
+
+  if (req.category === 'legal' || req.targetDepartment === 'legal' || req.targetDepartment === 'marketing') {
+    if (req.clientDecision === 'accepted') {
+      statusKey = 'accepted';
+      label = t('legal.decision.accepted');
+    } else if (req.clientDecision === 'rejected') {
+      statusKey = 'rejected';
+      label = t('legal.decision.rejected');
+    } else if (req.invoiceSent) {
+      statusKey = 'invoice_sent';
+      label = t('legal.invoice.sent');
+    }
+  }
+
+  return { statusKey, label };
+}
+
 // ─── request row ────────────────────────────────────────────────────────────
 
 function RequestRow({
@@ -134,13 +156,14 @@ function RequestRow({
   onOpen: (req: any) => void;
   t: (k: string) => string;
 }) {
+  const { statusKey, label } = getRequestStatusLabel(req, t);
   return (
     <motion.tr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="border-b border hover:bg-muted/50 transition-colors group"
     >
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center shrink-0">
             <User className="w-4 h-4 text-slate-500" />
@@ -151,37 +174,17 @@ function RequestRow({
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 sm:px-6 sm:py-4">
         <Badge variant="outline" className="font-bold text-[10px]">
           {req.serviceType}
         </Badge>
       </td>
-      <td className="px-6 py-4">
-        {(() => {
-          let statusKey = req.status;
-          let label = t(`legal.status.${req.status}`) || req.status;
-
-          if (req.category === 'legal' || req.targetDepartment === 'legal' || req.targetDepartment === 'marketing') {
-            if (req.clientDecision === 'accepted') {
-              statusKey = 'accepted';
-              label = t('legal.decision.accepted');
-            } else if (req.clientDecision === 'rejected') {
-              statusKey = 'rejected';
-              label = t('legal.decision.rejected');
-            } else if (req.invoiceSent) {
-              statusKey = 'invoice_sent';
-              label = t('legal.invoice.sent');
-            }
-          }
-
-          return (
-            <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
-              {label}
-            </span>
-          );
-        })()}
+      <td className="px-3 py-3 sm:px-6 sm:py-4">
+        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+          {label}
+        </span>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center gap-1.5 text-slate-400">
           <Calendar className="w-3.5 h-3.5" />
           <span className="text-[11px] font-bold">
@@ -191,7 +194,7 @@ function RequestRow({
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-center">
+      <td className="px-3 py-3 sm:px-6 sm:py-4 text-center">
         <button
           onClick={() => onOpen(req)}
           className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
@@ -200,6 +203,59 @@ function RequestRow({
         </button>
       </td>
     </motion.tr>
+  );
+}
+
+// ─── request card (mobile) ──────────────────────────────────────────────────
+
+function RequestCard({
+  req,
+  language,
+  onOpen,
+  t,
+}: {
+  req: any;
+  language: string;
+  onOpen: (req: any) => void;
+  t: (k: string) => string;
+}) {
+  const { statusKey, label } = getRequestStatusLabel(req, t);
+  return (
+    <div className="rounded-2xl border border bg-card p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+            <User className="w-5 h-5 text-slate-500" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-900">{req.clientName}</p>
+            <p className="text-[11px] text-slate-400 font-medium" dir="ltr">{req.phone}</p>
+          </div>
+        </div>
+        <button
+          onClick={() => onOpen(req)}
+          className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+        >
+          <ExternalLink className="w-4 h-4" />
+        </button>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <Badge variant="outline" className="font-bold text-[10px]">
+          {req.serviceType}
+        </Badge>
+        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+          {label}
+        </span>
+      </div>
+      <div className="flex items-center gap-1.5 text-slate-400">
+        <Calendar className="w-3.5 h-3.5" />
+        <span className="text-[11px] font-bold">
+          {format(new Date(req.createdAt), "dd MMM yyyy", {
+            locale: language === "ar" ? ar : enUS,
+          })}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -259,23 +315,24 @@ function RequestsTable({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div>
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-right">
               <thead>
                 <tr className="bg-muted/60 border-b border">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.parties")}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.type")}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.status")}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.actions")}
                   </th>
-                  <th className="px-6 py-4" />
+                  <th className="px-3 py-3 sm:px-6 sm:py-4" />
                 </tr>
               </thead>
               <tbody>
@@ -290,6 +347,18 @@ function RequestsTable({
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="md:hidden space-y-3 p-4">
+            {filtered.map((req) => (
+              <RequestCard
+                key={req.id}
+                req={req}
+                language={language}
+                onOpen={onOpen}
+                t={t}
+              />
+            ))}
+          </div>
           </div>
         )}
       </div>
@@ -605,7 +674,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             className="space-y-6"
           >
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-6 gap-4">
               <StatCard label={t("admin.legal.all")}       value={allLegal.length}   icon={Layers}   color="bg-muted text-slate-700" />
               <StatCard label={t("admin.legal.disputes_short")}           value={disputes.length}   icon={Scale}    color="bg-muted text-slate-700" />
               <StatCard label={t("admin.legal.contracts_short")}             value={contracts.length}  icon={FileText} color="bg-muted text-slate-700"   />
@@ -668,7 +737,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             exit={{ opacity: 0, y: -10 }}
             className="rounded-2xl border border bg-card p-5 shadow-sm"
           >
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
               {legalServiceTabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -708,7 +777,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
       {/* ── Details Dialog ───────────────────────────────────────────────── */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent
-          className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto"
+          className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto"
           dir={language === "ar" ? "rtl" : "ltr"}
         >
           <DialogHeader>

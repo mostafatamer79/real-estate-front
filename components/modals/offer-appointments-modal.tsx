@@ -70,7 +70,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
                 <DialogHeader className="p-3 sm:p-6 pb-2">
                     <DialogTitle className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                         <Calendar className="w-6 h-6 text-slate-700" />
@@ -143,7 +143,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                                             </Badge>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-muted rounded-lg p-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-muted rounded-lg p-3">
                                             <div className="flex items-center gap-2.5 text-slate-600">
                                                 <Phone className="w-4 h-4 text-slate-400" />
                                                 <span>{booking.user?.phone || (language === 'ar' ? 'غير متوفر' : 'Not available')}</span>

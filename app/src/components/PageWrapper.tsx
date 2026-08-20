@@ -2,11 +2,13 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [shouldAddPadding, setShouldAddPadding] = useState(false);
+  const { settings, isLoading: settingsLoading } = useSettings();
 
   useEffect(() => {
     // List of public routes that don't require authentication
@@ -17,10 +19,32 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
     );
 
     const token = localStorage.getItem('token');
-    
-    if (!token && !isPublic) {
+
+    // When the global free trial is active, all routes are accessible without login.
+    // Also wait until settings have loaded to avoid a premature redirect on first render.
+    const globalFreeTrial = settings.uiFlags['enable_global_free_trial'] === true;
+
+    if (!token && !isPublic && !settingsLoading) {
       // If no token and not a public route, redirect to login
       router.push('/login');
+    }
+
+    if (token && !isPublic && pathname !== '/profile' && pathname !== '/complete-profile') {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        try {
+          const parsedUser = JSON.parse(userStr);
+          const isProfileComplete = parsedUser.firstName && parsedUser.lastName && parsedUser.role !== 'user';
+          const isAgentWithoutLicense = parsedUser.role === 'agent' && !parsedUser.agentLicenseNumber;
+          const needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+          
+          if (needsProfileCompletion) {
+            router.push('/profile');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
     }
     
     // List of paths where the header is hidden or special handling is needed
@@ -43,7 +67,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
     const needsPadding = !isHiddenHeader && !isHomePage;
     
     setShouldAddPadding(needsPadding);
-  }, [pathname]);
+  }, [pathname, settings, settingsLoading]);
 
   return (
     <main

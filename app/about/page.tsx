@@ -278,7 +278,7 @@ export default function AboutPage() {
         </motion.button>
       )}
 
-      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-28 sm:px-8 lg:px-12 lg:pt-32">
+      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-24 sm:px-8 lg:px-12 lg:pt-32">
         <div className="absolute top-24 sm:top-28 z-20">
           <button
             type="button"
@@ -344,7 +344,7 @@ export default function AboutPage() {
 
 
 
-      <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
+      <section className="relative mx-auto max-w-7xl px-5 py-16 sm:py-24 sm:px-8 lg:px-12">
         <div className="mb-12 space-y-4">
           <h2 className="text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
           <p className="text-xs sm:text-sm font-bold leading-loose text-white/65 lg:whitespace-nowrap">
@@ -352,7 +352,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {capabilities.map((item, index) => (
             <motion.article
               key={item.title}

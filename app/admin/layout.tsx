@@ -103,6 +103,18 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       ]
     },
     {
+      title: isRtl ? 'الإدارة المالية للمنصة' : 'Platform Financial Management',
+      items: [
+        { id: 'finance-dashboard', href: '/admin/wallet?section=financial', label: isRtl ? 'لوحة مالية' : 'Finance Dashboard' },
+        { id: 'finance-transactions-tab', href: '/admin/wallet?section=transactions', label: isRtl ? 'العمليات' : 'Transactions' },
+        { id: 'finance-payments', href: '/admin/wallet?section=payments', label: isRtl ? 'المدفوعات' : 'Payments' },
+        { id: 'finance-expenses', href: '/admin/wallet?section=expenses', label: isRtl ? 'المصروفات' : 'Expenses' },
+        { id: 'finance-reports', href: '/admin/wallet?section=reports', label: isRtl ? 'التقارير' : 'Reports' },
+        { id: 'finance-settlements', href: '/admin/wallet?section=settlements', label: isRtl ? 'التسويات' : 'Settlements' },
+        { id: 'finance-service-requests', href: '/admin/wallet?section=service_requests', label: isRtl ? 'إدارة الخدمات' : 'Service Requests' },
+      ]
+    },
+    {
       title: isRtl ? 'الرئيسية' : 'Workspace',
       items: [
         { id: 'dashboard', href: '/admin/dashboard', label: isRtl ? ' لوح التحكم' : 'Dashboard' },
@@ -128,18 +140,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'marketing', href: '/admin/marketing', label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
         { id: 'properties-management', href: '/admin/properties-management',  label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
         { id: 'legal', href: '/admin/legal',  label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
-      ]
-    },
-    {
-      title: isRtl ? 'الإدارة المالية' : 'Financial Management',
-      items: [
-        { id: 'finance-dashboard', href: '/admin/wallet?section=financial', label: isRtl ? 'لوحة مالية' : 'Finance Dashboard' },
-        { id: 'finance-transactions-tab', href: '/admin/wallet?section=transactions', label: isRtl ? 'العمليات' : 'Transactions' },
-        { id: 'finance-payments', href: '/admin/wallet?section=payments', label: isRtl ? 'المدفوعات' : 'Payments' },
-        { id: 'finance-expenses', href: '/admin/wallet?section=expenses', label: isRtl ? 'المصروفات' : 'Expenses' },
-        { id: 'finance-reports', href: '/admin/wallet?section=reports', label: isRtl ? 'التقارير' : 'Reports' },
-        { id: 'finance-settlements', href: '/admin/wallet?section=settlements', label: isRtl ? 'التسويات' : 'Settlements' },
-        { id: 'finance-service-requests', href: '/admin/wallet?section=service_requests', label: isRtl ? 'إدارة الخدمات' : 'Service Requests' },
       ]
     },
     {
@@ -171,7 +171,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       {/* Mobile Menu Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className={`fixed top-4 z-50 p-2 bg-slate-900 text-white rounded-lg lg:hidden ${isRtl ? 'left-4' : 'right-4'}`}
+        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 p-2 bg-slate-900 text-white rounded-lg lg:hidden ${isRtl ? 'left-4' : 'right-4'}`}
       >
         {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
@@ -191,7 +191,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         className={`${
           // Desktop widths
           isSidebarOpen ? 'lg:w-64' : 'lg:w-20'
-        } w-64 fixed inset-y-0 z-40 bg-slate-950 text-white transition-transform lg:transition-all duration-300 ease-in-out border-slate-900 flex flex-col
+        } w-64 fixed inset-y-0 z-40 bg-slate-950 text-white transition-transform lg:transition-all duration-300 ease-in-out border-slate-900 flex flex-col pt-safe pb-safe
         ${isRtl ? 'right-0 lg:border-l lg:border-r-0' : 'left-0 border-r'}
         ${isSidebarOpen ? 'translate-x-0' : isRtl ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
@@ -203,7 +203,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             alt="Logo"
             width={isSidebarOpen ? 150 : 44}
             height={settings.logoHeight || 44}
-            className="object-contain w-auto transition-all duration-300"
+            className="object-contain w-auto max-w-[120px] sm:max-w-[160px] transition-all duration-300"
             style={{ height: isSidebarOpen ? `${settings.logoHeight || 44}px` : '36px' }}
             priority
           />
@@ -307,7 +307,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                           }`}
                         >
                           {isSidebarOpen && (
-                            <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+                            <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>
                           )}
 
                           {showAdminStatusBadge && isSidebarOpen && (

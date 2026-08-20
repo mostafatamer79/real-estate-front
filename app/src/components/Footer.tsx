@@ -91,7 +91,7 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16"
         >
           {/* Brand */}
           <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1">
@@ -104,7 +104,7 @@ export default function Footer() {
               <motion.img
                 src={settings?.logoWhiteUrl || '/icons/white.png'}
                 alt="شعار المنصة"
-                className="h-32 sm:h-40 w-auto object-contain relative z-10"
+                className="h-24 sm:h-40 w-auto object-contain relative z-10"
                 animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -120,8 +120,8 @@ export default function Footer() {
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white">
-                    <link.icon className="h-4 w-4 text-slate-500" />
+                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                    <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -137,8 +137,8 @@ export default function Footer() {
             <ul className="space-y-4">
               {supportLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white">
-                    <link.icon className="h-4 w-4 text-slate-500" />
+                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                    <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -154,11 +154,11 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="w-5 h-5 text-slate-500 shrink-0" />
-                <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors">{settings.contactEmail}</a>
+                <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors break-all">{settings.contactEmail}</a>
               </li>
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <X className="w-5 h-5 text-slate-500 shrink-0" />
-                <a href={getXProfileUrl(settings.contactTwitter)} target="_blank" rel="noreferrer" className="hover:text-white transition-colors" dir="ltr">
+                <a href={getXProfileUrl(settings.contactTwitter)} target="_blank" rel="noreferrer" className="hover:text-white transition-colors break-all" dir="ltr">
                   {settings.contactTwitter || "X"}
                 </a>
               </li>

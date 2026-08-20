@@ -22,6 +22,8 @@ import { Plus, Wallet, ArrowDownCircle, ArrowUpCircle, Loader2, CreditCard, Bank
 import { Invoice } from './types'
 import InvoiceModal from '@/app/src/components/invoice'
 import { apiClient } from '@/lib/client'
+import { financialApi } from '@/lib/api'
+import { serviceRequestApi } from '@/lib/service-request-api'
 import toast from 'react-hot-toast'
 import PaymentMethodsModal from '@/components/Payment/PaymentMethodsModal'
 import { SaudiRiyalAmount, SaudiRiyalSymbol } from '@/components/ui/saudi-riyal'
@@ -165,6 +167,27 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
         </span>
     );
 
+    const handleDeleteInvoice = async (id: string, isSubscription?: boolean, invoice?: any) => {
+        if (!confirm(t('common.confirmDelete') || 'هل أنت متأكد من الحذف؟')) return;
+        
+        setProcessingId(id);
+        try {
+            if (isSubscription) {
+                await apiClient.delete(`/subscriptions/${id}`);
+            } else if (invoice?.isPendingDecision || invoice?.isUnderReview || invoice?.invoice?.startsWith('REQ-')) {
+                await serviceRequestApi.remove(id);
+            } else {
+                await financialApi.deleteInvoice(id);
+            }
+            toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح');
+            if (onRefresh) onRefresh();
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || t('common.deleteError') || 'فشل الحذف');
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
     const ActionButtons = ({ invoice }: { invoice: any }) => (
         <div className='flex justify-end gap-2 transition-opacity flex-wrap sm:flex-nowrap'>
             <Button 
@@ -174,6 +197,15 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                 onClick={() => handleViewInvoice(invoice)}
             >
                 {t('common.view')}
+            </Button>
+            <Button 
+                size='sm' 
+                variant='ghost' 
+                className='text-rose-500 hover:text-rose-700 hover:bg-rose-50 font-bold'
+                onClick={(e) => { e.stopPropagation(); handleDeleteInvoice(invoice.id, invoice.isSubscription, invoice); }}
+                disabled={processingId === invoice.id}
+            >
+                {processingId === invoice.id ? <Loader2 className="w-4 h-4 animate-spin" /> : (t('common.delete') || 'حذف')}
             </Button>
             {invoice.isSubscriptionActive ? (
                 <span className="text-[10px] font-bold text-emerald-600 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100">نشط</span>
@@ -323,25 +355,25 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
 <Table>
                             <TableHeader className='bg-slate-900/5'>
                                 <TableRow>
-                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
-                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
-                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.date')}</TableHead>
-                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.amount')}</TableHead>
-                                    <TableHead className='text-right py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.status')}</TableHead>
-                                    <TableHead className='text-left py-3 sm:py-5 px-2 sm:px-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.commission.actions')}</TableHead>
+                                    <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.invoiceNo')}</TableHead>
+                                    <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.service')}</TableHead>
+                                    <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.date')}</TableHead>
+                                    <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.amount')}</TableHead>
+                                    <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.table.status')}</TableHead>
+                                    <TableHead className='text-left px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900 whitespace-nowrap max-w-[200px] truncate'>{t('wallet.commission.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice, index) => (
                                     <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
-                                        <TableCell className='font-bold text-slate-700 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
-                                        <TableCell className='font-medium text-slate-600 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
-                                        <TableCell className='text-slate-500 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
-                                        <TableCell className='font-black text-slate-900 py-3 sm:py-4 px-2 sm:px-4 whitespace-nowrap max-w-[200px] truncate'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
-                                        <TableCell className="py-3 sm:py-4 px-2 sm:px-4 text-center whitespace-nowrap max-w-[200px] truncate">
+                                        <TableCell className='font-bold text-slate-700 px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.invoice}</TableCell>
+                                        <TableCell className='font-medium text-slate-600 px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.service}</TableCell>
+                                        <TableCell className='text-slate-500 px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-[200px] truncate'>{invoice.date}</TableCell>
+                                        <TableCell className='font-black text-slate-900 px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap max-w-[200px] truncate'><SaudiRiyalAmount amount={Number(String(invoice.amount).replace(/,/g, '')) || 0} locale="en-US" /></TableCell>
+                                        <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-center whitespace-nowrap max-w-[200px] truncate">
                                             <StatusBadge invoice={invoice} />
                                         </TableCell>
-                                        <TableCell className='py-3 sm:py-4 px-2 sm:px-4'>
+                                        <TableCell className='px-3 py-3 sm:px-6 sm:py-4'>
                                             <ActionButtons invoice={invoice} />
                                         </TableCell>
                                     </TableRow>

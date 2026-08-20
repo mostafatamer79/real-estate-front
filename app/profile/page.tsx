@@ -228,7 +228,7 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
             <h1 className="text-xl sm:text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
             <button 
                 onClick={() => router.push('/')}
@@ -239,7 +239,7 @@ export default function ProfilePage() {
             </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {/* Sidebar / User Card */}
             <div className="md:col-span-1 space-y-6">
                 <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6 flex flex-col items-center text-center">
@@ -366,7 +366,7 @@ export default function ProfilePage() {
                         {/* Broker / Office */}
                         {(selectedRole === Role.BROKER || selectedRole === Role.REAL_ESTATE_OFFICE) && (
                               <div className="bg-muted/50 p-5 rounded-xl border border">
-                                <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 font-bold text-gray-950 mb-4">
+                                <h4 className="flex items-center gap-2 text-sm font-bold text-gray-950 mb-4">
                                     <Building2 className="w-4 h-4" />
                                     {t('profile.brokerType.label')}
                                 </h4>
@@ -397,7 +397,7 @@ export default function ProfilePage() {
 
                                 <div className="space-y-4">
                                     <h5 className="text-sm font-semibold text-gray-950 font-semibold text-gray-900 mb-2">{t('profile.license.fal')}</h5>
-                                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.license.falNum')} <span className="text-red-500">*</span></label>
                                             <input
@@ -491,7 +491,7 @@ export default function ProfilePage() {
                                 <div className="w-1 h-4 bg-slate-500 rounded-full"></div>
                                 {t('profile.contactInfo')}
                             </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-500 text-start">{t('profile.mobile')}</label>
                                     <div className="w-full px-3 py-2 bg-muted border border rounded-lg text-slate-500 text-start cursor-not-allowed">
@@ -511,9 +511,9 @@ export default function ProfilePage() {
                         <div>
                              <h4 className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-4 mt-6">
                                 <MapPin className="w-4 h-4" />
-                                {t('profile.nationalAddress.title')}
+                                {t('profile.nationalAddress.title')} <span className="text-xs text-slate-400 font-normal mx-2">({language === 'ar' ? 'اختياري' : 'Optional'})</span>
                             </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.postal')}</label>
                                     <input
@@ -542,7 +542,7 @@ export default function ProfilePage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.district')}</label>
+                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.district')} <span className="text-xs text-slate-400 font-normal">({language === 'ar' ? 'اختياري' : 'Optional'})</span></label>
                                     <input
                                         type="text"
                                         {...register('district')}

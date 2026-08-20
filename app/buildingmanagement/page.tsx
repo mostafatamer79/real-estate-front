@@ -291,7 +291,7 @@ function StatCard({ label, value, icon: Icon, color }: any) {
 function RequestRow({ req, language, onOpen, t, getStatusColor, getServiceStatusLabel, actionIcon: ActionIcon = Receipt }: any) {
   return (
     <tr className="border-b border hover:bg-muted/50 transition-colors group">
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3">
   <div className="w-6 h-6 rounded-lg bg-muted flex items-center justify-center shrink-0">
   <User className="w-3 h-3 text-slate-500" />
@@ -302,17 +302,17 @@ function RequestRow({ req, language, onOpen, t, getStatusColor, getServiceStatus
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 md:px-6 md:py-4">
         <Badge variant="outline" className="font-bold text-[10px]">
           {req.serviceType || req.type}
         </Badge>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 py-3 md:px-6 md:py-4">
         <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${getStatusColor(req.status, req.invoiceStatus)}`}>
           {getServiceStatusLabel(req)}
         </span>
       </td>
-      <td className="px-6 py-4 text-center">
+      <td className="px-3 py-3 md:px-6 md:py-4 text-center">
         <button
           onClick={() => onOpen(req)}
           className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
@@ -349,26 +349,26 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
       </div>
 
       <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hidden md:block">
           <table className="w-full text-right">
             <thead>
               <tr className="border-b border bg-muted/50">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.parties')}</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.type')}</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.status')}</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('bm.list.actions')}</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.parties')}</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.type')}</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('bm.list.status')}</th>
+                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('bm.list.actions')}</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 Array(5).fill(0).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={4} className="px-6 py-4 h-16 bg-muted/50" />
+                    <td colSpan={4} className="px-3 py-3 md:px-6 md:py-4 h-16 bg-muted/50" />
                   </tr>
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 font-bold text-sm">
+                  <td colSpan={4} className="px-3 py-3 md:px-6 md:py-4 py-20 text-center text-slate-400 font-bold text-sm">
                     {t('bm.list.empty')}
                   </td>
                 </tr>
@@ -388,6 +388,44 @@ function RequestsTable({ items, isLoading, language, onOpen, t, getStatusColor, 
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile card list */}
+        <div className="md:hidden divide-y divide-slate-50">
+          {isLoading ? (
+            Array(5).fill(0).map((_, i) => (
+              <div key={i} className="p-4 animate-pulse">
+                <div className="h-16 bg-muted/50 rounded-xl" />
+              </div>
+            ))
+          ) : filtered.length === 0 ? (
+            <div className="p-8 text-center text-slate-400 font-bold text-sm">
+              {t('bm.list.empty')}
+            </div>
+          ) : (
+            filtered.map((req: any) => (
+              <div key={req.id} className="p-4 flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-slate-900 truncate">{req.clientName || req.firstParty?.name || t('bm.undefined')}</p>
+                  <p className="text-[11px] text-slate-400 font-medium" dir="ltr">{req.phone}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge variant="outline" className="font-bold text-[10px]">
+                      {req.serviceType || req.type}
+                    </Badge>
+                    <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${getStatusColor(req.status, req.invoiceStatus)}`}>
+                      {getServiceStatusLabel(req)}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onOpen(req)}
+                  className="shrink-0 p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -1853,7 +1891,7 @@ function BuildingManagementContent({
               <h4 className="font-medium text-slate-800">{t('bm.form.firstParty')}</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 mb-2">{t('bm.form.name')} *</label>
                 <input
@@ -1989,7 +2027,7 @@ function BuildingManagementContent({
             </div>
 
             {legalDisputeForm.firstPartyAgent && (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-gray-700 mb-2">{t('bm.form.agentName')} *</label>
                   <input
@@ -2041,7 +2079,7 @@ function BuildingManagementContent({
               <h4 className="font-medium text-green-800">{t('bm.form.secondParty')}</h4>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 mb-2">{t('bm.form.name')} *</label>
                 <input
@@ -2178,7 +2216,7 @@ function BuildingManagementContent({
             </div>
 
             {legalDisputeForm.secondPartyAgent && (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-gray-700 mb-2">{t('bm.form.agentName')} *</label>
                   <input
@@ -2227,7 +2265,7 @@ function BuildingManagementContent({
         <div>
           <h2 className="text-base font-semibold text-gray-800 mb-4">{details.title}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             <div>
               <label className="block text-gray-700 mb-2">{details.typeLabel} *</label>
               <select
@@ -2428,7 +2466,7 @@ function BuildingManagementContent({
             </div>
           </div>
           
-          <div className="bg-muted p-1.5 rounded-2xl flex flex-wrap gap-1 border border-/50">
+          <div className="bg-muted p-1.5 rounded-2xl flex flex-wrap gap-1 border border-slate-200/50">
             {[
               { id: "portfolio", label: t('pm.tab.portfolio'), icon: Building },
               { id: "tenants", label: t('pm.tenants'), icon: Users },
@@ -2566,7 +2604,7 @@ function BuildingManagementContent({
 
             <form onSubmit={handleCreateTenant} className="p-5 space-y-6">
                 {/* Tenant Name & ID */}
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
                             <User className="w-4 h-4 text-slate-600" />
@@ -2595,7 +2633,7 @@ function BuildingManagementContent({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     {/* Phone Number */}
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
@@ -2627,7 +2665,7 @@ function BuildingManagementContent({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     {/* Tenant Type */}
                     <div className="space-y-2">
                         <Label className="text-xs font-semibold text-gray-700 flex items-center gap-2">
@@ -2796,7 +2834,7 @@ function BuildingManagementContent({
           </div>
         ) : (
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full text-start">
                     <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                         <tr>
@@ -2856,6 +2894,52 @@ function BuildingManagementContent({
                     </tbody>
                 </table>
             </div>
+
+            {/* Mobile tenant cards */}
+            <div className="md:hidden divide-y divide-slate-50">
+              {tenants
+                .filter(tenant => {
+                    if (!selectedProperty) return true;
+                    return leases.some(lease => lease.tenantId === tenant.id && lease.unit?.propertyId === selectedProperty.id);
+                })
+                .map(tenant => (
+                  <div key={tenant.id} className="p-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase shrink-0">
+                        {tenant.fullName.substring(0, 2)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-black text-slate-900 text-sm tracking-tight truncate">{tenant.fullName}</p>
+                        <p className="text-[11px] text-slate-400 font-bold">{tenant.email || t('bm.undefined')}</p>
+                        <p className="text-[11px] text-slate-500 font-medium" dir="ltr">{tenant.phoneNumber || '-'}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
+                          tenant.type === 'company' 
+                              ? 'bg-card text-slate-900 border shadow-sm' 
+                              : 'bg-slate-900 text-white border-slate-900'
+                      }`}>
+                          {tenant.type === 'company' ? t('pm.tenant.company') : t('pm.tenant.individual')}
+                      </span>
+                      <div className="flex gap-2">
+                        <button 
+                            onClick={() => { setSelectedTenant(tenant); setShowTenantDetails(true); }}
+                            className="w-9 h-9 flex items-center justify-center bg-card border border rounded-lg text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
+                        >
+                            <Eye className="w-4 h-4" />
+                        </button>
+                        <button 
+                            onClick={() => handleDeleteTenant(tenant.id)}
+                            className="w-9 h-9 flex items-center justify-center bg-card border border rounded-lg text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         )}
     </div>
@@ -2865,7 +2949,7 @@ function BuildingManagementContent({
   const renderReports = () => (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           {/* Sub-tabs */}
-          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-/50 w-fit">
+          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-slate-200/50 w-fit">
               {[
                 { id: 'roi', label: t('pm.tab.roi') },
                 { id: 'maintenance', label: t('pm.maintenance.log') }
@@ -2887,7 +2971,7 @@ function BuildingManagementContent({
           <div className="bg-card rounded-[1rem] border border overflow-hidden shadow-2xl shadow-stone-400">
               {activeReportsSubTab === 'roi' ? (
                   <div className="p-10 space-y-10">
-                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                           <div className="bg-muted p-5 rounded-[1.25rem] border border shadow-sm group hover:-translate-y-1 transition-all">
                                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">{t('pm.field.purchasePrice')}</p>
                                 <p className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -2933,7 +3017,7 @@ function BuildingManagementContent({
                               {t('bm.offer.new')}
                           </button>
                       </div>
-                      <div className="overflow-x-auto">
+                      <div className="overflow-x-auto hidden md:block">
                            <table className="w-full text-start">
                                <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                                    <tr>
@@ -2996,6 +3080,51 @@ function BuildingManagementContent({
                                    )}
                                </tbody>
                            </table>
+                      </div>
+
+                      {/* Mobile maintenance cards */}
+                      <div className="md:hidden divide-y divide-slate-50">
+                        {loadingMaintenance ? (
+                          <div className="p-8 text-center">
+                            <div className="w-12 h-12 border-4 border border-t-slate-900 rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{t('common.loading')}</p>
+                          </div>
+                        ) : maintenanceLogs.filter(log => !selectedProperty || log.propertyId === selectedProperty.id).length === 0 ? (
+                          <div className="p-12 text-center flex flex-col items-center gap-3 opacity-20">
+                            <Activity className="w-12 h-12" />
+                            <p className="font-black uppercase tracking-widest text-[10px]">{t('bm.list.empty')}</p>
+                          </div>
+                        ) : (
+                          maintenanceLogs
+                            .filter(log => !selectedProperty || log.propertyId === selectedProperty.id)
+                            .map(log => (
+                              <div key={log.id} className="p-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
+                                      log.status === 'completed' ? 'bg-card text-green-600 border-green-100' :
+                                      log.status === 'in_progress' ? 'bg-slate-900 text-white border-slate-900' :
+                                      'bg-card text-slate-400 border'
+                                  }`}>
+                                      {t(`pm.status.${log.status}`) || log.status}
+                                  </span>
+                                  <span className="text-[11px] text-slate-400 font-bold flex items-center gap-1">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    {log.completedDate ? new Date(log.completedDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US') : '-'}
+                                  </span>
+                                </div>
+                                <p className="font-black text-slate-900 text-sm tracking-tight">{log.description}</p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex flex-col">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('pm.maintenance.technician')}</span>
+                                    <span className="text-sm font-black text-slate-900">{log.technicianName || '-'}</span>
+                                  </div>
+                                  <p className="font-black text-slate-900 text-base">
+                                    <SaudiRiyalAmount amount={log.cost || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-30" />
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                        )}
                       </div>
                   </div>
               )}
@@ -3287,7 +3416,7 @@ function BuildingManagementContent({
             {/* Classification Section */}
             <div className="bg-muted p-4 rounded-xl border border">
               <h3 className="text-sm font-semibold text-gray-800 mb-3">{t('bm.users.classification')}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-700 mb-1">{t('bm.users.classification')} *</label>
                   <div className="flex gap-3">
@@ -3329,7 +3458,7 @@ function BuildingManagementContent({
                 </div>
               </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
                   <div>
                     <label className="block text-xs text-gray-700 mb-1">{t('profile.nameLabel')} ({t('common.firstName')}) *</label>
                     <input
@@ -3373,7 +3502,7 @@ function BuildingManagementContent({
             <div className="bg-muted p-3 sm:p-6 rounded-xl border border">
               <h3 className="text-base font-semibold text-gray-800 mb-4">{t('bm.users.financial')}</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div>
                    <label className="block text-gray-700 mb-2">{t('bm.users.financial.type')}</label>
                    <select
@@ -3498,7 +3627,8 @@ function BuildingManagementContent({
             ) : users.length === 0 ? (
               <div className="text-center py-10 text-gray-500">{t('wallet.noData')}</div>
             ) : (
-              <div className="overflow-x-auto">
+              <>
+              <div className="overflow-x-auto hidden md:block">
                 <table className="w-full text-xs text-start">
                   <thead className="bg-muted text-gray-700 uppercase">
                     <tr>
@@ -3543,6 +3673,40 @@ function BuildingManagementContent({
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile user cards */}
+              <div className="md:hidden divide-y divide-slate-100 border rounded-xl overflow-hidden">
+                {users.map((u: any) => (
+                  <div key={u.id} className="p-4 bg-card flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-gray-900 text-sm">{u.firstName} {u.lastName}</p>
+                      <p className="text-[11px] text-gray-500">{u.email || '-'}</p>
+                      <p className="text-[11px] text-gray-500" dir="ltr">{u.phone}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          u.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                          u.role === 'broker' ? 'bg-muted text-slate-800' : 'bg-muted text-gray-800'
+                        }`}>
+                          {t(`profile.role.${u.role}`) || u.role}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <div className={`w-1.5 h-1.5 rounded-full ${u.isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></div>
+                          <span className="text-[10px] text-gray-500">{u.isOnline ? t('bm.users.online') : t('bm.users.offline')}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-gray-500 text-end shrink-0">
+                      {u.lastSeen ? new Date(u.lastSeen).toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: '2-digit'
+                      }) : '-'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </>
             )}
           </div>
         </TabsContent>
@@ -3565,7 +3729,7 @@ function BuildingManagementContent({
       case "dashboard":
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
               <StatCard label={t('bm.all.title')}       value={allServices.length}   icon={Layers}   color="bg-muted text-slate-700" />
               <StatCard label={t('bm.disputes.title')}   value={disputes.length}      icon={Scale}    color="bg-muted text-slate-700" />
               <StatCard label={t('bm.contracts.title')}  value={contracts.length}     icon={FileText} color="bg-muted text-slate-700"   />
@@ -3695,7 +3859,7 @@ function BuildingManagementContent({
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                         {/* Client Info */}
                         <div className="space-y-4">
                           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
@@ -3734,7 +3898,7 @@ function BuildingManagementContent({
                             <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
                             {t('admin.service_requests.service_details')}
                           </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                             <div className="space-y-2">
                               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.category')}</label>
                               <div className="relative">
@@ -3772,7 +3936,7 @@ function BuildingManagementContent({
                             {srFormData.serviceCategory === 'other' && (
                               <div className="space-y-2 md:col-span-3 pb-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-4">{t('admin.service_requests.target_dept')}</label>
-                                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                                   {srDepartments.map(dept => {
                                     const sel = srFormData.targetDepartment === dept.id;
                                     return (
@@ -3824,21 +3988,22 @@ function BuildingManagementContent({
                           <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                         </div>
                       ) : srFiltered.length > 0 ? (
-                        <div className="overflow-x-auto">
+                        <>
+                        <div className="overflow-x-auto hidden md:block">
                           <table className="w-full text-right border-collapse">
                             <thead>
                               <tr className="bg-muted/50 border-b border">
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.client_name')}</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')}</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.details')}</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.client_name')}</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')}</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
+                                <th className="px-3 py-3 md:px-6 md:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.details')}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                               {srFiltered.map(req => (
                                 <tr key={req.id} className="group hover:bg-muted/50 transition-colors">
-                                  <td className="px-8 py-5">
+                                  <td className="px-3 py-3 md:px-6 md:py-4">
                                     <div className="flex items-center gap-3">
                                       <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                         <User className="w-4 h-4" />
@@ -3849,16 +4014,16 @@ function BuildingManagementContent({
                                       </div>
                                     </div>
                                   </td>
-                                  <td className="px-8 py-5">
+                                  <td className="px-3 py-3 md:px-6 md:py-4">
                                     <div>
                                       <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
                                       <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
                                     </div>
                                   </td>
-                                  <td className="px-8 py-5">
+                                  <td className="px-3 py-3 md:px-6 md:py-4">
                                     <Badge variant="secondary" className="font-bold">{t(`admin.trans.dept.${req.targetDepartment}`)}</Badge>
                                   </td>
-                                  <td className="px-8 py-5">
+                                  <td className="px-3 py-3 md:px-6 md:py-4">
                                     <div className="flex items-center gap-2 text-slate-400">
                                       <Calendar className="w-3.5 h-3.5" />
                                       <span className="text-[11px] font-bold">
@@ -3866,7 +4031,7 @@ function BuildingManagementContent({
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-8 py-5 text-center">
+                                  <td className="px-3 py-3 md:px-6 md:py-4 text-center">
                                     <button
                                       onClick={() => { setSrSelectedRequest(req); setSrEditingPrice(req.price?.toString() || "0"); setSrEditingDepartment(req.targetDepartment || ""); setSrInvoiceMessage(null); setSrIsDetailsOpen(true); }}
                                       className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
@@ -3879,6 +4044,41 @@ function BuildingManagementContent({
                             </tbody>
                           </table>
                         </div>
+
+                        {/* Mobile service request cards */}
+                        <div className="md:hidden divide-y divide-slate-50">
+                          {srFiltered.map(req => (
+                            <div key={req.id} className="p-4 flex items-start justify-between gap-3">
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900 shrink-0">
+                                    <User className="w-4 h-4" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-black text-slate-900 truncate">{req.clientName}</p>
+                                    <p className="text-[11px] font-bold text-slate-400" dir="ltr">{req.phone}</p>
+                                  </div>
+                                </div>
+                                <p className="text-sm font-black text-slate-900 mt-2">{req.serviceType}</p>
+                                <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge variant="secondary" className="font-bold text-[10px]">{t(`admin.trans.dept.${req.targetDepartment}`)}</Badge>
+                                  <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    {new Date(req.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                  </span>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => { setSrSelectedRequest(req); setSrEditingPrice(req.price?.toString() || "0"); setSrEditingDepartment(req.targetDepartment || ""); setSrInvoiceMessage(null); setSrIsDetailsOpen(true); }}
+                                className="shrink-0 p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        </>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
                           <div className="p-5 rounded-[1rem] bg-muted"><Briefcase className="w-16 h-16 text-slate-200" /></div>
@@ -3892,7 +4092,7 @@ function BuildingManagementContent({
 
               {/* Details Dialog */}
               <Dialog open={srIsDetailsOpen} onOpenChange={setSrIsDetailsOpen}>
-                <DialogContent className="sm:max-w-[680px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <DialogContent className="w-[95vw] sm:max-w-[680px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                   <DialogHeader>
                     <DialogTitle className="text-xl font-black text-slate-900">{t('admin.service_requests.details_title')}</DialogTitle>
                     <DialogDescription>{srSelectedRequest?.serviceType} - {srSelectedRequest?.clientName}</DialogDescription>
@@ -3902,9 +4102,10 @@ function BuildingManagementContent({
                     return (
                       <div className="py-4">
                         <T defaultValue="details" className="w-full">
-                          <TL className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                          <TL className="grid w-full grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
                             <TT value="details" className="py-2 rounded-lg font-bold">{t('common.details')}</TT>
-                          
+                            <TT value="visits" className="py-2 rounded-lg font-bold">{t('admin.service_requests.visits')}</TT>
+                            <TT value="invoices" className="py-2 rounded-lg font-bold">{t('admin.service_requests.invoices')}</TT>
                           </TL>
 
                           <TC value="details" className="space-y-6">
@@ -4246,7 +4447,7 @@ function BuildingManagementContent({
 
   const renderNewMaintenanceModal = () => (
     <Dialog open={showNewMaintenanceModal} onOpenChange={setShowNewMaintenanceModal}>
-      <DialogContent className="sm:max-w-[500px]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="w-[95vw] sm:max-w-[520px]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
             <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-slate-600">
@@ -4322,7 +4523,7 @@ function BuildingManagementContent({
   const renderFinancial = () => (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           {/* Header Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 <div className="bg-card p-5 rounded-[1rem] border border shadow-xl shadow-stone-400 hover:shadow-2xl hover:-translate-y-1 transition-all group">
                     <div className="flex items-center gap-5 mb-4">
                         <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-stone-400">
@@ -4390,7 +4591,7 @@ function BuildingManagementContent({
           </div>
 
           {/* Sub-tabs */}
-          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-/50 w-fit">
+          <div className="bg-muted p-1.5 rounded-2xl flex gap-1 border border-slate-200/50 w-fit">
               {[
                 { id: 'payments', label: t('pm.cashflow.schedule') },
                 { id: 'utilities', label: t('pm.tab.utilities') },
@@ -4422,7 +4623,8 @@ function BuildingManagementContent({
                     <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">{t('common.loading')}</p>
                  </div>
              ) : activeFinancialSubTab === 'payments' ? (
-                <div className="overflow-x-auto">
+                <>
+                <div className="overflow-x-auto hidden md:block">
                     <table className="w-full text-start">
                         <thead className="bg-muted/50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                             <tr>
@@ -4476,6 +4678,47 @@ function BuildingManagementContent({
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile payment cards */}
+                <div className="md:hidden divide-y divide-slate-50">
+                  {payments.filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id).length === 0 ? (
+                    <div className="p-12 text-center flex flex-col items-center gap-4 opacity-20">
+                      <Receipt className="w-12 h-10" />
+                      <p className="font-black uppercase tracking-widest text-xs">{t('bm.list.empty')}</p>
+                    </div>
+                  ) : (
+                    payments
+                    .filter(p => !selectedProperty || p.lease?.unit?.propertyId === selectedProperty.id)
+                    .map(payment => (
+                      <div key={payment.id} className="p-4 flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
+                                payment.status === 'paid' ? 'bg-card text-green-600 border-green-100' : 
+                                payment.status === 'overdue' ? 'bg-red-900 text-white border-red-900' : 
+                                'bg-card text-slate-400 border'
+                            }`}>
+                                {t(`pm.status.${payment.status || 'pending'}`)}
+                            </span>
+                            <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">{t(`pm.cashflow.method.${payment.method || 'bank'}`)}</span>
+                          </div>
+                          <p className="text-sm font-black text-slate-900">{new Date(payment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</p>
+                          <p className="text-xs text-slate-400">{payment.lease?.tenant?.fullName || '-'}</p>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <p className="font-black text-slate-900 text-base"><SaudiRiyalAmount amount={payment.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3 w-3 opacity-40" /></p>
+                          <button 
+                              onClick={() => { setSelectedTenant(payment.lease?.tenant || null); setShowTenantDetails(true); }}
+                              className="w-9 h-9 flex items-center justify-center bg-card border border rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm"
+                          >
+                              <FileText className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                </>
              ) : (
                  <div className="p-32 text-center flex flex-col items-center gap-3 md:gap-6 animate-in zoom-in duration-500">
                      <div className="w-24 h-24 bg-muted rounded-[1.25rem] flex items-center justify-center shadow-inner">
@@ -4532,7 +4775,7 @@ function BuildingManagementContent({
                             </RadioGroup>
                         </div>
                         
-                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                               <div className="space-y-2">
                                  <Label>{t('orders.propType')}</Label>
                                  <Select value={orderFormData.propertyType} onValueChange={(v) => setOrderFormData((p: any) => ({...p, propertyType: v}))}>
@@ -4579,7 +4822,7 @@ function BuildingManagementContent({
                                 <hr className="my-6" />
                          <h3 className="text-base font-semibold mb-4">{t('bm.offer.detailed')}</h3>
                          
-                         <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                             <div className="space-y-2">
                                 <Label>{t('orders.rooms')}</Label>
                                 <Input type="number" name="rooms" value={orderFormData.rooms || ''} onChange={handleOrderChange} />
@@ -4610,7 +4853,7 @@ function BuildingManagementContent({
                             </div>
                          </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mt-6">
+                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mt-6">
                             <div className="flex items-center space-x-2 space-x-reverse bg-muted p-3 rounded border">
                                 <Checkbox id="order_hasMaidRoom" checked={!!orderFormData.hasMaidRoom} onCheckedChange={(c) => setOrderFormData((p: any) => ({...p, hasMaidRoom: !!c}))} />
                                 <label htmlFor="order_hasMaidRoom" className="text-xs font-medium">{t('orders.maid')}</label>
@@ -4665,8 +4908,8 @@ function BuildingManagementContent({
                     <div className="space-y-4">
                        <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                            <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
-                           <Tabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-[300px]">
-                                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
+                           <Tabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
+                                <TabsList className="grid w-full grid-cols-2">
                                     <TabsTrigger value="all">{t('offers.allOfferss')}</TabsTrigger>
                                     <TabsTrigger value="my">{t('offers.myOfferss')}</TabsTrigger>
                                 </TabsList>
@@ -4819,7 +5062,7 @@ function BuildingManagementContent({
         {/* Main Category Selection */}
         <div className="mb-6">
             <Label className="block text-xs font-bold text-gray-700 mb-3">{t('bm.offer.category')}</Label>
-            <RadioGroup defaultValue="residential" className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3" onValueChange={(val) => handleCategoryChange(val as "residential" | "commercial")}>
+            <RadioGroup defaultValue="residential" className="grid grid-cols-1 md:grid-cols-2 gap-3" onValueChange={(val) => handleCategoryChange(val as "residential" | "commercial")}>
                 <div 
                     onClick={() => handleCategoryChange('residential')}
                     className={`flex items-center gap-2 border p-2 rounded-lg cursor-pointer transition-all ${mainCategory === 'residential' ? 'border-slate-500 bg-muted/50' : 'border hover:border hover:bg-muted'}`}
@@ -4863,7 +5106,7 @@ function BuildingManagementContent({
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  {/* Image Upload */}
                  <div 
                     onClick={() => fileInputRef.current?.click()}
@@ -4937,7 +5180,7 @@ function BuildingManagementContent({
               </CardTitle>
               <CardDescription>{t('bm.offer.basicSub')}</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5 p-5">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5">
               <div className="space-y-3">
                 <Label className="text-gray-700 font-bold">{t('bm.offer.propertyType')} <span className="text-red-500">*</span></Label>
                 <Select onValueChange={(val) => handleOfferSelectChange('propertyType', val)} value={formData.propertyType}>
@@ -5096,7 +5339,7 @@ function BuildingManagementContent({
                 </CardTitle>
                 <CardDescription>{t('bm.offer.detailedDesc')}</CardDescription>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 p-5">
+                <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-5">
                     <div className="space-y-3">
                         <Label className="text-gray-700 font-bold">{t('offers.filter.rooms')}</Label>
                         <Input type="number" name="rooms" value={formData.rooms} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
@@ -5126,7 +5369,7 @@ function BuildingManagementContent({
                         <Input type="number" name="buildingArea" value={formData.buildingArea} onChange={handleOfferChange} className="h-10 rounded-xl border bg-card text-start" />
                     </div>
 
-                    <div className="col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
+                    <div className="col-span-2 md:col-span-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
                         <div className="flex items-center gap-3 bg-card p-4 rounded-2xl border border shadow-sm">
                             <Checkbox id="hasMaidRoom" checked={!!formData.hasMaidRoom} onCheckedChange={(c) => handleOfferCheckboxChange('hasMaidRoom', c as boolean)} />
                             <Label htmlFor="hasMaidRoom" className="text-xs font-bold text-gray-700 cursor-pointer">{t('property.feature.maid')}</Label>
@@ -5179,7 +5422,7 @@ function BuildingManagementContent({
                 <CardDescription>{t('bm.offer.attachmentsDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                     {/* Property Papers */}
                     <div className="border p-4 rounded-xl bg-muted">
                         <Label className="block mb-3 font-semibold">{t('bm.offer.paperReq')}</Label>
@@ -5227,15 +5470,15 @@ function BuildingManagementContent({
        <div className="space-y-4">
            <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
-               <Tabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-[300px]">
-                    <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
+               <Tabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
+                    <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="all">{t('offers.allOffers')}</TabsTrigger>
                         <TabsTrigger value="my">{t('offers.myOffers')}</TabsTrigger>
                     </TabsList>
                </Tabs>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {loadingAllOffers ? (
                     <div className="col-span-full text-center py-6 md:py-12">
                         <Loader2 className="w-8 h-8 animate-spin text-slate-600 mx-auto" />
@@ -5518,7 +5761,7 @@ function BuildingManagementContent({
                       {loadingPackages ? (
                           <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-slate-600"/></div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {packages.map((pkg) => (
                                 <div 
                                     key={pkg.id} 
@@ -5610,27 +5853,28 @@ function BuildingManagementContent({
                     </Button>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
+                  <>
+                  <div className="overflow-x-auto hidden md:block">
                     <table className="w-full">
                       <thead className="bg-muted border-b border">
                         <tr>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.property')}</th>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('pm.unit')}</th>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.type')}</th>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.amount')}</th>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.startDate')}</th>
-                          <th className="px-6 py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.status')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.property')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('pm.unit')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.type')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.amount')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.startDate')}</th>
+                          <th className="px-3 py-3 md:px-6 md:py-4 text-start text-xs font-semibold text-gray-700">{t('sub.list.status')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {subscriptions.map((sub) => (
                           <tr key={sub.id} className="hover:bg-muted">
-                            <td className="px-6 py-4 text-xs text-gray-900">{sub.property?.name || sub.propertyId}</td>
-                            <td className="px-6 py-4 text-xs text-gray-900">{sub.unit?.unitNumber || '-'}</td>
-                            <td className="px-6 py-4 text-xs text-gray-900">{sub.subscriptionType}</td>
-                            <td className="px-6 py-4 text-xs text-gray-900"><SaudiRiyalAmount amount={sub.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-gray-900" /></td>
-                            <td className="px-6 py-4 text-xs text-gray-900">{new Date(sub.startDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-3 md:px-6 md:py-4 text-xs text-gray-900">{sub.property?.name || sub.propertyId}</td>
+                            <td className="px-3 py-3 md:px-6 md:py-4 text-xs text-gray-900">{sub.unit?.unitNumber || '-'}</td>
+                            <td className="px-3 py-3 md:px-6 md:py-4 text-xs text-gray-900">{sub.subscriptionType}</td>
+                            <td className="px-3 py-3 md:px-6 md:py-4 text-xs text-gray-900"><SaudiRiyalAmount amount={sub.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-gray-900" /></td>
+                            <td className="px-3 py-3 md:px-6 md:py-4 text-xs text-gray-900">{new Date(sub.startDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</td>
+                            <td className="px-3 py-3 md:px-6 md:py-4">
                               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                 sub.status === 'نشط' ? 'bg-green-100 text-green-700' : 
                                 sub.status === 'منتهي' ? 'bg-red-100 text-red-700' : 
@@ -5644,6 +5888,31 @@ function BuildingManagementContent({
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Mobile subscription cards */}
+                  <div className="md:hidden divide-y divide-gray-200 border rounded-xl overflow-hidden">
+                    {subscriptions.map((sub) => (
+                      <div key={sub.id} className="p-4 bg-card flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-gray-900">{sub.property?.name || sub.propertyId}</p>
+                          <p className="text-[11px] text-gray-500">{t('pm.unit')}: {sub.unit?.unitNumber || '-'}</p>
+                          <p className="text-[11px] text-gray-500">{sub.subscriptionType}</p>
+                          <p className="text-[11px] text-gray-500">{new Date(sub.startDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            sub.status === 'نشط' ? 'bg-green-100 text-green-700' : 
+                            sub.status === 'منتهي' ? 'bg-red-100 text-red-700' : 
+                            'bg-muted text-gray-700'
+                          }`}>
+                            {sub.status}
+                          </span>
+                          <SaudiRiyalAmount amount={sub.amount} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-3.5 w-3.5" className="text-xs text-gray-900 font-semibold" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  </>
                 )}
               </div>
             )}
@@ -5827,7 +6096,7 @@ function BuildingManagementContent({
         <button
           type="button"
           onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          className={`fixed top-4 z-50 lg:hidden w-12 h-12 bg-slate-900 text-white rounded-xl shadow-xl flex items-center justify-center transition-all ${language === 'ar' ? 'right-4' : 'left-4'}`}
+          className={`fixed top-4 z-50 lg:hidden w-12 h-12 bg-slate-900 text-white rounded-xl shadow-xl flex items-center justify-center transition-all mt-[env(safe-area-inset-top)] ${language === 'ar' ? 'right-4' : 'left-4'}`}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -5846,6 +6115,7 @@ function BuildingManagementContent({
         <div 
           className={`
             fixed top-0 h-screen w-[21rem] lg:w-[24rem] p-4 lg:p-5 z-50 transition-transform duration-300
+            pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
             ${language === 'ar' ? 'right-0' : 'left-0'}
             ${isMobileSidebarOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}
@@ -5856,7 +6126,7 @@ function BuildingManagementContent({
                 whileHover={{ x: language === 'ar' ? -5 : 5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleBack}
-                className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors bg-muted/50 px-5 py-3 rounded-2xl w-full border border-/50"
+                className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors bg-muted/50 px-5 py-3 rounded-2xl w-full border border-slate-200/50"
               >
                 <div className={`transform ${language === 'en' ? 'rotate-180' : ''}`}>
                    <ArrowRight className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
@@ -5984,7 +6254,7 @@ function BuildingManagementContent({
 
         {/* Main Workspace - Adjusted for sidebar */}
         <div className={`flex-1 overflow-hidden relative w-full ${language === 'ar' ? 'lg:mr-[25rem]' : 'lg:ml-[25rem]'}`}>
-          <main className="h-full overflow-y-auto overflow-x-hidden p-4 pt-20 sm:p-5 sm:pt-20 lg:p-12">
+          <main className="h-full overflow-y-auto overflow-x-hidden p-4 pt-[calc(5rem+env(safe-area-inset-top))] sm:p-5 sm:pt-[calc(5rem+env(safe-area-inset-top))] lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedSection}
@@ -6028,7 +6298,7 @@ function BuildingManagementContent({
 
       {/* Service Request Details Modal */}
       <Dialog open={isServiceRequestDetailsOpen} onOpenChange={setIsServiceRequestDetailsOpen}>
-        <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <DialogContent className="w-[95vw] sm:max-w-[680px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-900">{t('admin.service_requests.details_title')}</DialogTitle>
             <DialogDescription>
@@ -6040,8 +6310,10 @@ function BuildingManagementContent({
             <div className="py-4">
               <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="flex justify-center w-full">
-                  <TabsList className="flex w-full max-w-xs mb-6 bg-muted p-1 rounded-xl h-auto">
-                    <TabsTrigger value="details"  className="w-full py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
+                  <TabsList className="grid w-full max-w-xs grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                    <TabsTrigger value="details" className="py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
+                    <TabsTrigger value="visits" className="py-2 rounded-lg font-bold">{t("admin.service_requests.visits")}</TabsTrigger>
+                    <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t("admin.service_requests.invoices")}</TabsTrigger>
                   </TabsList>
                 </div>
 
@@ -6074,7 +6346,7 @@ function BuildingManagementContent({
                   </div>
 
                   {/* Status & Department (Legal overrides) */}
-                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border">
                     <div className="space-y-2">
                         {t("bm.users.status")}
                       <select

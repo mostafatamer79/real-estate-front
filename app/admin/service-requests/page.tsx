@@ -48,6 +48,26 @@ const STATUS_STYLES: Record<string, string> = {
   rejected:     "bg-muted text-slate-400",
 };
 
+function getRequestStatusLabel(req: any, t: (k: string) => string) {
+  let statusKey = req.status;
+  let label = t(`legal.status.${req.status}`) || req.status;
+
+  if (req.category === 'legal' || req.targetDepartment === 'legal' || req.targetDepartment === 'marketing') {
+    if (req.clientDecision === 'accepted') {
+      statusKey = 'accepted';
+      label = t('legal.decision.accepted');
+    } else if (req.clientDecision === 'rejected') {
+      statusKey = 'rejected';
+      label = t('legal.decision.rejected');
+    } else if (req.invoiceSent) {
+      statusKey = 'invoice_sent';
+      label = t('legal.invoice.sent');
+    }
+  }
+
+  return { statusKey, label };
+}
+
 export default function ServiceRequestsPage() {
     const { t, language } = useLanguage();
     const { token } = useAuth();
@@ -231,7 +251,7 @@ export default function ServiceRequestsPage() {
                         className="space-y-6"
                     >
                         {/* List Actions */}
-                        <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+                        <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
                             <div className="relative w-full group md:col-span-2">
                                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                                 <input 
@@ -281,26 +301,29 @@ export default function ServiceRequestsPage() {
                                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                                 </div>
                             ) : filteredRequests.length > 0 ? (
-                                <div className="overflow-x-auto">
+                                <>
+                                <div className="hidden md:block overflow-x-auto">
                                     <table className="w-full text-right border-collapse">
                                         <thead>
                                             <tr className="bg-muted/50 border-b border">
-                                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
-                                                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50">
-                                            {filteredRequests.map((req) => (
+                                            {filteredRequests.map((req) => {
+                                                const { statusKey, label } = getRequestStatusLabel(req, t);
+                                                return (
                                                 <motion.tr 
                                                     key={req.id}
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
                                                     className="group hover:bg-muted/50 transition-colors"
                                                 >
-                                                    <td className="px-8 py-6">
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <div className="flex items-center gap-4">
                                                             <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
                                                                 <User className="w-5 h-5" />
@@ -311,43 +334,23 @@ export default function ServiceRequestsPage() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-8 py-6">
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <div>
                                                             <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
                                                             <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
                                                         </div>
                                                     </td>
-                                                    <td className="px-8 py-6">
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <Badge variant="secondary" className="font-bold">
                                                             {t(`admin.trans.dept.${req.targetDepartment}`)}
                                                         </Badge>
                                                     </td>
-                                                    <td className="px-8 py-6">
-                                                        {(() => {
-                                                            let statusKey = req.status;
-                                                            let label = t(`legal.status.${req.status}`) || req.status;
-
-                                                            if (req.category === 'legal' || req.targetDepartment === 'legal' || req.targetDepartment === 'marketing') {
-                                                                if (req.clientDecision === 'accepted') {
-                                                                    statusKey = 'accepted';
-                                                                    label = t('legal.decision.accepted');
-                                                                } else if (req.clientDecision === 'rejected') {
-                                                                    statusKey = 'rejected';
-                                                                    label = t('legal.decision.rejected');
-                                                                } else if (req.invoiceSent) {
-                                                                    statusKey = 'invoice_sent';
-                                                                    label = t('legal.invoice.sent');
-                                                                }
-                                                            }
-
-                                                            return (
-                                                                <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
-                                                                    {label}
-                                                                </span>
-                                                            );
-                                                        })()}
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4">
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+                                                            {label}
+                                                        </span>
                                                     </td>
-                                                    <td className="px-8 py-6">
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <div className="flex items-center gap-2 text-slate-400">
                                                             <Calendar className="w-3.5 h-3.5" />
                                                             <span className="text-[11px] font-bold">
@@ -355,7 +358,7 @@ export default function ServiceRequestsPage() {
                                                             </span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-8 py-6 text-center">
+                                                    <td className="px-3 py-3 sm:px-6 sm:py-4 text-center">
                                                         <button 
                                                             onClick={() => {
                                                                 setSelectedRequest(req);
@@ -369,10 +372,62 @@ export default function ServiceRequestsPage() {
                                                         </button>
                                                     </td>
                                                 </motion.tr>
-                                            ))}
+                                            )})}
                                         </tbody>
                                     </table>
                                 </div>
+                                <div className="md:hidden space-y-3 p-4">
+                                    {filteredRequests.map((req) => {
+                                        const { statusKey, label } = getRequestStatusLabel(req, t);
+                                        return (
+                                            <div key={req.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                                                <div className="flex items-start justify-between gap-3 mb-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900">
+                                                            <User className="w-5 h-5" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-black text-slate-900">{req.clientName}</p>
+                                                            <p className="text-[11px] font-bold text-slate-400">{req.phone}</p>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedRequest(req);
+                                                            setEditingPrice(req.price?.toString() || "0");
+                                                            setEditingDepartment(req.targetDepartment || "");
+                                                            setIsDetailsOpen(true);
+                                                        }}
+                                                        className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                    >
+                                                        <ExternalLink className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div>
+                                                        <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
+                                                        <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <Badge variant="secondary" className="font-bold">
+                                                            {t(`admin.trans.dept.${req.targetDepartment}`)}
+                                                        </Badge>
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+                                                            {label}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                        <Calendar className="w-3.5 h-3.5" />
+                                                        <span className="text-[11px] font-bold">
+                                                            {format(new Date(req.createdAt), 'dd MMMM yyyy', { locale: language === 'ar' ? ar : enUS })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                </>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
                                     <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
@@ -385,7 +440,7 @@ export default function ServiceRequestsPage() {
                     </motion.div>
 
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <DialogHeader>
                         <DialogTitle className="text-xl font-black text-slate-900">{t('admin.service_requests.details_title')}</DialogTitle>
                         <DialogDescription>

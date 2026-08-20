@@ -117,7 +117,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
     const SpecItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string | number | undefined | null }) => {
         if (value === undefined || value === null || value === '') return null;
         return (
-            <div className="flex items-center gap-3 p-3.5 bg-muted/50 rounded-2xl border border-/50 hover:bg-card hover:shadow-sm transition-all duration-300">
+            <div className="flex items-center gap-3 p-3.5 bg-muted/50 rounded-2xl border border-slate-200/50 hover:bg-card hover:shadow-sm transition-all duration-300">
                 <div className="w-9 h-9 rounded-xl bg-card shadow-sm flex items-center justify-center text-slate-600 border border">
                     <Icon className="w-4.5 h-4.5" />
                 </div>
@@ -131,7 +131,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[750px] max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
+            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
                 <div className="h-56 sm:h-72 w-full bg-slate-950 relative shrink-0">
                     {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (
@@ -228,7 +228,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                              {t('offer.basic')}
                              <div className="h-[1px] flex-1 bg-muted" />
                         </h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <SpecItem icon={Calendar} label={t('offer.age')} value={activeOffer.propertyAge} />
                             <SpecItem icon={Compass} label={t('offer.direction')} value={activeOffer.direction} />
                             <SpecItem icon={Tag} label={t('offer.deed')} value={activeOffer.deedType} />
@@ -246,7 +246,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 {t('offer.facilities')}
                                 <div className="h-[1px] flex-1 bg-muted" />
                             </h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <SpecItem icon={Home} label={t('offer.rooms')} value={activeOffer.rooms} />
                                 <SpecItem icon={Home} label={t('offer.baths')} value={activeOffer.bathrooms} />
                                 <SpecItem icon={Home} label={t('offer.living')} value={activeOffer.livingRooms} />
@@ -300,7 +300,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
                     {/* Description */}
                     {activeOffer.additionalNotes && (
-                        <section className="bg-muted/50 p-3 sm:p-6 rounded-[1.25rem] border border-/50">
+                        <section className="bg-muted/50 p-3 sm:p-6 rounded-[1.25rem] border border-slate-200/50">
                             <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">{t('marketing.field.description')}</h3>
                             <p className="text-sm text-slate-600 leading-[1.8] font-medium italic">
                                 "{activeOffer.additionalNotes}"

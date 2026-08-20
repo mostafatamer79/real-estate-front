@@ -10,6 +10,7 @@ import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
 import { financialApi } from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
+import { useSettings } from "@/context/SettingsContext";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
@@ -56,6 +57,7 @@ export default function ScanMapPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { isOpen, message, isAdmin } = useSectionGuard('scan_map');
+  const { settings } = useSettings();
 
   const handleBack = useCallback(() => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -65,8 +67,10 @@ export default function ScanMapPage() {
     router.push('/details');
   }, [router]);
 
+  const isMapFree = settings.uiFlags?.is_map_free ?? false;
+
   // ✅ Memoized values
-  const reportPrice = useMemo(() => Math.max(30, Math.floor(25 + (searchRadius / 100))), [searchRadius]);
+  const reportPrice = useMemo(() => settings.servicePrices?.service_price_scan_report || 0, [settings.servicePrices?.service_price_scan_report]);
   const hasPlaces = useMemo(() => places.length > 0, [places]);
   const uniqueTypes = useMemo(() => new Set(places.map(p => p.type)).size, [places]);
 
@@ -126,10 +130,10 @@ export default function ScanMapPage() {
   // ✅ Optimized scan function
   const scanArea = useCallback(async () => {
     if (loading) return;
-    // if (!isPaid) {
-    //   setError(t('scan.paymentRequired'));
-    //   return;
-    // }
+    if (!isMapFree && !isPaid) {
+      setError(t('scan.paymentRequired'));
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -182,7 +186,7 @@ export default function ScanMapPage() {
     } finally {
       setLoading(false);
     }
-  }, [propertyLocation, searchRadius, loading, captureMapImage]);
+  }, [propertyLocation, searchRadius, loading, captureMapImage, isMapFree, isPaid]);
 
   const handleStartScan = useCallback(() => {
     if (!acceptedScanDisclaimer) {
@@ -377,7 +381,7 @@ export default function ScanMapPage() {
           {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
           {language === 'ar' ? 'رجوع' : 'Back'}
         </button>
-        <h1 className="text-2xl md:text-xl sm:text-3xl font-bold text-center mb-2 text-slate-400">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 text-slate-400">
            {t('scan.title')}
         </h1>
         <p className="text-slate-400 text-center text-sm md:text-base">
@@ -385,7 +389,7 @@ export default function ScanMapPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         {/* Left Column - Controls & Info */}
         <div className="lg:col-span-1 space-y-6">
           {/* Location Card */}
@@ -478,15 +482,19 @@ export default function ScanMapPage() {
                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
                   {t('scan.neighborReport')}
                 </h2>
-                <p className="text-xs text-slate-400 mb-4">
-                  {t('scan.paymentRequired')}
-                </p>
+                {!isMapFree && (
+                  <p className="text-xs text-slate-400 mb-4">
+                    {t('scan.paymentRequired')}
+                  </p>
+                )}
                 <div className="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl mb-4">
                   <span className="text-sm">{t('scan.price')}</span>
-                  <span className="font-bold text-emerald-400"><SaudiRiyalAmount amount={reportPrice} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span>
+                  <span className="font-bold text-emerald-400">
+                    {isMapFree ? (language === 'ar' ? 'مجاني' : 'Free') : <SaudiRiyalAmount amount={reportPrice} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />}
+                  </span>
                 </div>
 
-                {isPaid ? (
+                {isMapFree || isPaid ? (
                   <div className="bg-emerald-900/20 border border-emerald-500/50 text-emerald-400 p-3 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
                     {t('scan.unlocked')}
                   </div>

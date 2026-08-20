@@ -946,7 +946,7 @@ export default function OfferDetailsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {highlights.map((item) => (
                 <div key={item.key} className="rounded-2xl border border bg-muted px-4 py-5 text-center">
                   <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-card shadow-sm">
@@ -980,7 +980,7 @@ export default function OfferDetailsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                   <div className="space-y-4">
                     <div className="rounded-2xl border border bg-muted p-4">
                       <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -1077,7 +1077,7 @@ export default function OfferDetailsPage() {
                         <Award className="w-5 h-5" />
                         {t('offer.features')}
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
                         {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
                         {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
@@ -1315,7 +1315,7 @@ export default function OfferDetailsPage() {
       </div>
 
       {/* Main content skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Images skeleton */}
           <Skeleton className="h-[400px] w-full rounded-lg" />
@@ -1477,7 +1477,7 @@ export default function OfferDetailsPage() {
           {renderImages()}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Seller Info */}
@@ -1497,7 +1497,7 @@ export default function OfferDetailsPage() {
                 </div>
 
                 {/* Service shortcut buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {([
                     { type: 'postPurchase', icon: <CheckCircle className="w-4 h-4" /> },
                     { type: 'legal',        icon: <ShieldCheck className="w-4 h-4" /> },

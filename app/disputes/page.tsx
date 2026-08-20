@@ -92,7 +92,7 @@ export default function DisputesPage() {
     <div className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
       {/* Premium Header Container */}
-      <section className="relative overflow-hidden mb-8 md:mb-12 p-3 sm:p-6 md:p-12 rounded-b-[1.25rem] md:rounded-b-[1.25rem] bg-slate-950 text-white shadow-2xl">
+      <section className="relative overflow-hidden mb-8 md:mb-12 p-3 sm:p-6 md:p-12 rounded-b-[1.25rem] bg-slate-950 text-white shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-slate-600 rounded-full blur-[100px]" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
@@ -140,15 +140,15 @@ export default function DisputesPage() {
         <Tabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
           <div className="flex justify-center mb-8 w-full">
             <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
-              <TabsTrigger value="disputes" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+              <TabsTrigger value="disputes" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <Gavel className="w-4 h-4" />
                 {t('disputes.tab.disputes')}
               </TabsTrigger>
-              <TabsTrigger value="service_requests" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+              <TabsTrigger value="service_requests" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <Scale className="w-4 h-4" />
                 {t('disputes.tab.service_requests')}
               </TabsTrigger>
-              <TabsTrigger value="new_request" className="px-4 md:px-8 shrink-0 rounded-xl h-12 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+              <TabsTrigger value="new_request" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
                 <PlusCircle className="w-4 h-4" />
                 طلب جديد
               </TabsTrigger>
@@ -178,7 +178,7 @@ export default function DisputesPage() {
             </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[1.25rem] bg-muted/50 animate-pulse" />)}
           </div>
         ) : filteredDisputes.length === 0 ? (
@@ -189,7 +189,7 @@ export default function DisputesPage() {
               <p className="text-xl font-black uppercase tracking-widest opacity-40">{t('disputes.empty')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             <AnimatePresence mode="popLayout">
               {filteredDisputes.map((dispute, idx) => {
                 const status = getStatusConfig(dispute.status);

@@ -179,6 +179,14 @@
     height: 100dvh;
   }
 
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .glass {
     background-color: hsl(0, 0%, 100%, 0.8);
     backdrop-filter: blur(12px);
@@ -676,5 +684,21 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Safe-area padding for fixed bottom navigation bars */
+.fixed.bottom-0,
+.fixed.inset-x-0.bottom-0,
+nav.fixed[class*="bottom"] {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 768px) {
+  .premium-card,
+  .platform-card,
+  .glass {
+    border-radius: 1rem !important;
+    padding: 1rem !important;
   }
 }

@@ -60,6 +60,9 @@ export const serviceRequestApi = {
   getOrCreateSelfChat: (id: string): Promise<ApiResponse<{ chatRoomId: string }>> =>
     api.post(`/service-requests/${id}/self-chat`),
 
+  remove: (id: string): Promise<ApiResponse<any>> =>
+    api.delete(`/service-requests/${id}`),
+
   acceptDepartmentOffer: (id: string, deptSlug: string): Promise<ApiResponse<ServiceRequest>> =>
     api.put(`/service-requests/${id}/accept-department-offer`, { deptSlug }),
 

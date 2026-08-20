@@ -166,7 +166,7 @@ export default function VerifyOtpPage() {
       const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
 
 
-        router.push('/details');
+        router.push('/profile');
       
     } catch (err: any) {
       console.error('OTP verification error:', err);
@@ -228,7 +228,7 @@ export default function VerifyOtpPage() {
 
   return (
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-3 sm:p-6 pt-4">
-      <div className="w-full w-[95vw] sm:max-w-md">
+      <div className="w-[95vw] sm:max-w-md">
         <button
           onClick={() => router.back()}
           className="mb-8 flex items-center gap-2 text-white/80 hover:text-white"
@@ -245,7 +245,7 @@ export default function VerifyOtpPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className={`flex justify-center gap-2 sm:gap-3 ${language==='ar' ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex justify-center gap-1.5 sm:gap-3 ${language==='ar' ? 'flex-row-reverse' : ''}`}>
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -258,7 +258,7 @@ export default function VerifyOtpPage() {
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onFocus={() => setInputIndex(index)}
                   disabled={isLoading}
-                  className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-xl sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
+                  className="w-9 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
                   dir="ltr" // Keep LTR for numbers
                   autoComplete="one-time-code"
                   style={{

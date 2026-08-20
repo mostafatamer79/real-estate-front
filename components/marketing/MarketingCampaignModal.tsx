@@ -241,7 +241,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
         {/* Modal Body */}
         <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
                 <Mail className="w-3 h-3" />
@@ -398,16 +398,16 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
 
-              <div className="md:col-span-2 bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4 my-2 text-right">
+              <div className="md:col-span-2 bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4 my-2 text-right">
                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-600" />
                   {isRtl ? 'تفاصيل ومواصفات العقار للإعلان' : 'Ad Property Specifications'}
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
-                    <div className="flex bg-card p-1 rounded-xl border border-/60 gap-1">
+                    <div className="flex bg-card p-1 rounded-xl border border-slate-200/60 gap-1">
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'residential', propertyType: 'فيلا' })}
@@ -453,7 +453,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 {formData.category === 'orders' ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'من سعر' : 'Price From'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                         <input
@@ -477,7 +477,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'من مساحة (م²)' : 'Area From (m²)'}</label>
                         <input
@@ -502,7 +502,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     </div>
                   </>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                       <input
@@ -527,7 +527,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
                     <input
@@ -551,7 +551,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الغرف' : 'Rooms'}</label>
                     <input
@@ -586,7 +586,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الصالات' : 'Living Rooms'}</label>
                     <input type="number" value={formData.details?.livingRooms || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, livingRooms: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
@@ -605,7 +605,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'مساحة البناء' : 'Building Area'}</label>
                     <input type="number" value={formData.details?.buildingArea || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, buildingArea: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
@@ -624,7 +624,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الواجهة' : 'Direction'}</label>
                     <select value={formData.details?.direction || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, direction: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">

@@ -1,0 +1,17 @@
+--- app/scan-map/page.tsx
++++ app/scan-map/page.tsx
+@@ -10,6 +10,7 @@
+ import { financialApi } from "@/lib/api";
+ import { toast } from "react-hot-toast";
+ import { useSectionGuard } from "@/hooks/useSectionGuard";
++import { useSettings } from "@/context/SettingsContext";
+ import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+ import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+ 
+@@ -57,11 +58,15 @@
+   const { t, language } = useLanguage();
+   const router = useRouter();
+   const { isOpen, message, isAdmin } = useSectionGuard('scan_map');
++  const { settings } = useSettings();
+ 
+   const handleBack = useCallback(() => {

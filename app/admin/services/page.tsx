@@ -59,8 +59,9 @@ export default function AdminServicesManagementPage() {
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestPage, setRequestPage] = useState(1);
   const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability">("requests");
-  const [requestDrafts, setRequestDrafts] = useState<Record<string, { status: string; price: string; targetDepartment: string; description: string }>>({});
+  const [requestDrafts, setRequestDrafts] = useState<Record<string, { status: string; price: string; targetDepartment: string; description: string; assignedAgentId: string }>>({});
   const [invoiceDrafts, setInvoiceDrafts] = useState<Record<string, string>>({});
+  const [agents, setAgents] = useState<any[]>([]);
 
   // Local state for flags and prices to allow editing before saving
   const [localModuleFlags, setLocalModuleFlags] = useState<Record<string, 'enabled' | 'soon' | 'disabled'>>({});
@@ -173,8 +174,20 @@ export default function AdminServicesManagementPage() {
     }
   };
 
+  const loadAgents = async () => {
+    try {
+      const response = await usersApi.findAll();
+      const resData = (response as any).data || response; // fallback in case the interceptor already extracted data
+      const allUsers = Array.isArray(resData?.data) ? resData.data : Array.isArray(resData) ? resData : [];
+      setAgents(allUsers.filter((u: any) => ['agent', 'employee', 'manager', 'broker'].includes(u.role)));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     loadRequests();
+    loadAgents();
   }, []);
 
 
@@ -219,6 +232,7 @@ export default function AdminServicesManagementPage() {
     price: String(request.invoicePrice || request.price || ""),
     targetDepartment: request.targetDepartment || "real_estate",
     description: request.description || "",
+    assignedAgentId: request.assignedAgentId || "",
   };
 
   const updateRequestDraft = (request: any, key: string, value: string) => {
@@ -237,6 +251,7 @@ export default function AdminServicesManagementPage() {
         price: Number(draft.price || 0),
         targetDepartment: draft.targetDepartment,
         description: draft.description,
+        assignedAgentId: draft.assignedAgentId || null,
       });
       toast.success("تم تحديث طلب الخدمة");
       setRequestDrafts((current) => {
@@ -376,7 +391,7 @@ export default function AdminServicesManagementPage() {
 
 
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {[
           { id: "requests", label: "الطلبات", desc: "عرض كامل، رد على العميل، تسعير الطلب وإرسال الفاتورة", icon: FileText, count: filteredServiceRequests.length },
           { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: SaudiRiyalIcon, count: activeCategoryServices.length },
@@ -517,7 +532,7 @@ export default function AdminServicesManagementPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredPricingServices.map((service, index) => {
               const key = makeServicePriceKey(activeServiceCategory, service);
               const value = localServicePrices[key] || "";
@@ -611,18 +626,20 @@ export default function AdminServicesManagementPage() {
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">جاري تحميل الطلبات</p>
             </div>
           ) : visibleServiceRequests.length ? (
-            <div className="overflow-x-auto">
+            <>
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full min-w-[1100px] text-right">
                 <thead>
                   <tr className="border-b border bg-muted/70">
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">العميل</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الخدمة</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الحالة</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الإدارة</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">السعر</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">ملاحظات</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الفاتورة</th>
-                    <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">إجراءات</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">العميل</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الخدمة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الحالة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الإدارة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">مزود الخدمة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">السعر</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">ملاحظات</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الفاتورة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -630,16 +647,16 @@ export default function AdminServicesManagementPage() {
                     const draft = getRequestDraft(request);
                     return (
                       <tr key={request.id} className="align-top hover:bg-muted/50">
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
                           <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
                           <p className="mt-1 text-[10px] font-black text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <p className="text-sm font-black text-slate-900">{request.serviceType || "—"}</p>
                           <p className="mt-1 text-[11px] font-bold text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <select
                             value={draft.status}
                             onChange={(event) => updateRequestDraft(request, "status", event.target.value)}
@@ -652,7 +669,7 @@ export default function AdminServicesManagementPage() {
                             <option value="cancelled">ملغي</option>
                           </select>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <select
                             value={draft.targetDepartment}
                             onChange={(event) => updateRequestDraft(request, "targetDepartment", event.target.value)}
@@ -665,7 +682,21 @@ export default function AdminServicesManagementPage() {
                             <option value="employees">الموظفين</option>
                           </select>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
+                          <select
+                            value={draft.assignedAgentId}
+                            onChange={(event) => updateRequestDraft(request, "assignedAgentId", event.target.value)}
+                            className="h-10 w-36 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                          >
+                            <option value="">بدون تعيين</option>
+                            {agents.map((agent: any) => (
+                              <option key={agent.id} value={agent.id}>
+                                {agent.firstName} {agent.lastName} ({agent.role})
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <input
                             type="number"
                             min="0"
@@ -674,14 +705,14 @@ export default function AdminServicesManagementPage() {
                             className="h-10 w-28 rounded-xl border border bg-card px-3 text-xs font-black outline-none"
                           />
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <textarea
                             value={draft.description}
                             onChange={(event) => updateRequestDraft(request, "description", event.target.value)}
                             className="h-20 w-56 resize-none rounded-xl border border bg-card px-3 py-2 text-xs font-bold leading-5 outline-none"
                           />e
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="space-y-2">
                             <input
                               type="number"
@@ -700,7 +731,7 @@ export default function AdminServicesManagementPage() {
                             </button>
                           </div>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex flex-col gap-2">
                             <button
                               disabled={saving}
@@ -733,6 +764,131 @@ export default function AdminServicesManagementPage() {
                 </tbody>
               </table>
             </div>
+            <div className="md:hidden space-y-3 p-4">
+              {visibleServiceRequests.map((request) => {
+                const draft = getRequestDraft(request);
+                return (
+                  <div key={request.id} className="rounded-2xl border border bg-card p-4 shadow-sm space-y-3">
+                    <div>
+                      <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
+                      <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
+                      <p className="mt-1 text-[10px] font-black text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-slate-900">{request.serviceType || "—"}</p>
+                      <p className="mt-1 text-[11px] font-bold text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الحالة</label>
+                        <select
+                          value={draft.status}
+                          onChange={(event) => updateRequestDraft(request, "status", event.target.value)}
+                          className="h-10 w-full rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                        >
+                          <option value="pending">قيد الانتظار</option>
+                          <option value="assigned">تم التعيين</option>
+                          <option value="in_progress">قيد المعالجة</option>
+                          <option value="completed">مكتمل</option>
+                          <option value="cancelled">ملغي</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
+                        <select
+                          value={draft.targetDepartment}
+                          onChange={(event) => updateRequestDraft(request, "targetDepartment", event.target.value)}
+                          className="h-10 w-full rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                        >
+                          <option value="real_estate">الأملاك</option>
+                          <option value="marketing">التسويق</option>
+                          <option value="legal">القانونية</option>
+                          <option value="finance">المالية</option>
+                          <option value="employees">الموظفين</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">مزود الخدمة</label>
+                        <select
+                          value={draft.assignedAgentId}
+                          onChange={(event) => updateRequestDraft(request, "assignedAgentId", event.target.value)}
+                          className="h-10 w-full rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                        >
+                          <option value="">بدون تعيين</option>
+                          {agents.map((agent: any) => (
+                            <option key={agent.id} value={agent.id}>
+                              {agent.firstName} {agent.lastName} ({agent.role})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">السعر</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={draft.price}
+                          onChange={(event) => updateRequestDraft(request, "price", event.target.value)}
+                          className="h-10 w-full rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الفاتورة</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={invoiceDrafts[request.id] ?? draft.price}
+                          onChange={(event) => setInvoiceDrafts((current) => ({ ...current, [request.id]: event.target.value }))}
+                          className="h-10 w-full rounded-xl border border bg-card px-3 text-xs font-black outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ملاحظات</label>
+                      <textarea
+                        value={draft.description}
+                        onChange={(event) => updateRequestDraft(request, "description", event.target.value)}
+                        className="h-20 w-full resize-none rounded-xl border border bg-card px-3 py-2 text-xs font-bold leading-5 outline-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        disabled={saving}
+                        onClick={() => sendInvoice(request)}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                      >
+                        <SaudiRiyalIcon className="h-3.5 w-3.5" />
+                        إرسال فاتورة
+                      </button>
+                      <button
+                        disabled={saving}
+                        onClick={() => saveRequest(request)}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                      >
+                        <Save className="h-3.5 w-3.5" />
+                        حفظ
+                      </button>
+                      <button
+                        disabled={saving}
+                        onClick={() => openRequestChat(request.id)}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border bg-card px-3 text-[9px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-50"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        رد على العميل
+                      </button>
+                      <button
+                        disabled={saving}
+                        onClick={() => deleteRequest(request.id)}
+                        className="inline-flex h-9 items-center justify-center rounded-xl bg-red-50 px-3 text-[9px] font-black uppercase tracking-widest text-red-600 disabled:opacity-50"
+                      >
+                        حذف
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            </>
           ) : (
             <div className="flex min-h-72 flex-col items-center justify-center gap-3 text-slate-300">
               <MoreHorizontal className="h-10 w-10" />
@@ -966,7 +1122,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-full w-[95vw] sm:max-w-2xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="bg-card w-[95vw] sm:max-w-2xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
       >
         <button
           onClick={onClose}
@@ -987,7 +1143,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
 
         <form onSubmit={handleSubmit} className="space-y-6 text-right" dir="rtl">
           {/* Client Selection Section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-/80 space-y-4">
+          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
@@ -1061,7 +1217,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>اسم العميل المجهول</label>
                   <input
@@ -1089,7 +1245,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
           </div>
 
           {/* Service Classification & Type */}
-          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>تصنيف الخدمة</label>
               <select
@@ -1121,7 +1277,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
           </div>
 
           {/* Location Details & Price & Quantity */}
-          <div className="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className={labelCls}>المدينة</label>
               <input

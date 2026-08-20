@@ -131,14 +131,14 @@ function InfoPageContent() {
   
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <TabsList className="flex h-14 items-center justify-start rounded-2xl bg-card/5 border border-white/5 p-1.5 w-full overflow-x-auto overflow-y-hidden no-scrollbar gap-2">
+          <TabsList className="flex flex-wrap h-auto min-h-14 items-center justify-start rounded-2xl bg-card/5 border border-white/5 p-1.5 w-full gap-2 sm:flex-nowrap sm:h-14 sm:overflow-x-auto sm:overflow-y-hidden no-scrollbar">
             {tabsToRender.map((tab) => {
               const Icon = tab.icon;
               return (
                 <TabsTrigger
                   key={tab.key}
                   value={tab.key}
-                  className="flex-1 min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-card data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
+                  className="flex-1 min-w-[120px] sm:min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-card data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
                 >
                   <Icon className="w-4 h-4" />
                   {tab.title}
@@ -242,7 +242,7 @@ function InfoSection({ title, icon, content, actionBtn, bgColor = "bg-card/10" }
         <div className="p-5 bg-card/5 border border-white/10 rounded-2xl">
           {icon}
         </div>
-        <h2 className="text-2xl md:text-xl sm:text-3xl font-black tracking-tight">{title}</h2>
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">{title}</h2>
       </div>
 
       <div className="space-y-8 relative z-10">

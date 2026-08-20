@@ -103,7 +103,7 @@ export default function PhotographyFlow() {
             >
                 <div className="bg-card rounded-[1rem] overflow-hidden border border shadow-xl shadow-stone-400 relative">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-slate-900/5 rounded-full -mr-16 -mt-16 pointer-events-none" />
-                    <div className="p-10 bg-slate-900 text-white relative overflow-hidden">
+                    <div className="p-5 sm:p-10 bg-slate-900 text-white relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-950 opacity-50" />
                         <div className="relative z-10 flex items-center gap-5">
                             <div className="p-3 bg-card/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg">
@@ -115,7 +115,7 @@ export default function PhotographyFlow() {
                             </div>
                         </div>
                     </div>
-                    <div className="p-10 space-y-8">
+                    <div className="p-5 sm:p-10 space-y-8">
                         <div className="space-y-3">
                             <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.type')}</Label>
                             <Select 
@@ -281,7 +281,7 @@ export default function PhotographyFlow() {
                                     </div>
                                 </div>
                                 
-                                <div className="mt-4 md:mt-0 md:text-right w-full md:w-auto flex flex-row md:flex-col items-center md:items-end justify-between gap-3 min-w-[120px]">
+                                <div className="mt-4 md:mt-0 md:text-right w-full md:w-auto flex flex-row md:flex-col items-center md:items-end justify-between gap-3">
                                     <span className={`inline-flex items-center px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm
                                         ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
                                           req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
