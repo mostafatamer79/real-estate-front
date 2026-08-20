@@ -29,7 +29,7 @@ export function useAuth() {
     let needsProfileCompletion = false;
     if (parsedUser) {
       if (parsedUser.role !== Role.ADMIN) {
-        const isProfileComplete = !!parsedUser.firstName;
+        const isProfileComplete = !!parsedUser.firstName && parsedUser.role !== Role.VIEWER;
 
         const isAgentWithoutLicense =
           parsedUser.role === Role.AGENT &&
@@ -56,7 +56,7 @@ export function useAuth() {
 
       let needsProfileCompletion = false;
       if (newUser.role !== Role.ADMIN) {
-        const isProfileComplete = !!newUser.firstName;
+        const isProfileComplete = !!newUser.firstName && newUser.role !== Role.VIEWER;
 
         const isAgentWithoutLicense =
           newUser.role === Role.AGENT &&
