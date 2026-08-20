@@ -34,9 +34,12 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
       if (userStr) {
         try {
           const parsedUser = JSON.parse(userStr);
-          const isProfileComplete = parsedUser.firstName && parsedUser.lastName && parsedUser.role !== 'user';
-          const isAgentWithoutLicense = parsedUser.role === 'agent' && !parsedUser.agentLicenseNumber;
-          const needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+          let needsProfileCompletion = false;
+          if (parsedUser.role !== 'admin') {
+            const isProfileComplete = parsedUser.firstName && parsedUser.lastName && parsedUser.role !== 'user';
+            const isAgentWithoutLicense = parsedUser.role === 'agent' && !parsedUser.agentLicenseNumber;
+            needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+          }
           
           if (needsProfileCompletion) {
             router.push('/profile');

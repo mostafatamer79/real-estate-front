@@ -19,8 +19,11 @@ export default function HomePage() {
       if (storedUser) {
         try {
           const u = JSON.parse(storedUser);
-
-           router.push('/profile');
+          if (u.role === 'admin') {
+            router.push('/details');
+          } else {
+            router.push('/profile');
+          }
         } catch (e) {
           router.push('/profile');
         }

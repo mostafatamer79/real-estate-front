@@ -28,16 +28,18 @@ export function useAuth() {
     // Check if user needs to complete profile
     let needsProfileCompletion = false;
     if (parsedUser) {
-      const isProfileComplete =
-        parsedUser.firstName &&
-        parsedUser.lastName &&
-        parsedUser.role !== Role.USER;
+      if (parsedUser.role !== Role.ADMIN) {
+        const isProfileComplete =
+          parsedUser.firstName &&
+          parsedUser.lastName &&
+          parsedUser.role !== Role.USER;
 
-      const isAgentWithoutLicense =
-        parsedUser.role === Role.AGENT &&
-        !parsedUser.agentLicenseNumber;
+        const isAgentWithoutLicense =
+          parsedUser.role === Role.AGENT &&
+          !parsedUser.agentLicenseNumber;
 
-      needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+        needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+      }
     }
 
     setAuthData({
@@ -55,17 +57,19 @@ export function useAuth() {
       const newUser = { ...currentUser, ...updatedUser };
       localStorage.setItem('user', JSON.stringify(newUser));
 
-      // Re-check profile completion
-      const isProfileComplete =
-        newUser.firstName &&
-        newUser.lastName &&
-        newUser.role !== Role.USER;
+      let needsProfileCompletion = false;
+      if (newUser.role !== Role.ADMIN) {
+        const isProfileComplete =
+          newUser.firstName &&
+          newUser.lastName &&
+          newUser.role !== Role.USER;
 
-      const isAgentWithoutLicense =
-        newUser.role === Role.AGENT &&
-        !newUser.agentLicenseNumber;
+        const isAgentWithoutLicense =
+          newUser.role === Role.AGENT &&
+          !newUser.agentLicenseNumber;
 
-      const needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+        needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
+      }
 
       setAuthData(prev => ({
         ...prev,

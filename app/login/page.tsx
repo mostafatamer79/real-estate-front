@@ -56,7 +56,16 @@ export default function SignIn({ onClose }: SignInProps) {
     if (token) {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
-        router.push('/profile');
+        try {
+          const u = JSON.parse(storedUser);
+          if (u.role === 'admin') {
+            router.push('/details');
+          } else {
+            router.push('/profile');
+          }
+        } catch {
+          router.push('/profile');
+        }
       }
     }
   }, [router]);

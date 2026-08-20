@@ -165,9 +165,11 @@ export default function VerifyOtpPage() {
         .map(([key]) => key);
       const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
 
-
+      if (data.user?.role === 'admin') {
+        router.push('/details');
+      } else {
         router.push('/profile');
-      
+      }
     } catch (err: any) {
       console.error('OTP verification error:', err);
       // Try to translate if key exists (err.message), else show generic invalid
