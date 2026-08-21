@@ -74,7 +74,7 @@ export default function NormalChatPage() {
 
       const transformedRooms: ChatRoom[] = dedupedRooms.map((room: any) => {
         const otherParticipant = room.participants?.find(
-          (p: any) => (meId ? p.id !== meId : true)
+          (p: any) => (meId ? String(p.id) !== String(meId) : true)
         );
 
         return {
@@ -102,6 +102,16 @@ export default function NormalChatPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getParticipantName = (participant: any, fallbackName: string) => {
+    if (!participant) return fallbackName;
+    const first = participant.firstName || '';
+    const last = participant.lastName || '';
+    const fullName = `${first} ${last}`.trim();
+    if (fullName) return fullName;
+    if (participant.email) return participant.email;
+    return fallbackName;
   };
 
   const getFullName = (firstName: string | null = '', lastName: string | null = '') => {
@@ -230,7 +240,7 @@ export default function NormalChatPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="font-black text-slate-900 truncate">
-                    {chat.otherParticipant ? getFullName(chat.otherParticipant.firstName, chat.otherParticipant.lastName) : chat.name}
+                    {getParticipantName(chat.otherParticipant, chat.name)}
                   </h4>
                   {chat.lastMessage && (
                     <span className="flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400">

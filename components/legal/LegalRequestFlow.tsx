@@ -277,6 +277,7 @@ export default function LegalRequestFlow({
                     <option value="seller" className="bg-card text-slate-900">بائع</option>
                     <option value="buyer" className="bg-card text-slate-900">مشتري</option>
                     <option value="broker" className="bg-card text-slate-900">وسيط</option>
+                    <option value="other" className="bg-card text-slate-900">أخرى</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">

@@ -480,6 +480,22 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           }),
         }
       );
+      
+      // Also add department price so client can accept it
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/department-price`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            price: parseFloat(editingPrice),
+            deptSlug: editingDepartment || "legal",
+          }),
+        }
+      );
       fetchRequests();
       setIsDetailsOpen(false);
     } catch (err) {

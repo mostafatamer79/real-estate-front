@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
+import { toast } from 'react-hot-toast';
 
 import UserWallet from '@/components/financial/UserWallet';
 import CommissionManager from '@/components/financial/CommissionManager';
@@ -249,6 +250,20 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
         fetchStats();
     }, []);
 
+    const handleDelete = async (id: string) => {
+        if (!window.confirm(t('common.confirmDelete') || 'هل أنت متأكد من الحذف؟')) return;
+        try {
+            await financialApi.deleteInvoice(id);
+            setStats((prev: any) => ({
+                ...prev,
+                recentTransactions: prev.recentTransactions.filter((tx: any) => tx.id !== id)
+            }));
+            toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح');
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || t('common.deleteError') || 'فشل الحذف');
+        }
+    };
+
     const kpis = [
         { label: t('fin.kpi.sales'), value: stats?.totalSales || 0, icon: SaudiRiyalIcon, color: "text-slate-900", bg: "bg-muted" },
         { label: t('fin.kpi.rentals'), value: stats?.totalRentals || 0, icon: Briefcase, color: "text-slate-900", bg: "bg-muted" },
@@ -405,8 +420,16 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                     <p className="text-sm font-black text-slate-950 truncate">{tx.description || tx.type}</p>
                                     <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{tx.type} • {tx.status}</p>
                                 </div>
-                                <div className="text-left shrink-0">
+                                <div className="text-left shrink-0 flex items-center gap-4">
                                     <p className="text-sm font-black text-slate-950 tabular-nums"><SaudiRiyalAmount amount={Number(tx.amount || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-4 w-4 text-slate-400" className="text-sm font-black text-slate-950 tabular-nums" /></p>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => handleDelete(tx.id)}
+                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 px-2"
+                                    >
+                                        {t('common.delete') || 'حذف'}
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -438,6 +461,17 @@ function TransactionsSection() {
         load();
     }, []);
 
+    const handleDelete = async (id: string) => {
+        if (!window.confirm(t('common.confirmDelete') || 'هل أنت متأكد من الحذف؟')) return;
+        try {
+            await financialApi.deleteInvoice(id); // Using deleteInvoice to remove the transaction/invoice
+            setTransactions(prev => prev.filter(tx => tx.id !== id));
+            toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح');
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || t('common.deleteError') || 'فشل الحذف');
+        }
+    };
+
     return (
         <div className="rounded-3xl overflow-hidden border border">
             <div className="p-4 sm:p-8 border-b border flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-card">
@@ -460,11 +494,12 @@ function TransactionsSection() {
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('fin.table.commission')}</TableHead>
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('fin.table.status')}</TableHead>
                             <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('fin.table.date')}</TableHead>
+                            <TableHead className="px-8 py-5 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.actions') || 'الإجراءات'}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="divide-y divide-slate-50 bg-card">
                         {loading ? (
-                          <TableRow><TableCell colSpan={6} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-300" /></TableCell></TableRow>
+                          <TableRow><TableCell colSpan={7} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-300" /></TableCell></TableRow>
                         ) : transactions.length > 0 ? (
                             transactions.map((tx, idx) => (
                                 <motion.tr
@@ -493,10 +528,20 @@ function TransactionsSection() {
                                     <TableCell className="px-8 py-5 text-center font-bold text-slate-400 text-[10px]">
                                       {new Date(tx.transactionDate).toLocaleDateString('ar-SA')}
                                     </TableCell>
+                                    <TableCell className="px-8 py-5 text-center">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            onClick={() => handleDelete(tx.id)}
+                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        >
+                                            {t('common.delete') || 'حذف'}
+                                        </Button>
+                                    </TableCell>
                                 </motion.tr>
                             ))
                         ) : (
-                          <TableRow><TableCell colSpan={6} className="text-center py-20 text-slate-400 font-black uppercase tracking-widest opacity-30 text-[10px]">{t('fin.noData')}</TableCell></TableRow>
+                          <TableRow><TableCell colSpan={7} className="text-center py-20 text-slate-400 font-black uppercase tracking-widest opacity-30 text-[10px]">{t('fin.noData')}</TableCell></TableRow>
                         )}
                     </TableBody>
                 </Table>

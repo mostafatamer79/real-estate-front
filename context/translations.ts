@@ -841,7 +841,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // Financial
     "fin.title": "الإدارة المالية والمحاسبية",
     "fin.tab.dashboard": "لوحة مالية عامة",
-    "fin.tab.transactions": "العمليات المالية",
+    "fin.tab.transactions": "الادارة المالية للمنصه",
     "fin.tab.commissions": "العمولات",
     "fin.tab.payments": "المدفوعات",
     "fin.tab.expenses": "المصروفات",

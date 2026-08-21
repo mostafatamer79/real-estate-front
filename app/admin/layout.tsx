@@ -121,7 +121,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'dashboard', href: '/admin/dashboard', label: isRtl ? ' لوح التحكم' : 'Dashboard' },
         { id: 'users', href: '/admin/users', label: isRtl ? ' المستخدمين' : 'Users' },
         { id: 'subscriptions', href: '/admin/subscriptions', label: isRtl ? ' الاشتراكات' : 'Subscriptions' },
-        { id: 'finance-transactions', href: '/admin/transactions', label: isRtl ? 'العمليات المالية' : 'Transactions' },
+        { id: 'finance-transactions', href: '/admin/transactions', label: isRtl ? 'الادارة المالية للمنصه' : 'Transactions' },
 
         { id: 'map-control', href: '/admin/map-control', label: isRtl ? ' الخريطة' : 'Map' },
         { id: 'operations', href: '/admin/operations', label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },
@@ -141,6 +141,16 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'marketing', href: '/admin/marketing', label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
         { id: 'properties-management', href: '/admin/properties-management',  label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
         { id: 'legal', href: '/admin/legal',  label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
+      ]
+    },
+    {
+      title: isRtl ? 'المحفظة' : 'Wallet',
+      items: [
+        { id: 'wallet-main', href: '/admin/wallet', icon: Wallet, label: isRtl ? 'المحفظة' : 'Wallet' },
+        { id: 'invoices', href: '/admin/wallet?tab=invoices', icon: FileText, label: isRtl ? 'الفواتير' : 'Invoices' },
+        { id: 'commissions', href: '/admin/wallet?tab=commissions', icon: Percent, label: isRtl ? 'العمولات' : 'Commissions' },
+        { id: 'files', href: '/admin/wallet?tab=files', icon: CreditCard, label: isRtl ? 'الملفات والمستندات' : 'Files & Documents' },
+        { id: 'investments', href: '/admin/wallet?tab=investments', icon: TrendingUp, label: isRtl ? 'الاستثمارات' : 'Investments' },
       ]
     },
     {

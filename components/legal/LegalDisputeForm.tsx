@@ -61,7 +61,7 @@ export function LegalDisputeForm({ onSuccess, onCancel }: LegalDisputeFormProps)
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const partyRoles = ["بائع", "مشتري", "وسيط"];
+  const partyRoles = ["بائع", "مشتري", "وسيط", "أخرى"];
   const idTypes = ["هوية", "إقامة", "سجل تجاري"];
   const disputeTypes = [
     "نزاعات الملكية",

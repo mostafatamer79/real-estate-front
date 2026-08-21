@@ -2,6 +2,8 @@
 import React from 'react'
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { Card, CardFooter, CardHeader, CardTitle } from './ui/card'
 import {
     Table,
@@ -137,9 +139,43 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
         window.print();
     };
 
-    const handleDownload = () => {
-        // In a real app, this would generate and download a PDF
-        alert('سيتم تنزيل الفاتورة كملف PDF');
+    const handleDownload = async () => {
+        setIsProcessing(true);
+        try {
+            const invoiceElement = document.getElementById('invoice-content');
+            if (!invoiceElement) return;
+            
+            // Add a temporary class to format for PDF
+            invoiceElement.classList.add('pdf-mode');
+            
+            // Small delay to allow CSS changes to apply
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const canvas = await html2canvas(invoiceElement, {
+                scale: 2,
+                useCORS: true,
+            });
+            
+            invoiceElement.classList.remove('pdf-mode');
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+            
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${invoiceData.invoiceNumber}.pdf`);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('حدث خطأ أثناء إنشاء ملف PDF');
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
@@ -180,8 +216,18 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 </div>
 
                 {/* Invoice Content */}
-                <div className='p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible'>
-                    <Card className='bg-card border-0 shadow-none print:shadow-none'>
+                <div id="invoice-content" className='p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white'>
+                    {/* Letterhead Header (Only visible in print/PDF) */}
+                    <div className="hidden print:block pdf-header w-full mb-8 z-10 relative">
+                        <img src="/cover.jpeg" alt="Company Header" className="w-full h-auto object-contain" crossOrigin="anonymous" />
+                    </div>
+
+                    {/* Watermark Background (Only visible in print/PDF) */}
+                    <div className="hidden print:flex pdf-watermark absolute inset-0 opacity-5 pointer-events-none items-center justify-center z-0">
+                        <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain" crossOrigin="anonymous" />
+                    </div>
+
+                    <Card className='bg-card border-0 shadow-none print:shadow-none relative z-10'>
                         <CardHeader className='border-b border pb-6 print:border-b-2'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
@@ -454,11 +500,32 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                             </CardFooter>
                         </div>
                     </Card>
+
+                    {/* Letterhead Footer (Only visible in print/PDF) */}
+                    <div className="hidden print:block pdf-footer w-full mt-12 z-10 relative">
+                        <img src="/ends.jpeg" alt="Company Footer" className="w-full h-auto object-contain" crossOrigin="anonymous" />
+                    </div>
                 </div>
             </div>
 
             {/* Print Styles */}
             <style jsx global>{`
+                .pdf-mode .pdf-header, .pdf-mode .pdf-footer {
+                    display: block !important;
+                }
+                .pdf-mode .pdf-watermark {
+                    display: flex !important;
+                }
+                .pdf-mode .print\\:hidden {
+                    display: none !important;
+                }
+                .pdf-mode {
+                    padding: 0;
+                    margin: 0;
+                    box-shadow: none !important;
+                    width: 210mm; /* A4 width */
+                    max-width: none;
+                }
                 @media print {
                     body * {
                         visibility: hidden;

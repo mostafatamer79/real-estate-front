@@ -197,6 +197,20 @@ export default function ServiceRequestsPage() {
                     targetDepartment: editingDepartment 
                 }),
             });
+            
+            // Also add department price so client can accept it
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/department-price`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    price: parseFloat(editingPrice),
+                    deptSlug: editingDepartment || 'admin'
+                }),
+            });
+
             if (response.ok) {
                 fetchRequests();
                 setIsDetailsOpen(false);

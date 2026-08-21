@@ -126,7 +126,7 @@ export default function AdminServicesManagementPage() {
     legal_other: ["استشارة قانونية", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
     construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
     marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية (وسائل التواصل الاجتماعي)", "حملة إعلانية (إعلانات طرق/تقليدية)", "أخرى"],
-    other: ["التقييم العقاري", "المسح الهندسي", "أخرى"],
+    other: ["التقييم العقاري", "المسح الهندسي", "تمويل عقاري", "أخرى"],
   };
 
   const makeServicePriceKey = (category: string, service: string) =>
@@ -252,6 +252,10 @@ export default function AdminServicesManagementPage() {
         targetDepartment: draft.targetDepartment,
         description: draft.description,
         assignedAgentId: draft.assignedAgentId || null,
+      });
+      await api.put(`/service-requests/${request.id}/department-price`, {
+        price: Number(draft.price || 0),
+        deptSlug: draft.targetDepartment || 'admin',
       });
       toast.success("تم تحديث طلب الخدمة");
       setRequestDrafts((current) => {

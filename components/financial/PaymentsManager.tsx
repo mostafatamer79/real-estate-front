@@ -48,6 +48,17 @@ export default function PaymentsManager() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!window.confirm(t('common.confirmDelete') || 'هل أنت متأكد من الحذف؟')) return;
+        try {
+            await financialApi.deleteInvoice(id);
+            setPayments(prev => prev.filter(p => p.id !== id));
+            toast.success(t('common.deleteSuccess') || 'تم الحذف بنجاح');
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || t('common.deleteError') || 'فشل الحذف');
+        }
+    };
+
     useEffect(() => {
         fetchPayments();
     }, []);
@@ -261,6 +272,9 @@ export default function PaymentsManager() {
                                     <TableHead className={isRTL ? 'text-right' : 'text-left'}>
                                         {t('fin.payment.status')}
                                     </TableHead>
+                                    <TableHead className={isRTL ? 'text-right' : 'text-left'}>
+                                        {t('common.actions') || 'الإجراءات'}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -281,7 +295,9 @@ export default function PaymentsManager() {
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                      
+                                            <TableCell>
+                                                {payment.amount}
+                                            </TableCell>
                                             <TableCell>
                                                 {new Date(payment.transactionDate).toLocaleDateString(
                                                     isRTL ? 'ar-SA' : 'en-US'
@@ -292,11 +308,21 @@ export default function PaymentsManager() {
                                                     {t(`fin.status.${payment.status}`)}
                                                 </span>
                                             </TableCell>
+                                            <TableCell>
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    onClick={() => handleDelete(payment.id)}
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                >
+                                                    {t('common.delete') || 'حذف'}
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                                        <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                                             {t('fin.payment.noData')}
                                         </TableCell>
                                     </TableRow>

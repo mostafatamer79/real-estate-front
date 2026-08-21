@@ -140,7 +140,14 @@ export default function MyServiceRequestsPage() {
                     <Package className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{selectedRequest.serviceType}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                      {selectedRequest.serviceType}
+                      {selectedRequest.targetDepartment && (
+                        <span className="mx-2 text-sm text-slate-500 font-normal">
+                          ({t(`admin.trans.dept.${selectedRequest.targetDepartment}`)})
+                        </span>
+                      )}
+                    </h2>
                     <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
                       <span className="font-semibold text-slate-600">#{selectedRequest.id.substring(0, 8)}</span>
                       <span>•</span>
@@ -330,6 +337,11 @@ export default function MyServiceRequestsPage() {
 
                 <h3 className="text-base font-bold text-slate-900 mb-2 transition-colors line-clamp-1">
                   {request.serviceType}
+                  {request.targetDepartment && (
+                    <span className="mx-1 text-xs text-slate-500 font-normal inline-block">
+                      ({t(`admin.trans.dept.${request.targetDepartment}`)})
+                    </span>
+                  )}
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-slate-400 mb-6">
                   <span className="font-bold text-slate-500">#{request.id.substring(0, 8)}</span>

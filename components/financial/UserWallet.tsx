@@ -66,6 +66,20 @@ export default function UserWallet() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!window.confirm('هل أنت متأكد من الحذف؟')) return;
+        try {
+            await financialApi.deleteInvoice(id);
+            setWalletData((prev: any) => ({
+                ...prev,
+                transactions: prev.transactions.filter((tx: any) => tx.id !== id)
+            }));
+            toast.success('تم الحذف بنجاح');
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'فشل الحذف');
+        }
+    };
+
     if (loading) {
         return <div className="flex justify-center p-4 sm:p-8"><Loader2 className="animate-spin" /></div>;
     }
@@ -114,6 +128,7 @@ export default function UserWallet() {
                                 <TableHead className='text-right'>التاريخ</TableHead>
                                 <TableHead className='text-right'>المبلغ</TableHead>
                                 <TableHead className='text-right'>الحالة</TableHead>
+                                <TableHead className='text-right'>الإجراءات</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -127,11 +142,21 @@ export default function UserWallet() {
                                             <SaudiRiyalAmount amount={t.amount} locale="ar-SA" iconClassName='h-4 w-4' />
                                         </TableCell>
                                         <TableCell>{t.status}</TableCell>
+                                        <TableCell>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                onClick={() => handleDelete(t.id)}
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                                حذف
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                                    <TableCell colSpan={6} className="text-center py-6 text-gray-500">
                                         لا توجد عمليات مسجلة
                                     </TableCell>
                                 </TableRow>

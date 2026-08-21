@@ -135,5 +135,11 @@ export const financialApi = {
   getMyWallet: async (): Promise<WalletData> => {
     const response = await api.get('/financial/my-wallet');
     return response.data;
+  },
+
+  // Delete invoice
+  deleteInvoice: async (id: string): Promise<any> => {
+    const response = await api.delete(`/financial/invoices/${id}`);
+    return response.data;
   }
 };

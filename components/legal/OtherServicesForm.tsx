@@ -40,7 +40,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const serviceTypes = ["استشارات قانونية", "تقارير قانونية"];
-  const roles = ["بائع", "مشتري", "وسيط", "مستثمر"];
+  const roles = ["بائع", "مشتري", "وسيط", "مستثمر", "أخرى"];
   const propertyTypes = [
     "شقة",
     "فيلا",
