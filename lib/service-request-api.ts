@@ -35,6 +35,7 @@ export interface ServiceRequest {
   departmentPrices?: Record<string, { price: number; addedBy: string; note?: string; addedAt: string }>;
   chatRoomId?: string;
   invoiceNumber?: string;
+  targetDepartment?: string;
   metadata?: any;
 }
 
