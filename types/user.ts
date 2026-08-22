@@ -78,4 +78,5 @@ export interface User {
   departments?: Department[];
   departmentPermissions?: Record<string, any>;
   hasFreeTrial?: boolean;
+  onboardingStatus?: 'pending' | 'skipped' | 'completed';
 }

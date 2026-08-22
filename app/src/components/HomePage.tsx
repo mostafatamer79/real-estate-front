@@ -22,7 +22,11 @@ export default function HomePage() {
           if (u.role === 'admin') {
             router.push('/details');
           } else {
-            router.push('/profile');
+            if (u.firstName && u.lastName) {
+              router.push('/details');
+            } else {
+              router.push('/profile');
+            }
           }
         } catch (e) {
           router.push('/profile');

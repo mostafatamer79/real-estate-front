@@ -85,13 +85,13 @@ export default function Footer() {
         </button>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10 max-md:pt-12 max-md:pb-10">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16 max-md:mb-10 max-md:gap-8"
         >
           {/* Brand */}
           <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1">

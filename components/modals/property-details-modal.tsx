@@ -135,7 +135,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
+            <DialogContent className="w-[95vw] sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader className="border-b border bg-gradient-to-b from-white to-slate-50 px-6 py-5 sm:px-8">
                     <div className="flex items-start gap-4 pe-12">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-slate-700 shadow-sm">
@@ -156,7 +156,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                     </div>
                 </DialogHeader>
 
-                <div className="overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+                <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
                     <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                         <div className="rounded-[1rem] border border bg-muted px-4 py-4">
                             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</p>

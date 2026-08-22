@@ -25,6 +25,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: "#0f172a",
+  interactiveWidget: "resizes-content",
 };
 
 const geistMono = Geist_Mono({

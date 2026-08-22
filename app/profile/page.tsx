@@ -38,12 +38,7 @@ const profileSchema = z.object({
   lawLicenseNumber: z.string().optional(),
   
   // National Address
-  postalCode: z.string().optional(),
   city: z.string().optional(),
-  streetName: z.string().optional(),
-  district: z.string().optional(),
-  additionalNumber: z.string().optional(),
-  unitNumber: z.string().optional(),
   country: z.string().optional(),
 });
 
@@ -179,11 +174,7 @@ export default function ProfilePage() {
         lawLicenseNumber: user.lawLicenseNumber || '',
         commercialRegistrationNumber: user.commercialRegistrationNumber || '',
         
-        postalCode: user.postalCode || '',
-        streetName: user.streetName || '',
-        district: user.district || '',
-        additionalNumber: user.additionalNumber || '',
-        unitNumber: user.unitNumber || '',
+
         city: user.city || 'riyadh',
         country: user.country || 'saudi',
       });
@@ -311,7 +302,7 @@ export default function ProfilePage() {
 
             {/* Main Form */}
             <div className="md:col-span-2">
-                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6">
+                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6 wow-reveal">
                     <h3 className="text-lg font-semibold text-slate-800 mb-6 border-b pb-4 text-start">{t('profile.accountInfo')}</h3>
                     
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -366,6 +357,13 @@ export default function ProfilePage() {
                                         />
                                     </div>
                                 )}
+                            </div>
+                            
+                            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-3">
+                                <ShieldCheck className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                                <p className={`text-sm font-medium text-yellow-800 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
+                                    {t('profile.pendingAdminApproval')}
+                                </p>
                             </div>
                         </div>
 
@@ -516,19 +514,7 @@ export default function ProfilePage() {
 
                          {/* 4. National Address */}
                         <div>
-                             <h4 className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-4 mt-6">
-                                <MapPin className="w-4 h-4" />
-                                {t('profile.nationalAddress.title')} <span className="text-xs text-slate-400 font-normal mx-2">({language === 'ar' ? 'اختياري' : 'Optional'})</span>
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.postal')}</label>
-                                    <input
-                                        type="text"
-                                        {...register('postalCode')}
-                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    />
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('city.name')}</label>
                                     <select
@@ -539,38 +525,6 @@ export default function ProfilePage() {
                                             <option key={c} value={t(`city.${c}`)} className="slate-900">{t(`city.${c}`)}</option>
                                         ))}
                                     </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.street')}</label>
-                                    <input
-                                        type="text"
-                                        {...register('streetName')}
-                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.district')} <span className="text-xs text-slate-400 font-normal">({language === 'ar' ? 'اختياري' : 'Optional'})</span></label>
-                                    <input
-                                        type="text"
-                                        {...register('district')}
-                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.addNum')}</label>
-                                    <input
-                                        type="text"
-                                        {...register('additionalNumber')}
-                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1 text-slate-700">{t('profile.nationalAddress.unitNum')}</label>
-                                    <input
-                                        type="text"
-                                        {...register('unitNumber')}
-                                        className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    />
                                 </div>
                             </div>
                         </div>
@@ -608,7 +562,7 @@ export default function ProfilePage() {
         </div>
       </div>
       <Dialog open={showVerifyDialog} onOpenChange={setShowVerifyDialog}>
-        <DialogContent>
+        <DialogContent className="p-6 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
                 <DialogTitle className="text-center">{t('profile.verification.title')}</DialogTitle>
                 <DialogDescription className="text-center">

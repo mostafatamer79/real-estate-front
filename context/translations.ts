@@ -1104,6 +1104,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Profile Specific Labels
     "profile.activityType": "تحديد النشاط",
+    "profile.pendingAdminApproval": "لإكمال تقديم الطلب، يُرجى التواصل مع الإدارة عبر صفحة (تواصل معنا) بعد استكمال البيانات.",
     "profile.activityPlaceholder": "اكتب نوع الخدمة المقدمة",
     "profile.license.fal": "بيانات الترخيص (الهيئة العامة للعقار)",
     "profile.license.falNum": "رقم ترخيص فال",
@@ -2437,7 +2438,25 @@ export const translations: Record<Language, Record<string, string>> = {
     "internal.sub.statusTitle": "حالة الاشتراك",
     "internal.sub.openEnded": "صلاحية مفتوحة",
     "internal.sub.expired": "منتهي",
-    "internal.sub.daysLeft": "يتبقى {days} يوم"
+    "internal.sub.daysLeft": "يتبقى {days} يوم",
+
+    "tour.of": "من",
+    "tour.next": "التالي",
+    "tour.back": "السابق",
+    "tour.skip": "تخطي الجولة",
+    "tour.finish": "ابدأ الآن",
+    "tour.welcome.title": "مرحباً بك في الوساطة الرقمية",
+    "tour.welcome.description": "جولة قصيرة ستعرض لك أهم الخدمات والأدوات التي تساعدك في إدارة رحلتك العقارية بكل سهولة.",
+    "tour.map.title": "الخريطة التفاعلية",
+    "tour.map.description": "استكشف مواقع العقارات بدقة على الخريطة، واستخدم خاصية المسح لعرض التفاصيل المحيطة بأي منطقة تهمك.",
+    "tour.stats.title": "بطاقات النشاط والعروض",
+    "tour.stats.description": "تابع آخر العمليات والإعلانات والصفقات من خلال بطاقات تفاعلية تعطيك نظرة سريعة على نشاط حسابك.",
+    "tour.quickActions.title": "الإجراءات السريعة",
+    "tour.quickActions.description": "وصول فوري لأهم الخدمات: المحفظة، الخدمات، العروض، الطلبات، والاشتراكات، كلها في مكان واحد.",
+    "tour.navigation.title": "التنقل السريع",
+    "tour.navigation.description": "انتقل بسهولة بين الرئيسية والخدمات والطلبات والدردشة وحسابك من شريط التنقل السفلي أو القائمة العلوية.",
+    "tour.complete.title": "أنت جاهز للانطلاق!",
+    "tour.complete.description": "لقد تعرفت على أبرز مميزات المنصة. يمكنك الآن استكشافها بالكامل والاستفادة من جميع خدماتها."
   },
   en: {
     // Header
@@ -3324,6 +3343,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Profile Specific Labels
     "profile.activityType": "Activity Type",
+    "profile.pendingAdminApproval": "To complete your application, please contact the administration via the (Contact Us) page after completing your data.",
     "profile.activityPlaceholder": "Enter service type provided",
     "profile.license.fal": "License Data (REGA)",
     "profile.license.falNum": "Fal License Number",
@@ -4626,7 +4646,25 @@ export const translations: Record<Language, Record<string, string>> = {
     "internal.sub.statusTitle": "Subscription status",
     "internal.sub.openEnded": "Open-ended",
     "internal.sub.expired": "Expired",
-    "internal.sub.daysLeft": "{days} days left"
+    "internal.sub.daysLeft": "{days} days left",
+
+    "tour.of": "of",
+    "tour.next": "Next",
+    "tour.back": "Back",
+    "tour.skip": "Skip tour",
+    "tour.finish": "Get started",
+    "tour.welcome.title": "Welcome to Digital Brokerage",
+    "tour.welcome.description": "A quick walkthrough of the key services and tools that will help you manage your real estate journey with ease.",
+    "tour.map.title": "Interactive Map",
+    "tour.map.description": "Explore property locations on the map and use the scan feature to view details around any area that interests you.",
+    "tour.stats.title": "Activity & Offers Cards",
+    "tour.stats.description": "Keep track of recent operations, ads, and deals through interactive cards that give you a quick overview of your account activity.",
+    "tour.quickActions.title": "Quick Actions",
+    "tour.quickActions.description": "Instant access to the most important services: wallet, services, offers, orders, and subscriptions, all in one place.",
+    "tour.navigation.title": "Quick Navigation",
+    "tour.navigation.description": "Easily move between Home, Services, Requests, Chat, and your Profile using the bottom navigation bar or top menu.",
+    "tour.complete.title": "You're ready to go!",
+    "tour.complete.description": "You've learned about the platform's top features. Now you can explore everything and make the most of our services."
 
   }
 };

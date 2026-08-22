@@ -124,7 +124,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[px] p-0 overflow-hidden bg-card rounded-[1rem] border-0 shadow-2xl flex flex-col max-h-[90vh]">
+            <DialogContent className="w-[95vw] sm:max-w-lg p-0 overflow-hidden bg-card rounded-[1rem] border-0 shadow-2xl flex flex-col max-h-[90vh]">
                 {/* Custom Header */}
                 <DialogHeader className="sr-only">
                     <DialogTitle>{order?.propertyType || 'Order Details'}</DialogTitle>

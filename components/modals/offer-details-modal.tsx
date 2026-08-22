@@ -131,7 +131,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
+            <DialogContent className="w-[95vw] sm:max-w-xl max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
                 <div className="h-56 sm:h-72 w-full bg-slate-950 relative shrink-0">
                     {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (

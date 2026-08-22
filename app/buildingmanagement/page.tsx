@@ -2362,7 +2362,7 @@ function BuildingManagementContent({
         </div>
 
         {/* أزرار الإرسال */}
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <button
             type="button"
             onClick={submitLegalDispute}
@@ -2793,19 +2793,19 @@ function BuildingManagementContent({
 
   const renderTenants = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="flex justify-between items-center mb-10">
-          <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center border border shadow-sm">
+        <div className="flex justify-between items-center mb-10 flex-wrap gap-3 max-md:mb-6">
+          <div className="flex items-center gap-5 min-w-0">
+              <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center border border shadow-sm shrink-0">
                   <Users className="w-7 h-7 text-slate-900" />
               </div>
-              <div>
+              <div className="min-w-0">
                   <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase">{t('pm.tenants')}</h2>
                   <p className="text-slate-500 text-sm font-medium">{t('pm.tenants.desc')}</p>
               </div>
           </div>
-          <button 
+          <button
             onClick={() => setShowNewTenantModal(true)}
-            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-stone-400 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1"
+            className="h-10 px-8 bg-slate-900 text-white rounded-2xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-xl shadow-stone-400 font-black text-[11px] uppercase tracking-widest hover:-translate-y-1 max-md:h-11"
           >
             <Plus className="w-4 h-4" />
             {t('pm.tenant.add')}
@@ -4450,7 +4450,7 @@ function BuildingManagementContent({
 
   const renderNewMaintenanceModal = () => (
     <Dialog open={showNewMaintenanceModal} onOpenChange={setShowNewMaintenanceModal}>
-      <DialogContent className="w-[95vw] sm:max-w-[520px]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="w-[95vw] sm:max-w-[520px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
             <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-slate-600">

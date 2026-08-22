@@ -1,7 +1,7 @@
 // app/details/page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 const Map = dynamic(() => import("../src/components/Map"), {
   ssr: false,
@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { motion } from "framer-motion";
-import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
+import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2, Sparkles, Check } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator
@@ -29,6 +29,8 @@ import { useSectionGuard } from '@/hooks/useSectionGuard';
 import { useSettings } from '@/context/SettingsContext';
 import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 import api from '@/lib/api';
+import Tutorial from '@/components/Tutorial';
+import { shouldShowOnboarding, saveOnboardingStatus } from '@/lib/onboarding';
 
 export default function HomePage() {
   const propertyLocation: [number, number] = [24.7136, 46.6753];
@@ -78,8 +80,76 @@ export default function HomePage() {
   const [marketingRequests, setMarketingRequests] = useState<any[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedRange, setSelectedRange] = useState<string>('year');
+  const [showTour, setShowTour] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobileViewport(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleProfileUpdate = (_updatedUser: any) => { window.location.reload(); };
+
+  const tourSteps = useMemo(() => {
+    return [
+      {
+        id: 'welcome',
+        title: t('tour.welcome.title'),
+        description: t('tour.welcome.description'),
+        position: 'center' as const,
+        icon: <Sparkles className="w-6 h-6" />,
+      },
+      {
+        id: 'map',
+        title: t('tour.map.title'),
+        description: t('tour.map.description'),
+        targetId: 'tour-target-map',
+        position: 'bottom' as const,
+        icon: <MapIcon className="w-6 h-6" />,
+      },
+      {
+        id: 'stats',
+        title: t('tour.stats.title'),
+        description: t('tour.stats.description'),
+        targetId: 'tour-target-stats',
+        position: 'top' as const,
+        icon: <Grid className="w-6 h-6" />,
+      },
+      {
+        id: 'quick-actions',
+        title: t('tour.quickActions.title'),
+        description: t('tour.quickActions.description'),
+        targetId: 'tour-target-quick-actions',
+        position: 'top' as const,
+        icon: <Zap className="w-6 h-6" />,
+      },
+      {
+        id: 'navigation',
+        title: t('tour.navigation.title'),
+        description: t('tour.navigation.description'),
+        targetId: isMobileViewport ? 'tour-target-bottom-nav' : 'tour-target-header-profile',
+        position: isMobileViewport ? ('top' as const) : ('bottom' as const),
+        icon: <LayoutDashboard className="w-6 h-6" />,
+      },
+      {
+        id: 'complete',
+        title: t('tour.complete.title'),
+        description: t('tour.complete.description'),
+        position: 'center' as const,
+        icon: <Check className="w-6 h-6" />,
+      },
+    ];
+  }, [t, isMobileViewport]);
+
+  useEffect(() => {
+    if (shouldShowOnboarding(user)) {
+      const timer = window.setTimeout(() => setShowTour(true), 600);
+      return () => window.clearTimeout(timer);
+    }
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -177,7 +247,7 @@ export default function HomePage() {
         ) : settings.sectionFlags.scan_map === 'hidden' ? null : settings.sectionFlags.scan_map === 'closed' ? (
           <ComingSoonInline sectionName={t('details.map.title')} message={settings.sectionMessages.scan_map} />
         ) : (
-          <div className="relative group">
+          <div id="tour-target-map" className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/15 to-slate-600/20 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-700 cursor-pointer"
               onClick={() => router.push('/scan-map')} />
             <div className="relative w-full h-[350px] bg-slate-800 rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-slate-700/40">
@@ -218,7 +288,7 @@ export default function HomePage() {
             <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-900/70 rounded-3xl border border-slate-700/50 shadow-[0_4px_32px_rgba(0,0,0,0.4)] p-3 sm:p-6 overflow-hidden">
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/40 to-transparent" />
               <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
-              <PropertyInfoCards operations={operations} marketingRequests={marketingRequests} userRole={user?.role} />
+              <PropertyInfoCards id="tour-target-stats" operations={operations} marketingRequests={marketingRequests} userRole={user?.role} />
             </div>
           </div>
         )
@@ -346,7 +416,7 @@ export default function HomePage() {
       content: detailsPartStatus('quick_actions') === 'soon' ? (
         <ComingSoonInline sectionName={t('details.quickActions.title')} message={settings.detailsPartMessages?.quick_actions} />
       ) : (
-        <QuickActions />
+        <QuickActions id="tour-target-quick-actions" />
       ),
     },
   };
@@ -489,6 +559,21 @@ export default function HomePage() {
           user={user} onUpdate={handleProfileUpdate} />
       )}
       <Footer />
+
+      {showTour && user && (
+        <Tutorial
+          steps={tourSteps}
+          open={showTour}
+          onComplete={() => {
+            saveOnboardingStatus(user, 'completed');
+            setShowTour(false);
+          }}
+          onSkip={() => {
+            saveOnboardingStatus(user, 'skipped');
+            setShowTour(false);
+          }}
+        />
+      )}
     </>
   );
 }

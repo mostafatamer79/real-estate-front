@@ -1,297 +1,389 @@
-import React, { useState, useEffect } from 'react';
-import { X, ChevronRight, ChevronLeft, Lightbulb, Map, FileText, Grid3x3, MapPin } from 'lucide-react';
+"use client";
 
-// Tutorial Step Interface
-interface TutorialStep {
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
+
+export interface TourStep {
   id: string;
   title: string;
   description: string;
-  target: string;
-  icon: React.ReactNode;
-  position: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  targetId?: string;
+  position?: "top" | "bottom" | "left" | "right" | "center";
+  icon?: React.ReactNode;
 }
 
-// Tutorial Component
-export  const Tutorial = ({ onComplete, onSkip }: { onComplete: () => void; onSkip: () => void }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+interface TutorialProps {
+  steps: TourStep[];
+  onComplete: () => void;
+  onSkip: () => void;
+  open?: boolean;
+}
 
-  const steps: TutorialStep[] = [
-    {
-      id: 'welcome',
-      title: 'مرحباً بك في منصتنا!',
-      description: 'دعنا نأخذك في جولة سريعة لاكتشاف المميزات الرئيسية للمنصة',
-      target: 'none',
-      icon: <Lightbulb className="w-8 h-8" />,
-      position: 'center'
-    },
-    {
-      id: 'map',
-      title: 'الخريطة التفاعلية',
-      description: 'هنا يمكنك عرض موقع العقار على الخريطة والتفاعل معه بسهولة',
-      target: 'map-section',
-      icon: <Map className="w-6 h-6" />,
-      position: 'bottom'
-    },
-    {
-      id: 'info-cards',
-      title: 'بطاقات المعلومات',
-      description: 'اطلع على العمليات السابقة، الإعلانات، والصفقات من خلال هذه البطاقات التفاعلية',
-      target: 'info-cards-section',
-      icon: <FileText className="w-6 h-6" />,
-      position: 'top'
-    },
-    {
-      id: 'quick-actions',
-      title: 'الإجراءات السريعة',
-      description: 'الوصول السريع لجميع الخدمات: إدارة العقار، المحفظة، الخدمات، العروض، والطلبات',
-      target: 'quick-actions-section',
-      icon: <Grid3x3 className="w-6 h-6" />,
-      position: 'top'
-    },
-    {
-      id: 'complete',
-      title: 'أنت جاهز للبدء!',
-      description: 'يمكنك الآن استكشاف المنصة والاستفادة من جميع مميزاتها',
-      target: 'none',
-      icon: <Lightbulb className="w-8 h-8" />,
-      position: 'center'
+const SPOTLIGHT_PADDING = 14;
+const HIGHLIGHT_BORDER = 2;
+const TOOLTIP_MAX_WIDTH = 380;
+const TOOLTIP_APPROX_HEIGHT = 240;
+const SAFE_MARGIN = 16;
+
+interface TargetInfo {
+  rect: DOMRect;
+  element: HTMLElement;
+}
+
+interface SpotlightRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: number;
+}
+
+export default function Tutorial({
+  steps,
+  onComplete,
+  onSkip,
+  open = true,
+}: TutorialProps) {
+  const { t, language } = useLanguage();
+  const isRtl = language === "ar";
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [targetInfo, setTargetInfo] = useState<TargetInfo | null>(null);
+  const [viewport, setViewport] = useState({ width: 0, height: 0 });
+  const [mounted, setMounted] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const currentStep = steps[currentIndex];
+  const hasTarget = Boolean(currentStep.targetId);
+  const targetFound = Boolean(targetInfo);
+  const isCenter = !hasTarget || !targetFound || currentStep.position === "center";
+
+  const updateGeometry = useCallback(() => {
+    setViewport({ width: window.innerWidth, height: window.innerHeight });
+    if (!currentStep.targetId) {
+      setTargetInfo(null);
+      return;
     }
-  ];
-
-  const currentStepData = steps[currentStep];
+    const el = document.getElementById(currentStep.targetId);
+    if (el) {
+      setTargetInfo({ rect: el.getBoundingClientRect(), element: el });
+    } else {
+      setTargetInfo(null);
+    }
+  }, [currentStep.targetId]);
 
   useEffect(() => {
-    if (currentStepData.target !== 'none') {
-      const element = document.getElementById(currentStepData.target);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    setMounted(true);
+    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    updateGeometry();
+
+    const onResize = () => updateGeometry();
+    const onScroll = () => updateGeometry();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [updateGeometry]);
+
+  useEffect(() => {
+    updateGeometry();
+    if (targetInfo && !reducedMotion) {
+      targetInfo.element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
     }
-  }, [currentStep, currentStepData.target]);
+  }, [currentIndex, updateGeometry, targetInfo, reducedMotion]);
+
+  const spotlight: SpotlightRect | null = useMemo(() => {
+    if (!targetInfo) return null;
+    const { rect } = targetInfo;
+    const x = Math.max(0, rect.left - SPOTLIGHT_PADDING);
+    const y = Math.max(0, rect.top - SPOTLIGHT_PADDING);
+    const width = rect.width + SPOTLIGHT_PADDING * 2;
+    const height = rect.height + SPOTLIGHT_PADDING * 2;
+    const radius = Math.min(
+      28,
+      rect.width / 2 + SPOTLIGHT_PADDING,
+      rect.height / 2 + SPOTLIGHT_PADDING
+    );
+    return { x, y, width, height, radius };
+  }, [targetInfo]);
+
+  const tooltipStyle = useMemo(() => {
+    if (!targetInfo) return {};
+    const { rect } = targetInfo;
+    const width = Math.min(TOOLTIP_MAX_WIDTH, viewport.width - SAFE_MARGIN * 2);
+    const gap = 20;
+    let pos = currentStep.position || "bottom";
+
+    const positions = {
+      top: {
+        top: rect.top - gap,
+        left: rect.left + rect.width / 2,
+        transform: "translate(-50%, -100%)",
+      },
+      bottom: {
+        top: rect.bottom + gap,
+        left: rect.left + rect.width / 2,
+        transform: "translate(-50%, 0)",
+      },
+      left: {
+        top: rect.top + rect.height / 2,
+        left: rect.left - gap,
+        transform: "translate(-100%, -50%)",
+      },
+      right: {
+        top: rect.top + rect.height / 2,
+        left: rect.right + gap,
+        transform: "translate(0, -50%)",
+      },
+    };
+
+    let chosen =
+      positions[pos as keyof typeof positions] || positions.bottom;
+
+    // Adaptive flip if tooltip overflows
+    if (
+      pos === "bottom" &&
+      chosen.top + TOOLTIP_APPROX_HEIGHT > viewport.height - SAFE_MARGIN
+    ) {
+      chosen = positions.top;
+    }
+    if (pos === "top" && chosen.top - TOOLTIP_APPROX_HEIGHT < SAFE_MARGIN) {
+      chosen = positions.bottom;
+    }
+
+    let left = chosen.left;
+    if (left - width / 2 < SAFE_MARGIN) left = SAFE_MARGIN + width / 2;
+    if (left + width / 2 > viewport.width - SAFE_MARGIN)
+      left = viewport.width - SAFE_MARGIN - width / 2;
+
+    let top = chosen.top;
+    if (top + TOOLTIP_APPROX_HEIGHT > viewport.height - SAFE_MARGIN)
+      top = viewport.height - SAFE_MARGIN - TOOLTIP_APPROX_HEIGHT;
+    if (top < SAFE_MARGIN) top = SAFE_MARGIN;
+
+    return { top, left, transform: chosen.transform, width };
+  }, [targetInfo, viewport, currentStep.position]);
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    if (currentIndex < steps.length - 1) {
+      setCurrentIndex((i) => i + 1);
     } else {
-      handleComplete();
+      onComplete();
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+  const handleBack = () => {
+    if (currentIndex > 0) setCurrentIndex((i) => i - 1);
   };
 
-  const handleComplete = () => {
-    setIsVisible(false);
-    // Save that tutorial has been completed
-    localStorage.setItem('tutorial_completed', 'true');
-    setTimeout(onComplete, 300);
-  };
+  const handleSkip = () => onSkip();
 
-  const handleSkipTutorial = () => {
-    setIsVisible(false);
-    // Save that tutorial has been skipped
-    localStorage.setItem('tutorial_completed', 'true');
-    setTimeout(onSkip, 300);
-  };
+  const progressLabel = `${currentIndex + 1} ${t("tour.of") || "of"} ${steps.length}`;
 
-  if (!isVisible) return null;
+  if (!mounted || !open) return null;
 
-  // Center modal for welcome and complete steps
-  if (currentStepData.position === 'center') {
-    return (
-      <>
-        {/* Overlay */}
-        <div className="fixed inset-0 bg-black/70 z-[100] transition-opacity duration-300" />
-        
-        {/* Center Modal */}
-        <div className="fixed inset-0 flex items-center justify-center z-[101] p-4" dir="rtl">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl w-[95vw] sm:max-w-lg p-4 sm:p-8 border-2 border-blue-500/30 animate-in fade-in zoom-in duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-slate-500/20 rounded-xl text-blue-400">
-                  {currentStepData.icon}
-                </div>
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white">{currentStepData.title}</h2>
-                  <p className="text-sm text-gray-400 mt-1">
-                    خطوة {currentStep + 1} من {steps.length}
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[10000]"
+      dir={isRtl ? "rtl" : "ltr"}
+      aria-modal="true"
+      role="dialog"
+    >
+      {/* Dim overlay with spotlight cutout */}
+      {spotlight && (
+        <svg
+          className="absolute inset-0 w-full h-full"
+          aria-hidden="true"
+        >
+          <defs>
+            <mask id="tutorial-spotlight-mask">
+              <rect
+                x={0}
+                y={0}
+                width={viewport.width}
+                height={viewport.height}
+                fill="white"
+              />
+              <rect
+                x={spotlight.x}
+                y={spotlight.y}
+                width={spotlight.width}
+                height={spotlight.height}
+                rx={spotlight.radius}
+                ry={spotlight.radius}
+                fill="black"
+              />
+            </mask>
+          </defs>
+          <rect
+            x={0}
+            y={0}
+            width={viewport.width}
+            height={viewport.height}
+            fill="rgba(2, 6, 23, 0.76)"
+            mask="url(#tutorial-spotlight-mask)"
+            className="transition-all duration-500"
+          />
+        </svg>
+      )}
+
+      {/* Center dim for modal-only steps */}
+      {isCenter && !spotlight && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.25 }}
+          className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+        />
+      )}
+
+      {/* Animated spotlight ring */}
+      <AnimatePresence mode="wait">
+        {spotlight && (
+          <motion.div
+            key={`ring-${currentStep.id}`}
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.03 }}
+            transition={
+              reducedMotion
+                ? { duration: 0 }
+                : { type: "spring", stiffness: 300, damping: 30 }
+            }
+            className="absolute pointer-events-none z-[10005]"
+            style={{
+              left: spotlight.x - HIGHLIGHT_BORDER,
+              top: spotlight.y - HIGHLIGHT_BORDER,
+              width: spotlight.width + HIGHLIGHT_BORDER * 2,
+              height: spotlight.height + HIGHLIGHT_BORDER * 2,
+              borderRadius: spotlight.radius + HIGHLIGHT_BORDER,
+              boxShadow:
+                "0 0 0 2px rgba(99, 102, 241, 0.65), 0 0 48px 10px rgba(99, 102, 241, 0.22), inset 0 0 24px rgba(99, 102, 241, 0.12)",
+            }}
+          >
+            <div className="absolute inset-0 rounded-[inherit] border-2 border-indigo-400/80 animate-pulse" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tooltip / Modal card */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`card-${currentStep.id}`}
+          initial={{ opacity: 0, y: 16, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -12, scale: 0.98 }}
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 340, damping: 30 }
+          }
+          className={cn(
+            "absolute z-[10010] pointer-events-auto",
+            isCenter
+              ? "fixed inset-0 flex items-center justify-center p-4"
+              : "max-w-[min(380px,calc(100vw-32px))]"
+          )}
+          style={isCenter ? {} : tooltipStyle}
+        >
+          <div
+            className={cn(
+              "relative overflow-hidden bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/60 shadow-[0_24px_80px_rgba(0,0,0,0.55)]",
+              isCenter ? "w-full max-w-lg rounded-3xl p-6 sm:p-8" : "w-full rounded-2xl p-5"
+            )}
+          >
+            {/* Top shimmer accent */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
+
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3">
+                {currentStep.icon ? (
+                  <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
+                    {currentStep.icon}
+                  </div>
+                ) : null}
+                <div className="min-w-0">
+                  <h3 className="text-lg font-bold text-white leading-tight">
+                    {currentStep.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">
+                    {progressLabel}
                   </p>
                 </div>
               </div>
               <button
-                onClick={handleSkipTutorial}
-                className="text-gray-400 hover:text-white transition-colors p-2"
+                onClick={handleSkip}
+                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors shrink-0"
+                aria-label={t("tour.skip") || "Skip tour"}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              {currentStepData.description}
+            <p className="text-slate-300 text-sm leading-relaxed mb-6">
+              {currentStep.description}
             </p>
 
-            {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex gap-2">
-                {steps.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                      index <= currentStep ? 'bg-slate-500' : 'bg-slate-700'
-                    }`}
-                  />
-                ))}
-              </div>
+            {/* Progress bars */}
+            <div className="flex items-center gap-1.5 mb-5">
+              {steps.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={cn(
+                    "h-1.5 flex-1 rounded-full transition-all duration-300",
+                    idx <= currentIndex ? "bg-indigo-500" : "bg-slate-700"
+                  )}
+                />
+              ))}
             </div>
 
-            {/* Navigation Buttons */}
-            <div className="flex gap-3">
-              {currentStep > 0 && (
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              {currentIndex > 0 && (
                 <button
-                  onClick={handlePrevious}
-                  className="flex-1 py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                  onClick={handleBack}
+                  className="px-4 py-2.5 rounded-xl bg-slate-700/60 hover:bg-slate-700 text-slate-200 text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <ChevronRight className="w-5 h-5" />
-                  السابق
+                  <ChevronRight
+                    className={cn("w-4 h-4", !isRtl && "rotate-180")}
+                  />
+                  {t("tour.back") || "Back"}
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 px-4 bg-slate-600 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/20"
               >
-                {currentStep === steps.length - 1 ? 'ابدأ الآن' : 'التالي'}
-                {currentStep !== steps.length - 1 && <ChevronLeft className="w-5 h-5" />}
+                {currentIndex === steps.length - 1
+                  ? t("tour.finish") || "Finish"
+                  : t("tour.next") || "Next"}
+                <ChevronLeft
+                  className={cn("w-4 h-4", !isRtl && "rotate-180")}
+                />
               </button>
             </div>
 
             <button
-              onClick={handleSkipTutorial}
-              className="w-full mt-4 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+              onClick={handleSkip}
+              className="w-full mt-3 text-xs text-slate-500 hover:text-slate-300 transition-colors font-medium"
             >
-              تخطي الشرح
+              {t("tour.skip") || "Skip tour"}
             </button>
           </div>
-        </div>
-      </>
-    );
-  }
-
-  // Spotlight for specific sections
-  return (
-    <>
-      {/* Overlay with cutout */}
-      <div className="fixed inset-0 z-[100]" style={{ pointerEvents: 'none' }}>
-        <div className="absolute inset-0 bg-black/70" />
-      </div>
-
-      {/* Highlight Target */}
-      <div className="fixed inset-0 z-[101] pointer-events-none">
-        <div
-          id={`tutorial-highlight-${currentStepData.target}`}
-          className="absolute border-4 border-blue-500 rounded-xl shadow-[0_0_50px_rgba(59,130,246,0.5)] animate-pulse"
-          style={{
-            ...((() => {
-              const element = document.getElementById(currentStepData.target);
-              if (!element) return {};
-              const rect = element.getBoundingClientRect();
-              return {
-                top: `${rect.top - 8}px`,
-                left: `${rect.left - 8}px`,
-                width: `${rect.width + 16}px`,
-                height: `${rect.height + 16}px`,
-              };
-            })())
-          }}
-        />
-      </div>
-
-      {/* Tooltip */}
-      <div className="fixed z-[102] pointer-events-auto" dir="rtl">
-        <div
-          className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-2xl w-[95vw] sm:max-w-md p-3 sm:p-6 border-2 border-blue-500/30"
-          style={{
-            ...((() => {
-              const element = document.getElementById(currentStepData.target);
-              if (!element) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-              const rect = element.getBoundingClientRect();
-              
-              if (currentStepData.position === 'top') {
-                return {
-                  top: `${rect.top - 20}px`,
-                  left: `${rect.left + rect.width / 2}px`,
-                  transform: 'translate(-50%, -100%)'
-                };
-              } else if (currentStepData.position === 'bottom') {
-                return {
-                  top: `${rect.bottom + 20}px`,
-                  left: `${rect.left + rect.width / 2}px`,
-                  transform: 'translateX(-50%)'
-                };
-              }
-              return {};
-            })())
-          }}
-        >
-          <div className="flex justify-between items-start mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-slate-500/20 rounded-lg text-blue-400">
-                {currentStepData.icon}
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">{currentStepData.title}</h3>
-                <p className="text-xs text-gray-400">
-                  {currentStep + 1} / {steps.length}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleSkipTutorial}
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          <p className="text-gray-300 mb-4 leading-relaxed">
-            {currentStepData.description}
-          </p>
-
-          {/* Progress Dots */}
-          <div className="flex gap-1.5 mb-4">
-            {steps.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 flex-1 rounded-full transition-all ${
-                  index <= currentStep ? 'bg-slate-500' : 'bg-slate-700'
-                }`}
-              />
-            ))}
-          </div>
-
-          <div className="flex gap-2">
-            {currentStep > 0 && (
-              <button
-                onClick={handlePrevious}
-                className="flex-1 py-2 px-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
-              >
-                <ChevronRight className="w-4 h-4" />
-                السابق
-              </button>
-            )}
-            <button
-              onClick={handleNext}
-              className="flex-1 py-2 px-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
-            >
-              {currentStep === steps.length - 1 ? 'إنهاء' : 'التالي'}
-              {currentStep !== steps.length - 1 && <ChevronLeft className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
-};
+}

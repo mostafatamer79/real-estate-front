@@ -26,7 +26,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant, leases, pa
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                         <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-blue-600">

@@ -14,6 +14,10 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { Role } from "@/types/user";
 
 
+interface QuickActionsProps {
+  id?: string;
+}
+
 interface QuickActionItem {
   id: string;
   title: string;
@@ -35,7 +39,7 @@ const serviceShortcuts: ServiceShortcut[] = [
   { id: "other",        icon: MoreHorizontal,  labelKey: "other"        },
 ];
 
-export default function QuickActions() {
+export default function QuickActions({ id }: QuickActionsProps) {
   const router = useRouter();
   const { t, language } = useLanguage();
   const { settings } = useSettings();
@@ -120,6 +124,7 @@ export default function QuickActions() {
 
   return (
     <motion.div
+      id={id}
       variants={container}
       initial="hidden"
       whileInView="show"

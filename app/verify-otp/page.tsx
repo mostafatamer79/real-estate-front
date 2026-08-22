@@ -175,7 +175,11 @@ export default function VerifyOtpPage() {
         router.push('/details');
       } else {
         hapticSuccess();
-        router.push('/profile');
+        if (data.user?.firstName && data.user?.lastName) {
+          router.push('/details');
+        } else {
+          router.push('/profile');
+        }
       }
     } catch (err: any) {
       console.error('OTP verification error:', err);

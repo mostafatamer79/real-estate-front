@@ -21,9 +21,10 @@ interface PropertyInfoCardsProps {
   operations?: any[];
   marketingRequests?: any[];
   userRole?: string;
+  id?: string;
 }
 
-export default function PropertyInfoCards({ propertyId, operations = [], marketingRequests = [], userRole }: PropertyInfoCardsProps) {
+export default function PropertyInfoCards({ propertyId, operations = [], marketingRequests = [], userRole, id }: PropertyInfoCardsProps) {
   const { t, language } = useLanguage();
   const { settings } = useSettings();
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -68,6 +69,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
   return (
     <>
       <motion.div
+        id={id}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

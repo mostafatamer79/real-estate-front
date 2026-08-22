@@ -70,7 +70,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+            <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] flex flex-col p-0 overflow-hidden">
                 <DialogHeader className="p-3 sm:p-6 pb-2">
                     <DialogTitle className="text-xl sm:text-2xl font-bold flex items-center gap-2">
                         <Calendar className="w-6 h-6 text-slate-700" />
@@ -112,7 +112,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                             </p>
                         </div>
                     ) : (
-                        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+                        <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
                             <div className="space-y-4 pb-6">
                                 {bookings.map((booking) => (
                                     <div 

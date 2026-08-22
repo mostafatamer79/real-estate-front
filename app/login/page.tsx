@@ -64,7 +64,11 @@ export default function SignIn({ onClose }: SignInProps) {
           if (u.role === 'admin') {
             router.push('/details');
           } else {
-            router.push('/profile');
+            if (u.firstName && u.lastName) {
+              router.push('/details');
+            } else {
+              router.push('/profile');
+            }
           }
         } catch {
           router.push('/profile');
@@ -190,7 +194,7 @@ export default function SignIn({ onClose }: SignInProps) {
           <div
             className="bg-slate-900 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative"
           >
-            {onClose && (
+            {typeof onClose === 'function' && (
               <button
                 onClick={onClose}
                 className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
@@ -202,7 +206,7 @@ export default function SignIn({ onClose }: SignInProps) {
 
             <div className="text-center mb-8">
        
-                <h1 className="text-xl sm:text-2xl font-bold mb-2 leading-snug">
+                <h1 className="text-lg sm:text-xl font-bold mb-2 leading-snug">
                   {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
                 </h1>
                 <p className="text-white/60 text-sm">

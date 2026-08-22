@@ -147,7 +147,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             >
                 {/* Hairline top highlight */}
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                <div className='relative flex items-stretch justify-around h-[62px] px-2'>
+                <div className='relative flex items-stretch justify-around h-[66px] px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
@@ -160,29 +160,31 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 key={index}
                                 onClick={() => { if (!isSoon) { hapticTick(); onTabChange(item.id); } }}
                                 aria-current={isActive ? 'page' : undefined}
-                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-2 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-1.5 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 {isActive && (
                                     <motion.span
                                         layoutId="wallet-nav-active-pill"
                                         aria-hidden="true"
-                                        className='absolute inset-x-1 top-1.5 bottom-1.5 rounded-2xl bg-white/[0.10] shadow-[0_0_28px_rgba(255,255,255,0.12),inset_0_1px_0_rgba(255,255,255,0.14)]'
+                                        className='absolute inset-x-0.5 top-1.5 bottom-1.5 rounded-[1.25rem] bg-white/[0.10] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
                                         transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
                                 )}
-                                <img
-                                    src={item.icon}
-                                    alt={item.label}
-                                    className='relative z-10 w-[22px] h-[22px] object-contain'
-                                    style={{
-                                        filter: isActive
-                                            ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.35))'
-                                            : 'brightness(0) invert(0.45)',
-                                    }}
-                                />
+                                <span className='relative z-10 flex items-center justify-center h-7 w-7'>
+                                    <img
+                                        src={item.icon}
+                                        alt={item.label}
+                                        className='w-[26px] h-[26px] object-contain'
+                                        style={{
+                                            filter: isActive
+                                                ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.35))'
+                                                : 'brightness(0) invert(0.75)',
+                                        }}
+                                    />
+                                </span>
                                 <span
-                                    className={`relative z-10 mt-1 text-[11px] leading-none line-clamp-1 w-full px-0.5 text-center transition-colors duration-200 ${
-                                        isActive ? 'text-white font-bold' : 'text-slate-400 font-medium opacity-80'
+                                    className={`relative z-10 mt-1 text-[12px] leading-none line-clamp-1 w-full px-0.5 text-center transition-colors duration-200 ${
+                                        isActive ? 'text-white font-bold' : 'text-slate-300 font-medium opacity-90'
                                     }`}
                                 >
                                     {item.label}
