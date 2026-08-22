@@ -4,7 +4,8 @@ import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsContent } from '@/components/ui/tabs';
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import {
@@ -113,47 +114,47 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
 
 
             <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-4 sm:px-6'}`}>
-                <Tabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
-                    {/* Scrollable Premium Tabs */}
-                    <div className="overflow-x-auto pb-2 hide-scrollbar">
-                        <TabsList className="inline-flex h-auto min-h-11 flex-nowrap sm:flex-wrap items-center gap-1.5 rounded-2xl bg-slate-950/5 p-1.5 border border-slate-950/10 w-full sm:w-auto">
-                            <TabsTrigger value="dashboard" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                <SegmentedTabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
+                    {/* Premium Tabs — wrapping chips on phones, scroll row on desktop */}
+                    <div className="overflow-x-auto pb-2 hide-scrollbar max-md:overflow-visible max-md:pb-0">
+                        <SegmentedList className="inline-flex h-auto min-h-11 flex-nowrap sm:flex-wrap items-center gap-1.5 rounded-2xl bg-slate-950/5 p-1.5 border border-slate-950/10 w-full sm:w-auto max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:min-h-0">
+                            <SegmentedTrigger value="dashboard" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <LayoutDashboard className="w-3.5 h-3.5" />
                                 {t('fin.tab.dashboard')}
-                            </TabsTrigger>
-                            <TabsTrigger value="transactions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="transactions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <Receipt className="w-3.5 h-3.5" />
                                 {t('fin.tab.transactions')}
-                            </TabsTrigger>
-                            <TabsTrigger value="commissions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="commissions" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <Calculator className="w-3.5 h-3.5" />
                                 {t('fin.tab.commissions')}
-                            </TabsTrigger>
-                            <TabsTrigger value="payments" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="payments" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <CreditCard className="w-3.5 h-3.5" />
                                 {t('fin.tab.payments')}
-                            </TabsTrigger>
-                            <TabsTrigger value="expenses" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="expenses" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <Banknote className="w-3.5 h-3.5" />
                                 {t('fin.tab.expenses')}
-                            </TabsTrigger>
-                            <TabsTrigger value="reports" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="reports" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <FileText className="w-3.5 h-3.5" />
                                 {t('fin.tab.reports')}
-                            </TabsTrigger>
-                            <TabsTrigger value="wallet" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="wallet" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <Wallet className="w-3.5 h-3.5" />
                                 {t('fin.tab.wallet')}
-                            </TabsTrigger>
-                            <TabsTrigger value="settlements" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="settlements" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <ShieldCheck className="w-3.5 h-3.5" />
                                 {t('fin.tab.settlements')}
-                            </TabsTrigger>
-                            <TabsTrigger value="service_requests" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap">
+                            </SegmentedTrigger>
+                            <SegmentedTrigger value="service_requests" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <Briefcase className="w-3.5 h-3.5" />
                                 {t('fin.tab.service_requests')}
-                            </TabsTrigger>
-                        </TabsList>
+                            </SegmentedTrigger>
+                        </SegmentedList>
                     </div>
 
                     <AnimatePresence mode="wait">
@@ -216,7 +217,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                              </TabsContent>
                         </motion.div>
                     </AnimatePresence>
-                </Tabs>
+                </SegmentedTabs>
             </div>
 
             {!embedded && (
@@ -295,7 +296,7 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                                 <kpi.icon className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{kpi.label}</p>
+                                <p className="text-[9px] max-md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{kpi.label}</p>
                                 <h3 className="text-lg font-black text-slate-900 transition-colors">
                                   <SaudiRiyalAmount amount={Number(kpi.value || 0)} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-4 w-4 text-slate-400" className="text-lg font-black text-slate-900 transition-colors" />
                                 </h3>
@@ -484,7 +485,51 @@ function TransactionsSection() {
                     <Button variant="outline" className="rounded-xl h-10 px-5 font-black text-[11px] uppercase border hover:bg-muted"><Filter className="w-3.5 h-3.5 ml-2" />{t('common.filter')}</Button>
                 </div>
             </div>
-            <div className="overflow-x-auto hide-scrollbar">
+            {/* Mobile transaction cards */}
+            <div className="md:hidden space-y-3">
+                {loading ? (
+                    <div className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-300" /></div>
+                ) : transactions.length > 0 ? (
+                    transactions.map((tx) => (
+                        <div key={tx.id} className="bg-card rounded-2xl border p-4 shadow-sm">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="font-black text-slate-900 text-sm">{tx.type}</p>
+                                    <p className="text-[10px] font-bold font-mono text-slate-400 uppercase tracking-widest mt-0.5">{tx.id.slice(0, 8)}</p>
+                                </div>
+                                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shrink-0
+                                    ${tx.status === 'completed' ? 'bg-muted text-slate-900 border' : 'bg-muted text-slate-400 border'}`}>
+                                    {t('bm.status.' + tx.status)}
+                                </span>
+                            </div>
+                            <div className="mt-3 flex items-end justify-between gap-3">
+                                <div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('fin.table.amount')}</p>
+                                    <p className="font-black text-slate-900 tabular-nums">{tx.amount.toLocaleString()} <span className="text-[9px] opacity-40"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('fin.table.commission')}</p>
+                                    <p className="font-bold text-slate-500 text-xs tabular-nums">{tx.commissionAmount}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleDelete(tx.id)}
+                                    className="ms-auto h-9 px-3 rounded-xl bg-red-50 text-red-600 text-[11px] font-black active:scale-95 transition-transform"
+                                >
+                                    {t('common.delete') || 'حذف'}
+                                </button>
+                            </div>
+                            <p className="mt-3 pt-3 border-t text-[10px] font-bold text-slate-400">
+                                {new Date(tx.transactionDate).toLocaleDateString('ar-SA')}
+                            </p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-20 text-slate-400 font-black uppercase tracking-widest opacity-30 text-[10px]">{t('fin.noData')}</div>
+                )}
+            </div>
+
+            {/* Desktop transactions table */}
+            <div className="hidden md:block overflow-x-auto">
                 <Table>
                     <TableHeader className="bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                         <TableRow className="hover:bg-transparent">

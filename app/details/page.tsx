@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { motion } from "framer-motion";
-import { ArrowLeft, Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
+import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator
@@ -356,22 +356,8 @@ export default function HomePage() {
       <div className="w-full min-h-dvh-safe bg-slate-950 pt-4 md:pt-12 pb-12 relative overflow-hidden"
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
-        {/* Mobile App Bar */}
-        <div className="flex md:hidden items-center justify-between px-4 sm:px-6 pb-2 relative z-50" style={{ paddingTop: "calc(1rem + env(safe-area-inset-top))" }}>
-          <button 
-            onClick={() => router.back()} 
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white transition-colors"
-          >
-            <ArrowLeft className={`w-5 h-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
-          </button>
-          <div className="text-sm font-bold text-white tracking-widest uppercase">
-             {t("common.back") || "رجوع"}
-          </div>
-          <div className="w-10 h-10" />
-        </div>
-
-
         {/* Ambient background glows */}
+        <div className="wow-aurora md:hidden" aria-hidden="true" />
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
           <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
@@ -451,8 +437,8 @@ export default function HomePage() {
                         }} 
                       />
                     </div>
-                    <h2 
-                      className="text-base font-bold text-slate-300 tracking-tight"
+                    <h2
+                      className="text-base font-bold text-slate-300 tracking-tight wow-accent"
                       style={{
                         color: customTitleColor || undefined,
                         fontSize: customTitleSize ? `${customTitleSize}px` : undefined,

@@ -484,7 +484,11 @@
 
 /* ============================================================
    FIX: Tabs (TabsList + TabsTrigger) scoped to glass-themed pages only
+   Desktop-only (>=768px): on phones the SegmentedTabs component
+   renders wrapping chips instead, so these !important rules would
+   otherwise fight it.
    ============================================================ */
+@media (min-width: 768px) {
 .services-form-root [role="tablist"],
 .orders-page-root [role="tablist"],
 .subscriptions-page-root [role="tablist"],
@@ -532,6 +536,7 @@
 .wallet-page-root [role="tab"]:hover {
   color: #0f172a !important;
   background-color: rgba(255, 255, 255, 0.5) !important;
+}
 }
 
 /* ============================================================
@@ -746,5 +751,197 @@ nav.fixed[class*="bottom"] {
 @media (max-width: 768px) {
   .pb-nav-safe {
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================
+   MOBILE "WOW" LAYER — phones only (<768px), desktop untouched
+   Premium press feedback, card depth, focus glows, reveals.
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* --- Satisfying press feedback on every interactive element --- */
+  button:not([disabled]),
+  a[role="button"],
+  [role="button"]:not([disabled]),
+  [role="tab"],
+  label[role="button"],
+  input[type="submit"] {
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.18s ease, box-shadow 0.25s ease !important;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  button:not([disabled]):active,
+  a[role="button"]:active,
+  [role="tab"]:active {
+    transform: scale(0.96) !important;
+    filter: brightness(1.06);
+  }
+
+  /* --- Premium card depth for surface cards on phones --- */
+  .bg-card.rounded-xl,
+  .bg-card.rounded-2xl,
+  .bg-card.rounded-\[1rem\],
+  .bg-card.rounded-3xl,
+  .premium-card,
+  .platform-card {
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 8px 24px -8px rgba(15, 23, 42, 0.10) !important;
+  }
+
+  /* Dark pages: soft luminous depth instead of gray shadows */
+  .bg-slate-950 .bg-card\/\[0\.02\],
+  .bg-slate-950 .bg-card\/5,
+  .details-page-dark [class*="rounded"] {
+    will-change: transform;
+  }
+
+  /* --- Focus glow (keyboard-less devices rarely see it, but cheap) --- */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  /* --- Scroll reveal utility (opt-in class) --- */
+  .wow-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: wowReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  @keyframes wowReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger helper for lists */
+  .wow-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: wowReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .wow-stagger > *:nth-child(1) { animation-delay: 40ms; }
+  .wow-stagger > *:nth-child(2) { animation-delay: 90ms; }
+  .wow-stagger > *:nth-child(3) { animation-delay: 140ms; }
+  .wow-stagger > *:nth-child(4) { animation-delay: 190ms; }
+  .wow-stagger > *:nth-child(5) { animation-delay: 240ms; }
+  .wow-stagger > *:nth-child(6) { animation-delay: 290ms; }
+  .wow-stagger > *:nth-child(n+7) { animation-delay: 340ms; }
+
+  /* --- Gradient hairline accent for section titles (opt-in) --- */
+  .wow-accent {
+    position: relative;
+    padding-bottom: 10px;
+  }
+  .wow-accent::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: 0;
+    width: 44px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(129,140,248,0.9), rgba(99,102,241,0.35), transparent);
+  }
+  [dir="rtl"] .wow-accent::after {
+    background: linear-gradient(-90deg, rgba(129,140,248,0.9), rgba(99,102,241,0.35), transparent);
+  }
+
+  /* --- Ambient aurora blobs (fixed, GPU-cheap, behind content) --- */
+  .wow-aurora {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .wow-aurora::before,
+  .wow-aurora::after {
+    content: "";
+    position: absolute;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: 0.14;
+    will-change: transform;
+  }
+  .wow-aurora::before {
+    background: radial-gradient(circle at center, #6366f1, transparent 65%);
+    top: -20vmax;
+    inset-inline-start: -15vmax;
+    animation: auroraDrift 26s ease-in-out infinite alternate;
+  }
+  .wow-aurora::after {
+    background: radial-gradient(circle at center, #334155, transparent 65%);
+    bottom: -25vmax;
+    inset-inline-end: -18vmax;
+    animation: auroraDrift 32s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes auroraDrift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(6vmax, 4vmax, 0) scale(1.12); }
+  }
+
+  /* --- Shine sweep for primary CTAs (opt-in) --- */
+  .wow-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .wow-shine::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 45%;
+    inset-inline-start: -60%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.28), transparent);
+    transform: skewX(-18deg);
+    animation: wowShine 4.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes wowShine {
+    0%, 55% { inset-inline-start: -60%; }
+    85%, 100% { inset-inline-start: 130%; }
+  }
+
+  /* --- Number pop-in for counters/badges --- */
+  .wow-pop {
+    animation: wowPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes wowPop {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* --- Shimmer skeleton (opt-in loading placeholders) --- */
+  .wow-skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(148, 163, 184, 0.18);
+  }
+  .wow-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: wowShimmer 1.6s infinite;
+  }
+  @keyframes wowShimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  /* Full-width toasts on phones */
+  section[aria-label*="Notifications"], 
+  .go2072408551 {
+    max-width: calc(100vw - 24px) !important;
   }
 }

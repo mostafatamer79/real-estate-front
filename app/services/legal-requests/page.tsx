@@ -1,5 +1,6 @@
 "use client";
 import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+import { hapticTick, hapticSuccess, hapticError } from "@/lib/haptics";
 
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -83,11 +84,17 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
         body: JSON.stringify({ decision }),
       });
       if (res.ok) {
+        hapticSuccess();
         setActionMessage({ id, type: "success", text: t(decision === "accepted" ? "legal.decision.successAccept" : "legal.decision.successReject") });
         await fetchRequests();
-      } else setActionMessage({ id, type: "error", text: t("legal.decision.error") });
-    } catch { setActionMessage({ id, type: "error", text: t("legal.decision.error") }); }
-    finally { setActionLoading(null); }
+      } else {
+        hapticError();
+        setActionMessage({ id, type: "error", text: t("legal.decision.error") });
+      }
+    } catch {
+      hapticError();
+      setActionMessage({ id, type: "error", text: t("legal.decision.error") });
+    } finally { setActionLoading(null); }
   };
 
   return (
@@ -124,7 +131,20 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
       </div>
       )}
 
-      <div className={`${embedded ? '' : 'relative z-10 max-w-3xl mx-auto px-6 py-10'}`}>
+      <div className={`${embedded ? '' : 'relative z-10 max-w-3xl mx-auto px-4 sm:px-6 py-6 md:py-10'}`}>
+
+        {/* Mobile floating "New request" button */}
+        {!embedded && (
+          <Link
+            href="/services/form?type=legal"
+            onClick={() => hapticTick()}
+            className="md:hidden fixed bottom-[88px] z-40 ltr:right-4 rtl:left-4 h-12 pl-5 pr-4 rounded-full bg-card text-slate-950 shadow-[0_8px_30px_rgba(0,0,0,0.45)] flex items-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-transform"
+            style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+          >
+            <Plus className="w-4 h-4" />
+            {isRtl ? "جديد" : "New"}
+          </Link>
+        )}
 
         {/* Loading */}
         {isLoading && (
@@ -152,7 +172,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
         {/* Empty */}
         {!isLoading && !error && requests.length === 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 sm:py-40 gap-4 md:gap-8 text-center">
-            <div className="w-24 h-24 rounded-[1.25rem] border border-white/10 bg-card/[0.02] flex items-center justify-center">
+            <div className="w-24 h-24 rounded-[1.25rem] border border-white/10 bg-card/[0.02] flex items-center justify-center wow-pop">
               <Scale className="w-10 h-10 text-white/10" />
             </div>
             <div>

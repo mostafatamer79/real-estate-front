@@ -3,7 +3,8 @@ import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsContent } from '@/components/ui/tabs';
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { 
   Camera, Megaphone, ClipboardList, 
   Sparkles, Info, LayoutDashboard
@@ -107,23 +108,23 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
 
 
             <div className={`${embedded ? '' : 'max-w-7xl mx-auto px-6'}`}>
-                <Tabs defaultValue="advertising" className="w-full space-y-10" onValueChange={setActiveTab} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                <SegmentedTabs defaultValue="advertising" className="w-full space-y-10" onValueChange={setActiveTab} dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <div className="flex flex-col items-center gap-3 md:gap-6 w-full">
-                        <div className="w-[95vw] sm:max-w-3xl overflow-x-auto pb-2 hide-scrollbar">
-                            <TabsList className="inline-flex h-auto items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400">
-                                <TabsTrigger value="advertising" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
+                        <div className="w-[95vw] sm:max-w-3xl overflow-x-auto pb-2 hide-scrollbar max-md:w-full max-md:overflow-visible max-md:pb-0">
+                            <SegmentedList className="inline-flex h-auto items-center justify-center rounded-[1.25rem] bg-card border border p-2 w-full min-w-max md:min-w-0 shadow-xl shadow-stone-400 max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:shadow-none">
+                                <SegmentedTrigger value="advertising" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6 max-md:min-w-[46%] max-md:justify-center max-md:rounded-full">
                                     <span>{t('marketing.tab.ads')}</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="photography" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
+                                </SegmentedTrigger>
+                                <SegmentedTrigger value="photography" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.photography')}</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
+                                </SegmentedTrigger>
+                                <SegmentedTrigger value="requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.requests')}</span>
-                                </TabsTrigger>
-                                <TabsTrigger value="general_requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
+                                </SegmentedTrigger>
+                                <SegmentedTrigger value="general_requests" className="flex-1 rounded-[1rem] h-12 sm:h-16 gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-[10px] sm:text-xs transition-all duration-300 px-3 sm:px-6">
                                     <span>{t('marketing.tab.general_requests')}</span>
-                                </TabsTrigger>
-                            </TabsList>
+                                </SegmentedTrigger>
+                            </SegmentedList>
                         </div>
                     </div>
 
@@ -156,7 +157,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                             </TabsContent>
                         </motion.div>
                     </AnimatePresence>
-                </Tabs>
+                </SegmentedTabs>
             </div>
             
         </div>

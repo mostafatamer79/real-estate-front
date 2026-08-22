@@ -28,10 +28,10 @@ import {
   SaudiRiyalIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Header from '@/app/src/components/Header';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
 import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+import PullToRefresh from '@/components/shared/PullToRefresh';
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -120,9 +120,8 @@ export default function MyServiceRequestsPage() {
     const acceptedOffer = selectedRequest.metadata?.acceptedOffer;
     return (
       <div className="min-h-screen bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <Header />
       <MobileAppHeader title={language === 'ar' ? 'تفاصيل الطلب' : 'Request Details'} theme="light" />
-        <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-12">
           <Button
             variant="ghost"
             className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
@@ -264,11 +263,11 @@ export default function MyServiceRequestsPage() {
   }
 
   return (
+    <PullToRefresh onRefresh={fetchRequests}>
     <div className="min-h-screen bg-card" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <Header />
       <MobileAppHeader title={language === 'ar' ? 'طلباتي' : 'My Requests'} theme="light" />
 
-      <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-12">
         <Button
           variant="ghost"
           className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
@@ -298,15 +297,29 @@ export default function MyServiceRequestsPage() {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <div className="relative w-16 h-16">
-              <div className="absolute inset-0 border-4 border rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-slate-500 rounded-full border-t-transparent animate-spin"></div>
-            </div>
-            <p className="text-slate-400 font-medium animate-pulse">{t('common.loading')}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-card rounded-2xl border border p-4 shadow-sm space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="wow-skeleton h-9 w-9 rounded-xl" />
+                  <div className="wow-skeleton h-6 w-20 rounded-full" />
+                </div>
+                <div className="space-y-2">
+                  <div className="wow-skeleton h-4 w-3/4 rounded-lg" />
+                  <div className="wow-skeleton h-3 w-1/2 rounded-lg" />
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border">
+                  <div className="flex -space-x-2 rtl:space-x-reverse">
+                    <div className="wow-skeleton h-8 w-8 rounded-full ring-2 ring-white" />
+                    <div className="wow-skeleton h-8 w-8 rounded-full ring-2 ring-white" />
+                  </div>
+                  <div className="wow-skeleton h-4 w-16 rounded-lg" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : requests.length === 0 ? (
-          <div className="bg-card rounded-2xl border border-dashed border p-12 text-center">
+          <div className="bg-card rounded-2xl border border-dashed border p-12 text-center wow-pop">
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8 text-slate-300" />
             </div>
@@ -366,7 +379,7 @@ export default function MyServiceRequestsPage() {
                   </div>
                 </div>
 
-                <div className="absolute bottom-4 right-6 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                <div className="absolute bottom-4 right-6 opacity-40 transition-all">
                   <ChevronRight className={`w-4 h-4 text-slate-500 ${language === 'ar' ? 'rotate-180' : ''}`} />
                 </div>
               </div>
@@ -392,7 +405,7 @@ export default function MyServiceRequestsPage() {
                   key={p}
                   variant={page === p ? "default" : "ghost"}
                   onClick={() => setPage(p)}
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
+                  className={`w-10 h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
                 >
                   {p}
                 </Button>
@@ -411,5 +424,6 @@ export default function MyServiceRequestsPage() {
         )}
       </main>
     </div>
+    </PullToRefresh>
   );
 }

@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
 import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
+import { hapticTick } from "@/lib/haptics";
 import SoonBadge from "./SoonBadge";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -129,7 +130,7 @@ export default function QuickActions() {
       {/* ── Main Quick Actions ── */}
       <div className="
         w-full flex items-center justify-between gap-3 md:gap-3 md:gap-6
-        px-6 py-6
+        px-6 py-6 max-md:px-3 max-md:py-5 max-md:gap-1.5
         bg-gradient-to-b from-slate-800 to-slate-900
         border border-slate-700/60
         rounded-[1rem]
@@ -146,7 +147,7 @@ export default function QuickActions() {
           if (settings.sectionFlags[flagKey] === 'hidden') return null;
 
           return (
-            <div key={action.id} className="flex flex-col items-center shrink-0">
+            <div key={action.id} className="flex flex-col items-center shrink-0 max-md:flex-1 max-md:min-w-0">
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
@@ -154,6 +155,7 @@ export default function QuickActions() {
                   whileHover={{ scale: 1.12, y: -8 }}
                   whileTap={{ scale: 0.92 }}
                   onClick={() => {
+                    hapticTick();
                     const flagKey = action.id === 'requests' ? 'orders' : action.id;
                     if (settings.sectionFlags[flagKey] === 'hidden' || settings.sectionFlags[flagKey] === 'closed') return;
 
@@ -167,7 +169,7 @@ export default function QuickActions() {
                   }}
                   className={`
                     group relative
-                    w-16 h-16 md:w-24 md:h-24
+                    w-16 h-16 max-md:w-full max-md:max-w-[58px] max-md:h-auto max-md:aspect-square md:w-24 md:h-24
                     rounded-2xl md:rounded-3xl
                     bg-gradient-to-br from-slate-700/60 to-slate-800/80
                     border border-slate-700/50
@@ -204,7 +206,7 @@ export default function QuickActions() {
                 {action.title}
               </TooltipContent>
             </Tooltip>
-            <span className="text-xs mt-1 md:hidden text-slate-200 text-center">{action.title}</span>
+            <span className="text-xs mt-1 md:hidden text-slate-200 text-center max-md:text-[10px] max-md:leading-tight max-md:mt-1.5">{action.title}</span>
             </div>
           );
         })}

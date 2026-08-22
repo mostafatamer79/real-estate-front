@@ -1,5 +1,6 @@
 "use client";
 import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+import PullToRefresh from '@/components/shared/PullToRefresh';
 
 
 import React, { useState, useEffect } from "react";
@@ -155,8 +156,34 @@ export default function NormalChatPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-muted pb-12" dir="rtl">
+        <div className="px-4 py-6 mx-auto max-w-5xl space-y-6">
+          {/* Skeleton — chat header card */}
+          <div className="rounded-2xl border border bg-card p-4 sm:p-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="wow-skeleton h-12 w-12 rounded-xl shrink-0" />
+              <div className="space-y-2 flex-1">
+                <div className="wow-skeleton h-5 w-36 rounded-lg" />
+                <div className="wow-skeleton h-3.5 w-64 max-w-full rounded-lg" />
+              </div>
+            </div>
+          </div>
+          {/* Skeleton — search */}
+          <div className="wow-skeleton h-14 rounded-xl" />
+          {/* Skeleton — chat rows */}
+          <div className="space-y-3">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="rounded-2xl border border bg-card p-4 shadow-sm flex items-center gap-4">
+                <div className="wow-skeleton h-12 w-12 rounded-full shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="wow-skeleton h-4 w-1/3 rounded-lg" />
+                  <div className="wow-skeleton h-3 w-2/3 rounded-lg" />
+                </div>
+                <div className="wow-skeleton h-3 w-10 rounded-lg shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -164,10 +191,11 @@ export default function NormalChatPage() {
   const unreadTotal = chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
 
   return (
+    <PullToRefresh onRefresh={() => fetchChats()}>
     <div className="min-h-screen bg-muted pb-12" dir="rtl">
       <MobileAppHeader theme="light" title="محادثاتي" />
       <div className="px-4 py-6 mx-auto max-w-5xl space-y-6">
-      <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm wow-reveal">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white">
@@ -212,7 +240,7 @@ export default function NormalChatPage() {
 
       <div className="grid grid-cols-1 gap-3">
         {filteredChats.length === 0 ? (
-          <div className="rounded-2xl border border bg-card p-14 text-center shadow-sm">
+          <div className="rounded-2xl border border bg-card p-14 text-center shadow-sm wow-pop">
             <MessageCircle className="mx-auto mb-4 h-16 w-16 text-slate-200" />
             <h3 className="text-lg font-black text-slate-800">لا توجد محادثات مطابقة</h3>
             <p className="mt-1 text-sm font-bold text-slate-400">جرّب بحثًا آخر أو ابدأ محادثة من صفحة العرض أو الطلب.</p>
@@ -266,5 +294,6 @@ export default function NormalChatPage() {
       </div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }

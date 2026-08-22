@@ -1,5 +1,7 @@
 "use client";
 import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+import PullToRefresh from '@/components/shared/PullToRefresh';
+import { hapticTick } from "@/lib/haptics";
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -10,7 +12,7 @@ import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer, Booking } from "@/types/api";
 import { User } from "@/types/user";
 import ChatButton from "@/components/chat/chat-button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import OfferAppointmentsModal from "@/components/modals/offer-appointments-modal";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
@@ -387,6 +389,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
 
   // Final Render
   return (
+    <PullToRefresh onRefresh={fetchOffers}>
     <section className="offers-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-12 flex flex-col lg:flex-row" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <MobileAppHeader theme="light" title={t('action.offers') || 'العروض'} />
       <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
@@ -394,8 +397,9 @@ const MeterIcon = ({ className }: { className?: string }) => (
       <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
       {/* Mobile filter toggle button */}
       <button
-        onClick={() => setIsFilterOpen(!isFilterOpen)}
-        className="fixed bottom-6 right-6 z-50 lg:hidden w-12 h-12 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center"
+        onClick={() => { hapticTick(); setIsFilterOpen(!isFilterOpen); }}
+        className="fixed bottom-[88px] z-50 lg:hidden w-13 h-13 p-3.5 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+        style={{ marginBottom: 'env(safe-area-inset-bottom)', insetInlineEnd: '1.5rem' }}
       >
         <TableOfContents className="w-5 h-5" />
       </button>
@@ -412,7 +416,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
 
       {/* Sidebar - Filters */}
       <div className={`
-        fixed top-16 h-[calc(100dvh-64px)] w-80 max-w-[85vw] bg-card border-l border shadow-lg overflow-y-auto z-40 transition-transform duration-300
+        fixed inset-y-0 lg:top-16 lg:inset-y-auto lg:h-[calc(100dvh-64px)] w-80 max-w-[85vw] bg-card border-l border shadow-lg overflow-y-auto z-40 transition-transform duration-300
         ${language === 'ar' ? 'right-0 border-l' : 'left-0 border-r'}
         ${isFilterOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
         lg:translate-x-0
@@ -491,19 +495,37 @@ const MeterIcon = ({ className }: { className?: string }) => (
       </div>
 
       <div className={`flex-1 w-full relative z-10 ${language === 'ar' ? 'lg:mr-80' : 'lg:ml-80'}`}>
-        {loading && <div className="flex items-center justify-center h-dvh-safe"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div></div>}
+        {loading && (
+          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
+            <div className="wow-skeleton h-12 w-full rounded-2xl mb-6 max-md:!grid-cols-2" />
+            <div className="space-y-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="bg-card border border rounded-2xl p-4 shadow-sm space-y-3">
+                  <div className="wow-skeleton h-5 w-2/3 rounded-lg" />
+                  <div className="wow-skeleton h-3.5 w-1/3 rounded-lg" />
+                  <div className="wow-skeleton h-3 w-full rounded-lg" />
+                  <div className="wow-skeleton h-3 w-4/5 rounded-lg" />
+                  <div className="flex gap-2 pt-1">
+                    <div className="wow-skeleton h-9 flex-1 rounded-xl" />
+                    <div className="wow-skeleton h-9 flex-1 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {error && !loading && <div className="flex items-center justify-center h-dvh-safe text-center"><AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" /><h3 className="text-lg font-semibold text-gray-700 mb-2">حدث خطأ</h3><p className="text-gray-500 mb-4">{error}</p><button onClick={fetchOffers} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">محاولة مرة أخرى</button></div>}
         
         {!loading && !error && (
           <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
               {user?.id && (
-                <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full md:w-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  <TabsList className="grid w-full h-auto grid-cols-1 md:grid-cols-2 lg:w-[450px]">
-                    <TabsTrigger value="all" className="flex items-center gap-2"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</TabsTrigger>
-                    <TabsTrigger value="appointments" className="flex items-center gap-2"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</TabsTrigger>
-                  </TabsList>
-                </Tabs>
+                <SegmentedTabs value={activeTab} onValueChange={(val) => setActiveTab(val as "all" | "my" | "appointments")} className="w-full md:w-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                  <SegmentedList className="grid w-full h-auto grid-cols-1 md:grid-cols-2 lg:w-[450px] max-md:!grid-cols-2">
+                    <SegmentedTrigger value="all" className="flex items-center gap-2 max-md:justify-center max-md:rounded-full"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</SegmentedTrigger>
+                    <SegmentedTrigger value="appointments" className="flex items-center gap-2 max-md:justify-center max-md:rounded-full"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</SegmentedTrigger>
+                  </SegmentedList>
+                </SegmentedTabs>
               )}
             </div>
 
@@ -526,18 +548,18 @@ const MeterIcon = ({ className }: { className?: string }) => (
             )}
 
             <div className="mb-6"><p className="text-gray-600">{t('offers.results').replace('{count}', filteredOffers.length.toString())}</p></div>
-            <div className="space-y-4">
+            <div className="space-y-4 wow-stagger max-md:space-y-3">
               {filteredOffers.length > 0 ? filteredOffers.map((offer) => {
                 const sellerName = offer.user ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() : t('offers.owner');
                 return (
-                  <div key={offer.id} className="bg-card border border rounded-lg p-3 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <h2 className="text-lg font-bold text-gray-800 mb-3">{offer.address}</h2>
+                  <div key={offer.id} className="bg-card border border rounded-lg p-3 sm:p-6 shadow-sm hover:shadow-md transition-shadow max-md:rounded-2xl max-md:p-4">
+                    <h2 className="text-lg font-bold text-gray-800 mb-3 max-md:text-base max-md:font-black">{offer.address}</h2>
                     <div className="flex items-center gap-2 mb-3 text-sm"><span className="font-semibold text-gray-700">{sellerName}</span><span className="text-gray-400 mr-auto">•</span><span className="text-gray-500">{offer.timeAgo}</span></div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4">{offer.description}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4 max-md:line-clamp-3">{offer.description}</p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 border-t border pt-4">
-                      <div className="flex items-center gap-4 flex-wrap"><div className="flex items-center"><MeterIcon className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><SaudiRiyalIcon className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <button onClick={() => window.location.href = `/offers/${offer.id}`} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-muted transition-colors text-sm">{t('offers.details')}</button>
+                      <div className="flex items-center gap-4 flex-wrap max-md:bg-muted/70 max-md:rounded-xl max-md:px-3 max-md:py-2.5 max-md:w-fit"><div className="flex items-center"><MeterIcon className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><SaudiRiyalIcon className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800 max-md:text-base"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
+                      <div className="flex items-center gap-3 flex-wrap max-md:gap-2">
+                        <button onClick={() => { hapticTick(); window.location.href = `/offers/${offer.id}`; }} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-muted transition-colors text-sm max-md:flex-1 max-md:h-11 max-md:rounded-xl max-md:font-bold active:scale-[0.97] transition-transform">{t('offers.details')}</button>
                         {(user?.id === offer.userId || user?.id === offer.user?.id) && (<button onClick={() => { setSelectedOfferId(offer.id); setSelectedOfferTitle(offer.address); setIsAppointmentsModalOpen(true); }} className="px-4 py-2 bg-muted text-slate-700 rounded-lg hover:bg-muted transition-colors text-sm font-medium">{language === 'ar' ? 'عرض المواعيد' : 'View Appointments'}</button>)}
                         {user && offer.userId && offer.user && (<ChatButton offerId={offer.id} offerTitle={`${offer.propertyType} في ${offer.city}`} sellerId={offer.userId} sellerName={offer.user ? `${offer.user.firstName} ${offer.user.lastName}` : 'المعلن'} userId={user.id} userName={user.firstName || ''} />)}
                       </div>
@@ -545,7 +567,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
                   </div>
                 );
               }) : (
-                <div className="bg-card border border rounded-2xl p-6 sm:p-12 text-center shadow-sm">
+                <div className="bg-card border border rounded-2xl p-6 sm:p-12 text-center shadow-sm wow-pop">
                   <TableOfContents className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-700 mb-2">{activeTab === 'appointments' ? (language === 'ar' ? 'لا توجد مواعيد' : 'No appointments found') : (language === 'ar' ? 'لا توجد عروض' : 'No offers found')}</h3>
                   <p className="text-gray-500 mb-6">{activeTab === 'appointments' ? (language === 'ar' ? 'لم يتم العثور على أي مواعيد قادمة' : 'No upcoming appointments found') : (offers.length === 0 ? (language === 'ar' ? 'لا يوجد عروض متاحة حالياً' : 'No offers available at the moment') : (language === 'ar' ? 'لم يتم العثور على عروض تطابق معايير البحث' : 'No offers match your search criteria'))}</p>
@@ -557,5 +579,6 @@ const MeterIcon = ({ className }: { className?: string }) => (
       </div>
       <OfferAppointmentsModal isOpen={isAppointmentsModalOpen} onClose={() => setIsAppointmentsModalOpen(false)} offerId={selectedOfferId} propertyTitle={selectedOfferTitle} />
     </section>
+    </PullToRefresh>
   );
 }

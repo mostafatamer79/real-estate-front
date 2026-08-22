@@ -68,7 +68,8 @@ import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -961,15 +962,15 @@ export default function OfferDetailsPage() {
         </Card>
 
         {/* Tabbed view for Details and Attachments */}
-        <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 h-12 bg-muted/80 p-1 rounded-2xl">
-            <TabsTrigger value="details" className="rounded-xl text-sm font-black transition-all">
+        <SegmentedTabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 h-12 bg-muted/80 p-1 rounded-2xl max-md:!grid-cols-2 max-md:h-auto">
+            <SegmentedTrigger value="details" className="rounded-xl text-sm font-black transition-all max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
               {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
-            </TabsTrigger>
-            <TabsTrigger value="media" className="rounded-xl text-sm font-black transition-all">
+            </SegmentedTrigger>
+            <SegmentedTrigger value="media" className="rounded-xl text-sm font-black transition-all max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
               {language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}
-            </TabsTrigger>
-          </TabsList>
+            </SegmentedTrigger>
+          </SegmentedList>
 
           <TabsContent value="details" className="space-y-6 outline-none focus:outline-none">
             <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
@@ -1167,7 +1168,7 @@ export default function OfferDetailsPage() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </SegmentedTabs>
       </div>
     );
   };
@@ -1388,7 +1389,7 @@ export default function OfferDetailsPage() {
                 <span>تفاصيل العرض</span>
               </div>
 
-              <h1 className="text-2xl md:text-xl sm:text-3xl font-bold text-gray-800">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
                 {offer.propertyType} في {offer.city}
               </h1>
 
@@ -1456,7 +1457,7 @@ export default function OfferDetailsPage() {
                     onClick={() => setIsReportModalOpen(true)}
                   >
                     <Flag className="w-4 h-4" />
-                    <span className="hidden sm:inline mr-2">إبلاغ</span>
+                    <span className="mr-2">إبلاغ</span>
                   </Button>
                 )}
               </div>
@@ -1466,7 +1467,7 @@ export default function OfferDetailsPage() {
                 className="flex items-center gap-2 h-10 sm:h-9"
               >
                 <ArrowRight className="w-5 h-5" />
-                <span className="hidden md:inline">رجوع</span>
+                <span className="hidden min-[400px]:inline">رجوع</span>
               </Button>
             </div>
           </div>

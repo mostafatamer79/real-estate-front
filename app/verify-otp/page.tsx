@@ -3,8 +3,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useSettings } from "@/context/SettingsContext";
+import { hapticSuccess, hapticError } from "@/lib/haptics";
 import { Role } from "@/types/user";
 
 export default function VerifyOtpPage() {
@@ -16,6 +20,7 @@ export default function VerifyOtpPage() {
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
   const { t, language } = useLanguage();
   const router = useRouter();
+  const { settings } = useSettings();
 
   useEffect(() => {
     // Get email/phone from localStorage
@@ -166,12 +171,15 @@ export default function VerifyOtpPage() {
       const hasDepartmentAccess = [...assignedDepartments, ...permissionDepartments].length > 0;
 
       if (data.user?.role === 'admin') {
+        hapticSuccess();
         router.push('/details');
       } else {
+        hapticSuccess();
         router.push('/profile');
       }
     } catch (err: any) {
       console.error('OTP verification error:', err);
+      hapticError();
       // Try to translate if key exists (err.message), else show generic invalid
       // If the backend sends specific keys like "auth.user_not_found", t() will translate them.
       // If it sends generic English text not in our keys, t() returns the key (the text).
@@ -229,11 +237,35 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-3 sm:p-6 pt-4">
-      <div className="w-[95vw] sm:max-w-md">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-3 sm:p-6 pt-4 relative overflow-hidden">
+      {/* Ambient aurora (mobile) */}
+      <div className="wow-aurora md:hidden" aria-hidden="true" />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% -10%, rgba(255,255,255,0.05) 0%, transparent 60%)' }} aria-hidden="true" />
+
+      <div className="w-[95vw] sm:max-w-md relative z-10">
+        {/* Mobile hero logo */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          className="md:hidden flex justify-center mb-6"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-indigo-500/25 blur-2xl rounded-full animate-pulse" />
+            <Image
+              src={settings?.logoWhiteUrl || '/icons/white.png'}
+              alt={t('project.name')}
+              width={160}
+              height={48}
+              className="relative object-contain w-auto h-11 drop-shadow-[0_4px_24px_rgba(255,255,255,0.15)]"
+              priority
+            />
+          </div>
+        </motion.div>
+
         <button
           onClick={() => router.back()}
-          className="mb-8 flex items-center gap-2 text-white/80 hover:text-white"
+          className="mb-8 flex items-center gap-2 text-white/80 hover:text-white active:scale-95 transition-transform"
         >
           <ArrowLeft className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />
           {t('common.back')}
@@ -247,7 +279,7 @@ export default function VerifyOtpPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className={`flex justify-center gap-1.5 sm:gap-3 ${language==='ar' ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex justify-center gap-2 sm:gap-3 ${language==='ar' ? 'flex-row-reverse' : ''}`}>
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -260,7 +292,7 @@ export default function VerifyOtpPage() {
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onFocus={() => setInputIndex(index)}
                   disabled={isLoading}
-                  className="w-9 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-2xl font-bold bg-slate-800 border border-slate-700 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50 transition-all"
+                  className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black bg-slate-800/90 border border-slate-700 rounded-xl focus:border-indigo-400/70 focus:bg-slate-800 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] focus:outline-none disabled:opacity-50 transition-all"
                   dir="ltr" // Keep LTR for numbers
                   autoComplete="one-time-code"
                   style={{
@@ -279,7 +311,7 @@ export default function VerifyOtpPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+              <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                 <p className="text-red-300 text-sm text-center">{error}</p>
               </div>
             )}
@@ -287,7 +319,7 @@ export default function VerifyOtpPage() {
             <div className="text-center">
               <p className="text-white/60">
                 {t('otp.timeLeft')}{" "}
-                <span className={`font-medium ${timer < 60 ? "text-red-400" : "text-green-400"}`}>
+                <span className={`font-mono font-bold ${timer < 60 ? "text-red-400" : "text-green-400"}`}>
                   {formatTime(timer)}
                 </span>
               </p>
@@ -298,7 +330,7 @@ export default function VerifyOtpPage() {
             <button
               type="submit"
               disabled={isLoading || otp.join('').length !== 6}
-              className="w-full py-3 bg-slate-600 hover:bg-slate-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3.5 bg-slate-600 hover:bg-slate-500 rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] wow-shine"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -315,7 +347,7 @@ export default function VerifyOtpPage() {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={isLoading}
-                className="w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium disabled:opacity-50 transition-colors"
+                className="w-full py-3.5 bg-slate-800 hover:bg-slate-700 rounded-2xl font-bold disabled:opacity-50 transition-all active:scale-[0.98]"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">

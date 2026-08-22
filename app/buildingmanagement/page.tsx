@@ -101,7 +101,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import {
@@ -3396,11 +3397,11 @@ function BuildingManagementContent({
     <div className="bg-card p-4 rounded-xl shadow-sm border border">
       <h1 className="text-lg font-bold text-gray-800 mb-4">{t('bm.title.users')}</h1>
       
-      <Tabs value={activeUserTab} onValueChange={(v) => setActiveUserTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-        <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
-          <TabsTrigger value="new">{t('bm.users.newTitle')}</TabsTrigger>
-          <TabsTrigger value="list">{t('bm.users.title')}</TabsTrigger>
-        </TabsList>
+      <SegmentedTabs value={activeUserTab} onValueChange={(v) => setActiveUserTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
+        <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 max-md:!grid-cols-2 max-md:gap-1.5">
+          <SegmentedTrigger value="new">{t('bm.users.newTitle')}</SegmentedTrigger>
+          <SegmentedTrigger value="list">{t('bm.users.title')}</SegmentedTrigger>
+        </SegmentedList>
 
         <TabsContent value="new">
           <div className="flex items-center gap-3 mb-6">
@@ -3712,7 +3713,7 @@ function BuildingManagementContent({
             )}
           </div>
         </TabsContent>
-      </Tabs>
+      </SegmentedTabs>
     </div>
   );
 
@@ -4761,11 +4762,11 @@ function BuildingManagementContent({
                 </div>
             </div>
 
-            <Tabs value={activeOrderTab} onValueChange={(v) => setActiveOrderTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-                <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
-                    <TabsTrigger value="new">{t('bm.quick.new')}</TabsTrigger>
-                    <TabsTrigger value="list">{t('chat.all')}</TabsTrigger>
-                </TabsList>
+            <SegmentedTabs value={activeOrderTab} onValueChange={(v) => setActiveOrderTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
+                <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 max-md:!grid-cols-2 max-md:gap-1.5">
+                    <SegmentedTrigger value="new">{t('bm.quick.new')}</SegmentedTrigger>
+                    <SegmentedTrigger value="list">{t('chat.all')}</SegmentedTrigger>
+                </SegmentedList>
 
                 <TabsContent value="new" className="mt-6">
                     <form onSubmit={handleOrderSubmit} className="space-y-6">
@@ -4910,12 +4911,12 @@ function BuildingManagementContent({
                     <div className="space-y-4">
                        <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                            <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
-                           <Tabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="all">{t('offers.allOfferss')}</TabsTrigger>
-                                    <TabsTrigger value="my">{t('offers.myOfferss')}</TabsTrigger>
-                                </TabsList>
-                           </Tabs>
+                           <SegmentedTabs value={activeOrdersFilterTab} onValueChange={(v) => setActiveOrdersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
+                                <SegmentedList className="grid w-full grid-cols-2">
+                                    <SegmentedTrigger value="all">{t('offers.allOfferss')}</SegmentedTrigger>
+                                    <SegmentedTrigger value="my">{t('offers.myOfferss')}</SegmentedTrigger>
+                                </SegmentedList>
+                           </SegmentedTabs>
                        </div>
 
                         {loadingAllOrders ? (
@@ -5019,7 +5020,7 @@ function BuildingManagementContent({
                         )}
                     </div>
                 </TabsContent>
-            </Tabs>
+            </SegmentedTabs>
         </div>
       </div>
     );
@@ -5029,11 +5030,11 @@ function BuildingManagementContent({
     // Offer Form
     return (
       <div className="p-3 sm:p-6">
-        <Tabs value={activeOfferTab} onValueChange={(v) => setActiveOfferTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6">
-                <TabsTrigger value="new">{t('bm.quick.new.offer')}</TabsTrigger>
-                <TabsTrigger value="list">{t('chat.all.offer')}</TabsTrigger>
-            </TabsList>
+        <SegmentedTabs value={activeOfferTab} onValueChange={(v) => setActiveOfferTab(v as "new" | "list")} dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full">
+                <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 max-md:!grid-cols-2 max-md:gap-1.5">
+                    <SegmentedTrigger value="new">{t('bm.quick.new.offer')}</SegmentedTrigger>
+                <SegmentedTrigger value="list">{t('chat.all.offer')}</SegmentedTrigger>
+            </SegmentedList>
             
             <TabsContent value="new">
               <div className="bg-card rounded-2xl shadow-xl shadow-slate-50/50 border border p-5 mb-5 pb-20">
@@ -5049,16 +5050,16 @@ function BuildingManagementContent({
 
         {/* Tabs for Sale / Rent */}
         <div className="mb-6">
-            <Tabs defaultValue="sale" dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full" onValueChange={(val) => setDealType(val as "sale" | "rent")}>
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 h-10 bg-muted p-1 rounded-xl">
-                <TabsTrigger value="sale" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
+            <SegmentedTabs defaultValue="sale" dir={language === 'ar' ? 'rtl' : 'ltr'} className="w-full" onValueChange={(val) => setDealType(val as "sale" | "rent")}>
+            <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 h-10 bg-muted p-1 rounded-xl max-md:!grid-cols-2 max-md:h-auto">
+                <SegmentedTrigger value="sale" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all max-md:rounded-full max-md:py-2 max-md:data-[state=active]:!text-white">
                     {t('bm.offer.dealSale')}
-                </TabsTrigger>
-                <TabsTrigger value="rent" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all">
+                </SegmentedTrigger>
+                <SegmentedTrigger value="rent" className="text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-slate-600 data-[state=active]:shadow-sm transition-all max-md:rounded-full max-md:py-2 max-md:data-[state=active]:!text-white">
                     {t('bm.offer.dealRent')}
-                </TabsTrigger>
-            </TabsList>
-            </Tabs>
+                </SegmentedTrigger>
+            </SegmentedList>
+            </SegmentedTabs>
         </div>
 
         {/* Main Category Selection */}
@@ -5472,12 +5473,12 @@ function BuildingManagementContent({
        <div className="space-y-4">
            <div className="flex flex-col md:flex-row justify-between items-center bg-card p-4 rounded-lg shadow-sm gap-4">
                <h3 className="font-bold text-base">{t('bm.requests.all')}</h3>
-               <Tabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="all">{t('offers.allOffers')}</TabsTrigger>
-                        <TabsTrigger value="my">{t('offers.myOffers')}</TabsTrigger>
-                    </TabsList>
-               </Tabs>
+               <SegmentedTabs value={activeOffersFilterTab} onValueChange={(v) => setActiveOffersFilterTab(v as "all" | "my")} className="w-full sm:w-[300px]">
+                    <SegmentedList className="grid w-full grid-cols-2">
+                        <SegmentedTrigger value="all">{t('offers.allOffers')}</SegmentedTrigger>
+                        <SegmentedTrigger value="my">{t('offers.myOffers')}</SegmentedTrigger>
+                    </SegmentedList>
+               </SegmentedTabs>
            </div>
            
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -5560,7 +5561,7 @@ function BuildingManagementContent({
                 propertyTitle={selectedOfferForAppointments ? `${selectedOfferForAppointments.propertyType} - ${selectedOfferForAppointments.city}` : undefined}
             />
         </TabsContent>
-  </Tabs>
+  </SegmentedTabs>
 </div>
 );
   };
@@ -6310,13 +6311,13 @@ function BuildingManagementContent({
 
           {selectedServiceRequest && (
             <div className="py-4">
-              <Tabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+              <SegmentedTabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="flex justify-center w-full">
-                  <TabsList className="grid w-full max-w-xs grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
-                    <TabsTrigger value="details" className="py-2 rounded-lg font-bold">{t("common.details")}</TabsTrigger>
-                    <TabsTrigger value="visits" className="py-2 rounded-lg font-bold">{t("admin.service_requests.visits")}</TabsTrigger>
-                    <TabsTrigger value="invoices" className="py-2 rounded-lg font-bold">{t("admin.service_requests.invoices")}</TabsTrigger>
-                  </TabsList>
+                  <SegmentedList className="grid w-full max-w-xs grid-cols-3 mb-6 bg-muted p-1 rounded-xl h-auto">
+                    <SegmentedTrigger value="details" className="py-2 rounded-lg font-bold">{t("common.details")}</SegmentedTrigger>
+                    <SegmentedTrigger value="visits" className="py-2 rounded-lg font-bold">{t("admin.service_requests.visits")}</SegmentedTrigger>
+                    <SegmentedTrigger value="invoices" className="py-2 rounded-lg font-bold">{t("admin.service_requests.invoices")}</SegmentedTrigger>
+                  </SegmentedList>
                 </div>
 
                 {/* ── Details tab ──────────────────────────────────────── */}
@@ -6559,7 +6560,7 @@ function BuildingManagementContent({
                     </div>
                   )}
                 </TabsContent>
-              </Tabs>
+              </SegmentedTabs>
             </div>
           )}
         </DialogContent>

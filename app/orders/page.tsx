@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { ordersApi } from "@/lib/api";
 import { CreateOrderDto, Order } from "@/types/api";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -234,23 +235,23 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
               <p className="text-slate-500 font-bold">{t('orders.subtitle')}</p>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-            <TabsList className="grid w-full grid-cols-2 mb-8 !bg-slate-950/5 backdrop-blur-md border !border-slate-950/10 p-1.5 rounded-2xl h-auto gap-1">
-              <TabsTrigger 
-                value="create" 
-                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5"
+          <SegmentedTabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <SegmentedList className="grid w-full grid-cols-2 mb-8 !bg-slate-950/5 backdrop-blur-md border !border-slate-950/10 p-1.5 rounded-2xl h-auto gap-1">
+              <SegmentedTrigger
+                value="create"
+                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 max-md:rounded-full"
               >
                 <PlusCircle className="w-4.5 h-4.5" />
                 {t('orders.createOrder')}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="my-orders" 
-                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5"
+              </SegmentedTrigger>
+              <SegmentedTrigger
+                value="my-orders"
+                className="flex items-center justify-center gap-2 font-black py-3 rounded-xl transition-all duration-200 data-[state=active]:!bg-slate-950 data-[state=active]:!text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 max-md:rounded-full"
               >
                 <List className="w-4.5 h-4.5" />
                 {t('orders.myOrders')}
-              </TabsTrigger>
-            </TabsList>
+              </SegmentedTrigger>
+            </SegmentedList>
 
             <TabsContent value="create">
               <form onSubmit={handleSubmit}>
@@ -537,7 +538,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
           </div>
         )}
       </TabsContent>
-    </Tabs>
+    </SegmentedTabs>
         </div>
       </div>
     );

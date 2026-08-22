@@ -227,7 +227,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-muted pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader theme="light" title={t('profile.title')} />
+      <MobileAppHeader theme="light" title={t('profile.title')} showNotifications />
       <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
@@ -245,7 +245,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {/* Sidebar / User Card */}
             <div className="md:col-span-1 space-y-6">
-                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6 flex flex-col items-center text-center">
+                <div className="bg-card rounded-xl shadow-sm border border p-3 sm:p-6 flex flex-col items-center text-center wow-reveal">
                     <div className="relative group">
                         <div className="w-32 h-32 bg-muted rounded-full flex items-center justify-center overflow-hidden mb-4 border-4 border-white shadow-md">
                             {user.profileImage ? (
@@ -254,8 +254,8 @@ export default function ProfilePage() {
                                 <UserIcon className="w-12 h-12 text-slate-400" />
                             )}
                         </div>
-                        {/* Image Upload Trigger */}
-                        <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        {/* Image Upload Trigger — hover on desktop, tap button on touch devices */}
+                        <div className="hidden md:flex absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                            <label className="cursor-pointer w-full h-full flex items-center justify-center">
                                 <span className="text-white text-xs font-medium flex flex-col items-center gap-1">
                                     <Upload className="w-4 h-4" />
@@ -264,6 +264,10 @@ export default function ProfilePage() {
                                 <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                            </label>
                         </div>
+                        <label className="md:hidden absolute -bottom-1 -end-1 w-10 h-10 bg-slate-900 text-white rounded-full shadow-lg border-2 border-white flex items-center justify-center cursor-pointer active:scale-95 transition-transform">
+                            <Upload className="w-4 h-4" />
+                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                        </label>
                     </div>
 
                     <h2 className="text-xl font-bold text-slate-800 mb-1">{user.firstName} {user.lastName}</h2>

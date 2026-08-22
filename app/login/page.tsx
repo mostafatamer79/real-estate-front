@@ -13,8 +13,11 @@ import {
 } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
+import { hapticSuccess, hapticError } from "@/lib/haptics";
 
 interface SignInProps {
   onClose?: () => void;
@@ -104,10 +107,12 @@ export default function SignIn({ onClose }: SignInProps) {
 
       const userIdentifier = isPhoneMode ? phone : email;
       localStorage.setItem('pendingVerification', userIdentifier);
+      hapticSuccess();
       router.push('/verify-otp');
 
     } catch (err: unknown) {
       console.error('Registration error:', err);
+      hapticError();
       const message = err instanceof Error ? err.message : t('login.error.generic');
       setError(t(message) !== message ? t(message) : t('login.error.generic'));
     } finally {
@@ -133,8 +138,33 @@ export default function SignIn({ onClose }: SignInProps) {
       <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
 
       <div className="w-full max-w-md relative z-10">
+        {/* Mobile hero logo */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          className="md:hidden flex justify-center mb-7"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-indigo-500/25 blur-2xl rounded-full animate-pulse" />
+            <Image
+              src={settings.logoWhiteUrl || '/icons/white.png'}
+              alt={t('project.name')}
+              width={160}
+              height={48}
+              className="relative object-contain w-auto h-12 drop-shadow-[0_4px_24px_rgba(255,255,255,0.15)]"
+              priority
+            />
+          </div>
+        </motion.div>
+
         {/* Header/Back Link */}
-        <div className="flex justify-between items-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="flex justify-between items-center mb-8"
+        >
           <button
             onClick={() => router.back()}
             className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
@@ -146,12 +176,20 @@ export default function SignIn({ onClose }: SignInProps) {
           <Link href="/customerservice" className="text-white/40 hover:text-white text-xs transition-colors underline underline-offset-4">
             {t('header.customerService')}
           </Link>
-        </div>
+        </motion.div>
 
         {/* Login Card */}
-        <div 
-          className="bg-slate-900 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative"
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.14, type: 'spring', stiffness: 240, damping: 26 }}
+          className="relative"
         >
+          {/* Mobile glow ring behind card */}
+          <div aria-hidden="true" className="md:hidden absolute -inset-px rounded-[1.6rem] bg-gradient-to-b from-white/25 via-white/5 to-transparent pointer-events-none" />
+          <div
+            className="bg-slate-900 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative"
+          >
             {onClose && (
               <button
                 onClick={onClose}
@@ -276,9 +314,9 @@ export default function SignIn({ onClose }: SignInProps) {
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all ${
+                className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all active:scale-[0.98] ${
                   isFormValid && !isLoading
-                    ? "bg-slate-600 hover:bg-slate-500 text-white shadow-xl shadow-blue-600/20"
+                    ? "bg-slate-600 hover:bg-slate-500 text-white shadow-xl shadow-blue-600/20 wow-shine"
                     : "bg-card/5 text-white/20 cursor-not-allowed"
                 }`}
               >
@@ -299,6 +337,7 @@ export default function SignIn({ onClose }: SignInProps) {
               </button>
             </form>
         </div>
+        </motion.div>
 
         {/* Footer Info — guest access during free trial */}
         {isGlobalFreeTrial && (

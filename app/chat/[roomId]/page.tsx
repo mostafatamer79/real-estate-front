@@ -6,6 +6,7 @@ import { ArrowRight, Send, CheckCheck, MessageSquare, Wifi, WifiOff } from "luci
 import { chatApi } from "@/lib/chat";
 import api from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { hapticTick } from "@/lib/haptics";
 
 export default function NormalChatRoomPage() {
   const params = useParams();
@@ -154,6 +155,7 @@ export default function NormalChatRoomPage() {
 
   const sendMessage = async () => {
     if (!message.trim() || !socket) return;
+    hapticTick();
     try {
       socket.emit('sendMessage', { roomId, senderId: currentUser?.id, content: message });
       setMessage("");
@@ -228,8 +230,8 @@ export default function NormalChatRoomPage() {
     : roomDetails?.name || 'محادثة';
 
   return (
-    <div className="min-h-dvh-safe bg-muted px-4 py-5" dir="rtl">
-      <div className="mx-auto flex h-[calc(100dvh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm">
+    <div className="min-h-dvh-safe bg-muted px-4 py-5 max-md:px-0 max-md:py-0" dir="rtl">
+      <div className="mx-auto flex h-[calc(100dvh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm max-md:h-[100dvh] max-md:rounded-none max-md:border-0 max-md:shadow-none">
         
         {/* Header */}
         <div className="border-b border bg-card px-5 py-4">
@@ -311,7 +313,7 @@ export default function NormalChatRoomPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border bg-card p-4">
+        <div className="border-t border bg-card p-4 max-md:pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <textarea

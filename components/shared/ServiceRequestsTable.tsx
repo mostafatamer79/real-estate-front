@@ -183,6 +183,25 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         }
     };
 
+    const getStatusBadge = (req: { clientDecision?: string | null; invoiceSent?: boolean; paymentStatus?: string; category?: string; targetDepartment?: string; status?: string }) => {
+        let label = t(`legal.status.${req.status}`) || (req.paymentStatus === 'PAID' ? t('admin.trans.paid') : t('admin.trans.unpaid'));
+        let variantClass = req.paymentStatus === 'PAID' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600';
+
+        if (req.category === 'legal' || req.targetDepartment === 'legal' || req.targetDepartment === 'marketing') {
+            if (req.clientDecision === 'accepted') {
+                label = t('legal.decision.accepted');
+                variantClass = 'bg-emerald-100 text-emerald-700';
+            } else if (req.clientDecision === 'rejected') {
+                label = t('legal.decision.rejected');
+                variantClass = 'bg-rose-100 text-rose-700';
+            } else if (req.invoiceSent) {
+                label = t('legal.invoice.sent');
+                variantClass = 'bg-blue-100 text-blue-700';
+            }
+        }
+        return { label, variantClass };
+    };
+
     const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => {
         const matchesSearch = 
             req.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -229,7 +248,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                 </button>
             </div>
 
-            {/* Requests Table */}
+            {/* Requests List */}
             <div className="bg-card rounded-[1rem] border border shadow-xl shadow-stone-400 overflow-hidden min-h-[400px]">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -237,8 +256,53 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                     </div>
                 ) : filteredRequests.length > 0 ? (
-                    <div className="overflow-x-auto">
-                        <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
+                    <>
+                        {/* Mobile cards */}
+                        <div className="md:hidden divide-y divide-slate-100">
+                            {filteredRequests.map((req) => {
+                                const badge = getStatusBadge(req);
+                                return (
+                                    <motion.button
+                                        key={req.id}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        onClick={() => openDetails(req)}
+                                        className="w-full text-start p-4 active:bg-muted/70 transition-colors"
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 shrink-0">
+                                                    <User className="w-5 h-5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-black text-slate-900 truncate">{req.clientName}</p>
+                                                    <p dir="ltr" className="text-[11px] font-bold text-slate-400 text-start">{req.phone}</p>
+                                                </div>
+                                            </div>
+                                            <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 ${badge.variantClass}`}>
+                                                {badge.label}
+                                            </span>
+                                        </div>
+                                        <div className="mt-3 flex items-center justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-black text-slate-700 truncate">{req.serviceType}</p>
+                                                <p className="text-[11px] font-bold text-slate-400 truncate">{req.city} - {req.district}</p>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 text-slate-400 shrink-0">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span className="text-[10px] font-bold">
+                                                    {format(new Date(req.createdAt), 'dd MMM yyyy', { locale: language === 'ar' ? ar : undefined })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </motion.button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop table */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
                             <thead>
                                 <tr className="bg-muted/50 border-b border">
                                     <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
@@ -318,7 +382,8 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                        </div>
+                    </>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
                         <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">

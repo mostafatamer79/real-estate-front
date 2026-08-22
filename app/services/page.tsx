@@ -105,6 +105,7 @@ export default function Services() {
                 show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
               }}
               whileHover="hovered"
+              whileTap={disabled ? undefined : { scale: 0.97 }}
               role="button"
               tabIndex={disabled ? -1 : 0}
               aria-disabled={disabled}

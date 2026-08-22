@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
 import { useSettings } from '@/context/SettingsContext'
+import { hapticTick } from '@/lib/haptics'
 import { WalletTab } from './types'
 
 interface WalletSidebarProps {
@@ -139,51 +140,47 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 </div>
             </motion.div>
 
-            {/* Mobile Navigation - Clean Bottom Tab Bar */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/50 backdrop-blur-xl border-t border-white/40 shadow-[0_-4px_24px_rgba(0,0,0,0.06)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-                <div className='flex items-end justify-around py-2 px-1 sm:px-2'>
+            {/* Mobile Navigation - Dark frosted glass tab bar (matches global bottom nav) */}
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-slate-950/85 backdrop-blur-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.18)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+                {/* Hairline top highlight */}
+                <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className='relative flex items-stretch justify-around h-[64px] px-1.5'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
                         const isClosed = settings.moduleFlags[item.flagKey] === 'disabled';
-                        
+
                         if (isClosed) return null;
 
                         return (
                             <button
                                 key={index}
-                                onClick={() => !isSoon && onTabChange(item.id)}
-                                className={`flex flex-col items-center justify-end gap-1.5 flex-1 pb-1.5 pt-2 transition-all min-w-0 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                                onClick={() => { if (!isSoon) { hapticTick(); onTabChange(item.id); } }}
+                                aria-current={isActive ? 'page' : undefined}
+                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-2 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
-                                <div
-                                    className='flex items-center justify-center transition-all duration-300'
-                                    style={{
-                                        width: isActive ? '48px' : '40px',
-                                        height: isActive ? '48px' : '40px',
-                                        borderRadius: isActive ? '50%' : '16px',
-                                        backgroundColor: isActive ? '#0f172a' : 'rgba(255, 255, 255, 0.6)',
-                                        border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.7)',
-                                        boxShadow: isActive ? '0 8px 18px rgba(0,0,0,0.35)' : 'none',
-                                        transform: isActive ? 'translateY(-8px)' : 'none',
-                                    }}
-                                >
-                                    <img
-                                        src={item.icon}
-                                        alt={item.label}
-                                        style={{
-                                            width: isActive ? '28px' : '24px',
-                                            height: isActive ? '28px' : '24px',
-                                            objectFit: 'contain',
-                                            filter: isActive ? 'brightness(0) invert(1)' : 'opacity(0.9) grayscale(0)',
-                                        }}
+                                {isActive && (
+                                    <motion.span
+                                        layoutId="wallet-nav-active-pill"
+                                        aria-hidden="true"
+                                        className='absolute inset-x-1 top-1 bottom-1 rounded-2xl bg-white/[0.09] shadow-[0_0_24px_rgba(255,255,255,0.10),inset_0_1px_0_rgba(255,255,255,0.12)]'
+                                        transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
-                                </div>
-                                <span
-                                    className='leading-none text-center font-black transition-all duration-300 line-clamp-1 w-full px-0.5 relative text-[10px] sm:text-xs'
+                                )}
+                                <img
+                                    src={item.icon}
+                                    alt={item.label}
+                                    className='relative z-10 w-[22px] h-[22px] object-contain'
                                     style={{
-                                        color: isActive ? '#0f172a' : '#334155',
-                                        marginTop: isActive ? '6px' : '4px',
+                                        filter: isActive
+                                            ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.35))'
+                                            : 'brightness(0) invert(0.45)',
                                     }}
+                                />
+                                <span
+                                    className={`relative z-10 mt-1 text-[11px] leading-none line-clamp-1 w-full px-0.5 text-center transition-colors duration-200 ${
+                                        isActive ? 'text-white font-bold' : 'text-slate-400 font-medium opacity-80'
+                                    }`}
                                 >
                                     {item.label}
                                 </span>

@@ -2,7 +2,8 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import { Shield, BookOpen, FileCheck, Phone, ChevronLeft, Handshake, Scale, CheckCircle2, Landmark, UserCheck, Lock, Server, FileText, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -130,22 +131,22 @@ function InfoPageContent() {
         </div>
   
         {/* Tabs */}
-        <Tabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <TabsList className="flex flex-wrap h-auto min-h-14 items-center justify-start rounded-2xl bg-card/5 border border-white/5 p-1.5 w-full gap-2 sm:flex-nowrap sm:h-14 sm:overflow-x-auto sm:overflow-y-hidden no-scrollbar">
+        <SegmentedTabs defaultValue={defaultTab} className="w-full space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <SegmentedList pillClassName="bg-card" className="flex flex-wrap h-auto min-h-14 items-center justify-start rounded-2xl bg-card/5 border border-white/5 p-1.5 w-full gap-2 sm:flex-nowrap sm:h-14 sm:overflow-x-auto sm:overflow-y-hidden no-scrollbar">
             {tabsToRender.map((tab) => {
               const Icon = tab.icon;
               return (
-                <TabsTrigger
+                <SegmentedTrigger
                   key={tab.key}
                   value={tab.key}
-                  className="flex-1 min-w-[120px] sm:min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-card data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter"
+                  className="flex-1 min-w-[120px] sm:min-w-[140px] rounded-xl h-11 gap-2 data-[state=active]:bg-card data-[state=active]:text-slate-950 font-black text-xs transition-all uppercase tracking-tighter max-md:justify-center max-md:rounded-full"
                 >
                   <Icon className="w-4 h-4" />
                   {tab.title}
-                </TabsTrigger>
+                </SegmentedTrigger>
               );
             })}
-          </TabsList>
+          </SegmentedList>
 
           <AnimatePresence mode="wait">
             {tabsToRender.map((tab) => {
@@ -213,7 +214,7 @@ function InfoPageContent() {
               );
             })}
           </AnimatePresence>
-        </Tabs>
+        </SegmentedTabs>
       </div>
 
       <TermsPrivacyModal

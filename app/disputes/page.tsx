@@ -15,7 +15,8 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsContent } from '@/components/ui/tabs';
+import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
 import LegalRequestFlow from '@/components/legal/LegalRequestFlow';
 import { PlusCircle } from "lucide-react";
@@ -139,22 +140,22 @@ export default function DisputesPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-6">
-        <Tabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
+        <SegmentedTabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
           <div className="flex justify-center mb-8 w-full">
-            <TabsList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none">
-              <TabsTrigger value="disputes" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+            <SegmentedList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none max-md:h-auto max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:shadow-none max-md:overflow-visible">
+              <SegmentedTrigger value="disputes" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
                 <Gavel className="w-4 h-4" />
                 {t('disputes.tab.disputes')}
-              </TabsTrigger>
-              <TabsTrigger value="service_requests" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+              </SegmentedTrigger>
+              <SegmentedTrigger value="service_requests" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
                 <Scale className="w-4 h-4" />
                 {t('disputes.tab.service_requests')}
-              </TabsTrigger>
-              <TabsTrigger value="new_request" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all">
+              </SegmentedTrigger>
+              <SegmentedTrigger value="new_request" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
                 <PlusCircle className="w-4 h-4" />
                 طلب جديد
-              </TabsTrigger>
-            </TabsList>
+              </SegmentedTrigger>
+            </SegmentedList>
 
           </div>
 
@@ -288,7 +289,7 @@ export default function DisputesPage() {
          </div>
       </TabsContent>
 
-    </Tabs>
+    </SegmentedTabs>
 
 
       </div>

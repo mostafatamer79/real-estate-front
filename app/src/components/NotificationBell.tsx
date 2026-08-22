@@ -161,7 +161,7 @@ export default function NotificationBell({
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className={`absolute mt-2 w-96 border rounded-lg z-[9999] max-h-[600px] flex flex-col ${
+        <div className={`absolute mt-2 w-[min(24rem,calc(100vw-1.5rem))] border rounded-lg z-[9999] max-h-[600px] flex flex-col ${
           align === 'right' ? 'right-0' : 'left-0'
         } ${panelBaseClass} ${panelClassName || ''}`}
           dir={language === 'ar' ? 'rtl' : 'ltr'}

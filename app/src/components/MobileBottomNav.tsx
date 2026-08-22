@@ -3,36 +3,42 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Grid, FileText, User, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Home, LayoutGrid, FileText, User, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { hapticTick } from '@/lib/haptics';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const { t } = useLanguage();
 
   // Pages where we DO NOT want to show the bottom nav
-  const hiddenRoutes = ['/login', '/scan-map'];
+  // (/wallet has its own bottom tab bar)
+  const hiddenRoutes = ['/login', '/scan-map', '/wallet'];
   const isHidden = hiddenRoutes.some(route => pathname?.startsWith(route));
 
   // Hide nav on specific chat rooms but keep it on the main chat list
   const isChatRoom = pathname?.startsWith('/chat/') && pathname !== '/chat';
-  
+
   if (isHidden || isChatRoom) return null;
 
   const navItems = [
     { name: t('home.title') || 'Home', path: '/details', icon: Home },
-    { name: t('header.services') || 'Services', path: '/services', icon: Grid },
+    { name: t('header.services') || 'Services', path: '/services', icon: LayoutGrid },
     { name: t('header.myRequests') || 'Requests', path: '/services/my-requests', icon: FileText },
     { name: t('chat.title') || 'Chat', path: '/chat', icon: MessageSquare },
     { name: t('profile.title') || 'Profile', path: '/profile', icon: User },
   ];
 
   return (
-    <div 
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-xl border-t border-white/5 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]"
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-slate-950/85 backdrop-blur-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.18)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="flex justify-around items-center h-[64px] px-2">
+      {/* Hairline top highlight */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+      <div className="relative flex items-stretch justify-around h-[64px] px-1.5">
         {navItems.map((item) => {
           const isActive = pathname === item.path || pathname?.startsWith(item.path + '/');
           const Icon = item.icon;
@@ -40,20 +46,52 @@ export default function MobileBottomNav() {
             <Link
               key={item.path}
               href={item.path}
-              className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-200 ${
-                isActive ? 'text-primary' : 'text-slate-400 hover:text-slate-200'
-              }`}
+              aria-current={isActive ? 'page' : undefined}
+              onClick={() => !isActive && hapticTick()}
+              className="relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-2 active:scale-95 transition-transform"
             >
-              <div className={`p-1.5 rounded-xl transition-all duration-200 ${isActive ? 'bg-primary/10 scale-110' : ''}`}>
-                <Icon className={`w-5 h-5 ${isActive ? 'fill-primary/20' : ''}`} />
-              </div>
-              <span className={`text-[10px] font-medium ${isActive ? 'font-bold' : ''}`}>
+              {isActive && (
+                <>
+                  <motion.span
+                    layoutId="mobile-nav-active-pill"
+                    aria-hidden="true"
+                    className="absolute inset-x-1 top-1 bottom-1 rounded-2xl bg-white/[0.09] shadow-[0_0_24px_rgba(255,255,255,0.10),inset_0_1px_0_rgba(255,255,255,0.12)]"
+                    transition={{ type: 'spring', stiffness: 480, damping: 40 }}
+                  />
+                  {/* Glow dot under active item */}
+                  <motion.span
+                    layoutId="mobile-nav-glow-dot"
+                    aria-hidden="true"
+                    className="absolute -top-px left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-white/70 blur-[1px]"
+                    transition={{ type: 'spring', stiffness: 480, damping: 40 }}
+                  />
+                </>
+              )}
+              <motion.span
+                key={isActive ? 'active' : 'inactive'}
+                initial={isActive ? { scale: 0.7, y: 3 } : false}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                className="relative z-10"
+              >
+                <Icon
+                  className={`w-[22px] h-[22px] transition-colors duration-200 ${
+                    isActive ? 'text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.35)]' : 'text-slate-400'
+                  }`}
+                  strokeWidth={isActive ? 2.4 : 1.9}
+                />
+              </motion.span>
+              <span
+                className={`relative z-10 mt-1 text-[11px] leading-none transition-all duration-200 ${
+                  isActive ? 'text-white font-bold' : 'text-slate-400 font-medium opacity-80'
+                }`}
+              >
                 {item.name}
               </span>
             </Link>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }
