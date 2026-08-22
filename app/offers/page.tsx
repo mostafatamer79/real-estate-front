@@ -398,8 +398,8 @@ const MeterIcon = ({ className }: { className?: string }) => (
       {/* Mobile filter toggle button */}
       <button
         onClick={() => { hapticTick(); setIsFilterOpen(!isFilterOpen); }}
-        className="fixed bottom-[88px] z-50 lg:hidden w-13 h-13 p-3.5 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
-        style={{ marginBottom: 'env(safe-area-inset-bottom)', insetInlineEnd: '1.5rem' }}
+        className="fixed z-50 lg:hidden w-13 h-13 p-3.5 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+        style={{ bottom: 'calc(92px + env(safe-area-inset-bottom))', insetInlineEnd: '1.5rem' }}
       >
         <TableOfContents className="w-5 h-5" />
       </button>

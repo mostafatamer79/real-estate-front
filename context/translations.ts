@@ -32,7 +32,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.identity.badge": "ADMIN",
     "admin.identity.manager": "مدير النظام",
     "home.controlPanel": "لوحة التحكم",
-    
+    "home.title": "الرئيسية",
+
     "footer.offers": "العروض العقارية",
     "footer.management": "إدارة الأملاك",
     "footer.usage": "سياسة الاستخدام",
@@ -2466,6 +2467,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "admin.identity.badge": "ADMIN",
     "admin.identity.manager": "System Manager",
     "home.controlPanel": "Control Panel",
+    "home.title": "Home",
     "footer.offers": "Property Offers",
     "footer.management": "Property Management",
     "footer.usage": "Usage Policy",

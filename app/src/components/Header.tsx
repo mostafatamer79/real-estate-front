@@ -151,7 +151,7 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 ${
+      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950/80 max-md:backdrop-blur-2xl max-md:border-b-white/[0.08] ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >

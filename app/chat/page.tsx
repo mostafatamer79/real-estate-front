@@ -250,8 +250,9 @@ export default function NormalChatPage() {
             <motion.div
               key={chat.id}
               whileHover={{ y: -2, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => router.push(`/chat/${chat.id}`)}
-              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-card p-5 transition-all hover:border-slate-950 hover:shadow-sm ${
+              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-card p-5 transition-all hover:border-slate-950 hover:shadow-sm max-md:p-4 ${
                 chat.unreadCount > 0 ? "border-slate-950" : "border"
               }`}
             >

@@ -138,8 +138,8 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
           <Link
             href="/services/form?type=legal"
             onClick={() => hapticTick()}
-            className="md:hidden fixed bottom-[88px] z-40 ltr:right-4 rtl:left-4 h-12 pl-5 pr-4 rounded-full bg-card text-slate-950 shadow-[0_8px_30px_rgba(0,0,0,0.45)] flex items-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-transform"
-            style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+            className="md:hidden fixed z-40 ltr:right-4 rtl:left-4 h-12 pl-5 pr-4 rounded-full bg-card text-slate-950 shadow-[0_8px_30px_rgba(0,0,0,0.45)] flex items-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-transform"
+            style={{ bottom: 'calc(92px + env(safe-area-inset-bottom))' }}
           >
             <Plus className="w-4 h-4" />
             {isRtl ? "جديد" : "New"}

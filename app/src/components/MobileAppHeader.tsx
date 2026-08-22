@@ -29,6 +29,10 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
     ? 'bg-white/[0.06] border-white/10 text-slate-200 active:bg-white/[0.12]'
     : 'bg-slate-100/90 border-slate-200 text-slate-600 active:bg-slate-200';
 
+  // Guard against missing translation keys (t() returns the raw key)
+  const backKey = t("common.back");
+  const backLabel = backKey && backKey !== "common.back" ? backKey : isRtl ? "رجوع" : "Back";
+
   return (
     <motion.div
       initial={{ y: -24, opacity: 0 }}
@@ -48,12 +52,12 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
         <button
           onClick={() => router.back()}
           className={`flex items-center justify-center w-9 h-9 rounded-full border transition-colors active:scale-90 ${btnClass}`}
-          aria-label={t("common.back") || "رجوع"}
+          aria-label={backLabel}
         >
           <ArrowLeft className={`w-4 h-4 ${isRtl ? 'rotate-180' : ''}`} />
         </button>
         <h1 className={`text-sm font-bold tracking-wide ${textClass}`}>
-          {title || t("common.back") || "رجوع"}
+          {title || backLabel}
         </h1>
       </div>
       <div className="flex items-center gap-1.5">

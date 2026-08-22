@@ -140,11 +140,14 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 </div>
             </motion.div>
 
-            {/* Mobile Navigation - Dark frosted glass tab bar (matches global bottom nav) */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-slate-950/85 backdrop-blur-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.18)]' style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {/* Mobile Navigation - Floating dark glass dock (matches global bottom nav) */}
+            <div
+                className='lg:hidden fixed z-30 left-3 right-3 rounded-[1.75rem] border border-white/10 bg-slate-950/90 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.45)]'
+                style={{ bottom: 'calc(10px + env(safe-area-inset-bottom))' }}
+            >
                 {/* Hairline top highlight */}
-                <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                <div className='relative flex items-stretch justify-around h-[64px] px-1.5'>
+                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <div className='relative flex items-stretch justify-around h-[62px] px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
@@ -163,7 +166,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                     <motion.span
                                         layoutId="wallet-nav-active-pill"
                                         aria-hidden="true"
-                                        className='absolute inset-x-1 top-1 bottom-1 rounded-2xl bg-white/[0.09] shadow-[0_0_24px_rgba(255,255,255,0.10),inset_0_1px_0_rgba(255,255,255,0.12)]'
+                                        className='absolute inset-x-1 top-1.5 bottom-1.5 rounded-2xl bg-white/[0.10] shadow-[0_0_28px_rgba(255,255,255,0.12),inset_0_1px_0_rgba(255,255,255,0.14)]'
                                         transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
                                 )}

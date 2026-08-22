@@ -367,6 +367,34 @@ export default function HomePage() {
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
           className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 relative z-10">
 
+          {/* Mobile greeting hero */}
+          {(() => {
+            const h = new Date().getHours();
+            const greeting = language === 'ar'
+              ? (h < 12 ? 'صباح الخير' : h < 17 ? 'نهار سعيد' : 'مساء الخير')
+              : (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening');
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="md:hidden flex items-center justify-between gap-3 px-1 pt-2 pb-1 mb-2"
+              >
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">{greeting}</p>
+                  <h1 className="mt-1 text-xl font-black text-white leading-tight truncate">
+                    {user?.firstName
+                      ? (language === 'ar' ? `أهلاً، ${user.firstName}` : `Welcome, ${user.firstName}`)
+                      : t('project.name')}
+                  </h1>
+                </div>
+                <div className="w-11 h-11 rounded-2xl bg-slate-800 border border-white/10 flex items-center justify-center text-base font-black text-white shadow-lg shrink-0 wow-pop" aria-hidden="true">
+                  {(user?.firstName || '؟').charAt(0)}
+                </div>
+              </motion.div>
+            );
+          })()}
+
   
 
           <div className="space-y-10">
