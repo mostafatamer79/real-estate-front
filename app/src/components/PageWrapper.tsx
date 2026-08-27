@@ -2,7 +2,34 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSettings } from '@/context/SettingsContext';
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    y: 8,
+    scale: 0.995,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -4,
+    scale: 0.998,
+    transition: {
+      duration: 0.2,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  },
+};
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -78,11 +105,17 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   const hasBottomNav = !isHidden && !isChatRoom;
 
   return (
-    <main
-      key={pathname}
-      className={`animate-page-in ${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[92px] pb-nav-safe md:pb-0" : ""}`}
-    >
-      {children}
-    </main>
+    <AnimatePresence mode="wait">
+      <motion.main
+        key={pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className={`${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[92px] pb-nav-safe md:pb-0" : ""}`}
+      >
+        {children}
+      </motion.main>
+    </AnimatePresence>
   );
 }

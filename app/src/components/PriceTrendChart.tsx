@@ -18,7 +18,7 @@ export default function PriceTrendChart({
 
   if (!hasData) {
     return (
-      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col">
+      <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full min-h-[340px] font-sans border border-slate-700/40 flex flex-col wow-reveal">
         <div className="flex items-start justify-between mb-6">
           <div>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -60,7 +60,7 @@ export default function PriceTrendChart({
   const isUp = latest >= (previous ?? latest);
 
   return (
-    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40">
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40 wow-reveal">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -71,7 +71,7 @@ export default function PriceTrendChart({
             <span className="text-xl sm:text-3xl font-black text-slate-100 tracking-tighter">
               {latest?.toLocaleString()}
             </span>
-            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-all duration-300 ${
               isUp
                 ? 'text-emerald-300 bg-emerald-500/10 border border-emerald-500/20'
                 : 'text-rose-300   bg-rose-500/10   border border-rose-500/20'
@@ -128,6 +128,11 @@ export default function PriceTrendChart({
             strokeLinejoin="round"
             filter="url(#glow)"
             className="drop-shadow-lg transition-all duration-700"
+            style={{
+              strokeDasharray: '1000',
+              strokeDashoffset: '0',
+              animation: 'chartDraw 1.5s ease-out forwards',
+            }}
           />
 
           {/* Data dots */}
@@ -140,7 +145,8 @@ export default function PriceTrendChart({
               fill={color}
               stroke="#1e293b"
               strokeWidth="1.2"
-              className="opacity-0 hover:opacity-100 transition-opacity"
+              className="opacity-0 hover:opacity-100 transition-opacity duration-200"
+              style={{ animation: `chartDotFade 0.3s ease-out ${0.5 + i * 0.1}s forwards` }}
             />
           ))}
         </svg>

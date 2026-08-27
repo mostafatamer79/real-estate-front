@@ -1,3 +1,18 @@
+import { createElement } from "react";
+import {
+  BarChart3,
+  Building2,
+  ClipboardList,
+  Grid,
+  Headset,
+  Map as MapIcon,
+  Megaphone,
+  MessageSquare,
+  Wallet,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
+import type { TourStep } from "@/components/Tutorial";
 import { User } from "@/types/user";
 
 export type OnboardingStatus = "pending" | "skipped" | "completed";
@@ -76,4 +91,94 @@ export function clearOnboardingStatus(userId?: string | null): void {
   } catch {
     // ignore
   }
+}
+
+// ---------------------------------------------------------------------------
+// Tour steps
+// ---------------------------------------------------------------------------
+
+type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
+
+const tourIcon = (Icon: LucideIcon) => createElement(Icon, { className: "w-6 h-6" });
+
+/**
+ * Ordered onboarding tour steps. Steps with a `targetId` spotlight a live
+ * element on the details page; the rest render as centered cards.
+ */
+export function buildTourSteps(t: TranslateFn): TourStep[] {
+  return [
+    {
+      id: "customer-service",
+      title: t("tour.customerService.title"),
+      description: t("tour.customerService.description"),
+      position: "center",
+      icon: tourIcon(Headset),
+    },
+    {
+      id: "chat",
+      title: t("tour.chat.title"),
+      description: t("tour.chat.description"),
+      position: "center",
+      icon: tourIcon(MessageSquare),
+    },
+    {
+      id: "services-center",
+      title: t("tour.servicesCenter.title"),
+      description: t("tour.servicesCenter.description"),
+      position: "center",
+      icon: tourIcon(Grid),
+    },
+    {
+      id: "map",
+      title: t("tour.map.title"),
+      description: t("tour.map.description"),
+      targetId: "tour-target-map",
+      position: "bottom",
+      icon: tourIcon(MapIcon),
+    },
+    {
+      id: "stats",
+      title: t("tour.stats.title"),
+      description: t("tour.stats.description"),
+      targetId: "tour-target-stats",
+      position: "top",
+      icon: tourIcon(BarChart3),
+    },
+    {
+      id: "quick-actions",
+      title: t("tour.quickActions.title"),
+      description: t("tour.quickActions.description"),
+      targetId: "tour-target-quick-actions",
+      position: "top",
+      icon: tourIcon(Zap),
+    },
+    {
+      id: "wallet",
+      title: t("tour.wallet.title"),
+      description: t("tour.wallet.description"),
+      position: "center",
+      icon: tourIcon(Wallet),
+    },
+    {
+      id: "admin-services",
+      title: t("tour.adminServices.title"),
+      description: t("tour.adminServices.description"),
+      position: "center",
+      icon: tourIcon(Building2),
+    },
+    {
+      id: "offers",
+      title: t("tour.offers.title"),
+      description: t("tour.offers.description"),
+      position: "center",
+      icon: tourIcon(Megaphone),
+    },
+    {
+      id: "requests",
+      title: t("tour.requests.title"),
+      description: t("tour.requests.description"),
+      position: "center",
+      icon: tourIcon(ClipboardList),
+    },
+  ];
 }

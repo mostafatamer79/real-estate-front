@@ -42,6 +42,9 @@ import api, { usersApi } from "@/lib/api";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { SERVICE_CATALOG, SERVICE_CATEGORY_IDS } from "@/lib/service-catalog";
+import FormBuilderPanel from "./FormBuilderPanel";
+import DynamicAnswersView from "@/components/shared/DynamicAnswersView";
 
 export default function AdminServicesManagementPage() {
   const { t, language } = useLanguage();
@@ -58,10 +61,11 @@ export default function AdminServicesManagementPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestPage, setRequestPage] = useState(1);
-  const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability">("requests");
+  const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability" | "forms">("requests");
   const [requestDrafts, setRequestDrafts] = useState<Record<string, { status: string; price: string; targetDepartment: string; description: string; assignedAgentId: string }>>({});
   const [invoiceDrafts, setInvoiceDrafts] = useState<Record<string, string>>({});
   const [agents, setAgents] = useState<any[]>([]);
+  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
 
   // Local state for flags and prices to allow editing before saving
   const [localModuleFlags, setLocalModuleFlags] = useState<Record<string, 'enabled' | 'soon' | 'disabled'>>({});
@@ -79,12 +83,20 @@ export default function AdminServicesManagementPage() {
     }
   }, [settings]);
 
-  const nonLegalServiceCategories = [
-    { id: 'postPurchase', label: 'خدمات ما بعد الشراء', icon: ShoppingBag },
-    { id: 'construction', label: 'خدمات البناء والمقاولات', icon: Hammer },
-    { id: 'marketing', label: 'خدمات التسويق', icon: Megaphone },
-    { id: 'other', label: 'خدمات أخرى', icon: MoreHorizontal },
-  ];
+  // Catalog-driven categories (lib/service-catalog.ts) — includes leasing & visit.
+  const categoryIcons: Record<string, any> = {
+    postPurchase: ShoppingBag,
+    construction: Hammer,
+    marketing: Megaphone,
+    leasing: User,
+    visit: Eye,
+    other: MoreHorizontal,
+  };
+  const nonLegalServiceCategories = SERVICE_CATEGORY_IDS.filter((id) => id !== "legal").map((id) => ({
+    id,
+    label: SERVICE_CATALOG[id].title,
+    icon: categoryIcons[id] || MoreHorizontal,
+  }));
   const legalServiceCategories = [
     { id: 'legal', label: 'الخدمات القانونية', icon: Scale },
     { id: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
@@ -104,6 +116,8 @@ export default function AdminServicesManagementPage() {
     legal_other: "legal_other",
     construction: "construction",
     marketing: "marketing",
+    leasing: "leasing",
+    visit: "visit",
     other: "other",
   };
   const typeParam = searchParams.get("type") || "post_purchase";
@@ -117,16 +131,16 @@ export default function AdminServicesManagementPage() {
     { id: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
   ];
 
+  // Non-legal service options come from the shared catalog; legal lists stay as-is.
   const servicePriceGroups: Record<string, string[]> = {
-    postPurchase: ["الغاز", "نقل وتركيب الأثاث", "التأمين على المنزل", "الصيانة (سباكة / كهرباء)", "خدمة التنظيف", "تنسيق حدائق", "أنظمة أمنية", "أخرى"],
+    ...Object.fromEntries(
+      Object.entries(SERVICE_CATALOG).map(([id, entry]) => [id, entry.options])
+    ),
     legal: ["المنازعات العقارية", "العقود", "التوثيق", "أخرى"],
     legal_disputes: ["نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "أخرى"],
     legal_contracts: ["عقد بيع", "عقد إيجار", "عقد الانتفاع العقاري", "عقد الهبة العقاري", "عقد الرهن العقاري", "عقد الاستثمار العقاري", "مراجعة العقود", "أخرى"],
     legal_documentation: ["توثيق", "توثيق صك الملكية", "توثيق مستندات البيع", "توثيق بيانات الأطراف", "أخرى"],
     legal_other: ["استشارة قانونية", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
-    construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
-    marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية (وسائل التواصل الاجتماعي)", "حملة إعلانية (إعلانات طرق/تقليدية)", "أخرى"],
-    other: ["التقييم العقاري", "المسح الهندسي", "تمويل عقاري", "أخرى"],
   };
 
   const makeServicePriceKey = (category: string, service: string) =>
@@ -145,6 +159,8 @@ export default function AdminServicesManagementPage() {
     { id: "postPurchase", type: "post_purchase", label: "خدمات ما بعد الشراء", icon: ShoppingBag },
     { id: "construction", type: "construction", label: "البناء والمقاولات", icon: Hammer },
     { id: "marketing", type: "marketing", label: "خدمات التسويق", icon: Megaphone },
+    { id: "leasing", type: "leasing", label: "التأجير والإدارة", icon: User },
+    { id: "visit", type: "visit", label: "طلب زيارة العقار", icon: Eye },
     { id: "other", type: "other", label: "أخرى", icon: MoreHorizontal },
   ];
   const isLegalServicesPage = activeServiceCategory === "legal" || activeServiceCategory.startsWith("legal_");
@@ -395,11 +411,12 @@ export default function AdminServicesManagementPage() {
 
 
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[
           { id: "requests", label: "الطلبات", desc: "عرض كامل، رد على العميل، تسعير الطلب وإرسال الفاتورة", icon: FileText, count: filteredServiceRequests.length },
           { id: "pricing", label: "تسعير المنتجات", desc: "تعديل أسعار المنتجات والخدمات الجديدة", icon: SaudiRiyalIcon, count: activeCategoryServices.length },
           { id: "availability", label: "تفعيل الخدمات", desc: "تشغيل أو تعطيل ظهور الخدمات للعملاء", icon: Settings2, count: visibleServiceCategories.length },
+          { id: "forms", label: "تصميم النماذج", desc: "تعديل حقول نماذج طلبات الخدمات الظاهرة للعملاء", icon: Palette, count: 10 },
         ].map((panel) => {
           const Icon = panel.icon;
           const active = activePanel === panel.id;
@@ -407,7 +424,7 @@ export default function AdminServicesManagementPage() {
             <button
               key={panel.id}
               type="button"
-              onClick={() => setActivePanel(panel.id as "requests" | "pricing" | "availability")}
+              onClick={() => setActivePanel(panel.id as "requests" | "pricing" | "availability" | "forms")}
               className={`rounded-2xl border p-5 text-right transition-all ${
                 active ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-stone-400/10" : "border bg-card text-slate-600 hover:border-slate-300"
               }`}
@@ -482,6 +499,10 @@ export default function AdminServicesManagementPage() {
               );
             })}
           </div>
+        </div>
+
+        <div className={`lg:col-span-3 space-y-6 ${activePanel !== "forms" ? "hidden" : ""}`}>
+          <FormBuilderPanel />
         </div>
 
         <div className={`lg:col-span-3 space-y-6 ${activePanel !== "pricing" ? "hidden" : ""}`}>
@@ -650,7 +671,8 @@ export default function AdminServicesManagementPage() {
                   {visibleServiceRequests.map((request) => {
                     const draft = getRequestDraft(request);
                     return (
-                      <tr key={request.id} className="align-top hover:bg-muted/50">
+                      <React.Fragment key={request.id}>
+                      <tr className="align-top hover:bg-muted/50">
                         <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
                           <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
@@ -754,6 +776,13 @@ export default function AdminServicesManagementPage() {
                               رد على العميل
                             </button>
                             <button
+                              onClick={() => setExpandedRequestId((id) => (id === request.id ? null : request.id))}
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border bg-card px-3 text-[9px] font-black uppercase tracking-widest text-slate-600"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              {expandedRequestId === request.id ? "إخفاء التفاصيل" : "التفاصيل"}
+                            </button>
+                            <button
                               disabled={saving}
                               onClick={() => deleteRequest(request.id)}
                               className="inline-flex h-9 items-center justify-center rounded-xl bg-red-50 px-3 text-[9px] font-black uppercase tracking-widest text-red-600 disabled:opacity-50"
@@ -763,6 +792,16 @@ export default function AdminServicesManagementPage() {
                           </div>
                         </td>
                       </tr>
+                      {expandedRequestId === request.id && (
+                        <tr className="bg-muted/30">
+                          <td colSpan={9} className="px-3 py-3 sm:px-6 sm:py-4">
+                            <div className="rounded-2xl border border bg-card p-4" dir="rtl">
+                              <DynamicAnswersView request={request} />
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </React.Fragment>
                     );
                   })}
                 </tbody>
@@ -881,6 +920,13 @@ export default function AdminServicesManagementPage() {
                         رد على العميل
                       </button>
                       <button
+                        onClick={() => setExpandedRequestId((id) => (id === request.id ? null : request.id))}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border bg-card px-3 text-[9px] font-black uppercase tracking-widest text-slate-600"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        {expandedRequestId === request.id ? "إخفاء التفاصيل" : "التفاصيل"}
+                      </button>
+                      <button
                         disabled={saving}
                         onClick={() => deleteRequest(request.id)}
                         className="inline-flex h-9 items-center justify-center rounded-xl bg-red-50 px-3 text-[9px] font-black uppercase tracking-widest text-red-600 disabled:opacity-50"
@@ -888,6 +934,11 @@ export default function AdminServicesManagementPage() {
                         حذف
                       </button>
                     </div>
+                    {expandedRequestId === request.id && (
+                      <div className="rounded-2xl border border bg-muted/50 p-4" dir="rtl">
+                        <DynamicAnswersView request={request} />
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -1020,12 +1071,12 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
   const [userSearch, setUserSearch] = useState("");
   const [clientMode, setClientMode] = useState<"registered" | "anonymous">("anonymous");
 
+  // Non-legal options come from the shared catalog (includes leasing & visit).
   const modalServiceTypes: Record<string, string[]> = {
-    postPurchase: ["الغاز", "نقل وتركيب الأثاث", "التأمين على المنزل", "الصيانة (سباكة / كهرباء)", "خدمة التنظيف", "تنسيق حدائق", "أنظمة أمنية", "أخرى"],
+    ...Object.fromEntries(
+      Object.entries(SERVICE_CATALOG).map(([id, entry]) => [id, entry.options])
+    ),
     legal: ["المنازعات العقارية", "العقود", "التوثيق", "استشارة قانونية", "نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "عقد بيع", "عقد إيجار", "عقد الانتفاع العقاري", "عقد الهبة العقاري", "عقد الرهن العقاري", "عقد الاستثمار العقاري", "مراجعة العقود", "توثيق صك الملكية", "توثيق مستندات البيع", "توثيق بيانات الأطراف", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
-    construction: ["مقاول عظم", "تصميم هندسي", "تشطيبات", "كهرباء", "سباكة", "نجارة", "دهانات", "ألمنيوم", "إشراف هندسي", "تصميم داخلي", "أخرى"],
-    marketing: ["تصوير فوتوغرافي للعقار", "حملة إعلانية (وسائل التواصل الاجتماعي)", "حملة إعلانية (إعلانات طرق/تقليدية)", "أخرى"],
-    other: ["التقييم العقاري", "المسح الهندسي", "أخرى"],
   };
 
   const [form, setForm] = useState({
@@ -1261,6 +1312,8 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                 <option value="legal">الخدمات القانونية</option>
                 <option value="construction">البناء والمقاولات</option>
                 <option value="marketing">خدمات التسويق</option>
+                <option value="leasing">التأجير والإدارة</option>
+                <option value="visit">طلب زيارة العقار</option>
                 <option value="other">أخرى</option>
               </select>
             </div>

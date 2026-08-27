@@ -50,7 +50,7 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
   });
 
   return (
-    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40">
+    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/40 rounded-3xl p-3 sm:p-6 h-full font-sans border border-slate-700/40 wow-reveal">
       {/* Header */}
       <div className="flex flex-col mb-6">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -90,7 +90,10 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
                 strokeDashoffset={-seg.dashOffset}
                 strokeLinecap="butt"
                 className="transition-all duration-700 group-hover:opacity-90"
-                style={{ filter: `drop-shadow(0 0 4px ${seg.hex}55)` }}
+                style={{ 
+                  filter: `drop-shadow(0 0 4px ${seg.hex}55)`,
+                  animation: `donutDraw 1s ease-out ${i * 0.15}s both`,
+                }}
               />
             ))}
             {/* Gap overlay for spacing between segments */}
@@ -110,7 +113,7 @@ export default function PropertyDistributionChart({ data }: PropertyDistribution
           {chartData.map((type, index) => {
             const seg = segments[index];
             return (
-              <div key={index} className="flex items-center justify-between gap-2 group/leg cursor-default">
+              <div key={index} className="flex items-center justify-between gap-2 group/leg cursor-default wow-stagger" style={{ animationDelay: `${300 + index * 80}ms` }}>
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2 h-2 rounded-full shrink-0 transition-transform duration-200 group-hover/leg:scale-125"

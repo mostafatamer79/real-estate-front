@@ -136,18 +136,21 @@ export default function QuickActions({ id }: QuickActionsProps) {
       <div className="
         w-full flex items-center justify-between gap-3 md:gap-3 md:gap-6
         px-6 py-6 max-md:px-3 max-md:py-5 max-md:gap-1.5
-        bg-gradient-to-b from-slate-800 to-slate-900
-        border border-slate-700/60
-        rounded-[1rem]
+        bg-gradient-to-b from-slate-800/80 to-slate-900/90
+        border border-slate-700/40
+        rounded-[1.25rem]
         shadow-[0_4px_32px_rgba(0,0,0,0.4)]
         relative overflow-hidden overflow-x-auto hide-scrollbar
+        max-md:backdrop-blur-xl max-md:saturate-150
       ">
-        {/* Top shimmer */}
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-600/60 to-transparent" />
+        {/* Top shimmer highlight */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
         {/* Subtle ambient glow */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/2 via-transparent to-slate-500/2 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/3 via-transparent to-purple-500/2 pointer-events-none" />
+        {/* Inner top glow */}
+        <div className="pointer-events-none absolute inset-x-4 top-0 h-6 bg-gradient-to-b from-white/[0.04] to-transparent rounded-t-[1.25rem]" />
 
-        {actions.map((action) => {
+        {actions.map((action, index) => {
           const flagKey = action.id === 'requests' ? 'orders' : action.id;
           if (settings.sectionFlags[flagKey] === 'hidden') return null;
 
@@ -158,7 +161,7 @@ export default function QuickActions({ id }: QuickActionsProps) {
                 <motion.button
                   variants={item}
                   whileHover={{ scale: 1.12, y: -8 }}
-                  whileTap={{ scale: 0.92 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => {
                     hapticTick();
                     const flagKey = action.id === 'requests' ? 'orders' : action.id;
@@ -174,20 +177,23 @@ export default function QuickActions({ id }: QuickActionsProps) {
                   }}
                   className={`
                     group relative
-                    w-16 h-16 max-md:w-full max-md:max-w-[58px] max-md:h-auto max-md:aspect-square md:w-24 md:h-24
-                    rounded-2xl md:rounded-3xl
-                    bg-gradient-to-br from-slate-700/60 to-slate-800/80
-                    border border-slate-700/50
+                    w-16 h-16 max-md:w-full max-md:max-w-[62px] max-md:h-auto max-md:aspect-square md:w-24 md:h-24
+                    rounded-[1rem] md:rounded-[1.25rem]
+                    bg-gradient-to-br from-slate-700/50 to-slate-800/70
+                    border border-slate-700/40
                     ${action.accentColor}
                     flex items-center justify-center
                     shadow-[0_2px_12px_rgba(0,0,0,0.3)]
                     ${action.glowColor}
                     transition-all duration-300
+                    max-md:active:shadow-[0_1px_6px_rgba(0,0,0,0.4)]
                     ${settings.sectionFlags[flagKey] === 'closed' ? 'opacity-40 grayscale pointer-events-none cursor-not-allowed' : 'cursor-pointer'}
                   `}
                 >
-                  {/* Inner shimmer */}
-                  <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-transparent via-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Inner shimmer on hover */}
+                  <div className="absolute inset-0 rounded-[1rem] md:rounded-[1.25rem] bg-gradient-to-tr from-transparent via-white/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Top highlight line */}
+                  <div className="absolute top-0 inset-x-2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                   {/* Optimized Soon Badge */}
                   {settings.sectionFlags[flagKey] === 'closed' && (
@@ -203,15 +209,19 @@ export default function QuickActions({ id }: QuickActionsProps) {
                     </div>
                   </div>
 
-                  {/* Hover dot indicator */}
-                  <div className="absolute -bottom-1 w-1 h-1 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {/* Active dot indicator */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileHover={{ scale: 1 }}
+                    className="absolute -bottom-1 w-1.5 h-1.5 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_6px_rgba(99,102,241,0.5)]"
+                  />
                 </motion.button>
               </TooltipTrigger>
-              <TooltipContent className="bg-slate-900 border-slate-700 text-slate-200 font-bold px-3 py-2 rounded-xl shadow-2xl">
+              <TooltipContent className="bg-slate-900/95 backdrop-blur-xl border-slate-700/60 text-slate-200 font-bold px-3 py-2 rounded-xl shadow-2xl">
                 {action.title}
               </TooltipContent>
             </Tooltip>
-            <span className="text-xs mt-1 md:hidden text-slate-200 text-center max-md:text-[10px] max-md:leading-tight max-md:mt-1.5">{action.title}</span>
+            <span className="text-xs mt-1.5 md:hidden text-slate-200 text-center max-md:text-[10px] max-md:leading-tight max-md:mt-1.5 font-medium">{action.title}</span>
             </div>
           );
         })}

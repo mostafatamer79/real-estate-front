@@ -218,8 +218,23 @@ export default function NormalChatRoomPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-[60vh] flex items-center justify-center bg-muted">
+        <div className="space-y-4 w-full max-w-md px-4">
+          <div className="flex items-center gap-4">
+            <div className="wow-skeleton w-12 h-12 rounded-xl shrink-0" />
+            <div className="space-y-2 flex-1">
+              <div className="wow-skeleton h-4 w-32 rounded-lg" />
+              <div className="wow-skeleton h-3 w-20 rounded-lg" />
+            </div>
+          </div>
+          <div className="space-y-3 mt-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`} style={{ animationDelay: `${i * 100}ms` }}>
+                <div className={`wow-skeleton ${i % 2 === 0 ? 'w-3/4' : 'w-2/3'} h-12 rounded-2xl`} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -234,22 +249,23 @@ export default function NormalChatRoomPage() {
       <div className="mx-auto flex h-[calc(100dvh-2.5rem)] max-w-5xl flex-col overflow-hidden rounded-2xl border border bg-card shadow-sm max-md:h-[100dvh] max-md:rounded-none max-md:border-0 max-md:shadow-none">
         
         {/* Header */}
-        <div className="border-b border bg-card px-5 py-4">
+        <div className="border-b border bg-card px-5 py-4 wow-reveal">
           <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <button
+            <motion.button
               onClick={handleReturn}
+              whileTap={{ scale: 0.9 }}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border bg-muted text-slate-600 transition-all hover:bg-slate-950 hover:text-white"
               aria-label="العودة"
             >
               <ArrowRight className="h-5 w-5" />
-            </button>
+            </motion.button>
             <div className="flex min-w-0 items-center gap-3">
               <div className="relative shrink-0">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-white">
                   {otherParticipantName.charAt(0)}
                 </div>
-                <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${isOnline ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
               </div>
               <div className="min-w-0">
                 <h1 className="truncate text-lg font-black leading-tight text-slate-950">{otherParticipantName}</h1>
@@ -270,7 +286,7 @@ export default function NormalChatRoomPage() {
         <div className="flex-1 space-y-4 overflow-y-auto bg-muted p-5 scrollbar-hide md:p-7">
           <AnimatePresence initial={false}>
             {messages.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-slate-300">
+              <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-slate-300 wow-reveal">
                 <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card shadow-sm">
                   <MessageSquare className="h-10 w-10" />
                 </div>
@@ -283,13 +299,14 @@ export default function NormalChatRoomPage() {
                 return (
                   <motion.div
                     key={msg.id || index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                   >
                     <div className="flex max-w-[84%] flex-col gap-1 md:max-w-[70%]">
                       <div
-                        className={`px-4 py-3 shadow-sm ${
+                        className={`px-4 py-3 shadow-sm transition-all duration-200 ${
                           isOwn
                             ? 'rounded-2xl rounded-br-md bg-slate-950 text-white'
                             : 'rounded-2xl rounded-bl-md border border bg-card text-slate-900'
@@ -313,7 +330,7 @@ export default function NormalChatRoomPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border bg-card p-4 max-md:pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="border-t border bg-card p-4 max-md:pb-[max(1rem,env(safe-area-inset-bottom))] wow-reveal" style={{ animationDelay: '200ms' }}>
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <textarea
@@ -321,17 +338,18 @@ export default function NormalChatRoomPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="اكتب رسالة..."
-                className="max-h-[150px] min-h-[52px] w-full resize-none rounded-xl border border bg-muted px-4 py-3 text-sm font-bold outline-none transition-all focus:border-slate-950"
+                className="max-h-[150px] min-h-[52px] w-full resize-none rounded-xl border border bg-muted px-4 py-3 text-sm font-bold outline-none transition-all focus:border-slate-950 focus:shadow-lg focus:shadow-slate-950/5"
                 rows={1}
               />
             </div>
-            <button
+            <motion.button
               onClick={sendMessage}
               disabled={!message.trim()}
-              className="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-slate-950 text-white transition-all hover:bg-black active:scale-95 disabled:scale-100 disabled:opacity-30"
+              whileTap={{ scale: 0.9 }}
+              className="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-slate-950 text-white transition-all hover:bg-black disabled:scale-100 disabled:opacity-30"
             >
               <Send className="mb-1 ml-1 h-5 w-5 -rotate-45" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

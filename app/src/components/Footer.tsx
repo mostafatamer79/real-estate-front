@@ -75,14 +75,19 @@ export default function Footer() {
       </div>
 
       {showScrollTop && (
-        <button
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           type="button"
           onClick={scrollToTop}
           aria-label="العودة للأعلى"
           className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950 md:bottom-6 left-6 max-md:bottom-[calc(92px+env(safe-area-inset-bottom))]"
         >
           <ArrowUp className="h-5 w-5" />
-        </button>
+        </motion.button>
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10 max-md:pt-12 max-md:pb-10">
@@ -120,7 +125,7 @@ export default function Footer() {
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
                     <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
@@ -137,7 +142,7 @@ export default function Footer() {
             <ul className="space-y-4">
               {supportLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
                     <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
@@ -154,11 +159,11 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="w-5 h-5 text-slate-500 shrink-0" />
-                <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors break-all">{settings.contactEmail}</a>
+                <a href={`mailto:${settings.contactEmail}`} className="wow-ripple hover:text-white transition-colors break-all">{settings.contactEmail}</a>
               </li>
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <X className="w-5 h-5 text-slate-500 shrink-0" />
-                <a href={getXProfileUrl(settings.contactTwitter)} target="_blank" rel="noreferrer" className="hover:text-white transition-colors break-all" dir="ltr">
+                <a href={getXProfileUrl(settings.contactTwitter)} target="_blank" rel="noreferrer" className="wow-ripple hover:text-white transition-colors break-all" dir="ltr">
                   {settings.contactTwitter || "X"}
                 </a>
               </li>

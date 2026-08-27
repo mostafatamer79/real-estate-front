@@ -57,11 +57,30 @@ export default function RecentActivity() {
         };
     };
 
-    if (loading) return <div className="h-48 w-full bg-slate-900/50 animate-pulse rounded-3xl" />;
+    if (loading) return (
+        <div className="space-y-4">
+            <div className="flex items-center gap-3">
+                <div className="wow-skeleton w-10 h-10 rounded-xl" />
+                <div className="wow-skeleton h-4 w-32 rounded-lg" />
+            </div>
+            <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-4 p-4 rounded-2xl" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="wow-skeleton w-10 h-10 rounded-xl shrink-0" />
+                        <div className="flex-1 space-y-2">
+                            <div className="wow-skeleton h-3.5 w-3/4 rounded-lg" />
+                            <div className="wow-skeleton h-3 w-1/2 rounded-lg" />
+                        </div>
+                        <div className="wow-skeleton h-6 w-16 rounded-lg shrink-0" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 wow-reveal">
                 <div className="p-2 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-400">
                     <History className="w-4 h-4" />
                 </div>
@@ -70,7 +89,7 @@ export default function RecentActivity() {
                 </h2>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-4 wow-stagger">
                 {activities.length > 0 ? (
                     activities.map((activity, idx) => {
                         const activityText = getActivityText(activity);
@@ -79,11 +98,12 @@ export default function RecentActivity() {
                                 key={activity.id || idx}
                                 initial={{ opacity: 0, x: language === 'ar' ? 20 : -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: idx * 0.1 }}
+                                transition={{ delay: idx * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
+                                style={{ animationDelay: `${idx * 80}ms` }}
                                 className="group relative bg-slate-900/40 hover:bg-slate-900/60 border border-slate-800/60 hover:border-indigo-500/30 rounded-2xl p-4 transition-all duration-300"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         {getIcon(activity.type)}
                                     </div>
                                     <div className="flex-1 space-y-1">
@@ -98,7 +118,7 @@ export default function RecentActivity() {
                         );
                     })
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-6 md:py-12 px-6 bg-slate-900/20 border border-slate-800/40 rounded-[1rem] border-dashed">
+                    <div className="flex flex-col items-center justify-center py-6 md:py-12 px-6 bg-slate-900/20 border border-slate-800/40 rounded-[1rem] border-dashed wow-reveal">
                         <AlertCircle className="w-8 h-8 text-slate-700 mb-4" />
                         <p className="text-slate-500 text-sm font-medium">
                             {language === 'ar' ? 'لا توجد عمليات حالياً' : 'No previous operations found'}

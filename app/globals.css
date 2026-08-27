@@ -756,7 +756,8 @@ nav.fixed[class*="bottom"] {
 
 /* ============================================================
    MOBILE "WOW" LAYER — phones only (<768px), desktop untouched
-   Premium press feedback, card depth, focus glows, reveals.
+   Premium press feedback, card depth, focus glows, reveals,
+   ambient aurora, glassmorphism, micro-interactions, skeletons.
    ============================================================ */
 
 @media (max-width: 768px) {
@@ -808,7 +809,11 @@ nav.fixed[class*="bottom"] {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   }
 
-  /* --- Scroll reveal utility (opt-in class) --- */
+  /* ============================================================
+     SCROLL REVEAL SYSTEM
+     ============================================================ */
+
+  /* Basic reveal — rises up and fades in */
   .wow-reveal {
     opacity: 0;
     transform: translateY(18px);
@@ -820,21 +825,69 @@ nav.fixed[class*="bottom"] {
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Stagger helper for lists */
+  /* Scale reveal — pops in from small */
+  .wow-reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    animation: wowRevealScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+  @keyframes wowRevealScale {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Slide-in from left (RTL-aware) */
+  .wow-reveal-start {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: wowRevealStart 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+  [dir="rtl"] .wow-reveal-start { transform: translateX(20px); }
+  @keyframes wowRevealStart {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Stagger helper for lists — more children supported */
   .wow-stagger > * {
     opacity: 0;
     transform: translateY(16px);
     animation: wowReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-  .wow-stagger > *:nth-child(1) { animation-delay: 40ms; }
-  .wow-stagger > *:nth-child(2) { animation-delay: 90ms; }
-  .wow-stagger > *:nth-child(3) { animation-delay: 140ms; }
-  .wow-stagger > *:nth-child(4) { animation-delay: 190ms; }
-  .wow-stagger > *:nth-child(5) { animation-delay: 240ms; }
-  .wow-stagger > *:nth-child(6) { animation-delay: 290ms; }
-  .wow-stagger > *:nth-child(n+7) { animation-delay: 340ms; }
+  .wow-stagger > *:nth-child(1)  { animation-delay: 40ms; }
+  .wow-stagger > *:nth-child(2)  { animation-delay: 90ms; }
+  .wow-stagger > *:nth-child(3)  { animation-delay: 140ms; }
+  .wow-stagger > *:nth-child(4)  { animation-delay: 190ms; }
+  .wow-stagger > *:nth-child(5)  { animation-delay: 240ms; }
+  .wow-stagger > *:nth-child(6)  { animation-delay: 290ms; }
+  .wow-stagger > *:nth-child(7)  { animation-delay: 340ms; }
+  .wow-stagger > *:nth-child(8)  { animation-delay: 390ms; }
+  .wow-stagger > *:nth-child(9)  { animation-delay: 440ms; }
+  .wow-stagger > *:nth-child(10) { animation-delay: 490ms; }
+  .wow-stagger > *:nth-child(n+11) { animation-delay: 540ms; }
 
-  /* --- Gradient hairline accent for section titles (opt-in) --- */
+  /* Stagger with scale pop — for icon grids / card grids */
+  .wow-stagger-scale > * {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+    animation: wowStaggerScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .wow-stagger-scale > *:nth-child(1)  { animation-delay: 30ms; }
+  .wow-stagger-scale > *:nth-child(2)  { animation-delay: 70ms; }
+  .wow-stagger-scale > *:nth-child(3)  { animation-delay: 110ms; }
+  .wow-stagger-scale > *:nth-child(4)  { animation-delay: 150ms; }
+  .wow-stagger-scale > *:nth-child(5)  { animation-delay: 190ms; }
+  .wow-stagger-scale > *:nth-child(6)  { animation-delay: 230ms; }
+  .wow-stagger-scale > *:nth-child(n+7) { animation-delay: 270ms; }
+  @keyframes wowStaggerScale {
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ============================================================
+     GRADIENT ACCENT SYSTEM
+     ============================================================ */
+
+  /* Gradient hairline accent for section titles (opt-in) */
   .wow-accent {
     position: relative;
     padding-bottom: 10px;
@@ -853,7 +906,20 @@ nav.fixed[class*="bottom"] {
     background: linear-gradient(-90deg, rgba(129,140,248,0.9), rgba(99,102,241,0.35), transparent);
   }
 
-  /* --- Ambient aurora blobs (fixed, GPU-cheap, behind content) --- */
+  /* Wider accent for major sections */
+  .wow-accent-wide::after {
+    width: 64px;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(99,102,241,1), rgba(168,85,247,0.6), transparent);
+  }
+  [dir="rtl"] .wow-accent-wide::after {
+    background: linear-gradient(-90deg, rgba(99,102,241,1), rgba(168,85,247,0.6), transparent);
+  }
+
+  /* ============================================================
+     AMBIENT AURORA SYSTEM — floating color blobs
+     ============================================================ */
+
   .wow-aurora {
     position: fixed;
     inset: 0;
@@ -890,7 +956,33 @@ nav.fixed[class*="bottom"] {
     to   { transform: translate3d(6vmax, 4vmax, 0) scale(1.12); }
   }
 
-  /* --- Shine sweep for primary CTAs (opt-in) --- */
+  /* Enhanced aurora — adds a third purple blob */
+  .wow-aurora-v2::before {
+    background: radial-gradient(circle at center, #818cf8, transparent 60%);
+    opacity: 0.12;
+  }
+  .wow-aurora-v2::after {
+    background: radial-gradient(circle at center, #7c3aed, transparent 60%);
+    opacity: 0.08;
+  }
+  .wow-aurora-v2 .wow-aurora-orb {
+    position: absolute;
+    width: 50vmax;
+    height: 50vmax;
+    border-radius: 9999px;
+    filter: blur(100px);
+    background: radial-gradient(circle at center, #06b6d4, transparent 60%);
+    opacity: 0.06;
+    top: 30%;
+    inset-inline-end: -20vmax;
+    animation: auroraDrift 38s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  /* ============================================================
+     SHINE SWEEP SYSTEM — animated shimmer on CTAs
+     ============================================================ */
+
   .wow-shine {
     position: relative;
     overflow: hidden;
@@ -912,7 +1004,15 @@ nav.fixed[class*="bottom"] {
     85%, 100% { inset-inline-start: 130%; }
   }
 
-  /* --- Number pop-in for counters/badges --- */
+  /* Faster shine variant for small elements */
+  .wow-shine-fast::before {
+    animation-duration: 2.5s;
+  }
+
+  /* ============================================================
+     POP & BOUNCE ANIMATIONS
+     ============================================================ */
+
   .wow-pop {
     animation: wowPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
@@ -921,27 +1021,456 @@ nav.fixed[class*="bottom"] {
     to   { opacity: 1; transform: scale(1); }
   }
 
-  /* --- Shimmer skeleton (opt-in loading placeholders) --- */
+  /* Bounce-in for cards */
+  .wow-bounce {
+    animation: wowBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: var(--bounce-delay, 0ms);
+  }
+  @keyframes wowBounce {
+    0%   { opacity: 0; transform: scale(0.8) translateY(12px); }
+    60%  { opacity: 1; transform: scale(1.03) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* Float animation for decorative elements */
+  .wow-float {
+    animation: wowFloat 4s ease-in-out infinite;
+  }
+  @keyframes wowFloat {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  /* Pulse glow for notification badges */
+  .wow-pulse-glow {
+    animation: wowPulseGlow 2s ease-in-out infinite;
+  }
+  @keyframes wowPulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  }
+
+  /* ============================================================
+     PREMIUM GLASSMORPHISM SYSTEM
+     ============================================================ */
+
+  .wow-glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .wow-glass-light {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+
+  .wow-glass-dark {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* ============================================================
+     SKELETON LOADING SYSTEM — premium shimmer placeholders
+     ============================================================ */
+
   .wow-skeleton {
     position: relative;
     overflow: hidden;
     background-color: rgba(148, 163, 184, 0.18);
+    border-radius: 12px;
   }
   .wow-skeleton::after {
     content: "";
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-    animation: wowShimmer 1.6s infinite;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: wowShimmer 1.8s ease-in-out infinite;
   }
   @keyframes wowShimmer {
+    0%   { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
   }
 
-  /* Full-width toasts on phones */
+  /* Dark skeleton variant for dark pages */
+  .wow-skeleton-dark {
+    background-color: rgba(30, 41, 59, 0.6);
+  }
+  .wow-skeleton-dark::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(148, 163, 184, 0.1),
+      rgba(148, 163, 184, 0.18),
+      rgba(148, 163, 184, 0.1),
+      transparent
+    );
+  }
+
+  /* Skeleton with rounded shapes for avatars */
+  .wow-skeleton-circle {
+    border-radius: 9999px;
+  }
+
+  /* Skeleton text lines */
+  .wow-skeleton-text {
+    height: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .wow-skeleton-text:last-child {
+    width: 60%;
+  }
+
+  /* ============================================================
+     RIPPLE EFFECT — tap ripple on interactive cards
+     ============================================================ */
+
+  .wow-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .wow-ripple::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.2) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .wow-ripple:active::after {
+    opacity: 1;
+    transition: opacity 0s;
+  }
+
+  /* ============================================================
+     PREMIUM CARD SYSTEM — depth, hover glow, border shimmer
+     ============================================================ */
+
+  .wow-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      0 8px 32px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+  }
+  .wow-card:active {
+    transform: scale(0.98);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.1),
+      0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .wow-card-light {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 8px 32px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ============================================================
+     PAGE TRANSITION SYSTEM
+     ============================================================ */
+
+  @keyframes pageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .wow-page-enter {
+    animation: pageSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ============================================================
+     NOTIFICATION BADGE SYSTEM
+     ============================================================ */
+
+  .wow-badge {
+    position: relative;
+  }
+  .wow-badge::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    background: rgba(239, 68, 68, 0.3);
+    animation: wowPulseGlow 2s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  /* ============================================================
+     GRADIENT TEXT SYSTEM
+     ============================================================ */
+
+  .wow-text-gradient {
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .wow-text-gradient-warm {
+    background: linear-gradient(135deg, #f97316 0%, #ef4444 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ============================================================
+     GESTURE HINT SYSTEM — subtle swipe indicators
+     ============================================================ */
+
+  .wow-swipe-hint {
+    position: relative;
+  }
+  .wow-swipe-hint::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* ============================================================
+     HAPTIC FEEDBACK VISUAL — subtle vibration indicator
+     ============================================================ */
+
+  .wow-haptic-flash {
+    animation: wowHapticFlash 0.3s ease-out;
+  }
+  @keyframes wowHapticFlash {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  /* ============================================================
+     DIVIDER SYSTEM — premium gradient dividers
+     ============================================================ */
+
+  .wow-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 0 auto;
+    width: 80%;
+  }
+
+  .wow-divider-accent {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), rgba(168,85,247,0.2), transparent);
+    margin: 0 auto;
+    width: 60%;
+    border-radius: 999px;
+  }
+
+  /* ============================================================
+     TOAST SYSTEM — full-width toasts on phones
+     ============================================================ */
+
   section[aria-label*="Notifications"], 
   .go2072408551 {
     max-width: calc(100vw - 24px) !important;
+  }
+
+  /* Premium toast styling */
+  .go2072408551 [data-sonner-toast] {
+    border-radius: 20px !important;
+    backdrop-filter: blur(20px) !important;
+  }
+
+  /* ============================================================
+     SCROLL PROGRESS INDICATOR
+     ============================================================ */
+
+  .wow-scroll-progress {
+    position: fixed;
+    top: 0;
+    inset-inline-start: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1, #a78bfa, #818cf8);
+    z-index: 99999;
+    transition: width 0.1s linear;
+    border-radius: 0 999px 999px 0;
+  }
+
+  /* ============================================================
+     FLOATING ACTION BUTTON SYSTEM
+     ============================================================ */
+
+  .wow-fab {
+    position: fixed;
+    bottom: calc(92px + env(safe-area-inset-bottom) + 16px);
+    inset-inline-end: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 4px 16px rgba(99, 102, 241, 0.4),
+      0 8px 32px rgba(99, 102, 241, 0.2);
+    z-index: 50;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+  }
+  .wow-fab:active {
+    transform: scale(0.92);
+    box-shadow:
+      0 2px 8px rgba(99, 102, 241, 0.3),
+      0 4px 16px rgba(99, 102, 241, 0.15);
+  }
+
+  /* ============================================================
+     IMAGE TREATMENTS
+     ============================================================ */
+
+  .wow-image-glow {
+    filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.15));
+  }
+
+  .wow-image-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .wow-image-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     CHART ANIMATIONS — SVG path draw + donut segments
+     ============================================================ */
+
+  @keyframes chartDraw {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes chartDotFade {
+    from { opacity: 0; r: 0; }
+    to { opacity: 0.7; r: 1.8; }
+  }
+
+  @keyframes donutDraw {
+    from { stroke-dasharray: 0 264; }
+  }
+
+  /* ============================================================
+     TYPING INDICATOR — animated dots for chat
+     ============================================================ */
+
+  .wow-typing {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 8px 12px;
+  }
+  .wow-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: wowTypingBounce 1.2s ease-in-out infinite;
+  }
+  .wow-typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .wow-typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes wowTypingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ============================================================
+     FLOATING ACTION BUTTON — pulse glow for FABs
+     ============================================================ */
+
+  .wow-fab-glow {
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    animation: wowFabGlow 2s ease-in-out infinite;
+  }
+  @keyframes wowFabGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3); }
+    50% { box-shadow: 0 4px 30px rgba(99, 102, 241, 0.5), 0 0 60px rgba(99, 102, 241, 0.15); }
+  }
+
+  /* ============================================================
+     GLASSMORPHISM PANEL — reusable glass backdrop
+     ============================================================ */
+
+  .wow-glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+  .wow-glass-panel-dark {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  /* ============================================================
+     NUMBER COUNTER — for animated stats
+     ============================================================ */
+
+  .wow-count-up {
+    animation: wowCountPulse 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes wowCountPulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
   }
 }

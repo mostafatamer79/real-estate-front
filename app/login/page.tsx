@@ -134,23 +134,49 @@ export default function SignIn({ onClose }: SignInProps) {
       className="fixed inset-0 bg-slate-950 text-white flex flex-col items-center justify-start md:pt-12 p-3 sm:p-6 z-[60] overflow-y-auto"
       style={{ paddingTop: 'calc(1.5rem + env(safe-area-inset-top))' }}
     >
-      {/* Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-slate-600/20 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-pulse delay-700"></div>
+      {/* Enhanced Background Orbs — animated and more dramatic */}
+      <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-indigo-600/20 rounded-full blur-[140px] animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-purple-600/15 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-[40%] left-[50%] w-[30%] h-[30%] bg-cyan-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
 
-      {/* Decorative Lines */}
-      <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+      {/* Decorative dot grid */}
+      <div className="absolute inset-0 z-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.04) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+
+      {/* Floating decorative particles */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-white/10"
+            style={{
+              left: `${10 + (i * 12) % 80}%`,
+              top: `${5 + (i * 17) % 90}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 3 + (i % 3),
+              repeat: Infinity,
+              delay: i * 0.4,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Mobile hero logo */}
+        {/* Premium mobile hero logo */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-          className="md:hidden flex justify-center mb-7"
+          initial={{ scale: 0.7, opacity: 0, y: 12 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.1 }}
+          className="md:hidden flex justify-center mb-8"
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-indigo-500/25 blur-2xl rounded-full animate-pulse" />
+            <div className="absolute inset-0 bg-indigo-500/30 blur-3xl rounded-full animate-pulse scale-150" />
+            <div className="absolute inset-0 bg-purple-500/15 blur-2xl rounded-full animate-pulse" style={{ animationDelay: '1.5s' }} />
             <Image
               src={settings.logoWhiteUrl || '/icons/white.png'}
               alt={t('project.name')}
@@ -166,38 +192,49 @@ export default function SignIn({ onClose }: SignInProps) {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
           className="flex justify-between items-center mb-8"
         >
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-200 active:scale-95"
           >
             <ArrowLeft className={`w-5 h-5 sm:w-4 sm:h-4 ${language === 'en' ? '' : 'rotate-180'}`} />
             <span className="text-sm font-medium">{t('common.back')}</span>
           </button>
 
-          <Link href="/customerservice" className="text-white/40 hover:text-white text-xs transition-colors underline underline-offset-4">
+          <Link href="/customerservice" className="text-white/40 hover:text-white text-xs transition-colors duration-200 underline underline-offset-4">
             {t('header.customerService')}
           </Link>
         </motion.div>
 
-        {/* Login Card */}
+        {/* Login Card — premium glassmorphism */}
         <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          initial={{ opacity: 0, y: 28, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.14, type: 'spring', stiffness: 240, damping: 26 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 240, damping: 26 }}
           className="relative"
         >
-          {/* Mobile glow ring behind card */}
-          <div aria-hidden="true" className="md:hidden absolute -inset-px rounded-[1.6rem] bg-gradient-to-b from-white/25 via-white/5 to-transparent pointer-events-none" />
+          {/* Mobile glow ring behind card — animated */}
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            aria-hidden="true"
+            className="md:hidden absolute -inset-px rounded-[1.8rem] bg-gradient-to-b from-white/20 via-indigo-500/10 to-transparent pointer-events-none"
+          />
           <div
-            className="bg-slate-900 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative"
+            className="bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-[1.8rem] p-5 sm:p-8 shadow-[0_8px_40px_rgba(0,0,0,0.5)] relative overflow-hidden"
           >
+            {/* Inner top highlight */}
+            <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-6 top-0 h-8 bg-gradient-to-b from-white/[0.04] to-transparent rounded-t-[1.8rem]" />
+
             {typeof onClose === 'function' && (
               <button
                 onClick={onClose}
-                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors duration-200 active:scale-90"
                 disabled={isLoading}
               >
                 <X className="w-5 h-5" />
@@ -206,25 +243,40 @@ export default function SignIn({ onClose }: SignInProps) {
 
             <div className="text-center mb-8">
        
-                <h1 className="text-lg sm:text-xl font-bold mb-2 leading-snug">
+                <motion.h1
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.4 }}
+                  className="text-lg sm:text-xl font-bold mb-2 leading-snug"
+                >
                   {isPhoneMode ? t('login.title.phone') : t('login.title.email')}
-                </h1>
-                <p className="text-white/60 text-sm">
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.45, duration: 0.4 }}
+                  className="text-white/60 text-sm"
+                >
                   {isPhoneMode ? t('login.info.phone') : t('login.info.email')}
-                </p>
+                </motion.p>
             </div>
 
-            {/* Mode Switcher */}
+            {/* Mode Switcher — premium segmented control */}
             {(loginConfig.emailEnabled || loginConfig.phoneEnabled) && (
-              <div className="flex bg-slate-900/50 p-1.5 rounded-2xl mb-6 border border-white/5">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="flex bg-slate-800/80 p-1.5 rounded-2xl mb-6 border border-white/5 backdrop-blur-sm"
+              >
                   {/* Email tab */}
                   {loginConfig.emailEnabled && (
                     <button
                       onClick={() => setIsPhoneMode(false)}
                       disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all duration-300 ${
                         !isPhoneMode
-                          ? "bg-card/10 text-white shadow-lg"
+                          ? "bg-white/10 text-white shadow-[0_2px_12px_rgba(255,255,255,0.08)]"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
@@ -238,9 +290,9 @@ export default function SignIn({ onClose }: SignInProps) {
                     <button
                       onClick={() => setIsPhoneMode(true)}
                       disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-2 sm:px-4 rounded-xl transition-all duration-300 ${
                         isPhoneMode
-                          ? "bg-card/10 text-white shadow-lg"
+                          ? "bg-white/10 text-white shadow-[0_2px_12px_rgba(255,255,255,0.08)]"
                           : "text-white/40 hover:text-white/60"
                       } disabled:opacity-50`}
                     >
@@ -260,14 +312,19 @@ export default function SignIn({ onClose }: SignInProps) {
                       )}
                     </div>
                   )}
-              </div>
+              </motion.div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
-              <div className="space-y-1">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+                className="space-y-1"
+              >
                 <div className="relative group">
-                  <div className={`absolute inset-0 bg-slate-600/20 rounded-2xl blur-md opacity-0 group-focus-within:opacity-100 transition-opacity`}></div>
-                  <div className="relative flex items-center bg-slate-900/80 border border-white/10 rounded-2xl p-3.5 sm:p-4 focus-within:border-blue-500/50 transition-all">
+                  <div className={`absolute inset-0 bg-indigo-500/15 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500`}></div>
+                  <div className="relative flex items-center bg-slate-800/60 border border-white/8 rounded-2xl p-3.5 sm:p-4 focus-within:border-indigo-500/40 focus-within:bg-slate-800/80 transition-all duration-300">
                     {isPhoneMode ? (
                       <>
                         <div className="flex items-center gap-2 border-l border-white/10 pl-3 shrink-0">
@@ -279,7 +336,7 @@ export default function SignIn({ onClose }: SignInProps) {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           disabled={isLoading}
-                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/20"
+                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/25"
                           placeholder={t('login.placeholder.phone')}
                           required
                         />
@@ -292,7 +349,7 @@ export default function SignIn({ onClose }: SignInProps) {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           disabled={isLoading}
-                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/20"
+                          className="w-full bg-transparent outline-none px-3 text-white placeholder:text-white/25"
                           placeholder={t('login.placeholder.email')}
                           required
                         />
@@ -300,28 +357,41 @@ export default function SignIn({ onClose }: SignInProps) {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl"
+                >
                   <p className="text-red-400 text-xs text-center font-medium leading-relaxed">{error}</p>
-                </div>
+                </motion.div>
               )}
 
-              <div className="flex items-start gap-3 px-1 text-white/40">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+                className="flex items-start gap-3 px-1 text-white/40"
+              >
                 <Info className="w-5 h-5 sm:w-4 sm:h-4 mt-0.5 shrink-0" />
                 <p className="text-[11px] leading-relaxed">
                   {isPhoneMode ? t('login.note.phone') : t('login.note.email')}
                 </p>
-              </div>
+              </motion.div>
 
-              <button
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.4 }}
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all active:scale-[0.98] ${
+                whileTap={isFormValid && !isLoading ? { scale: 0.98 } : undefined}
+                className={`w-full relative group overflow-hidden py-4 rounded-2xl font-bold transition-all duration-300 ${
                   isFormValid && !isLoading
-                    ? "bg-slate-600 hover:bg-slate-500 text-white shadow-xl shadow-blue-600/20 wow-shine"
-                    : "bg-card/5 text-white/20 cursor-not-allowed"
+                    ? "bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-[0_4px_20px_rgba(99,102,241,0.3)] hover:shadow-[0_8px_32px_rgba(99,102,241,0.4)] wow-shine"
+                    : "bg-white/5 text-white/20 cursor-not-allowed"
                 }`}
               >
                 <div className="relative z-10 flex items-center justify-center gap-2">
@@ -338,21 +408,26 @@ export default function SignIn({ onClose }: SignInProps) {
                   )}
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full duration-1000 transition-transform"></div>
-              </button>
+              </motion.button>
             </form>
         </div>
         </motion.div>
 
         {/* Footer Info — guest access during free trial */}
         {isGlobalFreeTrial && (
-          <div className="mt-6 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.4 }}
+            className="mt-6 text-center"
+          >
             <button
               onClick={() => router.push('/')}
-              className="text-white/50 hover:text-white/80 text-sm transition-colors underline underline-offset-4"
+              className="text-white/50 hover:text-white/80 text-sm transition-colors duration-200 underline underline-offset-4 active:scale-95"
             >
               {t('login.continueWithoutLogin') || 'تصفح بدون تسجيل دخول'}
             </button>
-          </div>
+          </motion.div>
         )}
 
       </div>

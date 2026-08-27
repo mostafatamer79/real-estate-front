@@ -127,7 +127,23 @@ export default function RootLayout({
                     <MobileBottomNav />
                   </div>
                   <Toaster />
-                  <SonnerToaster richColors position="top-center" />
+                  <SonnerToaster
+                    richColors
+                    position="top-center"
+                    toastOptions={{
+                      duration: 4000,
+                      style: {
+                        borderRadius: "16px",
+                        backdropFilter: "blur(20px)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+                        padding: "12px 16px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                      },
+                    }}
+                    className="md:top-4"
+                  />
                   <HotToaster
                     position="top-center"
                     toastOptions={{

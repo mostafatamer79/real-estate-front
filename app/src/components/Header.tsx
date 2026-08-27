@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import NotificationBell from "./NotificationBell";
@@ -330,31 +331,44 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Navigation Drawer — premium glassmorphism */}
       {isMenuOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            className="md:hidden fixed inset-0 top-16 bg-black/40 z-30"
+          {/* Backdrop with blur */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed inset-0 top-16 bg-black/50 backdrop-blur-sm z-30"
             onClick={() => setIsMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900 border-b border-white/10 flex flex-col p-4 gap-3 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto animate-in slide-in-from-top duration-300">
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }}
+            className="md:hidden absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+          >
+             {/* Top highlight line */}
+             <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
              {settings.sectionFlags.customerservice !== 'hidden' && (
                <Link
-                  href="/customerservice"
-                  className={`flex items-center gap-3 py-3 text-white/80 text-base sm:text-lg font-medium ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
+                 href="/customerservice"
+                 className={`flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                 onClick={() => setIsMenuOpen(false)}
+               >
                    <Headset className="w-5 h-5" />
                    {t('header.customerService')}
-                </Link>
+               </Link>
              )}
 
 
              <button
                 onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
-                className="flex items-center gap-3 py-3 text-white/80 text-base sm:text-lg font-medium uppercase"
+                className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium uppercase rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
              >
                 <Languages className="w-5 h-5" />
                 {language === 'ar' ? 'English' : 'العربية'}
@@ -364,7 +378,7 @@ export default function Header() {
                <>
                  <Link
                     href="/profile"
-                    className="flex items-center gap-3 py-3 text-white text-base sm:text-lg font-medium"
+                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="w-5 h-5" />
@@ -373,13 +387,13 @@ export default function Header() {
 
                   <Link
                     href="/chat"
-                    className="flex items-center gap-3 py-3 text-white text-base sm:text-lg font-medium relative"
+                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium relative rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <div className="relative">
                       <MessageSquare className="w-5 h-5" />
                       {unreadChatCount > 0 && (
-                        <span className="absolute -top-1.5 -right-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white shadow-md ring-1 ring-slate-950">
+                        <span className="absolute -top-1.5 -right-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white shadow-md ring-1 ring-slate-950 wow-pulse-glow">
                           {unreadChatCount}
                         </span>
                       )}
@@ -389,7 +403,7 @@ export default function Header() {
 
                   <Link
                     href="/services/my-requests"
-                    className="flex items-center gap-3 py-3 text-white text-base sm:text-lg font-medium"
+                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Image
@@ -406,7 +420,7 @@ export default function Header() {
                     <>
                       <Link
                         href="/admin/dashboard"
-                        className="flex items-center gap-3 py-3 text-emerald-400 text-base sm:text-lg font-medium"
+                        className="flex items-center gap-3 py-3.5 px-3 text-emerald-400 text-base sm:text-lg font-medium rounded-xl hover:bg-emerald-500/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -414,7 +428,7 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/internal"
-                        className="flex items-center gap-3 py-3 text-blue-400 text-base sm:text-lg font-medium"
+                        className="flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -426,7 +440,7 @@ export default function Header() {
                   {user && ((user.departments && user.departments.length > 0) || (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && user.role !== Role.ADMIN && (
                     <Link
                       href="/internal"
-                      className="flex items-center gap-3 py-3 text-blue-400 text-base sm:text-lg font-medium"
+                      className="flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                         <LayoutDashboard className="w-5 h-5" />
@@ -438,7 +452,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/marketing"
-                        className={`flex items-center gap-3 py-3 text-orange-400 text-base sm:text-lg font-medium ${settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 py-3.5 px-3 text-orange-400 text-base sm:text-lg font-medium rounded-xl hover:bg-orange-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -456,7 +470,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/disputes"
-                        className={`flex items-center gap-3 py-3 text-blue-400 text-base sm:text-lg font-medium ${settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -474,7 +488,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/financial"
-                        className={`flex items-center gap-3 py-3 text-emerald-400 text-base sm:text-lg font-medium ${settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 py-3.5 px-3 text-emerald-400 text-base sm:text-lg font-medium rounded-xl hover:bg-emerald-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -492,7 +506,7 @@ export default function Header() {
                     <div className="relative">
                       <Link
                         href="/buildingmanagement"
-                        className={`flex items-center gap-3 py-3 text-purple-400 text-base sm:text-lg font-medium ${settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                        className={`flex items-center gap-3 py-3.5 px-3 text-purple-400 text-base sm:text-lg font-medium rounded-xl hover:bg-purple-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -506,9 +520,12 @@ export default function Header() {
                     </div>
                   )}
 
+                  {/* Divider */}
+                  <div className="wow-divider my-2" />
+
                   <button
                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                    className="flex items-center gap-3 py-3 text-red-400 text-base sm:text-lg font-medium mt-4"
+                    className="flex items-center gap-3 py-3.5 px-3 text-red-400 text-base sm:text-lg font-medium rounded-xl hover:bg-red-500/5 transition-all duration-200 active:scale-[0.98]"
                   >
                     <LogOut className="w-5 h-5" />
                     {t('header.logout')}
@@ -517,12 +534,12 @@ export default function Header() {
              ) : (
                 <button
                   onClick={() => { router.push('/login'); setIsMenuOpen(false); }}
-                  className="w-full py-3 bg-slate-600 text-white text-base sm:text-lg font-semibold rounded-xl shadow-lg"
+                  className="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-base sm:text-lg font-semibold rounded-xl shadow-[0_4px_20px_rgba(99,102,241,0.3)] active:scale-[0.98] transition-all duration-200"
                 >
                   {t('header.login')}
                 </button>
              )}
-        </div>
+        </motion.div>
       </>)}
       
       <TermsPrivacyModal 

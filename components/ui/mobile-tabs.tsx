@@ -2,15 +2,16 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { hapticTick } from "@/lib/haptics";
 
 /**
- * Mobile-first segmented tabs built on Radix Tabs primitives.
+ * Premium mobile-first segmented tabs built on Radix Tabs primitives.
  *
  * - Phones (<768px): triggers become wrapping chips (nothing hidden, no scroll)
  *   with a spring-animated sliding pill behind the active chip.
+ *   Enhanced with glow effects and smooth transitions.
  * - Desktop (>=768px): fully pass-through — pages keep their exact current
  *   styling via their own classes; the pill indicator is hidden.
  *
@@ -59,7 +60,7 @@ export function SegmentedList({
       <TabsPrimitive.List
         className={cn(
           // Mobile: let chips wrap instead of scrolling horizontally
-          "max-md:flex-wrap max-md:gap-2",
+          "max-md:flex-wrap max-md:gap-2 max-md:p-1.5",
           className
         )}
         {...props}
@@ -81,7 +82,15 @@ export function SegmentedTrigger({
 
   return (
     <TabsPrimitive.Trigger
-      className={cn("relative", className)}
+      className={cn(
+        "relative",
+        // Mobile: premium chip styling
+        "max-md:px-4 max-md:py-2.5 max-md:rounded-xl max-md:text-sm max-md:font-semibold",
+        "max-md:transition-all max-md:duration-200",
+        isActive && "max-md:text-white",
+        !isActive && "max-md:text-slate-400 max-md:hover:text-slate-200",
+        className
+      )}
       disabled={disabled}
       onPointerDown={(e) => {
         if (!isActive && !disabled) hapticTick();
@@ -94,10 +103,13 @@ export function SegmentedTrigger({
           layoutId={`segmented-pill-${state.layoutId}`}
           aria-hidden="true"
           className={cn(
-            "absolute inset-0 rounded-full bg-slate-950 shadow-sm md:hidden",
+            "absolute inset-0 rounded-xl md:hidden",
+            "bg-white/10 backdrop-blur-sm",
+            "shadow-[0_2px_8px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]",
+            "border border-white/[0.08]",
             pillClassName
           )}
-          transition={{ type: "spring", stiffness: 520, damping: 42, mass: 0.7 }}
+          transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.7 }}
         />
       )}
       <span className="relative z-10 inline-flex items-center justify-center gap-1.5">

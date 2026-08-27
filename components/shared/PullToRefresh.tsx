@@ -2,11 +2,11 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { motion } from "framer-motion";
-import { hapticTick } from "@/lib/haptics";
+import { motion, useSpring, useTransform } from "framer-motion";
+import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
 /**
- * Mobile pull-to-refresh.
+ * Premium mobile pull-to-refresh.
  *
  * Renders a floating indicator under the app bar while the user pulls down
  * at the top of the page, then triggers `onRefresh`. Children are rendered
@@ -15,8 +15,8 @@ import { hapticTick } from "@/lib/haptics";
  */
 
 const THRESHOLD = 64;
-const MAX_PULL = 96;
-const RESISTANCE = 0.45;
+const MAX_PULL = 100;
+const RESISTANCE = 0.42;
 
 export default function PullToRefresh({
   onRefresh,
@@ -33,11 +33,16 @@ export default function PullToRefresh({
   const pullRef = useRef(0);
   pullRef.current = pull;
 
+  // Spring animation for smooth indicator movement
+  const springPull = useSpring(0, { stiffness: 300, damping: 30 });
+  const indicatorY = useTransform(springPull, [0, MAX_PULL], [-40, 16]);
+
   const endPull = useCallback(() => {
     startY.current = null;
     engaged.current = false;
     setPull(0);
-  }, []);
+    springPull.set(0);
+  }, [springPull]);
 
   useEffect(() => {
     if (refreshing) return;
@@ -67,7 +72,9 @@ export default function PullToRefresh({
       }
 
       if (deltaY > 0) {
-        setPull(Math.min(deltaY * RESISTANCE, MAX_PULL));
+        const newPull = Math.min(deltaY * RESISTANCE, MAX_PULL);
+        setPull(newPull);
+        springPull.set(newPull);
       }
     };
 
@@ -76,7 +83,7 @@ export default function PullToRefresh({
       const shouldRefresh = pullRef.current >= THRESHOLD && !refreshing;
       endPull();
       if (shouldRefresh) {
-        hapticTick();
+        hapticSuccess();
         setRefreshing(true);
         try {
           await onRefresh();
@@ -96,9 +103,10 @@ export default function PullToRefresh({
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("touchcancel", endPull);
     };
-  }, [onRefresh, refreshing, endPull]);
+  }, [onRefresh, refreshing, endPull, springPull]);
 
   const progress = Math.min(pull / THRESHOLD, 1);
+  const circumference = 2 * Math.PI * 14;
 
   return (
     <>
@@ -110,20 +118,64 @@ export default function PullToRefresh({
           top: "calc(4.25rem + env(safe-area-inset-top))",
           opacity: refreshing ? 1 : Math.min(progress * 1.4, 1),
           transform: `translateY(${Math.max(pull - 24, refreshing ? 0 : -40)}px)`,
-          transition: pull === 0 ? "transform 0.25s ease" : undefined,
+          transition: pull === 0 ? "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)" : undefined,
         }}
       >
-        <motion.div
-          animate={{ rotate: refreshing ? 360 : progress * 180 }}
-          transition={
-            refreshing
-              ? { repeat: Infinity, duration: 0.9, ease: "linear" }
-              : { type: "spring", stiffness: 300, damping: 25 }
-          }
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-card border shadow-lg"
-        >
-          <RefreshCw className="h-4 w-4 text-slate-500" />
-        </motion.div>
+        <div className="relative">
+          {/* Glow ring behind indicator */}
+          <motion.div
+            animate={{
+              opacity: refreshing ? 0.3 : progress * 0.2,
+              scale: refreshing ? 1.2 : 0.8 + progress * 0.4,
+            }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 -m-2 rounded-full bg-indigo-500/20 blur-lg"
+          />
+
+          <motion.div
+            animate={{ rotate: refreshing ? 360 : progress * 180 }}
+            transition={
+              refreshing
+                ? { repeat: Infinity, duration: 0.8, ease: "linear" }
+                : { type: "spring", stiffness: 300, damping: 25 }
+            }
+            className="relative flex h-11 w-11 items-center justify-center rounded-full bg-slate-900/90 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+          >
+            {/* SVG progress ring */}
+            <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 32 32">
+              <circle
+                cx="16"
+                cy="16"
+                r="14"
+                fill="none"
+                stroke="rgba(255,255,255,0.06)"
+                strokeWidth="2"
+              />
+              <motion.circle
+                cx="16"
+                cy="16"
+                r="14"
+                fill="none"
+                stroke={refreshing ? "#818cf8" : "#6366f1"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                animate={{
+                  strokeDashoffset: refreshing
+                    ? [circumference, 0]
+                    : circumference * (1 - progress),
+                }}
+                transition={
+                  refreshing
+                    ? { repeat: Infinity, duration: 1.2, ease: "linear" }
+                    : { duration: 0.1 }
+                }
+              />
+            </svg>
+
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'text-indigo-400' : 'text-slate-400'} transition-colors`} />
+          </motion.div>
+        </div>
       </div>
 
       {children}

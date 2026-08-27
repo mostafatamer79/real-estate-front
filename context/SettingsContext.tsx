@@ -97,6 +97,9 @@ export interface GlobalSettings {
     // Service Prices (key = service_price_category_service, value = price)
     servicePrices: Record<string, number>;
 
+    // Service form definitions (key = service_form_<category>, value = raw JSON ServiceFormDef)
+    serviceForms: Record<string, string>;
+
     // Text Overrides (key = language_translationKey, value = text)
     textOverrides: Record<string, string>;
 
@@ -223,6 +226,7 @@ const defaultSettings: GlobalSettings = {
     purchaseFeePercentage: 2.5,
     taxPercentage: 15,
     servicePrices: {},
+    serviceForms: {},
     textOverrides: {},
     sectionFlags: {},
     sectionMessages: {},
@@ -291,6 +295,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             const allSettings = await fetchPublicSettings();
                 const next = { ...defaultSettings };
                 const services: Record<string, number> = {};
+                const serviceForms: Record<string, string> = {};
                 const texts: Record<string, string> = {};
                 const sectionFlags: Record<string, 'open' | 'closed'> = {};
                 const sectionMessages: Record<string, string> = {};
@@ -321,6 +326,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                         next.taxPercentage = parseFloat(s.value) || 15;
                     } else if (s.key.startsWith("service_price_")) {
                         services[s.key] = parseFloat(s.value) || 0;
+                    } else if (s.key.startsWith("service_form_")) {
+                        serviceForms[s.key] = s.value;
                     } else if (s.key.startsWith("txt_")) {
                         texts[s.key.replace("txt_", "")] = s.value;
                     } else if (s.key.startsWith("section_") && !s.key.includes("_message")) {
@@ -356,6 +363,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 });
 
                 next.servicePrices = services;
+                next.serviceForms = serviceForms;
                 console.log("FETCHED SETTINGS textOverrides:", texts);
                 next.textOverrides = texts;
                 next.sectionFlags = sectionFlags;
@@ -494,6 +502,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             // Service prices
             Object.entries(current.servicePrices).forEach(([key, value]) => {
                 entries.push({ key, value: String(value) });
+            });
+
+            // Service form definitions (raw JSON strings)
+            Object.entries(current.serviceForms || {}).forEach(([key, value]) => {
+                entries.push({ key, value, description: `Service form: ${key}` });
             });
 
             // Text overrides

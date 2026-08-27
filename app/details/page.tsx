@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { motion } from "framer-motion";
-import { Map as MapIcon, Grid, Zap, Megaphone, History, LayoutDashboard, Building2, Sparkles, Check } from "lucide-react";
+import { Map as MapIcon, Grid, Zap, Megaphone, History } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator
@@ -30,7 +30,7 @@ import { useSettings } from '@/context/SettingsContext';
 import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 import api from '@/lib/api';
 import Tutorial from '@/components/Tutorial';
-import { shouldShowOnboarding, saveOnboardingStatus } from '@/lib/onboarding';
+import { shouldShowOnboarding, saveOnboardingStatus, buildTourSteps } from '@/lib/onboarding';
 
 export default function HomePage() {
   const propertyLocation: [number, number] = [24.7136, 46.6753];
@@ -81,68 +81,10 @@ export default function HomePage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedRange, setSelectedRange] = useState<string>('year');
   const [showTour, setShowTour] = useState(false);
-  const [isMobileViewport, setIsMobileViewport] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
-  );
-
-  useEffect(() => {
-    const handleResize = () => setIsMobileViewport(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handleProfileUpdate = (_updatedUser: any) => { window.location.reload(); };
 
-  const tourSteps = useMemo(() => {
-    return [
-      {
-        id: 'welcome',
-        title: t('tour.welcome.title'),
-        description: t('tour.welcome.description'),
-        position: 'center' as const,
-        icon: <Sparkles className="w-6 h-6" />,
-      },
-      {
-        id: 'map',
-        title: t('tour.map.title'),
-        description: t('tour.map.description'),
-        targetId: 'tour-target-map',
-        position: 'bottom' as const,
-        icon: <MapIcon className="w-6 h-6" />,
-      },
-      {
-        id: 'stats',
-        title: t('tour.stats.title'),
-        description: t('tour.stats.description'),
-        targetId: 'tour-target-stats',
-        position: 'top' as const,
-        icon: <Grid className="w-6 h-6" />,
-      },
-      {
-        id: 'quick-actions',
-        title: t('tour.quickActions.title'),
-        description: t('tour.quickActions.description'),
-        targetId: 'tour-target-quick-actions',
-        position: 'top' as const,
-        icon: <Zap className="w-6 h-6" />,
-      },
-      {
-        id: 'navigation',
-        title: t('tour.navigation.title'),
-        description: t('tour.navigation.description'),
-        targetId: isMobileViewport ? 'tour-target-bottom-nav' : 'tour-target-header-profile',
-        position: isMobileViewport ? ('top' as const) : ('bottom' as const),
-        icon: <LayoutDashboard className="w-6 h-6" />,
-      },
-      {
-        id: 'complete',
-        title: t('tour.complete.title'),
-        description: t('tour.complete.description'),
-        position: 'center' as const,
-        icon: <Check className="w-6 h-6" />,
-      },
-    ];
-  }, [t, isMobileViewport]);
+  const tourSteps = useMemo(() => buildTourSteps(t), [t]);
 
   useEffect(() => {
     if (shouldShowOnboarding(user)) {
@@ -426,41 +368,66 @@ export default function HomePage() {
       <div className="w-full min-h-dvh-safe bg-slate-950 pt-4 md:pt-12 pb-12 relative overflow-hidden"
         dir={language === 'ar' ? 'rtl' : 'ltr'}>
 
-        {/* Ambient background glows */}
-        <div className="wow-aurora md:hidden" aria-hidden="true" />
+        {/* Enhanced aurora system — triple blob for premium feel */}
+        <div className="wow-aurora wow-aurora-v2 md:hidden" aria-hidden="true">
+          <div className="wow-aurora-orb" />
+        </div>
+
+        {/* Ambient background glows — more dramatic on mobile */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
+          <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/5 blur-[140px]" />
           <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
-          <div className="absolute top-[45%] right-[20%] w-[25%] h-[25%] rounded-full bg-gray-500/4 blur-[100px]" />
+          <div className="absolute top-[45%] right-[20%] w-[25%] h-[25%] rounded-full bg-purple-500/4 blur-[100px]" />
+          <div className="absolute top-[70%] left-[30%] w-[20%] h-[20%] rounded-full bg-cyan-500/3 blur-[80px]" />
         </div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
           className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 relative z-10">
 
-          {/* Mobile greeting hero */}
+          {/* Premium mobile greeting hero */}
           {(() => {
             const h = new Date().getHours();
             const greeting = language === 'ar'
               ? (h < 12 ? 'صباح الخير' : h < 17 ? 'نهار سعيد' : 'مساء الخير')
               : (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening');
+            const emoji = h < 12 ? '☀️' : h < 17 ? '🌤️' : '🌙';
             return (
               <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45 }}
-                className="md:hidden flex items-center justify-between gap-3 px-1 pt-2 pb-1 mb-2"
+                initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="md:hidden flex items-center justify-between gap-3 px-1 pt-3 pb-2 mb-3"
               >
-                <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">{greeting}</p>
-                  <h1 className="mt-1 text-xl font-black text-white leading-tight truncate">
+                <div className="min-w-0 flex-1">
+                  <motion.p
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.15, duration: 0.4 }}
+                    className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 flex items-center gap-1.5"
+                  >
+                    <span className="text-sm">{emoji}</span>
+                    {greeting}
+                  </motion.p>
+                  <motion.h1
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.25, duration: 0.4 }}
+                    className="mt-1 text-xl font-black text-white leading-tight truncate"
+                  >
                     {user?.firstName
                       ? (language === 'ar' ? `أهلاً، ${user.firstName}` : `Welcome, ${user.firstName}`)
                       : t('project.name')}
-                  </h1>
+                  </motion.h1>
                 </div>
-                <div className="w-11 h-11 rounded-2xl bg-slate-800 border border-white/10 flex items-center justify-center text-base font-black text-white shadow-lg shrink-0 wow-pop" aria-hidden="true">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.3, type: 'spring', stiffness: 400, damping: 20 }}
+                  className="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center text-base font-black text-white shadow-[0_4px_20px_rgba(99,102,241,0.2)] shrink-0"
+                  aria-hidden="true"
+                >
                   {(user?.firstName || '؟').charAt(0)}
-                </div>
+                </motion.div>
               </motion.div>
             );
           })()}
@@ -519,8 +486,9 @@ export default function HomePage() {
               return (
                 <motion.div key={section.id} variants={itemVariants} className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div 
-                      className="p-2 rounded-lg bg-slate-900 border border-slate-700/60 text-slate-400 flex items-center justify-center"
+                    <motion.div
+                      whileHover={{ scale: 1.05, rotate: 2 }}
+                      className="p-2 rounded-[10px] bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/40 text-slate-400 flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
                       style={{
                         color: customIconColor || undefined,
                         width: customIconSize ? `${customIconSize + 16}px` : undefined,
@@ -534,9 +502,9 @@ export default function HomePage() {
                           height: customIconSize ? `${customIconSize}px` : undefined,
                         }} 
                       />
-                    </div>
+                    </motion.div>
                     <h2
-                      className="text-base font-bold text-slate-300 tracking-tight wow-accent"
+                      className="text-base font-bold text-slate-300 tracking-tight wow-accent wow-accent-wide"
                       style={{
                         color: customTitleColor || undefined,
                         fontSize: customTitleSize ? `${customTitleSize}px` : undefined,

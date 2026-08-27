@@ -179,13 +179,35 @@ const WalletPage = () => {
             <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
             <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
 
+            {/* Mobile aurora effect */}
+            <div className="wow-aurora md:hidden pointer-events-none" aria-hidden="true" />
+
+            {/* Loading skeleton */}
+            {isLoading && (
+                <div className='max-w-[1600px] mx-auto relative z-10 px-4 pt-20 pb-32'>
+                    <div className="space-y-4">
+                        <div className="wow-skeleton h-12 w-48 rounded-xl" />
+                        <div className="wow-skeleton h-8 w-32 rounded-lg" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="wow-skeleton h-32 rounded-2xl" style={{ animationDelay: `${i * 100}ms` }} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {!isLoading && (
             <div className='flex max-w-[1600px] mx-auto relative z-10'>
+                <div className="wow-reveal" style={{ animationDelay: '100ms' }}>
                 <WalletSidebar 
                     activeTab={activeTab} 
                     onTabChange={handleTabChange} 
                 />
+                </div>
 
                 <div className='flex-1 lg:mr-[360px] p-4 pb-32 lg:pb-4 lg:pt-4'>
+                    <div className="wow-reveal" style={{ animationDelay: '200ms' }}>
                     {activeTab === 'invoices' && (
                         <InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} />
                     )}
@@ -215,8 +237,10 @@ const WalletPage = () => {
                     {activeTab === 'invest' && (
                         <InvestmentSection />
                     )}
+                    </div>
                 </div>
             </div>
+            )}
             <CommissionRequestModal 
                 open={!!trackingCommission} 
                 onOpenChange={(open) => !open && setTrackingCommission(null)} 

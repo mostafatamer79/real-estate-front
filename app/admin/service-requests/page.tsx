@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import DynamicAnswersView from "@/components/shared/DynamicAnswersView";
 
 const departments = [
   { id: 'real_estate', key: 'admin.trans.dept.real_estate' },
@@ -621,6 +622,9 @@ export default function ServiceRequestsPage() {
                                             </p>
                                         </div>
                                     )}
+
+                                    {/* Definition-driven answers (dynamic forms) — additive to the blocks above */}
+                                    <DynamicAnswersView request={selectedRequest} />
 
                                      <div className="space-y-4 pt-4 border-t border">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, LayoutGrid, FileText, User, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { hapticTick } from '@/lib/haptics';
@@ -56,15 +56,18 @@ export default function MobileBottomNav() {
     <motion.nav
       id="tour-target-bottom-nav"
       aria-label="Main navigation"
-      animate={{ y: hidden ? 130 : 0 }}
-      transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-      className="md:hidden fixed z-50 left-3 right-3 rounded-[1.75rem] border border-white/10 bg-slate-950/90 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
-      style={{ bottom: 'calc(10px + env(safe-area-inset-bottom))' }}
+      animate={{ y: hidden ? 130 : 0, opacity: hidden ? 0 : 1 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 35, mass: 0.8 }}
+      className="md:hidden fixed z-50 left-2.5 right-2.5 rounded-[1.5rem] border border-white/[0.08] bg-slate-950/85 backdrop-blur-[28px] saturate-[1.8] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_0.5px_rgba(255,255,255,0.05)]"
+      style={{ bottom: 'calc(8px + env(safe-area-inset-bottom))' }}
     >
-      {/* Hairline top highlight */}
-      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+      {/* Premium top highlight — gradient hairline */}
+      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-      <div className="relative flex items-stretch justify-around h-[66px] px-2">
+      {/* Subtle inner glow at top */}
+      <div className="pointer-events-none absolute inset-x-4 top-0 h-8 bg-gradient-to-b from-white/[0.03] to-transparent rounded-t-[1.5rem]" />
+
+      <div className="relative flex items-stretch justify-around h-[64px] px-1.5">
         {navItems.map((item) => {
           const isActive = pathname === item.path || pathname?.startsWith(item.path + '/');
           const Icon = item.icon;
@@ -74,37 +77,54 @@ export default function MobileBottomNav() {
               href={item.path}
               aria-current={isActive ? 'page' : undefined}
               onClick={() => !isActive && hapticTick()}
-              className="relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-1.5 active:scale-95 transition-transform"
+              className="relative flex flex-col items-center justify-center flex-1 min-w-[48px] py-1.5 active:scale-95 transition-transform duration-150"
             >
-              {isActive && (
-                <motion.span
-                  layoutId="mobile-nav-active-pill"
-                  aria-hidden="true"
-                  className="absolute inset-x-0.5 top-1.5 bottom-1.5 rounded-[1.25rem] bg-white/[0.10] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
-                  transition={{ type: 'spring', stiffness: 480, damping: 40 }}
-                />
-              )}
+              {/* Active pill background — premium glass effect */}
+              <AnimatePresence>
+                {isActive && (
+                  <motion.span
+                    layoutId="mobile-nav-active-pill"
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 38, mass: 0.7 }}
+                    className="absolute inset-x-1 top-1 bottom-1 rounded-[1.1rem] bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_12px_rgba(255,255,255,0.04)]"
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Icon container with spring animation */}
               <motion.span
                 key={isActive ? 'active' : 'inactive'}
-                initial={isActive ? { scale: 0.7, y: 3 } : false}
+                initial={isActive ? { scale: 0.5, y: 4 } : false}
                 animate={{ scale: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                transition={{ type: 'spring', stiffness: 600, damping: 20, mass: 0.6 }}
                 className="relative z-10 flex items-center justify-center h-7 w-7"
               >
                 <Icon
-                  className={`w-[26px] h-[26px] transition-colors duration-200 ${
-                    isActive ? 'text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.35)]' : 'text-slate-300'
+                  className={`w-[24px] h-[24px] transition-all duration-300 ${
+                    isActive
+                      ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]'
+                      : 'text-slate-400'
                   }`}
-                  strokeWidth={isActive ? 2.4 : 2}
+                  strokeWidth={isActive ? 2.5 : 1.8}
                 />
               </motion.span>
-              <span
-                className={`relative z-10 mt-1 text-[12px] leading-none max-w-full truncate px-0.5 transition-all duration-200 ${
-                  isActive ? 'text-white font-bold' : 'text-slate-300 font-medium opacity-90'
+
+              {/* Label with smooth transition */}
+              <motion.span
+                animate={{
+                  opacity: isActive ? 1 : 0.7,
+                  y: isActive ? 0 : 1,
+                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className={`relative z-10 mt-0.5 text-[11px] leading-none max-w-full truncate px-0.5 transition-colors duration-300 ${
+                  isActive ? 'text-white font-bold' : 'text-slate-400 font-medium'
                 }`}
               >
                 {item.name}
-              </span>
+              </motion.span>
             </Link>
           );
         })}
