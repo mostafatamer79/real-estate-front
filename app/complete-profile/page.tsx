@@ -21,12 +21,16 @@ export default function CompleteProfilePage() {
     lastName: '',
     role: Role.USER,
     licenseNumber: '',
+    roleOtherDescription: '',
     address: '',
     city: 'الرياض',
     country: 'السعودية',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const serviceProviderRoles = [Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER];
+  const isServiceProvider = serviceProviderRoles.includes(formData.role);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -40,6 +44,7 @@ export default function CompleteProfilePage() {
         lastName: user.lastName || '',
         role: user.role || Role.USER,
         licenseNumber: user.agentLicenseNumber || user.lawLicenseNumber || user.falLicenseNumber || '',
+        roleOtherDescription: user.roleOtherDescription || '',
         address: user.address || '',
         city: user.city || 'الرياض',
         country: user.country || 'السعودية',
@@ -81,6 +86,7 @@ export default function CompleteProfilePage() {
         },
         body: JSON.stringify({
           ...formData,
+          roleOtherDescription: formData.role === Role.OTHER ? formData.roleOtherDescription : undefined,
           agentLicenseNumber: formData.role === Role.AGENT || formData.role === Role.BROKER ? formData.licenseNumber : undefined,
           lawLicenseNumber: [Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role) ? formData.licenseNumber : undefined,
           falLicenseNumber: formData.role === Role.BROKER ? formData.licenseNumber : undefined,
@@ -260,57 +266,76 @@ export default function CompleteProfilePage() {
                                         </div>
                                     </label>
 
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.LAWYER ? 'bg-amber-600/10 border-amber-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input 
-                                            type="radio" 
-                                            name="role" 
-                                            value={Role.LAWYER}
-                                            checked={formData.role === Role.LAWYER}
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.OWNER ? 'bg-amber-600/10 border-amber-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                        <input
+                                            type="radio"
+                                            name="role"
+                                            value={Role.OWNER}
+                                            checked={formData.role === Role.OWNER}
                                             onChange={handleChange}
                                             className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
                                         />
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.LAWYER ? 'border-amber-500' : 'border-slate-500'}`}>
-                                                 {formData.role === Role.LAWYER && <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>}
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.OWNER ? 'border-amber-500' : 'border-slate-500'}`}>
+                                                 {formData.role === Role.OWNER && <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>}
                                             </div>
-                                            <span className={`font-medium ${formData.role === Role.LAWYER ? 'text-amber-400' : 'text-slate-400'}`}>{t('profile.role.lawyer')}</span>
+                                            <span className={`font-medium ${formData.role === Role.OWNER ? 'text-amber-400' : 'text-slate-400'}`}>{t('profile.role.owner')}</span>
                                         </div>
                                     </label>
 
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.NOTARY ? 'bg-emerald-600/10 border-emerald-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input 
-                                            type="radio" 
-                                            name="role" 
-                                            value={Role.NOTARY}
-                                            checked={formData.role === Role.NOTARY}
-                                            onChange={handleChange}
+                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${isServiceProvider ? 'bg-emerald-600/10 border-emerald-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
+                                        <input
+                                            type="radio"
+                                            name="roleGroup"
+                                            value="service_provider"
+                                            checked={isServiceProvider}
+                                            onChange={() => {
+                                                if (!isServiceProvider) {
+                                                    setFormData(prev => ({ ...prev, role: Role.LAWYER }));
+                                                }
+                                            }}
                                             className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
                                         />
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.NOTARY ? 'border-emerald-500' : 'border-slate-500'}`}>
-                                                 {formData.role === Role.NOTARY && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>}
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isServiceProvider ? 'border-emerald-500' : 'border-slate-500'}`}>
+                                                 {isServiceProvider && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>}
                                             </div>
-                                            <span className={`font-medium ${formData.role === Role.NOTARY ? 'text-emerald-400' : 'text-slate-400'}`}>{t('profile.role.notary')}</span>
-                                        </div>
-                                    </label>
-
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.LEGAL_CONSULTANT ? 'bg-indigo-600/10 border-indigo-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input 
-                                            type="radio" 
-                                            name="role" 
-                                            value={Role.LEGAL_CONSULTANT}
-                                            checked={formData.role === Role.LEGAL_CONSULTANT}
-                                            onChange={handleChange}
-                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.LEGAL_CONSULTANT ? 'border-indigo-500' : 'border-slate-500'}`}>
-                                                 {formData.role === Role.LEGAL_CONSULTANT && <div className="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>}
-                                            </div>
-                                            <span className={`font-medium ${formData.role === Role.LEGAL_CONSULTANT ? 'text-indigo-400' : 'text-slate-400'}`}>{t('profile.role.legal_consultant')}</span>
+                                            <span className={`font-medium ${isServiceProvider ? 'text-emerald-400' : 'text-slate-400'}`}>{t('profile.role.serviceProvider')}</span>
                                         </div>
                                     </label>
                                 </div>
+
+                                {isServiceProvider && (
+                                    <div className="animate-in fade-in slide-in-from-top-2">
+                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.activityType')}</label>
+                                        <select
+                                            name="role"
+                                            value={formData.role}
+                                            onChange={handleChange}
+                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
+                                        >
+                                            <option value={Role.LAWYER} className="slate-900">{t('profile.role.lawyer')}</option>
+                                            <option value={Role.NOTARY} className="slate-900">{t('profile.role.notary')}</option>
+                                            <option value={Role.LEGAL_CONSULTANT} className="slate-900">{t('profile.role.legal_consultant')}</option>
+                                            <option value={Role.ENGINEERING_OFFICE} className="slate-900">{t('profile.role.eng')}</option>
+                                            <option value={Role.OTHER} className="slate-900">{t('profile.role.other')}</option>
+                                        </select>
+                                    </div>
+                                )}
+
+                                {isServiceProvider && formData.role === Role.OTHER && (
+                                    <div className="animate-in fade-in slide-in-from-top-2">
+                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.activityType')}</label>
+                                        <input
+                                            type="text"
+                                            name="roleOtherDescription"
+                                            value={formData.roleOtherDescription}
+                                            onChange={handleChange}
+                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none placeholder:text-slate-600"
+                                            placeholder={t('profile.activityPlaceholder')}
+                                        />
+                                    </div>
+                                )}
 
                                 {([Role.AGENT, Role.BROKER, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role)) && (
                                     <div className="animate-in fade-in slide-in-from-top-2">

@@ -68,7 +68,7 @@ export default function ProfilePage() {
       firstName: '',
       lastName: '',
       role: Role.USER,
-      city: 'riyadh',
+      city: '',
       country: 'saudi',
       brokerType: 'individual',
     },
@@ -175,7 +175,7 @@ export default function ProfilePage() {
         commercialRegistrationNumber: user.commercialRegistrationNumber || '',
         
 
-        city: user.city || 'riyadh',
+        city: user.city || '',
         country: user.country || 'saudi',
       });
     } 
@@ -225,7 +225,7 @@ export default function ProfilePage() {
         <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
             <h1 className="text-xl sm:text-3xl font-bold text-slate-800">{t('profile.title')}</h1>
             <button 
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/details')}
                 className="hidden md:block px-4 py-2 text-slate-600 hover:bg-muted rounded-lg transition-colors"
                 dir="ltr" 
             >
@@ -332,19 +332,42 @@ export default function ProfilePage() {
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700 text-start">{t('profile.roleLabel')}</label>
                                     <select
-                                        {...register('role')}
+                                        value={[Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER].includes(selectedRole as Role) ? 'service_provider' : selectedRole}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === 'service_provider') {
+                                                if (![Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER].includes(selectedRole as Role)) {
+                                                    setValue('role', Role.LAWYER, { shouldDirty: true });
+                                                }
+                                            } else {
+                                                setValue('role', val as Role, { shouldDirty: true });
+                                            }
+                                        }}
                                         className={`w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
                                     >
                                         <option value={Role.USER}>{t('profile.role.user')}</option>
-                                        <option value={Role.BROKER}>{t('profile.role.broker')}</option>
                                         <option value={Role.OWNER}>{t('profile.role.owner')}</option>
-                                        <option value={Role.LAWYER}>{t('profile.role.lawyer')}</option>
-                                        <option value={Role.NOTARY}>{t('profile.role.notary')}</option>
-                                        <option value={Role.LEGAL_CONSULTANT}>{t('profile.role.legal_consultant')}</option>
-                                        <option value={Role.ENGINEERING_OFFICE}>{t('profile.role.eng')}</option>
-                                        <option value={Role.OTHER}>{t('profile.role.other')}</option>
+                                        <option value={Role.BROKER}>{t('profile.role.broker')}</option>
+                                        <option value="service_provider">{t('profile.role.serviceProvider')}</option>
                                     </select>
                                 </div>
+
+                                {[Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER].includes(selectedRole as Role) && (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1 text-slate-700 text-start">{t('profile.activityType')}</label>
+                                        <select
+                                            value={selectedRole}
+                                            onChange={(e) => setValue('role', e.target.value as Role, { shouldDirty: true })}
+                                            className={`w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                                        >
+                                            <option value={Role.LAWYER}>{t('profile.role.lawyer')}</option>
+                                            <option value={Role.NOTARY}>{t('profile.role.notary')}</option>
+                                            <option value={Role.LEGAL_CONSULTANT}>{t('profile.role.legal_consultant')}</option>
+                                            <option value={Role.ENGINEERING_OFFICE}>{t('profile.role.eng')}</option>
+                                            <option value={Role.OTHER}>{t('profile.role.other')}</option>
+                                        </select>
+                                    </div>
+                                )}
 
                                 {selectedRole === Role.OTHER && (
                                     <div>
@@ -517,14 +540,12 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                                 <div>
                                     <label className="block text-sm font-medium mb-1 text-slate-700">{t('city.name')}</label>
-                                    <select
+                                    <input
+                                        type="text"
                                         {...register('city')}
+                                        placeholder={t('city.name')}
                                         className="w-full px-3 py-2 bg-muted border border-slate-300 rounded-lg focus:border-gray-500 focus:outline-none text-start"
-                                    >
-                                        {['riyadh', 'jeddah', 'dammam', 'mecca', 'medina', 'taif', 'abha', 'hail', 'other'].map(c => (
-                                            <option key={c} value={t(`city.${c}`)} className="slate-900">{t(`city.${c}`)}</option>
-                                        ))}
-                                    </select>
+                                    />
                                 </div>
                             </div>
                         </div>

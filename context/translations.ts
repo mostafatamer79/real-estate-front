@@ -979,7 +979,7 @@ export const translations: Record<Language, Record<string, string>> = {
   "bm.users.newTitle": "إضافة موظف جديد",
   "bm.users.newDesc": "إضافة موظف جديد",
   "bm.form.nationalId": "الهوية الوطنية",
-    "profile.role.user": "مستخدم",
+    "profile.role.user": "مستخدم عقاري",
     "profile.role.admin": "مدير النظام",
     "profile.role.manager": "مدير",
     "profile.role.employee": "موظف",
@@ -988,10 +988,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.role.office": "مكتب عقاري",
     "profile.role.owner": "مالك عقار",
     "profile.role.lawyer": "محامي",
-    "profile.role.notary": "مؤثق",
+    "profile.role.notary": "موثق",
     "profile.role.legal_consultant": "مستشار قانوني",
     "profile.role.eng": "مكتب هندسي",
-    "profile.role.other": "مزود خدمة آخر",
+    "profile.role.serviceProvider": "مزود خدمة",
+    "profile.role.other": "أخرى",
 
     // Customer Service
     "cs.title": "خدمة العملاء",
@@ -3275,7 +3276,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
 
 
-    "profile.role.user": "Araib",
+    "profile.role.user": "Real Estate User",
     "profile.role.admin": "System Admin",
     "profile.role.manager": "Manager",
     "profile.role.employee": "Employee",
@@ -3287,7 +3288,8 @@ export const translations: Record<Language, Record<string, string>> = {
     "profile.role.notary": "Notary",
     "profile.role.legal_consultant": "Legal Consultant",
     "profile.role.eng": "Engineering Office",
-    "profile.role.other": "Other Service Provider",
+    "profile.role.serviceProvider": "Service Provider",
+    "profile.role.other": "Other",
     "profile.save": "Save",
     // Customer Service
     "cs.channels": "Communication Channels",
