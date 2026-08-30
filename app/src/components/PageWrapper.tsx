@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSettings } from '@/context/SettingsContext';
+import { needsProfileCompletion } from '@/lib/profile-completion';
 
 const pageVariants = {
   initial: {
@@ -61,14 +62,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
       if (userStr) {
         try {
           const parsedUser = JSON.parse(userStr);
-          let needsProfileCompletion = false;
-          if (parsedUser.role !== 'admin') {
-            const isProfileComplete = !!parsedUser.firstName && !!parsedUser.lastName;
-            const isAgentWithoutLicense = (parsedUser.role === 'agent' || parsedUser.role === 'broker') && !parsedUser.agentLicenseNumber && !parsedUser.falLicenseNumber;
-            needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
-          }
-          
-          if (needsProfileCompletion) {
+          if (needsProfileCompletion(parsedUser)) {
             router.push('/profile');
           }
         } catch (e) {

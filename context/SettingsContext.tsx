@@ -119,6 +119,9 @@ export interface GlobalSettings {
     loginConfig: {
         emailEnabled: boolean;
         phoneEnabled: boolean;
+        // enabled | soon | hidden — controls whether the method appears on the login page
+        emailStatus: 'enabled' | 'soon' | 'hidden';
+        phoneStatus: 'enabled' | 'soon' | 'hidden';
         phoneLabel: string;
     };
 
@@ -235,6 +238,8 @@ const defaultSettings: GlobalSettings = {
     loginConfig: {
         emailEnabled: true,
         phoneEnabled: false,
+        emailStatus: 'enabled' as const,
+        phoneStatus: 'soon' as const,
         phoneLabel: "قريباً",
     },
     uiFlags: {
@@ -305,6 +310,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 const detailsPartFlags: Record<string, 'enabled' | 'soon' | 'hidden'> = {};
                 const detailsPartMessages: Record<string, string> = {};
                 const loginConfig = { ...defaultSettings.loginConfig };
+                let emailStatusSeen = false;
+                let phoneStatusSeen = false;
 
                 allSettings.forEach((s) => {
                     if (s.key.startsWith("theme_")) {
@@ -350,6 +357,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                         loginConfig.phoneEnabled = s.value === 'true';
                     } else if (s.key === "login_phone_label") {
                         loginConfig.phoneLabel = s.value;
+                    } else if (s.key === "login_email_status") {
+                        loginConfig.emailStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
+                        emailStatusSeen = true;
+                    } else if (s.key === "login_phone_status") {
+                        loginConfig.phoneStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
+                        phoneStatusSeen = true;
                     } else if (s.key.startsWith("ui_")) {
                         const uiKey = s.key.replace("ui_", "");
                         uiFlags[uiKey] = s.value === 'true';
@@ -371,6 +384,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 next.moduleFlags = moduleFlags;
                 next.moduleMessages = moduleMessages;
                 next.loginConfig = loginConfig;
+                // Fall back to the legacy boolean flags when no status key is stored,
+                // then keep the booleans derived from the status for existing consumers.
+                if (!emailStatusSeen) loginConfig.emailStatus = loginConfig.emailEnabled ? 'enabled' : 'hidden';
+                if (!phoneStatusSeen) loginConfig.phoneStatus = loginConfig.phoneEnabled ? 'enabled' : 'soon';
+                loginConfig.emailEnabled = loginConfig.emailStatus === 'enabled';
+                loginConfig.phoneEnabled = loginConfig.phoneStatus === 'enabled';
                 next.uiFlags = uiFlags;
                 next.detailsPartFlags = detailsPartFlags;
                 next.detailsPartMessages = detailsPartMessages;
@@ -533,8 +552,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             });
 
             // Login config
-            entries.push({ key: 'login_email_enabled', value: String(current.loginConfig.emailEnabled) });
-            entries.push({ key: 'login_phone_enabled', value: String(current.loginConfig.phoneEnabled) });
+            const emailStatus = current.loginConfig.emailStatus || (current.loginConfig.emailEnabled ? 'enabled' : 'hidden');
+            const phoneStatus = current.loginConfig.phoneStatus || (current.loginConfig.phoneEnabled ? 'enabled' : 'soon');
+            entries.push({ key: 'login_email_status', value: emailStatus, description: 'Login method status: email' });
+            entries.push({ key: 'login_phone_status', value: phoneStatus, description: 'Login method status: phone' });
+            entries.push({ key: 'login_email_enabled', value: String(emailStatus === 'enabled') });
+            entries.push({ key: 'login_phone_enabled', value: String(phoneStatus === 'enabled') });
             entries.push({ key: 'login_phone_label', value: current.loginConfig.phoneLabel });
 
             // UI flags

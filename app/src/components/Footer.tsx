@@ -26,7 +26,7 @@ function getXProfileUrl(value: string) {
 }
 
 export default function Footer() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const { settings } = useSettings();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -55,15 +55,15 @@ export default function Footer() {
   };
 
   const platformLinks = [
-    { label: "نبذة عنا", href: "/about", icon: Info },
-    { label: "الشروط والأحكام", href: "/info?tab=terms", icon: Shield },
-    { label: "سياسة الاستخدام", href: "/info?tab=usage", icon: BookOpen },
+    { label: t("footer.about_us"), href: "/about", icon: Info },
+    { label: t("footer.terms"), href: "/info?tab=terms", icon: Shield },
+    { label: t("footer.usage"), href: "/info?tab=usage", icon: BookOpen },
   ];
 
   const supportLinks = [
-    { label: "الأسئلة الشائعة", href: "/customerservice/faq", icon: HelpCircle },
-    { label: "شاركنا رأيك", href: "/share-opinion", icon: MessageSquareHeart },
-    { label: "تواصل معنا", href: "/customerservice/contact", icon: MessageCircle },
+    { label: t("footer.faq"), href: "/customerservice/faq", icon: HelpCircle },
+    { label: t("footer.share_opinion"), href: "/share-opinion", icon: MessageSquareHeart },
+    { label: t("footer.contact_us"), href: "/customerservice/contact", icon: MessageCircle },
   ];
 
   return (
@@ -83,7 +83,7 @@ export default function Footer() {
           whileTap={{ scale: 0.9 }}
           type="button"
           onClick={scrollToTop}
-          aria-label="العودة للأعلى"
+          aria-label={t("footer.scroll_top")}
           className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950 md:bottom-6 left-6 max-md:bottom-[calc(92px+env(safe-area-inset-bottom))]"
         >
           <ArrowUp className="h-5 w-5" />
@@ -108,7 +108,7 @@ export default function Footer() {
               />
               <motion.img
                 src={settings?.logoWhiteUrl || '/icons/white.png'}
-                alt="شعار المنصة"
+                alt={t("footer.logo_alt")}
                 className="h-24 sm:h-40 w-auto object-contain relative z-10"
                 animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -120,7 +120,7 @@ export default function Footer() {
           {/* Platform */}
           <motion.div variants={itemVariants} className="space-y-6">
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              عن المنصة
+              {t("footer.about_platform")}
             </h3>
             <ul className="space-y-4">
               {platformLinks.map((link) => (
@@ -137,7 +137,7 @@ export default function Footer() {
           {/* Support */}
           <motion.div variants={itemVariants} className="space-y-6">
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              المساعدة والدعم
+              {t("footer.help_support")}
             </h3>
             <ul className="space-y-4">
               {supportLinks.map((link) => (
@@ -154,7 +154,7 @@ export default function Footer() {
           {/* Contact */}
           <motion.div variants={itemVariants} className="space-y-6">
              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-               اتصل بنا
+               {t("footer.contact")}
             </h3>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
@@ -180,10 +180,10 @@ export default function Footer() {
           className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4"
         >
           <p className="text-center md:text-right text-slate-500 text-sm font-medium">
-            كافة الحقوق محفوظة لمنصة الوساطة الرقمية © 2026
+            {t("footer.rights_platform", { year: 2026 })}
           </p>
           <div className="flex items-center gap-2 sm:gap-4 text-slate-500 text-sm font-medium">
-            <span className="text-sm">صنع بشغف لخدمة القطاع العقاري</span>
+            <span className="text-sm">{t("footer.made_with")}</span>
           </div>
         </motion.div>
       </div>

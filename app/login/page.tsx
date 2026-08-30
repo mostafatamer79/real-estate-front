@@ -34,15 +34,18 @@ export default function SignIn({ onClose }: SignInProps) {
   const { settings } = useSettings();
   const loginConfig = settings.loginConfig;
   const phoneLoginEnabled = true;
-  const effectivePhoneEnabled = loginConfig.phoneEnabled && phoneLoginEnabled;
+  const emailStatus = loginConfig.emailStatus || (loginConfig.emailEnabled ? 'enabled' : 'hidden');
+  const phoneStatus = loginConfig.phoneStatus || (loginConfig.phoneEnabled ? 'enabled' : 'soon');
+  const effectivePhoneEnabled = phoneStatus === 'enabled' && phoneLoginEnabled;
+  const effectiveEmailEnabled = emailStatus === 'enabled';
 
   useEffect(() => {
-    if (loginConfig && !loginConfig.emailEnabled && effectivePhoneEnabled) {
+    if (loginConfig && !effectiveEmailEnabled && effectivePhoneEnabled) {
       setIsPhoneMode(true);
-    } else if (loginConfig && loginConfig.emailEnabled && !effectivePhoneEnabled) {
+    } else if (loginConfig && effectiveEmailEnabled && !effectivePhoneEnabled) {
       setIsPhoneMode(false);
     }
-  }, [loginConfig, effectivePhoneEnabled]);
+  }, [loginConfig, effectiveEmailEnabled, effectivePhoneEnabled]);
 
   useEffect(() => {
     // Hide global header and disable scrolling when login overlay is active
@@ -124,9 +127,10 @@ export default function SignIn({ onClose }: SignInProps) {
     }
   };
 
-  const isFormValid = isPhoneMode
+  const activeMethodEnabled = isPhoneMode ? effectivePhoneEnabled : effectiveEmailEnabled;
+  const isFormValid = activeMethodEnabled && (isPhoneMode
     ? phone.trim().length > 0
-    : email.trim().length > 0;
+    : email.trim().length > 0);
 
   return (
     <div
@@ -262,7 +266,7 @@ export default function SignIn({ onClose }: SignInProps) {
             </div>
 
             {/* Mode Switcher — premium segmented control */}
-            {(loginConfig.emailEnabled || loginConfig.phoneEnabled) && (
+            {(emailStatus !== 'hidden' || phoneStatus !== 'hidden') && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -270,7 +274,7 @@ export default function SignIn({ onClose }: SignInProps) {
                 className="flex bg-slate-800/80 p-1.5 rounded-2xl mb-6 border border-white/5 backdrop-blur-sm"
               >
                   {/* Email tab */}
-                  {loginConfig.emailEnabled && (
+                  {effectiveEmailEnabled ? (
                     <button
                       onClick={() => setIsPhoneMode(false)}
                       disabled={isLoading}
@@ -283,7 +287,17 @@ export default function SignIn({ onClose }: SignInProps) {
                       <Mail className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
                       <span className="text-[11px] sm:text-sm font-semibold whitespace-nowrap">{t('login.tab.email')}</span>
                     </button>
-                  )}
+                  ) : emailStatus === 'soon' ? (
+                    <div className="relative flex-1">
+                      <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-white/20 cursor-not-allowed select-none">
+                        <Mail className="w-5 h-5 sm:w-4 sm:h-4" />
+                        <span className="text-sm font-semibold">{t('login.tab.email')}</span>
+                      </div>
+                      <span className="absolute -top-2.5 right-2 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/90 text-slate-950 shadow-lg shadow-amber-500/30 border border-amber-400/50 animate-pulse">
+                        {t('common.soon')}
+                      </span>
+                    </div>
+                  ) : null}
 
                   {/* Phone tab */}
                   {effectivePhoneEnabled ? (
@@ -299,7 +313,7 @@ export default function SignIn({ onClose }: SignInProps) {
                       <Phone className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
                       <span className="text-[11px] sm:text-sm font-semibold whitespace-nowrap">{t('login.tab.phone')}</span>
                     </button>
-                  ) : (
+                  ) : phoneStatus === 'soon' ? (
                     <div className="relative flex-1">
                       <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-white/20 cursor-not-allowed select-none">
                         <Phone className="w-5 h-5 sm:w-4 sm:h-4" />
@@ -311,7 +325,7 @@ export default function SignIn({ onClose }: SignInProps) {
                         </span>
                       )}
                     </div>
-                  )}
+                  ) : null}
               </motion.div>
             )}
 

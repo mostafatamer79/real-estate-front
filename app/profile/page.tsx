@@ -382,12 +382,14 @@ export default function ProfilePage() {
                                 )}
                             </div>
                             
-                            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-3">
-                                <ShieldCheck className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-                                <p className={`text-sm font-medium text-yellow-800 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-                                    {t('profile.pendingAdminApproval')}
-                                </p>
-                            </div>
+                            {[Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER].includes(selectedRole as Role) && (
+                                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-start gap-3">
+                                    <ShieldCheck className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                                    <p className={`text-sm font-medium text-yellow-800 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
+                                        {t('profile.pendingAdminApproval')}
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         {/* 2. Specialized Info (Conditional) */}

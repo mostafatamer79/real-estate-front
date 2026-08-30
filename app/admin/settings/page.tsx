@@ -1635,10 +1635,13 @@ function TextTab({
                                                                     if (ctrl.key.startsWith('login')) {
                                                                         const nestedKey = ctrl.key.replace('login', '');
                                                                         const formattedKey = nestedKey.charAt(0).toLowerCase() + nestedKey.slice(1);
+                                                                        const method = formattedKey.replace('Enabled', '');
+                                                                        const nextEnabled = !localSettings.loginConfig?.[formattedKey];
                                                                         updateSettings({
                                                                             loginConfig: {
                                                                                 ...localSettings.loginConfig,
-                                                                                [formattedKey]: !localSettings.loginConfig?.[formattedKey]
+                                                                                [formattedKey]: nextEnabled,
+                                                                                [`${method}Status`]: nextEnabled ? 'enabled' : 'hidden'
                                                                             }
                                                                         });
                                                                     } else {
@@ -1716,15 +1719,20 @@ function TextTab({
                                                     <p className="text-[10px] text-slate-400 mt-0.5">ادخل تفاصيلك لمتابعة العمل</p>
                                                 </div>
                                                 <div className="space-y-3">
-                                                    {localSettings.loginConfig?.emailEnabled !== false && (
-                                                        <input
-                                                            type="email"
-                                                            placeholder="البريد الإلكتروني..."
-                                                            disabled
-                                                            className="w-full bg-muted border border rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
-                                                        />
+                                                    {(localSettings.loginConfig?.emailStatus ? localSettings.loginConfig.emailStatus !== 'hidden' : localSettings.loginConfig?.emailEnabled !== false) && (
+                                                        <div className="space-y-1">
+                                                            <input
+                                                                type="email"
+                                                                placeholder="البريد الإلكتروني..."
+                                                                disabled
+                                                                className="w-full bg-muted border border rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
+                                                            />
+                                                            {localSettings.loginConfig?.emailStatus === 'soon' && (
+                                                                <span className="text-[8px] text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded-full">قريباً</span>
+                                                            )}
+                                                        </div>
                                                     )}
-                                                    {localSettings.loginConfig?.phoneEnabled && (
+                                                    {(localSettings.loginConfig?.phoneStatus ? localSettings.loginConfig.phoneStatus !== 'hidden' : localSettings.loginConfig?.phoneEnabled) && (
                                                         <div className="space-y-1">
                                                             <input
                                                                 type="text"
@@ -1732,9 +1740,11 @@ function TextTab({
                                                                 disabled
                                                                 className="w-full bg-muted border border rounded-xl py-2 px-3 text-xs outline-none cursor-not-allowed"
                                                             />
-                                                            <span className="text-[8px] text-red-500 font-bold bg-red-50 px-2 py-0.5 rounded-full">
-                                                                {localSettings.loginConfig?.phoneLabel || 'موقف'}
-                                                            </span>
+                                                            {localSettings.loginConfig?.phoneStatus !== 'enabled' && (
+                                                                <span className="text-[8px] text-red-500 font-bold bg-red-50 px-2 py-0.5 rounded-full">
+                                                                    {localSettings.loginConfig?.phoneLabel || 'قريباً'}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
@@ -2351,22 +2361,33 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
     };
 
     const LoginMethodRow = ({ id, label }: { id: string; label: string }) => {
-        const methodKey = `${id}Enabled` as keyof typeof localSettings.loginConfig;
+        const statusKey = `${id}Status` as 'emailStatus' | 'phoneStatus';
+        const enabledKey = `${id}Enabled` as 'emailEnabled' | 'phoneEnabled';
+        const status: 'enabled' | 'soon' | 'hidden' =
+            localSettings.loginConfig?.[statusKey] ||
+            (localSettings.loginConfig?.[enabledKey] ? 'enabled' : (id === 'email' ? 'hidden' : 'soon'));
+        const setStatus = (next: 'enabled' | 'soon' | 'hidden') => updateSettings({
+            loginConfig: {
+                ...(localSettings.loginConfig || {}),
+                [statusKey]: next,
+                [enabledKey]: next === 'enabled',
+            }
+        });
         return (
-            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all flex items-center justify-between px-5 py-4">
-                <div className="min-w-0 space-y-1">
-                    <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
-                        <Smartphone className="w-4 h-4 text-slate-400" /> {label}
-                    </p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{String(methodKey)}</p>
+            <div className="rounded-[1rem] border border bg-card shadow-sm hover:border-slate-300 transition-all">
+                <div className="px-5 py-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0 space-y-1">
+                        <p className="text-sm font-bold text-slate-950 truncate flex items-center gap-2">
+                            <Smartphone className="w-4 h-4 text-slate-400" /> {label}
+                        </p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{statusKey}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <button type="button" onClick={() => setStatus('enabled')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'enabled' ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-stone-400/10' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>متاح</button>
+                        <button type="button" onClick={() => setStatus('soon')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'soon' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>قريباً</button>
+                        <button type="button" onClick={() => setStatus('hidden')} className={`h-8 px-4 rounded-xl text-[11px] font-black border transition-all ${status === 'hidden' ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-muted text-slate-500 border hover:bg-muted'}`}>مخفي</button>
+                    </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => updateSettings({ loginConfig: { ...(localSettings.loginConfig || {}), [methodKey]: !localSettings.loginConfig[methodKey] } })}
-                    className={`w-14 h-7 rounded-full relative transition-all shrink-0 shadow-inner border border-transparent ${localSettings.loginConfig[methodKey] ? 'bg-emerald-500 border-emerald-600' : 'bg-muted border-slate-300'}`}
-                >
-                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-card transition-all shadow-sm ${localSettings.loginConfig[methodKey] ? 'left-8' : 'left-1'}`} />
-                </button>
             </div>
         );
     };

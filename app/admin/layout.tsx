@@ -121,7 +121,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'dashboard', href: '/admin/dashboard', label: isRtl ? ' لوح التحكم' : 'Dashboard' },
         { id: 'users', href: '/admin/users', label: isRtl ? ' المستخدمين' : 'Users' },
         { id: 'subscriptions', href: '/admin/subscriptions', label: isRtl ? ' الاشتراكات' : 'Subscriptions' },
-        { id: 'finance-transactions', href: '/admin/transactions', label: isRtl ? 'الادارة المالية للمنصه' : 'Transactions' },
 
         { id: 'map-control', href: '/admin/map-control', label: isRtl ? ' الخريطة' : 'Map' },
         { id: 'operations', href: '/admin/operations', label: isRtl ? ' الاحصائيات والعمليات' : 'Stats & Operations' },

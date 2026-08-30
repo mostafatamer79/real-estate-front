@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, Role } from '@/types/user';
+import { User } from '@/types/user';
+import { needsProfileCompletion } from '@/lib/profile-completion';
 
 interface AuthData {
   user: User | null;
@@ -26,25 +27,14 @@ export function useAuth() {
     const parsedUser = user ? JSON.parse(user) : null;
 
     // Check if user needs to complete profile
-    let needsProfileCompletion = false;
-    if (parsedUser) {
-      if (parsedUser.role !== Role.ADMIN) {
-        const isProfileComplete = !!parsedUser.firstName && parsedUser.role !== Role.VIEWER;
-
-        const isAgentWithoutLicense =
-          parsedUser.role === Role.AGENT &&
-          !parsedUser.agentLicenseNumber;
-
-        needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
-      }
-    }
+    const needsCompletion = needsProfileCompletion(parsedUser);
 
     setAuthData({
       user: parsedUser,
       token,
       refreshToken,
       isLoading: false,
-      needsProfileCompletion,
+      needsProfileCompletion: needsCompletion,
     });
   }, []);
 
@@ -54,21 +44,10 @@ export function useAuth() {
       const newUser = { ...currentUser, ...updatedUser };
       localStorage.setItem('user', JSON.stringify(newUser));
 
-      let needsProfileCompletion = false;
-      if (newUser.role !== Role.ADMIN) {
-        const isProfileComplete = !!newUser.firstName && newUser.role !== Role.VIEWER;
-
-        const isAgentWithoutLicense =
-          newUser.role === Role.AGENT &&
-          !newUser.agentLicenseNumber;
-
-        needsProfileCompletion = !isProfileComplete || isAgentWithoutLicense;
-      }
-
       setAuthData(prev => ({
         ...prev,
         user: newUser,
-        needsProfileCompletion
+        needsProfileCompletion: needsProfileCompletion(newUser)
       }));
     }
   };

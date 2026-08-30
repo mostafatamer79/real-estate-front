@@ -7,7 +7,6 @@ import { ConfirmDialogProvider } from "@/components/ui/confirm-dialog-provider";
 import Header from "./src/components/Header";
 import PageWrapper from "./src/components/PageWrapper";
 import AdminImpersonationReturn from "./src/components/AdminImpersonationReturn";
-import MobileBottomNav from "./src/components/MobileBottomNav";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -124,7 +123,6 @@ export default function RootLayout({
                       {children}
                     </PageWrapper>
                     <AdminImpersonationReturn />
-                    <MobileBottomNav />
                   </div>
                   <Toaster />
                   <SonnerToaster
