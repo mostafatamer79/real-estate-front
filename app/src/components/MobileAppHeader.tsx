@@ -10,9 +10,10 @@ interface MobileAppHeaderProps {
   title?: string;
   theme?: 'dark' | 'light'; // dark for slate-950 bg, light for white/slate-50 bg
   showNotifications?: boolean;
+  onBack?: () => void;
 }
 
-export default function MobileAppHeader({ title, theme = 'dark', showNotifications = false }: MobileAppHeaderProps) {
+export default function MobileAppHeader({ title, theme = 'dark', showNotifications = false, onBack }: MobileAppHeaderProps) {
   const router = useRouter();
   const { t, language, toggleLanguage } = useLanguage();
   const isRtl = language === 'ar';
@@ -50,7 +51,7 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
       />
       <div className="flex items-center gap-2.5">
         <button
-          onClick={() => router.back()}
+          onClick={() => { if (onBack) onBack(); else if (pathname === '/profile') router.push('/details'); else router.back(); }}
           className={`flex items-center justify-center w-9 h-9 rounded-full border transition-colors active:scale-90 ${btnClass}`}
           aria-label={backLabel}
         >

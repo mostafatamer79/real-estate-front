@@ -47,7 +47,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 
 export default function ProfilePage() {
-  const { user, token, updateUser } = useAuth();
+  const { user, token, updateUser, logout, needsProfileCompletion } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -211,6 +211,13 @@ export default function ProfilePage() {
       setIsSaving(false);
     }
   };
+  const handleBack = () => {
+    if (needsProfileCompletion) {
+      logout();
+    } else {
+      router.push("/details");
+    }
+  };
 
   if (!user) {
       return <div className="min-h-screen flex items-center justify-center bg-muted"><Loader2 className="w-8 h-8 animate-spin text-gray-400 font-bold bg-muted/50" /></div>;
@@ -218,7 +225,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-muted pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader theme="light" title={t('profile.title')} showNotifications />
+      <MobileAppHeader theme="light" title={t('profile.title')} showNotifications onBack={handleBack} />
       <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-6">
         
         {/* Header */}
