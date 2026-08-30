@@ -20,19 +20,19 @@ export default function HomePage() {
         try {
           const u = JSON.parse(storedUser);
           if (u.role === 'admin') {
-            router.push('/details');
+            router.replace('/details');
           } else {
             if (u.firstName && u.lastName) {
-              router.push('/details');
+              router.replace('/details');
             } else {
-              router.push('/profile');
+              router.replace('/profile');
             }
           }
         } catch (e) {
-          router.push('/profile');
+          router.replace('/profile');
         }
       } else {
-        router.push('/profile');
+        router.replace('/profile');
       }
     } else if (!showSignIn) {
       setShowSignIn(true);

@@ -65,16 +65,16 @@ export default function SignIn({ onClose }: SignInProps) {
         try {
           const u = JSON.parse(storedUser);
           if (u.role === 'admin') {
-            router.push('/details');
+            router.replace('/details');
           } else {
             if (u.firstName && u.lastName) {
-              router.push('/details');
+              router.replace('/details');
             } else {
-              router.push('/profile');
+              router.replace('/profile');
             }
           }
         } catch {
-          router.push('/profile');
+          router.replace('/profile');
         }
       }
     }
@@ -115,7 +115,7 @@ export default function SignIn({ onClose }: SignInProps) {
       const userIdentifier = isPhoneMode ? phone : email;
       localStorage.setItem('pendingVerification', userIdentifier);
       hapticSuccess();
-      router.push('/verify-otp');
+      router.replace('/verify-otp');
 
     } catch (err: unknown) {
       console.error('Registration error:', err);

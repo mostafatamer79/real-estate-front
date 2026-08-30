@@ -64,7 +64,7 @@ export default function ScanMapPage() {
       router.back();
       return;
     }
-    router.push('/details');
+    router.replace('/details');
   }, [router]);
 
   const isMapFree = settings.uiFlags?.is_map_free ?? false;

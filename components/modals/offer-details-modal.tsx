@@ -75,7 +75,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
     const handleChat = async () => {
         if (!currentUser) {
             toast.error(t('chat.loginRequired') || 'Please login to chat');
-            router.push('/login');
+            router.replace('/login');
             return;
         }
 

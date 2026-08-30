@@ -26,7 +26,7 @@ export default function VerifyOtpPage() {
     // Get email/phone from localStorage
     const pendingVerification = localStorage.getItem('pendingVerification');
     if (!pendingVerification) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
     setEmail(pendingVerification);
@@ -172,13 +172,13 @@ export default function VerifyOtpPage() {
 
       if (data.user?.role === 'admin') {
         hapticSuccess();
-        router.push('/details');
+        router.replace('/details');
       } else {
         hapticSuccess();
         if (data.user?.firstName && data.user?.lastName) {
-          router.push('/details');
+          router.replace('/details');
         } else {
-          router.push('/profile');
+          router.replace('/profile');
         }
       }
     } catch (err: any) {
@@ -268,7 +268,7 @@ export default function VerifyOtpPage() {
         </motion.div>
 
         <button
-          onClick={() => router.back()}
+          onClick={() => router.replace('/login')}
           className="mb-8 flex items-center gap-2 text-white/80 hover:text-white active:scale-95 transition-transform"
         >
           <ArrowLeft className={`w-4 h-4 ${language === 'en' ? 'rotate-180' : ''}`} />

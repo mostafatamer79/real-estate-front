@@ -52,7 +52,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 router.push('/');
             }
         } else {
-            router.push('/login');
+            router.replace('/login');
         }
     }, [router]);
 

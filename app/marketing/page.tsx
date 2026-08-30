@@ -41,7 +41,7 @@ export default function MarketingPage({ embedded = false }: { embedded?: boolean
                 router.push('/');
             }
         } else {
-            router.push('/login');
+            router.replace('/login');
         }
     }, [router]);
 

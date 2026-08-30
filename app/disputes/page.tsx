@@ -40,7 +40,7 @@ export default function DisputesPage() {
         router.push('/');
       }
     } else {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [router]);
 

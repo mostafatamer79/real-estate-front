@@ -100,7 +100,7 @@ export default function CompleteProfilePage() {
       }
 
       updateUser(data);
-      router.push('/details');
+      router.replace('/details');
 
     } catch (err: any) {
       console.error('Update error:', err);

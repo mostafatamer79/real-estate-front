@@ -54,7 +54,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
 
     if (!token && !isPublic && !settingsLoading) {
       // If no token and not a public route, redirect to login
-      router.push('/login');
+      router.replace('/login');
     }
 
     if (token && !isPublic && pathname !== '/profile' && pathname !== '/complete-profile') {
@@ -63,7 +63,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         try {
           const parsedUser = JSON.parse(userStr);
           if (needsProfileCompletion(parsedUser)) {
-            router.push('/profile');
+            router.replace('/profile');
           }
         } catch (e) {
           console.error(e);

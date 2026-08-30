@@ -77,10 +77,10 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
           }
         } catch (e) {
           console.error("Failed to parse user", e);
-          router.push('/login');
+          router.replace('/login');
         }
       } else {
-        router.push('/login');
+        router.replace('/login');
       }
     };
 
@@ -171,7 +171,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     window.dispatchEvent(new Event('auth-change'));
-    router.push('/login');
+    router.replace('/login');
   };
 
   if (!user) return null;

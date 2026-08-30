@@ -148,23 +148,21 @@ export default function AdminServicesManagementPage() {
 
   const activeCategoryConfig = pricingCategories.find((category) => category.id === activeServiceCategory) || serviceCategories[0];
   const activeCategoryServices = servicePriceGroups[activeServiceCategory] || [];
-  const legalServiceNavigationTabs = [
-    { id: "legal", type: "legal", label: "الخدمات القانونية", icon: Scale },
-    { id: "legal_disputes", type: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
-    { id: "legal_contracts", type: "legal_contracts", label: "القانونية: العقود", icon: FileText },
-    { id: "legal_documentation", type: "legal_documentation", label: "القانونية: التوثيق", icon: ShieldAlert },
-    { id: "legal_other", type: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
-  ];
-  const otherServiceNavigationTabs = [
+  const allServiceNavigationTabs = [
     { id: "postPurchase", type: "post_purchase", label: "خدمات ما بعد الشراء", icon: ShoppingBag },
     { id: "construction", type: "construction", label: "البناء والمقاولات", icon: Hammer },
     { id: "marketing", type: "marketing", label: "خدمات التسويق", icon: Megaphone },
     { id: "leasing", type: "leasing", label: "التأجير والإدارة", icon: User },
     { id: "visit", type: "visit", label: "طلب زيارة العقار", icon: Eye },
     { id: "other", type: "other", label: "أخرى", icon: MoreHorizontal },
+    { id: "legal", type: "legal", label: "الخدمات القانونية", icon: Scale },
+    { id: "legal_disputes", type: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
+    { id: "legal_contracts", type: "legal_contracts", label: "القانونية: العقود", icon: FileText },
+    { id: "legal_documentation", type: "legal_documentation", label: "القانونية: التوثيق", icon: ShieldAlert },
+    { id: "legal_other", type: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
   ];
   const isLegalServicesPage = activeServiceCategory === "legal" || activeServiceCategory.startsWith("legal_");
-  const serviceNavigationTabs = isLegalServicesPage ? legalServiceNavigationTabs : otherServiceNavigationTabs;
+  const serviceNavigationTabs = allServiceNavigationTabs;
   const visibleServiceCategories = isLegalServicesPage ? legalServiceCategories : nonLegalServiceCategories;
 
   const requestPageSize = 8;
@@ -409,6 +407,27 @@ export default function AdminServicesManagementPage() {
         </button>
       </header>
 
+      {/* Service Categories Navigation */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {serviceNavigationTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = searchParams.get("type") === tab.type || (!searchParams.get("type") && tab.type === "post_purchase");
+          return (
+            <button
+              key={tab.id}
+              onClick={() => router.push(`/admin/services?type=${tab.type}`)}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
+                isActive
+                  ? "border-slate-950 bg-slate-950 text-white"
+                  : "border-transparent bg-muted text-slate-500 hover:bg-slate-200"
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
