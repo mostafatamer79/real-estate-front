@@ -11,11 +11,30 @@ export type ServiceCategoryId =
   | 'visit'
   | 'other';
 
+export type ServiceItemStatus = 'enabled' | 'soon' | 'disabled';
+
 export interface ServiceCatalogEntry {
   title: string;
   description: string;
   index: string;
   options: string[];
+}
+
+export interface CustomServiceCategory {
+  id: string;
+  title: string;
+  description: string;
+  status: ServiceItemStatus;
+  index?: string;
+  createdAt?: string;
+}
+
+export interface CustomServiceItem {
+  id: string;
+  category: string;
+  name: string;
+  status: ServiceItemStatus;
+  createdAt?: string;
 }
 
 export const SERVICE_CATALOG: Record<ServiceCategoryId, ServiceCatalogEntry> = {
@@ -81,3 +100,88 @@ export const LEGAL_SUBCATEGORIES: LegalSubcategory[] = [
   { id: 'documentation', formKey: 'legal_documentation', title: 'التوثيق',            description: 'رفع صك الملكية ومستندات البيع' },
   { id: 'other',         formKey: 'legal_other',         title: 'أخرى',               description: 'استشارات قانونية أو تقارير قانونية' },
 ];
+
+export const CUSTOM_SERVICE_CATALOG_KEY = 'custom_service_catalog';
+export const CUSTOM_SERVICE_CATEGORIES_KEY = 'custom_service_categories';
+
+export const makeServicePriceKey = (category: string, service: string) =>
+  `service_price_${category}_${service}`.replace(/\s+/g, "_").toLowerCase();
+
+export const makeServiceItemFlagKey = (category: string, service: string) =>
+  `service_item_${category}_${service}`.replace(/\s+/g, "_").toLowerCase();
+
+export const normalizeServiceStatus = (value: unknown): ServiceItemStatus => {
+  if (value === 'soon' || value === 'disabled') return value;
+  return 'enabled';
+};
+
+
+export const slugifyCustomCategory = (value: string) => {
+  const normalized = value.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_\u0600-\u06ff-]/g, '');
+  return normalized || `category_${Date.now()}`;
+};
+
+export const parseCustomCategories = (raw: string | undefined | null): CustomServiceCategory[] => {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item): CustomServiceCategory | null => {
+        if (!item || typeof item !== 'object') return null;
+        const id = String(item.id || '').trim();
+        const title = String(item.title || '').trim();
+        if (!id || !title) return null;
+        return {
+          id,
+          title,
+          description: String(item.description || '').trim(),
+          status: normalizeServiceStatus(item.status),
+          index: typeof item.index === 'string' ? item.index : undefined,
+          createdAt: typeof item.createdAt === 'string' ? item.createdAt : undefined,
+        };
+      })
+      .filter((item): item is CustomServiceCategory => Boolean(item));
+  } catch {
+    return [];
+  }
+};
+
+export const parseCustomServices = (raw: string | undefined | null): CustomServiceItem[] => {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item): CustomServiceItem | null => {
+        if (!item || typeof item !== 'object') return null;
+        const category = String(item.category || '').trim();
+        const name = String(item.name || '').trim();
+        if (!category || !name) return null;
+        return {
+          id: String(item.id || `${category}_${name}`),
+          category,
+          name,
+          status: normalizeServiceStatus(item.status),
+          createdAt: typeof item.createdAt === 'string' ? item.createdAt : undefined,
+        };
+      })
+      .filter((item): item is CustomServiceItem => Boolean(item));
+  } catch {
+    return [];
+  }
+};
+
+export const getCustomServicesForCategory = (
+  customServices: CustomServiceItem[] | undefined,
+  category: string,
+) => (customServices || []).filter((service) => service.category === category);
+
+export const getServiceNamesForCategory = (
+  category: string,
+  customServices: CustomServiceItem[] | undefined,
+) => {
+  const base = SERVICE_CATALOG[category as ServiceCategoryId]?.options || [];
+  const custom = getCustomServicesForCategory(customServices, category).map((service) => service.name);
+  return Array.from(new Set([...base, ...custom]));
+};

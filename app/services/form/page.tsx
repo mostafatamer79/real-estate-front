@@ -2,7 +2,7 @@
 "use client";
 
 import MobileAppHeader from "@/app/src/components/MobileAppHeader";
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +11,12 @@ import { motion, Variants } from "framer-motion";
 import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import DynamicServiceForm from "@/components/services/DynamicServiceForm";
-import { SERVICE_CATALOG, ServiceCategoryId } from "@/lib/service-catalog";
+import {
+  getCustomServicesForCategory,
+  makeServiceItemFlagKey,
+  SERVICE_CATALOG,
+  ServiceCategoryId,
+} from "@/lib/service-catalog";
 import { resolveServiceForm, coerceServiceFormDef } from "@/lib/service-forms";
 import { ServiceFormDef } from "@/types/service-form";
 import api from "@/lib/api";
@@ -27,9 +32,44 @@ function ServiceFormContent() {
   const { user } = useAuth();
   const { settings } = useSettings();
 
-  const serviceType = (searchParams.get("type") || "postPurchase") as ServiceCategoryId;
+  const serviceType = searchParams.get("type") || "postPurchase";
   const legalCategory = searchParams.get("category");
-  const config = SERVICE_CATALOG[serviceType];
+  const customCategory = settings.customCategories.find((category) => category.id === serviceType);
+  const config = SERVICE_CATALOG[serviceType as ServiceCategoryId] || (customCategory
+    ? {
+        title: customCategory.title,
+        description: customCategory.description || "خدمة مخصصة من إدارة المنصة.",
+        index: customCategory.index || "NEW",
+        options: [],
+      }
+    : undefined);
+
+
+  const buildGenericCustomCategoryForm = (): ServiceFormDef => {
+    const services = getCustomServicesForCategory(settings.customServices, serviceType)
+      .filter((service) => service.status !== "disabled")
+      .map((service) => ({
+        value: service.name,
+        label: service.name,
+        status: service.status,
+        disabled: service.status === "soon",
+      }));
+
+    return {
+      version: 1,
+      serviceTypeFallback: customCategory?.title || serviceType,
+      fields: [
+        { id: "clientName", type: "text", label: "الاسم الكامل", required: true, target: "clientName", half: true },
+        { id: "phone", type: "text", label: "رقم الجوال", required: true, target: "phone", half: true, dir: "ltr" },
+        { id: "city", type: "text", label: "المدينة", required: true, target: "city", half: true },
+        { id: "district", type: "text", label: "الحي", required: true, target: "district", half: true },
+        { id: "service", type: "select", label: "نوع الخدمة المطلوبة", placeholder: "اختر من القائمة...", required: services.length > 0, target: "serviceType", options: services },
+        { id: "quantity", type: "number", label: "الكمية / العدد", required: true, half: true, target: "quantity", defaultValue: "1" },
+        { id: "description", type: "textarea", label: "تفاصيل وملاحظات", placeholder: "اشرح لنا حاجتك بالتفصيل...", target: "description" },
+        { id: "termsAccepted", type: "terms", label: "الشروط والأحكام", required: true, target: "termsAccepted", defaultValue: "false" },
+      ],
+    };
+  };
 
   // Resolve the form definition: SettingsContext first (service_form_<category> from
   // /settings/public), falling back to GET /settings/service-forms/:category (cached per category).
@@ -40,6 +80,11 @@ function ServiceFormContent() {
 
   useEffect(() => {
     if (serviceType === "legal") return;
+    if (customCategory && !settings.serviceForms[`service_form_${serviceType}`]) {
+      setDef(buildGenericCustomCategoryForm());
+      setDefState("ready");
+      return;
+    }
     const fromSettings = resolveServiceForm(serviceType, settings.serviceForms);
     if (fromSettings) {
       setDef(fromSettings);
@@ -71,13 +116,47 @@ function ServiceFormContent() {
     return () => {
       cancelled = true;
     };
-  }, [serviceType, settings.serviceForms, retryNonce]);
+  }, [serviceType, settings.serviceForms, settings.customServices, customCategory, retryNonce]);
 
   const moduleKey = `services_${serviceType}`;
-  const status: 'enabled' | 'soon' | 'disabled' = ((settings.moduleFlags as any)?.[moduleKey] as any) || 'enabled';
+  const categoryStatus = customCategory?.status;
+  const status: 'enabled' | 'soon' | 'disabled' = (categoryStatus || ((settings.moduleFlags as any)?.[moduleKey] as any)) || 'enabled';
   const msg = ((settings.moduleMessages as any)?.[moduleKey] as any) || '';
   const isAdmin = (user as any)?.role === 'admin';
   const isPreview = searchParams.get('preview') === '1';
+
+
+  const effectiveDef = useMemo<ServiceFormDef | null>(() => {
+    if (!def || serviceType === "legal") return def;
+    const customServices = getCustomServicesForCategory(settings.customServices, serviceType);
+    const customOptions = customServices.map((service) => ({
+      value: service.name,
+      label: service.name,
+      status: service.status,
+      disabled: service.status === "soon",
+    }));
+
+    return {
+      ...def,
+      fields: def.fields.map((field) => {
+        if (field.target !== "serviceType" || !field.options) return field;
+        const optionsByValue = new Map(
+          [...field.options, ...customOptions].map((option) => [option.value, option]),
+        );
+        const options = Array.from(optionsByValue.values())
+          .map((option) => {
+            const status = option.status || settings.moduleFlags[makeServiceItemFlagKey(serviceType, option.value)] || "enabled";
+            return {
+              ...option,
+              status,
+              disabled: option.disabled || status === "soon",
+            };
+          })
+          .filter((option) => option.status !== "disabled");
+        return { ...field, options };
+      }),
+    };
+  }, [def, serviceType, settings.customServices, settings.moduleFlags]);
 
   // Disabled modules are removed from UI and blocked from direct navigation for everyone.
   if (status === 'disabled') {
@@ -124,9 +203,9 @@ function ServiceFormContent() {
       {/* Hero */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-12 pb-10">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config.index}</p>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config.title}</h1>
-          <p className="text-slate-600 text-sm w-full sm:max-w-md leading-relaxed">{config.description}</p>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">{config?.index || "NEW"}</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-[-0.04em] leading-[0.9] text-slate-950 mb-4">{config?.title || "طلب خدمة"}</h1>
+          <p className="text-slate-600 text-sm w-full sm:max-w-md leading-relaxed">{config?.description || "أرسل تفاصيل الخدمة المطلوبة وسيقوم الفريق بالمراجعة."}</p>
         </motion.div>
       </div>
 
@@ -170,8 +249,8 @@ function ServiceFormContent() {
               </div>
             )}
 
-            {defState === "ready" && def && (
-              <DynamicServiceForm def={def} category={serviceType} />
+            {defState === "ready" && effectiveDef && (
+              <DynamicServiceForm def={effectiveDef} category={serviceType} />
             )}
           </motion.div>
         )}

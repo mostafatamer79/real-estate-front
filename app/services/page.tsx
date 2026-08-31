@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import {
-  ShoppingBag, Scale, Hammer, Megaphone, MoreHorizontal, ArrowLeft, ChevronRight
+  ShoppingBag, Scale, Hammer, Megaphone, MoreHorizontal, ArrowLeft, ChevronRight, Sparkles
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
@@ -9,13 +9,16 @@ import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
+import { SERVICE_CATALOG } from "@/lib/service-catalog";
 
-const serviceCards = [
-  { id: "postPurchase", icon: ShoppingBag, index: "01", span: "md:col-span-2 lg:col-span-3" },
-  { id: "legal",        icon: Scale,       index: "02", span: "md:col-span-2 lg:col-span-3" },
-  { id: "construction", icon: Hammer,      index: "03", span: "md:col-span-2 lg:col-span-2" },
-  { id: "marketing",    icon: Megaphone,   index: "04", span: "md:col-span-2 lg:col-span-2" },
-  { id: "other",        icon: MoreHorizontal, index: "05", span: "md:col-span-4 lg:col-span-2" },
+const baseServiceCards = [
+  { id: "postPurchase", icon: ShoppingBag, index: "01", span: "md:col-span-2 lg:col-span-3", title: SERVICE_CATALOG.postPurchase.title, description: SERVICE_CATALOG.postPurchase.description, custom: false },
+  { id: "legal", icon: Scale, index: "02", span: "md:col-span-2 lg:col-span-3", title: SERVICE_CATALOG.legal.title, description: SERVICE_CATALOG.legal.description, custom: false },
+  { id: "construction", icon: Hammer, index: "03", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.construction.title, description: SERVICE_CATALOG.construction.description, custom: false },
+  { id: "marketing", icon: Megaphone, index: "04", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.marketing.title, description: SERVICE_CATALOG.marketing.description, custom: false },
+  { id: "leasing", icon: Sparkles, index: "05", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.leasing.title, description: SERVICE_CATALOG.leasing.description, custom: false },
+  { id: "visit", icon: Sparkles, index: "06", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.visit.title, description: SERVICE_CATALOG.visit.description, custom: false },
+  { id: "other", icon: MoreHorizontal, index: "07", span: "md:col-span-4 lg:col-span-2", title: SERVICE_CATALOG.other.title, description: SERVICE_CATALOG.other.description, custom: false },
 ];
 
 export default function Services() {
@@ -26,7 +29,22 @@ export default function Services() {
   const { settings } = useSettings();
   const { user } = useAuth();
 
+  const serviceCards = [
+    ...baseServiceCards,
+    ...(settings.customCategories || []).map((category, index) => ({
+      id: category.id,
+      icon: Sparkles,
+      index: category.index || String(baseServiceCards.length + index + 1).padStart(2, "0"),
+      span: "md:col-span-2 lg:col-span-2",
+      title: category.title,
+      description: category.description,
+      custom: true,
+    })),
+  ];
+
   const statusOf = (id: string): 'enabled' | 'soon' | 'disabled' => {
+    const categoryStatus = settings.customCategories.find((category) => category.id === id)?.status;
+    if (categoryStatus === 'soon' || categoryStatus === 'disabled') return categoryStatus;
     const key = `services_${id}`;
     const v = (settings.moduleFlags as any)?.[key];
     if (v === 'soon' || v === 'disabled') return v;
@@ -95,7 +113,6 @@ export default function Services() {
           const isAdminRole = (user as any)?.role === 'admin';
           const disabled = status !== 'enabled';
           const isSoon = status === 'soon';
-          const isDisabled = status === 'disabled';
           if (status === 'disabled') return null;
           return (
             <motion.div
@@ -113,12 +130,12 @@ export default function Services() {
                 if (disabled) return;
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${card.id}`);
+                  router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${encodeURIComponent(card.id)}`);
                 }
               }}
               onClick={() => {
                 if (disabled) return;
-                router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${card.id}`);
+                router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${encodeURIComponent(card.id)}`);
               }}
               className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-card/[0.02] border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[100px] sm:min-h-[160px] overflow-hidden transition-all duration-300 ${
                 disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-white/20 hover:-translate-y-0.5'
@@ -149,7 +166,7 @@ export default function Services() {
 
               <div className="mt-2 sm:mt-auto pt-2 sm:pt-4 relative z-10 w-full flex flex-row items-center sm:items-end justify-between">
                 <h3 className="text-base sm:text-lg font-bold text-white/80 leading-tight group-hover:text-white transition-colors duration-200 pointer-events-none">
-                  {t(`services.${card.id}`)}
+                  {card.custom ? card.title : t(`services.${card.id}`)}
                 </h3>
                 {isSoon ? (
                   <span
@@ -171,6 +188,12 @@ export default function Services() {
                 )}
               </div>
 
+              {card.description && (
+                <p className="relative z-10 mt-3 line-clamp-2 text-[11px] font-medium leading-5 text-white/35">
+                  {card.description}
+                </p>
+              )}
+
               {/* Admin-only explicit preview for "soon" so it doesn't behave like normal click */}
               {isAdminRole && isSoon && (
                 <div className="relative z-10 pt-3">
@@ -178,7 +201,7 @@ export default function Services() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/services/form?type=${card.id}&preview=1`);
+                      router.push(`/services/form?type=${encodeURIComponent(card.id)}&preview=1`);
                     }}
                     className="h-9 px-3 rounded-xl bg-card/5 border border-white/10 hover:border-white/20 text-[10px] font-black text-white/60 hover:text-white/90 transition-all inline-flex items-center gap-2"
                   >

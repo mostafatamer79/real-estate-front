@@ -317,8 +317,8 @@ export default function DynamicServiceForm({
                 {f.placeholder || "اختر من القائمة..."}
               </option>
               {(f.options || []).map((o) => (
-                <option key={o.value} value={o.value} className="bg-card text-slate-900">
-                  {o.label}
+                <option key={o.value} value={o.value} disabled={o.disabled} className="bg-card text-slate-900">
+                  {o.status === "soon" ? `${o.label} - قريباً` : o.label}
                 </option>
               ))}
             </select>
@@ -332,19 +332,27 @@ export default function DynamicServiceForm({
               (f.options?.length || 0) > 2 ? "md:grid-cols-3" : "md:grid-cols-2"
             }`}
           >
-            {(f.options || []).map((o) => (
-              <div
-                key={o.value}
-                onClick={() => setValue(f.id, o.value)}
-                className={`flex items-center justify-center p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
-                  v === o.value
-                    ? "bg-slate-950 text-white border-slate-950"
-                    : "bg-muted text-slate-700 border hover:border-slate-400"
-                }`}
-              >
-                <span className="font-black text-sm">{o.label}</span>
-              </div>
-            ))}
+            {(f.options || []).map((o) => {
+              const disabledOption = !!o.disabled;
+              return (
+                <div
+                  key={o.value}
+                  onClick={() => {
+                    if (!disabledOption) setValue(f.id, o.value);
+                  }}
+                  aria-disabled={disabledOption}
+                  className={`flex items-center justify-center p-4 rounded-2xl border transition-all duration-300 ${
+                    disabledOption
+                      ? "bg-muted text-slate-400 border cursor-not-allowed opacity-60"
+                      : v === o.value
+                        ? "bg-slate-950 text-white border-slate-950 cursor-pointer"
+                        : "bg-muted text-slate-700 border hover:border-slate-400 cursor-pointer"
+                  }`}
+                >
+                  <span className="font-black text-sm">{o.status === "soon" ? `${o.label} - قريباً` : o.label}</span>
+                </div>
+              );
+            })}
           </div>
         );
       case "checkbox":

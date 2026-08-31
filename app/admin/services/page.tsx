@@ -31,6 +31,7 @@ import {
   User,
   UserCheck,
   Check,
+  Trash2,
   SaudiRiyalIcon
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -42,7 +43,17 @@ import api, { usersApi } from "@/lib/api";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { SERVICE_CATALOG, SERVICE_CATEGORY_IDS } from "@/lib/service-catalog";
+import {
+  CustomServiceCategory,
+  CustomServiceItem,
+  getServiceNamesForCategory,
+  makeServiceItemFlagKey,
+  makeServicePriceKey,
+  SERVICE_CATALOG,
+  SERVICE_CATEGORY_IDS,
+  ServiceItemStatus,
+  slugifyCustomCategory,
+} from "@/lib/service-catalog";
 import FormBuilderPanel from "./FormBuilderPanel";
 import DynamicAnswersView from "@/components/shared/DynamicAnswersView";
 
@@ -56,6 +67,8 @@ export default function AdminServicesManagementPage() {
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [savePopupOpen, setSavePopupOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateServiceModal, setShowCreateServiceModal] = useState(false);
+  const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceSearchTerm, setPriceSearchTerm] = useState("");
   const [requests, setRequests] = useState<any[]>([]);
@@ -70,11 +83,15 @@ export default function AdminServicesManagementPage() {
   // Local state for flags and prices to allow editing before saving
   const [localModuleFlags, setLocalModuleFlags] = useState<Record<string, 'enabled' | 'soon' | 'disabled'>>({});
   const [localServicePrices, setLocalServicePrices] = useState<Record<string, string>>({});
+  const [localCustomCategories, setLocalCustomCategories] = useState<CustomServiceCategory[]>([]);
+  const [localCustomServices, setLocalCustomServices] = useState<CustomServiceItem[]>([]);
 
 
   useEffect(() => {
     if (settings) {
       setLocalModuleFlags(settings.moduleFlags || {});
+      setLocalCustomCategories(settings.customCategories || []);
+      setLocalCustomServices(settings.customServices || []);
       const prices: Record<string, string> = {};
       Object.entries(settings.servicePrices || {}).forEach(([k, v]) => {
         prices[k] = String(v);
@@ -92,11 +109,21 @@ export default function AdminServicesManagementPage() {
     visit: Eye,
     other: MoreHorizontal,
   };
-  const nonLegalServiceCategories = SERVICE_CATEGORY_IDS.filter((id) => id !== "legal").map((id) => ({
+  const baseNonLegalServiceCategories = SERVICE_CATEGORY_IDS.filter((id) => id !== "legal").map((id) => ({
     id,
     label: SERVICE_CATALOG[id].title,
+    description: SERVICE_CATALOG[id].description,
     icon: categoryIcons[id] || MoreHorizontal,
+    custom: false,
   }));
+  const customServiceCategories = localCustomCategories.map((category) => ({
+    id: category.id,
+    label: category.title,
+    description: category.description,
+    icon: MoreHorizontal,
+    custom: true,
+  }));
+  const nonLegalServiceCategories = [...baseNonLegalServiceCategories, ...customServiceCategories];
   const legalServiceCategories = [
     { id: 'legal', label: 'الخدمات القانونية', icon: Scale },
     { id: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
@@ -121,7 +148,7 @@ export default function AdminServicesManagementPage() {
     other: "other",
   };
   const typeParam = searchParams.get("type") || "post_purchase";
-  const activeServiceCategory = serviceTypeToCategory[typeParam] || "postPurchase";
+  const activeServiceCategory = serviceTypeToCategory[typeParam] || typeParam || "postPurchase";
 
   const pricingCategories = [
     ...serviceCategories,
@@ -131,10 +158,10 @@ export default function AdminServicesManagementPage() {
     { id: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
   ];
 
-  // Non-legal service options come from the shared catalog; legal lists stay as-is.
+  // Non-legal service options come from the shared catalog plus admin-created services; legal lists stay as-is.
   const servicePriceGroups: Record<string, string[]> = {
     ...Object.fromEntries(
-      Object.entries(SERVICE_CATALOG).map(([id, entry]) => [id, entry.options])
+      [...Object.keys(SERVICE_CATALOG), ...localCustomCategories.map((category) => category.id)].map((id) => [id, getServiceNamesForCategory(id, localCustomServices)])
     ),
     legal: ["المنازعات العقارية", "العقود", "التوثيق", "أخرى"],
     legal_disputes: ["نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "أخرى"],
@@ -143,11 +170,121 @@ export default function AdminServicesManagementPage() {
     legal_other: ["استشارة قانونية", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
   };
 
-  const makeServicePriceKey = (category: string, service: string) =>
-    `service_price_${category}_${service}`.replace(/\s+/g, "_").toLowerCase();
-
   const activeCategoryConfig = pricingCategories.find((category) => category.id === activeServiceCategory) || serviceCategories[0];
   const activeCategoryServices = servicePriceGroups[activeServiceCategory] || [];
+  const isCustomService = (category: string, service: string) =>
+    localCustomServices.some((item) => item.category === category && item.name === service);
+  const getServiceItemStatus = (category: string, service: string): ServiceItemStatus => {
+    const custom = localCustomServices.find((item) => item.category === category && item.name === service);
+    return custom?.status || localModuleFlags[makeServiceItemFlagKey(category, service)] || "enabled";
+  };
+  const setServiceItemStatus = (category: string, service: string, status: ServiceItemStatus) => {
+    setLocalCustomServices((current) =>
+      current.map((item) => (item.category === category && item.name === service ? { ...item, status } : item)),
+    );
+    setLocalModuleFlags((current) => ({ ...current, [makeServiceItemFlagKey(category, service)]: status }));
+  };
+  const deleteCustomService = async (service: string) => {
+    const ok = await confirmDialog({
+      title: "حذف الخدمة؟",
+      description: "سيتم حذف الخدمة المضافة من القائمة ولن تظهر للعملاء بعد الحفظ.",
+      confirmLabel: "حذف الخدمة",
+      cancelLabel: "إلغاء",
+      destructive: true,
+    });
+    if (!ok) return;
+    setLocalCustomServices((current) => current.filter((item) => !(item.category === activeServiceCategory && item.name === service)));
+    setLocalServicePrices((current) => {
+      const next = { ...current };
+      delete next[makeServicePriceKey(activeServiceCategory, service)];
+      return next;
+    });
+  };
+  const addCustomService = (service: Omit<CustomServiceItem, "id" | "createdAt"> & { price: string }) => {
+    const name = service.name.trim();
+    if (!name) {
+      toast.error("أدخل اسم الخدمة");
+      return false;
+    }
+    const exists = getServiceNamesForCategory(service.category, localCustomServices).some((item) => item === name);
+    if (exists) {
+      toast.error("هذه الخدمة موجودة بالفعل في نفس التصنيف");
+      return false;
+    }
+    const created: CustomServiceItem = {
+      id: `custom_${service.category}_${Date.now()}`,
+      category: service.category,
+      name,
+      status: service.status,
+      createdAt: new Date().toISOString(),
+    };
+    setLocalCustomServices((current) => [...current, created]);
+    setLocalModuleFlags((current) => ({ ...current, [makeServiceItemFlagKey(service.category, name)]: service.status }));
+    if (service.price !== "") {
+      setLocalServicePrices((current) => ({ ...current, [makeServicePriceKey(service.category, name)]: service.price }));
+    }
+    return true;
+  };
+
+  const isCustomCategory = (category: string) => localCustomCategories.some((item) => item.id === category);
+  const addCustomCategory = (category: Omit<CustomServiceCategory, "createdAt">) => {
+    const title = category.title.trim();
+    if (!title) {
+      toast.error("أدخل اسم التصنيف");
+      return false;
+    }
+    const id = slugifyCustomCategory(category.id || title);
+    const exists = [...SERVICE_CATEGORY_IDS, ...localCustomCategories.map((item) => item.id)].includes(id);
+    if (exists) {
+      toast.error("هذا التصنيف موجود بالفعل");
+      return false;
+    }
+    const created: CustomServiceCategory = {
+      ...category,
+      id,
+      title,
+      description: category.description.trim(),
+      status: category.status,
+      createdAt: new Date().toISOString(),
+    };
+    setLocalCustomCategories((current) => [...current, created]);
+    setLocalModuleFlags((current) => ({ ...current, [`services_${id}`]: category.status }));
+    return true;
+  };
+  const setCategoryStatus = (category: string, status: ServiceItemStatus) => {
+    setLocalCustomCategories((current) =>
+      current.map((item) => (item.id === category ? { ...item, status } : item)),
+    );
+    handleToggleModule(category, status);
+  };
+  const deleteCustomCategory = async (category: string) => {
+    const ok = await confirmDialog({
+      title: "حذف التصنيف؟",
+      description: "سيتم حذف التصنيف والخدمات المضافة داخله بعد الحفظ.",
+      confirmLabel: "حذف التصنيف",
+      cancelLabel: "إلغاء",
+      destructive: true,
+    });
+    if (!ok) return;
+    setLocalCustomCategories((current) => current.filter((item) => item.id !== category));
+    setLocalCustomServices((current) => current.filter((item) => item.category !== category));
+    setLocalModuleFlags((current) => {
+      const next = { ...current };
+      delete next[`services_${category}`];
+      Object.keys(next).forEach((key) => {
+        if (key.startsWith(`service_item_${category}_`)) delete next[key];
+      });
+      return next;
+    });
+    setLocalServicePrices((current) => {
+      const next = { ...current };
+      Object.keys(next).forEach((key) => {
+        if (key.startsWith(`service_price_${category}_`)) delete next[key];
+      });
+      return next;
+    });
+  };
+
   const allServiceNavigationTabs = [
     { id: "postPurchase", type: "post_purchase", label: "خدمات ما بعد الشراء", icon: ShoppingBag },
     { id: "construction", type: "construction", label: "البناء والمقاولات", icon: Hammer },
@@ -162,13 +299,17 @@ export default function AdminServicesManagementPage() {
     { id: "legal_other", type: "legal_other", label: "القانونية: أخرى", icon: MoreHorizontal },
   ];
   const isLegalServicesPage = activeServiceCategory === "legal" || activeServiceCategory.startsWith("legal_");
-  const serviceNavigationTabs = allServiceNavigationTabs;
+  const serviceNavigationTabs = [
+    ...allServiceNavigationTabs,
+    ...localCustomCategories.map((category) => ({ id: category.id, type: category.id, label: category.title, icon: MoreHorizontal })),
+  ];
   const visibleServiceCategories = isLegalServicesPage ? legalServiceCategories : nonLegalServiceCategories;
 
   const requestPageSize = 8;
   const filteredPricingServices = activeCategoryServices.filter((service) =>
     service.toLowerCase().includes(priceSearchTerm.trim().toLowerCase())
   );
+  const visibleActiveCategoryServices = activeCategoryServices.filter((service) => getServiceItemStatus(activeServiceCategory, service) !== "disabled");
   const pricedServicesCount = activeCategoryServices.filter((service) => {
     const key = makeServicePriceKey(activeServiceCategory, service);
     return Number(localServicePrices[key] || 0) > 0;
@@ -226,7 +367,9 @@ export default function AdminServicesManagementPage() {
       const ok = await saveSettings({
         ...settings,
         moduleFlags: { ...settings.moduleFlags, ...localModuleFlags },
-        servicePrices: numericPrices
+        servicePrices: numericPrices,
+        customCategories: localCustomCategories,
+        customServices: localCustomServices
       });
 
       if (ok) {
@@ -465,14 +608,27 @@ export default function AdminServicesManagementPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         <div className={`lg:col-span-2 space-y-8 ${activePanel !== "availability" ? "hidden" : ""}`}>
-          <div className="flex items-center gap-3 border-b border pb-4">
-            <LayoutGrid className="w-5 h-5 text-slate-400" />
-            <h2 className="text-lg font-black text-slate-900">أقسام الخدمات وتوفرها</h2>
+          <div className="flex flex-col gap-3 border-b border pb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <LayoutGrid className="w-5 h-5 text-slate-400" />
+              <h2 className="text-lg font-black text-slate-900">أقسام الخدمات وتوفرها</h2>
+            </div>
+            {!isLegalServicesPage && (
+              <button
+                type="button"
+                onClick={() => setShowCreateCategoryModal(true)}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black transition-all"
+              >
+                <Plus className="h-4 w-4" />
+                إضافة تصنيف
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-4">
             {visibleServiceCategories.map((cat) => {
-              const status = localModuleFlags[`services_${cat.id}`] || 'enabled';
+              const customCategory = isCustomCategory(cat.id);
+              const status = localCustomCategories.find((category) => category.id === cat.id)?.status || localModuleFlags[`services_${cat.id}`] || 'enabled';
               return (
                 <div key={cat.id} className="p-3 sm:p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
@@ -487,13 +643,13 @@ export default function AdminServicesManagementPage() {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleToggleModule(cat.id, 'enabled')}
+                      onClick={() => setCategoryStatus(cat.id, 'enabled')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-slate-950 text-white border-slate-950' : 'bg-muted text-slate-400 border hover:border'}`}
                     >
                       نشط
                     </button>
                     <button
-                      onClick={() => handleToggleModule(cat.id, 'soon')}
+                      onClick={() => setCategoryStatus(cat.id, 'soon')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-muted text-slate-400 border hover:border'}`}
                       style={
                         status === 'soon'
@@ -508,11 +664,20 @@ export default function AdminServicesManagementPage() {
                       قريباً
                     </button>
                     <button
-                      onClick={() => handleToggleModule(cat.id, 'disabled')}
+                      onClick={() => setCategoryStatus(cat.id, 'disabled')}
                       className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-muted text-slate-400 border hover:border'}`}
                     >
                       معطل
                     </button>
+                    {customCategory && (
+                      <button
+                        type="button"
+                        onClick={() => deleteCustomCategory(cat.id)}
+                        className="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest bg-red-50 text-red-600 transition-all hover:bg-red-100"
+                      >
+                        حذف
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -539,7 +704,7 @@ export default function AdminServicesManagementPage() {
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
-                  <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{activeCategoryServices.length}</p>
+                  <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{visibleActiveCategoryServices.length}</p>
                   <p className="text-[10px] font-black text-slate-400">خدمة</p>
                 </div>
                 <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
@@ -566,6 +731,13 @@ export default function AdminServicesManagementPage() {
                 />
               </div>
               <button
+                onClick={() => setShowCreateServiceModal(true)}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border bg-card px-5 text-[11px] font-black uppercase tracking-widest text-slate-700 transition-all hover:border-slate-300"
+              >
+                <Plus className="h-4 w-4" />
+                إضافة خدمة
+              </button>
+              <button
                 onClick={() => setConfirmSaveOpen(true)}
                 disabled={saving}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-black disabled:opacity-50"
@@ -581,6 +753,8 @@ export default function AdminServicesManagementPage() {
               const key = makeServicePriceKey(activeServiceCategory, service);
               const value = localServicePrices[key] || "";
               const hasPrice = Number(value || 0) > 0;
+              const status = getServiceItemStatus(activeServiceCategory, service);
+              const custom = isCustomService(activeServiceCategory, service);
               return (
                 <div key={key} className="rounded-[1.25rem] border border bg-card p-5 shadow-sm transition-all hover:border-slate-300">
                   <div className="mb-4 flex items-start justify-between gap-4">
@@ -590,9 +764,20 @@ export default function AdminServicesManagementPage() {
                       </span>
                       <h3 className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{service}</h3>
                     </div>
-                    <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-muted text-slate-400"}`}>
-                      {hasPrice ? "مسعر" : "بدون سعر"}
-                    </span>
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-muted text-slate-400"}`}>
+                        {hasPrice ? "مسعر" : "بدون سعر"}
+                      </span>
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-black ${
+                        status === "enabled"
+                          ? "bg-slate-100 text-slate-700"
+                          : status === "soon"
+                            ? "bg-amber-50 text-amber-700"
+                            : "bg-red-50 text-red-600"
+                      }`}>
+                        {status === "enabled" ? "نشط" : status === "soon" ? "قريباً" : "مخفي"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="rounded-2xl border border bg-muted p-2">
@@ -608,6 +793,41 @@ export default function AdminServicesManagementPage() {
                       <span className="rounded-lg bg-slate-950 px-3 py-2 text-[10px] font-black text-white"><SaudiRiyalSymbol iconClassName="h-4 w-4 text-white" /></span>
                     </div>
                   </div>
+
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setServiceItemStatus(activeServiceCategory, service, "enabled")}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "enabled" ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                    >
+                      نشط
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setServiceItemStatus(activeServiceCategory, service, "soon")}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "soon" ? "border-amber-200 bg-amber-50 text-amber-700" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                    >
+                      قريباً
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setServiceItemStatus(activeServiceCategory, service, "disabled")}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "disabled" ? "border-red-100 bg-red-50 text-red-600" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                    >
+                      إخفاء
+                    </button>
+                  </div>
+
+                  {custom && (
+                    <button
+                      type="button"
+                      onClick={() => deleteCustomService(service)}
+                      className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-3 text-[9px] font-black uppercase tracking-widest text-red-600 transition-all hover:bg-red-100"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      حذف الخدمة المضافة
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -1001,6 +1221,34 @@ export default function AdminServicesManagementPage() {
         />
       )}
 
+      {showCreateCategoryModal && (
+        <CreateServiceCategoryModal
+          onClose={() => setShowCreateCategoryModal(false)}
+          onCreate={(category) => {
+            if (addCustomCategory(category)) {
+              setShowCreateCategoryModal(false);
+              setActivePanel("availability");
+              router.push(`/admin/services?type=${category.id || slugifyCustomCategory(category.title)}`);
+            }
+          }}
+        />
+      )}
+
+      {showCreateServiceModal && (
+        <CreateServiceItemModal
+          categories={nonLegalServiceCategories}
+          defaultCategory={activeServiceCategory}
+          onClose={() => setShowCreateServiceModal(false)}
+          onCreate={(service) => {
+            if (addCustomService(service)) {
+              setShowCreateServiceModal(false);
+              setActivePanel("pricing");
+              router.push(`/admin/services?type=${service.category === "postPurchase" ? "post_purchase" : service.category}`);
+            }
+          }}
+        />
+      )}
+
       <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
         <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
           <div className="p-7">
@@ -1078,22 +1326,283 @@ export default function AdminServicesManagementPage() {
   );
 }
 
+
+
+interface CreateServiceCategoryModalProps {
+  onClose: () => void;
+  onCreate: (category: Omit<CustomServiceCategory, "createdAt">) => void;
+}
+
+function CreateServiceCategoryModal({ onClose, onCreate }: CreateServiceCategoryModalProps) {
+  const [form, setForm] = useState<Omit<CustomServiceCategory, "createdAt">>({
+    id: "",
+    title: "",
+    description: "",
+    status: "enabled",
+    index: "",
+  });
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        dir="rtl"
+      >
+        <button type="button" onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+            <LayoutGrid className="h-6 w-6" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-950">إضافة تصنيف جديد</h2>
+            <p className="text-xs text-slate-400 font-bold">سيظهر التصنيف كبطاقة جديدة في صفحة الخدمات حسب حالة الظهور.</p>
+          </div>
+        </div>
+
+        <form
+          className="space-y-5 text-right"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onCreate({ ...form, id: form.id || slugifyCustomCategory(form.title) });
+          }}
+        >
+          <div>
+            <label className={labelCls}>اسم التصنيف</label>
+            <input
+              value={form.title}
+              onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+              className={inputCls}
+              placeholder="مثال: خدمات الصيانة"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>وصف مختصر</label>
+            <textarea
+              value={form.description}
+              onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+              className="w-full h-24 bg-muted border-transparent border focus:border-slate-950 rounded-xl p-4 text-sm font-bold outline-none transition-all resize-none"
+              placeholder="وصف يظهر داخل بطاقة الخدمة للعملاء"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>معرف التصنيف</label>
+              <input
+                value={form.id}
+                onChange={(event) => setForm((current) => ({ ...current, id: slugifyCustomCategory(event.target.value) }))}
+                className={inputCls}
+                placeholder="maintenance"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <label className={labelCls}>رقم العرض</label>
+              <input
+                value={form.index || ""}
+                onChange={(event) => setForm((current) => ({ ...current, index: event.target.value }))}
+                className={inputCls}
+                placeholder="08"
+                dir="ltr"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>حالة الظهور</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                ["enabled", "نشط"],
+                ["soon", "قريباً"],
+                ["disabled", "مخفي"],
+              ].map(([status, label]) => (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => setForm((current) => ({ ...current, status: status as ServiceItemStatus }))}
+                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3 border-t border pt-5">
+            <button type="submit" className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-black">
+              <Check className="h-4 w-4" />
+              إضافة التصنيف
+            </button>
+            <button type="button" onClick={onClose} className="h-12 rounded-2xl border border px-6 text-xs font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-muted">
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
+
+interface CreateServiceItemModalProps {
+  categories: Array<{ id: string; label: string; icon: any }>;
+  defaultCategory: string;
+  onClose: () => void;
+  onCreate: (service: Omit<CustomServiceItem, "id" | "createdAt"> & { price: string }) => void;
+}
+
+function CreateServiceItemModal({ categories, defaultCategory, onClose, onCreate }: CreateServiceItemModalProps) {
+  const safeDefaultCategory = categories.some((category) => category.id === defaultCategory) ? defaultCategory : "postPurchase";
+  const [form, setForm] = useState<{ category: string; name: string; price: string; status: ServiceItemStatus }>({
+    category: safeDefaultCategory,
+    name: "",
+    price: "",
+    status: "enabled",
+  });
+  const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
+  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        dir="rtl"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+            <Plus className="h-6 w-6" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-950">إضافة خدمة جديدة</h2>
+            <p className="text-xs text-slate-400 font-bold">ستضاف الخدمة إلى التصنيف المختار وتظهر في نموذج العميل حسب الحالة.</p>
+          </div>
+        </div>
+
+        <form
+          className="space-y-5 text-right"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onCreate(form);
+          }}
+        >
+          <div>
+            <label className={labelCls}>تصنيف الخدمة</label>
+            <select
+              value={form.category}
+              onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
+              className={inputCls}
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>{category.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className={labelCls}>اسم الخدمة</label>
+            <input
+              value={form.name}
+              onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+              className={inputCls}
+              placeholder="مثال: صيانة مكيفات"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>السعر الأولي</label>
+            <input
+              type="number"
+              min="0"
+              value={form.price}
+              onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))}
+              className={inputCls}
+              placeholder="0.00"
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>حالة الظهور</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                ["enabled", "نشط"],
+                ["soon", "قريباً"],
+                ["disabled", "مخفي"],
+              ].map(([status, label]) => (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => setForm((current) => ({ ...current, status: status as ServiceItemStatus }))}
+                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3 border-t border pt-5">
+            <button
+              type="submit"
+              className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-black"
+            >
+              <Check className="h-4 w-4" />
+              إضافة الخدمة
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-12 rounded-2xl border border px-6 text-xs font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-muted"
+            >
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
+
 interface CreateServiceRequestModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
 function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestModalProps) {
+  const { settings } = useSettings();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [userSearch, setUserSearch] = useState("");
   const [clientMode, setClientMode] = useState<"registered" | "anonymous">("anonymous");
 
-  // Non-legal options come from the shared catalog (includes leasing & visit).
+  // Non-legal options come from the shared catalog plus admin-created services.
   const modalServiceTypes: Record<string, string[]> = {
     ...Object.fromEntries(
-      Object.entries(SERVICE_CATALOG).map(([id, entry]) => [id, entry.options])
+      Object.keys(SERVICE_CATALOG).map((id) => [
+        id,
+        getServiceNamesForCategory(id, settings.customServices).filter(
+          (service) => settings.moduleFlags[makeServiceItemFlagKey(id, service)] !== "disabled",
+        ),
+      ])
     ),
     legal: ["المنازعات العقارية", "العقود", "التوثيق", "استشارة قانونية", "نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "عقد بيع", "عقد إيجار", "عقد الانتفاع العقاري", "عقد الهبة العقاري", "عقد الرهن العقاري", "عقد الاستثمار العقاري", "مراجعة العقود", "توثيق صك الملكية", "توثيق مستندات البيع", "توثيق بيانات الأطراف", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
   };

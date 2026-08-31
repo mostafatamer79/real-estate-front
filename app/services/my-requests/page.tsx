@@ -1,262 +1,355 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { serviceRequestApi, ServiceRequest, ServiceStatus } from '@/lib/service-request-api';
-import { useLanguage } from '@/context/LanguageContext';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { serviceRequestApi, ServiceRequest, ServiceStatus } from "@/lib/service-request-api";
+import { useLanguage } from "@/context/LanguageContext";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Package,
-  MessageSquare,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  ChevronRight,
-  ArrowRight,
-  User,
-  DollarSign,
-  Calendar,
-  Check,
-  ChevronLeft,
-  Search,
   ArrowLeft,
-  Plus,
   Building2,
-  Lock,
-  SaudiRiyalIcon
-} from 'lucide-react';
-import toast from 'react-hot-toast';
-import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
-import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
-import MobileAppHeader from '@/app/src/components/MobileAppHeader';
-import PullToRefresh from '@/components/shared/PullToRefresh';
+  Check,
+  Clock,
+  Loader2,
+  MessageSquare,
+  Package,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  SaudiRiyalIcon,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+import PullToRefresh from "@/components/shared/PullToRefresh";
+import { useAuth } from "@/hooks/useAuth";
+
+const STAFF_ROLES = new Set([
+  "admin",
+  "agent",
+  "manager",
+  "employee",
+  "marketing",
+  "marketing_admin",
+  "legal",
+  "legal_admin",
+  "finance",
+  "finance_admin",
+]);
+
+const departmentLabels: Record<string, string> = {
+  admin: "الإدارة",
+  agent: "الوسيط",
+  marketing: "التسويق",
+  finance: "المالية",
+  legal: "القانونية",
+  properties: "الأملاك",
+  employees: "الموظفين",
+  real_estate: "الأملاك",
+};
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [savingId, setSavingId] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
+  const [priceDrafts, setPriceDrafts] = useState<Record<string, { price: string; note: string; deptSlug: string }>>({});
+  const [search, setSearch] = useState("");
   const { t, language } = useLanguage();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
 
+  const role = String((user as any)?.role || "");
+  const isAdmin = role === "admin";
+  const canManageRequests = STAFF_ROLES.has(role);
+
+  const defaultDeptSlug = useMemo(() => {
+    const departments = Array.isArray((user as any)?.departments) ? (user as any).departments : [];
+    if (isAdmin) return "admin";
+    if (role === "agent") return "agent";
+    return departments[0] || role || "agent";
+  }, [isAdmin, role, user]);
+
   useEffect(() => {
+    if (authLoading) return;
+    if (!canManageRequests) {
+      setLoading(false);
+      return;
+    }
     fetchRequests();
-  }, [page]);
+  }, [authLoading, canManageRequests]);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await serviceRequestApi.findAll({ page, limit: 10, mine: true });
-      setRequests(response.data.items);
-      setTotalPages(response.data.totalPages);
+      const response = await serviceRequestApi.findAll({ page: 1, limit: 200 });
+      setRequests(response.data.items || []);
     } catch (error) {
-      console.error('Error fetching requests:', error);
-      toast.error(t('common.error'));
+      console.error("Error fetching service requests:", error);
+      toast.error(t("common.error") || "تعذر تحميل الطلبات");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSelfChat = async (requestId: string) => {
+  const getDraft = (request: ServiceRequest) =>
+    priceDrafts[request.id] || {
+      price: request.price ? String(request.price) : "",
+      note: "",
+      deptSlug: defaultDeptSlug,
+    };
+
+  const updateDraft = (request: ServiceRequest, key: "price" | "note" | "deptSlug", value: string) => {
+    setPriceDrafts((current) => ({
+      ...current,
+      [request.id]: { ...getDraft(request), [key]: value },
+    }));
+  };
+
+  const submitPrice = async (request: ServiceRequest) => {
+    const draft = getDraft(request);
+    const price = Number(draft.price);
+    if (!price || price < 0) {
+      toast.error("أدخل سعر صحيح");
+      return;
+    }
+
+    setSavingId(request.id);
     try {
-      const response = await serviceRequestApi.getOrCreateSelfChat(requestId);
-      router.push(`/chat?roomId=${response.data.chatRoomId}`);
-    } catch (error) {
-      console.error('Error starting chat:', error);
-      toast.error(t('common.error'));
+      const response = await serviceRequestApi.addDepartmentPrice(request.id, {
+        price,
+        note: draft.note,
+        deptSlug: draft.deptSlug || defaultDeptSlug,
+      });
+      toast.success("تم إرسال السعر بانتظار اعتماد الإدارة");
+      setSelectedRequest(response.data);
+      await fetchRequests();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "تعذر إرسال السعر");
+    } finally {
+      setSavingId(null);
     }
   };
 
-  const handleStaffChat = async (requestId: string, staffId: string) => {
-    try {
-      const response = await serviceRequestApi.getOrCreateStaffChat(requestId, staffId);
-      router.push(`/chat?roomId=${response.data.chatRoomId}`);
-    } catch (error) {
-      console.error('Error starting staff chat:', error);
-      toast.error(t('common.error'));
-    }
-  };
-
-  const handleAcceptOffer = async (requestId: string, deptSlug: string) => {
+  const confirmOffer = async (request: ServiceRequest, deptSlug: string) => {
+    if (!isAdmin) return;
     const ok = await confirmDialog({
-      title: language === 'ar' ? 'هل أنت متأكد من قبول هذا العرض؟' : 'Are you sure you want to accept this offer?',
-      description: language === 'ar' ? 'سيتم اعتماد العرض والانتقال إلى مرحلة التنفيذ.' : 'This offer will be approved and moved to execution.',
-      confirmLabel: language === 'ar' ? 'قبول العرض' : 'Accept offer',
-      cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
+      title: "اعتماد السعر؟",
+      description: "بعد الاعتماد ستظهر الفاتورة للعميل في المحفظة للدفع.",
+      confirmLabel: "اعتماد وإرسال للمحفظة",
+      cancelLabel: "إلغاء",
     });
     if (!ok) return;
 
+    setSavingId(request.id);
     try {
-      const response = await serviceRequestApi.acceptDepartmentOffer(requestId, deptSlug);
-      toast.success(language === 'ar' ? 'تم قبول العرض بنجاح' : 'Offer accepted successfully');
+      const response = await serviceRequestApi.acceptDepartmentOffer(request.id, deptSlug);
+      toast.success("تم اعتماد السعر وإظهار الفاتورة في محفظة العميل");
       setSelectedRequest(response.data);
-      fetchRequests();
-    } catch (error) {
-      console.error('Error accepting offer:', error);
-      toast.error(t('common.error'));
+      await fetchRequests();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "تعذر اعتماد السعر");
+    } finally {
+      setSavingId(null);
     }
   };
 
-  const getStatusBadge = (status: ServiceStatus) => {
-    switch (status) {
+  const openChat = async (requestId: string) => {
+    setSavingId(requestId);
+    try {
+      const response = await serviceRequestApi.getOrCreateChat(requestId);
+      router.push(`/chat?roomId=${response.data.chatRoomId}`);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "تعذر فتح المحادثة");
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const getStatusBadge = (request: ServiceRequest) => {
+    if (request.adminAccepted || request.clientDecision === "accepted") {
+      return <Badge variant="outline" className="border-emerald-100 bg-emerald-50 text-emerald-700">معتمد للمحفظة</Badge>;
+    }
+    if (Object.keys(request.departmentPrices || {}).length > 0) {
+      return <Badge variant="outline" className="border-amber-100 bg-amber-50 text-amber-700">بانتظار اعتماد الإدارة</Badge>;
+    }
+    switch (request.status) {
       case ServiceStatus.PENDING:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.pending')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">قيد المراجعة</Badge>;
       case ServiceStatus.IN_PROGRESS:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.in_progress')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">قيد المعالجة</Badge>;
       case ServiceStatus.COMPLETED:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.completed')}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">مكتمل</Badge>;
       case ServiceStatus.CANCELLED:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{t('legal.status.cancelled')}</Badge>;
+        return <Badge variant="outline" className="border-red-100 bg-red-50 text-red-600">ملغي</Badge>;
       default:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{status}</Badge>;
+        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{request.status}</Badge>;
     }
   };
 
-  if (selectedRequest) {
-    const acceptedOffer = selectedRequest.metadata?.acceptedOffer;
+  const filteredRequests = requests.filter((request) => {
+    const term = search.trim().toLowerCase();
+    if (!term) return true;
+    return [request.serviceType, request.clientName, request.phone, request.city, request.district, request.category]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(term));
+  });
+
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader title={language === 'ar' ? 'تفاصيل الطلب' : 'Request Details'} theme="light" />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-12">
-          <Button
-            variant="ghost"
-            className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
-            onClick={() => setSelectedRequest(null)}
-          >
-            <ArrowLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
-            {language === 'ar' ? 'العودة للطلبات' : 'Back to Requests'}
+      <div className="min-h-screen bg-muted flex items-center justify-center" dir="rtl">
+        <div className="flex items-center gap-3 text-slate-500 font-bold">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          جاري تحميل طلبات الخدمات...
+        </div>
+      </div>
+    );
+  }
+
+  if (!canManageRequests) {
+    return (
+      <div className="min-h-screen bg-muted" dir={language === "ar" ? "rtl" : "ltr"}>
+        <MobileAppHeader title="طلبات الخدمات" theme="light" />
+        <main className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-card border text-slate-500">
+            <ShieldCheck className="h-8 w-8" />
+          </div>
+          <h1 className="text-2xl font-black text-slate-950">هذه الصفحة للإدارة والفريق فقط</h1>
+          <p className="mt-3 text-sm font-bold leading-6 text-slate-500">
+            طلبك يتم مراجعته من الفريق. عند اعتماد السعر من الإدارة ستظهر الفاتورة مباشرة في المحفظة.
+          </p>
+          <Button onClick={() => router.push("/wallet")} className="mt-6 rounded-2xl bg-slate-950 px-6 text-white hover:bg-black">
+            الذهاب إلى المحفظة
+          </Button>
+        </main>
+      </div>
+    );
+  }
+
+  const requestForDetails = selectedRequest;
+
+  if (requestForDetails) {
+    const draft = getDraft(requestForDetails);
+    const offers = requestForDetails.departmentPrices || {};
+    const acceptedOffer = requestForDetails.metadata?.acceptedOffer;
+
+    return (
+      <div className="min-h-screen bg-muted" dir={language === "ar" ? "rtl" : "ltr"}>
+        <MobileAppHeader title="تفاصيل طلب الخدمة" theme="light" />
+        <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 pb-12">
+          <Button variant="ghost" className="mb-6 gap-2 text-slate-500 hover:text-slate-900" onClick={() => setSelectedRequest(null)}>
+            <ArrowLeft className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
+            العودة للطلبات
           </Button>
 
-          <Card className="overflow-hidden border shadow-xl rounded-2xl">
-            <CardHeader className="bg-card border-b border p-4 sm:p-8">
-              <div className="flex flex-col md:flex-row justify-between gap-3 md:gap-6">
+          <section className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+            <div className="border-b bg-card p-5 sm:p-8">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl border border bg-card flex items-center justify-center text-slate-600">
-                    <Package className="w-5 h-5" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                    <Package className="h-6 w-6" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                      {selectedRequest.serviceType}
-                      {selectedRequest.targetDepartment && (
-                        <span className="mx-2 text-sm text-slate-500 font-normal">
-                          ({t(`admin.trans.dept.${selectedRequest.targetDepartment}`)})
-                        </span>
-                      )}
-                    </h2>
-                    <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
-                      <span className="font-semibold text-slate-600">#{selectedRequest.id.substring(0, 8)}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{new Date(selectedRequest.createdAt).toLocaleDateString()}</span>
-                    </div>
+                    <h1 className="text-xl sm:text-2xl font-black text-slate-950">{requestForDetails.serviceType || "طلب خدمة"}</h1>
+                    <p className="mt-1 text-xs font-bold text-slate-400">#{requestForDetails.id.substring(0, 8)} · {new Date(requestForDetails.createdAt).toLocaleDateString("ar-SA")}</p>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  {getStatusBadge(selectedRequest.status)}
-                  <Button
-                    variant="outline"
-                    className="border text-slate-700 hover:bg-muted gap-2 rounded-xl h-9 px-3 text-xs"
-                    onClick={() => handleSelfChat(selectedRequest.id)}
-                  >
-                    <Lock className="w-4 h-4" />
-                    {language === 'ar' ? 'ملاحظات خاصة' : 'Private Notes'}
+                <div className="flex flex-wrap items-center gap-2">
+                  {getStatusBadge(requestForDetails)}
+                  <Button variant="outline" className="h-10 rounded-xl gap-2" onClick={() => openChat(requestForDetails.id)} disabled={savingId === requestForDetails.id}>
+                    <MessageSquare className="h-4 w-4" />
+                    محادثة الطلب
                   </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
-                <div className="p-4 bg-muted rounded-xl border border">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الموقع' : 'Location'}</p>
-                  <p className="font-bold text-slate-800">{selectedRequest.city}, {selectedRequest.district}</p>
+            </div>
+
+            <div className="grid gap-6 p-5 sm:p-8 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <InfoTile label="العميل" value={requestForDetails.clientName || requestForDetails.user?.firstName || "-"} />
+                  <InfoTile label="الجوال" value={requestForDetails.phone || requestForDetails.user?.phone || "-"} />
+                  <InfoTile label="الموقع" value={`${requestForDetails.city || "-"}، ${requestForDetails.district || "-"}`} />
+                  <InfoTile label="القسم" value={departmentLabels[requestForDetails.targetDepartment || ""] || requestForDetails.targetDepartment || "-"} />
                 </div>
-                <div className="p-4 bg-muted rounded-xl border border">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'السعر' : 'Price'}</p>
-                  <p className="font-bold text-slate-800 text-lg"><SaudiRiyalAmount amount={selectedRequest.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
-                </div>
-                <div className="p-4 bg-muted rounded-xl border border">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'رقم الفاتورة' : 'Invoice Number'}</p>
-                  <p className="font-mono font-bold text-blue-600">{selectedRequest.invoiceNumber || '---'}</p>
+                <div className="rounded-2xl border bg-muted p-4">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">وصف الطلب</p>
+                  <p className="text-sm font-bold leading-7 text-slate-700">{requestForDetails.description || "لا يوجد وصف"}</p>
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-3">{language === 'ar' ? 'وصف الطلب' : 'Request Description'}</h3>
-                  <div className="p-4 bg-card border border rounded-xl italic text-slate-600 leading-relaxed">
-                    "{selectedRequest.description || (language === 'ar' ? 'لا يوجد وصف' : 'No description provided')}"
+              <div className="space-y-4">
+                <div className="rounded-2xl border bg-card p-4 shadow-sm">
+                  <div className="mb-4 flex items-center gap-2">
+                    <SaudiRiyalIcon className="h-4 w-4 text-slate-500" />
+                    <h2 className="text-sm font-black text-slate-950">إرسال سعر للفريق الإداري</h2>
+                  </div>
+                  <div className="space-y-3">
+                    <input
+                      type="number"
+                      min="0"
+                      value={draft.price}
+                      onChange={(event) => updateDraft(requestForDetails, "price", event.target.value)}
+                      className="h-11 w-full rounded-xl border bg-muted px-4 text-sm font-black outline-none focus:border-slate-950"
+                      placeholder="السعر"
+                    />
+                    <input
+                      value={draft.deptSlug}
+                      onChange={(event) => updateDraft(requestForDetails, "deptSlug", event.target.value)}
+                      className="h-11 w-full rounded-xl border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-950"
+                      placeholder="القسم / المزود"
+                      dir="ltr"
+                    />
+                    <textarea
+                      value={draft.note}
+                      onChange={(event) => updateDraft(requestForDetails, "note", event.target.value)}
+                      className="h-24 w-full resize-none rounded-xl border bg-muted p-4 text-sm font-bold outline-none focus:border-slate-950"
+                      placeholder="ملاحظة داخلية عن السعر"
+                    />
+                    <Button className="h-11 w-full rounded-xl bg-slate-950 text-white hover:bg-black" disabled={savingId === requestForDetails.id} onClick={() => submitPrice(requestForDetails)}>
+                      {savingId === requestForDetails.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <SaudiRiyalIcon className="h-4 w-4" />}
+                      إرسال السعر
+                    </Button>
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border">
-                  <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <SaudiRiyalIcon className="w-4 h-4 text-slate-500" />
-                    {language === 'ar' ? 'عروض الأسعار المتاحة' : 'Available Pricing Offers'}
-                  </h3>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    {Object.entries(selectedRequest.departmentPrices || {}).map(([dept, data]) => {
+                <div className="rounded-2xl border bg-card p-4 shadow-sm">
+                  <h2 className="mb-4 text-sm font-black text-slate-950">عروض الأسعار</h2>
+                  <div className="space-y-3">
+                    {Object.entries(offers).map(([dept, offer]) => {
                       const isAccepted = acceptedOffer?.dept === dept;
                       return (
-                        <div key={dept} className={`flex flex-col md:flex-row items-center justify-between p-4 rounded-xl border transition-all ${isAccepted ? 'bg-muted border-slate-300' : 'bg-card border hover:border-slate-300'}`}>
-                          <div className="flex items-center gap-4 mb-4 md:mb-0">
-                            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-card border border text-slate-500">
-                              <Building2 className="w-4 h-4" />
-                            </div>
+                        <div key={dept} className={`rounded-xl border p-4 ${isAccepted ? "border-emerald-100 bg-emerald-50" : "bg-muted"}`}>
+                          <div className="flex items-start justify-between gap-3">
                             <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-900 capitalize">{dept === 'admin' ? (language === 'ar' ? 'الإدارة' : 'Admin') : dept}</span>
-                                {isAccepted && <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{language === 'ar' ? 'مقبول' : 'Accepted'}</Badge>}
-                              </div>
-                              <p className="text-xs text-slate-500 mt-0.5">{data.note || (language === 'ar' ? 'عرض سعر رسمي' : 'Official pricing offer')}</p>
+                              <p className="text-sm font-black text-slate-900">{departmentLabels[dept] || dept}</p>
+                              <p className="mt-1 text-xs font-bold text-slate-500">{offer.note || "بدون ملاحظات"}</p>
                             </div>
+                            <p className="text-sm font-black text-slate-950"><SaudiRiyalAmount amount={offer.price} locale="ar-SA" /></p>
                           </div>
-                          <div className="flex flex-col items-center md:items-end gap-3">
-                            <div className="text-base font-black text-slate-900">
-                              <SaudiRiyalAmount amount={data.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />
-                            </div>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 px-3 gap-2 rounded-lg hover:bg-muted text-slate-700 border text-xs"
-                                onClick={() => handleStaffChat(selectedRequest.id, data.addedBy)}
-                              >
-                                <MessageSquare className="w-4 h-4" />
-                                {language === 'ar' ? 'مراسلة العارض' : 'Chat Offerer'}
-                              </Button>
-                              {!isAccepted && !acceptedOffer && (
-                                <Button
-                                  size="sm"
-                                  className="h-8 px-3 gap-2 bg-slate-900 hover:bg-black text-white rounded-lg text-xs"
-                                  onClick={() => handleAcceptOffer(selectedRequest.id, dept)}
-                                >
-                                  <Check className="w-4 h-4" />
-                                  {language === 'ar' ? 'اختيار العرض' : 'Select Offer'}
-                                </Button>
-                              )}
-                            </div>
-                          </div>
+                          {isAdmin && !acceptedOffer && (
+                            <Button className="mt-3 h-9 w-full rounded-xl bg-emerald-600 text-white hover:bg-emerald-700" disabled={savingId === requestForDetails.id} onClick={() => confirmOffer(requestForDetails, dept)}>
+                              <Check className="h-4 w-4" />
+                              اعتماد وإظهارها في المحفظة
+                            </Button>
+                          )}
+                          {isAccepted && <p className="mt-3 text-[10px] font-black text-emerald-700">تم اعتماد هذا السعر وإرساله للمحفظة</p>}
                         </div>
                       );
                     })}
-
-                    {Object.keys(selectedRequest.departmentPrices || {}).length === 0 && (
-                      <div className="p-12 text-center bg-muted rounded-2xl border border-dashed border">
-                        <Clock className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                        <p className="text-slate-500 font-medium">
-                          {language === 'ar' ? 'جاري انتظار عروض الأسعار من الأقسام المختصة...' : 'Waiting for pricing offers from relevant departments...'}
-                        </p>
+                    {Object.keys(offers).length === 0 && (
+                      <div className="rounded-xl border border-dashed bg-muted p-8 text-center text-sm font-bold text-slate-400">
+                        لا توجد أسعار مرسلة بعد
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         </main>
       </div>
     );
@@ -264,166 +357,88 @@ export default function MyServiceRequestsPage() {
 
   return (
     <PullToRefresh onRefresh={fetchRequests}>
-    <div className="min-h-screen bg-card" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader title={language === 'ar' ? 'طلباتي' : 'My Requests'} theme="light" />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-12">
-        <Button
-          variant="ghost"
-          className="mb-6 gap-2 text-slate-500 hover:text-slate-900"
-          onClick={() => router.back()}
-        >
-          <ArrowLeft className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
-          {language === 'ar' ? 'العودة للخدمات' : 'Back to Services'}
-        </Button>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <Package className="w-6 h-6 text-slate-600" />
-              {t('chat.myRequests')}
-            </h1>
-            <p className="text-slate-500 mt-2 text-sm">
-              {language === 'ar' ? 'إدارة ومتابعة طلبات الخدمات الخاصة بك في مكان واحد' : 'Manage and track your service requests in one place'}
-            </p>
-          </div>
-          <Button
-            onClick={() => router.push('/services')}
-            className="bg-slate-900 hover:bg-black text-white gap-2 px-4 h-10 rounded-lg text-sm font-bold"
-          >
-            <Plus className="w-4 h-4" />
-            {language === 'ar' ? 'طلب خدمة جديد' : 'New Service Request'}
-          </Button>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-card rounded-2xl border border p-4 shadow-sm space-y-4">
-                <div className="flex justify-between items-start">
-                  <div className="wow-skeleton h-9 w-9 rounded-xl" />
-                  <div className="wow-skeleton h-6 w-20 rounded-full" />
-                </div>
-                <div className="space-y-2">
-                  <div className="wow-skeleton h-4 w-3/4 rounded-lg" />
-                  <div className="wow-skeleton h-3 w-1/2 rounded-lg" />
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border">
-                  <div className="flex -space-x-2 rtl:space-x-reverse">
-                    <div className="wow-skeleton h-8 w-8 rounded-full ring-2 ring-white" />
-                    <div className="wow-skeleton h-8 w-8 rounded-full ring-2 ring-white" />
-                  </div>
-                  <div className="wow-skeleton h-4 w-16 rounded-lg" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : requests.length === 0 ? (
-          <div className="bg-card rounded-2xl border border-dashed border p-12 text-center wow-pop">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-slate-300" />
+      <div className="min-h-screen bg-card" dir={language === "ar" ? "rtl" : "ltr"}>
+        <MobileAppHeader title="طلبات الخدمات" theme="light" />
+        <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 pb-12">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <Button variant="ghost" className="mb-4 gap-2 text-slate-500 hover:text-slate-900" onClick={() => router.back()}>
+                <ArrowLeft className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
+                رجوع
+              </Button>
+              <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-950">
+                <Package className="h-6 w-6 text-slate-600" />
+                قائمة طلبات الخدمات
+              </h1>
+              <p className="mt-2 text-sm font-bold text-slate-500">إرسال الأسعار من الفريق ثم اعتمادها من الإدارة قبل ظهورها في محفظة العميل.</p>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
-              {language === 'ar' ? 'لا توجد طلبات حتى الآن' : 'No requests yet'}
-            </h3>
-            <p className="text-sm text-slate-500 mb-6 w-full sm:max-w-md mx-auto">
-              {language === 'ar' ? 'ابدأ بطلب أول خدمة لك، وسيقوم فريقنا بمراجعتها وتقديم العروض المناسبة.' : 'Start by requesting your first service, and our team will review it and provide suitable offers.'}
-            </p>
-            <Button onClick={() => router.push('/services')} variant="outline" className="h-10 px-5 rounded-lg font-bold border">
-              {language === 'ar' ? 'تصفح الخدمات المتاحة' : 'Browse Available Services'}
-            </Button>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="relative">
+                <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  className="h-11 w-full rounded-xl border bg-muted pr-10 pl-4 text-sm font-bold outline-none focus:border-slate-950 sm:w-80"
+                  placeholder="بحث في الطلبات"
+                />
+              </div>
+              <Button variant="outline" className="h-11 rounded-xl gap-2" onClick={fetchRequests}>
+                <RefreshCw className="h-4 w-4" />
+                تحديث
+              </Button>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {requests.map((request) => (
-              <div
-                key={request.id}
-                className="group bg-card rounded-2xl border border p-4 hover:border-slate-300 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
-                onClick={() => setSelectedRequest(request)}
-              >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-9 h-9 bg-muted rounded-xl border border flex items-center justify-center text-slate-600 transition-colors">
-                    <Package className="w-4 h-4" />
-                  </div>
-                  {getStatusBadge(request.status)}
-                </div>
 
-                <h3 className="text-base font-bold text-slate-900 mb-2 transition-colors line-clamp-1">
-                  {request.serviceType}
-                  {request.targetDepartment && (
-                    <span className="mx-1 text-xs text-slate-500 font-normal inline-block">
-                      ({t(`admin.trans.dept.${request.targetDepartment}`)})
-                    </span>
-                  )}
-                </h3>
-                <div className="flex items-center gap-2 text-xs text-slate-400 mb-6">
-                  <span className="font-bold text-slate-500">#{request.id.substring(0, 8)}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(request.createdAt).toLocaleDateString()}</span>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border">
-                  <div className="flex -space-x-2 rtl:space-x-reverse">
-                    {Object.keys(request.departmentPrices || {}).map((dept, i) => (
-                      <div key={dept} className="w-8 h-8 rounded-full bg-muted border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-500 uppercase" title={dept}>
-                        {dept[0]}
+          {filteredRequests.length === 0 ? (
+            <div className="rounded-2xl border border-dashed bg-card p-12 text-center">
+              <Clock className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+              <p className="text-sm font-black text-slate-400">لا توجد طلبات مطابقة</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {filteredRequests.map((request) => {
+                const offersCount = Object.keys(request.departmentPrices || {}).length;
+                return (
+                  <button
+                    key={request.id}
+                    type="button"
+                    onClick={() => setSelectedRequest(request)}
+                    className="group rounded-2xl border bg-card p-5 text-right shadow-sm transition-all hover:border-slate-300 hover:shadow-lg"
+                  >
+                    <div className="mb-5 flex items-start justify-between gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-600">
+                        <Building2 className="h-5 w-5" />
                       </div>
-                    ))}
-                    {Object.keys(request.departmentPrices || {}).length === 0 && (
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{language === 'ar' ? 'قيد المراجعة' : 'In Review'}</div>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">{language === 'ar' ? 'السعر' : 'Price'}</p>
-                    <p className="font-black text-slate-900"><SaudiRiyalAmount amount={request.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-4 right-6 opacity-40 transition-all">
-                  <ChevronRight className={`w-4 h-4 text-slate-500 ${language === 'ar' ? 'rotate-180' : ''}`} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {!selectedRequest && totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-16">
-            <Button
-              variant="ghost"
-              disabled={page === 1}
-              onClick={(e) => { e.stopPropagation(); setPage(p => p - 1); }}
-              className="rounded-lg h-10 px-4 font-bold text-sm"
-            >
-              <ChevronLeft className={`w-5 h-5 me-2 ${language === 'ar' ? 'rotate-180' : ''}`} />
-              {language === 'ar' ? 'السابق' : 'Previous'}
-            </Button>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <Button
-                  key={p}
-                  variant={page === p ? "default" : "ghost"}
-                  onClick={() => setPage(p)}
-                  className={`w-10 h-10 rounded-lg font-bold text-sm ${page === p ? 'bg-slate-900 text-white' : ''}`}
-                >
-                  {p}
-                </Button>
-              ))}
+                      {getStatusBadge(request)}
+                    </div>
+                    <h2 className="line-clamp-1 text-base font-black text-slate-950">{request.serviceType || "طلب خدمة"}</h2>
+                    <p className="mt-1 line-clamp-1 text-xs font-bold text-slate-500">{request.clientName || request.user?.firstName || "عميل"} · {request.phone || request.user?.phone || "-"}</p>
+                    <div className="mt-5 grid grid-cols-2 gap-2 border-t pt-4">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-300">العروض</p>
+                        <p className="text-sm font-black text-slate-900">{offersCount}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-300">السعر الحالي</p>
+                        <p className="text-sm font-black text-slate-900"><SaudiRiyalAmount amount={request.price || 0} locale="ar-SA" /></p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            <Button
-              variant="ghost"
-              disabled={page === totalPages}
-              onClick={(e) => { e.stopPropagation(); setPage(p => p + 1); }}
-              className="rounded-lg h-10 px-4 font-bold text-sm"
-            >
-              {language === 'ar' ? 'التالي' : 'Next'}
-              <ChevronRight className={`w-5 h-5 ms-2 ${language === 'ar' ? 'rotate-180' : ''}`} />
-            </Button>
-          </div>
-        )}
-      </main>
-    </div>
+          )}
+        </main>
+      </div>
     </PullToRefresh>
+  );
+}
+
+function InfoTile({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border bg-muted p-4">
+      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
+      <p className="text-sm font-bold text-slate-800">{value}</p>
+    </div>
   );
 }

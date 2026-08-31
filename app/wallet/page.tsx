@@ -60,11 +60,10 @@ const WalletPage = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const [invoicesRes, commissionsRes, filesRes, requestsRes, subscriptionsRes, walletRes] = await Promise.all([
+            const [invoicesRes, commissionsRes, filesRes, subscriptionsRes, walletRes] = await Promise.all([
                 financialApi.getInvoices(),
                 financialApi.getCommissions(),
                 financialApi.getFiles(),
-                apiClient.get('/service-requests').catch(() => ({ data: [] })),
                 apiClient.get('/subscriptions/my').catch(() => ({ data: [] })),
                 financialApi.getWallet().catch(() => ({ data: { balance: 0 } }))
             ]);
@@ -87,32 +86,6 @@ const WalletPage = () => {
                     isPendingDecision: false,
                     raw: inv
                 }));
-            }
-
-            if (requestsRes.data) {
-                const requestsData = requestsRes.data.items || requestsRes.data.data || requestsRes.data;
-                const pendingReqs = Array.isArray(requestsData) 
-                    ? requestsData.filter((r: any) => 
-                        (r.category === 'legal' || r.category === 'marketing') && 
-                        r.clientDecision !== 'accepted'
-                      )
-                    : [];
-
-                const mappedServiceInvoices = pendingReqs.map((req: any) => ({
-                    status: req.clientDecision === 'REJECTED' ? t('legal.decision.rejected') : 
-                            (req.invoiceSent ? t('legal.decision.pending') : t('legal.status.underReview') || 'قيد المراجعة والتسعير'),
-                    amount: req.invoicePrice ? Number(req.invoicePrice).toLocaleString() : '-',
-                    date: req.createdAt ? new Date(req.createdAt).toLocaleDateString('en-CA') : '',
-                    service: req.serviceType || 'خدمة عامة',
-                    invoice: `REQ-${req.id.substring(0, 5).toUpperCase()}`,
-                    originalStatus: req.invoiceSent ? 'pending_decision' : 'under_review',
-                    originalDecision: req.clientDecision.toLowerCase(),
-                    id: req.id,
-                    isPendingDecision: req.invoiceSent && (req.clientDecision === 'PENDING' || req.clientDecision === 'REJECTED'),
-                    isUnderReview: !req.invoiceSent,
-                    raw: req
-                }));
-                mappedInvoices = [...mappedServiceInvoices, ...mappedInvoices];
             }
 
             if (subscriptionsRes.data) {

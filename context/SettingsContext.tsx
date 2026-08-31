@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { fetchPublicSettings, getApiBaseUrl } from "@/lib/runtime-config";
+import { CustomServiceCategory, CustomServiceItem, CUSTOM_SERVICE_CATALOG_KEY, CUSTOM_SERVICE_CATEGORIES_KEY, parseCustomCategories, parseCustomServices } from "@/lib/service-catalog";
 
 export interface GlobalSettings {
     // Theme / Branding
@@ -99,6 +100,10 @@ export interface GlobalSettings {
 
     // Service form definitions (key = service_form_<category>, value = raw JSON ServiceFormDef)
     serviceForms: Record<string, string>;
+
+    // Admin-created service categories and their child services
+    customCategories: CustomServiceCategory[];
+    customServices: CustomServiceItem[];
 
     // Text Overrides (key = language_translationKey, value = text)
     textOverrides: Record<string, string>;
@@ -230,6 +235,8 @@ const defaultSettings: GlobalSettings = {
     taxPercentage: 15,
     servicePrices: {},
     serviceForms: {},
+    customCategories: [],
+    customServices: [],
     textOverrides: {},
     sectionFlags: {},
     sectionMessages: {},
@@ -301,6 +308,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 const next = { ...defaultSettings };
                 const services: Record<string, number> = {};
                 const serviceForms: Record<string, string> = {};
+                let customCategories: CustomServiceCategory[] = [];
+                let customServices: CustomServiceItem[] = [];
                 const texts: Record<string, string> = {};
                 const sectionFlags: Record<string, 'open' | 'closed'> = {};
                 const sectionMessages: Record<string, string> = {};
@@ -335,6 +344,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                         services[s.key] = parseFloat(s.value) || 0;
                     } else if (s.key.startsWith("service_form_")) {
                         serviceForms[s.key] = s.value;
+                    } else if (s.key === CUSTOM_SERVICE_CATEGORIES_KEY) {
+                        customCategories = parseCustomCategories(s.value);
+                    } else if (s.key === CUSTOM_SERVICE_CATALOG_KEY) {
+                        customServices = parseCustomServices(s.value);
                     } else if (s.key.startsWith("txt_")) {
                         texts[s.key.replace("txt_", "")] = s.value;
                     } else if (s.key.startsWith("section_") && !s.key.includes("_message")) {
@@ -377,6 +390,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
                 next.servicePrices = services;
                 next.serviceForms = serviceForms;
+                next.customCategories = customCategories;
+                next.customServices = customServices;
                 console.log("FETCHED SETTINGS textOverrides:", texts);
                 next.textOverrides = texts;
                 next.sectionFlags = sectionFlags;
@@ -526,6 +541,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             // Service form definitions (raw JSON strings)
             Object.entries(current.serviceForms || {}).forEach(([key, value]) => {
                 entries.push({ key, value, description: `Service form: ${key}` });
+            });
+
+            entries.push({
+                key: CUSTOM_SERVICE_CATEGORIES_KEY,
+                value: JSON.stringify(current.customCategories || []),
+                description: "Admin-created service categories",
+            });
+
+            entries.push({
+                key: CUSTOM_SERVICE_CATALOG_KEY,
+                value: JSON.stringify(current.customServices || []),
+                description: "Admin-created service catalog items",
             });
 
             // Text overrides

@@ -17,6 +17,8 @@ export type FieldType =
 export interface FieldOption {
   value: string;
   label: string;
+  disabled?: boolean;
+  status?: 'enabled' | 'soon' | 'disabled';
 }
 
 export interface VisibleWhen {

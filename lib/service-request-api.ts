@@ -21,7 +21,7 @@ export enum ServiceStatus {
 
 export interface ServiceRequest {
   id: string;
-  category: ServiceCategory;
+  category: ServiceCategory | string;
   serviceType: string;
   clientName: string;
   phone: string;
@@ -37,6 +37,13 @@ export interface ServiceRequest {
   invoiceNumber?: string;
   targetDepartment?: string;
   metadata?: any;
+  user?: { id?: string; firstName?: string; lastName?: string; email?: string; phone?: string };
+  userId?: string | null;
+  invoiceSent?: boolean;
+  invoicePrice?: number | null;
+  adminAccepted?: boolean;
+  clientDecision?: string | null;
+  paymentStatus?: string;
 }
 
 export const serviceRequestApi = {
@@ -49,7 +56,7 @@ export const serviceRequestApi = {
   findOne: (id: string): Promise<ApiResponse<ServiceRequest>> =>
     api.get(`/service-requests/${id}`),
 
-  addDepartmentPrice: (id: string, data: { price: number; note?: string }): Promise<ApiResponse<ServiceRequest>> =>
+  addDepartmentPrice: (id: string, data: { price: number; note?: string; deptSlug?: string }): Promise<ApiResponse<ServiceRequest>> =>
     api.put(`/service-requests/${id}/department-price`, data),
 
   getOrCreateChat: (id: string): Promise<ApiResponse<{ chatRoomId: string }>> =>
