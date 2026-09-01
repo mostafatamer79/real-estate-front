@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, MoreVertical, Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import StripePaymentModal from "@/components/Payment/StripePaymentModal";
+import PaylinkPaymentModal from "@/components/Payment/PaylinkPaymentModal";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { SaudiRiyalIcon } from "@/components/ui/saudi-riyal-icon";
 import { hapticTick } from "@/lib/haptics";
@@ -295,7 +295,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
       </AnimatePresence>
 
        {selectedBooking && (
-        <StripePaymentModal 
+        <PaylinkPaymentModal 
             isOpen={isPaymentModalOpen}
             onClose={() => setIsPaymentModalOpen(false)}
             bookingId={selectedBooking.id}
