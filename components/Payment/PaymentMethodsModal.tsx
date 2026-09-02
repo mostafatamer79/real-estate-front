@@ -4,7 +4,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Wallet, CreditCard, Calendar, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
-import { financialApi } from '@/lib/api';
+import { financialApi, paylinkApi } from '@/lib/api';
 import { apiClient } from '@/lib/client';
 import toast from 'react-hot-toast';
 
@@ -58,36 +58,18 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         tamara: 'بطاقة ائتمان',
         tabby: 'بطاقة ائتمان',
       };
-      // Logic for different payment methods
-      if (invoiceId) {
-        await financialApi.payInvoice(invoiceId, methodToPay as string);
+      if (selectedMethod === 'balance') {
+        if (!invoiceId) throw new Error('Wallet payment is not available for this item');
+        await financialApi.payInvoice(invoiceId, 'balance');
         toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
-      } else if (subscriptionId) {
-        await apiClient.post(`/subscriptions/${subscriptionId}/activate`, {
-          paymentMethod: subscriptionMethodMap[methodToPay as string] || 'بطاقة ائتمان',
-        });
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (refreshToken) {
-          const refreshRes = await apiClient.post('/auth/refresh', { refreshToken });
-          if (refreshRes.data?.accessToken) {
-            localStorage.setItem('token', refreshRes.data.accessToken);
-          }
-          if (refreshRes.data?.refreshToken) {
-            localStorage.setItem('refreshToken', refreshRes.data.refreshToken);
-          }
-          if (refreshRes.data?.user) {
-            localStorage.setItem('user', JSON.stringify(refreshRes.data.user));
-            window.dispatchEvent(new Event('auth-change'));
-          }
-        }
-        toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
+        onPaymentSuccess();
+        onClose();
       } else {
-        // Fallback for non-invoice payments if any (simulated for now)
-        toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
+        if (!invoiceId && !subscriptionId) throw new Error('Payment item is not available');
+        const result = await paylinkApi.createInvoice({ invoiceId: invoiceId || undefined, subscriptionId: subscriptionId || undefined });
+        if (!result.data?.paymentUrl) throw new Error('Paylink payment URL was not returned');
+        window.location.assign(result.data.paymentUrl);
       }
-      
-      onPaymentSuccess();
-      onClose();
     } catch (err: any) {
       toast.error(err.message || t('payment.error'));
     } finally {

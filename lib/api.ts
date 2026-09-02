@@ -589,6 +589,13 @@ export const subscriptionsApi = {
     api.get(`/subscriptions/unit/${unitId}`),
 };
 
+export const paylinkApi = {
+  createInvoice: (data: { bookingId?: string; invoiceId?: string; subscriptionId?: string }): Promise<ApiResponse<{ paymentUrl: string; transactionNo: string; orderNumber: string; amount?: number }>> =>
+    api.post('/payment/paylink/invoice', data),
+  createWalletTopup: (amount: number): Promise<ApiResponse<{ paymentUrl: string; transactionNo: string; orderNumber: string; amount?: number }>> =>
+    api.post('/payment/paylink/wallet-topup', { amount }),
+};
+
 export const financialApi = {
   getWallet: (): Promise<ApiResponse<any>> =>
     api.get('/financial/my-wallet'),
