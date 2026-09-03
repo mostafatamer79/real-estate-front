@@ -590,7 +590,7 @@ export const subscriptionsApi = {
 };
 
 export const paylinkApi = {
-  createInvoice: (data: { bookingId?: string; invoiceId?: string; subscriptionId?: string }): Promise<ApiResponse<{ paymentUrl: string; transactionNo: string; orderNumber: string; amount?: number }>> =>
+  createInvoice: (data: { bookingId?: string; invoiceId?: string; subscriptionId?: string; customerMobile?: string }): Promise<ApiResponse<{ paymentUrl: string; transactionNo: string; orderNumber: string; amount?: number }>> =>
     api.post('/payment/paylink/invoice', data),
   createWalletTopup: (amount: number): Promise<ApiResponse<{ paymentUrl: string; transactionNo: string; orderNumber: string; amount?: number }>> =>
     api.post('/payment/paylink/wallet-topup', { amount }),

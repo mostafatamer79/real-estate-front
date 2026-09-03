@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from "@/context/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Wallet, CreditCard, Calendar, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { Wallet, CreditCard, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { financialApi, paylinkApi } from '@/lib/api';
-import { apiClient } from '@/lib/client';
+import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 
 
@@ -21,11 +21,16 @@ interface PaymentMethodsModalProps {
 
 export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoiceId, subscriptionId, price, onPaymentSuccess }: PaymentMethodsModalProps) {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [selectedInstallment, setSelectedInstallment] = useState<string | null>(null);
+  const [customerMobile, setCustomerMobile] = useState('');
+
+  useEffect(() => {
+    if (isOpen) setCustomerMobile(user?.phone || '');
+  }, [isOpen, user?.phone]);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,18 +51,10 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   const handlePayment = async () => {
     if (!selectedMethod) return;
-    if (selectedMethod === 'installments' && !selectedInstallment) return;
+    if (selectedMethod !== 'balance' if (selectedMethod !== 'balance' && !customerMobile.trim()) returnif (selectedMethod !== 'balance' && !customerMobile.trim()) return !customerMobile.trim()) return;
     
     setProcessing(true);
     try {
-      const methodToPay = selectedMethod === 'installments' ? selectedInstallment : selectedMethod;
-      const subscriptionMethodMap: Record<string, string> = {
-        balance: 'نقدي',
-        credit: 'بطاقة ائتمان',
-        installments: 'بطاقة ائتمان',
-        tamara: 'بطاقة ائتمان',
-        tabby: 'بطاقة ائتمان',
-      };
       if (selectedMethod === 'balance') {
         if (!invoiceId) throw new Error('Wallet payment is not available for this item');
         await financialApi.payInvoice(invoiceId, 'balance');
@@ -66,7 +63,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         onClose();
       } else {
         if (!invoiceId && !subscriptionId) throw new Error('Payment item is not available');
-        const result = await paylinkApi.createInvoice({ invoiceId: invoiceId || undefined, subscriptionId: subscriptionId || undefined });
+        const result = await paylinkApi.createInvoice({ invoiceId: invoiceId || undefined, subscriptionId: subscriptionId || undefined, customerMobile: customerMobile.trim() });
         if (!result.data?.paymentUrl) throw new Error('Paylink payment URL was not returned');
         window.location.assign(result.data.paymentUrl);
       }
@@ -80,7 +77,6 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
   const methods = [
     { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> },
     { id: 'credit', title: t('payment.credit'), icon: <CreditCard className="w-5 h-5" />, desc: t('payment.creditDesc') || "مدى، فيزا، ماستركارد" },
-    { id: 'installments', title: t('payment.installments') || "تقسيط", icon: <Calendar className="w-5 h-5" />, desc: t('payment.installmentsDesc') },
   ];
 
   return (
@@ -99,9 +95,6 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               key={method.id}
               onClick={() => {
                 setSelectedMethod(method.id);
-                if (method.id !== 'installments') {
-                  setSelectedInstallment(null);
-                }
               }}
               className={`w-full flex items-center justify-between p-4 sm:p-5 rounded-2xl border-2 transition-all group ${
                 selectedMethod === method.id 
@@ -129,53 +122,25 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
           ))}
         </div>
 
-        {selectedMethod === 'installments' && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-            <button
-              onClick={() => setSelectedInstallment('tamara')}
-              className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
-                selectedInstallment === 'tamara'
-                  ? 'border-pink-500 bg-pink-50/70'
-                  : '!border-white/20 hover:border-pink-500 !bg-white/40 backdrop-blur-md'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl transition-colors ${
-                  selectedInstallment === 'tamara' ? 'bg-pink-500 text-white' : 'bg-muted text-pink-400'
-                }`}>
-                  <Calendar className="w-4 h-4" />
-                </div>
-                <p className="font-bold text-slate-900">{t('payment.tamara')}</p>
-              </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                selectedInstallment === 'tamara' ? 'border-pink-500 bg-pink-500' : 'border'
-              }`}>
-                {selectedInstallment === 'tamara' && <CheckCircle2 className="w-3 h-3 text-white" />}
-              </div>
-            </button>
-
-            <button
-              onClick={() => setSelectedInstallment('tabby')}
-              className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-all ${
-                selectedInstallment === 'tabby'
-                  ? 'border-emerald-500 bg-emerald-50/70'
-                  : '!border-white/20 hover:border-emerald-500 !bg-white/40 backdrop-blur-md'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl transition-colors ${
-                  selectedInstallment === 'tabby' ? 'bg-emerald-500 text-white' : 'bg-muted text-emerald-400'
-                }`}>
-                  <Calendar className="w-4 h-4" />
-                </div>
-                <p className="font-bold text-slate-900">{t('payment.tabby')}</p>
-              </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                selectedInstallment === 'tabby' ? 'border-emerald-500 bg-emerald-500' : 'border'
-              }`}>
-                {selectedInstallment === 'tabby' && <CheckCircle2 className="w-3 h-3 text-white" />}
-              </div>
-            </button>
+        {selectedMethod === 'credit' && (
+          <div className="mt-4 space-y-2">
+            <label htmlFor="paylink-customer-mobile" className="text-sm font-bold text-slate-700">
+              {language === 'ar' ? 'رقم الجوال' : 'Mobile number'}
+            </label>
+            <input
+              id="paylink-customer-mobile"
+              type="tel"
+              inputMode="tel"
+              value={customerMobile}
+              onChange={(event) => setCustomerMobile(event.target.value)}
+              placeholder="05xxxxxxxx"
+              className="w-full h-12 rounded-xl border-2 border-slate-200 bg-white px-4 text-left text-slate-900 outline-none focus:border-indigo-600"
+              dir="ltr"
+              required
+            />
+            <p className="text-xs font-medium text-slate-500">
+              {language === 'ar' ? 'رقم الجوال مطلوب لإتمام الدفع الإلكتروني.' : 'A mobile number is required to complete online payment.'}
+            </p>
           </div>
         )}
 
@@ -193,7 +158,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               !selectedMethod ||
               processing ||
               (selectedMethod === 'balance' && balance < price) ||
-              (selectedMethod === 'installments' && !selectedInstallment)
+              (selectedMethod !== 'balance' && !customerMobile.trim())
             }
             className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg transition-all active:scale-95"
           >

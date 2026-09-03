@@ -1576,16 +1576,6 @@ const WalletPage = () => {
                     </button>
                 </div>
 
-                {/* Installments */}
-                <div className="p-6">
-                    <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
-                    <div className="text-right">
-                        <div className="font-semibold">دفع من تابي وتمارا</div>
-                        <div className="text-sm text-gray-400 mt-1">12 قسط</div>
-                    </div>
-                    <Receipt className="h-5 w-5" />
-                    </button>
-                </div>
                 </div>
             </div>
             )}
