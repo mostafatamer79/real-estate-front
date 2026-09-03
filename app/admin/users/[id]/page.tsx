@@ -70,8 +70,7 @@ export default function AdminUserDetailsPage() {
     if (!ok) return;
     setSaving(true);
     try {
-      await api.put(`/user/${user.id}/verify`, { status });
-      await api.put(`/user/${user.id}`, { licenseVerificationStatus: status });
+      await api.put(`/user/${user.id}`, { agentVerificationStatus: status });
       toast.success(status === "verified" ? (isRtl ? "تم اعتماد الرخصة" : "License approved") : (isRtl ? "تم رفض الرخصة" : "License rejected"));
       await loadUser();
     } catch {

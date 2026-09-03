@@ -301,9 +301,17 @@ export default function ProfilePage() {
                     <p className="text-sm text-slate-500 mb-4">{user.email || user.phone}</p>
                     
                     {/* Verification / National ID Badge */}
-                    <div className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium mb-4 ${user.isVerified ? 'bg-muted text-gray-700' : 'bg-muted text-gray-500'}`}>
+                    <div className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium mb-4 ${user.isVerified ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-muted text-gray-500'}`}>
                         {user.isVerified ? <ShieldCheck className="w-4 h-4" /> : <Loader2 className="w-4 h-4" />}
                         <span>{user.isVerified ? t('profile.verification.verified') : t('profile.verification.unverified')}</span>
+                    </div>
+
+                    <div className={`w-full rounded-lg border px-3 py-2.5 text-start ${user.agentVerificationStatus === 'verified' ? 'border-blue-200 bg-blue-50 text-blue-700' : user.agentVerificationStatus === 'rejected' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+                        <div className="flex items-center justify-between gap-2 text-sm font-bold">
+                            <span>{language === 'ar' ? 'حالة رخصة فال' : 'FAL license status'}</span>
+                            <span>{user.agentVerificationStatus === 'verified' ? (language === 'ar' ? 'تم التحقق' : 'Verified') : user.agentVerificationStatus === 'rejected' ? (language === 'ar' ? 'مرفوض' : 'Rejected') : (language === 'ar' ? 'قيد المراجعة' : 'Under review')}</span>
+                        </div>
+                        {user.agentVerificationStatus === 'rejected' && <p className="mt-1 text-xs font-semibold">{language === 'ar' ? 'رخصة فال غير صحيحة' : 'Invalid FAL license'}</p>}
                     </div>
 
                     {user.isVerified && user.nationalId && (
