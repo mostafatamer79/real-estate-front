@@ -311,7 +311,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 let customCategories: CustomServiceCategory[] = [];
                 let customServices: CustomServiceItem[] = [];
                 const texts: Record<string, string> = {};
-                const sectionFlags: Record<string, 'open' | 'closed'> = {};
+                const sectionFlags: Record<string, 'open' | 'closed' | 'hidden'> = {};
                 const sectionMessages: Record<string, string> = {};
                 const moduleFlags: Record<string, 'enabled' | 'soon' | 'disabled'> = {};
                 const moduleMessages: Record<string, string> = {};
@@ -353,7 +353,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                     } else if (s.key.startsWith("section_") && !s.key.includes("_message")) {
                         // e.g. section_wallet => 'open' | 'closed'
                         const sectionKey = s.key.replace("section_", "");
-                        sectionFlags[sectionKey] = s.value === 'closed' ? 'closed' : 'open';
+                        sectionFlags[sectionKey] = s.value === 'closed' || s.value === 'hidden' ? s.value : 'open';
                     } else if (s.key.startsWith("section_") && s.key.endsWith("_message")) {
                         // e.g. section_wallet_message
                         const sectionKey = s.key.replace("section_", "").replace("_message", "");

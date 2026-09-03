@@ -2078,6 +2078,9 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
         { id: 'operations', label: 'الإحصائيات والعمليات', type: 'module', subcategoryId: 'home_stats' },
         { id: 'stats', label: 'إحصاءات وملخصات (التفاصيل)', type: 'detailsPart', subcategoryId: 'home_stats' },
 
+        { id: 'offers', label: 'الإعلانات العقارية (الواجهة)', type: 'section', subcategoryId: 'home_ads' },
+        { id: 'offers', label: 'الإعلانات (لوحة التحكم)', type: 'module', subcategoryId: 'home_ads' },
+
         { id: 'show_charts_section', label: 'إظهار الرسوم البيانية', type: 'uiFlag', subcategoryId: 'home_analytics' },
         { id: 'trends', label: 'التحليلات والاتجاهات', type: 'module', subcategoryId: 'home_analytics' },
         { id: 'charts', label: 'التحليلات والاتجاهات (التفاصيل)', type: 'detailsPart', subcategoryId: 'home_analytics' },
