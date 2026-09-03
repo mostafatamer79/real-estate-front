@@ -59,7 +59,8 @@ export default function Tutorial({
   const currentStep = steps[currentIndex];
   const hasTarget = Boolean(currentStep.targetId);
   const targetFound = Boolean(targetInfo);
-  const isCenter = !hasTarget || !targetFound || currentStep.position === "center";
+  const isMobile = viewport.width > 0 && viewport.width < 640;
+  const isCenter = isMobile || !hasTarget || !targetFound || currentStep.position === "center";
 
   const updateGeometry = useCallback(() => {
     setViewport({ width: window.innerWidth, height: window.innerHeight });
@@ -301,7 +302,7 @@ export default function Tutorial({
           <div
             className={cn(
               "relative overflow-hidden bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/60 shadow-[0_24px_80px_rgba(0,0,0,0.55)]",
-              isCenter ? "w-full max-w-lg rounded-3xl p-6 sm:p-8" : "w-full rounded-2xl p-5"
+              isCenter ? "w-full max-w-lg rounded-[1.75rem] p-5 sm:p-8" : "w-full rounded-2xl p-5"
             )}
           >
             {/* Top shimmer accent */}
@@ -332,7 +333,7 @@ export default function Tutorial({
               </button>
             </div>
 
-            <p className="text-slate-300 text-sm leading-relaxed mb-6">
+            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line mb-6">
               {currentStep.description}
             </p>
 

@@ -693,6 +693,18 @@
   }
 }
 
+/* Mobile footer optimization */
+@media (max-width: 768px) {
+  .mobile-footer {
+    min-height: auto;
+  }
+  .mobile-footer .absolute.top-0.left-0 { display: none; }
+  .mobile-footer h3 { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .mobile-footer a, .mobile-footer li { font-size: 0.86rem; }
+  .mobile-footer .max-w-7xl { padding-inline: 1.25rem; }
+  .mobile-footer img { max-width: 10rem; }
+}
+
 /* Safe-area padding for fixed bottom navigation bars */
 .fixed.bottom-0,
 .fixed.inset-x-0.bottom-0,

@@ -50,6 +50,8 @@ const departmentLabels: Record<string, string> = {
   real_estate: "الأملاك",
 };
 
+type RequestFilter = "all" | "accepted" | "rejected";
+
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,7 @@ export default function MyServiceRequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
   const [priceDrafts, setPriceDrafts] = useState<Record<string, { price: string; note: string; deptSlug: string }>>({});
   const [search, setSearch] = useState("");
+  const [requestFilter, setRequestFilter] = useState<RequestFilter>("all");
   const { t, language } = useLanguage();
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
@@ -190,7 +193,20 @@ export default function MyServiceRequestsPage() {
     }
   };
 
+  const isAcceptedRequest = (request: ServiceRequest) =>
+    Boolean(request.adminAccepted || request.clientDecision === "accepted" || request.status === ServiceStatus.COMPLETED);
+
+  const isRejectedRequest = (request: ServiceRequest) =>
+    Boolean(request.clientDecision === "rejected" || request.status === ServiceStatus.CANCELLED);
+
+  const filterRequests = (request: ServiceRequest) => {
+    if (requestFilter === "accepted") return isAcceptedRequest(request);
+    if (requestFilter === "rejected") return isRejectedRequest(request);
+    return true;
+  };
+
   const filteredRequests = requests.filter((request) => {
+    if (!filterRequests(request)) return false;
     const term = search.trim().toLowerCase();
     if (!term) return true;
     return [request.serviceType, request.clientName, request.phone, request.city, request.district, request.category]
@@ -366,9 +382,17 @@ export default function MyServiceRequestsPage() {
                 <ArrowLeft className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
                 رجوع
               </Button>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black text-slate-600">
+                  {isAdmin ? "لوحة المشرف" : "بوابة الوكيل"}
+                </span>
+                <span className="rounded-full border border-slate-200 bg-card px-3 py-1 text-[10px] font-bold text-slate-400">
+                  {isAdmin ? "اعتماد الأسعار وإدارة جميع الطلبات" : "تقديم عروض الأسعار ومتابعة الطلبات"}
+                </span>
+              </div>
               <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-950">
                 <Package className="h-6 w-6 text-slate-600" />
-                قائمة طلبات الخدمات
+                {isAdmin ? "إدارة طلبات الخدمات" : "طلبات خدمات الوكيل"}
               </h1>
               <p className="mt-2 text-sm font-bold text-slate-500">إرسال الأسعار من الفريق ثم اعتمادها من الإدارة قبل ظهورها في محفظة العميل.</p>
             </div>
@@ -389,10 +413,33 @@ export default function MyServiceRequestsPage() {
             </div>
           </div>
 
+          <div className="mb-6 grid grid-cols-3 gap-2 rounded-2xl border bg-muted p-1.5 sm:max-w-2xl sm:gap-3">
+            {([
+              { id: "all", label: "كل الخدمات", count: requests.length },
+              { id: "accepted", label: "الخدمات المقبولة", count: requests.filter(isAcceptedRequest).length },
+              { id: "rejected", label: "الخدمات المرفوضة", count: requests.filter(isRejectedRequest).length },
+            ] as const).map((tab) => {
+              const active = requestFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setRequestFilter(tab.id)}
+                  className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-center text-[10px] font-black transition-all sm:text-xs ${
+                    active ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-card hover:text-slate-900"
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${active ? "bg-card/15 text-white" : "bg-card text-slate-400"}`}>{tab.count}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {filteredRequests.length === 0 ? (
             <div className="rounded-2xl border border-dashed bg-card p-12 text-center">
               <Clock className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-              <p className="text-sm font-black text-slate-400">لا توجد طلبات مطابقة</p>
+              <p className="text-sm font-black text-slate-400">لا توجد خدمات ضمن هذا التصنيف</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">

@@ -54,6 +54,7 @@ export default function ProfilePage() {
 
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingLicense, setIsUploadingLicense] = useState(false);
 
   const {
     register,
@@ -152,6 +153,33 @@ export default function ProfilePage() {
         }
     } catch (error) {
         toast({ title: t('common.error'), description: t('profile.upload.error'), variant: "destructive" });
+    }
+  };
+
+
+  const handleLicenseUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!allowedTypes.includes(file.type) || file.size > 10 * 1024 * 1024) {
+      toast({ title: t('common.error'), description: language === 'ar' ? 'يرجى رفع صورة أو ملف PDF بحجم أقصى 10 ميجابايت' : 'Upload a JPG, PNG, WEBP, or PDF up to 10 MB', variant: 'destructive' });
+      return;
+    }
+    setIsUploadingLicense(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post<ApiResponse<{ url: string }>>('/user/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const licenseDocumentUrl = res.data.data?.url || (res.data as any).url;
+      if (!licenseDocumentUrl) throw new Error('Missing uploaded license URL');
+      const profileRes = await api.put<ApiResponse<UserType>>('/user/profile', { licenseDocumentUrl, licenseVerificationStatus: 'pending' });
+      updateUser(profileRes.data.data || profileRes.data);
+      toast({ title: t('common.success'), description: language === 'ar' ? 'تم رفع الرخصة وبانتظار المراجعة' : 'License uploaded and awaiting review' });
+    } catch {
+      toast({ title: t('common.error'), description: language === 'ar' ? 'تعذر رفع صورة الرخصة' : 'Could not upload the license', variant: 'destructive' });
+    } finally {
+      setIsUploadingLicense(false);
     }
   };
 
@@ -473,10 +501,22 @@ export default function ProfilePage() {
                                     </div>
                                     
                                     <div className="pt-2">
-                                        <button type="button" className="flex items-center justify-center gap-2 w-full py-2.5 bg-card border border text-gray-900 rounded-lg hover:bg-muted transition-colors text-sm font-medium">
-                                            <span>{t('profile.link.fal')}</span>
-                                        </button>
-                                        <p className="text-xs text-slate-400 mt-2 text-center">{t('profile.verify.auto')}</p>
+                                      <div className="mb-2 flex items-center justify-between">
+                                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'صورة الرخصة' : 'License document'}</span>
+                                        {user.licenseDocumentUrl && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700">{language === 'ar' ? 'قيد المراجعة' : 'Under review'}</span>}
+                                      </div>
+                                      <label className="group flex min-h-[118px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-card px-4 py-5 text-center transition hover:border-slate-500 hover:bg-slate-50">
+                                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition group-hover:bg-slate-900 group-hover:text-white">
+                                          {isUploadingLicense ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
+                                        </span>
+                                        <span className="text-sm font-bold text-slate-800">{user.licenseDocumentUrl ? (language === 'ar' ? 'اضغط لاستبدال الملف' : 'Click to replace document') : (language === 'ar' ? 'اضغط لإرفاق صورة الرخصة' : 'Click to attach your license')}</span>
+                                        <span className="text-[11px] text-slate-400">{language === 'ar' ? 'JPG أو PNG أو WEBP أو PDF · حتى 10 ميجابايت' : 'JPG, PNG, WEBP or PDF · up to 10 MB'}</span>
+                                        <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="hidden" disabled={isUploadingLicense} onChange={handleLicenseUpload} />
+                                      </label>
+                                      {user.licenseDocumentUrl && <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-2.5">
+                                        {user.licenseDocumentUrl.toLowerCase().endsWith('.pdf') ? <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-slate-500"><FileText className="h-6 w-6" /></span> : <img src={user.licenseDocumentUrl} alt={language === 'ar' ? 'صورة الرخصة' : 'License preview'} className="h-12 w-16 rounded-lg object-cover" />}
+                                        <div><p className="text-xs font-bold text-slate-700">{language === 'ar' ? 'تم رفع المستند بنجاح' : 'Document uploaded successfully'}</p><p className="mt-1 text-[11px] text-slate-500">{language === 'ar' ? 'سيتم التحقق منه من قبل الإدارة' : 'It will be reviewed by the admin team'}</p></div>
+                                      </div>}
                                     </div>
                                 </div>
                              </div>

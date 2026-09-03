@@ -57,6 +57,30 @@ export default function AdminUserDetailsPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
 
+
+  const reviewLicense = async (status: "verified" | "rejected") => {
+    if (!user) return;
+    const ok = await confirmDialog({
+      title: status === "verified" ? (isRtl ? "اعتماد الرخصة؟" : "Approve this license?") : (isRtl ? "رفض الرخصة؟" : "Reject this license?"),
+      description: isRtl ? "سيتم تحديث حالة توثيق المستخدم." : "The user's verification status will be updated.",
+      confirmLabel: status === "verified" ? (isRtl ? "اعتماد" : "Approve") : (isRtl ? "رفض" : "Reject"),
+      cancelLabel: isRtl ? "إلغاء" : "Cancel",
+      destructive: status === "rejected",
+    });
+    if (!ok) return;
+    setSaving(true);
+    try {
+      await api.put(`/user/${user.id}/verify`, { status });
+      await api.put(`/user/${user.id}`, { licenseVerificationStatus: status });
+      toast.success(status === "verified" ? (isRtl ? "تم اعتماد الرخصة" : "License approved") : (isRtl ? "تم رفض الرخصة" : "License rejected"));
+      await loadUser();
+    } catch {
+      toast.error(isRtl ? "تعذر تحديث حالة الرخصة" : "Failed to update license status");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const loadUser = async () => {
     setLoading(true);
     try {
@@ -577,6 +601,27 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-3 md:gap-6 xl:grid-cols-1 md:grid-cols-2">
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-card shadow-sm md:col-span-2">
+          <div className="border-b border-slate-100 bg-gradient-to-l from-slate-950 to-slate-800 px-5 py-5 text-white sm:px-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div><div className="mb-2 flex items-center gap-2 text-xs font-bold text-slate-300"><Shield className="h-4 w-4" />{isRtl ? "مراجعة وثائق المستخدم" : "User document review"}</div><h2 className="text-xl font-black">{isRtl ? "رخصة المستخدم والتحقق" : "User license & verification"}</h2><p className="mt-1 text-xs font-medium text-slate-300">{isRtl ? "راجع المستند واعتمد الحساب عند استيفاء المتطلبات." : "Review the document and approve the account when requirements are met."}</p></div>
+              <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${user?.licenseVerificationStatus === "verified" || user?.isVerified ? "bg-emerald-400/15 text-emerald-300" : user?.licenseVerificationStatus === "rejected" ? "bg-red-400/15 text-red-300" : "bg-amber-400/15 text-amber-200"}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{user?.licenseVerificationStatus === "verified" || user?.isVerified ? (isRtl ? "موثق" : "Verified") : user?.licenseVerificationStatus === "rejected" ? (isRtl ? "مرفوض" : "Rejected") : (isRtl ? "بانتظار المراجعة" : "Pending review")}</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              {user?.licenseDocumentUrl ? <a href={user.licenseDocumentUrl} target="_blank" rel="noreferrer" className="group relative block overflow-hidden rounded-xl bg-white">
+                {user.licenseDocumentUrl.toLowerCase().endsWith('.pdf') ? <div className="flex h-52 flex-col items-center justify-center gap-3 text-slate-500"><FileText className="h-12 w-12" /><span className="text-sm font-bold">PDF</span></div> : <img src={user.licenseDocumentUrl} alt="License" className="h-52 w-full object-contain transition duration-300 group-hover:scale-[1.02]" />}
+                <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/85 px-4 py-2 text-xs font-bold text-white">{isRtl ? "فتح بالحجم الكامل" : "Open full size"}</span>
+              </a> : <div className="flex h-52 flex-col items-center justify-center gap-3 text-center text-slate-400"><FileText className="h-10 w-10" /><p className="text-sm font-bold">{isRtl ? "لم يرفق المستخدم صورة الرخصة بعد" : "No license has been uploaded yet"}</p></div>}
+            </div>
+            <div className="space-y-3">
+              <p className="text-xs font-bold leading-5 text-slate-500">{isRtl ? "يمكنك فتح المستند لمراجعته ثم اختيار الإجراء المناسب." : "Open the document to review it, then choose the appropriate action."}</p>
+              <button disabled={saving || !user?.licenseDocumentUrl} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
+              <button disabled={saving || !user?.licenseDocumentUrl} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>
+            </div>
+          </div>
+        </div>
         <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">

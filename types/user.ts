@@ -74,6 +74,8 @@ export interface User {
   additionalNumber?: string;
   unitNumber?: string;
   licenseIssueDate?: string;
+  licenseDocumentUrl?: string;
+  licenseVerificationStatus?: VerifyStatus;
   brokerType?: 'individual' | 'office';
   departments?: Department[];
   departmentPermissions?: Record<string, any>;
