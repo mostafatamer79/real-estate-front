@@ -83,7 +83,7 @@ export default function Footer() {
           type="button"
           onClick={scrollToTop}
           aria-label={t("footer.scroll_top")}
-          className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950 md:bottom-6 left-6 max-md:bottom-[calc(92px+env(safe-area-inset-bottom))]"
+          className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950 md:bottom-6 left-6 max-md:bottom-[calc(16px+env(safe-area-inset-bottom))]"
         >
           <ArrowUp className="h-5 w-5" />
         </motion.button>
@@ -95,10 +95,10 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16 max-md:mb-7 max-md:gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16 max-md:grid-cols-2 max-md:gap-x-5 max-md:gap-y-7 max-md:mb-7"
         >
           {/* Brand */}
-          <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1 max-md:space-y-2 max-md:flex max-md:justify-end">
+          <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1 max-md:col-span-2 max-md:space-y-2 max-md:flex max-md:justify-center">
             <Link href="/" className="inline-block mb-2 relative group">
               <motion.div
                 animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
@@ -151,7 +151,7 @@ export default function Footer() {
           </motion.div>
 
           {/* Contact */}
-          <motion.div variants={itemVariants} className="space-y-6 max-md:space-y-3">
+          <motion.div variants={itemVariants} className="space-y-6 max-md:col-span-2 max-md:space-y-3">
              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
                {t("footer.contact")}
             </h3>

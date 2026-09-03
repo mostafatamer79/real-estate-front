@@ -201,6 +201,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
         </motion.div>
 
         {/* ── Ads Card ── */}
+        {settings.sectionFlags.offers !== 'hidden' && settings.sectionFlags.offers !== 'closed' && (
         <motion.div whileHover={{ y: -5, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
           <Card
             className="
@@ -210,32 +211,8 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               shadow-[0_4px_24px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_30px_rgba(16,185,129,0.06)]
               transition-all duration-500
             "
-            onClick={() => {
-              if (settings.sectionFlags.offers === 'hidden' || settings.sectionFlags.offers === 'closed') return;
-              handleCardClick("ads");
-            }}
+            onClick={() => handleCardClick("ads")}
           >
-            {settings.sectionFlags.offers === 'hidden' ? null : settings.sectionFlags.offers === 'closed' ? (
-              <div className="absolute inset-0 z-50">
-                <ComingSoonInline 
-                  sectionName={t('cards.dealsAds')} 
-                  message={settings.sectionMessages.offers} 
-                />
-              </div>
-            ) : null}
-            {/* Soon Badge */}
-            {settings.sectionFlags.offers === 'hidden' ? null : settings.sectionFlags.offers === 'closed' && (
-              <div
-                className="absolute top-4 left-4 z-20 px-2 py-0.5 text-[8px] font-black rounded-full shadow-lg ring-1 ring-white/10 border"
-                style={{
-                  backgroundColor: "var(--soon-badge-bg, #ffffff)",
-                  color: "var(--soon-badge-text, #000000)",
-                  borderColor: "var(--soon-badge-bg, #ffffff)",
-                }}
-              >
-                {t('common.soon') || 'قريباً'}
-              </div>
-            )}
             {/* Ambient glow */}
             <div className="absolute top-0 right-0 w-48 h-48 -mr-20 -mt-20 rounded-full bg-emerald-500/6 blur-3xl group-hover:bg-emerald-500/12 transition-all duration-700" />
             <div className="absolute bottom-0 left-0 w-32 h-32 -ml-10 -mb-10 rounded-full bg-slate-600/20 blur-2xl" />
@@ -311,7 +288,6 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
                     "
                     onClick={(e) => { 
                       e.stopPropagation(); 
-                      if (settings.sectionFlags.offers === 'hidden' || settings.sectionFlags.offers === 'closed') return;
                       handleCardClick("ads"); 
                     }}
                   >
@@ -326,6 +302,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
             </CardFooter>
           </Card>
         </motion.div>
+        )}
       </motion.div>
 
       {/* ── Modal ── */}

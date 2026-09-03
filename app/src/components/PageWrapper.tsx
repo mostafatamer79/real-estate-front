@@ -96,6 +96,9 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   const hiddenRoutes = ['/login', '/scan-map'];
   const isHidden = hiddenRoutes.some(route => pathname?.startsWith(route));
   const isChatRoom = pathname?.startsWith('/chat/') && pathname !== '/chat';
+  // This page renders the site footer, so generic trailing mobile spacing
+  // would otherwise appear as a blank band below it.
+  const hasPageFooter = pathname === '/details';
   const hasBottomNav = !isHidden && !isChatRoom;
 
   return (
@@ -106,7 +109,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         initial="initial"
         animate="animate"
         exit="exit"
-        className={`${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav ? "pb-[92px] pb-nav-safe md:pb-0" : ""}`}
+        className={`${shouldAddPadding ? "pt-16" : ""} ${hasBottomNav && !hasPageFooter ? "pb-[92px] pb-nav-safe md:pb-0" : ""}`}
       >
         {children}
       </motion.main>

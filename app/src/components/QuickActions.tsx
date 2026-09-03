@@ -152,7 +152,13 @@ export default function QuickActions({ id }: QuickActionsProps) {
 
         {actions.map((action, index) => {
           const flagKey = action.id === 'requests' ? 'orders' : action.id;
-          if (settings.sectionFlags[flagKey] === 'hidden') return null;
+          // Offers should not be advertised while the public offers section is
+          // marked as coming soon. Other shortcuts retain their existing
+          // coming-soon badge behavior.
+          if (
+            settings.sectionFlags[flagKey] === 'hidden' ||
+            (action.id === 'offers' && settings.sectionFlags[flagKey] === 'closed')
+          ) return null;
 
           return (
             <div key={action.id} className="flex flex-col items-center shrink-0 max-md:flex-1 max-md:min-w-0">
