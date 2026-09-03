@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
-import { User, Role } from "@/types/user";
+import { User, Role, VerifyStatus } from "@/types/user";
 import { 
   Loader2, 
   Trash2, 
@@ -409,9 +409,9 @@ export default function UsersPage() {
         });
         if (!ok) return;
         try {
-            const verifyStatus = status ? 'verified' : 'rejected'; 
-            await api.put(`/user/${userId}/verify`, { status: verifyStatus });
-            setUsers(users.map(u => u.id === userId ? { ...u, isVerified: status } : u));
+            const verifyStatus = status ? 'verified' : 'rejected';
+            await api.put(`/user/${userId}`, { agentVerificationStatus: verifyStatus });
+            setUsers(users.map(u => u.id === userId ? { ...u, agentVerificationStatus: verifyStatus as VerifyStatus } : u));
         } catch (error) { console.error(error); }
     };
 
