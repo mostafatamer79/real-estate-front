@@ -51,7 +51,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   const handlePayment = async () => {
     if (!selectedMethod) return;
-    if (selectedMethod !== 'balance' if (selectedMethod !== 'balance' && !customerMobile.trim()) returnif (selectedMethod !== 'balance' && !customerMobile.trim()) return !customerMobile.trim()) return;
+    if (selectedMethod !== 'balance' && !customerMobile.trim()) return;
     
     setProcessing(true);
     try {
