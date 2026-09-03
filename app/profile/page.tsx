@@ -324,6 +324,21 @@ export default function ProfilePage() {
                         </Button>
                     )}
 
+                     {/* License upload under the verification card */}
+                     <div className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-start">
+                         <div className="mb-2 flex items-center justify-between gap-2">
+                             <span className="flex items-center gap-2 text-xs font-bold text-slate-700"><FileText className="h-4 w-4" />{language === 'ar' ? 'صورة الرخصة' : 'License document'}</span>
+                             {user.licenseDocument && <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-700">{language === 'ar' ? 'قيد المراجعة' : 'Under review'}</span>}
+                         </div>
+                         <label className="group flex min-h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-slate-300 bg-white px-2 py-3 text-center transition hover:border-slate-500 hover:bg-slate-50">
+                             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 group-hover:bg-slate-900 group-hover:text-white">{isUploadingLicense ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}</span>
+                             <span className="text-[11px] font-bold text-slate-700">{user.licenseDocument ? (language === 'ar' ? 'استبدال الملف' : 'Replace file') : (language === 'ar' ? 'إرفاق صورة الرخصة' : 'Attach license photo')}</span>
+                             <span className="text-[10px] text-slate-400">JPG, PNG, WEBP, PDF · 10 MB</span>
+                             <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="hidden" disabled={isUploadingLicense} onChange={handleLicenseUpload} />
+                         </label>
+                         {user.licenseDocument && <div className="mt-2 flex items-center gap-2 rounded-lg bg-white p-1.5">{user.licenseDocument.toLowerCase().endsWith('.pdf') ? <FileText className="h-7 w-7 text-slate-500" /> : <img src={user.licenseDocument} alt={language === 'ar' ? 'صورة الرخصة' : 'License preview'} className="h-8 w-10 rounded object-cover" />}<span className="text-[10px] font-medium text-slate-600">{language === 'ar' ? 'تم الإرفاق وسيتم مراجعته' : 'Attached and awaiting review'}</span></div>}
+                     </div>
+
                      {/* Validation status for Brokers/Offices */}
                     {hasLicenseRole && (
                          <div className="w-full border-t pt-4 mt-4">
@@ -426,24 +441,6 @@ export default function ProfilePage() {
                                     </p>
                                 </div>
                             )}
-                        </div>
-
-                        {/* License upload is available to every account. */}
-                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <div>
-                              <h4 className="flex items-center gap-2 text-sm font-bold text-slate-800"><FileText className="h-4 w-4" />{language === 'ar' ? 'إرفاق صورة الرخصة' : 'Attach license document'}</h4>
-                              <p className="mt-1 text-xs text-slate-500">{language === 'ar' ? 'ارفع صورة الرخصة ليتمكن فريق الإدارة من مراجعتها.' : 'Upload your license so the admin team can review it.'}</p>
-                            </div>
-                            {user.licenseDocument && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700">{language === 'ar' ? 'قيد المراجعة' : 'Under review'}</span>}
-                          </div>
-                          <label className="group flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white px-4 py-5 text-center transition hover:border-slate-500 hover:bg-slate-50">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition group-hover:bg-slate-900 group-hover:text-white">{isUploadingLicense ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}</span>
-                            <span className="text-sm font-bold text-slate-800">{user.licenseDocument ? (language === 'ar' ? 'اضغط لاستبدال الملف' : 'Click to replace document') : (language === 'ar' ? 'اضغط لاختيار ملف الرخصة' : 'Click to choose your license file')}</span>
-                            <span className="text-[11px] text-slate-400">{language === 'ar' ? 'JPG أو PNG أو WEBP أو PDF · حتى 10 ميجابايت' : 'JPG, PNG, WEBP or PDF · up to 10 MB'}</span>
-                            <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="hidden" disabled={isUploadingLicense} onChange={handleLicenseUpload} />
-                          </label>
-                          {user.licenseDocument && <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5">{user.licenseDocument.toLowerCase().endsWith('.pdf') ? <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-50 text-slate-500"><FileText className="h-6 w-6" /></span> : <img src={user.licenseDocument} alt={language === 'ar' ? 'صورة الرخصة' : 'License preview'} className="h-12 w-16 rounded-lg object-cover" />}<div><p className="text-xs font-bold text-slate-700">{language === 'ar' ? 'تم رفع الملف بنجاح' : 'File uploaded successfully'}</p><p className="mt-1 text-[11px] text-slate-500">{language === 'ar' ? 'سيتم التحقق منه من قبل الإدارة' : 'It will be reviewed by the admin team'}</p></div></div>}
                         </div>
 
                         {/* 2. Specialized Info (Conditional) */}
