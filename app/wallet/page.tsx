@@ -172,12 +172,10 @@ const WalletPage = () => {
 
             {!isLoading && (
             <div className='flex max-w-[1600px] mx-auto relative z-10'>
-                <div className="wow-reveal" style={{ animationDelay: '100ms' }}>
-                <WalletSidebar 
-                    activeTab={activeTab} 
-                    onTabChange={handleTabChange} 
+                <WalletSidebar
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
                 />
-                </div>
 
                 <div className='flex-1 lg:mr-[360px] p-4 pb-32 lg:pb-4 lg:pt-4'>
                     <div className="wow-reveal" style={{ animationDelay: '200ms' }}>

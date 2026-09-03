@@ -185,6 +185,7 @@ export default function ProfilePage() {
 
 
   const selectedRole = watch('role');
+  const hasLicenseRole = [Role.AGENT, Role.BROKER, Role.REAL_ESTATE_OFFICE, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(selectedRole as Role);
 
   // Effect logic
   useEffect(() => {
@@ -324,7 +325,7 @@ export default function ProfilePage() {
                     )}
 
                      {/* Validation status for Brokers/Offices */}
-                    {(selectedRole === Role.BROKER || selectedRole === Role.REAL_ESTATE_OFFICE) && (
+                    {hasLicenseRole && (
                          <div className="w-full border-t pt-4 mt-4">
                              <div className="flex items-center justify-between text-sm mb-2">
                                  <span className="text-slate-500">{t('profile.fal.status')}</span>
@@ -429,7 +430,7 @@ export default function ProfilePage() {
 
                         {/* 2. Specialized Info (Conditional) */}
                         {/* Broker / Office */}
-                        {(selectedRole === Role.BROKER || selectedRole === Role.REAL_ESTATE_OFFICE) && (
+                        {hasLicenseRole && (
                               <div className="bg-muted/50 p-5 rounded-xl border border">
                                 <h4 className="flex items-center gap-2 text-sm font-bold text-gray-950 mb-4">
                                     <Building2 className="w-4 h-4" />

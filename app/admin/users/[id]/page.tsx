@@ -616,6 +616,10 @@ export default function AdminUserDetailsPage() {
               </a> : <div className="flex h-52 flex-col items-center justify-center gap-3 text-center text-slate-400"><FileText className="h-10 w-10" /><p className="text-sm font-bold">{isRtl ? "لم يرفق المستخدم صورة الرخصة بعد" : "No license has been uploaded yet"}</p></div>}
             </div>
             <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs">
+                <div><p className="text-slate-400">{isRtl ? "رقم الترخيص" : "License number"}</p><p className="mt-1 font-black text-slate-800">{user?.falLicenseNumber || user?.agentLicenseNumber || user?.lawLicenseNumber || "—"}</p></div>
+                <div><p className="text-slate-400">{isRtl ? "نوع المستخدم" : "User type"}</p><p className="mt-1 font-black text-slate-800">{user?.role || "—"}</p></div>
+              </div>
               <p className="text-xs font-bold leading-5 text-slate-500">{isRtl ? "يمكنك فتح المستند لمراجعته ثم اختيار الإجراء المناسب." : "Open the document to review it, then choose the appropriate action."}</p>
               <button disabled={saving || !user?.licenseDocumentUrl} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
               <button disabled={saving || !user?.licenseDocumentUrl} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>

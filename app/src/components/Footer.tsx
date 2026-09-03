@@ -66,7 +66,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mobile-footer relative bg-slate-950 text-white overflow-hidden mt-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <footer className="mobile-footer relative mt-auto overflow-hidden border-t border-slate-800 bg-slate-950 text-white" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Abstract Background Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[100px]" />
@@ -89,17 +89,17 @@ export default function Footer() {
         </motion.button>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10 max-md:pt-8 max-md:pb-7">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10 max-md:px-5 max-md:pt-6 max-md:pb-5">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16 max-md:grid-cols-2 max-md:gap-x-5 max-md:gap-y-7 max-md:mb-7"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 mb-16 max-md:grid-cols-2 max-md:gap-x-3 max-md:gap-y-4 max-md:mb-5"
         >
           {/* Brand */}
-          <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1 max-md:col-span-2 max-md:space-y-2 max-md:flex max-md:justify-center">
-            <Link href="/" className="inline-block mb-2 relative group">
+          <motion.div variants={itemVariants} className="space-y-6 lg:col-span-1 max-md:col-span-2 max-md:space-y-0 max-md:flex max-md:justify-center">
+            <Link href="/" className="inline-block mb-2 relative group max-md:mb-0">
               <motion.div
                 animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -108,7 +108,7 @@ export default function Footer() {
               <motion.img
                 src={settings?.logoWhiteUrl || '/icons/white.png'}
                 alt={t("footer.logo_alt")}
-                className="h-24 sm:h-40 w-auto max-md:h-20 object-contain relative z-10"
+                className="h-24 sm:h-40 w-auto max-md:h-14 object-contain relative z-10"
                 animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -117,14 +117,14 @@ export default function Footer() {
           </motion.div>
 
           {/* Platform */}
-          <motion.div variants={itemVariants} className="space-y-6 max-md:space-y-3">
+          <motion.div variants={itemVariants} className="space-y-6 max-md:space-y-3 max-md:rounded-2xl max-md:border max-md:border-white/10 max-md:bg-white/[0.03] max-md:p-3">
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
               {t("footer.about_platform")}
             </h3>
-            <ul className="space-y-4 max-md:space-y-3">
+            <ul className="space-y-4 max-md:space-y-2">
               {platformLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap max-md:w-full max-md:gap-2 max-md:text-[0.78rem]">
                     <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
@@ -134,14 +134,14 @@ export default function Footer() {
           </motion.div>
 
           {/* Support */}
-          <motion.div variants={itemVariants} className="space-y-6 max-md:space-y-3">
+          <motion.div variants={itemVariants} className="space-y-6 max-md:space-y-3 max-md:rounded-2xl max-md:border max-md:border-white/10 max-md:bg-white/[0.03] max-md:p-3">
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
               {t("footer.help_support")}
             </h3>
-            <ul className="space-y-4 max-md:space-y-3">
+            <ul className="space-y-4 max-md:space-y-2">
               {supportLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap">
+                  <Link href={link.href} className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap max-md:w-full max-md:gap-2 max-md:text-[0.78rem]">
                     <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
                     {link.label}
                   </Link>
@@ -151,11 +151,11 @@ export default function Footer() {
           </motion.div>
 
           {/* Contact */}
-          <motion.div variants={itemVariants} className="space-y-6 max-md:col-span-2 max-md:space-y-3">
+          <motion.div variants={itemVariants} className="space-y-6 max-md:col-span-2 max-md:space-y-3 max-md:rounded-2xl max-md:border max-md:border-white/10 max-md:bg-white/[0.03] max-md:p-4">
              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
                {t("footer.contact")}
             </h3>
-            <ul className="space-y-4 max-md:space-y-3">
+            <ul className="space-y-4 max-md:space-y-2">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="w-5 h-5 text-slate-500 shrink-0" />
                 <a href={`mailto:${settings.contactEmail}`} className="wow-ripple hover:text-white transition-colors break-all">{settings.contactEmail}</a>
@@ -176,7 +176,7 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 max-md:pt-4 max-md:gap-2"
+          className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 max-md:pt-4 max-md:gap-1 max-md:text-xs"
         >
           <p className="text-center md:text-right text-slate-500 text-sm font-medium">
             {t("footer.rights_platform", { year: 2026 })}

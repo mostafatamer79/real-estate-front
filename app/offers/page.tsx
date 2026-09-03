@@ -399,7 +399,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
       <button
         onClick={() => { hapticTick(); setIsFilterOpen(!isFilterOpen); }}
         className="fixed z-50 lg:hidden w-13 h-13 p-3.5 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
-        style={{ bottom: 'calc(92px + env(safe-area-inset-bottom))', insetInlineEnd: '1.5rem' }}
+        style={{ bottom: 'calc(16px + env(safe-area-inset-bottom))', insetInlineEnd: '1.5rem' }}
       >
         <TableOfContents className="w-5 h-5" />
       </button>
@@ -409,19 +409,19 @@ const MeterIcon = ({ className }: { className?: string }) => (
         <button
           type="button"
           aria-label="Close filters"
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
           onClick={() => setIsFilterOpen(false)}
         />
       )}
 
       {/* Sidebar - Filters */}
       <div className={`
-        fixed inset-y-0 lg:top-16 lg:inset-y-auto lg:h-[calc(100dvh-64px)] w-80 max-w-[85vw] bg-card border-l border shadow-lg overflow-y-auto z-40 transition-transform duration-300
+        fixed inset-y-0 w-80 max-w-[85vw] bg-card border-l border shadow-lg overflow-y-auto z-40 transition-transform duration-300 max-lg:inset-y-auto max-lg:top-[calc(61px+env(safe-area-inset-top))] max-lg:bottom-0 max-lg:w-full max-lg:max-w-none max-lg:rounded-t-3xl max-lg:border-x-0 max-lg:border-b-0 lg:top-16 lg:inset-y-auto lg:h-[calc(100dvh-64px)]
         ${language === 'ar' ? 'right-0 border-l' : 'left-0 border-r'}
         ${isFilterOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
         lg:translate-x-0
       `}>
-        <div className="p-3 sm:p-6">
+        <div className="p-3 sm:p-6 max-lg:p-4 max-lg:pb-28">
           <div className="my-4 space-y-4">
             <button onClick={() => router.push('/details')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-muted px-3 py-2 rounded-lg w-full">
               <ArrowRight className={`w-5 h-5 transform ${language === 'en' ? 'rotate-180' : ''}`} />
@@ -453,7 +453,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
               </div>
             )}
 
-            <div><h3 className="text-sm font-semibold text-gray-700  flex items-center "><MeterIcon className="w-4 h-4" />{t('offers.filter.area')}</h3>
+            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><MeterIcon className="w-4 h-4" />{t('offers.filter.area')}</h3>
               <div className="flex gap-2">
                 <Input type="number" placeholder={language === 'ar' ? 'من' : 'From'} value={areaFrom} onChange={(e) => setAreaFrom(e.target.value)} />
                 <Input type="number" placeholder={language === 'ar' ? 'إلى' : 'To'} value={areaTo} onChange={(e) => setAreaTo(e.target.value)} />
