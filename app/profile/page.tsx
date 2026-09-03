@@ -187,6 +187,14 @@ export default function ProfilePage() {
   const selectedRole = watch('role');
   const hasLicenseRole = [Role.AGENT, Role.BROKER, Role.REAL_ESTATE_OFFICE, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(selectedRole as Role);
 
+  // Refresh the profile so admin FAL decisions appear without requiring a new login.
+  useEffect(() => {
+    if (!token) return;
+    api.get<ApiResponse<UserType>>('/user/profile').then((response) => {
+      updateUser(response.data.data || response.data);
+    }).catch(() => undefined);
+  }, [token]);
+
   // Effect logic
   useEffect(() => {
     if (user) {
