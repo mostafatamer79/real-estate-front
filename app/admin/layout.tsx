@@ -296,11 +296,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
                     const isSectionHidden = sectionKey && settings.sectionFlags?.[sectionKey] === 'hidden';
                     const isModuleHidden = moduleStatus === 'disabled';
-                    const isOffersComingSoon =
-                      (sectionKey === 'offers' && settings.sectionFlags?.offers === 'closed') ||
-                      (moduleKey === 'offers' && moduleStatus === 'soon');
-
-                    if (isSectionHidden || isModuleHidden || isOffersComingSoon) return null;
+                    if (isSectionHidden || isModuleHidden) return null;
 
                     const showAdminStatusBadge =
                       (sectionKey && settings.sectionFlags?.[sectionKey] === 'closed') ||

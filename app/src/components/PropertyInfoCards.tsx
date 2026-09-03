@@ -27,6 +27,7 @@ interface PropertyInfoCardsProps {
 export default function PropertyInfoCards({ propertyId, operations = [], marketingRequests = [], userRole, id }: PropertyInfoCardsProps) {
   const { t, language } = useLanguage();
   const { settings } = useSettings();
+  const adsDetailsStatus = settings.detailsPartFlags?.ads || 'enabled';
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [isRequestAdModalOpen, setIsRequestAdModalOpen] = useState(false);
 
@@ -201,7 +202,7 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
         </motion.div>
 
         {/* ── Ads Card ── */}
-        {settings.sectionFlags.offers !== 'hidden' && settings.sectionFlags.offers !== 'closed' && (
+        {adsDetailsStatus === 'enabled' && (
         <motion.div whileHover={{ y: -5, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
           <Card
             className="

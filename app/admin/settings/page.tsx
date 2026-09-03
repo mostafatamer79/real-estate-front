@@ -2080,6 +2080,7 @@ function SiteControlTab({ localSettings, updateSettings, t }: TabProps) {
 
         { id: 'offers', label: 'الإعلانات العقارية (الواجهة)', type: 'section', subcategoryId: 'home_ads' },
         { id: 'offers', label: 'الإعلانات (لوحة التحكم)', type: 'module', subcategoryId: 'home_ads' },
+        { id: 'ads', label: 'الإعلانات (صفحة التفاصيل)', type: 'detailsPart', subcategoryId: 'home_ads' },
 
         { id: 'show_charts_section', label: 'إظهار الرسوم البيانية', type: 'uiFlag', subcategoryId: 'home_analytics' },
         { id: 'trends', label: 'التحليلات والاتجاهات', type: 'module', subcategoryId: 'home_analytics' },
