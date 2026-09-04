@@ -72,13 +72,24 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
   const onSubmit = async (data: ProfileFormValues) => {
     setIsSaving(true);
     try {
-      const response = await api.put<ApiResponse<User>>('/user/profile', data);
+      const needsLicenseApplication = data.role === Role.AGENT
+        && user?.role !== Role.AGENT
+        && user?.agentVerificationStatus !== 'verified';
+      if (needsLicenseApplication && !data.agentLicenseNumber?.trim()) {
+        throw new Error('رقم الرخصة المهنية مطلوب لإرسال الطلب');
+      }
+      const response = needsLicenseApplication
+        ? await api.post<ApiResponse<User>>('/user/profile/license-application', {
+            requestedRole: Role.AGENT,
+            agentLicenseNumber: data.agentLicenseNumber,
+          })
+        : await api.put<ApiResponse<User>>('/user/profile', data);
       
-      onUpdate(response.data.data);
+      onUpdate(response.data.data || response.data);
       onClose();
       toast({
         title: "تم الحفظ بنجاح",
-        description: "تم تحديث بيانات الملف الشخصي",
+        description: needsLicenseApplication ? "تم إرسال طلب الرخصة للمراجعة" : "تم تحديث بيانات الملف الشخصي",
         variant: "default",
       });
     } catch (error: any) {

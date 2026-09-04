@@ -62,7 +62,9 @@ export default function AdminUserDetailsPage() {
     if (!user) return;
     const ok = await confirmDialog({
       title: status === "verified" ? (isRtl ? "اعتماد الرخصة؟" : "Approve this license?") : (isRtl ? "رفض الرخصة؟" : "Reject this license?"),
-      description: isRtl ? "سيتم تحديث حالة توثيق المستخدم." : "The user's verification status will be updated.",
+      description: status === "verified"
+        ? (isRtl ? "سيتم اعتماد الرخصة وترقية نوع الحساب المطلوب." : "The license will be approved and the requested account type promoted.")
+        : (isRtl ? "سيتم رفض الرخصة مع السماح للمستخدم بإعادة الإرسال." : "The license will be rejected and the user can submit it again."),
       confirmLabel: status === "verified" ? (isRtl ? "اعتماد" : "Approve") : (isRtl ? "رفض" : "Reject"),
       cancelLabel: isRtl ? "إلغاء" : "Cancel",
       destructive: status === "rejected",
@@ -70,7 +72,7 @@ export default function AdminUserDetailsPage() {
     if (!ok) return;
     setSaving(true);
     try {
-      await api.put(`/user/${user.id}`, { agentVerificationStatus: status });
+      await api.post(`/user/${user.id}/license-review`, { status });
       toast.success(status === "verified" ? (isRtl ? "تم اعتماد الرخصة" : "License approved") : (isRtl ? "تم رفض الرخصة" : "License rejected"));
       await loadUser();
     } catch {
@@ -617,11 +619,11 @@ export default function AdminUserDetailsPage() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs">
                 <div><p className="text-slate-400">{isRtl ? "رقم الترخيص" : "License number"}</p><p className="mt-1 font-black text-slate-800">{user?.falLicenseNumber || user?.agentLicenseNumber || user?.lawLicenseNumber || "—"}</p></div>
-                <div><p className="text-slate-400">{isRtl ? "نوع المستخدم" : "User type"}</p><p className="mt-1 font-black text-slate-800">{user?.role || "—"}</p></div>
+                <div><p className="text-slate-400">{isRtl ? "النوع المطلوب" : "Requested type"}</p><p className="mt-1 font-black text-slate-800">{user?.requestedRole || user?.role || "—"}</p></div>
               </div>
               <p className="text-xs font-bold leading-5 text-slate-500">{isRtl ? "يمكنك فتح المستند لمراجعته ثم اختيار الإجراء المناسب." : "Open the document to review it, then choose the appropriate action."}</p>
-              <button disabled={saving || !user?.licenseDocument} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
-              <button disabled={saving || !user?.licenseDocument} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>
+              <button disabled={saving || !user?.licenseDocument || !user?.requestedRole} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
+              <button disabled={saving || !user?.licenseDocument || !user?.requestedRole} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>
             </div>
           </div>
         </div>

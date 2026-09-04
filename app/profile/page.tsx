@@ -186,6 +186,7 @@ export default function ProfilePage() {
 
   const selectedRole = watch('role');
   const hasLicenseRole = [Role.AGENT, Role.BROKER, Role.REAL_ESTATE_OFFICE, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(selectedRole as Role);
+  const requiresLicenseReview = [Role.AGENT, Role.BROKER].includes(selectedRole as Role);
 
   // Refresh the profile so admin FAL decisions appear without requiring a new login.
   useEffect(() => {
@@ -201,7 +202,7 @@ export default function ProfilePage() {
       reset({
         firstName: user.firstName || '',
         lastName: user.lastName || '',
-        role: user.role || Role.USER,
+        role: user.requestedRole || user.role || Role.USER,
         roleOtherDescription: user.roleOtherDescription || '',
         
         brokerType: user.brokerType || 'individual',
@@ -219,21 +220,36 @@ export default function ProfilePage() {
   }, [user, reset]);
 
   const onSubmit = async (data: ProfileFormValues) => {
+    if (!user) return;
     setIsSaving(true);
     try {
       // Sanitize dates: empty strings -> undefined
       const payload: any = { ...data };
       if (!payload.falLicenseExpiry) payload.falLicenseExpiry = undefined;
       if (!payload.licenseIssueDate) payload.licenseIssueDate = undefined;
-      
-      const res = await api.put<ApiResponse<UserType>>('/user/profile', payload);
+
+      const isNewProfessionalApplication = requiresLicenseReview
+        && selectedRole !== user.role
+        && user.agentVerificationStatus !== 'verified';
+      if (isNewProfessionalApplication && !payload.falLicenseNumber?.trim()) {
+        throw new Error(language === 'ar' ? 'يرجى إدخال رقم رخصة فال قبل إرسال الطلب' : 'Enter a FAL license number before submitting the application');
+      }
+
+      const res = isNewProfessionalApplication
+        ? await api.post<ApiResponse<UserType>>('/user/profile/license-application', {
+            requestedRole: selectedRole,
+            falLicenseNumber: payload.falLicenseNumber,
+          })
+        : await api.put<ApiResponse<UserType>>('/user/profile', payload);
       
       // Update local state
       updateUser(res.data.data || res.data); // Adjust depending on API response structure { data: User } or just User
 
       toast({
         title: t('common.success'),
-        description: t('wallet.saveSuccess'),
+        description: isNewProfessionalApplication
+          ? (language === 'ar' ? 'تم إرسال طلب الرخصة للمراجعة. سيبقى نوع حسابك الحالي حتى الاعتماد.' : 'Your license application was submitted for review. Your current account type stays active until approval.')
+          : t('wallet.saveSuccess'),
         variant: "default",
       });
       
@@ -314,14 +330,6 @@ export default function ProfilePage() {
                         <span>{user.isVerified ? t('profile.verification.verified') : t('profile.verification.unverified')}</span>
                     </div>
 
-                    <div className={`w-full rounded-lg border px-3 py-2.5 text-start ${user.agentVerificationStatus === 'verified' ? 'border-blue-200 bg-blue-50 text-blue-700' : user.agentVerificationStatus === 'rejected' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
-                        <div className="flex items-center justify-between gap-2 text-sm font-bold">
-                            <span>{language === 'ar' ? 'حالة رخصة فال' : 'FAL license status'}</span>
-                            <span>{user.agentVerificationStatus === 'verified' ? (language === 'ar' ? 'تم التحقق' : 'Verified') : user.agentVerificationStatus === 'rejected' ? (language === 'ar' ? 'مرفوض' : 'Rejected') : (language === 'ar' ? 'قيد المراجعة' : 'Under review')}</span>
-                        </div>
-                        {user.agentVerificationStatus === 'rejected' && <p className="mt-1 text-xs font-semibold">{language === 'ar' ? 'رخصة فال غير صحيحة' : 'Invalid FAL license'}</p>}
-                    </div>
-
                     {user.isVerified && user.nationalId && (
                         <div className="w-full bg-muted rounded-lg p-3 mb-4">
                             <p className="text-xs text-slate-500 mb-1">{t('profile.nationalId')}</p>
@@ -340,29 +348,37 @@ export default function ProfilePage() {
                         </Button>
                     )}
 
-                     {/* License upload under the verification card */}
-                     <div className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-start">
-                         <div className="mb-2 flex items-center justify-between gap-2">
-                             <span className="flex items-center gap-2 text-xs font-bold text-slate-700"><FileText className="h-4 w-4" />{language === 'ar' ? 'صورة الرخصة' : 'License document'}</span>
-                             {user.licenseDocument && <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-700">{language === 'ar' ? 'قيد المراجعة' : 'Under review'}</span>}
-                         </div>
-                         <label className="group flex min-h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-slate-300 bg-white px-2 py-3 text-center transition hover:border-slate-500 hover:bg-slate-50">
-                             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 group-hover:bg-slate-900 group-hover:text-white">{isUploadingLicense ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}</span>
-                             <span className="text-[11px] font-bold text-slate-700">{user.licenseDocument ? (language === 'ar' ? 'استبدال الملف' : 'Replace file') : (language === 'ar' ? 'إرفاق صورة الرخصة' : 'Attach license photo')}</span>
-                             <span className="text-[10px] text-slate-400">JPG, PNG, WEBP, PDF · 10 MB</span>
-                             <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="hidden" disabled={isUploadingLicense} onChange={handleLicenseUpload} />
-                         </label>
-                         {user.licenseDocument && <div className="mt-2 flex items-center gap-2 rounded-lg bg-white p-1.5">{user.licenseDocument.toLowerCase().endsWith('.pdf') ? <FileText className="h-7 w-7 text-slate-500" /> : <img src={user.licenseDocument} alt={language === 'ar' ? 'صورة الرخصة' : 'License preview'} className="h-8 w-10 rounded object-cover" />}<span className="text-[10px] font-medium text-slate-600">{language === 'ar' ? 'تم الإرفاق وسيتم مراجعته' : 'Attached and awaiting review'}</span></div>}
-                     </div>
-
-                     {/* Validation status for Brokers/Offices */}
                     {hasLicenseRole && (
-                         <div className="w-full border-t pt-4 mt-4">
-                             <div className="flex items-center justify-between text-sm mb-2">
-                                 <span className="text-slate-500">{t('profile.fal.status')}</span>
-                                 <span className="text-green-600 font-medium">{t('profile.fal.valid')}</span>
-                             </div>
-                         </div>
+                        <>
+                            <div className={`w-full rounded-lg border px-3 py-2.5 text-start ${user.agentVerificationStatus === 'verified' ? 'border-blue-200 bg-blue-50 text-blue-700' : user.agentVerificationStatus === 'rejected' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+                                <div className="flex items-center justify-between gap-2 text-sm font-bold">
+                                    <span>{language === 'ar' ? 'حالة رخصة فال' : 'FAL license status'}</span>
+                                    <span>{user.agentVerificationStatus === 'verified' ? (language === 'ar' ? 'تم التحقق' : 'Verified') : user.agentVerificationStatus === 'rejected' ? (language === 'ar' ? 'مرفوض' : 'Rejected') : (language === 'ar' ? 'قيد المراجعة' : 'Under review')}</span>
+                                </div>
+                                {user.agentVerificationStatus === 'rejected' && <p className="mt-1 text-xs font-semibold">{language === 'ar' ? 'رخصة فال غير صحيحة' : 'Invalid FAL license'}</p>}
+                            </div>
+
+                            <div className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-start">
+                                <div className="mb-2 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-2 text-xs font-bold text-slate-700"><FileText className="h-4 w-4" />{language === 'ar' ? 'صورة الرخصة' : 'License document'}</span>
+                                    {user.licenseDocument && <span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-700">{language === 'ar' ? 'قيد المراجعة' : 'Under review'}</span>}
+                                </div>
+                                <label className="group flex min-h-[88px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-slate-300 bg-white px-2 py-3 text-center transition hover:border-slate-500 hover:bg-slate-50">
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 group-hover:bg-slate-900 group-hover:text-white">{isUploadingLicense ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}</span>
+                                    <span className="text-[11px] font-bold text-slate-700">{user.licenseDocument ? (language === 'ar' ? 'استبدال الملف' : 'Replace file') : (language === 'ar' ? 'إرفاق صورة الرخصة' : 'Attach license photo')}</span>
+                                    <span className="text-[10px] text-slate-400">JPG, PNG, WEBP, PDF · 10 MB</span>
+                                    <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="hidden" disabled={isUploadingLicense} onChange={handleLicenseUpload} />
+                                </label>
+                                {user.licenseDocument && <div className="mt-2 flex items-center gap-2 rounded-lg bg-white p-1.5">{user.licenseDocument.toLowerCase().endsWith('.pdf') ? <FileText className="h-7 w-7 text-slate-500" /> : <img src={user.licenseDocument} alt={language === 'ar' ? 'صورة الرخصة' : 'License preview'} className="h-8 w-10 rounded object-cover" />}<span className="text-[10px] font-medium text-slate-600">{language === 'ar' ? 'تم الإرفاق وسيتم مراجعته' : 'Attached and awaiting review'}</span></div>}
+                            </div>
+
+                            <div className="w-full border-t pt-4 mt-4">
+                                <div className="flex items-center justify-between text-sm mb-2">
+                                    <span className="text-slate-500">{t('profile.fal.status')}</span>
+                                    <span className="text-green-600 font-medium">{t('profile.fal.valid')}</span>
+                                </div>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>
@@ -414,6 +430,7 @@ export default function ProfilePage() {
                                     >
                                         <option value={Role.USER}>{t('profile.role.user')}</option>
                                         <option value={Role.OWNER}>{t('profile.role.owner')}</option>
+                                        <option value={Role.AGENT}>{t('profile.role.agent')}</option>
                                         <option value={Role.BROKER}>{t('profile.role.broker')}</option>
                                         <option value="service_provider">{t('profile.role.serviceProvider')}</option>
                                     </select>

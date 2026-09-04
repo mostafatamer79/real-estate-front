@@ -59,6 +59,7 @@ export interface User {
   // Legacy or Generic
   agentLicenseNumber?: string;
   agentVerificationStatus?: VerifyStatus;
+  requestedRole?: Role | null;
   
   address?: string;
   city?: string;
