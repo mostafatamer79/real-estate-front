@@ -170,11 +170,11 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                         transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
                                 )}
-                                <span className='relative z-10 flex items-center justify-center h-9 w-9'>
+                                <span className='relative z-10 flex items-center justify-center h-11 w-11'>
                                     <img
                                         src={item.icon}
                                         alt={item.label}
-                                        className='w-[30px] h-[30px] scale-[1.35] object-contain'
+                                        className='w-[40px] h-[40px] object-contain'
                                         style={{
                                             filter: isActive
                                                 ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.35))'
