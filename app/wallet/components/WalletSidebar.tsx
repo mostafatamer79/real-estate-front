@@ -147,7 +147,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
             >
                 {/* Hairline top highlight */}
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                <div className='relative flex items-stretch justify-around h-[74px] px-1'>
+                <div className='relative flex items-stretch justify-around h-[88px] px-1'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
@@ -160,7 +160,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 key={index}
                                 onClick={() => { if (!isSoon) { hapticTick(); onTabChange(item.id); } }}
                                 aria-current={isActive ? 'page' : undefined}
-                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[58px] py-1.5 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[58px] py-2 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 {isActive && (
                                     <motion.span
@@ -170,11 +170,11 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                         transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
                                 )}
-                                <span className='relative z-10 flex items-center justify-center h-11 w-11'>
+                                <span className='relative z-10 flex items-center justify-center h-14 w-14'>
                                     <img
                                         src={item.icon}
                                         alt={item.label}
-                                        className='w-[40px] h-[40px] object-contain'
+                                        className='w-[52px] h-[52px] object-contain'
                                         style={{
                                             filter: isActive
                                                 ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.35))'
@@ -183,7 +183,7 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                     />
                                 </span>
                                 <span
-                                    className={`relative z-10 mt-1 text-[11px] leading-none line-clamp-1 w-full px-0.5 text-center transition-colors duration-200 ${
+                                    className={`relative z-10 mt-0.5 text-[11px] leading-none line-clamp-1 w-full px-0.5 text-center transition-colors duration-200 ${
                                         isActive ? 'text-white font-bold' : 'text-slate-300 font-medium opacity-90'
                                     }`}
                                 >

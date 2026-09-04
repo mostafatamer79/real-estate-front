@@ -167,7 +167,7 @@ export default function Footer() {
             {settings.contactEmail && (
               <a
                 href={`mailto:${settings.contactEmail}`}
-                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.12] active:scale-90 border border-white/[0.08] text-white/60 hover:text-white transition-all"
+                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] border border-white/[0.08] text-white/55 active:scale-90 transition-all"
               >
                 <Mail className="h-4 w-4" />
               </a>
@@ -175,7 +175,7 @@ export default function Footer() {
             {settings.contactPhone && (
               <a
                 href={`tel:${settings.contactPhone}`}
-                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.12] active:scale-90 border border-white/[0.08] text-white/60 hover:text-white transition-all"
+                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] border border-white/[0.08] text-white/55 active:scale-90 transition-all"
               >
                 <Phone className="h-4 w-4" />
               </a>
@@ -185,7 +185,7 @@ export default function Footer() {
                 href={getXProfileUrl(settings.contactTwitter)}
                 target="_blank"
                 rel="noreferrer"
-                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.12] active:scale-90 border border-white/[0.08] text-white/60 hover:text-white transition-all"
+                className="h-9 w-9 rounded-full flex items-center justify-center bg-white/[0.06] border border-white/[0.08] text-white/55 active:scale-90 transition-all"
               >
                 <X className="h-4 w-4" />
               </a>
@@ -193,18 +193,21 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* links — two columns, clean and simple */}
-        <div className="px-6 pb-5 grid grid-cols-2 gap-x-6 gap-y-1">
+        {/* divider */}
+        <div className="h-px mx-6 bg-white/[0.07]" />
+
+        {/* links — two columns */}
+        <div className="px-6 py-5 grid grid-cols-2 gap-x-4">
           {/* column 1 */}
-          <div className="space-y-1">
-            <p className="text-[0.68rem] font-bold uppercase tracking-widest text-white/25 mb-2.5">
+          <div>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-widest text-white/25 mb-3">
               {t("footer.about_platform")}
             </p>
             {platformLinks.map(l => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="block py-1.5 text-[0.85rem] text-white/50 hover:text-white active:text-white/70 transition-colors"
+                className="flex items-center h-10 text-sm text-white/55 active:text-white transition-colors"
               >
                 {l.label}
               </Link>
@@ -212,15 +215,15 @@ export default function Footer() {
           </div>
 
           {/* column 2 */}
-          <div className="space-y-1">
-            <p className="text-[0.68rem] font-bold uppercase tracking-widest text-white/25 mb-2.5">
+          <div>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-widest text-white/25 mb-3">
               {t("footer.help_support")}
             </p>
             {supportLinks.map(l => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="block py-1.5 text-[0.85rem] text-white/50 hover:text-white active:text-white/70 transition-colors"
+                className="flex items-center h-10 text-sm text-white/55 active:text-white transition-colors"
               >
                 {l.label}
               </Link>
@@ -228,14 +231,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* bottom bar */}
-        <div className="h-px bg-white/[0.07] mx-6" />
-        <div className="px-6 py-4 flex flex-col items-center gap-1 text-center">
-          <p className="text-[0.72rem] text-white/30">
+        {/* copyright */}
+        <div className="h-px mx-6 bg-white/[0.07]" />
+        <div className="px-6 py-4 text-center">
+          <p className="text-[0.73rem] text-white/30">
             {t("footer.rights_platform", { year: 2026 })}
-          </p>
-          <p className="text-[0.65rem] text-white/20">
-            {t("footer.made_with")}
           </p>
         </div>
 
