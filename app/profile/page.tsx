@@ -252,7 +252,8 @@ export default function ProfilePage() {
           : t('wallet.saveSuccess'),
         variant: "default",
       });
-      
+
+      router.push("/details");
     } catch (error: any) {
         console.error(error);
       toast({
