@@ -233,37 +233,37 @@ export default function Footer() {
       </div>
 
       {/* ════════════════════════════════════════════════════
-          MOBILE LAYOUT (Clean, Modern, Simple - Bayut/Aqar style)
+          MOBILE LAYOUT (Refined, Clean & High-End - Aqar / Bayut inspired)
           ════════════════════════════════════════════════════ */}
-      <div className="md:hidden relative z-10 px-5 pt-6 pb-6">
-        {/* Brand & Social Bar */}
-        <div className="flex items-center justify-between pb-5 border-b border-slate-800">
-          <Link href="/" className="inline-block">
+      <div className="md:hidden relative z-10 px-5 pt-7 pb-6 space-y-6">
+        {/* Top: Logo & Social Buttons */}
+        <div className="flex items-center justify-between">
+          <Link href="/" className="inline-flex items-center active:opacity-75 transition-opacity">
             <img
               src={settings?.logoWhiteUrl || "/icons/white.png"}
               alt={t("footer.logo_alt")}
-              className="h-8 w-auto object-contain"
+              className="h-9 w-auto object-contain"
             />
           </Link>
 
-          {/* Social Icons */}
+          {/* Social / Contact Icons */}
           <div className="flex items-center gap-2">
             {settings.contactEmail && (
               <a
                 href={`mailto:${settings.contactEmail}`}
                 aria-label="Email"
-                className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 active:text-white transition-colors"
+                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
               >
-                <Mail className="w-3.5 h-3.5" />
+                <Mail className="w-4 h-4" />
               </a>
             )}
             {settings.contactPhone && (
               <a
                 href={`tel:${settings.contactPhone}`}
                 aria-label="Phone"
-                className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 active:text-white transition-colors"
+                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
               >
-                <Phone className="w-3.5 h-3.5" />
+                <Phone className="w-4 h-4" />
               </a>
             )}
             {settings.contactTwitter && (
@@ -272,46 +272,50 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="X"
-                className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 active:text-white transition-colors"
+                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </a>
             )}
           </div>
         </div>
 
-        {/* 2-Column Links: Clean, aligned, easy to read */}
-        <div className="grid grid-cols-2 gap-6 py-5 border-b border-slate-800">
-          <div>
-            <h4 className="text-xs font-semibold text-slate-300 mb-3">
+        {/* Clean 2-Column Links with Icons */}
+        <div className="grid grid-cols-2 gap-5 pt-1">
+          {/* Platform Column */}
+          <div className="space-y-3">
+            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-slate-400 pb-1.5 border-b border-slate-800/60">
               {t("footer.about_platform")}
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               {platformLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs text-slate-400 active:text-white transition-colors block"
+                    className="flex items-center gap-2 text-[0.82rem] font-medium text-slate-400 hover:text-slate-200 active:text-white transition-colors"
                   >
-                    {link.label}
+                    <link.icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span className="truncate">{link.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold text-slate-300 mb-3">
+          {/* Support Column */}
+          <div className="space-y-3">
+            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-slate-400 pb-1.5 border-b border-slate-800/60">
               {t("footer.help_support")}
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               {supportLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs text-slate-400 active:text-white transition-colors block"
+                    className="flex items-center gap-2 text-[0.82rem] font-medium text-slate-400 hover:text-slate-200 active:text-white transition-colors"
                   >
-                    {link.label}
+                    <link.icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span className="truncate">{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -319,12 +323,12 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="pt-4 flex flex-col items-center gap-1 text-center">
-          <p className="text-[0.72rem] text-slate-500">
+        {/* Bottom Minimal Copyright Strip */}
+        <div className="pt-4 border-t border-slate-800/80 flex flex-col items-center gap-1 text-center">
+          <p className="text-[0.72rem] text-slate-500 font-medium">
             {t("footer.rights_platform", { year: 2026 })}
           </p>
-          <p className="text-[0.65rem] text-slate-600">
+          <p className="text-[0.66rem] text-slate-600">
             {t("footer.made_with")}
           </p>
         </div>

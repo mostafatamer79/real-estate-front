@@ -140,14 +140,14 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                 </div>
             </motion.div>
 
-            {/* Mobile Navigation - Floating dark glass dock (matches global bottom nav) */}
+            {/* Mobile Navigation - Clean bottom nav docked to screen edge */}
             <div
-                className='lg:hidden fixed z-[60] left-3 right-3 rounded-[1.75rem] border border-white/10 bg-slate-950/90 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.45)]'
-                style={{ bottom: 'calc(10px + env(safe-area-inset-bottom))' }}
+                className='lg:hidden fixed z-[60] inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/95 backdrop-blur-2xl shadow-[0_-10px_30px_rgba(0,0,0,0.35)]'
+                style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
                 {/* Hairline top highlight */}
-                <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                <div className='relative flex items-stretch justify-around h-[88px] px-1'>
+                <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className='relative flex items-stretch justify-around h-[76px] px-2'>
                     {leftSectionItems.map((item, index) => {
                         const isActive = activeTab === item.id;
                         const isSoon = settings.moduleFlags[item.flagKey] === 'soon';
@@ -160,13 +160,13 @@ const WalletSidebar: React.FC<WalletSidebarProps> = ({ activeTab, onTabChange })
                                 key={index}
                                 onClick={() => { if (!isSoon) { hapticTick(); onTabChange(item.id); } }}
                                 aria-current={isActive ? 'page' : undefined}
-                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[58px] py-2 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                                className={`relative flex flex-col items-center justify-center flex-1 min-w-[58px] py-1.5 transition-transform active:scale-95 ${isSoon ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
                             >
                                 {isActive && (
                                     <motion.span
                                         layoutId="wallet-nav-active-pill"
                                         aria-hidden="true"
-                                        className='absolute inset-x-0.5 top-1.5 bottom-1.5 rounded-[1.25rem] bg-white/[0.10] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
+                                        className='absolute inset-x-1 top-1 bottom-1 rounded-2xl bg-white/[0.06] border border-white/10'
                                         transition={{ type: 'spring', stiffness: 480, damping: 40 }}
                                     />
                                 )}
