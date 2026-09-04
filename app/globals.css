@@ -693,12 +693,7 @@
   }
 }
 
-/* Mobile footer — layout handled via separate mobile/desktop sections in Footer.tsx */
-@media (max-width: 768px) {
-  .mobile-footer {
-    min-height: auto;
-  }
-}
+
 
 /* Safe-area padding for fixed bottom navigation bars */
 .fixed.bottom-0,
