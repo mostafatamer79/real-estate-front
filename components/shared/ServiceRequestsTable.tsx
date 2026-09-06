@@ -50,7 +50,8 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500`, {
+            const deptParam = department ? `&department=${encodeURIComponent(department)}` : '';
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500${deptParam}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

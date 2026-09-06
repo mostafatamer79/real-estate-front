@@ -159,6 +159,7 @@ export default function QuickActions({ id }: QuickActionsProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
+                  id={`tour-target-${action.id}`}
                   variants={item}
                   whileHover={{ scale: 1.12, y: -8 }}
                   whileTap={{ scale: 0.9 }}

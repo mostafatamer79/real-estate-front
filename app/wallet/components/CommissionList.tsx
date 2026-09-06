@@ -25,8 +25,8 @@ const CommissionList: React.FC<CommissionListProps> = ({ onNewRequest, commissio
     const { t, language } = useLanguage()
 
     return (
-        <div className='flex-1'>
-            <Card className='bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-xl p-4 sm:p-6'>
+        <div className='flex-1 w-full min-w-0'>
+            <Card className='w-full min-w-0 bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-xl p-4 sm:p-6'>
                 <CardHeader className='pb-4 sm:pb-6 px-0'>
                     <div className='flex items-center justify-between gap-3'>
                         <CardTitle className='text-xl sm:text-2xl font-bold text-black text-right'>

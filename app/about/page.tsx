@@ -37,7 +37,7 @@ const capabilities = [
 function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
   const { settings } = useSettings();
   return (
-    <section className="relative mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-12">
+    <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-8 lg:px-12 sm:py-10">
       <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-card/[0.028] p-4 shadow-2xl shadow-black/30 [contain:paint] sm:p-6 lg:p-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.09),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
         {!reduceMotion && (
@@ -59,18 +59,18 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
           </>
         )}
 
-        <div className="relative grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div className="relative grid gap-8 lg:gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <motion.div
-            initial={{ x: reduceMotion ? 0 : isRtl ? 42 : -42, opacity: 1 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true, margin: "-120px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-4 sm:space-y-6 w-full min-w-0"
           >
             <h2 className="text-xl font-black leading-[1.4] text-white sm:text-2xl lg:text-3xl">
               تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
             </h2>
-            <p className="w-[95vw] sm:max-w-2xl text-xs font-bold leading-relaxed text-white/66">
+            <p className="w-full max-w-2xl text-xs font-bold leading-relaxed text-white/66">
               هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها بالذكاء الاصطناعي إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة.
             </p>
           </motion.div>
@@ -278,7 +278,7 @@ export default function AboutPage() {
         </motion.button>
       )}
 
-      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-5 pb-14 pt-24 sm:px-8 lg:px-12 lg:pt-32">
+      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-4 pb-14 pt-24 sm:px-8 lg:px-12 lg:pt-32">
         <div className="absolute top-24 sm:top-28 z-20">
           <button
             type="button"
@@ -344,7 +344,7 @@ export default function AboutPage() {
 
 
 
-      <section className="relative mx-auto max-w-7xl px-5 py-16 sm:py-24 sm:px-8 lg:px-12">
+      <section className="relative mx-auto max-w-7xl px-4 py-12 sm:py-24 sm:px-8 lg:px-12">
         <div className="mb-12 space-y-4">
           <h2 className="text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
           <p className="text-xs sm:text-sm font-bold leading-loose text-white/65 lg:whitespace-nowrap">
@@ -358,7 +358,7 @@ export default function AboutPage() {
               key={item.title}
               initial={{ y: reduceMotion ? 0 : 22 }}
               whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-90px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
               className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
@@ -417,8 +417,8 @@ export default function AboutPage() {
         </div>
       </section> */}
 
-      {/* <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
-        <div className="mb-12 w-[95vw] sm:max-w-3xl space-y-4">
+      {/* <section className="relative mx-auto max-w-7xl px-4 py-24 sm:px-8 lg:px-12">
+        <div className="mb-12 w-full max-w-3xl space-y-4">
           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Operations</p>
           <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">الإدارة ترى الصورة كاملة.</h2>
           <p className="text-base font-bold leading-8 text-white/65">
@@ -432,7 +432,7 @@ export default function AboutPage() {
               key={item.title}
               initial={{ y: reduceMotion ? 0 : 18 }}
               whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-110px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
               whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
               className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
@@ -447,13 +447,13 @@ export default function AboutPage() {
         </div>
       </section> */}
 
-      <section className="relative px-5 pb-28 sm:px-8 lg:px-12">
+      <section className="relative px-4 pb-28 sm:px-8 lg:px-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-20px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-8 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
+          className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-5 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
         >
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
           <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>

@@ -39,4 +39,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 config.bat
-.env*
+
+# Local environment files
+!.env.example
+
+graphify-out/
+.codex/

@@ -254,7 +254,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
     );
 
     return (
-        <div className='flex flex-col gap-6 w-full'>
+        <div className='flex flex-col gap-6 w-full min-w-0'>
             {/* Balance Card - Keeping it here or moving to a separate component? Assuming Invoices section includes balance for now based on layout */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <Card className='md:col-span-2 relative overflow-hidden bg-slate-900/85 backdrop-blur-xl border border-white/10 shadow-xl rounded-[1.25rem] p-4 sm:p-6'>

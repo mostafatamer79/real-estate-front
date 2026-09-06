@@ -521,9 +521,9 @@ const MeterIcon = ({ className }: { className?: string }) => (
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
               {user?.id && (
                 <SegmentedTabs value={activeTab} onValueChange={(val) => setActiveTab(val as "all" | "my" | "appointments")} className="w-full md:w-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  <SegmentedList className="grid w-full h-auto grid-cols-1 md:grid-cols-2 lg:w-[450px] max-md:!grid-cols-2">
-                    <SegmentedTrigger value="all" className="flex items-center gap-2 max-md:justify-center max-md:rounded-full"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</SegmentedTrigger>
-                    <SegmentedTrigger value="appointments" className="flex items-center gap-2 max-md:justify-center max-md:rounded-full"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</SegmentedTrigger>
+                  <SegmentedList className="grid w-full h-auto grid-cols-1 md:grid-cols-2 lg:w-[450px] bg-slate-100 dark:bg-slate-800/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/50 max-md:!grid-cols-2 max-md:gap-1.5">
+                    <SegmentedTrigger value="all" className="flex items-center gap-2 max-md:justify-center py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:rounded-full"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</SegmentedTrigger>
+                    <SegmentedTrigger value="appointments" className="flex items-center gap-2 max-md:justify-center py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:rounded-full"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</SegmentedTrigger>
                   </SegmentedList>
                 </SegmentedTabs>
               )}

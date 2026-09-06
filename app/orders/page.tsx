@@ -303,20 +303,20 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
   
                 <div className="space-y-2">
                   <Label className="text-slate-900 font-bold">{t('orders.city')}</Label>
-                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
+                  <Input className="placeholder:text-muted-foreground text-slate-900 font-bold" 
                     value={formData.city}
                     onChange={(e) => handleChange("city", e.target.value)}
-                    placeholder={language === 'ar' ? ": الرياض" : "e.g. Riyadh"}
+                    placeholder={t('orders.city')}
                     required
                   />
                 </div>
   
                 <div className="space-y-2">
                   <Label className="text-slate-900 font-bold">{t('orders.neighborhood')}</Label>
-                  <Input className="placeholder:text-slate-900 text-slate-900 font-bold" 
+                  <Input className="placeholder:text-muted-foreground text-slate-900 font-bold" 
                     value={formData.neighborhood}
                     onChange={(e) => handleChange("neighborhood", e.target.value)}
-                    placeholder={language === 'ar' ? ": النرجس" : "e.g. Al-Narjis"}
+                    placeholder={t('orders.neighborhood')}
                     required
                   />
                 </div>

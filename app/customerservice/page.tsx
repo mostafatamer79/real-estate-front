@@ -387,10 +387,10 @@ export function CustomerServicePage() {
           )}
 
           <Dialog open={Boolean(selectedTicket)} onOpenChange={(open) => !open && setSelectedTicket(null)}>
-            <DialogContent className="max-h-[85vh] w-[95vw] sm:max-w-2xl overflow-y-auto rounded-[1.25rem] p-0">
+            <DialogContent className="flex flex-col max-h-[85dvh] w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] p-0">
               {selectedTicket && (
                 <>
-                  <DialogHeader className="border-b border p-3 sm:p-6 text-start">
+                  <DialogHeader className="border-b border p-3 sm:p-6 text-start shrink-0">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <DialogTitle className="text-lg font-black text-slate-950 flex items-center gap-2">
@@ -409,7 +409,7 @@ export function CustomerServicePage() {
                     </div>
                   </DialogHeader>
 
-                  <div className="space-y-4 p-3 sm:p-6">
+                  <div className="space-y-4 p-3 sm:p-6 overflow-y-auto flex-1">
                     <div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-muted p-4">
                       <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{language === "ar" ? "أنت" : "You"}</p>
                       <p className="whitespace-pre-wrap text-sm font-bold leading-7 text-slate-700">{selectedTicket.question}</p>
@@ -430,7 +430,7 @@ export function CustomerServicePage() {
                   </div>
 
                   {selectedTicket.status !== "resolved" && (
-                    <DialogFooter className="border-t border p-3 sm:p-6">
+                    <DialogFooter className="border-t border p-3 sm:p-6 shrink-0">
                       <div className="w-full rounded-2xl bg-muted p-3">
                         <Textarea
                           value={ticketReplyDrafts[selectedTicket.id] || ""}

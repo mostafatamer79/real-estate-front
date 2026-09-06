@@ -180,6 +180,7 @@ export default function Header() {
               {settings.sectionFlags.customerservice !== 'hidden' && (
                 <div className="relative group/nav">
                   <Link
+                    id="tour-target-customer-service"
                     href="/customerservice"
                     className={`flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
                     onClick={(e) => {
@@ -210,6 +211,7 @@ export default function Header() {
                   <NotificationBell />
 
                   <Link
+                    id="tour-target-chat"
                     href="/chat"
                     className="text-white/70 hover:text-white transition-colors relative"
                     title={t('chat.title')}
@@ -324,6 +326,7 @@ export default function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
+          id="tour-target-mobile-menu"
           className="md:hidden text-white p-2 -m-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -448,77 +451,6 @@ export default function Header() {
                     </Link>
                   )}
 
-                   {(user?.role === Role.ADMIN || user?.role === Role.MARKETING) && settings.sectionFlags.marketing !== 'hidden' && (
-                    <div className="relative">
-                      <Link
-                        href="/marketing"
-                        className={`flex items-center gap-3 py-3.5 px-3 text-orange-400 text-base sm:text-lg font-medium rounded-xl hover:bg-orange-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                          <LayoutDashboard className="w-5 h-5" />
-                          {t('header.marketing_management')}
-                      </Link>
-                      {settings.sectionFlags.marketing === 'closed' && user?.role !== Role.ADMIN && (
-                        <SoonBadge className="absolute left-0 top-0 px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest">
-                          {t('common.soon') || 'قريباً'}
-                        </SoonBadge>
-                      )}
-                    </div>
-                  )}
-
-                   {(user?.role === Role.ADMIN || user?.role === Role.LEGAL) && settings.sectionFlags.disputes !== 'hidden' && (
-                    <div className="relative">
-                      <Link
-                        href="/disputes"
-                        className={`flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                          <LayoutDashboard className="w-5 h-5" />
-                          {t('header.legal_management')}
-                      </Link>
-                      {settings.sectionFlags.disputes === 'closed' && user?.role !== Role.ADMIN && (
-                        <SoonBadge className="absolute left-0 top-0 px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest">
-                          {t('common.soon') || 'قريباً'}
-                        </SoonBadge>
-                      )}
-                    </div>
-                  )}
-
-                   {(user?.role === Role.ADMIN || user?.role === Role.FINANCE) && settings.sectionFlags.financial !== 'hidden' && (
-                    <div className="relative">
-                      <Link
-                        href="/financial"
-                        className={`flex items-center gap-3 py-3.5 px-3 text-emerald-400 text-base sm:text-lg font-medium rounded-xl hover:bg-emerald-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                          <LayoutDashboard className="w-5 h-5" />
-                          {t('header.financial_management')}
-                      </Link>
-                      {settings.sectionFlags.financial === 'closed' && user?.role !== Role.ADMIN && (
-                        <SoonBadge className="absolute left-0 top-0 px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest">
-                          {t('common.soon') || 'قريباً'}
-                        </SoonBadge>
-                      )}
-                    </div>
-                  )}
-
-                   {(user?.role === Role.ADMIN || (user?.departments && user?.departments.length > 0)) && user?.role !== Role.VIEWER && settings.sectionFlags.buildingmanagement !== 'hidden' && (
-                    <div className="relative">
-                      <Link
-                        href="/buildingmanagement"
-                        className={`flex items-center gap-3 py-3.5 px-3 text-purple-400 text-base sm:text-lg font-medium rounded-xl hover:bg-purple-500/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                          <LayoutDashboard className="w-5 h-5" />
-                          {t('action.propertyManagement')}
-                      </Link>
-                      {settings.sectionFlags.buildingmanagement === 'closed' && user?.role !== Role.ADMIN && (
-                        <SoonBadge className="absolute left-0 top-0 px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest">
-                          {t('common.soon') || 'قريباً'}
-                        </SoonBadge>
-                      )}
-                    </div>
-                  )}
 
                   {/* Divider */}
                   <div className="wow-divider my-2" />

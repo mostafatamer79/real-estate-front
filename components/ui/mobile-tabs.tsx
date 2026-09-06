@@ -88,7 +88,7 @@ export function SegmentedTrigger({
         "max-md:px-4 max-md:py-2.5 max-md:rounded-xl max-md:text-sm max-md:font-semibold",
         "max-md:transition-all max-md:duration-200",
         isActive && "max-md:text-white",
-        !isActive && "max-md:text-slate-400 max-md:hover:text-slate-200",
+        !isActive && "max-md:text-slate-600 max-md:hover:text-slate-900 dark:max-md:text-slate-400 dark:max-md:hover:text-slate-200",
         className
       )}
       disabled={disabled}
@@ -104,10 +104,7 @@ export function SegmentedTrigger({
           aria-hidden="true"
           className={cn(
             "absolute inset-0 rounded-xl md:hidden",
-            "bg-white/10 backdrop-blur-sm",
-            "shadow-[0_2px_8px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]",
-            "border border-white/[0.08]",
-            pillClassName
+            pillClassName || "bg-slate-900 text-white shadow-sm"
           )}
           transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.7 }}
         />

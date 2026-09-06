@@ -19,9 +19,12 @@ export interface TourStep {
   title: string;
   description: string;
   targetId?: string;
+  mobileTargetId?: string;
   position?: "top" | "bottom" | "left" | "right" | "center";
   icon?: React.ReactNode;
   gradient?: string;
+  /** The page route this step belongs to (e.g. "/details", "/chat"). When set, the tutorial navigates to this route before showing the step. */
+  route?: string;
 }
 
 interface TutorialProps {
@@ -29,6 +32,7 @@ interface TutorialProps {
   onComplete: () => void;
   onSkip: () => void;
   open?: boolean;
+  initialStep?: number;
 }
 
 interface TargetInfo {
@@ -126,10 +130,10 @@ function ProgressRing({ current, total, size = 44 }: { current: number; total: n
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function Tutorial({ steps, onComplete, onSkip, open = true }: TutorialProps) {
+export default function Tutorial({ steps, onComplete, onSkip, open = true, initialStep = 0 }: TutorialProps) {
   const { t, language } = useLanguage();
   const isRtl = language === "ar";
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(initialStep);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [targetInfo, setTargetInfo] = useState<TargetInfo | null>(null);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
@@ -141,7 +145,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true }: Tut
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentStep = steps[currentIndex];
-  const hasTarget = Boolean(currentStep.targetId);
+  const hasTarget = Boolean(currentStep.targetId || currentStep.mobileTargetId);
   const targetFound = Boolean(targetInfo);
   const isMobile = viewport.width > 0 && viewport.width < 640;
   const isMobileBottomSheet = isMobile && hasTarget && targetFound;
@@ -150,12 +154,20 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true }: Tut
   // ── Geometry ──────────────────────────────────────────────────────────────
 
   const updateGeometry = useCallback(() => {
+    const isMob = typeof window !== "undefined" && window.innerWidth < 640;
     setViewport({ width: window.innerWidth, height: window.innerHeight });
-    if (!currentStep.targetId) { setTargetInfo(null); return; }
-    const el = document.getElementById(currentStep.targetId);
-    if (el) setTargetInfo({ rect: el.getBoundingClientRect(), element: el });
-    else setTargetInfo(null);
-  }, [currentStep.targetId]);
+    const targetId = (isMob && currentStep.mobileTargetId) ? currentStep.mobileTargetId : currentStep.targetId;
+    if (!targetId) { setTargetInfo(null); return; }
+    let el = document.getElementById(targetId);
+    if ((!el || el.getBoundingClientRect().width === 0) && currentStep.mobileTargetId) {
+      el = document.getElementById(currentStep.mobileTargetId);
+    }
+    if (el && el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().height > 0) {
+      setTargetInfo({ rect: el.getBoundingClientRect(), element: el });
+    } else {
+      setTargetInfo(null);
+    }
+  }, [currentStep.targetId, currentStep.mobileTargetId]);
 
   useEffect(() => {
     setMounted(true);
@@ -275,17 +287,8 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true }: Tut
 
   // ── Accent palette ────────────────────────────────────────────────────────
 
-  const ACCENT_PALETTE = [
-    "from-indigo-500 to-violet-500",
-    "from-violet-500 to-purple-500",
-    "from-blue-500 to-indigo-500",
-    "from-emerald-500 to-teal-500",
-    "from-amber-500 to-orange-500",
-    "from-pink-500 to-rose-500",
-    "from-cyan-500 to-blue-500",
-    "from-fuchsia-500 to-pink-500",
-  ];
-  const accentGradient = currentStep.gradient ?? ACCENT_PALETTE[currentIndex % ACCENT_PALETTE.length];
+  const DEFAULT_ACCENT = "from-indigo-500 to-violet-500";
+  const accentGradient = currentStep.gradient ?? DEFAULT_ACCENT;
   const isLastStep = currentIndex === steps.length - 1;
 
   if (!mounted || !open) return null;
