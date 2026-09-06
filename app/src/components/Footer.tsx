@@ -246,8 +246,18 @@ export default function Footer() {
             />
           </Link>
 
-          {/* Social / Contact Icons */}
+          {/* Social / Contact Icons & Call Us Button */}
           <div className="flex items-center gap-2">
+            {/* Call Us Button */}
+            <a
+              href={settings.contactPhone?.trim() ? `tel:${settings.contactPhone.trim()}` : "/customerservice/contact"}
+              aria-label={t("footer.call_us")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-95 transition-all text-xs font-bold shadow-sm"
+            >
+              <Phone className="w-3.5 h-3.5 shrink-0" />
+              <span>{t("footer.call_us")}</span>
+            </a>
+
             {settings.contactEmail && (
               <a
                 href={`mailto:${settings.contactEmail}`}
@@ -255,15 +265,6 @@ export default function Footer() {
                 className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
               >
                 <Mail className="w-4 h-4" />
-              </a>
-            )}
-            {settings.contactPhone && (
-              <a
-                href={`tel:${settings.contactPhone}`}
-                aria-label="Phone"
-                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
-              >
-                <Phone className="w-4 h-4" />
               </a>
             )}
             {settings.contactTwitter && (
@@ -320,6 +321,31 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        {/* Mobile Contact Strip */}
+        <div className="pt-1">
+          <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <Phone className="w-3.5 h-3.5" />
+              </div>
+              <div className="min-w-0">
+                <h5 className="text-[11px] font-bold text-slate-400 leading-tight">
+                  {t("footer.call_us")}
+                </h5>
+                <p className="text-xs font-bold text-white font-mono truncate mt-0.5" dir="ltr">
+                  {settings.contactPhone?.trim() || settings.contactEmail || "info@digital-brokerage.com"}
+                </p>
+              </div>
+            </div>
+            <a
+              href={settings.contactPhone?.trim() ? `tel:${settings.contactPhone.trim()}` : "/customerservice/contact"}
+              className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-black transition-all shrink-0 shadow-sm"
+            >
+              {isAr ? "اتصال" : "Call"}
+            </a>
           </div>
         </div>
 

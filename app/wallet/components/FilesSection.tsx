@@ -74,11 +74,11 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     }
 
     return (
-        <Card className='bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
-            <div className='p-4 sm:p-8'>
-                <div className='mb-6 sm:mb-8'>
-                    <h2 className='text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
-                    <p className='text-slate-500 font-bold text-sm'>{t('wallet.desc.files')}</p>
+        <Card className='w-full min-w-0 bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
+            <div className='w-full min-w-0 p-3.5 sm:p-8'>
+                <div className='mb-4 sm:mb-8'>
+                    <h2 className='text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
+                    <p className='text-slate-500 font-bold text-xs sm:text-sm'>{t('wallet.desc.files')}</p>
                 </div>
 
                 <div className='hidden md:block rounded-2xl border border-white/30 overflow-hidden'>
@@ -150,44 +150,48 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                 </div>
 
                 {/* Mobile file cards */}
-                <div className='md:hidden mt-4 space-y-3'>
+                <div className='md:hidden mt-3 space-y-3 w-full min-w-0'>
                     {files.map((file, index) => (
-                        <div key={index} className='bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-4 shadow-sm'>
-                            <div className='flex items-start gap-3 mb-3'>
-                                <div className='p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0'>
+                        <div key={index} className='bg-white/50 backdrop-blur-md border border-white/50 rounded-2xl p-3.5 sm:p-4 shadow-sm w-full min-w-0 overflow-hidden'>
+                            <div className='flex items-start gap-3 mb-3 min-w-0'>
+                                <div className='p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0 mt-0.5'>
                                     <FileText className='w-5 h-5' />
                                 </div>
                                 <div className='min-w-0 flex-1'>
-                                    <p className='font-bold text-slate-900 truncate'>{file.name}</p>
+                                    <p className='font-bold text-slate-900 text-sm break-words leading-snug' dir="auto">{file.name}</p>
                                     {file.locationName && (
-                                        <p className='text-[11px] font-bold text-slate-400 mt-1 truncate'>
+                                        <p className='text-[11px] font-bold text-slate-500 mt-1 break-words'>
                                             اسم المكان: {file.locationName}
                                         </p>
                                     )}
                                     {file.description && !file.locationName && (
-                                        <p className='text-[11px] font-bold text-slate-400 mt-1'>{file.description}</p>
+                                        <p className='text-[11px] font-bold text-slate-500 mt-1 break-words'>{file.description}</p>
                                     )}
                                 </div>
                             </div>
-                            <div className='flex items-center justify-between gap-3 mb-3'>
-                                <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
+                            <div className='flex items-center justify-between gap-2 pt-2 border-t border-slate-950/5 min-w-0'>
+                                <span className='px-2.5 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0'>
                                     {getFileTypeLabel(file)}
                                 </span>
-                                <span className='text-xs text-slate-400 font-bold'>
-                                    {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
-                                </span>
-                            </div>
-                            <div className='flex items-center justify-end gap-2'>
-                                <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
-                                    onClick={() => handleViewFile(file)}
-                                >
-                                    <Eye className='w-4 h-4' />
-                                </Button>
-                                <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
-                                    onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
-                                >
-                                    <Download className='w-4 h-4' />
-                                </Button>
+                                <div className='flex items-center gap-2'>
+                                    <span className='text-xs text-slate-400 font-bold font-mono'>
+                                        {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
+                                    </span>
+                                    <div className='flex items-center gap-1'>
+                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-500 hover:text-slate-900'
+                                            onClick={() => handleViewFile(file)}
+                                            title="عرض"
+                                        >
+                                            <Eye className='w-4 h-4' />
+                                        </Button>
+                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-500 hover:text-slate-900'
+                                            onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
+                                            title="تحميل"
+                                        >
+                                            <Download className='w-4 h-4' />
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

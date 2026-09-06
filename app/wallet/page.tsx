@@ -145,7 +145,7 @@ const WalletPage = () => {
     }
 
     return (
-        <div className='wallet-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden' dir="rtl">
+        <div className='wallet-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-x-hidden' dir="rtl">
             <MobileAppHeader theme="light" title={t('action.wallet')} />
             {/* Ambient Background Glows */}
             <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
@@ -157,7 +157,7 @@ const WalletPage = () => {
 
             {/* Loading skeleton */}
             {isLoading && (
-                <div className='max-w-[1600px] mx-auto relative z-10 px-4 pt-20 pb-32'>
+                <div className='w-full max-w-[1600px] mx-auto relative z-10 px-3 sm:px-4 pt-20 pb-32'>
                     <div className="space-y-4">
                         <div className="wow-skeleton h-12 w-48 rounded-xl" />
                         <div className="wow-skeleton h-8 w-32 rounded-lg" />
@@ -171,14 +171,14 @@ const WalletPage = () => {
             )}
 
             {!isLoading && (
-            <div className='flex max-w-[1600px] mx-auto relative z-10'>
+            <div className='flex flex-col lg:flex-row w-full max-w-[1600px] mx-auto relative z-10 min-w-0'>
                 <WalletSidebar
                     activeTab={activeTab}
                     onTabChange={handleTabChange}
                 />
 
-                <div className='flex-1 lg:mr-[360px] p-4 pb-32 lg:pb-4 lg:pt-4'>
-                    <div className="wow-reveal" style={{ animationDelay: '200ms' }}>
+                <div className='flex-1 w-full min-w-0 lg:mr-[360px] p-3 sm:p-4 pb-32 lg:pb-4 lg:pt-4'>
+                    <div className="wow-reveal w-full min-w-0" style={{ animationDelay: '200ms' }}>
                     {activeTab === 'invoices' && (
                         <InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} />
                     )}

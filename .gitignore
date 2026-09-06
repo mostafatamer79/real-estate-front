@@ -40,3 +40,11 @@ yarn-error.log*
 next-env.d.ts
 config.bat
 .env*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+graphify-out/
+.codex/

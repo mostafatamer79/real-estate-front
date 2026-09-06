@@ -964,10 +964,10 @@ export default function OfferDetailsPage() {
         {/* Tabbed view for Details and Attachments */}
         <SegmentedTabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 h-12 bg-muted/80 p-1 rounded-2xl max-md:!grid-cols-2 max-md:h-auto">
-            <SegmentedTrigger value="details" className="rounded-xl text-sm font-black transition-all max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
+            <SegmentedTrigger value="details" className="rounded-xl text-sm font-black transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
               {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
             </SegmentedTrigger>
-            <SegmentedTrigger value="media" className="rounded-xl text-sm font-black transition-all max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
+            <SegmentedTrigger value="media" className="rounded-xl text-sm font-black transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
               {language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}
             </SegmentedTrigger>
           </SegmentedList>

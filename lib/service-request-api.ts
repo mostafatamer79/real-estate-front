@@ -50,7 +50,7 @@ export const serviceRequestApi = {
   create: (data: any): Promise<ApiResponse<ServiceRequest>> =>
     api.post('/service-requests', data),
 
-  findAll: (params?: { page?: number; limit?: number; mine?: boolean }): Promise<ApiResponse<{ items: ServiceRequest[]; total: number; page: number; limit: number; totalPages: number }>> =>
+  findAll: (params?: { page?: number; limit?: number; mine?: boolean; department?: string; category?: string }): Promise<ApiResponse<{ items: ServiceRequest[]; total: number; page: number; limit: number; totalPages: number }>> =>
     api.get('/service-requests', { params }),
 
   findOne: (id: string): Promise<ApiResponse<ServiceRequest>> =>

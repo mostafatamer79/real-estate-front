@@ -398,7 +398,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
     if (!token) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500&department=legal`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {

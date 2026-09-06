@@ -93,7 +93,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
       orderType: "buy",
       mainCategory: "residential",
       propertyType: "شقة",
-      city: "الرياض",
+      city: "",
       neighborhood: "",
       area: 1,
       propertyAge: "جديد",
@@ -337,7 +337,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     value={form.clientName}
                     onChange={(e) => setForm((f: any) => ({ ...f, clientName: e.target.value }))}
                     className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all"
-                    placeholder=": محمد أحمد"
+                    placeholder="محمد أحمد"
                   />
                 </div>
                 <div className="space-y-1">
@@ -471,7 +471,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   value={form.propertyAge}
                   onChange={e => setForm((f: any) => ({ ...f, propertyAge: e.target.value }))}
                   className={inputCls}
-                  placeholder=": جديد، أقل من 5 سنوات..."
+                  placeholder="جديد، أقل من 5 سنوات..."
                 />
               </div>
               <div className="space-y-1">
