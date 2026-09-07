@@ -10,6 +10,8 @@ test("footer keeps its original dark palette and omits the Contact Us navigation
 
   assert.match(footer, /border-slate-800 bg-slate-950 text-white/);
   assert.doesNotMatch(footer, /t\("footer\.contact_us"\)/);
+  assert.doesNotMatch(footer, /Mobile Contact Strip/);
+  assert.match(footer, /bg-slate-900\/80 border border-slate-800\/80 text-slate-200/);
 });
 
 test("internal properties navigation omits the Orders entry", () => {
