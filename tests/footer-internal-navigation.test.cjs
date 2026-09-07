@@ -5,10 +5,10 @@ const { join } = require("node:path");
 
 const projectRoot = join(__dirname, "..");
 
-test("footer uses shared theme tokens and omits the Contact Us navigation link", () => {
+test("footer keeps its original dark palette and omits the Contact Us navigation link", () => {
   const footer = readFileSync(join(projectRoot, "app/src/components/Footer.tsx"), "utf8");
 
-  assert.match(footer, /border-border bg-card text-card-foreground/);
+  assert.match(footer, /border-slate-800 bg-slate-950 text-white/);
   assert.doesNotMatch(footer, /t\("footer\.contact_us"\)/);
 });
 
