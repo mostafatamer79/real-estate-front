@@ -394,7 +394,6 @@ export default function InternalShell({ children }: { children: React.ReactNode 
     properties: [
       { id: "buildingmanagement", href: `/internal/${deptSlug}?view=properties&section=dashboard`, icon: Building2, label: "إدارة المباني", moduleKey: "properties" },
       { id: "offers", href: `/internal/${deptSlug}?view=properties&section=offers`, icon: Building2, label: "إدارة العروض", moduleKey: "offers" },
-      { id: "orders", href: `/internal/${deptSlug}?view=properties&section=orders`, icon: Building2, label: "إدارة الطلبات", moduleKey: "orders" },
     ],
     employees: [{ id: "employees", href: `/internal/${deptSlug}?view=employees&section=users`, icon: Users, label: "الموظفين", moduleKey: "employees" }],
   };

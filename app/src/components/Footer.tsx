@@ -8,7 +8,6 @@ import {
   Shield,
   BookOpen,
   Mail,
-  MessageCircle,
   X,
   Info,
   HelpCircle,
@@ -64,18 +63,17 @@ export default function Footer() {
   const supportLinks = [
     { label: t("footer.faq"), href: "/customerservice/faq", icon: HelpCircle },
     { label: t("footer.share_opinion"), href: "/share-opinion", icon: MessageSquareHeart },
-    { label: t("footer.contact_us"), href: "/customerservice/contact", icon: MessageCircle },
   ];
 
   return (
     <footer
-      className="mobile-footer relative mt-auto overflow-hidden border-t border-slate-800 bg-slate-950 text-white"
+      className="mobile-footer relative mt-auto overflow-hidden border-t border-border bg-card text-card-foreground"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* Abstract Background Shapes (original desktop styles) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none hidden md:block">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[100px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-slate-900/10 blur-[100px]" />
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[100px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-muted/80 blur-[100px]" />
       </div>
 
       {showScrollTop && (
@@ -88,7 +86,7 @@ export default function Footer() {
           type="button"
           onClick={scrollToTop}
           aria-label={t("footer.scroll_top")}
-          className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-slate-900/90 text-white shadow-2xl backdrop-blur transition hover:bg-card hover:text-slate-950 md:bottom-6 left-6 max-md:bottom-[calc(80px+env(safe-area-inset-bottom))]"
+          className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-card/95 text-foreground shadow-2xl backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:bottom-6 left-6 max-md:bottom-[calc(80px+env(safe-area-inset-bottom))]"
         >
           <ArrowUp className="h-5 w-5" />
         </motion.button>
@@ -132,7 +130,7 @@ export default function Footer() {
 
           {/* Platform */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
               {t("footer.about_platform")}
             </h3>
             <ul className="space-y-4">
@@ -140,9 +138,9 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap"
+                    className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
                   >
-                    <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
+                    <link.icon className="h-4 w-4 text-muted-foreground shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -152,7 +150,7 @@ export default function Footer() {
 
           {/* Support */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
               {t("footer.help_support")}
             </h3>
             <ul className="space-y-4">
@@ -160,9 +158,9 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-slate-400 transition-colors hover:text-white whitespace-nowrap"
+                    className="wow-ripple flex w-fit items-center gap-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
                   >
-                    <link.icon className="h-4 w-4 text-slate-500 shrink-0" />
+                    <link.icon className="h-4 w-4 text-muted-foreground shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -172,25 +170,25 @@ export default function Footer() {
 
           {/* Contact */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
               {t("footer.contact")}
             </h3>
             <ul className="space-y-4">
-              <li className="flex items-center gap-3 text-slate-400 text-sm">
-                <Mail className="w-5 h-5 text-slate-500 shrink-0" />
+              <li className="flex items-center gap-3 text-muted-foreground text-sm">
+                <Mail className="w-5 h-5 text-muted-foreground shrink-0" />
                 <a
                   href={`mailto:${settings.contactEmail}`}
-                  className="wow-ripple hover:text-white transition-colors break-all"
+                  className="wow-ripple hover:text-foreground transition-colors break-all"
                 >
                   {settings.contactEmail}
                 </a>
               </li>
               {settings.contactPhone && (
-                <li className="flex items-center gap-3 text-slate-400 text-sm">
-                  <Phone className="w-5 h-5 text-slate-500 shrink-0" />
+                <li className="flex items-center gap-3 text-muted-foreground text-sm">
+                  <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
                   <a
                     href={`tel:${settings.contactPhone}`}
-                    className="wow-ripple hover:text-white transition-colors break-all"
+                    className="wow-ripple hover:text-foreground transition-colors break-all"
                     dir="ltr"
                   >
                     {settings.contactPhone}
@@ -198,13 +196,13 @@ export default function Footer() {
                 </li>
               )}
               {settings.contactTwitter && (
-                <li className="flex items-center gap-3 text-slate-400 text-sm">
-                  <X className="w-5 h-5 text-slate-500 shrink-0" />
+                <li className="flex items-center gap-3 text-muted-foreground text-sm">
+                  <X className="w-5 h-5 text-muted-foreground shrink-0" />
                   <a
                     href={getXProfileUrl(settings.contactTwitter)}
                     target="_blank"
                     rel="noreferrer"
-                    className="wow-ripple hover:text-white transition-colors break-all"
+                    className="wow-ripple hover:text-foreground transition-colors break-all"
                     dir="ltr"
                   >
                     {settings.contactTwitter || "X"}
@@ -221,12 +219,12 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4"
+          className="border-t border-border pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4"
         >
-          <p className="text-center md:text-right text-slate-500 text-sm font-medium">
+          <p className="text-center md:text-right text-muted-foreground text-sm font-medium">
             {t("footer.rights_platform", { year: 2026 })}
           </p>
-          <div className="flex items-center gap-2 sm:gap-4 text-slate-500 text-sm font-medium">
+          <div className="flex items-center gap-2 sm:gap-4 text-muted-foreground text-sm font-medium">
             <span className="text-sm">{t("footer.made_with")}</span>
           </div>
         </motion.div>
@@ -252,7 +250,7 @@ export default function Footer() {
             <a
               href={settings.contactPhone?.trim() ? `tel:${settings.contactPhone.trim()}` : "/customerservice/contact"}
               aria-label={t("footer.call_us")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-95 transition-all text-xs font-bold shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all text-xs font-bold shadow-sm"
             >
               <Phone className="w-3.5 h-3.5 shrink-0" />
               <span>{t("footer.call_us")}</span>
@@ -262,7 +260,7 @@ export default function Footer() {
               <a
                 href={`mailto:${settings.contactEmail}`}
                 aria-label="Email"
-                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
+                className="w-9 h-9 rounded-xl bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all shadow-sm"
               >
                 <Mail className="w-4 h-4" />
               </a>
@@ -273,7 +271,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="X"
-                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
+                className="w-9 h-9 rounded-xl bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all shadow-sm"
               >
                 <X className="w-4 h-4" />
               </a>
@@ -285,7 +283,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-5 pt-1">
           {/* Platform Column */}
           <div className="space-y-3">
-            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-slate-400 pb-1.5 border-b border-slate-800/60">
+            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-muted-foreground pb-1.5 border-b border-border">
               {t("footer.about_platform")}
             </h4>
             <ul className="space-y-2">
@@ -293,9 +291,9 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-2 text-[0.82rem] font-medium text-slate-400 hover:text-slate-200 active:text-white transition-colors"
+                    className="flex items-center gap-2 text-[0.82rem] font-medium text-muted-foreground hover:text-foreground active:text-foreground transition-colors"
                   >
-                    <link.icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <link.icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate">{link.label}</span>
                   </Link>
                 </li>
@@ -305,7 +303,7 @@ export default function Footer() {
 
           {/* Support Column */}
           <div className="space-y-3">
-            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-slate-400 pb-1.5 border-b border-slate-800/60">
+            <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-muted-foreground pb-1.5 border-b border-border">
               {t("footer.help_support")}
             </h4>
             <ul className="space-y-2">
@@ -313,9 +311,9 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-2 text-[0.82rem] font-medium text-slate-400 hover:text-slate-200 active:text-white transition-colors"
+                    className="flex items-center gap-2 text-[0.82rem] font-medium text-muted-foreground hover:text-foreground active:text-foreground transition-colors"
                   >
-                    <link.icon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <link.icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate">{link.label}</span>
                   </Link>
                 </li>
@@ -326,23 +324,23 @@ export default function Footer() {
 
         {/* Mobile Contact Strip */}
         <div className="pt-1">
-          <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-between gap-3 shadow-sm">
+          <div className="p-3 rounded-2xl bg-muted/60 border border-border flex items-center justify-between gap-3 shadow-sm">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
                 <Phone className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
-                <h5 className="text-[11px] font-bold text-slate-400 leading-tight">
+                <h5 className="text-[11px] font-bold text-muted-foreground leading-tight">
                   {t("footer.call_us")}
                 </h5>
-                <p className="text-xs font-bold text-white font-mono truncate mt-0.5" dir="ltr">
+                <p className="text-xs font-bold text-foreground font-mono truncate mt-0.5" dir="ltr">
                   {settings.contactPhone?.trim() || settings.contactEmail || "info@digital-brokerage.com"}
                 </p>
               </div>
             </div>
             <a
               href={settings.contactPhone?.trim() ? `tel:${settings.contactPhone.trim()}` : "/customerservice/contact"}
-              className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-black transition-all shrink-0 shadow-sm"
+              className="px-3 py-1.5 rounded-xl bg-primary hover:bg-primary/90 active:scale-95 text-primary-foreground text-xs font-black transition-all shrink-0 shadow-sm"
             >
               {isAr ? "اتصال" : "Call"}
             </a>
@@ -350,11 +348,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Minimal Copyright Strip */}
-        <div className="pt-4 border-t border-slate-800/80 flex flex-col items-center gap-1 text-center">
-          <p className="text-[0.72rem] text-slate-500 font-medium">
+        <div className="pt-4 border-t border-border flex flex-col items-center gap-1 text-center">
+          <p className="text-[0.72rem] text-muted-foreground font-medium">
             {t("footer.rights_platform", { year: 2026 })}
           </p>
-          <p className="text-[0.66rem] text-slate-600">
+          <p className="text-[0.66rem] text-muted-foreground/80">
             {t("footer.made_with")}
           </p>
         </div>
