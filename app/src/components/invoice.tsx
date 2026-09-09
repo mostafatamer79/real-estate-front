@@ -149,7 +149,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
         } : null;
         try {
             if (!invoiceElement) return;
-            
+
+            invoiceElement.classList.add('invoice-export-mode');
             invoiceElement.style.height = `${invoiceElement.scrollHeight}px`;
             invoiceElement.style.maxHeight = 'none';
             invoiceElement.style.overflow = 'visible';
@@ -219,6 +220,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             alert('حدث خطأ أثناء إنشاء ملف PDF');
         } finally {
             if (invoiceElement && originalLayout) {
+                invoiceElement.classList.remove('invoice-export-mode');
                 invoiceElement.style.height = originalLayout.height;
                 invoiceElement.style.maxHeight = originalLayout.maxHeight;
                 invoiceElement.style.overflow = originalLayout.overflow;
@@ -404,8 +406,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                     <SaudiRiyalIcon className='h-5 w-5 text-purple-600' />
                                     تفاصيل الرسوم
                                 </h3>
-                                <div className='overflow-x-auto'>
-                                    <Table className='border border'>
+                                <div className='invoice-fees-table-wrapper overflow-x-auto'>
+                                    <Table className='invoice-fees-table border border'>
                                         <TableHeader>
                                             <TableRow className='bg-muted'>
                                                 <TableHead className='text-right font-bold text-gray-700'>{t('invoice.item')}</TableHead>
@@ -571,6 +573,16 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
             {/* Print Styles */}
             <style jsx global>{`
+                .invoice-export-mode .invoice-fees-table-wrapper {
+                    overflow: visible !important;
+                }
+
+                .invoice-export-mode .invoice-fees-table {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    table-layout: fixed !important;
+                }
+
                 @media print {
                     body * {
                         visibility: hidden;

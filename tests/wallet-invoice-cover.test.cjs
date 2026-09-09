@@ -22,6 +22,12 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /cacheBust: true/);
   assert.match(invoice, /invoice-export-actions/);
   assert.match(invoice, /classList\?\.contains\('invoice-export-actions'\)/);
+  assert.match(invoice, /invoice-export-mode/);
+  assert.match(invoice, /classList\.add\('invoice-export-mode'\)/);
+  assert.match(invoice, /invoice-fees-table-wrapper/);
+  assert.match(invoice, /invoice-fees-table/);
+  assert.match(invoice, /overflow: visible !important/);
+  assert.match(invoice, /table-layout: fixed !important/);
   assert.doesNotMatch(invoice, /classList\.add\('pdf-mode'\)/);
   assert.match(invoice, /backgroundColor: '#ffffff'/);
   assert.match(invoice, /style\.height = `\$\{invoiceElement\.scrollHeight\}px`/);
