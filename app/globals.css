@@ -644,7 +644,38 @@
   }
 }
 
+@keyframes mobileHeaderReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileMenuReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .mobile-header-shell {
+    animation: mobileHeaderReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .mobile-menu-panel {
+    animation: mobileMenuReveal 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: top center;
+  }
+
   /* Gentle page transition on every navigation (main is keyed by pathname) */
   .animate-page-in {
     animation: pageFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;

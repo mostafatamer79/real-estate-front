@@ -244,18 +244,8 @@ export default function Footer() {
             />
           </Link>
 
-          {/* Social / Contact Icons & Call Us Button */}
+          {/* Social / Contact Icons */}
           <div className="flex items-center gap-2">
-            {/* Call Us Button */}
-            <a
-              href={settings.contactPhone?.trim() ? `tel:${settings.contactPhone.trim()}` : "/customerservice/contact"}
-              aria-label={t("footer.call_us")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-slate-200 hover:bg-slate-800 hover:text-white active:scale-95 transition-all text-xs font-bold shadow-sm"
-            >
-              <Phone className="w-3.5 h-3.5 shrink-0" />
-              <span>{t("footer.call_us")}</span>
-            </a>
-
             {settings.contactEmail && (
               <a
                 href={`mailto:${settings.contactEmail}`}

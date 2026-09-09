@@ -1,0 +1,27 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.resolve(__dirname, '..');
+const header = fs.readFileSync(path.join(root, 'app/src/components/Header.tsx'), 'utf8');
+const footer = fs.readFileSync(path.join(root, 'app/src/components/Footer.tsx'), 'utf8');
+const styles = fs.readFileSync(path.join(root, 'app/globals.css'), 'utf8');
+
+test('mobile footer removes the top call-us action but keeps contact details', () => {
+  const mobileStart = footer.indexOf('MOBILE LAYOUT');
+  const mobileFooter = footer.slice(mobileStart);
+
+  assert.equal(mobileFooter.includes('t("footer.call_us")'), false);
+  assert.match(mobileFooter, /mobile-contact-block/);
+  assert.match(mobileFooter, /settings\.contactEmail/);
+});
+
+test('mobile header uses a polished shell and motion with reduced-motion support', () => {
+  assert.match(header, /mobile-header-shell/);
+  assert.match(header, /mobile-header-menu-button/);
+  assert.match(header, /mobile-menu-panel/);
+  assert.match(styles, /@keyframes mobileHeaderReveal/);
+  assert.match(styles, /@keyframes mobileMenuReveal/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+});

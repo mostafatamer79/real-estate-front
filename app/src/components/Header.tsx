@@ -152,14 +152,14 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950 max-md:border-b-white/[0.08] ${
+      className={`mobile-header-shell ${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950 max-md:border-b-white/[0.08] ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="w-full mx-auto h-full flex items-center justify-between px-6">
+      <div className="w-full mx-auto h-full flex items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <div
-          className="flex items-center gap-3 cursor-pointer group"
+          className="mobile-header-brand flex items-center gap-3 cursor-pointer group"
           onClick={() => router.push('/details')}
         >
           <Image
@@ -167,7 +167,7 @@ export default function Header() {
             alt={t('project.name')}
             width={280}
             height={settings.logoHeight || 40}
-            className="object-contain w-auto max-w-[50vw] h-8 sm:h-auto sm:max-w-none group-hover:opacity-80 transition-opacity"
+            className="object-contain w-auto max-w-[42vw] h-7 sm:h-auto sm:max-w-none group-hover:opacity-80 transition-opacity"
             style={{ height: `${settings.logoHeight || 40}px` }}
             priority
           />
@@ -327,7 +327,7 @@ export default function Header() {
         {/* Mobile Menu Toggle */}
         <button
           id="tour-target-mobile-menu"
-          className="md:hidden text-white p-2 -m-2"
+          className="mobile-header-menu-button md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all hover:bg-white/[0.08]"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -352,7 +352,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }}
-            className="md:hidden absolute top-16 left-0 right-0 bg-slate-950 border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+            className="mobile-menu-panel md:hidden absolute top-16 left-0 right-0 bg-slate-950/95 border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
              {/* Top highlight line */}
              <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
