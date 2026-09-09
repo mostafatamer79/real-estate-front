@@ -2,7 +2,7 @@
 import React from 'react'
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import { Card, CardFooter, CardHeader, CardTitle } from './ui/card'
 import {
@@ -159,79 +159,25 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             // Small delay to allow CSS changes to apply
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            const canvas = await html2canvas(invoiceElement, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                foreignObjectRendering: true,
+            const imageData = await toPng(invoiceElement, {
+                pixelRatio: 2,
                 backgroundColor: '#ffffff',
-                logging: false,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: invoiceElement.scrollWidth,
-                windowHeight: invoiceElement.scrollHeight,
-                onclone: (clonedDocument) => {
-                    const clonedInvoice = clonedDocument.getElementById('invoice-content');
-                    if (!clonedInvoice) return;
-
-                    clonedInvoice.style.height = `${invoiceElement.scrollHeight}px`;
-                    clonedInvoice.style.maxHeight = 'none';
-                    clonedInvoice.style.overflow = 'visible';
-
-                    // html2canvas 1.4 cannot parse Tailwind's oklch colors from stylesheets.
-                    // Replace them in the cloned stylesheets before html2canvas reads CSS rules.
-                    clonedDocument.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
-                        const sheet = (node as HTMLLinkElement).sheet;
-                        let cssText = node.textContent || '';
-                        try {
-                            if (sheet?.cssRules) {
-                                cssText = Array.from(sheet.cssRules).map((rule) => rule.cssText).join('\n');
-                            }
-                        } catch {
-                            return;
-                        }
-
-                        const safeCss = cssText.replace(/oklch\([^)]*\)/gi, '#64748b');
-                        if (safeCss === cssText) return;
-
-                        const replacement = clonedDocument.createElement('style');
-                        replacement.textContent = safeCss;
-                        node.replaceWith(replacement);
-                    });
-
-                    const elements = [
-                        clonedInvoice,
-                        ...Array.from(clonedInvoice.querySelectorAll<HTMLElement>('*')),
-                    ];
-                    const colorProperties = [
-                        'color',
-                        'background-color',
-                        'border-top-color',
-                        'border-right-color',
-                        'border-bottom-color',
-                        'border-left-color',
-                        'box-shadow',
-                        'text-shadow',
-                    ];
-
-                    elements.forEach((element) => {
-                        const computed = clonedDocument.defaultView?.getComputedStyle(element);
-                        if (!computed) return;
-
-                        colorProperties.forEach((property) => {
-                            if (!computed.getPropertyValue(property).includes('oklch')) return;
-                            const fallback = property === 'background-color'
-                                ? '#ffffff'
-                                : property.includes('shadow')
-                                    ? 'none'
-                                    : '#1e293b';
-                            element.style.setProperty(property, fallback);
-                        });
-                    });
+                cacheBust: true,
+                skipAutoScale: true,
+                width: invoiceElement.scrollWidth,
+                height: invoiceElement.scrollHeight,
+                style: {
+                    height: `${invoiceElement.scrollHeight}px`,
+                    maxHeight: 'none',
+                    overflow: 'visible',
                 },
             });
-            
-            const imgData = canvas.toDataURL('image/png');
+            const sourceImage = await new Promise<HTMLImageElement>((resolve, reject) => {
+                const image = new window.Image();
+                image.onload = () => resolve(image);
+                image.onerror = () => reject(new Error('Unable to prepare the invoice image'));
+                image.src = imageData;
+            });
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -239,23 +185,23 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             });
             
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pageHeightPx = Math.floor((canvas.width * pdf.internal.pageSize.getHeight()) / pdfWidth);
-            const pageCount = Math.ceil(canvas.height / pageHeightPx);
+            const pageHeightPx = Math.floor((sourceImage.naturalWidth * pdf.internal.pageSize.getHeight()) / pdfWidth);
+            const pageCount = Math.ceil(sourceImage.naturalHeight / pageHeightPx);
 
             for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
                 const sourceY = pageIndex * pageHeightPx;
-                const sliceHeight = Math.min(pageHeightPx, canvas.height - sourceY);
+                const sliceHeight = Math.min(pageHeightPx, sourceImage.naturalHeight - sourceY);
                 const pageCanvas = document.createElement('canvas');
-                pageCanvas.width = canvas.width;
+                pageCanvas.width = sourceImage.naturalWidth;
                 pageCanvas.height = sliceHeight;
                 const pageContext = pageCanvas.getContext('2d');
                 if (!pageContext) continue;
 
                 pageContext.drawImage(
-                    canvas,
+                    sourceImage,
                     0,
                     sourceY,
-                    canvas.width,
+                    sourceImage.naturalWidth,
                     sliceHeight,
                     0,
                     0,
@@ -265,7 +211,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
                 if (pageIndex > 0) pdf.addPage();
                 const pageImage = pageCanvas.toDataURL('image/png');
-                const pageHeight = (sliceHeight * pdfWidth) / canvas.width;
+                const pageHeight = (sliceHeight * pdfWidth) / sourceImage.naturalWidth;
                 pdf.addImage(pageImage, 'PNG', 0, 0, pdfWidth, pageHeight);
             }
             pdf.save(`${invoiceData.invoiceNumber}.pdf`);
