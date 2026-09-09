@@ -197,7 +197,7 @@ function RequestCard({
                   <div className="flex flex-wrap items-center gap-2">
                     {existingOffer ? (
                       <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        تم تقديم عرض سعر القسم وهو مقفل ومؤكد
+                        تم إرسال السعر للعميل وظهر في محفظته
                       </span>
                     ) : (
                       <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-black bg-muted text-slate-700 border border">
@@ -273,7 +273,7 @@ function RequestCard({
                       className="w-full h-11 bg-card border border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all text-slate-700 placeholder:text-slate-300 disabled:opacity-65 disabled:bg-muted/50 disabled:cursor-not-allowed"
                     />
                     <p className="text-[10px] font-bold text-slate-400">
-                      {existingOffer ? "تم تقديم عرض القسم مسبقاً وقفله بنجاح." : "بمجرد تقديم هذا العرض سيتم قفله تلقائياً ولن تتمكن من تعديله مجدداً."}
+                      {existingOffer ? "تم إرسال السعر للعميل وأصبح جاهزاً للدفع من المحفظة." : "بمجرد إرسال السعر سيتم قفله تلقائياً ولن تتمكن من تعديله مجدداً."}
                     </p>
                   </div>
                   <div className="flex-1 space-y-1">

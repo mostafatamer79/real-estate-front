@@ -7,8 +7,6 @@ export type ServiceCategoryId =
   | 'legal'
   | 'construction'
   | 'marketing'
-  | 'leasing'
-  | 'visit'
   | 'other';
 
 export type ServiceItemStatus = 'enabled' | 'soon' | 'disabled';
@@ -62,22 +60,10 @@ export const SERVICE_CATALOG: Record<ServiceCategoryId, ServiceCatalogEntry> = {
     index: '04',
     options: ['تصوير فوتوغرافي للعقار', 'حملة إعلانية (وسائل التواصل الاجتماعي)', 'حملة إعلانية (إعلانات طرق/تقليدية)', 'أخرى'],
   },
-  leasing: {
-    title: 'خدمات التأجير والإدارة',
-    description: 'إدارة ذكية لعقودك وتحصيل إيجاراتك بكل يسر وأمان.',
-    index: '05',
-    options: ['تأجير العقار', 'إدارة عقود الإيجار', 'تحصيل الإيجارات', 'أخرى'],
-  },
-  visit: {
-    title: 'طلب زيارة العقار',
-    description: 'خدمات ميدانية لمعاينة العقار، تصويره، أو استلام تقارير مفصلة عنه.',
-    index: '06',
-    options: ['زيارة شخصية', 'زيارة بالنيابة', 'تصوير العقار', 'تقرير مفصل', 'جولة مع الوكيل', 'أخرى'],
-  },
   other: {
     title: 'خدمات أخرى',
     description: 'خدمات استشارية وتقييمية شاملة تلبي كافة احتياجاتك العقارية.',
-    index: '07',
+    index: '05',
     options: ['التقييم العقاري', 'المسح الهندسي', 'تمويل عقاري', 'أخرى'],
   },
 };

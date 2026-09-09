@@ -28,7 +28,6 @@ import {
   AlertTriangle,
   Plus,
   X,
-  User,
   UserCheck,
   Check,
   Trash2,
@@ -100,13 +99,11 @@ export default function AdminServicesManagementPage() {
     }
   }, [settings]);
 
-  // Catalog-driven categories (lib/service-catalog.ts) — includes leasing & visit.
+  // Catalog-driven categories (lib/service-catalog.ts).
   const categoryIcons: Record<string, any> = {
     postPurchase: ShoppingBag,
     construction: Hammer,
     marketing: Megaphone,
-    leasing: User,
-    visit: Eye,
     other: MoreHorizontal,
   };
   const baseNonLegalServiceCategories = SERVICE_CATEGORY_IDS.filter((id) => id !== "legal").map((id) => ({
@@ -143,8 +140,6 @@ export default function AdminServicesManagementPage() {
     legal_other: "legal_other",
     construction: "construction",
     marketing: "marketing",
-    leasing: "leasing",
-    visit: "visit",
     other: "other",
   };
   const typeParam = searchParams.get("type") || "post_purchase";
@@ -289,8 +284,6 @@ export default function AdminServicesManagementPage() {
     { id: "postPurchase", type: "post_purchase", label: "خدمات ما بعد الشراء", icon: ShoppingBag },
     { id: "construction", type: "construction", label: "البناء والمقاولات", icon: Hammer },
     { id: "marketing", type: "marketing", label: "خدمات التسويق", icon: Megaphone },
-    { id: "leasing", type: "leasing", label: "التأجير والإدارة", icon: User },
-    { id: "visit", type: "visit", label: "طلب زيارة العقار", icon: Eye },
     { id: "other", type: "other", label: "أخرى", icon: MoreHorizontal },
     { id: "legal", type: "legal", label: "الخدمات القانونية", icon: Scale },
     { id: "legal_disputes", type: "legal_disputes", label: "القانونية: المنازعات", icon: Scale },
@@ -1840,8 +1833,6 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                 <option value="legal">الخدمات القانونية</option>
                 <option value="construction">البناء والمقاولات</option>
                 <option value="marketing">خدمات التسويق</option>
-                <option value="leasing">التأجير والإدارة</option>
-                <option value="visit">طلب زيارة العقار</option>
                 <option value="other">أخرى</option>
               </select>
             </div>

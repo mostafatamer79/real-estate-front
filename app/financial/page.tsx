@@ -117,7 +117,7 @@ export default function FinancialPage({ embedded = false, initialTab = "dashboar
                 <SegmentedTabs value={activeTab} className="w-full space-y-8" onValueChange={setActiveTab}>
                     {/* Premium Tabs — wrapping chips on phones, scroll row on desktop */}
                     <div className="overflow-x-auto pb-2 hide-scrollbar max-md:overflow-visible max-md:pb-0">
-                        <SegmentedList className="inline-flex h-auto min-h-11 flex-nowrap sm:flex-wrap items-center gap-1.5 rounded-2xl bg-slate-950/5 p-1.5 border border-slate-950/10 w-full sm:w-auto max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:min-h-0">
+                        <SegmentedList dir={language === 'ar' ? 'rtl' : 'ltr'} className="financial-tabs-list inline-flex h-auto min-h-11 flex-nowrap sm:flex-wrap items-center gap-1.5 rounded-2xl bg-slate-950/5 p-1.5 border border-slate-950/10 w-full sm:w-auto max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:min-h-0">
                             <SegmentedTrigger value="dashboard" className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider data-[state=active]:bg-slate-950 data-[state=active]:text-white data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:bg-slate-950/5 transition-all whitespace-nowrap max-md:flex-1 max-md:min-w-[29%] max-md:justify-center max-md:rounded-full max-md:px-4 max-md:py-2.5 max-md:text-[11px]">
                                 <LayoutDashboard className="w-3.5 h-3.5" />
                                 {t('fin.tab.dashboard')}
@@ -289,9 +289,9 @@ function GeneralDashboard({ embedded = false }: { embedded?: boolean }) {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
                       key={idx}
-                      className="p-3 sm:p-6 rounded-3xl bg-card border border hover:border-slate-300 transition-all duration-300 group"
+                      className="financial-kpi-card p-3 sm:p-6 rounded-3xl bg-card border border hover:border-slate-300 transition-all duration-300 group"
                     >
-                        <div className="flex items-center gap-4">
+                        <div className="financial-kpi-content flex items-center gap-4 text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                             <div className={`w-12 h-12 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center transition-all duration-500 border border-`}>
                                 <kpi.icon className="w-5 h-5" />
                             </div>

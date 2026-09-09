@@ -16,9 +16,7 @@ const baseServiceCards = [
   { id: "legal", icon: Scale, index: "02", span: "md:col-span-2 lg:col-span-3", title: SERVICE_CATALOG.legal.title, description: SERVICE_CATALOG.legal.description, custom: false },
   { id: "construction", icon: Hammer, index: "03", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.construction.title, description: SERVICE_CATALOG.construction.description, custom: false },
   { id: "marketing", icon: Megaphone, index: "04", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.marketing.title, description: SERVICE_CATALOG.marketing.description, custom: false },
-  { id: "leasing", icon: Sparkles, index: "05", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.leasing.title, description: SERVICE_CATALOG.leasing.description, custom: false },
-  { id: "visit", icon: Sparkles, index: "06", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.visit.title, description: SERVICE_CATALOG.visit.description, custom: false },
-  { id: "other", icon: MoreHorizontal, index: "07", span: "md:col-span-4 lg:col-span-2", title: SERVICE_CATALOG.other.title, description: SERVICE_CATALOG.other.description, custom: false },
+  { id: "other", icon: MoreHorizontal, index: "05", span: "md:col-span-4 lg:col-span-2", title: SERVICE_CATALOG.other.title, description: SERVICE_CATALOG.other.description, custom: false },
 ];
 
 export default function Services() {

@@ -152,7 +152,7 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950/80 max-md:backdrop-blur-2xl max-md:border-b-white/[0.08] ${
+      className={`${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950 max-md:border-b-white/[0.08] ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
@@ -352,7 +352,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }}
-            className="md:hidden absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+            className="md:hidden absolute top-16 left-0 right-0 bg-slate-950 border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
           >
              {/* Top highlight line */}
              <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -423,7 +423,7 @@ export default function Header() {
                     <>
                       <Link
                         href="/admin/dashboard"
-                        className="flex items-center gap-3 py-3.5 px-3 text-emerald-400 text-base sm:text-lg font-medium rounded-xl hover:bg-emerald-500/5 transition-all duration-200 active:scale-[0.98]"
+                        className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -431,7 +431,7 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/internal"
-                        className="flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98]"
+                        className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -443,7 +443,7 @@ export default function Header() {
                   {user && ((user.departments && user.departments.length > 0) || (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && user.role !== Role.ADMIN && (
                     <Link
                       href="/internal"
-                      className="flex items-center gap-3 py-3.5 px-3 text-blue-400 text-base sm:text-lg font-medium rounded-xl hover:bg-blue-500/5 transition-all duration-200 active:scale-[0.98]"
+                      className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                         <LayoutDashboard className="w-5 h-5" />
@@ -457,7 +457,7 @@ export default function Header() {
 
                   <button
                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                    className="flex items-center gap-3 py-3.5 px-3 text-red-400 text-base sm:text-lg font-medium rounded-xl hover:bg-red-500/5 transition-all duration-200 active:scale-[0.98]"
+                    className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                   >
                     <LogOut className="w-5 h-5" />
                     {t('header.logout')}
@@ -466,7 +466,7 @@ export default function Header() {
              ) : (
                 <button
                   onClick={() => { router.push('/login'); setIsMenuOpen(false); }}
-                  className="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-base sm:text-lg font-semibold rounded-xl shadow-[0_4px_20px_rgba(99,102,241,0.3)] active:scale-[0.98] transition-all duration-200"
+                  className="w-full py-3 bg-slate-800 text-white text-base sm:text-lg font-semibold rounded-xl border border-white/10 shadow-sm active:scale-[0.98] transition-all duration-200"
                 >
                   {t('header.login')}
                 </button>

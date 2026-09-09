@@ -180,7 +180,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
     return (
         <div
-            className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto p-4 print:block print:p-0'
+            className='invoice-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-sm overflow-y-auto p-4 print:block print:p-0'
             onClick={onClose}
             dir="rtl"
         >
@@ -216,7 +216,15 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 </div>
 
                 {/* Invoice Content */}
-                <div id="invoice-content" className='p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white'>
+                <div
+                    id="invoice-content"
+                    className='invoice-cover-background p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white/70'
+                    style={{
+                        backgroundImage: "url('/cover.jpeg')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'top center',
+                    }}
+                >
                     {/* Letterhead Header (Only visible in print/PDF) */}
                     <div className="hidden print:block pdf-header w-full mb-8 z-10 relative">
                         <img src="/cover.jpeg" alt="Company Header" className="w-full h-auto object-contain" crossOrigin="anonymous" />

@@ -275,7 +275,7 @@ export default function NewSubscriptionPage() {
         </div>
 
         {(!loading && packages.length === 0 && planMode === "packages") ? null : (
-          <div className="grid grid-cols-2 gap-3 rounded-[1rem] border border bg-card p-2 shadow-sm">
+          <div className="rounded-[1rem] border border bg-card p-2 shadow-sm">
             <button
               type="button"
               onClick={() => {
@@ -283,25 +283,9 @@ export default function NewSubscriptionPage() {
                 setSelectedDepartments([]);
                 setEmployeeSeats(0);
               }}
-              className={`h-12 rounded-2xl text-sm font-black transition-colors ${
-                planMode === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
-              }`}
+              className="h-12 w-full rounded-2xl bg-slate-950 text-sm font-black text-white transition-colors"
             >
               الباقات الجاهزة
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setPlanMode("custom");
-                setSelectedPackageId("");
-                setSelectedDepartments([]);
-                setEmployeeSeats(0);
-              }}
-              className={`h-12 rounded-2xl text-sm font-black transition-colors ${
-                planMode === "custom" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
-              }`}
-            >
-              اشتراك مخصص
             </button>
           </div>
         )}
@@ -322,19 +306,6 @@ export default function NewSubscriptionPage() {
             ) : packages.length === 0 && planMode === "packages" ? (
               <div className="py-8 md:py-16 flex flex-col items-center gap-4 text-center">
                 <p className="text-slate-400 font-bold">{t("sub.public.emptyPackages")}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPlanMode("custom");
-                    setSelectedPackageId("");
-                    setSelectedDepartments([]);
-                    setEmployeeSeats(0);
-                  }}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white transition-colors hover:bg-slate-800"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  اشتراك مخصص
-                </button>
               </div>
             ) : planMode === "custom" ? (
               <div className="space-y-4">

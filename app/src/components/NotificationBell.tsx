@@ -87,7 +87,11 @@ export default function NotificationBell({
     if (data.roomId) return `/chat/${data.roomId}`;
     if (data.offerId) return `/offers/${data.offerId}`;
     if (data.orderId) return `/orders/${data.orderId}`;
-    if (data.serviceRequestId) return `/admin/service-requests?requestId=${data.serviceRequestId}`;
+    if (data.serviceRequestId) {
+      if (data.wallet) return '/wallet';
+      if (data.department) return `/internal/${data.department}?view=requests`;
+      return '/wallet';
+    }
     if (data.commissionId) return '/wallet';
     if (data.bookingId) return '/orders';
 
@@ -103,7 +107,9 @@ export default function NotificationBell({
       case 'commission':
         return '/wallet';
       case 'service_request':
-        return data.serviceRequestId ? `/admin/service-requests?requestId=${data.serviceRequestId}` : '/services/my-requests';
+        if (data.wallet) return '/wallet';
+        if (data.department) return `/internal/${data.department}?view=requests`;
+        return '/wallet';
       case 'legal_dispute':
         return '/disputes';
       default:

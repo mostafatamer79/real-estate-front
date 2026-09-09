@@ -2457,19 +2457,19 @@ function BuildingManagementContent({
   // Render Property Management Main Section with Sub-tabs
   const renderPropertyManagement = () => (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="bg-card rounded-[1.25rem] shadow-2xl shadow-stone-400 p-10 border border">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 md:gap-6 mb-10">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 bg-slate-900 rounded-[1rem] flex items-center justify-center shadow-xl shadow-stone-400 text-white">
-              <Building className="w-8 h-8" />
+      <div className="property-management-card bg-card rounded-[1.25rem] shadow-2xl shadow-stone-400 p-4 sm:p-10 border border">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6 mb-6 sm:mb-10">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-900 rounded-[1rem] flex items-center justify-center shadow-xl shadow-stone-400 text-white shrink-0">
+              <Building className="w-7 h-7 sm:w-8 sm:h-8" />
             </div>
-            <div>
-              <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">{t('pm.properties')}</h1>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-3xl font-black text-slate-900 tracking-tighter uppercase truncate">{t('pm.properties')}</h1>
               <p className="text-slate-500 font-medium text-sm">{t('action.assetManagement')}</p>
             </div>
           </div>
           
-          <div className="bg-muted p-1.5 rounded-2xl flex flex-wrap gap-1 border border-slate-200/50">
+          <div className="property-management-tabs bg-muted p-1.5 rounded-2xl flex flex-col sm:flex-row sm:flex-wrap gap-1 border border-slate-200/50">
             {[
               { id: "portfolio", label: t('pm.tab.portfolio'), icon: Building },
               { id: "tenants", label: t('pm.tenants'), icon: Users },
@@ -2480,7 +2480,7 @@ function BuildingManagementContent({
               <button 
                 key={tab.id}
                 onClick={() => setActivePropertyTab(tab.id as any)} 
-                className={`px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2 ${
+                className={`w-full sm:w-auto justify-center px-3 sm:px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2 ${
                   activePropertyTab === tab.id 
                     ? "bg-card text-slate-900 shadow-lg shadow-stone-400 scale-105" 
                     : "text-slate-400 hover:text-slate-600 hover:bg-card/50"

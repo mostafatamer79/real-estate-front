@@ -322,6 +322,53 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Contact details — mirrors the desktop contact column */}
+        <div className="mobile-contact-block space-y-3 border-t border-slate-800/80 pt-5">
+          <h4 className="text-[0.72rem] font-bold uppercase tracking-wider text-slate-400">
+            {t("footer.contact")}
+          </h4>
+          <ul className="space-y-3">
+            {settings.contactEmail && (
+              <li className="flex items-center gap-3 text-[0.82rem] font-medium text-slate-400">
+                <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+                <a
+                  href={`mailto:${settings.contactEmail}`}
+                  className="hover:text-white transition-colors break-all"
+                  dir="ltr"
+                >
+                  {settings.contactEmail}
+                </a>
+              </li>
+            )}
+            {settings.contactPhone && (
+              <li className="flex items-center gap-3 text-[0.82rem] font-medium text-slate-400">
+                <Phone className="w-4 h-4 text-slate-500 shrink-0" />
+                <a
+                  href={`tel:${settings.contactPhone}`}
+                  className="hover:text-white transition-colors"
+                  dir="ltr"
+                >
+                  {settings.contactPhone}
+                </a>
+              </li>
+            )}
+            {settings.contactTwitter && (
+              <li className="flex items-center gap-3 text-[0.82rem] font-medium text-slate-400">
+                <X className="w-4 h-4 text-slate-500 shrink-0" />
+                <a
+                  href={getXProfileUrl(settings.contactTwitter)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition-colors"
+                  dir="ltr"
+                >
+                  {settings.contactTwitter}
+                </a>
+              </li>
+            )}
+          </ul>
+        </div>
+
         {/* Bottom Minimal Copyright Strip */}
         <div className="pt-4 border-t border-slate-800/80 flex flex-col items-center gap-1 text-center">
           <p className="text-[0.72rem] text-slate-500 font-medium">

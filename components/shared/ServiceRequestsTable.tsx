@@ -86,20 +86,27 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         setInvoiceMessage(null);
         
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/send-invoice`, {
+            const isDepartmentPricing = department === 'marketing' || department === 'legal';
+            const endpoint = isDepartmentPricing
+                ? `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/department-price`
+                : `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/send-invoice`;
+            const res = await fetch(endpoint, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ price: parseFloat(invoicePrice) })
+                body: JSON.stringify({
+                    price: parseFloat(invoicePrice),
+                    ...(isDepartmentPricing ? { deptSlug: department } : {}),
+                })
             });
 
             if (res.ok) {
-                setInvoiceMessage({ type: 'success', text: 'تم إرسال الفاتورة بنجاح' });
+                setInvoiceMessage({ type: 'success', text: isDepartmentPricing ? 'تم إرسال السعر للعميل وظهر في محفظته' : 'تم إرسال الفاتورة بنجاح' });
                 fetchRequests();
                 // Optionally update the selected request locally so the UI updates without closing the modal
-                setSelectedRequest({ ...selectedRequest, invoiceSent: true, price: invoicePrice });
+                setSelectedRequest({ ...selectedRequest, invoiceSent: true, clientDecision: 'accepted', price: invoicePrice, invoicePrice });
                 setInvoicePrice("");
             } else {
                 setInvoiceMessage({ type: 'error', text: 'حدث خطأ أثناء إرسال الفاتورة' });
@@ -472,7 +479,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                         ) : (
                                                             <>
                                                                 <CheckCircle className="w-4 h-4" />
-                                                                <span>إرسال الفاتورة للعميل</span>
+                                                                <span>{department === 'marketing' || department === 'legal' ? 'إرسال السعر للعميل' : 'إرسال الفاتورة للعميل'}</span>
                                                             </>
                                                         )}
                                                     </button>
