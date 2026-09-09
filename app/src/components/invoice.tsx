@@ -189,26 +189,29 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header - Hide in print */}
-                <div className='flex justify-between items-center p-6 border-b border print:hidden'>
+                <div className='invoice-modal-toolbar sticky top-0 z-30 flex justify-between items-center gap-3 p-4 sm:p-6 border-b border bg-card/95 backdrop-blur-xl print:hidden'>
                     <h1 className='text-2xl font-bold'>{t('invoice.title')}</h1>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-1.5 sm:gap-2'>
                         <button
                             onClick={handlePrint}
-                            className='p-2 hover:bg-muted rounded-lg transition-colors flex items-center gap-2'
+                            aria-label={t('invoice.print')}
+                            className='invoice-toolbar-button p-2.5 sm:p-2 hover:bg-muted rounded-xl transition-colors flex items-center gap-2'
                         >
                             <Printer className='h-5 w-5' />
-                            <span>{t('invoice.print')}</span>
+                            <span className='hidden sm:inline'>{t('invoice.print')}</span>
                         </button>
                         <button
                             onClick={handleDownload}
-                            className='p-2 hover:bg-muted rounded-lg transition-colors flex items-center gap-2'
+                            aria-label={t('invoice.download')}
+                            className='invoice-toolbar-button p-2.5 sm:p-2 hover:bg-muted rounded-xl transition-colors flex items-center gap-2'
                         >
                             <Download className='h-5 w-5' />
-                            <span>{t('invoice.download')}</span>
+                            <span className='hidden sm:inline'>{t('invoice.download')}</span>
                         </button>
                         <button
                             onClick={onClose}
-                            className='p-2 hover:bg-muted rounded-full transition-colors'
+                            aria-label={t('common.close') || 'Close'}
+                            className='invoice-toolbar-button p-2.5 sm:p-2 hover:bg-muted rounded-full transition-colors'
                         >
                             <X className='h-6 w-6 text-gray-600' />
                         </button>
@@ -218,11 +221,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 {/* Invoice Content */}
                 <div
                     id="invoice-content"
-                    className='invoice-cover-background p-6 max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white/70'
+                    className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white/70'
                     style={{
                         backgroundImage: "url('/cover.jpeg')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'top center',
+                        backgroundSize: '100% auto',
+                        backgroundPosition: 'center -96px',
+                        backgroundAttachment: 'local',
+                        backgroundRepeat: 'no-repeat',
                     }}
                 >
                     {/* Letterhead Header (Only visible in print/PDF) */}
