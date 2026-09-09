@@ -205,9 +205,35 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             });
             
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const pageHeightPx = Math.floor((canvas.width * pdf.internal.pageSize.getHeight()) / pdfWidth);
+            const pageCount = Math.ceil(canvas.height / pageHeightPx);
+
+            for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+                const sourceY = pageIndex * pageHeightPx;
+                const sliceHeight = Math.min(pageHeightPx, canvas.height - sourceY);
+                const pageCanvas = document.createElement('canvas');
+                pageCanvas.width = canvas.width;
+                pageCanvas.height = sliceHeight;
+                const pageContext = pageCanvas.getContext('2d');
+                if (!pageContext) continue;
+
+                pageContext.drawImage(
+                    canvas,
+                    0,
+                    sourceY,
+                    canvas.width,
+                    sliceHeight,
+                    0,
+                    0,
+                    pageCanvas.width,
+                    pageCanvas.height,
+                );
+
+                if (pageIndex > 0) pdf.addPage();
+                const pageImage = pageCanvas.toDataURL('image/png');
+                const pageHeight = (sliceHeight * pdfWidth) / canvas.width;
+                pdf.addImage(pageImage, 'PNG', 0, 0, pdfWidth, pageHeight);
+            }
             pdf.save(`${invoiceData.invoiceNumber}.pdf`);
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -267,7 +293,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         src="/watermark.png"
                         alt=""
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-80 brightness-0 contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-40 brightness-0 contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
                     />
 
                     {/* Letterhead Header (Only visible in print/PDF) */}
@@ -276,7 +302,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     </div>
 
                     {/* Watermark Background (Only visible in print/PDF) */}
-                    <div className="hidden print:flex pdf-watermark absolute inset-0 opacity-30 pointer-events-none items-center justify-center z-0">
+                    <div className="hidden print:flex pdf-watermark absolute inset-0 opacity-40 pointer-events-none items-center justify-center z-0">
                         <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain brightness-0" crossOrigin="anonymous" />
                     </div>
 
