@@ -221,15 +221,15 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 {/* Invoice Content */}
                 <div
                     id="invoice-content"
-                    className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white/70'
-                    style={{
-                        backgroundImage: "url('/watermark.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'top center',
-                        backgroundAttachment: 'local',
-                        backgroundRepeat: 'no-repeat',
-                    }}
+                    className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white'
                 >
+                    <img
+                        src="/watermark.png"
+                        alt=""
+                        aria-hidden="true"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.14] contrast-150 pointer-events-none select-none z-0"
+                    />
+
                     {/* Letterhead Header (Only visible in print/PDF) */}
                     <div className="hidden print:block pdf-header w-full mb-8 z-10 relative">
                         <img src="/cover.jpeg" alt="Company Header" className="w-full h-auto object-contain" crossOrigin="anonymous" />
@@ -240,7 +240,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain" crossOrigin="anonymous" />
                     </div>
 
-                    <Card className='bg-card border-0 shadow-none print:shadow-none relative z-10'>
+                    <Card className='invoice-section-card bg-white/95 border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
                         <CardHeader className='border-b border pb-6 print:border-b-2'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
@@ -298,7 +298,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                         <User className='h-5 w-5 text-blue-600' />
                                         {t('invoice.clientData')}
                                     </h3>
-                                    <div className='bg-muted p-4 rounded-lg space-y-3'>
+                                    <div className='invoice-section-card bg-slate-50/95 p-4 rounded-2xl border border-slate-200/80 space-y-3'>
                                         <div className='flex items-center gap-2'>
                                             <User className='h-4 w-4 text-gray-500' />
                                             <div>
@@ -328,7 +328,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                         <FileText className='h-5 w-5 text-green-600' />
                                         تفاصيل الخدمة
                                     </h3>
-                                    <div className='bg-green-50 p-4 rounded-lg space-y-3'>
+                                    <div className='invoice-section-card bg-emerald-50/90 p-4 rounded-2xl border border-emerald-100 space-y-3'>
                                         <div>
                                             <p className='font-semibold'>{t('wallet.commission.table.service')}</p>
                                             <p className='text-gray-700'>{invoiceData.service.type}</p>
@@ -345,7 +345,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                             {/* Service Description */}
                             <div>
                                 <h3 className='text-xl font-bold mb-4'>{t('invoice.serviceDesc')}</h3>
-                                <div className='bg-muted p-4 rounded-lg border border-blue-100'>
+                                <div className='invoice-section-card bg-blue-50/80 p-4 rounded-2xl border border-blue-100'>
                                     <p className='text-gray-700 leading-relaxed'>{invoiceData.service.description}</p>
                                 </div>
                             </div>
@@ -412,7 +412,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
                                             {/* Total Row */}
                                             <TableRow className='bg-muted font-bold border-t-2 border-blue-200'>
-                                                <TableCell colSpan={3} className='text-right text-blue-800'>
+                                                <TableCell colSpan={3} className='invoice-total-card text-right text-blue-800'>
                                                     {t('invoice.finalTotal')}
                                                 </TableCell>
                                                 <TableCell className='text-right text-blue-800 text-lg'>
