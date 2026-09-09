@@ -161,6 +161,40 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 scrollY: 0,
                 windowWidth: invoiceElement.scrollWidth,
                 windowHeight: invoiceElement.scrollHeight,
+                onclone: (clonedDocument) => {
+                    const clonedInvoice = clonedDocument.getElementById('invoice-content');
+                    if (!clonedInvoice) return;
+
+                    const elements = [
+                        clonedInvoice,
+                        ...Array.from(clonedInvoice.querySelectorAll<HTMLElement>('*')),
+                    ];
+                    const colorProperties = [
+                        'color',
+                        'background-color',
+                        'border-top-color',
+                        'border-right-color',
+                        'border-bottom-color',
+                        'border-left-color',
+                        'box-shadow',
+                        'text-shadow',
+                    ];
+
+                    elements.forEach((element) => {
+                        const computed = clonedDocument.defaultView?.getComputedStyle(element);
+                        if (!computed) return;
+
+                        colorProperties.forEach((property) => {
+                            if (!computed.getPropertyValue(property).includes('oklch')) return;
+                            const fallback = property === 'background-color'
+                                ? '#ffffff'
+                                : property.includes('shadow')
+                                    ? 'none'
+                                    : '#1e293b';
+                            element.style.setProperty(property, fallback);
+                        });
+                    });
+                },
             });
             
             const imgData = canvas.toDataURL('image/png');
@@ -233,7 +267,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         src="/watermark.png"
                         alt=""
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.12] contrast-150 pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.28] contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
                     />
 
                     {/* Letterhead Header (Only visible in print/PDF) */}
@@ -246,7 +280,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain" crossOrigin="anonymous" />
                     </div>
 
-                    <Card className='invoice-section-card bg-white/95 border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
+                    <Card className='invoice-section-card bg-white/75 border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
                         <CardHeader className='border-b border pb-6 print:border-b-2'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
