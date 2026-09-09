@@ -16,6 +16,7 @@ test('wallet invoice shows a clear watermark and supports reliable export', () =
   assert.match(invoice, /brightness-0/);
   assert.match(invoice, /bg-transparent/);
   assert.match(invoice, /allowTaint: false/);
+  assert.match(invoice, /foreignObjectRendering: true/);
   assert.match(invoice, /backgroundColor: '#ffffff'/);
   assert.match(invoice, /onclone:/);
   assert.match(invoice, /oklch/);

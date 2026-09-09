@@ -163,6 +163,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 scale: 2,
                 useCORS: true,
                 allowTaint: false,
+                foreignObjectRendering: true,
                 backgroundColor: '#ffffff',
                 logging: false,
                 scrollX: 0,
