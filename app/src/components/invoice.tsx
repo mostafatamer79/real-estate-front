@@ -223,9 +223,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     id="invoice-content"
                     className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white/70'
                     style={{
-                        backgroundImage: "url('/cover.jpeg')",
-                        backgroundSize: '100% auto',
-                        backgroundPosition: 'center -96px',
+                        backgroundImage: "url('/watermark.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'top center',
                         backgroundAttachment: 'local',
                         backgroundRepeat: 'no-repeat',
                     }}
