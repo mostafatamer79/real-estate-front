@@ -12,9 +12,8 @@ test('wallet invoice shows a clear watermark and supports reliable export', () =
   assert.match(invoice, /invoice-modal-backdrop/);
   assert.match(invoice, /invoice-content[\s\S]*invoice-cover-background/);
   assert.match(invoice, /invoice-watermark-layer/);
-  assert.match(invoice, /opacity-40/);
+  assert.match(invoice, /opacity-\[0\.14\]/);
   assert.match(invoice, /brightness-0/);
-  assert.match(invoice, /pdf-watermark[\s\S]*opacity-40/);
   assert.match(invoice, /bg-transparent/);
   assert.match(invoice, /allowTaint: false/);
   assert.match(invoice, /backgroundColor: '#ffffff'/);

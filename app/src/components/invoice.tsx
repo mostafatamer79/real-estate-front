@@ -293,17 +293,12 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         src="/watermark.png"
                         alt=""
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-40 brightness-0 contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.14] brightness-0 contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
                     />
 
                     {/* Letterhead Header (Only visible in print/PDF) */}
                     <div className="hidden print:block pdf-header w-full mb-8 z-10 relative">
                         <img src="/cover.jpeg" alt="Company Header" className="w-full h-auto object-contain" crossOrigin="anonymous" />
-                    </div>
-
-                    {/* Watermark Background (Only visible in print/PDF) */}
-                    <div className="hidden print:flex pdf-watermark absolute inset-0 opacity-40 pointer-events-none items-center justify-center z-0">
-                        <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain brightness-0" crossOrigin="anonymous" />
                     </div>
 
                     <Card className='invoice-section-card bg-transparent border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
