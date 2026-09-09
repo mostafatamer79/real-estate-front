@@ -584,6 +584,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     table-layout: fixed !important;
                 }
 
+                .invoice-export-mode .invoice-fees-table th,
+                .invoice-export-mode .invoice-fees-table td {
+                    white-space: normal !important;
+                    overflow-wrap: anywhere !important;
+                    padding: 0.4rem !important;
+                }
+
                 @media print {
                     body * {
                         visibility: hidden;
