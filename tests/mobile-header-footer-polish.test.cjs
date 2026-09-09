@@ -13,6 +13,8 @@ test('mobile footer removes the top call-us action but keeps contact details', (
   const mobileFooter = footer.slice(mobileStart);
 
   assert.equal(mobileFooter.includes('t("footer.call_us")'), false);
+  assert.equal(mobileFooter.includes('aria-label="Email"'), false);
+  assert.equal(mobileFooter.includes('aria-label="X"'), false);
   assert.match(mobileFooter, /mobile-contact-block/);
   assert.match(mobileFooter, /settings\.contactEmail/);
 });
@@ -20,6 +22,10 @@ test('mobile footer removes the top call-us action but keeps contact details', (
 test('mobile header uses a polished shell and motion with reduced-motion support', () => {
   assert.match(header, /mobile-header-shell/);
   assert.match(header, /mobile-header-menu-button/);
+  assert.match(header, /mobile-header-shortcuts/);
+  assert.match(header, /tour-target-mobile-customer-service/);
+  assert.match(header, /tour-target-mobile-language/);
+  assert.match(header, /tour-target-mobile-profile/);
   assert.match(header, /mobile-menu-panel/);
   assert.match(styles, /@keyframes mobileHeaderReveal/);
   assert.match(styles, /@keyframes mobileMenuReveal/);

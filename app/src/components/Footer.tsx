@@ -244,29 +244,6 @@ export default function Footer() {
             />
           </Link>
 
-          {/* Social / Contact Icons */}
-          <div className="flex items-center gap-2">
-            {settings.contactEmail && (
-              <a
-                href={`mailto:${settings.contactEmail}`}
-                aria-label="Email"
-                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
-              >
-                <Mail className="w-4 h-4" />
-              </a>
-            )}
-            {settings.contactTwitter && (
-              <a
-                href={getXProfileUrl(settings.contactTwitter)}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="X"
-                className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-center justify-center text-slate-400 hover:text-white active:bg-slate-800 active:scale-95 transition-all shadow-sm"
-              >
-                <X className="w-4 h-4" />
-              </a>
-            )}
-          </div>
         </div>
 
         {/* Clean 2-Column Links with Icons */}

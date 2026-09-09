@@ -173,6 +173,43 @@ export default function Header() {
           />
         </div>
 
+        {/* Mobile shortcuts kept outside the drawer for quick access */}
+        <div className="mobile-header-shortcuts md:hidden flex items-center gap-1.5">
+          {settings.sectionFlags.customerservice !== 'hidden' && (
+            <Link
+              id="tour-target-mobile-customer-service"
+              href="/customerservice"
+              aria-label={t('header.customerService')}
+              onClick={(event) => {
+                if (settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN) {
+                  event.preventDefault();
+                }
+              }}
+              className={`flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08] ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
+            >
+              <Headset className="h-4.5 w-4.5" />
+            </Link>
+          )}
+          <button
+            id="tour-target-mobile-language"
+            type="button"
+            onClick={toggleLanguage}
+            aria-label={language === 'ar' ? 'English' : 'العربية'}
+            className="flex h-10 min-w-10 items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-2 text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
+          >
+            <Languages className="h-4 w-4" />
+            <span className="text-[0.62rem] font-bold uppercase">{language === 'ar' ? 'EN' : 'AR'}</span>
+          </button>
+          <Link
+            id="tour-target-mobile-profile"
+            href="/profile"
+            aria-label={language === 'ar' ? 'الملف الشخصي' : 'Profile'}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
+          >
+            <User className="h-4.5 w-4.5" />
+          </Link>
+        </div>
+
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-4 md:gap-8 items-center">
             
