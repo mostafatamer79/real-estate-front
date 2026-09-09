@@ -276,7 +276,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 >
                     <div
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 opacity-[0.14] pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 opacity-[0.18] pointer-events-none select-none z-0"
                         style={{
                             backgroundImage: "url('/watermark.png')",
                             backgroundRepeat: 'repeat',

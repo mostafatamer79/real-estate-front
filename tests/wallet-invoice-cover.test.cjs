@@ -14,7 +14,7 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /invoice-watermark-layer/);
   assert.match(invoice, /backgroundRepeat: 'repeat'/);
   assert.match(invoice, /backgroundSize: '452px auto'/);
-  assert.match(invoice, /opacity-\[0\.14\]/);
+  assert.match(invoice, /opacity-\[0\.18\]/);
   assert.match(invoice, /bg-transparent/);
   assert.match(invoice, /import \{ toPng \} from 'html-to-image';/);
   assert.doesNotMatch(invoice, /html2canvas/);
