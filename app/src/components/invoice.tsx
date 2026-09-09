@@ -141,8 +141,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
     const handleDownload = async () => {
         setIsProcessing(true);
+        const invoiceElement = document.getElementById('invoice-content');
         try {
-            const invoiceElement = document.getElementById('invoice-content');
             if (!invoiceElement) return;
             
             // Add a temporary class to format for PDF
@@ -154,9 +154,14 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             const canvas = await html2canvas(invoiceElement, {
                 scale: 2,
                 useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: invoiceElement.scrollWidth,
+                windowHeight: invoiceElement.scrollHeight,
             });
-            
-            invoiceElement.classList.remove('pdf-mode');
             
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
@@ -174,6 +179,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             console.error('Error generating PDF:', error);
             alert('حدث خطأ أثناء إنشاء ملف PDF');
         } finally {
+            invoiceElement?.classList.remove('pdf-mode');
             setIsProcessing(false);
         }
     };
@@ -223,6 +229,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     id="invoice-content"
                     className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white'
                 >
+                    <img
+                        src="/watermark.png"
+                        alt=""
+                        aria-hidden="true"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.12] contrast-150 pointer-events-none select-none z-0"
+                    />
+
                     {/* Letterhead Header (Only visible in print/PDF) */}
                     <div className="hidden print:block pdf-header w-full mb-8 z-10 relative">
                         <img src="/cover.jpeg" alt="Company Header" className="w-full h-auto object-contain" crossOrigin="anonymous" />
