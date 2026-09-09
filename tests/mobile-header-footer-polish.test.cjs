@@ -27,7 +27,13 @@ test('mobile header uses a polished shell and motion with reduced-motion support
   assert.match(header, /tour-target-mobile-language/);
   assert.match(header, /tour-target-mobile-profile/);
   assert.match(header, /mobile-menu-panel/);
+  const drawer = header.slice(header.indexOf('mobile-menu-panel'));
+  assert.equal(drawer.includes("t('header.customerService')"), false);
+  assert.equal(drawer.includes('toggleLanguage(); setIsMenuOpen(false)'), false);
+  assert.equal(drawer.includes('href="/profile"'), false);
   assert.match(styles, /@keyframes mobileHeaderReveal/);
   assert.match(styles, /@keyframes mobileMenuReveal/);
+  assert.match(styles, /@keyframes mobileMenuItemReveal/);
+  assert.match(styles, /\.mobile-menu-panel > a/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });

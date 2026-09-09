@@ -389,42 +389,13 @@ export default function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }}
-            className="mobile-menu-panel md:hidden absolute top-16 left-0 right-0 bg-slate-950/95 border-b border-white/[0.08] flex flex-col p-4 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+            className="mobile-menu-panel md:hidden absolute top-16 left-0 right-0 bg-slate-950/95 border-b border-white/[0.08] flex flex-col p-3 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
              {/* Top highlight line */}
              <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-             {settings.sectionFlags.customerservice !== 'hidden' && (
-               <Link
-                 href="/customerservice"
-                 className={`flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98] ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-                 onClick={() => setIsMenuOpen(false)}
-               >
-                   <Headset className="w-5 h-5" />
-                   {t('header.customerService')}
-               </Link>
-             )}
-
-
-             <button
-                onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
-                className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium uppercase rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
-             >
-                <Languages className="w-5 h-5" />
-                {language === 'ar' ? 'English' : 'العربية'}
-             </button>
-
              {user ? (
                <>
-                 <Link
-                    href="/profile"
-                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="w-5 h-5" />
-                    {user.firstName || user.email}
-                  </Link>
-
                   <Link
                     href="/chat"
                     className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium relative rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
