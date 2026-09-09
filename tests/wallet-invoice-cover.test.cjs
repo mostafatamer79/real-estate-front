@@ -8,10 +8,10 @@ const invoice = fs.readFileSync(
   'utf8'
 );
 
-test('wallet invoice uses the watermark-only background behind on-screen content', () => {
+test('wallet invoice keeps the on-screen invoice clean without a watermark layer', () => {
   assert.match(invoice, /invoice-modal-backdrop/);
   assert.match(invoice, /invoice-content[\s\S]*invoice-cover-background/);
-  assert.match(invoice, /invoice-watermark-layer/);
+  assert.doesNotMatch(invoice, /invoice-watermark-layer/);
   assert.match(invoice, /invoice-section-card/);
   assert.match(invoice, /invoice-total-card/);
   assert.match(invoice, /bg-white/);
