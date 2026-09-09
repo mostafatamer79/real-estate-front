@@ -142,11 +142,19 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
     const handleDownload = async () => {
         setIsProcessing(true);
         const invoiceElement = document.getElementById('invoice-content');
+        const originalLayout = invoiceElement ? {
+            height: invoiceElement.style.height,
+            maxHeight: invoiceElement.style.maxHeight,
+            overflow: invoiceElement.style.overflow,
+        } : null;
         try {
             if (!invoiceElement) return;
             
             // Add a temporary class to format for PDF
             invoiceElement.classList.add('pdf-mode');
+            invoiceElement.style.height = `${invoiceElement.scrollHeight}px`;
+            invoiceElement.style.maxHeight = 'none';
+            invoiceElement.style.overflow = 'visible';
             
             // Small delay to allow CSS changes to apply
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -164,6 +172,31 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 onclone: (clonedDocument) => {
                     const clonedInvoice = clonedDocument.getElementById('invoice-content');
                     if (!clonedInvoice) return;
+
+                    clonedInvoice.style.height = `${invoiceElement.scrollHeight}px`;
+                    clonedInvoice.style.maxHeight = 'none';
+                    clonedInvoice.style.overflow = 'visible';
+
+                    // html2canvas 1.4 cannot parse Tailwind's oklch colors from stylesheets.
+                    // Replace them in the cloned stylesheets before html2canvas reads CSS rules.
+                    clonedDocument.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
+                        const sheet = (node as HTMLLinkElement).sheet;
+                        let cssText = node.textContent || '';
+                        try {
+                            if (sheet?.cssRules) {
+                                cssText = Array.from(sheet.cssRules).map((rule) => rule.cssText).join('\n');
+                            }
+                        } catch {
+                            return;
+                        }
+
+                        const safeCss = cssText.replace(/oklch\([^)]*\)/gi, '#64748b');
+                        if (safeCss === cssText) return;
+
+                        const replacement = clonedDocument.createElement('style');
+                        replacement.textContent = safeCss;
+                        node.replaceWith(replacement);
+                    });
 
                     const elements = [
                         clonedInvoice,
@@ -239,6 +272,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             console.error('Error generating PDF:', error);
             alert('حدث خطأ أثناء إنشاء ملف PDF');
         } finally {
+            if (invoiceElement && originalLayout) {
+                invoiceElement.style.height = originalLayout.height;
+                invoiceElement.style.maxHeight = originalLayout.maxHeight;
+                invoiceElement.style.overflow = originalLayout.overflow;
+            }
             invoiceElement?.classList.remove('pdf-mode');
             setIsProcessing(false);
         }

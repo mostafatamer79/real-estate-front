@@ -19,6 +19,11 @@ test('wallet invoice shows a clear watermark and supports reliable export', () =
   assert.match(invoice, /backgroundColor: '#ffffff'/);
   assert.match(invoice, /onclone:/);
   assert.match(invoice, /oklch/);
+  assert.match(invoice, /cssRules/);
+  assert.match(invoice, /safeCss = cssText\.replace/);
+  assert.match(invoice, /style\.height = `\$\{invoiceElement\.scrollHeight\}px`/);
+  assert.match(invoice, /maxHeight = 'none'/);
+  assert.match(invoice, /overflow = 'visible'/);
   assert.match(invoice, /pageHeightPx/);
   assert.match(invoice, /pageCount/);
   assert.match(invoice, /pdf\.addPage\(\)/);
