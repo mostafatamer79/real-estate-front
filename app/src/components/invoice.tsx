@@ -267,7 +267,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         src="/watermark.png"
                         alt=""
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.28] contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.32] contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
                     />
 
                     {/* Letterhead Header (Only visible in print/PDF) */}
@@ -280,7 +280,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                         <img src="/watermark.png" alt="Watermark" className="w-2/3 h-auto object-contain" crossOrigin="anonymous" />
                     </div>
 
-                    <Card className='invoice-section-card bg-white/75 border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
+                    <Card className='invoice-section-card bg-transparent border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
                         <CardHeader className='border-b border pb-6 print:border-b-2'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
