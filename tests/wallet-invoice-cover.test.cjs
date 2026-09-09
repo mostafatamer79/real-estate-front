@@ -26,6 +26,7 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /classList\.add\('invoice-export-mode'\)/);
   assert.match(invoice, /invoice-fees-table-wrapper/);
   assert.match(invoice, /invoice-fees-table/);
+  assert.match(invoice, /\[data-slot="table-container"\]/);
   assert.match(invoice, /overflow: visible !important/);
   assert.match(invoice, /table-layout: fixed !important/);
   assert.doesNotMatch(invoice, /classList\.add\('pdf-mode'\)/);

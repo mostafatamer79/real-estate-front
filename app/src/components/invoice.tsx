@@ -573,7 +573,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
             {/* Print Styles */}
             <style jsx global>{`
-                .invoice-export-mode .invoice-fees-table-wrapper {
+                .invoice-export-mode .invoice-fees-table-wrapper,
+                .invoice-export-mode .invoice-fees-table-wrapper [data-slot="table-container"] {
                     overflow: visible !important;
                 }
 
