@@ -150,8 +150,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
         try {
             if (!invoiceElement) return;
             
-            // Add a temporary class to format for PDF
-            invoiceElement.classList.add('pdf-mode');
             invoiceElement.style.height = `${invoiceElement.scrollHeight}px`;
             invoiceElement.style.maxHeight = 'none';
             invoiceElement.style.overflow = 'visible';
@@ -166,6 +164,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 skipAutoScale: true,
                 width: invoiceElement.scrollWidth,
                 height: invoiceElement.scrollHeight,
+                filter: (node) => !node.classList?.contains('invoice-export-actions'),
                 style: {
                     height: `${invoiceElement.scrollHeight}px`,
                     maxHeight: 'none',
@@ -224,7 +223,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 invoiceElement.style.maxHeight = originalLayout.maxHeight;
                 invoiceElement.style.overflow = originalLayout.overflow;
             }
-            invoiceElement?.classList.remove('pdf-mode');
             setIsProcessing(false);
         }
     };
@@ -274,11 +272,15 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     id="invoice-content"
                     className='invoice-cover-background scroll-smooth overscroll-contain p-4 sm:p-6 max-h-[calc(100vh-148px)] sm:max-h-[calc(100vh-200px)] overflow-y-auto print:max-h-none print:overflow-visible relative bg-white'
                 >
-                    <img
-                        src="/watermark.png"
-                        alt=""
+                    <div
                         aria-hidden="true"
-                        className="invoice-watermark-layer absolute inset-0 h-full w-full object-cover opacity-[0.14] brightness-0 contrast-150 mix-blend-multiply pointer-events-none select-none z-0"
+                        className="invoice-watermark-layer absolute inset-0 opacity-[0.14] pointer-events-none select-none z-0"
+                        style={{
+                            backgroundImage: "url('/watermark.png')",
+                            backgroundRepeat: 'repeat',
+                            backgroundSize: '452px auto',
+                            backgroundPosition: 'center top',
+                        }}
                     />
 
                     {/* Letterhead Header (Only visible in print/PDF) */}
@@ -492,7 +494,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                      
 
                             {/* Action Buttons - Hide in print */}
-                            <CardFooter className='pt-6 flex justify-between print:hidden'>
+                            <CardFooter className='invoice-export-actions pt-6 flex justify-between print:hidden'>
                                 <div className='flex gap-4'>
                                     <button
                                         onClick={handlePrint}
@@ -569,22 +571,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
             {/* Print Styles */}
             <style jsx global>{`
-                .pdf-mode .pdf-header, .pdf-mode .pdf-footer {
-                    display: block !important;
-                }
-                .pdf-mode .pdf-watermark {
-                    display: flex !important;
-                }
-                .pdf-mode .print\\:hidden {
-                    display: none !important;
-                }
-                .pdf-mode {
-                    padding: 0;
-                    margin: 0;
-                    box-shadow: none !important;
-                    width: 210mm; /* A4 width */
-                    max-width: none;
-                }
                 @media print {
                     body * {
                         visibility: hidden;

@@ -12,13 +12,17 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /invoice-modal-backdrop/);
   assert.match(invoice, /invoice-content[\s\S]*invoice-cover-background/);
   assert.match(invoice, /invoice-watermark-layer/);
+  assert.match(invoice, /backgroundRepeat: 'repeat'/);
+  assert.match(invoice, /backgroundSize: '452px auto'/);
   assert.match(invoice, /opacity-\[0\.14\]/);
-  assert.match(invoice, /brightness-0/);
   assert.match(invoice, /bg-transparent/);
   assert.match(invoice, /import \{ toPng \} from 'html-to-image';/);
   assert.doesNotMatch(invoice, /html2canvas/);
   assert.match(invoice, /toPng\(invoiceElement/);
   assert.match(invoice, /cacheBust: true/);
+  assert.match(invoice, /invoice-export-actions/);
+  assert.match(invoice, /classList\?\.contains\('invoice-export-actions'\)/);
+  assert.doesNotMatch(invoice, /classList\.add\('pdf-mode'\)/);
   assert.match(invoice, /backgroundColor: '#ffffff'/);
   assert.match(invoice, /style\.height = `\$\{invoiceElement\.scrollHeight\}px`/);
   assert.match(invoice, /maxHeight = 'none'/);
@@ -26,7 +30,7 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /pageHeightPx/);
   assert.match(invoice, /pageCount/);
   assert.match(invoice, /pdf\.addPage\(\)/);
-  assert.match(invoice, /finally \{[\s\S]*pdf-mode/);
+  assert.doesNotMatch(invoice, /\.pdf-mode \.pdf-header/);
   assert.match(invoice, /invoice-section-card/);
   assert.match(invoice, /invoice-total-card/);
   assert.match(invoice, /bg-white/);
