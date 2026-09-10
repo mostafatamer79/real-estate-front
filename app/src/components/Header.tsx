@@ -175,6 +175,21 @@ export default function Header() {
 
         {/* Mobile shortcuts kept outside the drawer for quick access */}
         <div className="mobile-header-shortcuts md:hidden flex items-center gap-1.5">
+          {user && (
+            <Link
+              id="tour-target-mobile-chat"
+              href="/chat"
+              aria-label={t('chat.title')}
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
+            >
+              <MessageSquare className="h-4.5 w-4.5" />
+              {unreadChatCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white shadow-md ring-1 ring-slate-950">
+                  {unreadChatCount > 9 ? '9+' : unreadChatCount}
+                </span>
+              )}
+            </Link>
+          )}
           {settings.sectionFlags.customerservice !== 'hidden' && (
             <Link
               id="tour-target-mobile-customer-service"
@@ -190,24 +205,7 @@ export default function Header() {
               <Headset className="h-4.5 w-4.5" />
             </Link>
           )}
-          <button
-            id="tour-target-mobile-language"
-            type="button"
-            onClick={toggleLanguage}
-            aria-label={language === 'ar' ? 'English' : 'العربية'}
-            className="flex h-10 min-w-10 items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-2 text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
-          >
-            <Languages className="h-4 w-4" />
-            <span className="text-[0.62rem] font-bold uppercase">{language === 'ar' ? 'EN' : 'AR'}</span>
-          </button>
-          <Link
-            id="tour-target-mobile-profile"
-            href="/profile"
-            aria-label={language === 'ar' ? 'الملف الشخصي' : 'Profile'}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
-          >
-            <User className="h-4.5 w-4.5" />
-          </Link>
+          {user && <NotificationBell variant="dark" buttonClassName="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.16)] hover:bg-white/[0.08]" />}
         </div>
 
         {/* Desktop Navigation */}
@@ -397,20 +395,25 @@ export default function Header() {
              {user ? (
                <>
                   <Link
-                    href="/chat"
-                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium relative rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                    id="tour-target-mobile-profile"
+                    href="/profile"
+                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <div className="relative">
-                      <MessageSquare className="w-5 h-5" />
-                      {unreadChatCount > 0 && (
-                        <span className="absolute -top-1.5 -right-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white shadow-md ring-1 ring-slate-950 wow-pulse-glow">
-                          {unreadChatCount}
-                        </span>
-                      )}
-                    </div>
-                    {t('chat.title')}
+                    <User className="w-5 h-5" />
+                    {language === 'ar' ? 'صفحة العميل' : 'Customer page'}
                   </Link>
+
+                  <button
+                    id="tour-target-mobile-language"
+                    type="button"
+                    onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
+                    aria-label={language === 'ar' ? 'English' : 'العربية'}
+                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                  >
+                    <Languages className="w-5 h-5" />
+                    {language === 'ar' ? 'English' : 'العربية'}
+                  </button>
 
                   <Link
                     href="/services/my-requests"
