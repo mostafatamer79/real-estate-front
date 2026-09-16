@@ -329,6 +329,15 @@ export default function SignIn({ onClose }: SignInProps) {
               </motion.div>
             )}
 
+            <button
+              type="button"
+              onClick={() => router.push('/nafath-login')}
+              disabled={isLoading}
+              className="w-full mb-5 rounded-xl border border-emerald-400/35 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20 disabled:opacity-50"
+            >
+              تسجيل الدخول عبر نفاذ
+            </button>
+
             <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
