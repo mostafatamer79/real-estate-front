@@ -879,6 +879,7 @@ nav.fixed[class*="bottom"] {
   .wow-reveal {
     opacity: 0;
     transform: translateY(18px);
+    will-change: transform, opacity;
     animation: wowReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     animation-delay: var(--reveal-delay, 0ms);
   }
@@ -891,6 +892,7 @@ nav.fixed[class*="bottom"] {
   .wow-reveal-scale {
     opacity: 0;
     transform: scale(0.92);
+    will-change: transform, opacity;
     animation: wowRevealScale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     animation-delay: var(--reveal-delay, 0ms);
   }
@@ -902,6 +904,7 @@ nav.fixed[class*="bottom"] {
   .wow-reveal-start {
     opacity: 0;
     transform: translateX(-20px);
+    will-change: transform, opacity;
     animation: wowRevealStart 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     animation-delay: var(--reveal-delay, 0ms);
   }
@@ -988,6 +991,7 @@ nav.fixed[class*="bottom"] {
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
+    contain: paint;
   }
   .wow-aurora::before,
   .wow-aurora::after {

@@ -279,7 +279,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-muted pb-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader theme="light" title={t('profile.title')} showNotifications onBack={handleBack} />
+      <MobileAppHeader theme="light" title={t('profile.title')} onBack={handleBack} />
       <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-6">
         
         {/* Header */}

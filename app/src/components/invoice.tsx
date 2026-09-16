@@ -291,7 +291,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                     </div>
 
                     <Card className='invoice-section-card bg-transparent border border-slate-200/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] print:shadow-none print:border-0 relative z-10'>
-                        <CardHeader className='border-b border pb-6 print:border-b-2'>
+                        <CardHeader className='sticky top-0 z-20 border-b border bg-white/95 pb-6 backdrop-blur-sm print:static print:border-b-2 print:bg-transparent print:backdrop-blur-none'>
                             <div className='flex justify-between items-start'>
                                 <div className='space-y-4'>
                                     <div className='flex items-center gap-3'>

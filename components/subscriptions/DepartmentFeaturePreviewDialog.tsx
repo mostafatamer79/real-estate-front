@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BarChart3,
   Briefcase,
@@ -173,48 +173,63 @@ const SECTION_ICONS: Record<string, React.ElementType> = {
   logs: MessageSquare,
 };
 
+const ADMINISTRATION_TO_PREVIEW: Record<string, PreviewDepartmentKey> = {
+  "admin.dept.real_estate": "properties",
+  "admin.dept.offers": "offers",
+  "admin.dept.orders": "orders",
+  "admin.dept.marketing": "marketing",
+  "admin.dept.legal": "legal",
+  "admin.dept.finance": "finance",
+  "admin.dept.hr": "employees",
+};
+
 export default function DepartmentFeaturePreviewDialog({
   open,
   onOpenChange,
   initialDepartment = "properties",
+  packageName,
+  packageFeatures,
+  packageAdministrations,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialDepartment?: PreviewDepartmentKey;
+  packageName?: string;
+  packageFeatures?: string[];
+  packageAdministrations?: string[];
 }) {
   const { language, direction } = useLanguage();
   const [activeDepartment, setActiveDepartment] = useState<PreviewDepartmentKey>(initialDepartment);
   const [activeSection, setActiveSection] = useState<string>("dashboard");
 
-  useEffect(() => {
-    if (open) {
-      setActiveDepartment(initialDepartment);
-    }
-  }, [initialDepartment, open]);
+  const visibleDepartments = useMemo(() => {
+    if (!packageAdministrations?.length) return PREVIEW_DEPARTMENTS;
+
+    const allowedDepartments = new Set(
+      packageAdministrations.map((administration) => ADMINISTRATION_TO_PREVIEW[administration]).filter(Boolean),
+    );
+    return PREVIEW_DEPARTMENTS.filter((department) => allowedDepartments.has(department.id));
+  }, [packageAdministrations]);
 
   const currentDepartment = useMemo(
-    () => PREVIEW_DEPARTMENTS.find((department) => department.id === activeDepartment) || PREVIEW_DEPARTMENTS[0],
-    [activeDepartment],
+    () => visibleDepartments.find((department) => department.id === activeDepartment) || visibleDepartments[0] || PREVIEW_DEPARTMENTS[0],
+    [activeDepartment, visibleDepartments],
   );
-
-  useEffect(() => {
-    setActiveSection(currentDepartment.sections[0]?.id || "dashboard");
-  }, [currentDepartment]);
 
   const currentSection =
     currentDepartment.sections.find((section) => section.id === activeSection) || currentDepartment.sections[0];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-[1.25rem] border border bg-card p-0" dir={direction}>
+      <DialogContent className="w-full max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-1rem)] overflow-x-hidden overflow-y-auto rounded-[1.25rem] border border bg-card p-0 sm:max-w-5xl sm:max-h-[90vh]" dir={direction}>
         <div className="border-b border bg-slate-950 px-4 py-4 sm:px-6 sm:py-5 text-white">
           <DialogHeader className="space-y-2 text-right">
-            <DialogTitle className="text-xl sm:text-2xl font-black">
+            <DialogTitle className="text-lg leading-[1.6] sm:text-2xl sm:leading-tight font-black">
               {language === "ar" ? "معاينة الأقسام قبل الاشتراك" : "Department Preview Before Subscription"}
             </DialogTitle>
-            <DialogDescription className="text-sm font-bold text-white/70">
-              {language === "ar"
-                ? "هذه معاينة للخصائص والواجهات فقط. لا يمكن إنشاء أو تعديل أي بيانات من هنا."
+              <DialogDescription className="max-w-full break-words text-sm leading-[1.9] font-bold text-white/70">
+                {language === "ar"
+                ? `هذه معاينة لخصائص ${packageName ? `باقة «${packageName}»` : "القسم"} والواجهات فقط. لا يمكن إنشاء أو تعديل أي بيانات من هنا.`
                 : "This is a read-only preview of features and interfaces. No data can be created or edited here."}
             </DialogDescription>
           </DialogHeader>
@@ -223,7 +238,7 @@ export default function DepartmentFeaturePreviewDialog({
         <div className="grid gap-0 lg:grid-cols-[240px_minmax(0,1fr)]">
           <aside className="border-b border bg-muted p-3 sm:p-4 lg:border-b-0 lg:border-l">
             <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-              {PREVIEW_DEPARTMENTS.map((department) => {
+              {visibleDepartments.map((department) => {
                 const Icon = department.icon;
                 const active = department.id === currentDepartment.id;
                 return (
@@ -261,7 +276,7 @@ export default function DepartmentFeaturePreviewDialog({
                   <div className="text-xl sm:text-2xl font-black text-slate-950">
                     {language === "ar" ? currentDepartment.titleAr : currentDepartment.titleEn}
                   </div>
-                  <p className="text-sm font-bold text-slate-500">
+                  <p className="break-words text-sm leading-[1.9] font-bold text-slate-500">
                     {language === "ar" ? currentDepartment.subtitleAr : currentDepartment.subtitleEn}
                   </p>
                 </div>
@@ -271,8 +286,8 @@ export default function DepartmentFeaturePreviewDialog({
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                {(language === "ar" ? currentDepartment.featuresAr : currentDepartment.featuresEn).map((feature) => (
-                  <span key={feature} className="rounded-full border border bg-card px-3 py-2 text-[11px] font-black text-slate-700">
+                {(packageFeatures?.length ? packageFeatures : (language === "ar" ? currentDepartment.featuresAr : currentDepartment.featuresEn)).map((feature) => (
+                  <span key={feature} className="max-w-full break-words rounded-full border border bg-card px-3 py-2 text-[11px] leading-6 font-black text-slate-700">
                     {feature}
                   </span>
                 ))}
@@ -311,7 +326,7 @@ export default function DepartmentFeaturePreviewDialog({
                 <div className="mb-2 text-lg font-black text-slate-950">
                   {language === "ar" ? currentSection.titleAr : currentSection.titleEn}
                 </div>
-                <p className="text-sm font-bold text-slate-500">
+                <p className="break-words text-sm leading-[1.9] font-bold text-slate-500">
                   {language === "ar" ? currentSection.descriptionAr : currentSection.descriptionEn}
                 </p>
 

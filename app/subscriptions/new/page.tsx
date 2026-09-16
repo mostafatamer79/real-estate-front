@@ -19,6 +19,7 @@ interface ManagementPackage {
   monthlyPrice: number;
   discount: number;
   description?: string;
+  features?: string[];
   administrations?: string[];
   departmentPrices?: Record<string, { monthly: number; yearly: number }>;
   employeeSeatMonthlyPrice?: number;
@@ -75,6 +76,7 @@ export default function NewSubscriptionPage() {
   const [notes, setNotes] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewDepartment, setPreviewDepartment] = useState<PreviewDepartmentKey>("properties");
+  const [previewPackage, setPreviewPackage] = useState<ManagementPackage | null>(null);
 
   useEffect(() => {
     const syncImpersonation = () => {
@@ -237,7 +239,11 @@ export default function NewSubscriptionPage() {
         notes: notes || (planMode === "custom" ? "اشتراك مخصص" : undefined),
       });
       toast.success(t("sub.public.createdRedirect"));
-      router.push(`/wallet?subscription=${response.data.id}`);
+      if (Number(response.data.amount || 0) <= 0 && response.data.status === "نشط") {
+        router.push("/department-hub");
+      } else {
+        router.push(`/wallet?subscription=${response.data.id}`);
+      }
     } catch (error: any) {
       console.error("Error creating department subscription:", error);
       toast.error(error?.response?.data?.message || t("sub.toast.error"));
@@ -246,8 +252,9 @@ export default function NewSubscriptionPage() {
     }
   };
 
-  const openDepartmentPreview = (department: PreviewDepartmentKey) => {
+  const openDepartmentPreview = (department: PreviewDepartmentKey, pkg?: ManagementPackage) => {
     setPreviewDepartment(department);
+    setPreviewPackage(pkg || selectedPackage || null);
     setPreviewOpen(true);
   };
 
@@ -412,7 +419,7 @@ export default function NewSubscriptionPage() {
                             onClick={(event) => {
                               event.stopPropagation();
                               const previewKey = departmentPreviewMap[administration];
-                              if (previewKey) openDepartmentPreview(previewKey);
+                              if (previewKey) openDepartmentPreview(previewKey, pkg);
                             }}
                             className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-[11px] font-black text-slate-700 transition-colors hover:bg-muted"
                           >
@@ -636,9 +643,13 @@ export default function NewSubscriptionPage() {
         </div>
       </div>
       <DepartmentFeaturePreviewDialog
+        key={`${previewOpen ? "open" : "closed"}-${previewPackage?.id || "all"}-${previewDepartment}`}
         open={previewOpen}
         onOpenChange={setPreviewOpen}
         initialDepartment={previewDepartment}
+        packageName={previewPackage?.name}
+        packageFeatures={previewPackage?.features}
+        packageAdministrations={previewPackage?.administrations}
       />
     </div>
   );

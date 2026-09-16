@@ -46,3 +46,10 @@ test('wallet invoice exports every page without the unsupported CSS parser', () 
   assert.match(invoice, /invoice-modal-toolbar/);
   assert.match(invoice, /scroll-smooth/);
 });
+
+test('wallet invoice keeps the icon header visible while invoice content scrolls', () => {
+  assert.match(
+    invoice,
+    /<CardHeader className=['"][^'"]*sticky top-0[^'"]*['"][^>]*>/
+  );
+});

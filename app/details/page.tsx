@@ -11,7 +11,7 @@ import PropertyInfoCards from "../src/components/PropertyInfoCards";
 import QuickActions from "../src/components/QuickActions";
 import PriceTrendChart from "../src/components/PriceTrendChart";
 import PropertyDistributionChart from "../src/components/PropertyDistributionChart";
-import ProfileModal from "@/components/ProfileModal";
+const ProfileModal = dynamic(() => import("@/components/ProfileModal"));
 import ComingSoonInline from "@/components/ComingSoonInline";
 import RecentActivity from "../src/components/RecentActivity";
 import Footer from "../src/components/Footer";
@@ -29,7 +29,7 @@ import { useSectionGuard } from '@/hooks/useSectionGuard';
 import { useSettings } from '@/context/SettingsContext';
 import ComingSoonOverlay from '@/components/ComingSoonOverlay';
 import api from '@/lib/api';
-import Tutorial from '@/components/Tutorial';
+const Tutorial = dynamic(() => import('@/components/Tutorial'));
 import { shouldShowOnboarding, saveOnboardingStatus, buildTourSteps } from '@/lib/onboarding';
 
 export default function HomePage() {
@@ -522,7 +522,7 @@ export default function HomePage() {
 
       </div>
 
-      {user && token && (
+      {isProfileModalOpen && user && token && (
         <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)}
           user={user} onUpdate={handleProfileUpdate} />
       )}

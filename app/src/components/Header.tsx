@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -24,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useNotifications } from "@/context/NotificationContext";
 import { Role } from "@/types/user";
-import { TermsPrivacyModal } from "@/components/modals/terms-privacy-modal";
+const TermsPrivacyModal = dynamic(() => import("@/components/modals/terms-privacy-modal").then((module) => module.TermsPrivacyModal));
 
 export default function Header() {
   const [user, setUser] = useState<any>(null);
@@ -69,25 +70,36 @@ export default function Header() {
     // Listen for custom auth changes (login/logout)
     window.addEventListener('auth-change', refreshUser);
     // Listen for changes from other tabs
-    window.addEventListener('storage', (e) => {
+    const handleStorage = (e: StorageEvent) => {
       if (e.key === 'user' || e.key === 'token') refreshUser();
-    });
+    };
+    window.addEventListener('storage', handleStorage);
 
     let lastScrollY = window.scrollY;
-    const handleScroll = () => {
+    let scrollFrame: number | null = null;
+    let visible = true;
+    let scrolled = window.scrollY > 10;
+    const updateScroll = () => {
+      scrollFrame = null;
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 64) {
-        setIsVisible(false);
+        if (visible) { visible = false; setIsVisible(false); }
       } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
+        if (!visible) { visible = true; setIsVisible(true); }
       }
-      setIsScrolled(currentScrollY > 10);
+      const nextScrolled = currentScrollY > 10;
+      if (nextScrolled !== scrolled) { scrolled = nextScrolled; setIsScrolled(nextScrolled); }
       lastScrollY = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      if (scrollFrame === null) scrollFrame = requestAnimationFrame(updateScroll);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('auth-change', refreshUser);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', handleStorage);
+      if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
     };
   }, []);
 
@@ -167,6 +179,7 @@ export default function Header() {
             alt={t('project.name')}
             width={280}
             height={settings.logoHeight || 40}
+            sizes="(max-width: 640px) 42vw, 280px"
             className="object-contain w-auto max-w-[42vw] h-7 sm:h-auto sm:max-w-none group-hover:opacity-80 transition-opacity"
             style={{ height: `${settings.logoHeight || 40}px` }}
             priority
@@ -210,8 +223,8 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-4 md:gap-8 items-center">
-            
-         
+
+
               {settings.sectionFlags.customerservice !== 'hidden' && (
                 <div className="relative group/nav">
                   <Link
@@ -251,8 +264,8 @@ export default function Header() {
                     className="text-white/70 hover:text-white transition-colors relative"
                     title={t('chat.title')}
                   >
-                    <MessageSquare 
-                      className="w-5 h-5" 
+                    <MessageSquare
+                      className="w-5 h-5"
                       style={{
                         color: settings?.headerChatColor || undefined,
                         width: settings?.headerChatSize ? `${settings.headerChatSize}px` : undefined,
@@ -287,15 +300,15 @@ export default function Header() {
                     href="/profile"
                     className="flex items-center gap-2 text-white bg-card/5 hover:bg-card/10 px-4 py-2 rounded-full border border-white/10 transition-all"
                   >
-                    <User 
-                      className="w-4 h-4" 
+                    <User
+                      className="w-4 h-4"
                       style={{
                         color: settings?.headerProfileColor || undefined,
                         width: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
                         height: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
                       }}
                     />
-                    <span 
+                    <span
                       className="text-sm"
                       style={{
                         color: settings?.headerProfileColor || undefined,
@@ -484,12 +497,12 @@ export default function Header() {
              )}
         </motion.div>
       </>)}
-      
-      <TermsPrivacyModal 
+
+      {isTermsModalOpen && <TermsPrivacyModal
         isOpen={isTermsModalOpen}
         onClose={() => setIsTermsModalOpen(false)}
         defaultTab={termsModalTab}
-      />
+      />}
     </header>
   );
 }

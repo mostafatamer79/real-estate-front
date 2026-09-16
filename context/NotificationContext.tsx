@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { notificationApi, Notification } from '@/lib/api/notification-api';
 import { toast } from 'react-hot-toast';
@@ -21,13 +21,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const data = await notificationApi.fetchNotifications(20, 0);
+      const [data, count] = await Promise.all([
+        notificationApi.fetchNotifications(20, 0),
+        notificationApi.getUnreadCount(),
+      ]);
       setNotifications(data.notifications);
-      const count = await notificationApi.getUnreadCount();
       setUnreadCount(count);
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
@@ -114,7 +116,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       console.log('Notification WebSocket disconnected');
     });
 
-    setSocket(newSocket);
+    socketRef.current = newSocket;
 
     const handleRefresh = () => {
       fetchNotifications();
@@ -125,20 +127,31 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     return () => {
       window.removeEventListener('refresh-notifications', handleRefresh);
       newSocket.close();
+      socketRef.current = null;
     };
   }, [fetchNotifications]);
 
+  const contextValue = useMemo(() => ({
+    notifications,
+    unreadCount,
+    loading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    refreshNotifications: fetchNotifications,
+  }), [
+    notifications,
+    unreadCount,
+    loading,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    fetchNotifications,
+  ]);
+
   return (
     <NotificationContext.Provider
-      value={{
-        notifications,
-        unreadCount,
-        loading,
-        markAsRead,
-        markAllAsRead,
-        deleteNotification,
-        refreshNotifications: fetchNotifications,
-      }}
+      value={contextValue}
     >
       {children}
     </NotificationContext.Provider>

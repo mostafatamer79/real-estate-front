@@ -317,6 +317,9 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
         open={previewOpen}
         onOpenChange={setPreviewOpen}
         initialDepartment={DEPT_TO_PREVIEW[deptSlug]}
+        packageName={selectedPackage?.name}
+        packageFeatures={selectedPackage?.features}
+        packageAdministrations={selectedPackage?.administrations}
       />
     </div>
   );
