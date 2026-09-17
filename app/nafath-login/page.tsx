@@ -62,8 +62,9 @@ export default function NafathLoginPage() {
       <button onClick={() => router.replace('/login')} className="text-sm text-slate-300">العودة لتسجيل الدخول</button>
       <h1 className="mt-6 text-2xl font-bold">تسجيل الدخول عبر نفاذ</h1>
       {!request ? <form onSubmit={submit} className="mt-6 space-y-4">
-        <label className="block text-sm text-slate-300">رقم الهوية الوطنية أو الإقامة</label>
-        <input value={nationalId} onChange={(event) => setNationalId(event.target.value.replace(/\D/g, ''))} inputMode="numeric" minLength={8} maxLength={20} required className="w-full rounded-xl border border-slate-700 bg-slate-800 p-3 text-left" dir="ltr" />
+        <label htmlFor="nafath-national-id" className="block text-base font-semibold text-white">رقم الهوية الوطنية أو الإقامة</label>
+        <input id="nafath-national-id" aria-label="رقم الهوية الوطنية أو الإقامة" placeholder="اكتب رقم الهوية أو الإقامة هنا" value={nationalId} onChange={(event) => setNationalId(event.target.value.replace(/\D/g, ''))} inputMode="numeric" minLength={8} maxLength={20} required className="w-full rounded-xl border-2 border-emerald-400/70 bg-slate-800 p-4 text-left text-lg text-white placeholder:text-slate-400 focus:border-emerald-300 focus:outline-none" dir="ltr" />
+        <p className="text-sm text-slate-300">اكتب الرقم ثم اضغط متابعة عبر نفاذ.</p>
         <button disabled={loading} className="w-full rounded-xl bg-emerald-500 p-3 font-bold text-slate-950 disabled:opacity-50">{loading ? 'جارٍ بدء الطلب...' : 'متابعة عبر نفاذ'}</button>
       </form> : <div className="mt-6 space-y-5 text-center">
         <p className="text-slate-300">طابق الرقم التالي مع الرقم الظاهر في تطبيق نفاذ:</p>
