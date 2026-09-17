@@ -13,7 +13,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     // List of public routes that don't require authentication
-    const publicRoutes = ['/', '/login', '/verify-otp', '/customerservice'];
+    const publicRoutes = ['/', '/login', '/verify-otp', '/nafath-login', '/customerservice'];
 
     const isPublic = publicRoutes.some(route =>
       pathname === route || (route !== '/' && pathname?.startsWith(route))
