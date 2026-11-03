@@ -26,13 +26,13 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-start justify-between gap-4 overflow-hidden rounded-[1rem] border p-4 pr-12 shadow-[0_20px_60px_rgba(15,23,42,0.16)] backdrop-blur-xl transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-70 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-3 data-[state=open]:sm:slide-in-from-bottom-3",
+  "group pointer-events-auto relative flex w-full items-start justify-between gap-4 overflow-hidden rounded-[1rem] border p-4 pr-12 shadow-[0_20px_60px_rgba(15,23,42,0.16)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-70 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-3 data-[state=open]:sm:slide-in-from-bottom-3",
   {
     variants: {
       variant: {
-        default: "border bg-card/95 text-slate-950",
+        default: "border-slate-200 bg-white text-slate-950",
         destructive:
-          "destructive group border-red-200 bg-card text-slate-950",
+          "destructive group border-red-200 bg-white text-slate-950",
       },
     },
     defaultVariants: {
@@ -107,7 +107,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm font-medium leading-6 text-slate-500", className)}
+    className={cn("text-sm font-medium leading-6 text-slate-600", className)}
     {...props}
   />
 ))

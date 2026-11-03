@@ -4,9 +4,9 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Wallet, CreditCard, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
-import { financialApi, paylinkApi } from '@/lib/api';
-import { useAuth } from '@/hooks/useAuth';
+import { financialApi } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { geideaEnabled, useGeideaCheckout } from '@/hooks/useGeideaCheckout';
 
 
 interface PaymentMethodsModalProps {
@@ -17,20 +17,17 @@ interface PaymentMethodsModalProps {
   subscriptionId?: string;
   price: number;
   onPaymentSuccess: () => void;
+  allowWallet?: boolean;
 }
 
-export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoiceId, subscriptionId, price, onPaymentSuccess }: PaymentMethodsModalProps) {
+export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoiceId, subscriptionId, price, onPaymentSuccess, allowWallet = true }: PaymentMethodsModalProps) {
   const { t, language } = useLanguage();
-  const { user } = useAuth();
+  const geidea = useGeideaCheckout(language);
+  const useGeidea = geideaEnabled && Boolean(bookingId || invoiceId || subscriptionId);
   const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [customerMobile, setCustomerMobile] = useState('');
-
-  useEffect(() => {
-    if (isOpen) setCustomerMobile(user?.phone || '');
-  }, [isOpen, user?.phone]);
 
   useEffect(() => {
     if (isOpen) {
@@ -51,7 +48,10 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
 
   const handlePayment = async () => {
     if (!selectedMethod) return;
-    if (selectedMethod !== 'balance' && !customerMobile.trim()) return;
+    if (selectedMethod === 'credit' && !useGeidea) {
+      toast.error(language === 'ar' ? 'الدفع الإلكتروني غير متاح حالياً.' : 'Card payments are currently unavailable.');
+      return;
+    }
     
     setProcessing(true);
     try {
@@ -61,11 +61,12 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
         toast.success(t('payment.success') || "تمت عملية الدفع بنجاح");
         onPaymentSuccess();
         onClose();
-      } else {
-        if (!invoiceId && !subscriptionId) throw new Error('Payment item is not available');
-        const result = await paylinkApi.createInvoice({ invoiceId: invoiceId || undefined, subscriptionId: subscriptionId || undefined, customerMobile: customerMobile.trim() });
-        if (!result.data?.paymentUrl) throw new Error('Paylink payment URL was not returned');
-        window.location.assign(result.data.paymentUrl);
+      } else if (selectedMethod === 'credit' && useGeidea) {
+        if (await geidea.pay({ bookingId, invoiceId, subscriptionId })) {
+          toast.success(t('payment.success'));
+          onPaymentSuccess();
+          onClose();
+        }
       }
     } catch (err: any) {
       toast.error(err.message || t('payment.error'));
@@ -75,12 +76,12 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
   };
 
   const methods = [
-    { id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> },
+    ...(!subscriptionId && allowWallet ? [{ id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> }] : []),
     { id: 'credit', title: t('payment.credit'), icon: <CreditCard className="w-5 h-5" />, desc: t('payment.creditDesc') || "مدى، فيزا، ماستركارد" },
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog modal={!geidea.processing} open={isOpen} onOpenChange={(open) => { if (!open && !processing) onClose(); }}>
       <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 max-h-[90vh] overflow-y-auto !bg-white/80 backdrop-blur-xl border !border-white/30 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
@@ -93,6 +94,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
           {methods.map((method) => (
             <button
               key={method.id}
+              disabled={processing || geidea.pending}
               onClick={() => {
                 setSelectedMethod(method.id);
               }}
@@ -122,27 +124,11 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
           ))}
         </div>
 
-        {selectedMethod === 'credit' && (
-          <div className="mt-4 space-y-2">
-            <label htmlFor="paylink-customer-mobile" className="text-sm font-bold text-slate-700">
-              {language === 'ar' ? 'رقم الجوال' : 'Mobile number'}
-            </label>
-            <input
-              id="paylink-customer-mobile"
-              type="tel"
-              inputMode="tel"
-              value={customerMobile}
-              onChange={(event) => setCustomerMobile(event.target.value)}
-              placeholder="05xxxxxxxx"
-              className="w-full h-12 rounded-xl border-2 border-slate-200 bg-white px-4 text-left text-slate-900 outline-none focus:border-indigo-600"
-              dir="ltr"
-              required
-            />
-            <p className="text-xs font-medium text-slate-500">
-              {language === 'ar' ? 'رقم الجوال مطلوب لإتمام الدفع الإلكتروني.' : 'A mobile number is required to complete online payment.'}
-            </p>
-          </div>
-        )}
+        {geidea.error && <p role="alert" className="mt-4 text-sm text-red-600">{geidea.error}</p>}
+
+        {!useGeidea && <p role="status" className="mt-4 text-sm text-amber-700">
+          {language === 'ar' ? 'الدفع الإلكتروني غير متاح حالياً.' : 'Card payments are currently unavailable.'}
+        </p>}
 
         {selectedMethod === 'balance' && balance < price && (
             <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2 text-amber-700 text-xs font-bold">
@@ -158,11 +144,11 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               !selectedMethod ||
               processing ||
               (selectedMethod === 'balance' && balance < price) ||
-              (selectedMethod !== 'balance' && !customerMobile.trim())
+              (selectedMethod === 'credit' && !useGeidea)
             }
             className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg transition-all active:scale-95"
           >
-            {processing ? <Loader2 className="w-6 h-6 animate-spin" /> : t('payment.confirm')}
+            {processing ? <Loader2 className="w-6 h-6 animate-spin" /> : geidea.pending ? (language === 'ar' ? 'التحقق من حالة الدفع' : 'Check payment status') : t('payment.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

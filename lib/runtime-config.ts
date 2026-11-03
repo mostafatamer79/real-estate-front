@@ -19,6 +19,7 @@ export function getApiBaseUrl(): string {
 export async function fetchPublicSettings(): Promise<Array<{ key: string; value: string }>> {
   const res = await fetch(`${getApiBaseUrl()}/settings/public`, {
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
 
   if (!res.ok) {

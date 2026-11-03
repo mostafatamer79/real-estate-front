@@ -14,7 +14,6 @@ import PropertyDistributionChart from "../src/components/PropertyDistributionCha
 const ProfileModal = dynamic(() => import("@/components/ProfileModal"));
 import ComingSoonInline from "@/components/ComingSoonInline";
 import RecentActivity from "../src/components/RecentActivity";
-import Footer from "../src/components/Footer";
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -526,7 +525,6 @@ export default function HomePage() {
         <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)}
           user={user} onUpdate={handleProfileUpdate} />
       )}
-      <Footer />
 
       {showTour && user && (
         <Tutorial
