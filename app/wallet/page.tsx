@@ -8,6 +8,7 @@ import CommissionForm from './components/CommissionForm'
 import CommissionList from './components/CommissionList'
 import CommissionRequestModal from './components/CommissionRequestModal'
 import InvoicesSection from './components/InvoicesSection'
+import WalletActivity, { type WalletEntry } from './components/WalletActivity'
 import FilesSection from './components/FilesSection'
 import InvestmentSection from './components/InvestmentSection'
 import { useLanguage } from '@/context/LanguageContext'
@@ -45,6 +46,7 @@ const WalletPage = () => {
     const [commissions, setCommissions] = useState<Commission[]>([])
     const [files, setFiles] = useState<any[]>([])
     const [balance, setBalance] = useState<number>(0)
+    const [walletEntries, setWalletEntries] = useState<WalletEntry[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [trackingCommission, setTrackingCommission] = useState<Commission | null>(null)
 
@@ -70,12 +72,13 @@ const WalletPage = () => {
 
             if (walletRes.data) {
                 setBalance(walletRes.data.balance || 0);
+                setWalletEntries(walletRes.data.transactions || []);
             }
 
             let mappedInvoices: any[] = [];
 
             if (invoicesRes.data) {
-                mappedInvoices = invoicesRes.data.map((inv: any) => ({
+                mappedInvoices = invoicesRes.data.filter((inv: any) => inv.referenceType !== 'GeideaSubscription').map((inv: any) => ({
                     status: inv.status === 'paid' ? t('wallet.paid') : t('wallet.pay'),
                     amount: Number(inv.total).toLocaleString(),
                     date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-CA') : '',
@@ -180,7 +183,7 @@ const WalletPage = () => {
                 <div className='flex-1 w-full min-w-0 lg:mr-[360px] p-3 sm:p-4 pb-32 lg:pb-4 lg:pt-4'>
                     <div className="wow-reveal w-full min-w-0" style={{ animationDelay: '200ms' }}>
                     {activeTab === 'invoices' && (
-                        <InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} />
+                        <><InvoicesSection invoices={invoices} onRefresh={fetchData} balance={balance} /><WalletActivity entries={walletEntries} /></>
                     )}
 
                     {activeTab === 'commission' && (

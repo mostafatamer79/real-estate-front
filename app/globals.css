@@ -42,47 +42,44 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Custom Grayscale Theme Colors */
-  --color-primary: hsl(264, 8%, 20%);
-  --color-primary-500: hsl(264, 8%, 40%);
-  --color-accent: hsl(264, 4%, 90%);
+  --color-primary-500: #427565;
 }
 
 :root {
   --radius: 0.75rem;
-  --background: #f8fafc;
-  --foreground: hsl(264, 4%, 15%);
+  --background: #f6f8f5;
+  --foreground: #203b32;
   --card: #ffffff;
-  --card-foreground: hsl(264, 4%, 15%);
+  --card-foreground: #203b32;
   --popover: #ffffff;
-  --popover-foreground: hsl(264, 4%, 15%);
-  --primary: hsl(264, 8%, 20%);
+  --popover-foreground: #203b32;
+  --primary: #24483d;
   --primary-foreground: hsl(0, 0%, 99%);
-  --secondary: #f1f5f9;
-  --secondary-foreground: hsl(264, 8%, 20%);
-  --muted: #f1f5f9;
-  --muted-foreground: hsl(264, 4%, 45%);
-  --accent: #f1f5f9;
-  --accent-foreground: hsl(264, 8%, 20%);
-  --destructive: hsl(264, 4%, 30%);
-  --border: #e2e8f0;
-  --input: #f1f5f9;
-  --ring: hsl(264, 8%, 20%, 0.3);
+  --secondary: #eaf1eb;
+  --secondary-foreground: #24483d;
+  --muted: #eaf1eb;
+  --muted-foreground: #52675b;
+  --accent: #eaf1eb;
+  --accent-foreground: #24483d;
+  --destructive: #b42318;
+  --border: #d7e2d9;
+  --input: #eaf1eb;
+  --ring: rgb(36 72 61 / 0.35);
   --sidebar: #ffffff;
-  --sidebar-foreground: hsl(264, 4%, 15%);
-  --sidebar-primary: hsl(264, 8%, 20%);
+  --sidebar-foreground: #203b32;
+  --sidebar-primary: #24483d;
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
   --sidebar-accent: hsl(0, 0%, 0%, 0.05);
-  --sidebar-accent-foreground: hsl(264, 4%, 15%);
+  --sidebar-accent-foreground: #203b32;
   --sidebar-border: hsl(264, 2%, 90%);
-  --sidebar-ring: hsl(264, 8%, 20%, 0.3);
+  --sidebar-ring: rgb(36 72 61 / 0.35);
   --app-font-family: system-ui;
   --platform-card-bg: #ffffff;
-  --platform-card-text: #0f172a;
-  --platform-card-border: #e2e8f0;
+  --platform-card-text: #24483d;
+  --platform-card-border: #d7e2d9;
   --platform-card-radius: 24px;
-  --platform-icon-bg: #f1f5f9;
-  --platform-icon-color: #0f172a;
+  --platform-icon-bg: #eaf1eb;
+  --platform-icon-color: #24483d;
   --platform-button-radius: 16px;
 }
 
@@ -367,8 +364,6 @@
 .wallet-dialog-content .bg-card:not([class*="bg-slate-900"]),
 .orders-page-root .bg-card,
 .orders-page-root [class*="bg-card"],
-.offers-page-root .bg-card,
-.offers-page-root [class*="bg-card"],
 .subscriptions-page-root .bg-card,
 .subscriptions-page-root [class*="bg-card"],
 .internal-page-root .bg-card,

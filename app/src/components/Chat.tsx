@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, MoreVertical, Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import PaylinkPaymentModal from "@/components/Payment/PaylinkPaymentModal";
+import GeideaPaymentModal from "@/components/Payment/GeideaPaymentModal";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { SaudiRiyalIcon } from "@/components/ui/saudi-riyal-icon";
 import { hapticTick } from "@/lib/haptics";
@@ -30,6 +30,8 @@ interface ChatProps {
   personName?: string;
   address?: string;
 }
+
+const BookingPaymentModal = GeideaPaymentModal;
 
 export default function Chat({ isOpen, onClose, offerId, personName, address }: ChatProps) {
   const { t, language } = useLanguage();
@@ -295,7 +297,8 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
       </AnimatePresence>
 
        {selectedBooking && (
-        <PaylinkPaymentModal 
+        <BookingPaymentModal
+            key={selectedBooking.id}
             isOpen={isPaymentModalOpen}
             onClose={() => setIsPaymentModalOpen(false)}
             bookingId={selectedBooking.id}
