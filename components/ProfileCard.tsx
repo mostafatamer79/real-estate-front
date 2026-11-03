@@ -74,7 +74,7 @@ export default function ProfileCard() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-white/60">حالة الحساب:</span>
                   <VerificationBadge 
-                    status={user.isVerified ? VerifyStatus.VERIFIED : VerifyStatus.PENDING}
+                    status={user.nafathVerifiedAt ? VerifyStatus.VERIFIED : VerifyStatus.PENDING}
                   />
                 </div>
                 

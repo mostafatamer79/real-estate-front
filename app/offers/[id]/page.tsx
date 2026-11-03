@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { safeHttpUrl } from "@/lib/safe-url";
 import {
   Home,
   ArrowRight,
@@ -108,6 +109,7 @@ interface ExtendedOffer extends ApiOffer {
     phone?: string;
     role: string;
     isVerified: boolean;
+    nafathVerifiedAt?: string | null;
     profileImage?: string;
     createdAt: string;
     updatedAt: string;
@@ -1154,7 +1156,7 @@ export default function OfferDetailsPage() {
                       <Camera className="w-5 h-5" />
                       {language === 'ar' ? 'صورة الشيك' : 'Check image'}
                     </h3>
-                    <a href={offer.checkImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-muted">
+                    <a href={safeHttpUrl(offer.checkImage) || '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-muted">
                       <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
                       <Download className="w-4 h-4" />
                     </a>
@@ -1211,7 +1213,7 @@ export default function OfferDetailsPage() {
                 <span className="text-gray-600 text-sm">
                   {seller?.role ? (t(`profile.role.${seller.role?.toLowerCase()}`) || seller.role) : (language === 'ar' ? 'معلن' : 'Advertiser')}
                 </span>
-                {seller?.isVerified && (
+                {seller?.nafathVerifiedAt && (
                   <BadgeCheck className="w-4 h-4 text-green-500" />
                 )}
               </div>
@@ -1235,8 +1237,8 @@ export default function OfferDetailsPage() {
             {seller && (
               <div className="flex items-center justify-between">
                 <span className="text-gray-600 text-sm">{t('offer.status')}</span>
-                <Badge variant={seller.isVerified ? "default" : "secondary"}>
-                  {seller.isVerified ? t('offer.verifiedUser') : t('offer.underReview')}
+                <Badge variant={seller.nafathVerifiedAt ? "default" : "secondary"}>
+                  {seller.nafathVerifiedAt ? t('offer.verifiedUser') : t('offer.underReview')}
                 </Badge>
               </div>
             )}

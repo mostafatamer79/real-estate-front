@@ -27,6 +27,7 @@ import { serviceRequestApi } from '@/lib/service-request-api'
 import toast from 'react-hot-toast'
 import PaymentMethodsModal from '@/components/Payment/PaymentMethodsModal'
 import { SaudiRiyalAmount, SaudiRiyalSymbol } from '@/components/ui/saudi-riyal'
+import { geideaEnabled, useGeideaCheckout } from '@/hooks/useGeideaCheckout'
 
 // Define extended Invoice interface to include all necessary fields
 interface ExtendedInvoice extends Invoice {
@@ -42,7 +43,8 @@ interface InvoicesSectionProps {
 }
 
 const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, balance = 0 }) => {
-    const { t } = useLanguage()
+    const { t, language } = useLanguage()
+    const topup = useGeideaCheckout(language)
     const [showInvoiceModal, setShowInvoiceModal] = useState(false)
     const [selectedInvoice, setSelectedInvoice] = useState<any>(null)
     const [processingId, setProcessingId] = useState<string | null>(null)
@@ -74,15 +76,23 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
         }
     }
 
-    const handleAddCredit = () => {
+    const handleAddCredit = async () => {
+        const amount = Number(addAmount);
+        if (!Number.isFinite(amount) || amount < 1 || amount > 10000 || Math.abs(amount * 100 - Math.round(amount * 100)) > 0.000001) {
+            toast.error(language === 'ar' ? 'أدخل مبلغاً بين 1 و10000 ر.س بمنزلتين عشريتين كحد أقصى.' : 'Enter 1–10000 SAR with at most two decimal places.');
+            return;
+        }
         setIsSubmitting(true);
-        // Simulate a delay or API call
-        setTimeout(() => {
-            toast.success("سيتم توفير خيارات شحن الرصيد قريباً");
+        try {
+            if (await topup.pay({ walletTopupAmount: amount })) {
+                toast.success(language === 'ar' ? 'تم شحن المحفظة بنجاح' : 'Wallet topped up successfully');
+                setShowAddDialog(false);
+                setAddAmount('');
+                onRefresh?.();
+            }
+        } finally {
             setIsSubmitting(false);
-            setShowAddDialog(false);
-            setAddAmount('');
-        }, 1000);
+        }
     };
 
     const handleWithdrawal = async () => {
@@ -435,7 +445,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
             />
 
             {/* Add Balance Dialog */}
-            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <Dialog modal={!topup.processing} open={showAddDialog} onOpenChange={(open) => { if (!topup.processing) setShowAddDialog(open); }}>
                 <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-[1.25rem] p-4 sm:p-8 bg-white/70 backdrop-blur-xl border border-white/50" dir="rtl">
                     <DialogHeader className="mb-6">
                         <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('wallet.balance.addTitle') || 'إضافة رصيد للمحفظة'}</DialogTitle>
@@ -447,6 +457,10 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                             <div className="relative">
                                 <Input 
                                     type="number"
+                                    min="1"
+                                    max="10000"
+                                    step="0.01"
+                                    disabled={topup.processing || topup.pending}
                                     value={addAmount}
                                     onChange={(e) => setAddAmount(e.target.value)}
                                     className="h-16 text-xl sm:text-2xl font-black rounded-2xl border-2 border focus:border-slate-900 transition-all pl-12"
@@ -477,11 +491,12 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                     <DialogFooter className="mt-8 flex-col sm:flex-row gap-3">
                         <Button 
                             onClick={handleAddCredit}
-                            disabled={!addAmount || isSubmitting}
+                            disabled={!geideaEnabled || !addAmount || isSubmitting}
                             className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-lg"
                         >
-                            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : t('wallet.balance.confirm') || 'تأكيد عملية الشحن'}
+                            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : topup.pending ? (language === 'ar' ? 'التحقق من حالة الدفع' : 'Check payment status') : t('wallet.balance.confirm') || 'تأكيد عملية الشحن'}
                         </Button>
+                        {topup.error && <p role="alert" className="text-sm text-red-600">{topup.error}</p>}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -534,6 +549,7 @@ const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, onRefresh, 
                 onClose={() => setIsPaymentModalOpen(false)}
                 invoiceId={paymentInvoice?.isSubscription ? undefined : paymentInvoice?.id}
                 subscriptionId={paymentInvoice?.isSubscription ? paymentInvoice?.subscriptionId : undefined}
+                allowWallet={!['GeideaWalletTopup', 'GeideaSubscription'].includes(paymentInvoice?.raw?.referenceType) && !paymentInvoice?.isSubscription}
                 price={parseFloat(paymentInvoice?.amount?.replace(/,/g, '') || '0')}
                 onPaymentSuccess={async () => {
                     if (onRefresh) onRefresh();

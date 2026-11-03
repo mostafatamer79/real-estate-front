@@ -47,6 +47,7 @@ export interface User {
   role: Role;
   roleOtherDescription?: string;
   isVerified: boolean;
+  nafathVerifiedAt?: string | null;
   isActive: boolean;
   parentId?:string;
   

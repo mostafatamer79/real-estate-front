@@ -7,6 +7,7 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
+  Home,
   Users,
   Settings,
   ShoppingBag,
@@ -100,7 +101,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
       title: '',
       items: [
-        { id: 'details', href: '/details', icon: ArrowLeft, label: t('admin.nav.back_to_details') || (isRtl ? 'العودة للموقع' : 'Back to site') },
+        { id: 'home', href: '/details', icon: Home, label: isRtl ? 'الصفحة الرئيسية' : 'Homepage' },
       ]
     },
     {
@@ -309,12 +310,15 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                           onClick={(e) => {
                             closeSidebarIfMobile();
                           }}
+                          aria-label={item.label}
+                          title={item.label}
                           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
                             isActive
                               ? 'bg-card text-slate-950 shadow-md shadow-white/5'
                               : 'text-white/50 hover:text-white hover:bg-card/5'
                           }`}
                         >
+                          {item.id === 'home' && <Home className="w-5 h-5 shrink-0" aria-hidden="true" />}
                           {isSidebarOpen && (
                             <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>
                           )}
@@ -374,7 +378,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             : isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
         }`}
       >
-        <MobileAppHeader theme="light" title={t('admin.dashboard.title') || 'لوحة التحكم'} />
+        <MobileAppHeader theme="light" title={t('admin.dashboard.title') || 'لوحة التحكم'} onBack={() => router.push('/details')} />
         {/* Top Header */}
         <header className="hidden md:flex h-16 bg-card border-b border items-center justify-between px-4 sm:px-8 shrink-0">
            <div className="flex items-center gap-4">
@@ -387,6 +391,13 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                style={{ height: `${settings.logoHeight || 40}px` }}
              />
            </div>
+           <Link
+             href="/details"
+             className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-bold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+           >
+             <Home className="h-5 w-5" aria-hidden="true" />
+             <span>{isRtl ? 'الصفحة الرئيسية' : 'Homepage'}</span>
+           </Link>
         </header>
 
         {/* Page Content */}

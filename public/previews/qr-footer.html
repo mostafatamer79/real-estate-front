@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>الوساطة الرقمية</title>
+  <script>
+    const requestedTheme = new URLSearchParams(location.search).get('theme');
+    document.documentElement.dataset.theme = ['light', 'dark'].includes(requestedTheme)
+      ? requestedTheme
+      : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  </script>
+  <style>
+    :root { color-scheme: light; font-family: Tahoma, Arial, sans-serif; --page: #f6f8f5; --surface: #fff; --text: #203b32; --link: #405b4c; --hover: #183c2d; --muted: #576d60; --border: #d7e2d9; --divider: #e5ece7; }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0b1110; --surface: #111b17; --text: #e6eee8; --link: #c1d1c6; --hover: #fff; --muted: #a3b7aa; --border: #2b3c32; --divider: #29392f; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: end; background: var(--page); color: var(--text); }
+    footer { background: var(--surface); color: var(--text); border-top: 1px solid var(--border); }
+    .theme-toggle { position: fixed; top: 24px; left: 24px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+    .theme-toggle:focus-visible { outline: 2px solid #91b9a3; outline-offset: 4px; }
+    .footer-inner { width: min(1160px, 100%); margin-inline: auto; padding: 32px 28px 20px; }
+    .footer-grid { display: grid; grid-template-columns: 170px minmax(0, 1fr) 120px; grid-template-areas: "brand links qr"; align-items: center; gap: 48px; padding-bottom: 28px; }
+    .brand { grid-area: brand; align-self: center; }
+    .brand img { display: block; width: 170px; height: 90px; max-width: 100%; object-fit: contain; object-position: right center; }
+    .brand .logo-dark { display: none; }
+    [data-theme="dark"] .brand .logo-light { display: none; }
+    [data-theme="dark"] .brand .logo-dark { display: block; }
+    .links { grid-area: links; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; }
+    a { color: var(--link); text-decoration: none; font-size: 13px; line-height: 1.7; }
+    .links a { display: inline-flex; align-items: center; min-height: 44px; }
+    a:hover { color: var(--hover); text-decoration: underline; text-underline-offset: 5px; }
+    a:focus-visible { outline: 2px solid #91b9a3; outline-offset: 6px; border-radius: 3px; }
+    .qr { grid-area: qr; display: block; width: 120px; padding: 4px; background: #fff; border-radius: 6px; line-height: 0; align-self: center; }
+    .qr img { display: block; width: 112px; height: 112px; }
+    .bottom { border-top: 1px solid var(--divider); padding-top: 18px; color: var(--muted); font-size: 12px; line-height: 1.8; text-align: center; }
+    .bottom p { margin: 0; }
+    ::selection { background: #b8d6c5; color: #122c20; }
+    @media (max-width: 760px) {
+      .footer-inner { padding: 24px 24px 20px; }
+      .footer-grid { grid-template-columns: minmax(0, 1fr) 120px; grid-template-areas: "brand qr" "links links"; column-gap: 24px; row-gap: 20px; padding-bottom: 20px; }
+      .brand img { width: 160px; height: 84px; }
+      .links { gap: 0 24px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      a { transition: color 150ms ease; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" type="button" aria-label="تبديل الوضع الداكن" aria-pressed="false">الوضع الداكن</button>
+  <footer aria-label="تذييل الموقع">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <a class="brand" href="https://www.digitalbrokerage.sa/" aria-label="الوساطة الرقمية — الصفحة الرئيسية">
+          <img class="logo-light" src="../icons/black.png" alt="الوساطة الرقمية" width="170" height="90">
+          <img class="logo-dark" src="../icons/white.png" alt="الوساطة الرقمية" width="170" height="90">
+        </a>
+        <nav class="links" aria-label="روابط الموقع">
+          <a href="https://www.digitalbrokerage.sa/about">من نحن</a>
+          <a href="https://www.digitalbrokerage.sa/customerservice/contact">تواصل معنا</a>
+          <a href="https://www.digitalbrokerage.sa/customerservice/faq">الأسئلة الشائعة</a>
+          <a href="https://www.digitalbrokerage.sa/info?tab=terms">الشروط والأحكام</a>
+          <a href="https://www.digitalbrokerage.sa/info?tab=usage">سياسة الاستخدام</a>
+          <a href="https://www.digitalbrokerage.sa/share-opinion">شاركنا رأيك</a>
+        </nav>
+        <a class="qr" href="https://eauthenticate.saudibusiness.gov.sa/EAuthSealApi/seal?token=YWU3Qm5vS3hTSkNlZGljRFgwY0VFdz09&amp;lang=ar" target="_blank" rel="noopener noreferrer" aria-label="عرض التوثيق الرسمي للوساطة الرقمية — نافذة جديدة">
+          <img src="../sbc-verification-qr.png" width="112" height="112" alt="رمز QR للتوثيق الرسمي للوساطة الرقمية">
+        </a>
+      </div>
+      <div class="bottom"><p>جميع الحقوق محفوظة للوساطة الرقمية © 2026</p></div>
+    </div>
+  </footer>
+  <script>
+    const toggle = document.querySelector('.theme-toggle');
+    function updateToggle() {
+      const isDark = document.documentElement.dataset.theme === 'dark';
+      toggle.setAttribute('aria-pressed', String(isDark));
+      toggle.textContent = isDark ? 'الوضع الفاتح' : 'الوضع الداكن';
+    }
+    toggle.addEventListener('click', () => {
+      document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      const url = new URL(location.href);
+      url.searchParams.set('theme', document.documentElement.dataset.theme);
+      history.replaceState(null, '', url);
+      updateToggle();
+    });
+    updateToggle();
+  </script>
+</body>
+</html>

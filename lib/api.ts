@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import type { GeideaSession, GeideaPaymentTarget, GeideaVerification } from '@/lib/geidea';
 import { 
   ApiResponse, 
   CreateOfferDto, 
@@ -161,6 +162,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.data?.code === 'NAFATH_VERIFICATION_REQUIRED') {
+      window.dispatchEvent(new Event('nafath-verification-required'));
+    }
     if (error.response?.status === 401) {
       // Handle unauthorized
       localStorage.removeItem('token');
@@ -587,6 +591,13 @@ export const subscriptionsApi = {
 
   getByUnit: (unitId: string): Promise<ApiResponse<Subscription[]>> =>
     api.get(`/subscriptions/unit/${unitId}`),
+};
+
+export const geideaApi = {
+  createSession: (data: GeideaPaymentTarget & { language: 'ar' | 'en' }): Promise<ApiResponse<GeideaSession>> =>
+    api.post('/payment/geidea/session', data),
+  verifyOrder: (orderId: string): Promise<ApiResponse<GeideaVerification>> =>
+    api.post('/payment/geidea/verify', { orderId }),
 };
 
 export const paylinkApi = {
