@@ -107,6 +107,9 @@ export const useChat = (options: UseChatOptions = {}) => {
     });
 
     socketClient.on('error', (error) => {
+      if (error.code === 'NAFATH_VERIFICATION_REQUIRED') {
+        window.dispatchEvent(new Event('nafath-verification-required'));
+      }
       setError(error.message || 'Chat error occurred');
       onErrorRef.current?.(error);
     });

@@ -37,6 +37,10 @@ import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
+import {
+  ADMIN_PERMISSION_DEFINITIONS,
+  normalizeDepartmentPermissions,
+} from "@/lib/department-permissions";
 
 // ─── Department meta ───────────────────────────────────────────────────────────
 const DEPARTMENTS = [
@@ -80,6 +84,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
     phone: user?.phone || '',
     role: user?.role || 'employee',
     department: (user?.departments as string[]) || [],
+    departmentPermissions: normalizeDepartmentPermissions(user?.departmentPermissions),
     parentId: user?.parentId || '',
     hasFreeTrial: user?.hasFreeTrial || false,
   });
@@ -98,6 +103,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
       phone: user?.phone || '',
       role: user?.role || 'employee',
       department: (user?.departments as string[]) || [],
+      departmentPermissions: normalizeDepartmentPermissions(user?.departmentPermissions),
       parentId: user?.parentId || '',
       hasFreeTrial: user?.hasFreeTrial || false,
     });
@@ -142,6 +148,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
         lastName: form.lastName,
         role: form.role,
         departments: form.department,
+        departmentPermissions: form.departmentPermissions,
         parentId: form.role === 'employee' ? form.parentId : undefined,
         hasFreeTrial: form.hasFreeTrial,
       };
@@ -165,6 +172,17 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   };
 
   const deptLabel = (d: typeof DEPARTMENTS[0]) => language === 'ar' ? d.labelAr : d.labelEn;
+  const setDepartmentPermission = (id: string, value: string | boolean) => {
+    setForm(current => ({
+      ...current,
+      departmentPermissions: { ...current.departmentPermissions, [id]: value },
+      department: id === 'employees'
+        ? current.department
+        : value === 'none'
+          ? current.department.filter(dept => dept !== id && !(id === 'financial' && dept === 'finance'))
+          : Array.from(new Set([...current.department, id === 'financial' ? 'finance' : id])),
+    }));
+  };
   const fieldCls = (f: string) => `w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
   const iconFieldCls = (f: string) => `w-full h-11 bg-muted rounded-xl pr-10 pl-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
 
@@ -278,7 +296,15 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                         onClick={() => {
                           setForm(f => {
                             const newDepts = f.department.includes(dept.value) ? f.department.filter(d => d !== dept.value) : [...f.department, dept.value];
-                            return { ...f, department: newDepts };
+                            const permissionKey = dept.value === 'finance' ? 'financial' : dept.value;
+                            const nextPermission = newDepts.includes(dept.value)
+                              ? (f.departmentPermissions[permissionKey] === 'none' ? 'view' : f.departmentPermissions[permissionKey])
+                              : 'none';
+                            return {
+                              ...f,
+                              department: newDepts,
+                              departmentPermissions: { ...f.departmentPermissions, [permissionKey]: nextPermission },
+                            };
                           });
                         }}
                         className="min-w-0 flex-1 px-2 py-2 text-right text-[9px] font-black"
@@ -305,6 +331,61 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
               {touched.department && fieldErrors.department && (
                 <p className="text-[10px] font-bold text-red-500">{fieldErrors.department}</p>
               )}
+            </div>
+          )}
+
+          {form.role !== Role.USER && (
+            <div className="space-y-3 rounded-2xl border border-slate-200 bg-muted/50 p-4">
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  {language === 'ar' ? 'صلاحيات الأقسام' : 'Department permissions'}
+                </label>
+                <p className="mt-1 text-[11px] font-bold text-slate-500">
+                  {language === 'ar' ? 'حدد مستوى الوصول لكل قسم للموظف.' : 'Choose the access level for each employee section.'}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                {ADMIN_PERMISSION_DEFINITIONS.filter(({ id }) => id !== 'employees').map(({ id, labelAr, labelEn }) => {
+                  const currentLevel = form.departmentPermissions[id];
+                  return (
+                    <div key={id} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-xs font-black text-slate-800">{language === 'ar' ? labelAr : labelEn}</span>
+                      <div className="grid grid-cols-3 gap-1 rounded-xl bg-muted p-1" role="group" aria-label={language === 'ar' ? `صلاحيات ${labelAr}` : `${labelEn} permissions`}>
+                        {[
+                          ['none', language === 'ar' ? 'بدون' : 'None'],
+                          ['view', language === 'ar' ? 'مشاهدة' : 'View'],
+                          ['manage', language === 'ar' ? 'كاملة' : 'Full'],
+                        ].map(([level, label]) => (
+                          <button
+                            key={level}
+                            type="button"
+                            onClick={() => setDepartmentPermission(id, level)}
+                            className={`min-h-9 rounded-lg px-2 text-[10px] font-black transition-colors ${currentLevel === level ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-500 hover:bg-card hover:text-slate-950'}`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-card p-3">
+                  <span className="text-xs font-black text-slate-800">
+                    {language === 'ar' ? 'إدارة الموظفين' : 'Employee management'}
+                  </span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={form.departmentPermissions.employees === true}
+                    onClick={() => setDepartmentPermission('employees', form.departmentPermissions.employees !== true)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.departmentPermissions.employees === true ? 'bg-slate-950' : 'bg-slate-300'}`}
+                  >
+                    <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${form.departmentPermissions.employees === true ? (language === 'ar' ? '-translate-x-6' : 'translate-x-6') : 'translate-x-1'}`} />
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

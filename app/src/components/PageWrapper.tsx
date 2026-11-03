@@ -1,22 +1,32 @@
 "use client";
 
 import { usePathname, useRouter } from 'next/navigation';
+import { isPublicBrowsingPath } from "@/lib/seo";
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
-import { needsProfileCompletion } from '@/lib/profile-completion';
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { isLoading: settingsLoading } = useSettings();
+  const { language } = useLanguage();
+  const [verificationRequired, setVerificationRequired] = useState(false);
+
+  useEffect(() => {
+    const showVerification = () => setVerificationRequired(true);
+    window.addEventListener('nafath-verification-required', showVerification);
+    return () => window.removeEventListener('nafath-verification-required', showVerification);
+  }, []);
 
   useEffect(() => {
     // List of public routes that don't require authentication
     const publicRoutes = ['/', '/login', '/verify-otp', '/nafath-login', '/customerservice'];
 
-    const isPublic = publicRoutes.some(route =>
-      pathname === route || (route !== '/' && pathname?.startsWith(route))
+    const isPublic = isPublicBrowsingPath(pathname) || publicRoutes.some(route =>
+      pathname === route || (route === '/customerservice' && ['/customerservice/contact', '/customerservice/faq', '/customerservice/support'].includes(pathname))
     );
 
     const token = localStorage.getItem('token');
@@ -28,19 +38,6 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
       router.replace('/login');
     }
 
-    if (token && !isPublic && pathname !== '/profile' && pathname !== '/complete-profile') {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          const parsedUser = JSON.parse(userStr);
-          if (needsProfileCompletion(parsedUser)) {
-            router.replace('/profile');
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
 
   }, [pathname, router, settingsLoading]);
 
@@ -63,5 +60,11 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
   // We add padding if the header is visible AND it's not the home page
   const shouldAddPadding = !isHiddenHeader && !isHomePage;
 
-  return <AnimatePresence mode="wait"><motion.main key={pathname} initial={{ opacity: 0, y: 8, scale: 0.995 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, scale: 0.998 }} transition={{ duration: 0.35 }} className={shouldAddPadding ? "pt-16" : ""}>{children}</motion.main></AnimatePresence>;
+  return <AnimatePresence mode="wait"><motion.main key={pathname} initial={false} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, scale: 0.998 }} transition={{ duration: 0.35 }} className={shouldAddPadding ? "pt-16" : ""}>
+    {verificationRequired && pathname !== '/profile' && <div role="alert" className="sticky top-16 z-50 mx-4 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <p>{language === 'ar' ? 'يمكنك التصفح. لإتمام هذا الإجراء، وثّق هويتك عبر نفاذ من ملفك الشخصي.' : 'You can browse. To complete this action, verify your identity through Nafath on your profile.'}</p>
+      <Link href="/profile" className="shrink-0 font-bold underline">{language === 'ar' ? 'توثيق الهوية' : 'Verify identity'}</Link>
+      <button type="button" onClick={() => setVerificationRequired(false)} aria-label={language === 'ar' ? 'إغلاق' : 'Dismiss'} className="p-2">×</button>
+    </div>}
+    {children}</motion.main></AnimatePresence>;
 }

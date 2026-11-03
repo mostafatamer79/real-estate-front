@@ -12,7 +12,8 @@ import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { fetchPublicSettings } from "@/lib/runtime-config";
+import BusinessVerificationFooter from "@/components/BusinessVerificationFooter";
+import { SITE_NAME, SITE_DESCRIPTION, getSiteUrl, buildPageMetadata } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,43 +33,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const settings = await fetchPublicSettings();
-    const appName =
-      settings.find((s) => s.key === "theme_appName")?.value || "الوساطة الرقمية";
-    const description =
-      settings.find((s) => s.key === "theme_description")?.value ||
-      "الوساطة الرقمية - منصة عقارية شاملة";
-
-    return {
-      title: appName,
-      description,
-      manifest: "/manifest.json",
-      icons: {
-        apple: "/icons/icon-512x512.png",
-      },
-      appleWebApp: {
-        capable: true,
-        statusBarStyle: "default",
-        title: appName,
-      },
-    };
-  } catch {
-    // Fall back to static metadata when the API is unavailable at build time.
-  }
-
+export function generateMetadata(): Metadata {
   return {
-    title: "الوساطة الرقمية",
-    description: "الوساطة الرقمية - منصة عقارية شاملة",
-    manifest: "/manifest.json",
-    icons: {
-      apple: "/icons/icon-512x512.png",
-    },
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "default",
-      title: "الوساطة الرقمية",
+    ...buildPageMetadata("/", SITE_NAME, SITE_DESCRIPTION, { index: false }),
+    metadataBase: new URL(getSiteUrl()),
+    applicationName: SITE_NAME,
+    manifest: "/manifest.webmanifest",
+    icons: { icon: "/icons/icon-512x512.png", apple: "/icons/icon-512x512.png" },
+    appleWebApp: { capable: true, statusBarStyle: "default", title: SITE_NAME },
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
     },
   };
 }
@@ -79,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overscroll-none`}
         suppressHydrationWarning
@@ -122,6 +97,7 @@ export default function RootLayout({
                     <PageWrapper>
                       {children}
                     </PageWrapper>
+                    <BusinessVerificationFooter />
                     <AdminImpersonationReturn />
                   </div>
                   <Toaster />
@@ -130,15 +106,6 @@ export default function RootLayout({
                     position="top-center"
                     toastOptions={{
                       duration: 4000,
-                      style: {
-                        borderRadius: "16px",
-                        backdropFilter: "blur(20px)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-                        padding: "12px 16px",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                      },
                     }}
                     className="md:top-4"
                   />
@@ -148,11 +115,10 @@ export default function RootLayout({
                       duration: 4000,
                       style: {
                         borderRadius: "24px",
-                        background: "rgba(255,255,255,0.96)",
+                        background: "#ffffff",
                         color: "rgb(15 23 42)",
                         border: "1px solid rgb(226 232 240)",
                         boxShadow: "0 20px 60px rgba(15, 23, 42, 0.16)",
-                        backdropFilter: "blur(18px)",
                         padding: "14px 16px",
                         fontWeight: "700",
                       },

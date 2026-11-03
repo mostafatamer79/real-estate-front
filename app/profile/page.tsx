@@ -1,4 +1,5 @@
 "use client";
+import NafathVerification from '@/components/profile/NafathVerification';
 import MobileAppHeader from '@/app/src/components/MobileAppHeader';
 
 
@@ -7,9 +8,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Save, Loader2, User as UserIcon, MapPin, Briefcase, FileText, CheckCircle, Building2, Upload, ShieldCheck } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Role, User as UserType } from '@/types/user';
@@ -47,7 +45,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 
 export default function ProfilePage() {
-  const { user, token, updateUser, logout, needsProfileCompletion } = useAuth();
+  const { user, updateUser, logout, needsProfileCompletion } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -74,57 +72,6 @@ export default function ProfilePage() {
       brokerType: 'individual',
     },
   });
-
-  // Verification State
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [showVerifyDialog, setShowVerifyDialog] = useState(false);
-  const [verificationStep, setVerificationStep] = useState<'request' | 'otp'>('request');
-  const [otpCode, setOtpCode] = useState('');
-  const [mockNationalId, setMockNationalId] = useState(''); // In real app, this comes from Nafath
-  const [otpTimer, setOtpTimer] = useState(0);
-
-  useEffect(() => {
-    if (otpTimer <= 0) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setOtpTimer((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, [otpTimer]);
-
-  const handleVerifyStart = async () => {
-     setIsVerifying(true);
-     try {
-        const nationalId = mockNationalId || '1000000000';
-        const response = await api.post('/user/nafath/send-otp', { nationalId });
-        setVerificationStep('otp');
-        setOtpTimer(60);
-        setOtpCode('');
-        setMockNationalId(response.data?.nationalId || nationalId);
-     } catch (e) {
-        toast({ title: t('common.error'), description: t('otp.errorGeneric'), variant: "destructive" });
-     } finally {
-        setIsVerifying(false);
-     }
-  };
-
-  const handleVerifyOtp = async () => {
-    setIsVerifying(true);
-    try {
-       await api.post('/user/nafath/verify', { nationalId: mockNationalId, otp: otpCode });
-       toast({ title: t('common.success'), description: t('profile.verification.success'), variant: "default" });
-       setShowVerifyDialog(false);
-       
-       updateUser({ isVerified: true, nationalId: mockNationalId });
-    } catch (e) {
-       toast({ title: t('common.error'), description: t('otp.errorInvalid'), variant: "destructive" });
-    } finally {
-        setIsVerifying(false);
-    }
-  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -187,14 +134,6 @@ export default function ProfilePage() {
   const selectedRole = watch('role');
   const hasLicenseRole = [Role.AGENT, Role.BROKER, Role.REAL_ESTATE_OFFICE, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(selectedRole as Role);
   const requiresLicenseReview = [Role.AGENT, Role.BROKER].includes(selectedRole as Role);
-
-  // Refresh the profile so admin FAL decisions appear without requiring a new login.
-  useEffect(() => {
-    if (!token) return;
-    api.get<ApiResponse<UserType>>('/user/profile').then((response) => {
-      updateUser(response.data.data || response.data);
-    }).catch(() => undefined);
-  }, [token]);
 
   // Effect logic
   useEffect(() => {
@@ -325,28 +264,13 @@ export default function ProfilePage() {
                     <h2 className="text-xl font-bold text-slate-800 mb-1">{user.firstName} {user.lastName}</h2>
                     <p className="text-sm text-slate-500 mb-4">{user.email || user.phone}</p>
                     
-                    {/* Verification / National ID Badge */}
-                    <div className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium mb-4 ${user.isVerified ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-muted text-gray-500'}`}>
-                        {user.isVerified ? <ShieldCheck className="w-4 h-4" /> : <Loader2 className="w-4 h-4" />}
-                        <span>{user.isVerified ? t('profile.verification.verified') : t('profile.verification.unverified')}</span>
-                    </div>
+                    <NafathVerification userId={user.id} verifiedAt={user.nafathVerifiedAt} onVerified={updateUser} />
 
-                    {user.isVerified && user.nationalId && (
-                        <div className="w-full bg-muted rounded-lg p-3 mb-4">
+                    {user.nafathVerifiedAt && user.nationalId && (
+                        <div className="w-full bg-muted rounded-lg p-3 my-4">
                             <p className="text-xs text-slate-500 mb-1">{t('profile.nationalId')}</p>
-                            <p className="font-mono font-medium text-slate-700 tracking-wider">{user.nationalId}</p>
+                            <p dir="ltr" className="font-mono font-medium text-slate-700 tracking-wider">{'••••••' + user.nationalId.slice(-4)}</p>
                         </div>
-                    )}
-
-                    {!user.isVerified && (
-                        <Button 
-                            variant="outline" 
-                            className="w-full gap-2 border-gray-600 text-gray-600 hover:bg-muted"
-                            onClick={() => { setShowVerifyDialog(true); setVerificationStep('request'); }}
-                        >
-                            <img src="/nafath-logo-placeholder.png" className="w-5 h-5 object-contain hidden" alt="Nafath" /> {/* Placeholder */}
-                            {t('profile.verification.btn')}
-                        </Button>
                     )}
 
                     {hasLicenseRole && (
@@ -663,47 +587,7 @@ export default function ProfilePage() {
             </div>
         </div>
       </div>
-      <Dialog open={showVerifyDialog} onOpenChange={setShowVerifyDialog}>
-        <DialogContent className="p-6 max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle className="text-center">{t('profile.verification.title')}</DialogTitle>
-                <DialogDescription className="text-center">
-                    {verificationStep === 'request' 
-                        ? t('profile.verification.sentToPhone') 
-                        : t('profile.verification.enterOtp')
-                    }
-                </DialogDescription>
-            </DialogHeader>
 
-            {verificationStep === 'request' ? (
-                <div className="flex flex-col items-center py-4">
-                     <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                        <ShieldCheck className="w-8 h-8 text-gray-400 font-bold bg-muted/50" />
-                     </div>
-                     <Button onClick={handleVerifyStart} disabled={isVerifying} className="w-full mt-4">
-                        {isVerifying && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-                        {t('login.submit')}
-                     </Button>
-                </div>
-            ) : (
-                <div className="space-y-4 py-4">
-                    <Input 
-                        value={otpCode} 
-                        onChange={(e) => setOtpCode(e.target.value)} 
-                        maxLength={6} 
-                        className="text-center text-xl sm:text-2xl tracking-widest" 
-                        placeholder="______"
-                    />
-                    <div className="text-xs text-center text-slate-400">
-                        {otpTimer > 0 ? `00:${otpTimer.toString().padStart(2, '0')}` : <span className="text-gray-400 font-bold bg-muted/50 cursor-pointer" onClick={handleVerifyStart}>{t('otp.resendBtn')}</span>}
-                    </div>
-                    <Button onClick={handleVerifyOtp} disabled={isVerifying || otpCode.length < 6} className="w-full">
-                         {isVerifying ? t('otp.verifying') : t('otp.verifyBtn')}
-                    </Button>
-                </div>
-            )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
