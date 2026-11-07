@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, ShieldCheck } from 'lucide-react';
+import { ExternalLink, Loader2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/context/LanguageContext';
 import api from '@/lib/api';
@@ -12,6 +12,7 @@ type PendingVerification = {
   requestId: string;
   clientSecret: string;
   expiresAt: string;
+  url?: string;
 };
 const STORAGE_KEY = 'nafath-profile-verification';
 
@@ -24,6 +25,7 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
   const ar = language === 'ar';
   const [busy, setBusy] = useState(false);
   const [configured, setConfigured] = useState(false);
+  const [pendingUrl, setPendingUrl] = useState<string>('');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -70,6 +72,7 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
         if (pending.userId !== userId || !pending.requestId || !pending.clientSecret) {
           sessionStorage.removeItem(STORAGE_KEY); return;
         }
+        if (pending.url) setPendingUrl(pending.url);
         const deadline = new Date(pending.expiresAt).getTime();
         if (!Number.isFinite(deadline)) { sessionStorage.removeItem(STORAGE_KEY); return; }
         if (!cancelled) setBusy(true);
@@ -88,12 +91,12 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
             if (response.data.status === 'COMPLETED') {
               await refreshProfile();
               sessionStorage.removeItem(STORAGE_KEY);
-              if (!cancelled) { setBusy(false); setMessage(''); }
+              if (!cancelled) { setBusy(false); setPendingUrl(''); setMessage(''); }
               return;
             }
             if (response.data.status !== 'WAITING' || Date.now() >= deadline) {
               sessionStorage.removeItem(STORAGE_KEY);
-              setBusy(false); setMessage(expired);
+              setBusy(false); setPendingUrl(''); setMessage(expired);
               return;
             }
             timer = setTimeout(poll, 2500);
@@ -110,6 +113,13 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
     return () => { cancelled = true; controller.abort(); if (timer) clearTimeout(timer); };
   }, [userId, ar]);
 
+  const cancel = () => {
+    sessionStorage.removeItem(STORAGE_KEY);
+    setBusy(false);
+    setPendingUrl('');
+    setMessage('');
+  };
+
   const start = async () => {
     if (!configured) return;
     setBusy(true); setMessage('');
@@ -117,10 +127,12 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
       const response = await api.post<{ requestId: string; clientSecret: string; expiresAt: string; url: string }>('/auth/nafath/request', { locale: ar ? 'ar' : 'en' });
       const url = new URL(response.data.url);
       if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Invalid verification URL');
+      const destination = url.toString();
+      setPendingUrl(destination);
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-        userId, requestId: response.data.requestId, clientSecret: response.data.clientSecret, expiresAt: response.data.expiresAt,
+        userId, requestId: response.data.requestId, clientSecret: response.data.clientSecret, expiresAt: response.data.expiresAt, url: destination,
       } satisfies PendingVerification));
-      window.location.assign(url.toString());
+      window.location.assign(destination);
     } catch {
       setBusy(false);
       setMessage(ar ? 'خدمة نفاذ غير متاحة حالياً. يرجى المحاولة لاحقاً أو التواصل مع الدعم.' : 'Nafath is currently unavailable. Please try later or contact support.');
@@ -134,13 +146,50 @@ export default function NafathVerification({ userId, verifiedAt, onVerified }: {
     </div>
     {!verifiedAt && <>
       {!configured && <p role="status" className="text-start text-xs leading-6 text-amber-700">
-        {ar ? 'خدمة التحقق عبر نفاذ غير متاحة حالياً. يمكنك استخدام طرق تسجيل الدخول المتاحة والتواصل مع الدعم بشأن التوثيق.' : 'Nafath verification is currently unavailable. Use the available login methods and contact support about identity verification.'}
+        {ar ? 'خدمة التحقق عبر نفاذ غير متاحة حالياً. يمكنك تصفح المنصة وتحديث ملفك الشخصي، والتواصل مع الدعم بشأن التوثيق.' : 'Nafath verification is currently unavailable. Use the available login methods and contact support about identity verification.'}
       </p>}
-      {configured && <p className="text-start text-xs leading-6 text-slate-500">{ar ? 'يمكنك تصفح الموقع. وثّق هويتك عبر نفاذ لإتمام الطلبات ونشر العروض وإرسال الرسائل.' : 'You can browse the website. Verify your identity through Nafath to submit requests, publish offers and send messages.'}</p>}
-      <Button type="button" onClick={start} disabled={busy || !configured} className="w-full gap-2" aria-busy={busy}>
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <ShieldCheck className="h-4 w-4" aria-hidden="true" />}
-        {busy ? (ar ? 'جارٍ انتظار التحقق…' : 'Waiting for verification…') : (ar ? 'توثيق الهوية عبر نفاذ' : 'Verify identity through Nafath')}
-      </Button>
+      {configured && !busy && <p className="text-start text-xs leading-6 text-slate-500">{ar ? 'يمكنك تصفح المنصة. يُرجى توثيق حسابك عبر نفاذ لتتمكن من طلب الخدمات أو تقديمها.' : 'You can browse the website. Verify your identity through Nafath to submit requests, publish offers and send messages.'}</p>}
+      {busy ? (
+        <div className="space-y-2.5 rounded-lg border border-amber-200 bg-amber-50/70 p-3 text-start text-xs text-amber-900">
+          <div className="flex items-center gap-2 font-medium">
+            <Loader2 className="h-4 w-4 animate-spin text-amber-600" aria-hidden="true" />
+            <span>{ar ? 'طلب التوثيق قيد الانتظار…' : 'Verification request in progress…'}</span>
+          </div>
+          <p className="text-[11px] leading-5 text-slate-600">
+            {ar
+              ? 'إذا لم يتم توجيهك تلقائياً لبوابة النفاذ الوطني (iam.sa)، اضغط أدناه لإكمال تسجيل الدخول:'
+              : 'If not automatically redirected to Nafath portal (iam.sa), click below to proceed:'}
+          </p>
+          {pendingUrl && (
+            <Button
+              type="button"
+              className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+              onClick={() => { window.location.assign(pendingUrl); }}
+            >
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              <span>{ar ? 'الانتقال إلى بوابة نفاذ (iam.sa)' : 'Go to Nafath Portal (iam.sa)'}</span>
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={cancel}
+            className="w-full text-xs text-slate-600 hover:text-slate-900 border-slate-300"
+          >
+            {ar ? 'إلغاء المحاولة والبدء من جديد' : 'Cancel and start over'}
+          </Button>
+          <p className="text-[10px] leading-4 text-slate-500">
+            {ar
+              ? 'ملاحظة: تتطلب بوابة النفاذ الوطني الاتصال من داخل المملكة العربية السعودية أو عبر VPN سعودي.'
+              : 'Note: Nafath portal (iam.sa) is accessible only from Saudi Arabia.'}
+          </p>
+        </div>
+      ) : (
+        <Button type="button" onClick={start} disabled={!configured} className="w-full gap-2" aria-busy={busy}>
+          <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+          <span>{ar ? 'توثيق الحساب' : 'Verify account'}</span>
+        </Button>
+      )}
     </>}
     {message && <p role="alert" className="text-start text-xs leading-6 text-red-600">{message}</p>}
   </div>;
