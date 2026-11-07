@@ -121,6 +121,9 @@ export type InfoBlock = {
 };
 
 const getApiUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return `${window.location.origin}/api`;
+  }
   let url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api';
   if (url && !url.startsWith('http') && !url.startsWith('https')) {
     url = `https://${url}`;
@@ -163,7 +166,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.data?.code === 'NAFATH_VERIFICATION_REQUIRED') {
+      const ar = document.documentElement.lang !== 'en';
+      error.response.data.message = ar ? 'يمكنك التصفح وحفظ بياناتك. يُرجى توثيق حسابك عبر نفاذ لطلب الخدمات أو تقديمها.' : 'You can browse and save your profile. Verify your account through Nafath to request or provide services.';
       window.dispatchEvent(new Event('nafath-verification-required'));
+    }
+    if (error.response?.data?.code === 'LICENSE_REVIEW_REQUIRED') {
+      error.response.data.message = document.documentElement.lang !== 'en' ? 'تنفيذ الخدمات معلق بسبب حالة الرخصة. يمكنك التصفح وتحديث ملفك الشخصي ومراجعة إشعاراتك لمعرفة السبب.' : 'Service actions are suspended because of your license status. You can browse and update your profile; check notifications for the reason.';
     }
     if (error.response?.status === 401) {
       // Handle unauthorized
