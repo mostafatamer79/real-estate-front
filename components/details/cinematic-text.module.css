@@ -1,0 +1,3 @@
+.heading { max-width:100%; }
+.word { --word-progress:1; display:inline-block; color:color-mix(in srgb,var(--muted-foreground),var(--foreground) calc(var(--word-progress)*100%)); transform:translateY(calc((1 - var(--word-progress))*8px)); filter:blur(calc((1 - var(--word-progress))*.45px)); }
+@media(prefers-reduced-motion:reduce) { .word { color:var(--foreground); transform:none; filter:none; } }
