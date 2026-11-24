@@ -1,6 +1,9 @@
 const DEFAULT_API_URL = "http://localhost:3030/api";
 
 export function getApiBaseUrl(): string {
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `${window.location.origin}/api`;
+  }
   let url = process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
 
   if (!url.startsWith("http://") && !url.startsWith("https://")) {

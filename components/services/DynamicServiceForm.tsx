@@ -6,6 +6,7 @@ import { applyCatalogToForm } from "@/lib/service-catalog";
 import { useEffect, useMemo, useState, useId, useRef } from "react";
 import { loginHref } from "@/lib/auth-navigation";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
+import { getApiUrl } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronLeft, Loader2, Upload } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -382,7 +383,7 @@ export default function DynamicServiceForm({
     const loadingToast = toast.loading(ar ? "جاري إرسال طلبك..." : "Submitting your request...");
 
     try {
-      const response = await fetchWithTimeout(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
+      const response = await fetchWithTimeout(`${getApiUrl()}/service-requests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

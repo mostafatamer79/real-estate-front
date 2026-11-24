@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { notificationApi, Notification } from '@/lib/api/notification-api';
+import { getApiUrl } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
 interface NotificationContextType {
@@ -90,7 +91,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     fetchNotifications();
 
     // Setup WebSocket connection
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api';
+    const API_URL = getApiUrl();
     const socketBaseUrl = API_URL.replace(/\/api\/?$/, '');
     const newSocket = io(`${socketBaseUrl}/notifications`, {
       auth: { token },

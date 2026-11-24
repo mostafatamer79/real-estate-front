@@ -5,6 +5,7 @@ import { hapticTick, hapticSuccess, hapticError } from "@/lib/haptics";
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { getApiUrl } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Scale, CheckCircle2, XCircle, Clock,
@@ -62,7 +63,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
     if (!token) return;
     setIsLoading(true); setError(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?category=legal`, {
+      const res = await fetch(`${getApiUrl()}/service-requests?category=legal`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error();
@@ -78,7 +79,7 @@ export default function LegalRequestsPage({ embedded = false }: { embedded?: boo
     if (!token) return;
     setActionLoading(id); setActionMessage(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${id}/client-decision`, {
+      const res = await fetch(`${getApiUrl()}/service-requests/${id}/client-decision`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ decision }),

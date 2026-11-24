@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { loadServiceRequestPages } from "@/lib/service-request-pages";
 import { useAuth } from "@/hooks/useAuth";
+import { getApiUrl } from "@/lib/api";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
@@ -69,7 +70,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         try {
             const deptParam = department ? `&department=${encodeURIComponent(department)}` : '';
             const items = await loadServiceRequestPages<any>(async params => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=${params.page}&limit=${params.limit}${deptParam}`, {
+                const response = await fetch(`${getApiUrl()}/service-requests?page=${params.page}&limit=${params.limit}${deptParam}`, {
                     headers: { Authorization: `Bearer ${token}` }, signal: controller.signal,
                 });
                 if (!response.ok) throw new Error('Request list unavailable');
@@ -98,8 +99,8 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         try {
             const isDepartmentPricing = department === 'marketing' || department === 'legal';
             const endpoint = isDepartmentPricing
-                ? `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/department-price`
-                : `${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/send-invoice`;
+                ? `${getApiUrl()}/service-requests/${selectedRequest.id}/department-price`
+                : `${getApiUrl()}/service-requests/${selectedRequest.id}/send-invoice`;
             const res = await fetch(endpoint, {
                 method: 'PUT',
                 headers: {
@@ -141,7 +142,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         if (!token || !selectedRequest) return;
         setIsUpdatingStatus(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}`, {
+            const res = await fetch(`${getApiUrl()}/service-requests/${selectedRequest.id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -171,7 +172,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         if (!ok) return;
         setIsDeleting(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}`, {
+            const res = await fetch(`${getApiUrl()}/service-requests/${selectedRequest.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` },
             });
@@ -189,7 +190,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const handleOpenChat = async () => {
         if (!token || !selectedRequest) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests/${selectedRequest.id}/chat`, {
+            const res = await fetch(`${getApiUrl()}/service-requests/${selectedRequest.id}/chat`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
             });

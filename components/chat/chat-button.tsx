@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { chatApi } from "@/lib/chat";
+import { getApiUrl } from "@/lib/api";
 import SimpleChatModal from "./chat-modal";
 
 interface ChatButtonProps {
@@ -36,7 +37,7 @@ export default function ChatButton({
     setIsLoading(true);
     try {
       // Create or get offer chat room
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/offer`, {
+      const response = await fetch(`${getApiUrl()}/chat/rooms/offer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

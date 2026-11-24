@@ -6,6 +6,9 @@ import { io, Socket } from "socket.io-client";
 class SocketClient {
   private socket: Socket | null = null;
   private url: string = (() => {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return `${window.location.origin}/chat`;
+    }
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
     const socketBaseUrl = apiUrl.replace(/\/api\/?$/, "");
     return `${socketBaseUrl}/chat`;

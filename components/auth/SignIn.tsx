@@ -20,6 +20,7 @@ import { publicLoginExit } from "@/lib/login-exit";
 import { safeReturnTo } from "@/lib/auth-navigation";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { otpDeadline } from "@/lib/otp-expiry";
+import { getApiUrl } from "@/lib/api";
 import LoginServiceDoor from "./LoginServiceDoor";
 import styles from "./sign-in.module.css";
 
@@ -215,7 +216,7 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
         ? phone.trim()
         : email.trim().toLowerCase();
 
-      const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
+      const endpoint = `${getApiUrl()}/auth/register`;
       const payload = isPhoneMode
         ? { phone: canonicalIdentifier }
         : { email: canonicalIdentifier };

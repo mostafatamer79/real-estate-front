@@ -19,6 +19,7 @@ import {
 import styles from './complete-profile.module.css';
 import { ProfileCompletionError, profileCompletionPlan, profileRoleAction } from '@/lib/profile-onboarding';
 import { useToast } from '@/hooks/use-toast';
+import { getApiUrl } from '@/lib/api';
 
 interface ProfileFormData {
   firstName: string;
@@ -157,7 +158,8 @@ export default function CompleteProfilePage() {
       saveRequest.current = controller;
       setIsSaving(true);
       const request = async (path: string, method: string, body: unknown) => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        const response = await fetch(`${getApiUrl()}${cleanPath}`, {
           method,
           signal: controller.signal,
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

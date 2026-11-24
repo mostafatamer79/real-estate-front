@@ -12,6 +12,7 @@ import { hapticSuccess, hapticError } from "@/lib/haptics";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { safeReturnTo } from "@/lib/auth-navigation";
 import { otpDeadline, otpSecondsLeft } from "@/lib/otp-expiry";
+import { getApiUrl } from "@/lib/api";
 import styles from "./verify-otp.module.css";
 import AnimatedArtwork from "@/components/cinematic/AnimatedArtwork";
 
@@ -302,7 +303,7 @@ export default function VerifyOtpPage() {
 
     try {
       const response = await fetchWithTimeout(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`,
+        `${getApiUrl()}/auth/verify-otp`,
         {
           signal: controller.signal,
           method: "POST",
@@ -415,7 +416,7 @@ export default function VerifyOtpPage() {
 
     try {
       const response = await fetchWithTimeout(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/resend-otp`,
+        `${getApiUrl()}/auth/resend-otp`,
         {
           signal: controller.signal,
           method: "POST",

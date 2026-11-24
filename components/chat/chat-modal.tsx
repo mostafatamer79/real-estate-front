@@ -4,6 +4,7 @@
 import { useEffect, useState, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { X, Send, Loader2 } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 interface Message {
   id: string;
@@ -44,7 +45,8 @@ export default function SimpleChatModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
+    const rawApiUrl = (typeof getApiUrl === 'function' ? getApiUrl() : null) || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
+    const apiUrl = typeof rawApiUrl === 'string' ? rawApiUrl : "http://localhost:3030/api";
     const socketBaseUrl = apiUrl.replace(/\/api\/?$/, "");
     let active = true;
     setMessages([]);
