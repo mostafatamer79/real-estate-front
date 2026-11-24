@@ -263,7 +263,7 @@ export function OtherServicesForm({ onSuccess, onCancel }: OtherServicesFormProp
             />
           </div>
 
-          <div className="p-4 bg-muted border border-blue-200 rounded-lg">
+          <div className="calm-panel p-4 bg-muted border border-blue-200 rounded-lg">
             <Label className="text-blue-800">{t('legal.other.legalStatus')}</Label>
             <Textarea
               value={legalStatus}

@@ -101,23 +101,23 @@ export default function PhotographyFlow() {
               animate={{ opacity: 1, x: 0 }}
               className="lg:col-span-5"
             >
-                <div className="bg-card rounded-[1rem] overflow-hidden border border shadow-xl shadow-stone-400 relative">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-slate-900/5 rounded-full -mr-16 -mt-16 pointer-events-none" />
-                    <div className="p-5 sm:p-10 bg-slate-900 text-white relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-950 opacity-50" />
+                <div className="calm-panel bg-card rounded-[1rem] overflow-hidden border border shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 relative">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-card/5 dark:bg-slate-900/5 rounded-full -mr-16 -mt-16 pointer-events-none" />
+                    <div className="p-5 sm:p-10 bg-card dark:bg-slate-900 text-foreground dark:text-white relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-muted dark:from-slate-800 to-background dark:to-slate-950 opacity-50" />
                         <div className="relative z-10 flex items-center gap-5">
-                            <div className="p-3 bg-card/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg">
+                            <div className="calm-panel p-3 bg-muted dark:bg-card/10 backdrop-blur-md rounded-2xl border border-border dark:border-white/10 shadow-lg">
                                 <Camera className="w-6 h-6" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-black tracking-tight">{t('marketing.photo.req')}</h3>
-                                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mt-1">{t('marketing.photo.steps')}</p>
+                                <p className="text-muted-foreground dark:text-white/60 text-[10px] font-black uppercase tracking-widest mt-1">{t('marketing.photo.steps')}</p>
                             </div>
                         </div>
                     </div>
                     <div className="p-5 sm:p-10 space-y-8">
                         <div className="space-y-3">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.type')}</Label>
+                            <Label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.type')}</Label>
                             <Select 
                                 value={formData.type} 
                                 onValueChange={(val) => setFormData({...formData, type: val as MarketingRequestType})}
@@ -125,17 +125,17 @@ export default function PhotographyFlow() {
                                 <SelectTrigger className="h-14 rounded-2xl border bg-muted/50 focus:ring-4 focus:ring-slate-100 focus:border-slate-300 transition-all font-bold text-sm">
                                     <SelectValue placeholder={t('marketing.photo.type')} />
                                 </SelectTrigger>
-                                <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-2xl border shadow-2xl p-2">
+                                <SelectContent dir={language === 'ar' ? 'rtl' : 'ltr'} className="rounded-2xl border shadow-sm dark:shadow-2xl p-2">
                                     <SelectItem value={MarketingRequestType.PHOTOGRAPHY_PROFESSIONAL} className="py-3 px-4 rounded-xl cursor-pointer hover:bg-muted focus:bg-muted transition-colors my-1">
                                         <div className="flex flex-col gap-1">
                                             <span className="font-bold text-sm text-slate-900">{t('marketing.photo.professional')}</span>
-                                            <span className="text-[10px] text-slate-400 font-bold">{t('marketing.photo.resolution')}</span>
+                                            <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{t('marketing.photo.resolution')}</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value={MarketingRequestType.PHOTOGRAPHY_FIELD} className="py-3 px-4 rounded-xl cursor-pointer hover:bg-muted focus:bg-muted transition-colors my-1">
                                         <div className="flex flex-col gap-1">
                                             <span className="font-bold text-sm text-slate-900">{t('marketing.photo.field')}</span>
-                                            <span className="text-[10px] text-slate-400 font-bold">{t('marketing.photo.fieldDesc')}</span>
+                                            <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{t('marketing.photo.fieldDesc')}</span>
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
@@ -143,7 +143,7 @@ export default function PhotographyFlow() {
                         </div>
 
                         <div className="space-y-3">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.propId')}</Label>
+                            <Label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.propId')}</Label>
                             <div className="relative group">
                                 <Input 
                                     className="h-14 rounded-2xl border bg-muted/50 focus:ring-4 focus:ring-slate-100 focus:border-slate-300 px-5 transition-all text-sm font-bold placeholder:font-normal"
@@ -156,7 +156,7 @@ export default function PhotographyFlow() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.date')}</Label>
+                                <Label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.date')}</Label>
                                 <Input 
                                     type="date" 
                                     className="h-14 rounded-2xl border bg-muted/50 focus:ring-4 focus:ring-slate-100 focus:border-slate-300 transition-all font-bold text-xs px-4"
@@ -165,7 +165,7 @@ export default function PhotographyFlow() {
                                 />
                             </div>
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.time')}</Label>
+                                <Label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.time')}</Label>
                                 <Input 
                                     type="time" 
                                     className="h-14 rounded-2xl border bg-muted/50 focus:ring-4 focus:ring-slate-100 focus:border-slate-300 transition-all font-bold text-xs px-4" 
@@ -176,7 +176,7 @@ export default function PhotographyFlow() {
                         </div>
 
                         <div className="space-y-3">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.notes')}</Label>
+                            <Label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest px-1">{t('marketing.photo.notes')}</Label>
                             <Textarea 
                                 className="min-h-[120px] rounded-2xl border bg-muted/50 focus:ring-4 focus:ring-slate-100 focus:border-slate-300 transition-all resize-none p-5 font-bold text-sm placeholder:font-normal"
                                 placeholder={t('marketing.photo.notesPlaceholder')} 
@@ -186,11 +186,11 @@ export default function PhotographyFlow() {
                         </div>
 
                         <motion.button 
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: 1.015 }}
+                            whileTap={{ scale: 0.985 }}
                             onClick={handleSubmit} 
                             disabled={submitting}
-                            className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-stone-400 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                            className="w-full h-14 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
                             {submitting ? <Loader2 className="animate-spin w-5 h-5" /> : (
                                 <>
@@ -212,7 +212,7 @@ export default function PhotographyFlow() {
             >
                 <div className="flex items-center justify-between px-2">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-card rounded-2xl flex items-center justify-center shadow-sm border border">
+                    <div className="calm-icon w-12 h-12 bg-card rounded-2xl flex items-center justify-center shadow-sm border border">
                         <Camera className="w-6 h-6 text-slate-900" />
                     </div>
                     <div>
@@ -221,12 +221,12 @@ export default function PhotographyFlow() {
                         </h4>
                         <div className="flex items-center gap-2 mt-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('marketing.requests.active')}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.requests.active')}</p>
                         </div>
                     </div>
                   </div>
-                  <div className="bg-card px-5 py-2.5 rounded-xl text-xs font-black text-slate-900 border border shadow-sm shadow-stone-400">
-                    {myRequests.length} <span className="text-slate-400 font-bold ml-1">{t('marketing.requests.count')}</span>
+                  <div className="calm-panel bg-card px-5 py-2.5 rounded-xl text-xs font-black text-slate-900 border border shadow-sm shadow-primary/5 dark:shadow-stone-400">
+                    {myRequests.length} <span className="text-muted-foreground dark:text-slate-400 font-bold ml-1">{t('marketing.requests.count')}</span>
                   </div>
                 </div>
 
@@ -236,7 +236,7 @@ export default function PhotographyFlow() {
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col items-center justify-center py-24 text-slate-300 rounded-[1rem] border-2 border-dashed border bg-card/50"
+                            className="calm-panel flex flex-col items-center justify-center py-24 text-muted-foreground dark:text-slate-300 rounded-[1rem] border-2 border-dashed border bg-card/50"
                         >
                             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
                                 <Camera className="w-10 h-10 opacity-20" />
@@ -252,13 +252,13 @@ export default function PhotographyFlow() {
                                exit={{ opacity: 0, scale: 0.9 }}
                                transition={{ delay: i * 0.05 }}
                                key={req.id} 
-                               className="group bg-card border border rounded-[1.25rem] p-5 lg:p-3 sm:p-6 flex flex-col md:flex-row justify-between items-center hover:border-slate-900 hover:shadow-xl hover:shadow-stone-400 transition-all cursor-default relative overflow-hidden text-right"
+                               className="calm-panel group bg-card border border rounded-[1.25rem] p-5 lg:p-3 sm:p-6 flex flex-col md:flex-row justify-between items-center hover:border-border hover:dark:border-slate-900 hover:shadow-xl hover:shadow-stone-400 transition-all cursor-default relative overflow-hidden text-right"
                                dir={language === 'ar' ? 'rtl' : 'ltr'}
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-muted rounded-full -mr-12 -mt-12 group-hover:bg-muted transition-colors -z-10" />
                                 
                                 <div className="flex items-center gap-5 w-full">
-                                    <div className="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-stone-400/20 group-hover:scale-110 transition-transform duration-500">
+                                    <div className="calm-icon w-16 h-16 rounded-2xl bg-card dark:bg-slate-900 text-foreground dark:text-white flex items-center justify-center shadow-lg shadow-primary/5 dark:shadow-stone-400/20 group-hover:scale-110 transition-transform duration-500">
                                         <Camera className="w-7 h-7" />
                                     </div>
                                     <div className="space-y-1">
@@ -267,13 +267,13 @@ export default function PhotographyFlow() {
                                         </p>
                                         <div className="flex flex-wrap items-center gap-3">
                                           <div className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-lg">
-                                              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                                              <p className="text-[10px] text-slate-500 font-bold">
+                                              <Calendar className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
+                                              <p className="text-[10px] text-muted-foreground dark:text-slate-500 font-bold">
                                                   {new Date(req.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-CA')}
                                               </p>
                                           </div>
                                           {req.details?.propertyId && (
-                                              <div className="text-[9px] font-black bg-muted text-slate-500 px-2.5 py-1 rounded-lg border border uppercase tracking-wider">
+                                              <div className="calm-panel text-[9px] font-black bg-muted text-muted-foreground dark:text-slate-500 px-2.5 py-1 rounded-lg border border uppercase tracking-wider">
                                                   {t('marketing.photo.propId')}: {req.details.propertyId}
                                               </div>
                                           )}
@@ -283,17 +283,17 @@ export default function PhotographyFlow() {
                                 
                                 <div className="mt-4 md:mt-0 md:text-right w-full md:w-auto flex flex-row md:flex-col items-center md:items-end justify-between gap-3">
                                     <span className={`inline-flex items-center px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border shadow-sm
-                                        ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
-                                          req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
+                                        ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-muted-foreground dark:text-slate-500 border' :
+                                          req.status === MarketingRequestStatus.COMPLETED ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900 shadow-primary/5 dark:shadow-stone-400/20' :
                                           req.status === MarketingRequestStatus.REJECTED ? 'bg-red-50 text-red-500 border-red-100' : 'bg-muted text-slate-600 border'}`}>
                                         <div className={`w-1.5 h-1.5 rounded-full ${req.status === MarketingRequestStatus.PENDING ? 'bg-slate-400 animate-pulse' : 'bg-current'} ${language === 'ar' ? 'ml-2' : 'mr-2'}`} />
                                         {t('marketing.status.' + req.status)}
                                     </span>
                                      <motion.button 
-                                        whileHover={{ scale: 1.1, backgroundColor: '#FEF2F2', borderColor: '#FEE2E2', color: '#EF4444' }}
-                                        whileTap={{ scale: 0.9 }}
+                                        whileHover={{ scale: 1.015, backgroundColor: '#FEF2F2', borderColor: '#FEE2E2', color: '#EF4444' }}
+                                        whileTap={{ scale: 0.985 }}
                                         onClick={() => handleDeleteRequest(req.id)}
-                                        className="w-10 h-10 flex items-center justify-center bg-card border border rounded-xl text-slate-400 transition-all shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center bg-card border border rounded-xl text-muted-foreground dark:text-slate-400 transition-all shadow-sm"
                                         title={t('common.delete')}
                                       >
                                         <Trash2 className="w-4 h-4" />

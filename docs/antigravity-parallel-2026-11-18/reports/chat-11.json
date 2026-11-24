@@ -1,0 +1,43 @@
+{
+  "chat": 11,
+  "slug": "public-content-faq",
+  "status": "NOT_READY",
+  "statusDetail": "Code complete, scoped lint and focused tests passed; rendered browser checks marked PENDING coordinator gate",
+  "reviewGroup": 2,
+  "routes": [
+    "/about",
+    "/info",
+    "/share-opinion",
+    "/customerservice/faq"
+  ],
+  "modifiedFiles": [
+    "app/about/page.tsx",
+    "app/info/page.tsx",
+    "app/share-opinion/page.tsx",
+    "app/customerservice/faq/page.tsx"
+  ],
+  "createdFiles": [
+    "lib/redesign-chat11-content.ts",
+    "tests/parallel-chat11-content.test.cjs",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-11.md",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-11.json"
+  ],
+  "checks": {
+    "scopedLint": {
+      "command": "npm --prefix /home/mostafa/Work/mostakl/realestate/real-estate-front run lint -- app/about/page.tsx app/info/page.tsx app/share-opinion/page.tsx app/customerservice/faq/page.tsx lib/redesign-chat11-content.ts",
+      "status": "PASSED",
+      "errors": 0,
+      "warnings": 0
+    },
+    "focusedTests": {
+      "command": "node --test /home/mostafa/Work/mostakl/realestate/real-estate-front/tests/parallel-chat11-content.test.cjs",
+      "status": "PASSED",
+      "passed": 6,
+      "failed": 0
+    },
+    "browserRenderedChecks": {
+      "status": "PENDING",
+      "reason": "Coordinator gate"
+    }
+  }
+}

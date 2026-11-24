@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>التفاصيل — المحراب المعماري الحركي المطور</title>
+  <link rel="stylesheet" href="details-elite.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+  <style>
+    /* ==========================================================================
+       DISCIPLINED LUXURY PALETTE (Non-colorful, Architectural, High-End Monochromatic)
+       Base: Obsidian / Vantablack + Muted Slate + Signature Architectural Gold Hairlines
+       ========================================================================== */
+    :root {
+      --bg-page: #f1f4f8;
+      --bg-gradient: radial-gradient(120% 70% at 50% 0%, #ffffff 0%, #e8eef6 100%);
+      --bezel-shell-bg: rgba(255, 255, 255, 0.75);
+      --bezel-shell-border: rgba(148, 163, 184, 0.3);
+      --bezel-core-bg: #ffffff;
+      --bezel-core-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent-gold: #b38234;
+      --accent-gold-glow: rgba(179, 130, 52, 0.15);
+      --accent-gold-soft: rgba(179, 130, 52, 0.08);
+      --border-subtle: #cbd5e1;
+      --border-card: #e2e8f0;
+      --surface-hover: #f8fafc;
+      --badge-bg: #e2e8f0;
+      --badge-text: #1e293b;
+      --chart-grid: rgba(100, 116, 139, 0.12);
+      --chart-line: #b38234;
+      --icon-filter: none;
+    }
+
+    body.dark {
+      --bg-page: #06090e;
+      --bg-gradient: radial-gradient(120% 70% at 50% 0%, #0d1522 0%, #06090e 100%);
+      --bezel-shell-bg: rgba(255, 255, 255, 0.035);
+      --bezel-shell-border: rgba(255, 255, 255, 0.08);
+      --bezel-core-bg: #0c131f;
+      --bezel-core-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #7e8c9f;
+      --accent-gold: #d8b381;
+      --accent-gold-glow: rgba(216, 179, 129, 0.18);
+      --accent-gold-soft: rgba(216, 179, 129, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-card: rgba(255, 255, 255, 0.06);
+      --surface-hover: #131c2c;
+      --badge-bg: rgba(255, 255, 255, 0.06);
+      --badge-text: #cbd5e1;
+      --chart-grid: rgba(255, 255, 255, 0.05);
+      --chart-line: #d8b381;
+      --icon-filter: brightness(0) invert(1);
+    }
+
+    /* Ambient Architectural Light Pulse */
+    .ambient-glow {
+      position: fixed;
+      top: -120px;
+      right: 15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-gold-glow) 0%, transparent 70%);
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* Staggered Entrance Animations */
+    .stagger-in {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: springFadeIn 750ms var(--ease-spring) forwards;
+    }
+    .stagger-1 { animation-delay: 50ms; }
+    .stagger-2 { animation-delay: 120ms; }
+    .stagger-3 { animation-delay: 190ms; }
+    .stagger-4 { animation-delay: 260ms; }
+    .stagger-5 { animation-delay: 330ms; }
+    .stagger-6 { animation-delay: 400ms; }
+
+    @keyframes springFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Interactive Chart Tooltip & Cursor Tracking */
+    .chart-interactive-stage {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      cursor: crosshair;
+    }
+    .chart-cursor-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--accent-gold);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+    .chart-cursor-bubble {
+      position: absolute;
+      top: -36px;
+      transform: translateX(-50%);
+      background: var(--bezel-core-bg);
+      border: 1px solid var(--accent-gold);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 150ms ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .chart-interactive-stage:hover .chart-cursor-line,
+    .chart-interactive-stage:hover .chart-cursor-bubble {
+      opacity: 1;
+    }
+
+    /* Platform Icon Pods */
+    .platform-icon-pod {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--surface-hover);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform var(--duration-base) var(--ease-spring), border-color var(--duration-base) var(--ease-smooth);
+    }
+    .platform-icon-img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      filter: var(--icon-filter);
+      opacity: 0.85;
+      transition: transform var(--duration-base) var(--ease-spring), opacity var(--duration-base) var(--ease-smooth);
+    }
+    .dock-card:hover .platform-icon-pod {
+      transform: translateY(-3px) scale(1.08);
+      border-color: var(--accent-gold);
+    }
+    .dock-card:hover .platform-icon-img {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  </style>
+  <link rel="stylesheet" href="details-kinetic-sanctuary.css">
+</head>
+<body class="dark sanctuary">
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <!-- FLOATING GLASS BAR -->
+  <header class="elite-header">
+    <div class="header-glass-bar">
+      <a href="details-elite-options.html" class="brand-capsule">
+        <div class="brand-logo-ring" style="background: var(--text-primary); border: 1px solid var(--border-subtle); color: var(--accent-gold);">
+          <!-- Official Platform Brand Icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 21V9l9-7 9 7v12M8 21V11h8v10M1 21h22"/>
+          </svg>
+        </div>
+        <span>مساحة الأعمال العقارية</span>
+      </a>
+
+      <div class="header-actions">
+        <button id="replay-motion-btn" class="btn-outline" title="إعادة تشغيل حركات الدخول">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+            <path d="M16 21h5v-5"/>
+          </svg>
+          <span>إعادة الحركة</span>
+        </button>
+        <button id="theme-toggle" class="btn-outline" aria-label="المظهر الداكن" aria-pressed="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <span>المظهر</span>
+        </button>
+        <a href="details-elite-options.html" class="btn-island">
+          <span>معرض الاختيار</span>
+          <div class="btn-bubble">←</div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO INTRO -->
+    <section class="elite-hero" aria-labelledby="workspace-title">
+      <div class="hero-copy">
+        <h1 class="hero-title" id="workspace-title">مساحة أعمالك العقارية</h1>
+        <p class="hero-description">استكشف المشهد ثلاثي الأبعاد وتابع العروض والصفقات ومؤشرات السيولة.</p>
+      </div>
+      <nav class="workspace-shortcuts" aria-label="أقسام مساحة العمل">
+        <a href="#section-map">الخريطة ثلاثية الأبعاد</a>
+        <a href="#section-stats">العمليات والإعلانات</a>
+        <a href="#section-analytics">التحليلات المالية</a>
+        <a href="#section-dock">الوصول السريع</a>
+      </nav>
+    </section>
+
+    <!-- BENTO GRID SYSTEM -->
+    <div class="bento-container">
+      <div class="bento-grid-asym">
+
+        <section class="col-span-8 sanctuary-map" id="section-map" aria-labelledby="sanctuary-map-title">
+          <header class="sanctuary-map-heading">
+            <div>
+              <h2 id="sanctuary-map-title">الخريطة ثلاثية الأبعاد</h2>
+              <p>تعرّف على المبنى والخدمات المحيطة به.</p>
+            </div>
+            <span class="sanctuary-map-badge">معاينة توضيحية</span>
+          </header>
+
+          <div class="sanctuary-map-stage">
+            <div class="sanctuary-map-host" role="group" aria-label="مشهد ثلاثي الأبعاد. استخدم الأسهم للتدوير أو اسحب أفقيًا." hidden></div>
+            <div class="sanctuary-map-pins"></div>
+            <p class="sanctuary-map-status" role="status"></p>
+            <noscript><p class="sanctuary-map-status">فعّل JavaScript لتشغيل المشهد ثلاثي الأبعاد.</p></noscript>
+          </div>
+
+          <div class="sanctuary-map-footer">
+            <div class="sanctuary-map-tools" role="group" aria-label="أدوات المشهد">
+              <button type="button" data-camera="right" aria-label="تدوير يمينًا" disabled>↷</button>
+              <button type="button" data-camera="left" aria-label="تدوير يسارًا" disabled>↶</button>
+              <button type="button" data-camera="in" aria-label="تقريب" disabled>+</button>
+              <button type="button" data-camera="out" aria-label="إبعاد" disabled>−</button>
+              <button type="button" data-camera="reset" disabled>إعادة العرض</button>
+              <button type="button" data-camera="play" aria-pressed="false" disabled>تشغيل الحركة</button>
+            </div>
+
+            <div class="sanctuary-places">
+              <h3 id="sanctuary-places-title">المواقع حول المبنى</h3>
+              <div id="sanctuary-place-list" role="group" aria-labelledby="sanctuary-places-title"></div>
+              <p class="sanctuary-place-detail" role="status">اختر موقعًا في القائمة أو على المشهد.</p>
+            </div>
+
+            <div class="sanctuary-map-actions">
+              <p>المواقع المعروضة جزء من نموذج توضيحي.</p>
+              <a href="/details#details-workspace" class="btn-island">فتح خريطة المنصة <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="col-span-4 sanctuary-stats" id="section-stats" aria-labelledby="sanctuary-stats-title">
+          <header>
+            <h2 class="card-heading" id="sanctuary-stats-title">إحصائيات العمليات</h2>
+          </header>
+          <dl class="sanctuary-stat-totals">
+            <div><dt>العمليات السابقة</dt><dd>٨</dd></div>
+            <div><dt>الطلبات الإعلانية</dt><dd>١٩</dd></div>
+          </dl>
+          <ul class="sanctuary-recent-ads" aria-label="العروض الأخيرة">
+            <li>
+              <div><strong>فيلا فاخرة بحي الملقا</strong><small>٤٥٠ م² · واجهة شمالية</small></div>
+              <bdi>٣٬٨٥٠٬٠٠٠ ر.س</bdi>
+            </li>
+            <li>
+              <div><strong>مبنى تجاري بحي الصحافة</strong><small>٨٢٠ م² · دخل سنوي ٨٫٥٪</small></div>
+              <bdi>٧٬٢٠٠٬٠٠٠ ر.س</bdi>
+            </li>
+          </ul>
+          <div class="sanctuary-stats-actions">
+            <a href="/offers" class="btn-outline">تصفح العروض</a>
+            <a href="/offers/new" class="btn-outline">إضافة إعلان</a>
+          </div>
+        </section>
+
+        <!-- 3. FINANCIAL TELEMETRY CHART WITH INTERACTIVE SCRUBBER (COL 7) -->
+        <div class="col-span-7 bezel-shell stagger-in stagger-5" id="section-analytics" data-tilt>
+          <div class="bezel-core">
+            <div class="card-topbar">
+              <div class="card-title-group">
+                <div class="card-icon-pod" style="color: var(--accent-gold);">
+                  <!-- Official Line Chart Icon -->
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="card-heading">مؤشرات السيولة والصفقات (١٢ شهر)</h2>
+                  <p style="font-size: 12px; color: var(--text-muted);">التدفق المالي التراكمي ومقارنة الفترات</p>
+                </div>
+              </div>
+              <span class="card-badge">+34.2% نمو سنوي</span>
+            </div>
+
+            <!-- Interactive Chart with Hover Tracking -->
+            <div class="chart-interactive-stage" id="chart-stage">
+              <div class="chart-cursor-line" id="chart-cursor-line"></div>
+              <div class="chart-cursor-bubble" id="chart-cursor-bubble">مايو: ٤٢٠,٠٠٠ ر.س</div>
+              
+              <svg class="chart-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="monochromeGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="var(--chart-line)" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <!-- Subtle grid -->
+                <line x1="0" y1="50" x2="600" y2="50" stroke="var(--chart-grid)" stroke-width="1"/>
+                <line x1="0" y1="100" x2="600" y2="100" stroke="var(--chart-grid)" stroke-width="1"/>
+                <line x1="0" y1="150" x2="600" y2="150" stroke="var(--chart-grid)" stroke-width="1"/>
+
+                <!-- Area Gradient Fill -->
+                <path d="M 0 170 Q 100 140, 180 120 T 350 80 T 520 40 L 600 25 L 600 200 L 0 200 Z" fill="url(#monochromeGradient)"/>
+                <!-- Path Line Stroke -->
+                <path class="chart-path" d="M 0 170 Q 100 140, 180 120 T 350 80 T 520 40 L 600 25" fill="none" stroke="var(--chart-line)" stroke-width="2.5"/>
+
+                <!-- Key Pin Vertices -->
+                <circle cx="180" cy="120" r="4" fill="var(--chart-line)"/>
+                <circle cx="350" cy="80" r="4" fill="var(--chart-line)"/>
+                <circle cx="520" cy="40" r="5" fill="#fff" stroke="var(--chart-line)" stroke-width="2.5"/>
+              </svg>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 12px;">
+              <span>يناير</span><span>مارس</span><span>مايو</span><span>يوليو</span><span>سبتمبر</span><span>نوفمبر</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. PROPERTY DISTRIBUTION (COL 5) -->
+        <div class="col-span-5 bezel-shell stagger-in stagger-5" data-tilt>
+          <div class="bezel-core">
+            <div class="card-topbar">
+              <div class="card-title-group">
+                <div class="card-icon-pod" style="color: var(--accent-gold);">
+                  <!-- Official PieChart icon from platform -->
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="card-heading">توزيع المحفظة العقارية</h2>
+                  <p style="font-size: 12px; color: var(--text-muted);">حسب تصنيف الأصول</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monochromatic Donut Chart -->
+            <div class="donut-wrapper">
+              <svg class="donut-svg" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--border-subtle)" stroke-width="3.5"/>
+                <!-- Segment 1: Gold 45% -->
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--accent-gold)" stroke-width="3.5" stroke-dasharray="45 55" stroke-dashoffset="0"/>
+                <!-- Segment 2: Slate 30% -->
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--text-secondary)" stroke-width="3.5" stroke-dasharray="30 70" stroke-dashoffset="-45"/>
+                <!-- Segment 3: Muted 25% -->
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--text-muted)" stroke-width="3.5" stroke-dasharray="25 75" stroke-dashoffset="-75"/>
+              </svg>
+
+              <div class="donut-legend">
+                <div class="donut-legend-item">
+                  <div><span class="donut-color-dot" style="background: var(--accent-gold);"></span>سكني (فلل وشقق)</div>
+                  <strong style="color: var(--text-primary);">45%</strong>
+                </div>
+                <div class="donut-legend-item">
+                  <div><span class="donut-color-dot" style="background: var(--text-secondary);"></span>تجاري ومكتبي</div>
+                  <strong style="color: var(--text-primary);">30%</strong>
+                </div>
+                <div class="donut-legend-item">
+                  <div><span class="donut-color-dot" style="background: var(--text-muted);"></span>أراضٍ ومخططات</div>
+                  <strong style="color: var(--text-primary);">25%</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. QUICK ACTIONS HUB WITH EXACT PLATFORM ICONS (COL 12) -->
+        <div class="col-span-12 bezel-shell stagger-in stagger-6" id="section-dock">
+          <div class="bezel-core">
+            <div class="card-topbar">
+              <div class="card-title-group">
+                <div class="card-icon-pod" style="color: var(--accent-gold);">
+                  <!-- Official Zap icon from platform -->
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="card-heading">بوابة الإجراءات السريعة والمعاملات</h2>
+                  <p style="font-size: 12px; color: var(--text-muted);">وصول مباشر للخدمات بنفس أيقونات المنصة المعتمدة</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- EXACT PLATFORM ICONS FROM /icons/ -->
+            <div class="quick-dock-grid">
+              
+              <!-- 01. Subscriptions -->
+              <a href="/subscriptions/new" class="dock-card">
+                <div class="platform-icon-pod">
+                  <img src="/icons/subscriptions-transparent.png" alt="الاشتراكات" class="platform-icon-img">
+                </div>
+                <span class="dock-title">الاشتراكات</span>
+                <span class="dock-tag">الباقات وإدارة الحساب</span>
+              </a>
+
+              <!-- 02. Wallet -->
+              <a href="/wallet" class="dock-card">
+                <div class="platform-icon-pod">
+                  <img src="/icons/wallet.png" alt="المحفظة المالية" class="platform-icon-img">
+                </div>
+                <span class="dock-title">المحفظة المالية</span>
+                <span class="dock-tag">الرصيد والعمليات</span>
+              </a>
+
+              <!-- 03. Services (2.png) -->
+              <a href="/services" class="dock-card">
+                <div class="platform-icon-pod">
+                  <img src="/icons/2.png" alt="الخدمات الإدارية" class="platform-icon-img">
+                </div>
+                <span class="dock-title">الخدمات الإدارية</span>
+                <span class="dock-tag">استعراض وطلب الخدمات</span>
+              </a>
+
+              <!-- 04. Offers (3.png) -->
+              <a href="/offers" class="dock-card">
+                <div class="platform-icon-pod">
+                  <img src="/icons/3.png" alt="العروض العقارية" class="platform-icon-img">
+                </div>
+                <span class="dock-title">العروض العقارية</span>
+                <span class="dock-tag">تصفح الفرص المتاحة</span>
+              </a>
+
+              <!-- 05. Orders (4.png) -->
+              <a href="/orders" class="dock-card">
+                <div class="platform-icon-pod">
+                  <img src="/icons/4.png" alt="مركز الطلبات" class="platform-icon-img">
+                </div>
+                <span class="dock-title">مركز الطلبات</span>
+                <span class="dock-tag">متابعة العقود والطلبات</span>
+              </a>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="details-elite.js"></script>
+  <script type="module" src="details-kinetic-sanctuary.js"></script>
+  <script>
+    // Interactive Chart Hover Scrubbing
+    const chartStage = document.getElementById('chart-stage');
+    const cursorLine = document.getElementById('chart-cursor-line');
+    const cursorBubble = document.getElementById('chart-cursor-bubble');
+
+    const monthsData = [
+      { month: 'يناير', value: '١٨٠,٠٠٠ ر.س' },
+      { month: 'فبراير', value: '٢٤٠,٠٠٠ ر.س' },
+      { month: 'مارس', value: '٣١٠,٠٠٠ ر.س' },
+      { month: 'أبريل', value: '٢٩٠,٠٠٠ ر.س' },
+      { month: 'مايو', value: '٤٢٠,٠٠٠ ر.س' },
+      { month: 'يونيو', value: '٤٦٠,٠٠٠ ر.س' },
+      { month: 'يوليو', value: '٥١٠,٠٠٠ ر.س' },
+      { month: 'أغسطس', value: '٥٨٠,٠٠٠ ر.س' },
+      { month: 'سبتمبر', value: '٦٤٠,٠٠٠ ر.س' },
+      { month: 'أكتوبر', value: '٧٢٠,٠٠٠ ر.س' },
+      { month: 'نوفمبر', value: '٨٥٠,٠٠٠ ر.س' },
+      { month: 'ديسمبر', value: '٩٢٠,٠٠٠ ر.س' },
+    ];
+
+    if (chartStage && cursorLine && cursorBubble) {
+      chartStage.addEventListener('mousemove', (e) => {
+        const rect = chartStage.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = Math.max(0, Math.min(1, x / rect.width));
+        const index = Math.min(monthsData.length - 1, Math.floor(pct * monthsData.length));
+        
+        cursorLine.style.left = `${x}px`;
+        cursorBubble.style.left = `${x}px`;
+        cursorBubble.textContent = `${monthsData[index].month}: ${monthsData[index].value}`;
+      });
+    }
+
+    // Replay Animations Button
+    const replayBtn = document.getElementById('replay-motion-btn');
+    if (replayBtn) {
+      replayBtn.addEventListener('click', () => {
+        const animated = document.querySelectorAll('.stagger-in');
+        animated.forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; // trigger reflow
+          el.style.animation = '';
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 "use client";
 
+import styles from "./offer-request-modal.module.css";
+
 import React, { useState, useMemo } from 'react';
 import {
-    Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+    Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -259,11 +261,12 @@ export default function VisitRequestModal({
                     {(['gregorian', 'hijri'] as CalendarType[]).map(ct => (
                         <button
                             key={ct}
+                            aria-pressed={calType === ct}
                             onClick={() => setCalType(ct)}
                             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${
                                 calType === ct
-                                    ? 'bg-slate-900 text-white shadow'
-                                    : 'text-slate-500 hover:text-slate-700'
+                                    ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white shadow'
+                                    : 'text-muted-foreground dark:text-slate-500 hover:text-foreground'
                             }`}
                         >
                             {ct === 'hijri' ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
@@ -275,11 +278,11 @@ export default function VisitRequestModal({
 
             {/* Month nav */}
             <div className="flex items-center justify-between">
-                <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={prevFn}>
+                <Button variant="ghost" size="sm" className="h-11 w-11 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={prevFn}>
                     {isAr ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </Button>
-                <h3 className="font-bold text-sm text-slate-800">{calHeaderLabel()}</h3>
-                <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={nextFn}>
+                <h3 className="font-bold text-sm text-foreground">{calHeaderLabel()}</h3>
+                <Button variant="ghost" size="sm" className="h-11 w-11 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={nextFn}>
                     {isAr ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </Button>
             </div>
@@ -287,7 +290,7 @@ export default function VisitRequestModal({
             {/* Day headers */}
             <div className="grid grid-cols-7 gap-1 text-center text-xs">
                 {dayHeaders.map(d => (
-                    <div key={d} className="text-slate-400 font-bold py-1">{d}</div>
+                    <div key={d} className="text-muted-foreground dark:text-slate-400 font-bold py-1">{d}</div>
                 ))}
                 {Array.from({ length: startOfMonth(month).getDay() }).map((_, i) => (
                     <div key={`e-${i}`} />
@@ -298,16 +301,17 @@ export default function VisitRequestModal({
                     return (
                         <button
                             key={date.toString()}
+                            aria-pressed={Boolean(isSel)}
                             disabled={isPast}
                             onClick={() => { onSelect(date); onTime(''); }}
                             className={`
                                 relative p-1.5 rounded-lg text-xs font-semibold transition-all
-                                ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-slate-700'}
+                                ${isSel ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' : isPast ? 'text-muted-foreground dark:text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-foreground'}
                             `}
                         >
                             {dayLabel(date)}
                             {calType === 'hijri' && !isPast && (
-                                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[8px] text-slate-400 leading-none whitespace-nowrap">
+                                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[8px] text-muted-foreground dark:text-slate-400 leading-none whitespace-nowrap">
                                     {format(date, 'd')}
                                 </span>
                             )}
@@ -321,7 +325,7 @@ export default function VisitRequestModal({
 
             {/* Selected date display */}
             {selDate && (
-                <div className="text-center text-xs text-slate-500 font-medium bg-muted rounded-lg py-1.5">
+                <div className="text-center text-xs text-muted-foreground dark:text-slate-500 font-medium bg-muted rounded-lg py-1.5">
                     {calType === 'hijri' ? hijriLabel(selDate) : format(selDate, 'dd MMMM yyyy', { locale })}
                 </div>
             )}
@@ -329,7 +333,7 @@ export default function VisitRequestModal({
             {/* Time slots */}
             {selDate && (
                 <div>
-                    <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
+                    <p className="text-xs font-bold text-muted-foreground mb-2 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                     </p>
                     <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
@@ -340,8 +344,8 @@ export default function VisitRequestModal({
                                 className={`
                                     px-2 py-1.5 text-xs rounded-lg border font-semibold transition-all
                                     ${selTime === t
-                                        ? 'bg-slate-900 text-white border-slate-900'
-                                        : 'border text-slate-600 hover:bg-muted'}
+                                        ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900'
+                                        : 'border text-muted-foreground hover:bg-muted'}
                                 `}
                             >
                                 {t}
@@ -357,14 +361,15 @@ export default function VisitRequestModal({
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent
-                className="w-[95vw] sm:max-w-lg bg-card rounded-2xl p-0 overflow-hidden gap-0"
+                className={`${styles.modal} w-[95vw] sm:max-w-lg bg-card rounded-2xl p-0 overflow-hidden gap-0`}
                 dir={isAr ? 'rtl' : 'ltr'}
             >
                 {/* Header */}
                 <DialogHeader className="px-6 pt-6 pb-4 border-b border">
-                    <DialogTitle className="text-lg font-black text-slate-900">
+                    <DialogTitle className="text-lg font-black text-foreground">
                         {T.title}
                     </DialogTitle>
+                    <DialogDescription className="sr-only">{isAr ? 'اختر نوع الزيارة والموعد ثم راجع تفاصيل الطلب.' : 'Choose a visit type and date, then review your request.'}</DialogDescription>
 
                     {/* Tab: Proxy / Self */}
                     <Tabs
@@ -395,7 +400,7 @@ export default function VisitRequestModal({
                                 {steps.map((s, i) => (
                                     <div
                                         key={s}
-                                        className={`h-1 flex-1 rounded-full transition-all ${i <= stepIndex ? 'bg-slate-900' : 'bg-muted'}`}
+                                        className={`h-1 flex-1 rounded-full transition-all ${i <= stepIndex ? 'bg-card dark:bg-slate-900' : 'bg-muted'}`}
                                     />
                                 ))}
                             </div>
@@ -403,13 +408,13 @@ export default function VisitRequestModal({
                             {/* Step: type info */}
                             {step === 'type' && (
                                 <div className="space-y-4">
-                                    <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
-                                        <p className="text-sm text-indigo-800 font-medium leading-relaxed">
+                                    <div className="bg-muted border border-border rounded-xl p-4">
+                                        <p className="text-sm text-foreground font-medium leading-relaxed">
                                             {T.proxyInfo}
                                         </p>
                                     </div>
                                     <div className="text-center py-2">
-                                        <p className="text-xs text-slate-500 font-medium">
+                                        <p className="text-xs text-muted-foreground dark:text-slate-500 font-medium">
                                             {isAr ? 'اضغط "التالي" لتحديد التاريخ والوقت' : 'Press "Next" to choose date and time'}
                                         </p>
                                     </div>
@@ -419,7 +424,7 @@ export default function VisitRequestModal({
                             {/* Step: calendar */}
                             {step === 'calendar' && (
                                 <div className="space-y-1">
-                                    <p className="text-xs font-bold text-slate-600 mb-3 flex items-center gap-1">
+                                    <p className="text-xs font-bold text-muted-foreground mb-3 flex items-center gap-1">
                                         <CalendarIcon className="w-3.5 h-3.5" /> {T.chooseDate}
                                     </p>
                                     {renderCalendar(
@@ -439,10 +444,10 @@ export default function VisitRequestModal({
                             {/* Step: recording type */}
                             {step === 'recording' && (
                                 <div className="space-y-3">
-                                    <p className="text-xs font-bold text-slate-600 flex items-center gap-1">
+                                    <p className="text-xs font-bold text-muted-foreground flex items-center gap-1">
                                         <Video className="w-3.5 h-3.5" /> {T.recordingType}
                                     </p>
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-muted-foreground dark:text-slate-500">
                                         {isAr
                                             ? 'اختر طريقة توثيق الزيارة (اختيار واحد فقط)'
                                             : 'Choose how the visit will be documented (select one)'}
@@ -454,17 +459,18 @@ export default function VisitRequestModal({
                                         ] as const).map(opt => (
                                             <button
                                                 key={opt.id}
+                                                aria-pressed={recordingType === opt.id}
                                                 onClick={() => setRecordingType(opt.id)}
                                                 className={`
                                                     flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center
                                                     ${recordingType === opt.id
-                                                        ? 'border-slate-900 bg-slate-900 text-white'
-                                                        : 'border text-slate-600 hover:border-slate-400'}
+                                                        ? 'border-border dark:border-slate-900 bg-card dark:bg-slate-900 text-foreground dark:text-white'
+                                                        : 'border text-muted-foreground hover:border-slate-400'}
                                                 `}
                                             >
                                                 <opt.icon className="w-6 h-6" />
                                                 <span className="text-xs font-bold">{opt.label}</span>
-                                                <span className={`text-[10px] leading-tight ${recordingType === opt.id ? 'text-slate-300' : 'text-slate-400'}`}>
+                                                <span className={`text-[10px] leading-tight ${recordingType === opt.id ? 'text-muted-foreground dark:text-slate-300' : 'text-muted-foreground dark:text-slate-400'}`}>
                                                     {opt.desc}
                                                 </span>
                                             </button>
@@ -476,16 +482,16 @@ export default function VisitRequestModal({
                             {/* Step: confirm summary */}
                             {step === 'confirm' && (
                                 <div className="space-y-4">
-                                    <div className="bg-muted border border rounded-xl p-4 space-y-3">
-                                        <h3 className="font-bold text-slate-900 text-sm">{T.summary}</h3>
+                                    <div className="calm-panel bg-muted border border rounded-xl p-4 space-y-3">
+                                        <h3 className="font-bold text-foreground text-sm">{T.summary}</h3>
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="text-slate-500">{T.visitMode}</span>
-                                                <span className="font-semibold text-slate-800">{T.proxyTab}</span>
+                                                <span className="text-muted-foreground dark:text-slate-500">{T.visitMode}</span>
+                                                <span className="font-semibold text-foreground">{T.proxyTab}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-slate-500">{T.visitDate}</span>
-                                                <span className="font-semibold text-slate-800">
+                                                <span className="text-muted-foreground dark:text-slate-500">{T.visitDate}</span>
+                                                <span className="font-semibold text-foreground">
                                                     {selectedDate && (
                                                         calType === 'hijri'
                                                             ? hijriLabel(selectedDate)
@@ -494,30 +500,30 @@ export default function VisitRequestModal({
                                                 </span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-slate-500">{T.visitTime}</span>
-                                                <span className="font-semibold text-slate-800">{selectedTime}</span>
+                                                <span className="text-muted-foreground dark:text-slate-500">{T.visitTime}</span>
+                                                <span className="font-semibold text-foreground">{selectedTime}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-slate-500">{T.recType}</span>
-                                                <span className="font-semibold text-slate-800">
+                                                <span className="text-muted-foreground dark:text-slate-500">{T.recType}</span>
+                                                <span className="font-semibold text-foreground">
                                                     {recordingType === 'video' ? T.videoRec : T.liveStream}
                                                 </span>
                                             </div>
                                             <div className="border-t border my-1" />
                                             <div className="flex justify-between items-center">
-                                                <span className="text-slate-600 font-bold">
+                                                <span className="text-muted-foreground font-bold">
                                                     {isAr ? 'تكلفة الخدمة' : 'Service Fee'}
                                                 </span>
-                                                <span className="text-xl font-black text-slate-900">
+                                                <span className="text-xl font-black text-foreground">
                                                     <SaudiRiyalAmount amount={visitPriceAmount} locale={visitPriceLocale} minimumFractionDigits={0} maximumFractionDigits={0} />
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-slate-500 leading-relaxed">
+                                    <p className="text-xs text-muted-foreground dark:text-slate-500 leading-relaxed">
                                         {isAr
-                                            ? 'بالضغط على "إرسال الطلب" سيتم إنشاء الحجز ومعالجة الدفع تلقائياً.'
-                                            : 'By pressing "Send Request" the booking will be created and payment processed.'}
+                                            ? 'راجع تفاصيل الزيارة قبل إرسال الطلب.'
+                                            : 'Review the visit details before sending your request.'}
                                     </p>
                                 </div>
                             )}
@@ -527,29 +533,29 @@ export default function VisitRequestModal({
                     {/* ── SELF MODE ── */}
                     {visitMode === 'self' && (
                         <div className="space-y-4">
-                            <div className="bg-muted border border rounded-xl p-4 text-sm text-gray-600">
+                            <div className="calm-panel bg-muted border border rounded-xl p-4 text-sm text-gray-600">
                                 {T.selfInfo}
                             </div>
-                            <p className="text-xs font-bold text-slate-600 flex items-center gap-1">
+                            <p className="text-xs font-bold text-muted-foreground flex items-center gap-1">
                                 <CalendarIcon className="w-3.5 h-3.5" /> {T.chooseDate}
                             </p>
                             {/* Calendar (no Hijri toggle for self) */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(subMonths(selfCurrentMonth, 1))}>
+                                    <Button variant="ghost" size="sm" className="h-11 w-11 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(subMonths(selfCurrentMonth, 1))}>
                                         {isAr ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                                     </Button>
-                                    <h3 className="font-bold text-sm text-slate-800">
+                                    <h3 className="font-bold text-sm text-foreground">
                                         {format(selfCurrentMonth, 'MMMM yyyy', { locale })}
                                     </h3>
-                                    <Button variant="ghost" size="sm" className="h-10 w-10 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(addMonths(selfCurrentMonth, 1))}>
+                                    <Button variant="ghost" size="sm" className="h-11 w-11 px-0 sm:h-8 sm:w-auto sm:px-2.5" onClick={() => setSelfCurrentMonth(addMonths(selfCurrentMonth, 1))}>
                                         {isAr ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                     </Button>
                                 </div>
 
                                 <div className="grid grid-cols-7 gap-1 text-center text-xs">
                                     {dayHeaders.map(d => (
-                                        <div key={d} className="text-slate-400 font-bold py-1">{d}</div>
+                                        <div key={d} className="text-muted-foreground dark:text-slate-400 font-bold py-1">{d}</div>
                                     ))}
                                     {Array.from({ length: startOfMonth(selfCurrentMonth).getDay() }).map((_, i) => (
                                         <div key={`e-${i}`} />
@@ -564,7 +570,7 @@ export default function VisitRequestModal({
                                                 onClick={() => { setSelfDate(date); setSelfTime(null); }}
                                                 className={`
                                                     p-1.5 rounded-lg text-xs font-semibold transition-all
-                                                    ${isSel ? 'bg-slate-900 text-white' : isPast ? 'text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-slate-700'}
+                                                    ${isSel ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' : isPast ? 'text-muted-foreground dark:text-slate-300 cursor-not-allowed' : 'hover:bg-muted text-foreground'}
                                                 `}
                                             >
                                                 {format(date, 'd')}
@@ -575,7 +581,7 @@ export default function VisitRequestModal({
 
                                 {selfDate && (
                                     <div>
-                                        <p className="text-xs font-bold text-slate-600 mb-2 flex items-center gap-1">
+                                        <p className="text-xs font-bold text-muted-foreground mb-2 flex items-center gap-1">
                                             <Clock className="w-3.5 h-3.5" /> {T.chooseTime}
                                         </p>
                                         <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1.5">
@@ -586,8 +592,8 @@ export default function VisitRequestModal({
                                                     className={`
                                                         px-2 py-1.5 text-xs rounded-lg border font-semibold transition-all
                                                         ${selfTime === t
-                                                            ? 'bg-slate-900 text-white border-slate-900'
-                                                            : 'border text-slate-600 hover:bg-muted'}
+                                                            ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900'
+                                                            : 'border text-muted-foreground hover:bg-muted'}
                                                     `}
                                                 >
                                                     {t}
@@ -605,10 +611,10 @@ export default function VisitRequestModal({
                 <DialogFooter className="px-6 py-4 border-t border bg-muted">
                     {/* Live price badge — always visible */}
                     <div className="flex items-center justify-between w-full mb-3 px-1">
-                        <span className="text-xs text-slate-500 font-medium">
+                        <span className="text-xs text-muted-foreground dark:text-slate-500 font-medium">
                             {isAr ? 'تكلفة الزيارة' : 'Visit Fee'}
                         </span>
-                        <span className="text-base font-black text-slate-900 bg-card border border px-3 py-1 rounded-xl shadow-sm">
+                        <span className="calm-panel text-base font-black text-foreground bg-card border border px-3 py-1 rounded-xl shadow-sm">
                             <SaudiRiyalAmount amount={visitPriceAmount} locale={visitPriceLocale} minimumFractionDigits={0} maximumFractionDigits={0} />
                         </span>
                     </div>
@@ -629,7 +635,7 @@ export default function VisitRequestModal({
                         {visitMode === 'proxy' ? (
                             step === 'confirm' ? (
                                 <Button
-                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-white"
+                                    className="flex-1 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white"
                                     onClick={handleConfirm}
                                     disabled={loading}
                                 >
@@ -637,7 +643,7 @@ export default function VisitRequestModal({
                                 </Button>
                             ) : (
                                 <Button
-                                    className="flex-1 bg-slate-900 hover:bg-slate-800 text-white"
+                                    className="flex-1 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white"
                                     onClick={goNext}
                                     disabled={!canGoNext()}
                                 >
@@ -646,7 +652,7 @@ export default function VisitRequestModal({
                             )
                         ) : (
                             <Button
-                                className="flex-1 bg-slate-900 hover:bg-slate-800 text-white"
+                                className="flex-1 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white"
                                 onClick={handleConfirm}
                                 disabled={loading || !selfDate || !selfTime}
                             >

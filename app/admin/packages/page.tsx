@@ -7,6 +7,7 @@ import { Plus, Edit2, Trash2, Check, X, Loader2, ArrowRight } from "lucide-react
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/api";
+import type { PackageDiscountPeriod } from "@/lib/package-pricing";
 import toast from "react-hot-toast";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 
@@ -16,6 +17,7 @@ interface ManagementPackage {
   yearlyPrice: number;
   monthlyPrice: number;
   discount: number;
+  discountPeriod?: PackageDiscountPeriod;
   description: string;
   administrations: string[];
   departmentPrices?: Record<string, { monthly: number; yearly: number }>;
@@ -65,6 +67,7 @@ export default function AdminPackagesPage() {
     yearlyPrice: "",
     monthlyPrice: "",
     discount: "0",
+    discountPeriod: "both" as PackageDiscountPeriod,
     description: "",
     administrations: [] as string[],
     departmentPrices: emptyDepartmentPrices(),
@@ -107,6 +110,7 @@ export default function AdminPackagesPage() {
         yearlyPrice: pkg.yearlyPrice.toString(),
         monthlyPrice: pkg.monthlyPrice.toString(),
         discount: pkg.discount.toString(),
+        discountPeriod: pkg.discountPeriod ?? "both",
         description: pkg.description || "",
         administrations: pkg.administrations || [],
         departmentPrices: { ...emptyDepartmentPrices(), ...(pkg.departmentPrices || {}) },
@@ -121,6 +125,7 @@ export default function AdminPackagesPage() {
         yearlyPrice: "",
         monthlyPrice: "",
         discount: "0",
+    discountPeriod: "both" as PackageDiscountPeriod,
         description: "",
         administrations: [],
         departmentPrices: emptyDepartmentPrices(),
@@ -143,6 +148,7 @@ export default function AdminPackagesPage() {
         yearlyPrice: parseFloat(formData.yearlyPrice),
         monthlyPrice: parseFloat(formData.monthlyPrice),
         discount: parseFloat(formData.discount),
+        discountPeriod: formData.discountPeriod,
       };
 
       if (editingPackage) {
@@ -247,25 +253,25 @@ export default function AdminPackagesPage() {
               if (window.history.length > 1) router.back();
               else router.push("/admin/subscriptions");
             }}
-            className="mb-3 inline-flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 text-sm font-black text-slate-700 transition-all hover:border-slate-900"
+            className="mb-3 inline-flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 text-sm font-black text-slate-700 transition-all hover:border-border hover:dark:border-slate-900"
           >
             <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
             {isRtl ? "رجوع" : "Back"}
           </button>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('admin.packages.title')}</h1>
-          <p className="text-gray-500 mt-1">{t('admin.packages.subtitle')}</p>
+          <p className="text-muted-foreground dark:text-gray-500 mt-1">{t('admin.packages.subtitle')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/subscriptions"
-            className="flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 font-bold text-slate-700 transition-colors hover:border-slate-900"
+            className="flex items-center gap-2 rounded-xl border border bg-card px-4 py-2 font-bold text-slate-700 transition-colors hover:border-border hover:dark:border-slate-900"
           >
             <ArrowRight className={`h-4 w-4 ${isRtl ? "" : "rotate-180"}`} />
             <span>{isRtl ? "العودة للاشتراكات" : "Back to subscriptions"}</span>
           </Link>
           <button
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-2 bg-card dark:bg-slate-900 text-foreground dark:text-white px-4 py-2 rounded-xl hover:bg-muted hover:dark:bg-slate-800 transition-colors"
           >
             <Plus className="w-5 h-5" />
             <span>{t('admin.packages.add')}</span>
@@ -273,12 +279,12 @@ export default function AdminPackagesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-2xl border border bg-card p-1 shadow-sm">
+      <div className="calm-panel grid grid-cols-1 md:grid-cols-2 gap-2 rounded-2xl border border bg-card p-1 shadow-sm">
         <button
           type="button"
           onClick={() => setActiveTab("packages")}
           className={`h-12 rounded-xl text-sm font-black transition-colors ${
-            activeTab === "packages" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
+            activeTab === "packages" ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-slate-600 hover:bg-muted"
           }`}
         >
           {isRtl ? "الباقات" : "Packages"}
@@ -287,7 +293,7 @@ export default function AdminPackagesPage() {
           type="button"
           onClick={() => setActiveTab("pricing")}
           className={`h-12 rounded-xl text-sm font-black transition-colors ${
-            activeTab === "pricing" ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-muted"
+            activeTab === "pricing" ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-slate-600 hover:bg-muted"
           }`}
         >
           {isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}
@@ -301,7 +307,7 @@ export default function AdminPackagesPage() {
       ) : activeTab === "packages" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {packages.map((pkg) => (
-            <div key={pkg.id} className="bg-card rounded-2xl p-3 sm:p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div key={pkg.id} className="calm-panel bg-card rounded-2xl p-3 sm:p-6 shadow-sm border border hover:shadow-md transition-shadow relative overflow-hidden group">
                 {!pkg.isActive && (
                     <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold">{t('admin.packages.inactive')}</div>
                 )}
@@ -310,14 +316,14 @@ export default function AdminPackagesPage() {
                   <h3 className="text-lg font-bold text-gray-900">{pkg.name}</h3>
                   <div className="mt-1 space-y-1">
                       <p className="text-xl font-black text-blue-600">
-                          {pkg.yearlyPrice} <span className="text-xs font-normal text-gray-500">{t('admin.packages.currencyPerYear')}</span>
+                          {pkg.yearlyPrice} <span className="text-xs font-normal text-muted-foreground dark:text-gray-500">{t('admin.packages.currencyPerYear')}</span>
                       </p>
                       <p className="text-sm font-bold text-gray-700">
-                          {pkg.monthlyPrice} <span className="text-xs font-normal text-gray-500">{t('admin.packages.currencyPerMonth')}</span>
+                          {pkg.monthlyPrice} <span className="text-xs font-normal text-muted-foreground dark:text-gray-500">{t('admin.packages.currencyPerMonth')}</span>
                       </p>
                       {pkg.discount > 0 && (
                           <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-md font-medium">
-                              {pkg.discount}% {t('admin.packages.discount')}
+                              {pkg.discount}% {t('admin.packages.discount')} · {pkg.discountPeriod === 'yearly' ? (isRtl ? 'سنوي فقط' : 'Yearly only') : pkg.discountPeriod === 'monthly' ? (isRtl ? 'شهري فقط' : 'Monthly only') : (isRtl ? 'شهري وسنوي' : 'Monthly and yearly')}
                           </span>
                       )}
                   </div>
@@ -338,13 +344,13 @@ export default function AdminPackagesPage() {
                 {/* Administrations Preview */}
                 {pkg.administrations && pkg.administrations.length > 0 && (
                    <div className="space-y-1">
-                      <p className="text-xs font-bold text-gray-500 uppercase">{t('admin.packages.administrations')}</p>
+                      <p className="text-xs font-bold text-muted-foreground dark:text-gray-500 uppercase">{t('admin.packages.administrations')}</p>
                       <div className="flex flex-wrap gap-1">
                         {pkg.administrations.slice(0, 3).map((admin, idx) => (
                           <span key={idx} className="text-xs bg-muted text-slate-600 px-2 py-1 rounded-md">{t(admin)}</span>
                         ))}
                          {pkg.administrations.length > 3 && (
-                            <span className="text-xs text-gray-400 px-1">+{pkg.administrations.length - 3}</span>
+                            <span className="text-xs text-muted-foreground dark:text-gray-400 px-1">+{pkg.administrations.length - 3}</span>
                          )}
                       </div>
                    </div>
@@ -354,11 +360,11 @@ export default function AdminPackagesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-3xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-6">
             <div>
               <h2 className="text-xl font-black text-slate-950">{isRtl ? "تحديث أسعار الإدارات" : "Update Department Pricing"}</h2>
-              <p className="mt-1 text-sm font-bold text-slate-400">
+              <p className="mt-1 text-sm font-bold text-muted-foreground dark:text-slate-400">
                 {isRtl ? "هذه الأسعار عامة للاشتراك المخصص وليست مرتبطة بأي باقة." : "These prices are global for custom subscriptions and are not linked to any package."}
               </p>
             </div>
@@ -367,11 +373,11 @@ export default function AdminPackagesPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {AVAILABLE_ADMINISTRATIONS.map((admin) => (
-                  <div key={admin} className="rounded-2xl border border bg-muted p-4">
+                  <div key={admin} className="calm-panel rounded-2xl border border bg-muted p-4">
                     <div className="mb-3 text-sm font-black text-slate-950">{t(admin)}</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري" : "Monthly"}</label>
+                        <label className="mb-1 block text-[11px] font-bold text-muted-foreground dark:text-slate-500">{isRtl ? "شهري" : "Monthly"}</label>
                         <input
                           type="number"
                           min="0"
@@ -382,7 +388,7 @@ export default function AdminPackagesPage() {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "سنوي" : "Yearly"}</label>
+                        <label className="mb-1 block text-[11px] font-bold text-muted-foreground dark:text-slate-500">{isRtl ? "سنوي" : "Yearly"}</label>
                         <input
                           type="number"
                           min="0"
@@ -397,11 +403,11 @@ export default function AdminPackagesPage() {
                 ))}
               </div>
 
-                <div className="rounded-2xl border border bg-muted p-4">
+                <div className="calm-panel rounded-2xl border border bg-muted p-4">
                   <div className="mb-3 text-sm font-black text-slate-950">{isRtl ? "سعر كل موظف" : "Employee Seat Price"}</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "شهري لكل موظف" : "Monthly per employee"}</label>
+                      <label className="mb-1 block text-[11px] font-bold text-muted-foreground dark:text-slate-500">{isRtl ? "شهري لكل موظف" : "Monthly per employee"}</label>
                       <input
                         type="number"
                         min="0"
@@ -412,7 +418,7 @@ export default function AdminPackagesPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[11px] font-bold text-slate-500">{isRtl ? "سنوي لكل موظف" : "Yearly per employee"}</label>
+                      <label className="mb-1 block text-[11px] font-bold text-muted-foreground dark:text-slate-500">{isRtl ? "سنوي لكل موظف" : "Yearly per employee"}</label>
                       <input
                         type="number"
                         min="0"
@@ -429,7 +435,7 @@ export default function AdminPackagesPage() {
                 <button
                   type="button"
                   onClick={handleSaveDepartmentPricing}
-                  className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-black"
+                  className="rounded-xl bg-background dark:bg-slate-950 px-5 py-3 text-sm font-black text-foreground dark:text-white transition-colors hover:bg-black"
                 >
                   {isRtl ? "حفظ أسعار الإدارات" : "Save Department Pricing"}
                 </button>
@@ -451,7 +457,7 @@ export default function AdminPackagesPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-card rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl"
+              className="calm-panel bg-card rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-sm dark:shadow-xl"
             >
               <div className="p-3 sm:p-6 border-b border flex justify-between items-center sticky top-0 bg-card z-10">
                 <h2 className="text-xl font-bold">{editingPackage ? t('admin.packages.modal.edit') : t('admin.packages.modal.new')}</h2>
@@ -515,6 +521,21 @@ export default function AdminPackagesPage() {
                             />
                         </div>
                         <div className="space-y-2">
+                            <label htmlFor="package-discount-period" className="text-sm font-medium text-foreground">
+                                {isRtl ? 'تطبيق الخصم على' : 'Apply discount to'}
+                            </label>
+                            <select
+                                id="package-discount-period"
+                                value={formData.discountPeriod}
+                                onChange={(event) => setFormData({ ...formData, discountPeriod: event.target.value as PackageDiscountPeriod })}
+                                className="w-full min-h-11 p-3 rounded-xl border border-border bg-background text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <option value="both">{isRtl ? 'الشهري والسنوي' : 'Monthly and yearly'}</option>
+                                <option value="monthly">{isRtl ? 'الشهري فقط' : 'Monthly only'}</option>
+                                <option value="yearly">{isRtl ? 'السنوي فقط' : 'Yearly only'}</option>
+                            </select>
+                        </div>
+                        <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">{t('admin.packages.form.desc')}</label>
                             <textarea
                                 value={formData.description}
@@ -556,14 +577,14 @@ export default function AdminPackagesPage() {
                         id="isActive"
                         checked={formData.isActive}
                         onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
-                        className="w-5 h-5 rounded border-gray-300 text-slate-900 focus:ring-slate-900"
+                        className="w-5 h-5 rounded border-gray-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900"
                     />
                     <label htmlFor="isActive" className="text-sm font-medium text-gray-700">{t('admin.packages.form.active')}</label>
                 </div>
 
                 <div className="pt-2 flex justify-end gap-3 save-btn">
                     <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl border border font-medium hover:bg-muted">{t('admin.packages.form.cancel')}</button>
-                    <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800">{t('admin.packages.form.save')}</button>
+                    <button type="submit" className="px-5 py-2.5 rounded-xl bg-card dark:bg-slate-900 text-foreground dark:text-white font-medium hover:bg-muted hover:dark:bg-slate-800">{t('admin.packages.form.save')}</button>
                 </div>
               </form>
             </motion.div>

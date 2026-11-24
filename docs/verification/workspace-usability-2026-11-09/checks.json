@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "searchArabic": true,
+      "statusFilter": true,
+      "sorting": true,
+      "pagination": true,
+      "mobileLayout": true
+    },
+    {
+      "width": 390,
+      "searchArabic": true,
+      "statusFilter": true,
+      "sorting": true,
+      "pagination": true,
+      "mobileLayout": true
+    },
+    {
+      "listErrorRecovery": true
+    },
+    {
+      "inlineValidation": true,
+      "firstInvalidFocus": true,
+      "radioKeyboard": true,
+      "numericValidation": true,
+      "failedSavePreservesInput": true,
+      "concurrentSubmitGuard": true
+    },
+    {
+      "successfulSaveLocksUntilRedirect": true
+    },
+    {
+      "rtlKeyboardTabs": true,
+      "activeTabContrast": true
+    },
+    {
+      "transactionUnitsCorrect": true,
+      "singleDashboardChartFetch": true
+    },
+    {
+      "englishValidation": true
+    },
+    {
+      "directEntryBackFallback": true
+    },
+    {
+      "darkNavigationPreserved": true
+    }
+  ],
+  "submissions": 2,
+  "pageErrors": []
+}

@@ -27,12 +27,12 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
     const isPending = !isAccepted && !isRejected;
 
     const statusConfig = {
-        icon: isAccepted ? <CheckCircle2 className="w-8 h-8 text-white" /> : 
-              isRejected ? <AlertCircle className="w-8 h-8 text-white" /> : 
-              <Clock className="w-8 h-8 text-white" />,
-        color: isAccepted ? 'from-slate-800 to-slate-900' :
-               isRejected ? 'from-slate-800 to-slate-900' :
-               'from-slate-800 to-slate-900',
+        icon: isAccepted ? <CheckCircle2 className="w-8 h-8 text-foreground dark:text-white" /> :
+              isRejected ? <AlertCircle className="w-8 h-8 text-foreground dark:text-white" /> :
+              <Clock className="w-8 h-8 text-foreground dark:text-white" />,
+        color: isAccepted ? 'from-muted dark:from-slate-800 to-card dark:to-slate-900' :
+               isRejected ? 'from-muted dark:from-slate-800 to-card dark:to-slate-900' :
+               'from-muted dark:from-slate-800 to-card dark:to-slate-900',
         bgGlow: isAccepted ? 'bg-green-500/20' :
                 isRejected ? 'bg-red-500/20' :
                 'bg-slate-1000/20',
@@ -46,22 +46,22 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="wallet-dialog-content w-[calc(100vw-1.5rem)] sm:max-w-xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-3xl" dir="rtl">
+            <DialogContent className="calm-overlay wallet-dialog-content w-[calc(100vw-1.5rem)] sm:max-w-xl max-h-[90vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-3xl border border-border dark:border-white/40 shadow-sm dark:shadow-2xl rounded-3xl" dir="rtl">
                 
                 {/* Premium Header */}
                 <div className={`relative px-6 pt-8 pb-24 sm:px-8 sm:pt-12 text-center overflow-hidden bg-gradient-to-br ${statusConfig.color}`}>
                     <div className="absolute inset-0 bg-[url('/watermark.png')] opacity-10 mix-blend-overlay background-size-cover"></div>
-                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl mix-blend-overlay animate-pulse"></div>
-                    <div className="absolute -top-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-2xl mix-blend-overlay"></div>
+                    <div className="calm-decoration absolute -bottom-24 -right-24 w-64 h-64 bg-muted dark:bg-white/20 rounded-full blur-3xl mix-blend-overlay animate-pulse"></div>
+                    <div className="calm-decoration absolute -top-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-2xl mix-blend-overlay"></div>
                     
                     <div className="relative z-10 flex flex-col items-center">
-                        <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 shadow-2xl border border-white/30 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                        <div className="calm-panel w-20 h-20 bg-muted dark:bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 shadow-sm dark:shadow-2xl border border-border dark:border-white/30 transform rotate-3 hover:rotate-0 transition-transform duration-500">
                             {statusConfig.icon}
                         </div>
-                        <DialogTitle className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight drop-shadow-md">
+                        <DialogTitle className="text-2xl sm:text-3xl font-black text-foreground dark:text-white mb-2 tracking-tight drop-shadow-md">
                             {isAccepted ? 'تم الموافقة على الطلب' : isRejected ? 'تم رفض الطلب' : 'الطلب قيد المراجعة'}
                         </DialogTitle>
-                        <DialogDescription className="text-white/80 font-medium text-lg">
+                        <DialogDescription className="text-foreground dark:text-white/80 font-medium text-lg">
                             {t('wallet.commissionRequest') || 'طلب عقد وساطة عقارية'}
                         </DialogDescription>
                     </div>
@@ -69,11 +69,11 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
                 {/* Overlapping Content Card */}
                 <div className="relative z-20 px-6 sm:px-8 -mt-16 pb-8">
-                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 sm:p-8 border border-slate-100">
+                    <div className="calm-panel bg-white rounded-3xl shadow-sm dark:shadow-xl shadow-slate-200/50 p-6 sm:p-8 border border-slate-100">
                         
                         {/* Status Ribbon */}
                         <div className="flex justify-center -mt-12 mb-8">
-                            <div className={`px-6 py-2 rounded-full border-4 border-white shadow-lg flex items-center gap-2 font-bold text-sm ${statusConfig.bgSoft} ${statusConfig.textColor}`}>
+                            <div className={`px-6 py-2 rounded-full border-4 border-border dark:border-white shadow-lg flex items-center gap-2 font-bold text-sm ${statusConfig.bgSoft} ${statusConfig.textColor}`}>
                                 <span className="relative flex h-3 w-3">
                                   {isPending && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>}
                                   <span className={`relative inline-flex rounded-full h-3 w-3 ${isAccepted ? 'bg-slate-1000' : isRejected ? 'bg-slate-1000' : 'bg-slate-1000'}`}></span>
@@ -84,9 +84,9 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
 
                         {/* Request Details Grid */}
                         <div className="grid grid-cols-2 gap-4 mb-8">
-                            <div className="group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
-                                <div className="flex items-center gap-3 mb-2 text-slate-500">
-                                    <div className="p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
+                            <div className="calm-panel group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
+                                <div className="flex items-center gap-3 mb-2 text-muted-foreground dark:text-slate-500">
+                                    <div className="calm-panel p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
                                         <FileText className="w-4 h-4" />
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wider">{t('wallet.commission.table.number') || 'رقم الطلب'}</span>
@@ -94,9 +94,9 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                                 <p className="text-base sm:text-lg font-black text-slate-900 font-mono tracking-tight break-all group-hover:text-slate-800 transition-colors">{requestNumber}</p>
                             </div>
                             
-                            <div className="group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
-                                <div className="flex items-center gap-3 mb-2 text-slate-500">
-                                    <div className="p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
+                            <div className="calm-panel group min-w-0 bg-slate-50 hover:bg-slate-100/50 transition-colors p-4 rounded-2xl border border-slate-100/80 hover:border-slate-300">
+                                <div className="flex items-center gap-3 mb-2 text-muted-foreground dark:text-slate-500">
+                                    <div className="calm-panel p-2 bg-white rounded-xl shadow-sm text-slate-600 group-hover:scale-110 transition-transform">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <span className="text-xs font-bold uppercase tracking-wider">{t('wallet.table.date') || 'التاريخ'}</span>
@@ -108,32 +108,32 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                         {/* Timeline / Progress Indicator */}
                         <div className="relative mb-8 pt-4 pb-2">
                             <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
-                                <div className={`h-full ${isAccepted ? 'bg-slate-1000 w-full' : isRejected ? 'bg-slate-1000 w-full' : 'bg-slate-800 w-1/2'} transition-all duration-1000`}></div>
+                                <div className={`h-full ${isAccepted ? 'bg-slate-1000 w-full' : isRejected ? 'bg-slate-1000 w-full' : 'bg-muted dark:bg-slate-800 w-1/2'} transition-all duration-1000`}></div>
                             </div>
                             <div className="relative flex justify-between z-10 px-2">
                                 <div className="flex flex-col items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-lg shadow-slate-500/30 ring-4 ring-white">
+                                    <div className="calm-icon w-8 h-8 rounded-full bg-muted dark:bg-slate-800 text-foreground dark:text-white flex items-center justify-center shadow-lg shadow-slate-500/30 ring-4 ring-border dark:ring-white">
                                         <CheckCircle2 className="w-4 h-4" />
                                     </div>
-                                    <span className="text-[10px] font-bold text-slate-500">تم الاستلام</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-500">تم الاستلام</span>
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ring-4 ring-white transition-colors duration-500 ${isAccepted || isRejected ? (isAccepted ? 'bg-slate-1000 text-white shadow-slate-500/30' : 'bg-slate-1000 text-white shadow-slate-500/30') : 'bg-white border-2 border-slate-500 text-slate-500'}`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ring-4 ring-white transition-colors duration-500 ${isAccepted || isRejected ? (isAccepted ? 'bg-slate-1000 text-foreground dark:text-white shadow-slate-500/30' : 'bg-slate-1000 text-foreground dark:text-white shadow-slate-500/30') : 'bg-white border-2 border-slate-500 text-muted-foreground dark:text-slate-500'}`}>
                                         {isAccepted ? <ShieldCheck className="w-4 h-4" /> : isRejected ? <AlertCircle className="w-4 h-4" /> : <Clock className="w-4 h-4 animate-spin-slow" />}
                                     </div>
-                                    <span className="text-[10px] font-bold text-slate-500">المراجعة</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-500">المراجعة</span>
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ring-4 ring-white transition-colors duration-500 delay-300 ${isAccepted ? 'bg-slate-1000 text-white shadow-slate-500/30' : 'bg-slate-100 text-slate-400'}`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ring-4 ring-white transition-colors duration-500 delay-300 ${isAccepted ? 'bg-slate-1000 text-foreground dark:text-white shadow-slate-500/30' : 'bg-slate-100 text-muted-foreground dark:text-slate-400'}`}>
                                         <Building className="w-4 h-4" />
                                     </div>
-                                    <span className="text-[10px] font-bold text-slate-500">الاعتماد</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-500">الاعتماد</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Note/Disclaimer */}
-                        <div className="bg-slate-50 rounded-2xl p-4 flex gap-4 items-start border border-slate-200">
+                        <div className="calm-panel bg-slate-50 rounded-2xl p-4 flex gap-4 items-start border border-slate-200">
                             <div className="p-2 bg-slate-200 rounded-full text-slate-700 mt-0.5">
                                 <MapPin className="w-4 h-4" />
                             </div>
@@ -146,7 +146,7 @@ const CommissionRequestModal: React.FC<CommissionRequestModalProps> = ({
                     {/* Action Buttons */}
                     <div className="mt-8 flex gap-4">
                         <Button 
-                            className="flex-1 bg-slate-900 hover:bg-slate-800 text-white h-14 rounded-2xl text-lg font-bold shadow-xl shadow-slate-900/20 transition-all hover:-translate-y-1 active:translate-y-0"
+                            className="flex-1 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white h-14 rounded-2xl text-lg font-bold shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-slate-900/20 transition-all hover:-translate-y-1 active:translate-y-0"
                             onClick={() => onOpenChange(false)}
                         >
                             {t('common.close') || 'إغلاق نافذة التتبع'}

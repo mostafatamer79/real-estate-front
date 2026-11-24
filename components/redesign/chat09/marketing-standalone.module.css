@@ -1,0 +1,277 @@
+/* components/redesign/chat09/marketing-standalone.module.css
+   Pearl / Navy / Brass Architectural Theme for Standalone Marketing Workspace
+   Strictly scoped to .marketingRoot; zero global leakage
+*/
+
+.marketingRoot {
+  --mkt-pearl: #f8f7f4;
+  --mkt-pearl-subtle: #faf9f6;
+  --mkt-surface: #ffffff;
+  --mkt-surface-elevated: #ffffff;
+  --mkt-surface-muted: #f3f2ee;
+  --mkt-navy: #0b192c;
+  --mkt-navy-deep: #071220;
+  --mkt-navy-surface: #13243a;
+  --mkt-text-primary: #0b192c;
+  --mkt-text-secondary: #475569;
+  --mkt-text-muted: #64748b;
+  --mkt-border: #e2ded6;
+  --mkt-border-subtle: #edebe4;
+
+  /* Brass / Bronze Architectural Accents */
+  --mkt-brass: #946528;
+  --mkt-brass-hover: #7d5420;
+  --mkt-brass-tint: rgba(148, 101, 40, 0.08);
+  --mkt-brass-border: rgba(148, 101, 40, 0.28);
+
+  /* Status Tokens */
+  --mkt-status-success-bg: #ecfdf5;
+  --mkt-status-success-text: #065f46;
+  --mkt-status-success-border: #a7f3d0;
+  --mkt-status-warning-bg: #fffbeb;
+  --mkt-status-warning-text: #92400e;
+  --mkt-status-warning-border: #fde68a;
+
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--mkt-pearl);
+  color: var(--mkt-text-primary);
+  font-family: inherit;
+  overflow-x: clip;
+}
+
+:global(.dark) .marketingRoot {
+  --mkt-pearl: #0b192c;
+  --mkt-pearl-subtle: #071220;
+  --mkt-surface: #102138;
+  --mkt-surface-elevated: #152740;
+  --mkt-surface-muted: #162b47;
+  --mkt-navy: #f8f7f4;
+  --mkt-navy-deep: #060b13;
+  --mkt-navy-surface: #1a2f4c;
+  --mkt-text-primary: #f8f7f4;
+  --mkt-text-secondary: #9bb0c6;
+  --mkt-text-muted: #7d93aa;
+  --mkt-border: #1e3655;
+  --mkt-border-subtle: #172b43;
+
+  /* Brass in Dark Mode */
+  --mkt-brass: #e6bb78;
+  --mkt-brass-hover: #ffd38c;
+  --mkt-brass-tint: rgba(230, 187, 120, 0.12);
+  --mkt-brass-border: rgba(230, 187, 120, 0.35);
+
+  --mkt-status-success-bg: rgba(6, 95, 70, 0.25);
+  --mkt-status-success-text: #34d399;
+  --mkt-status-success-border: rgba(52, 211, 153, 0.3);
+  --mkt-status-warning-bg: rgba(146, 64, 14, 0.25);
+  --mkt-status-warning-text: #fcd34d;
+  --mkt-status-warning-border: rgba(252, 211, 77, 0.3);
+}
+
+/* Header & Architectural Hero */
+.heroBanner {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--mkt-border);
+  background: linear-gradient(135deg, var(--mkt-surface) 0%, var(--mkt-surface-muted) 100%);
+  padding: 2rem 1rem 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .heroBanner {
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroBanner {
+    padding: 3rem 2rem 3rem 2rem;
+  }
+}
+
+.heroArtworkWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.16;
+  mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+:global([dir="rtl"]) .heroArtworkWrapper {
+  right: auto;
+  left: 0;
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background-color: var(--mkt-navy);
+  color: var(--mkt-pearl);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--mkt-text-primary);
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+}
+
+.heroSubtitle {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--mkt-text-secondary);
+  max-width: 38rem;
+  margin-top: 0.5rem;
+}
+
+/* Tabs Navigation Styling */
+.tabsContainer {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.tabsScroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabsList {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 1rem;
+  background-color: var(--mkt-surface);
+  border: 1px solid var(--mkt-border);
+  padding: 0.375rem;
+  box-shadow: 0 2px 10px rgba(11, 25, 44, 0.03);
+}
+
+@media (max-width: 767px) {
+  .tabsList {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    gap: 0.5rem;
+  }
+}
+
+.tabTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--mkt-text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.tabTrigger:hover {
+  background-color: var(--mkt-surface-muted);
+  color: var(--mkt-text-primary);
+}
+
+.tabTrigger[data-state="active"] {
+  background-color: var(--mkt-navy);
+  color: var(--mkt-pearl);
+  box-shadow: 0 4px 12px rgba(11, 25, 44, 0.15);
+}
+
+@media (max-width: 767px) {
+  .tabTrigger {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 8.5rem;
+    justify-content: center;
+    border: 1px solid var(--mkt-border);
+    background-color: var(--mkt-surface);
+  }
+  .tabTrigger[data-state="active"] {
+    border-color: var(--mkt-navy);
+  }
+}
+
+/* Floating Navigation Action */
+.floatingBackBtn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: var(--mkt-navy);
+  color: var(--mkt-pearl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(11, 25, 44, 0.2);
+  z-index: 40;
+  border: 1px solid var(--mkt-border);
+  transition: all 0.2s ease;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+:global([dir="rtl"]) .floatingBackBtn {
+  left: auto;
+  right: 1.5rem;
+}
+
+.floatingBackBtn:hover {
+  transform: scale(1.05);
+}
+
+/* Strict Focus and Reduced-Motion Scoping */
+.marketingRoot :focus-visible {
+  outline: 2px solid var(--mkt-brass);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketingRoot *,
+  .marketingRoot *::before,
+  .marketingRoot *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

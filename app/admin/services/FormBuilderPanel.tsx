@@ -80,7 +80,7 @@ const FIXED_TARGETS: { value: string; label: string }[] = [
 
 const inputCls =
   "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
 
 function makeFieldId() {
   return `field_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
@@ -107,6 +107,7 @@ interface FieldEditorState extends FieldDef {
 
 export default function FormBuilderPanel() {
   const { settings, updateSettings, refetch } = useSettings();
+  const builderCategories=[...BUILDER_CATEGORIES,...settings.customCategories.map(category=>({id:category.id,label:category.title}))];
   const confirmDialog = useConfirmDialog();
 
   const [category, setCategory] = useState<string>(BUILDER_CATEGORIES[0].id);
@@ -333,17 +334,17 @@ export default function FormBuilderPanel() {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm space-y-5">
+      <div className="calm-panel rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm space-y-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+            <div className="calm-icon flex h-12 w-12 items-center justify-center rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white">
               <Palette className="h-6 w-6" />
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">
                 تصميم نماذج الخدمات
               </h2>
-              <p className="mt-1 text-sm font-bold text-slate-500">
+              <p className="mt-1 text-sm font-bold text-muted-foreground dark:text-slate-500">
                 عدّل الحقول التي تظهر للعميل في نموذج طلب كل خدمة.
               </p>
             </div>
@@ -355,7 +356,7 @@ export default function FormBuilderPanel() {
               onChange={(e) => setCategory(e.target.value)}
               className="h-12 rounded-2xl border border bg-card px-4 text-sm font-black outline-none"
             >
-              {BUILDER_CATEGORIES.map((c) => (
+              {builderCategories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.label}
                 </option>
@@ -388,16 +389,16 @@ export default function FormBuilderPanel() {
       </div>
 
       {loading || !draft ? (
-        <div className="flex min-h-72 flex-col items-center justify-center gap-3 rounded-[1.25rem] border border bg-card">
+        <div className="calm-panel flex min-h-72 flex-col items-center justify-center gap-3 rounded-[1.25rem] border border bg-card">
           <Loader2 className="h-8 w-8 animate-spin text-slate-900" />
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
             جاري تحميل النموذج
           </p>
         </div>
       ) : (
-        <div className="rounded-[1.25rem] border border bg-card shadow-sm">
+        <div className="calm-panel rounded-[1.25rem] border border bg-card shadow-sm">
           <div className="flex flex-col gap-3 border-b border p-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs font-black text-slate-500">
+            <p className="text-xs font-black text-muted-foreground dark:text-slate-500">
               {visibleIndices.length} حقل
               {serviceFilter ? " (حقول مشتركة + حقول هذه الخدمة)" : ""}
             </p>
@@ -420,7 +421,7 @@ export default function FormBuilderPanel() {
               <button
                 onClick={handleSave}
                 disabled={saving || resetting}
-                className="inline-flex h-10 items-center gap-2 rounded-2xl bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black disabled:opacity-50"
+                className="inline-flex h-10 items-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-black disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 حفظ النموذج
@@ -443,7 +444,7 @@ export default function FormBuilderPanel() {
                       type="button"
                       onClick={() => moveField(listPos, -1)}
                       disabled={listPos === 0}
-                      className="rounded-md p-1 text-slate-400 hover:bg-muted hover:text-slate-900 disabled:opacity-30"
+                      className="rounded-md p-1 text-muted-foreground dark:text-slate-400 hover:bg-muted hover:text-slate-900 disabled:opacity-30"
                     >
                       <ArrowUp className="h-3.5 w-3.5" />
                     </button>
@@ -451,7 +452,7 @@ export default function FormBuilderPanel() {
                       type="button"
                       onClick={() => moveField(listPos, 1)}
                       disabled={listPos === visibleIndices.length - 1}
-                      className="rounded-md p-1 text-slate-400 hover:bg-muted hover:text-slate-900 disabled:opacity-30"
+                      className="rounded-md p-1 text-muted-foreground dark:text-slate-400 hover:bg-muted hover:text-slate-900 disabled:opacity-30"
                     >
                       <ArrowDown className="h-3.5 w-3.5" />
                     </button>
@@ -460,7 +461,7 @@ export default function FormBuilderPanel() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-black text-slate-900">{field.label}</p>
-                      <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-black text-slate-500">
+                      <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-black text-muted-foreground dark:text-slate-500">
                         {FIELD_TYPE_LABELS.get(field.type) || field.type}
                       </span>
                       {field.required && (
@@ -474,7 +475,7 @@ export default function FormBuilderPanel() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 truncate text-[10px] font-bold text-slate-400">
+                    <p className="mt-0.5 truncate text-[10px] font-bold text-muted-foreground dark:text-slate-400">
                       target: {field.target || "—"}
                       {field.section ? ` · قسم: ${field.section}` : ""}
                     </p>
@@ -483,7 +484,7 @@ export default function FormBuilderPanel() {
                   <button
                     type="button"
                     onClick={() => openEditor(fieldIndex)}
-                    className="rounded-xl border border bg-card p-2 text-slate-500 hover:border-slate-300 hover:text-slate-950"
+                    className="rounded-xl border border bg-card p-2 text-muted-foreground dark:text-slate-500 hover:border-slate-300 hover:text-slate-950"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -498,7 +499,7 @@ export default function FormBuilderPanel() {
               );
             })}
             {visibleIndices.length === 0 && (
-              <p className="p-10 text-center text-sm font-black text-slate-400">
+              <p className="p-10 text-center text-sm font-black text-muted-foreground dark:text-slate-400">
                 لا توجد حقول مطابقة — أضف حقلًا جديدًا
               </p>
             )}
@@ -508,7 +509,7 @@ export default function FormBuilderPanel() {
 
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
         <DialogContent
-          className="w-[95vw] sm:max-w-2xl rounded-[1.25rem] border border bg-card p-0 shadow-2xl max-h-[90vh] overflow-y-auto"
+          className="calm-overlay w-[95vw] sm:max-w-2xl rounded-[1.25rem] border border bg-card p-0 shadow-sm dark:shadow-2xl max-h-[90vh] overflow-y-auto"
           dir="rtl"
         >
           {editor && (
@@ -517,7 +518,7 @@ export default function FormBuilderPanel() {
                 <DialogTitle className="text-xl font-black text-slate-950">
                   {editorIndex !== null ? "تعديل الحقل" : "إضافة حقل جديد"}
                 </DialogTitle>
-                <DialogDescription className="text-sm font-bold leading-6 text-slate-500">
+                <DialogDescription className="text-sm font-bold leading-6 text-muted-foreground dark:text-slate-500">
                   حدّد خصائص الحقل ومكان حفظ قيمته في الطلب.
                 </DialogDescription>
               </DialogHeader>
@@ -636,8 +637,8 @@ export default function FormBuilderPanel() {
                     onClick={() => setEditor({ ...editor, required: !editor.required })}
                     className={`h-11 rounded-xl border text-xs font-black transition-all ${
                       editor.required
-                        ? "bg-slate-950 text-white border-slate-950"
-                        : "bg-muted text-slate-500 border hover:border"
+                        ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950"
+                        : "bg-muted text-muted-foreground dark:text-slate-500 border hover:border"
                     }`}
                   >
                     حقل مطلوب
@@ -647,16 +648,16 @@ export default function FormBuilderPanel() {
                     onClick={() => setEditor({ ...editor, half: !editor.half })}
                     className={`h-11 rounded-xl border text-xs font-black transition-all ${
                       editor.half
-                        ? "bg-slate-950 text-white border-slate-950"
-                        : "bg-muted text-slate-500 border hover:border"
+                        ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950"
+                        : "bg-muted text-muted-foreground dark:text-slate-500 border hover:border"
                     }`}
                   >
                     نصف العرض
                   </button>
                 </div>
 
-                <div className="md:col-span-2 rounded-2xl border border bg-muted p-4 space-y-3">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="calm-panel md:col-span-2 rounded-2xl border border bg-muted p-4 space-y-3">
+                  <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                     الظهور المشروط (visibleWhen) — اختياري
                   </p>
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -704,7 +705,7 @@ export default function FormBuilderPanel() {
                 <Button
                   type="button"
                   onClick={applyEditor}
-                  className="h-12 rounded-2xl bg-slate-950 text-xs font-black text-white hover:bg-black"
+                  className="h-12 rounded-2xl bg-background dark:bg-slate-950 text-xs font-black text-foreground dark:text-white hover:bg-black"
                 >
                   {editorIndex !== null ? "حفظ الحقل" : "إضافة الحقل"}
                 </Button>

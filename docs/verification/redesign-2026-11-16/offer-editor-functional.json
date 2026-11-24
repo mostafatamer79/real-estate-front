@@ -1,0 +1,146 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "missing edit route now renders",
+      "existing values prefilled",
+      "failed PATCH preserves changes",
+      "PATCH only changed city and cleared notes",
+      "success returns to actual listing",
+      "create required validation",
+      "create numeric payload",
+      "unowned media/owner fields excluded",
+      "no overflow",
+      "no page exceptions"
+    ]
+  }
+]

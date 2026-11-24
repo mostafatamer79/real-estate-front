@@ -118,7 +118,7 @@ export default function AdminTrendsPage() {
   return (
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="space-y-2">
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+        <div className="inline-flex items-center gap-2 rounded-full bg-card dark:bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
           <LineChart className="h-3.5 w-3.5" />
           {isRtl ? "تحليلات والاتجاهات" : "Analytics & Trends"}
         </div>
@@ -129,48 +129,48 @@ export default function AdminTrendsPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
+          <div key={card.label} className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+            <div className="calm-icon mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <TrendingUp className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{card.label}</p>
             <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{card.value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "الاتجاه الشهري" : "Monthly trend"}</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
           {monthlyTotals.slice(-6).map((item: any, index: number) => (
             <div key={item.month || index} className="rounded-xl bg-muted p-4">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.month || index + 1}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{item.month || index + 1}</p>
               <p className="mt-1 text-lg font-black text-slate-950">{Number(item.total || item.revenue || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}</p>
             </div>
           ))}
           {!monthlyTotals.length && (
-            <div className="col-span-full py-10 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+            <div className="col-span-full py-10 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
               {isRtl ? "لا توجد بيانات شهرية" : "No monthly data"}
             </div>
           )}
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
+            <div className="calm-icon flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <Megaphone className="h-5 w-5" />
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-950">{isRtl ? "إدارة الإعلانات" : "Ads management"}</h2>
-              <p className="text-xs font-bold text-slate-400">{isRtl ? "إنشاء وترتيب الحملات البريدية" : "Create and sort email campaigns"}</p>
+              <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{isRtl ? "إنشاء وترتيب الحملات البريدية" : "Create and sort email campaigns"}</p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => { setEditingCampaign(null); setModalOpen(true); }}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-white"
+            className="inline-flex items-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-foreground dark:text-white"
           >
             <Plus className="h-4 w-4" />
             {isRtl ? "إعلان جديد" : "New ad"}
@@ -179,12 +179,12 @@ export default function AdminTrendsPage() {
 
         <div className="overflow-hidden rounded-2xl border border">
           {loadingCampaigns ? (
-            <div className="p-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
+            <div className="p-10 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               <RefreshCcw className="mx-auto mb-3 h-5 w-5 animate-spin" />
               {isRtl ? "جاري التحميل..." : "Loading..."}
             </div>
           ) : campaigns.length === 0 ? (
-            <div className="p-10 text-center text-xs font-black uppercase tracking-widest text-slate-400">
+            <div className="p-10 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "لا توجد إعلانات" : "No ads campaigns"}
             </div>
           ) : (
@@ -193,7 +193,7 @@ export default function AdminTrendsPage() {
                 <div key={campaign.id} className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-black text-slate-950">{campaign.subject || campaign.category}</p>
-                    <p className="text-[11px] font-bold text-slate-400">
+                    <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">
                       {categoryLabel(campaign.category)} • {campaign.frequency} • {campaign.targetRole || (isRtl ? "الكل" : "All")}
                     </p>
                   </div>
@@ -228,10 +228,10 @@ export default function AdminTrendsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "عنوان التحليل" : "Analysis title"}
             </label>
             <input
@@ -244,11 +244,11 @@ export default function AdminTrendsPage() {
                   },
                 })
               }
-              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "ملاحظة الاتجاهات" : "Trends note"}
             </label>
             <textarea
@@ -261,7 +261,7 @@ export default function AdminTrendsPage() {
                   },
                 })
               }
-              className="min-h-28 w-full rounded-xl border border bg-muted p-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="min-h-28 w-full rounded-xl border border bg-muted p-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
         </div>
@@ -269,7 +269,7 @@ export default function AdminTrendsPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-white disabled:opacity-60"
+          className="mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-60"
         >
           <Save className="h-4 w-4" />
           {saving ? (isRtl ? "جار الحفظ..." : "Saving...") : (isRtl ? "حفظ" : "Save")}

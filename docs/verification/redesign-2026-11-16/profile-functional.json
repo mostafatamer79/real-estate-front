@@ -1,0 +1,130 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "Nafath profile refresh preserves dirty fields",
+      "first name validation and optional last name",
+      "profile/application failures preserve values",
+      "basic edits saved alongside license application",
+      "previously reviewed license still uses application for new role",
+      "active role remains authoritative",
+      "successful save returns details",
+      "no clipped form controls or page exceptions"
+    ]
+  }
+]

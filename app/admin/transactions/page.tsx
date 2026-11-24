@@ -184,7 +184,7 @@ export default function TransactionsPage() {
     if (type === "deposit" || type === "sale" || type === "rent") return <ArrowDownRight className="h-4 w-4 text-green-500" />;
     if (type === "withdrawal" || type === "expense" || type === "tax") return <ArrowUpRight className="h-4 w-4 text-red-500" />;
     if (type === "commission") return <CheckCircle className="h-4 w-4 text-blue-500" />;
-    return <Clock className="h-4 w-4 text-slate-500" />;
+    return <Clock className="h-4 w-4 text-muted-foreground dark:text-slate-500" />;
   };
 
   const transactionTypeLabel = (type: string) => {
@@ -295,21 +295,21 @@ export default function TransactionsPage() {
           <h1 className="mb-2 text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {label("admin.transactions.title", "إدارة العمليات", "Transactions Management")}
           </h1>
-          <p className="font-medium text-slate-500">
+          <p className="font-medium text-muted-foreground dark:text-slate-500">
             {label("admin.transactions.desc", "إنشاء وتعديل وحذف العمليات المالية", "Create, update and delete financial transactions")}
           </p>
         </div>
         <button
           type="button"
           onClick={() => { setEditingId(null); setForm(emptyForm); setIsModalOpen(true); }}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-stone-400/10 hover:bg-slate-800 transition-colors self-start md:self-auto"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-foreground dark:text-white shadow-lg shadow-primary/5 dark:shadow-stone-400/10 hover:bg-muted hover:dark:bg-slate-800 transition-colors self-start md:self-auto"
         >
           <Plus className="h-4 w-4" />
           {isRtl ? "إضافة عملية" : "Add Transaction"}
         </button>
         <div className="grid w-full gap-3 md:max-w-5xl md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         <div className="relative md:col-span-2">
-          <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
+          <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
           <input
             type="text"
             placeholder={t("admin.search") || (isRtl ? "بحث" : "Search")}
@@ -343,7 +343,7 @@ export default function TransactionsPage() {
 
    
 
-      <div className="overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
+      <div className="calm-panel overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
         <div className="overflow-x-auto w-full">
 <Table>
           <TableHeader className="bg-muted/50">
@@ -362,22 +362,22 @@ export default function TransactionsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={8} className="py-10 text-center">
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-300" />
+                  <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground dark:text-slate-300" />
                 </TableCell>
               </TableRow>
             ) : filteredTransactions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="py-10 text-center text-slate-500">
+                <TableCell colSpan={8} className="py-10 text-center text-muted-foreground dark:text-slate-500">
                   {isRtl ? "لا توجد عمليات" : "No transactions found"}
                 </TableCell>
               </TableRow>
             ) : (
               filteredTransactions.map((tx) => (
                 <TableRow key={tx.id} className="whitespace-nowrap hover:bg-muted/50">
-                  <TableCell className="font-mono text-xs text-slate-500">#{String(tx.id).substring(0, 8)}</TableCell>
+                  <TableCell className="font-mono text-xs text-muted-foreground dark:text-slate-500">#{String(tx.id).substring(0, 8)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                      <div className="calm-icon flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                         {getTypeIcon(tx.type)}
                       </div>
                       <span className="font-bold capitalize text-slate-700">{transactionTypeLabel(tx.type)}</span>
@@ -389,21 +389,21 @@ export default function TransactionsPage() {
                   <TableCell>
                     {tx.fromUser ? (
                       <div className="flex items-center gap-2">
-                        <User className="h-3 w-3 text-slate-400" />
+                        <User className="h-3 w-3 text-muted-foreground dark:text-slate-400" />
                         <span className="text-sm text-slate-600">{tx.fromUser.firstName} {tx.fromUser.lastName}</span>
                       </div>
-                    ) : tx.fromUserId ? <span className="font-mono text-xs text-slate-500">{tx.fromUserId.slice(0, 8)}</span> : <span className="text-slate-400">-</span>}
+                    ) : tx.fromUserId ? <span className="font-mono text-xs text-muted-foreground dark:text-slate-500">{tx.fromUserId.slice(0, 8)}</span> : <span className="text-muted-foreground dark:text-slate-400">-</span>}
                   </TableCell>
                   <TableCell>
                     {tx.toUser ? (
                       <div className="flex items-center gap-2">
-                        <User className="h-3 w-3 text-slate-400" />
+                        <User className="h-3 w-3 text-muted-foreground dark:text-slate-400" />
                         <span className="text-sm text-slate-600">{tx.toUser.firstName} {tx.toUser.lastName}</span>
                       </div>
-                    ) : tx.toUserId ? <span className="font-mono text-xs text-slate-500">{tx.toUserId.slice(0, 8)}</span> : <span className="text-slate-400">-</span>}
+                    ) : tx.toUserId ? <span className="font-mono text-xs text-muted-foreground dark:text-slate-500">{tx.toUserId.slice(0, 8)}</span> : <span className="text-muted-foreground dark:text-slate-400">-</span>}
                   </TableCell>
                   <TableCell>{getStatusBadge(tx.status)}</TableCell>
-                  <TableCell className="text-xs text-slate-500">
+                  <TableCell className="text-xs text-muted-foreground dark:text-slate-500">
                     {tx.createdAt || tx.transactionDate ? new Date(tx.createdAt || tx.transactionDate).toLocaleDateString(isRtl ? "ar-SA" : "en-US") : "-"}
                   </TableCell>
                   <TableCell>
@@ -432,8 +432,8 @@ export default function TransactionsPage() {
 
       {/* Create / Edit Transaction Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-card/40 dark:bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="calm-panel w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm dark:shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
@@ -441,11 +441,11 @@ export default function TransactionsPage() {
                 <h3 className="text-lg font-black text-slate-900">
                   {editingId ? (isRtl ? "تعديل عملية" : "Edit Transaction") : (isRtl ? "إضافة عملية جديدة" : "New Transaction")}
                 </h3>
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-muted-foreground dark:text-slate-400">
                   {isRtl ? "أدخل بيانات العملية المالية" : "Fill in the transaction details below"}
                 </p>
               </div>
-              <button onClick={resetForm} className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all">
+              <button onClick={resetForm} className="rounded-xl border border bg-card p-2 text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -455,26 +455,26 @@ export default function TransactionsPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2">
                 {/* Type */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "النوع" : "Type"}</span>
                   <select value={form.type} onChange={(e) => setForm((c) => ({ ...c, type: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {transactionTypes.map((type) => <option key={type} value={type}>{transactionTypeLabel(type)}</option>)}
                   </select>
                 </div>
                 {/* Amount */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
                   <input type="number" min="0" value={form.amount} onChange={(e) => setForm((c) => ({ ...c, amount: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors" />
                 </div>
                 {/* Status */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
                   <select value={form.status} onChange={(e) => setForm((c) => ({ ...c, status: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {transactionStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 {/* Payment Method */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "طريقة الدفع" : "Payment Method"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "طريقة الدفع" : "Payment Method"}</span>
                   <select value={form.paymentMethod} onChange={(e) => setForm((c) => ({ ...c, paymentMethod: e.target.value }))} className="h-11 w-full rounded-xl border border bg-card px-3 text-sm font-bold outline-none focus:border-slate-950 transition-colors">
                     {paymentMethods.map((m) => <option key={m || "empty"} value={m}>{m || (isRtl ? "غير محدد" : "None")}</option>)}
                   </select>
@@ -491,7 +491,7 @@ export default function TransactionsPage() {
                   ["description", isRtl ? "الوصف" : "Description", "text"],
                 ] as [string, string, string][]).map(([key, lbl, inputType]) => (
                   <div key={key} className="space-y-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{lbl}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{lbl}</span>
                     <input
                       type={inputType}
                       value={form[key] || ""}
@@ -508,7 +508,7 @@ export default function TransactionsPage() {
               <button type="button" onClick={resetForm} className="inline-flex h-11 items-center justify-center rounded-xl border border bg-card px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-muted transition-colors">
                 {isRtl ? "إلغاء" : "Cancel"}
               </button>
-              <button type="button" onClick={saveTransaction} disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50 hover:bg-slate-800 transition-colors">
+              <button type="button" onClick={saveTransaction} disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50 hover:bg-muted hover:dark:bg-slate-800 transition-colors">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {editingId ? (isRtl ? "حفظ التعديل" : "Save Changes") : (isRtl ? "إنشاء" : "Create")}
               </button>
@@ -519,19 +519,19 @@ export default function TransactionsPage() {
 
       {/* Viewing Transaction Details Modal */}
       {viewingTransaction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-card/40 dark:bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="calm-panel w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm dark:shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {isRtl ? "تفاصيل العملية المالية" : "Transaction Details"}
                 </h3>
-                <p className="font-mono text-xs text-slate-400 mt-1">ID: {viewingTransaction.id}</p>
+                <p className="font-mono text-xs text-muted-foreground dark:text-slate-400 mt-1">ID: {viewingTransaction.id}</p>
               </div>
               <button
                 onClick={() => setViewingTransaction(null)}
-                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -542,9 +542,9 @@ export default function TransactionsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6" dir={isRtl ? "rtl" : "ltr"}>
                 {/* Type */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "النوع" : "Type"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "النوع" : "Type"}</span>
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                    <div className="calm-icon flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                       {getTypeIcon(viewingTransaction.type)}
                     </div>
                     <p className="text-sm font-bold text-slate-900">{transactionTypeLabel(viewingTransaction.type)}</p>
@@ -553,7 +553,7 @@ export default function TransactionsPage() {
 
                 {/* Amount */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "المبلغ" : "Amount"}</span>
                   <p className="text-sm font-black text-slate-950">
                     {renderCurrency(Number(viewingTransaction.amount || 0))}
                   </p>
@@ -561,37 +561,37 @@ export default function TransactionsPage() {
 
                 {/* Status */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
                   <div>{getStatusBadge(viewingTransaction.status)}</div>
                 </div>
 
                 {/* Payment Method */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "طريقة الدفع" : "Payment Method"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "طريقة الدفع" : "Payment Method"}</span>
                   <p className="text-sm font-bold text-slate-900">{viewingTransaction.paymentMethod || (isRtl ? "غير محدد" : "None")}</p>
                 </div>
 
                 {/* From User */}
-                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
+                <div className="calm-panel space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "من" : "From"}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "من" : "From"}</span>
                     {viewingTransaction.fromUser ? (
                       <div>
                         <p className="text-sm font-bold text-slate-900">
                           {viewingTransaction.fromUser.firstName} {viewingTransaction.fromUser.lastName}
                         </p>
-                        <span className="block text-xs font-medium text-slate-400 font-mono">{viewingTransaction.fromUserId}</span>
+                        <span className="block text-xs font-medium text-muted-foreground dark:text-slate-400 font-mono">{viewingTransaction.fromUserId}</span>
                       </div>
                     ) : viewingTransaction.fromUserId ? (
                       <p className="text-sm font-mono text-slate-900">{viewingTransaction.fromUserId}</p>
                     ) : (
-                      <p className="text-sm font-bold text-slate-400">—</p>
+                      <p className="text-sm font-bold text-muted-foreground dark:text-slate-400">—</p>
                     )}
                   </div>
                   {viewingTransaction.fromUser && (
                     <button
                       onClick={() => handleOpenChat(viewingTransaction.fromUserId)}
-                      className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                      className="flex h-10 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-4 text-xs font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors gap-2 shrink-0"
                     >
                       <MessageSquare className="h-4 w-4" />
                       {isRtl ? "فتح الشات" : "Open Chat"}
@@ -600,26 +600,26 @@ export default function TransactionsPage() {
                 </div>
 
                 {/* To User */}
-                <div className="space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
+                <div className="calm-panel space-y-1 sm:col-span-2 p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إلى" : "To"}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "إلى" : "To"}</span>
                     {viewingTransaction.toUser ? (
                       <div>
                         <p className="text-sm font-bold text-slate-900">
                           {viewingTransaction.toUser.firstName} {viewingTransaction.toUser.lastName}
                         </p>
-                        <span className="block text-xs font-medium text-slate-400 font-mono">{viewingTransaction.toUserId}</span>
+                        <span className="block text-xs font-medium text-muted-foreground dark:text-slate-400 font-mono">{viewingTransaction.toUserId}</span>
                       </div>
                     ) : viewingTransaction.toUserId ? (
                       <p className="text-sm font-mono text-slate-900">{viewingTransaction.toUserId}</p>
                     ) : (
-                      <p className="text-sm font-bold text-slate-400">—</p>
+                      <p className="text-sm font-bold text-muted-foreground dark:text-slate-400">—</p>
                     )}
                   </div>
                   {viewingTransaction.toUser && (
                     <button
                       onClick={() => handleOpenChat(viewingTransaction.toUserId)}
-                      className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                      className="flex h-10 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-4 text-xs font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors gap-2 shrink-0"
                     >
                       <MessageSquare className="h-4 w-4" />
                       {isRtl ? "فتح الشات" : "Open Chat"}
@@ -629,7 +629,7 @@ export default function TransactionsPage() {
 
                 {/* Tax */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الضريبة" : "Tax"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "الضريبة" : "Tax"}</span>
                   <p className="text-sm font-bold text-slate-900">
                     {viewingTransaction.taxAmount != null 
                       ? renderCurrency(Number(viewingTransaction.taxAmount))
@@ -640,7 +640,7 @@ export default function TransactionsPage() {
 
                 {/* Commission */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "العمولة" : "Commission"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "العمولة" : "Commission"}</span>
                   <p className="text-sm font-bold text-slate-900">
                     {viewingTransaction.commissionAmount != null 
                       ? renderCurrency(Number(viewingTransaction.commissionAmount))
@@ -651,13 +651,13 @@ export default function TransactionsPage() {
 
                 {/* Expense Category */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "تصنيف المصروف" : "Expense Category"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "تصنيف المصروف" : "Expense Category"}</span>
                   <p className="text-sm font-bold text-slate-900">{viewingTransaction.expenseCategory || "—"}</p>
                 </div>
 
                 {/* Date */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "التاريخ" : "Date"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "التاريخ" : "Date"}</span>
                   <p className="text-sm font-bold text-slate-900">
                     {viewingTransaction.createdAt || viewingTransaction.transactionDate 
                       ? new Date(viewingTransaction.createdAt || viewingTransaction.transactionDate).toLocaleString(isRtl ? "ar-SA" : "en-US")
@@ -668,19 +668,19 @@ export default function TransactionsPage() {
 
                 {/* Reference Type */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "نوع المرجع" : "Reference Type"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "نوع المرجع" : "Reference Type"}</span>
                   <p className="text-sm font-bold text-slate-900 font-mono">{viewingTransaction.referenceType || "—"}</p>
                 </div>
 
                 {/* Reference ID */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "معرف المرجع" : "Reference ID"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "معرف المرجع" : "Reference ID"}</span>
                   <p className="text-sm font-bold text-slate-900 font-mono">{viewingTransaction.referenceId || "—"}</p>
                 </div>
 
                 {/* Description */}
                 <div className="sm:col-span-2 space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الوصف" : "Description"}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "الوصف" : "Description"}</span>
                   <p className="text-sm font-medium text-slate-700 bg-muted p-4 rounded-2xl border border whitespace-pre-wrap">
                     {viewingTransaction.description || (isRtl ? "لا يوجد وصف" : "No description")}
                   </p>
@@ -692,7 +692,7 @@ export default function TransactionsPage() {
             <div className="border-t border bg-muted/30 px-8 py-5 flex justify-end">
               <button
                 onClick={() => setViewingTransaction(null)}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 transition-colors"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors"
               >
                 {isRtl ? "إغلاق" : "Close"}
               </button>

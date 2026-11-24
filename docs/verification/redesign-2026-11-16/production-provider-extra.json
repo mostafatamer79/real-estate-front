@@ -1,0 +1,52 @@
+[
+  {
+    "width": 320,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "missing-user",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "stale-language",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "shrunk-page",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "guide",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "missing-user",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "stale-language",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "shrunk-page",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "guide",
+    "passed": true
+  }
+]

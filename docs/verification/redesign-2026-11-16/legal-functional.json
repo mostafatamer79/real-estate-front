@@ -1,0 +1,146 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "dedicated generated artwork",
+      "two real category destinations",
+      "disabled category absent",
+      "soon subcategory non-navigable",
+      "soon parent blocks direct access and forged preview",
+      "admin explicit preview",
+      "disabled parent blocks even admin",
+      "closed section message",
+      "no overflow",
+      "no page exceptions"
+    ]
+  }
+]

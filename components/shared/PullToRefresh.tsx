@@ -129,7 +129,7 @@ export default function PullToRefresh({
               scale: refreshing ? 1.2 : 0.8 + progress * 0.4,
             }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 -m-2 rounded-full bg-indigo-500/20 blur-lg"
+            className="calm-decoration absolute inset-0 -m-2 rounded-full bg-indigo-500/20 blur-lg"
           />
 
           <motion.div
@@ -139,7 +139,7 @@ export default function PullToRefresh({
                 ? { repeat: Infinity, duration: 0.8, ease: "linear" }
                 : { type: "spring", stiffness: 300, damping: 25 }
             }
-            className="relative flex h-11 w-11 items-center justify-center rounded-full bg-slate-900/90 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+            className="calm-icon relative flex h-11 w-11 items-center justify-center rounded-full bg-card/90 dark:bg-slate-900/90 backdrop-blur-xl border border-border dark:border-white/10 shadow-[0_8px_28px_rgba(32,59,50,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
           >
             {/* SVG progress ring */}
             <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 32 32">
@@ -173,7 +173,7 @@ export default function PullToRefresh({
               />
             </svg>
 
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'text-indigo-400' : 'text-slate-400'} transition-colors`} />
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'text-indigo-400' : 'text-muted-foreground dark:text-slate-400'} transition-colors`} />
           </motion.div>
         </div>
       </div>

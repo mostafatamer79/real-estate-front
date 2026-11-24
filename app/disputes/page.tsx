@@ -1,308 +1,446 @@
 "use client";
-import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { legalServicesApi, LegalDispute } from "@/lib/legal-services";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Calendar, User, FileText, Gavel,
-  ArrowRight, ChevronDown, Search, Filter,
-  ShieldAlert, Sparkles, Scale, Info,
-  MoreHorizontal, ChevronLeft, ShieldCheck
+  Calendar,
+  Gavel,
+  ArrowRight,
+  Search,
+  ShieldAlert,
+  Scale,
+  PlusCircle,
+  ChevronLeft,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { TabsContent } from '@/components/ui/tabs';
+import { TabsContent } from "@/components/ui/tabs";
 import { SegmentedTabs, SegmentedList, SegmentedTrigger } from "@/components/ui/mobile-tabs";
-import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
-import LegalRequestFlow from '@/components/legal/LegalRequestFlow';
-import { PlusCircle } from "lucide-react";
+import ServiceRequestsTable from "@/components/shared/ServiceRequestsTable";
+import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
-
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+import DisputeDetailsDialog from "@/components/redesign/chat10/DisputeDetailsDialog";
+import {
+  safeExtractParty,
+  filterDisputes,
+  getDisputeStatusConfig,
+  getDisputeText,
+} from "@/lib/redesign-chat10-disputes";
+import { canAccessDepartment } from "@/lib/redesign-department-navigation";
 
 export default function DisputesPage() {
   const router = useRouter();
   const { t, language } = useLanguage();
   const [disputes, setDisputes] = useState<LegalDispute[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const { isOpen, message, isAdmin } = useSectionGuard('disputes');
+  const [selectedDispute, setSelectedDispute] = useState<LegalDispute | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const { isOpen, message, isAdmin } = useSectionGuard("disputes");
+  const reqIdRef = useRef(0);
 
+  // Authentication & Role Check
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      if (!['admin', 'legal', 'legal_admin', 'viewer'].includes(user.role)) {
-        router.push('/');
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        router.replace("/login");
+        return;
       }
-    } else {
-      router.replace('/login');
+      const user = JSON.parse(storedUser);
+      const isAllowedRole = ["admin", "legal", "legal_admin", "viewer"].includes(user?.role);
+      const hasLegalGrant = canAccessDepartment(user, "legal");
+
+      if (!isAllowedRole && !hasLegalGrant) {
+        router.push("/");
+      }
+    } catch {
+      router.replace("/login");
     }
   }, [router]);
 
-
-
-  useEffect(() => {
-    const fetchDisputes = async () => {
-      try {
-        const res = await legalServicesApi.getLegalDisputes();
-        if (Array.isArray(res)) setDisputes(res);
-        else if (res && Array.isArray(res.data)) setDisputes(res.data);
-        else setDisputes([]);
-      } catch (err) {
-        console.error(err);
-      } finally {
+  // Fetch disputes with recoverable error handling and race-condition prevention
+  const fetchDisputes = useCallback(async () => {
+    const currentId = ++reqIdRef.current;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await legalServicesApi.getLegalDisputes();
+      if (reqIdRef.current !== currentId) return; // Stale request discarded
+      if (Array.isArray(res)) {
+        setDisputes(res);
+      } else if (res && Array.isArray((res as { data?: LegalDispute[] }).data)) {
+        setDisputes((res as { data: LegalDispute[] }).data);
+      } else {
+        setDisputes([]);
+      }
+    } catch (err) {
+      if (reqIdRef.current !== currentId) return; // Stale error discarded
+      console.error("Failed to fetch disputes:", err);
+      setError(getDisputeText("disputes.loadError", language, t));
+    } finally {
+      if (reqIdRef.current === currentId) {
         setLoading(false);
       }
-    };
+    }
+  }, [language, t]);
+
+  useEffect(() => {
     fetchDisputes();
-  }, []);
+  }, [fetchDisputes]);
 
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case 'completed': return { color: 'text-blue-950 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-900' };
-      case 'inProgress': return { color: 'text-blue-950 bg-muted', ring: 'ring-blue-100', dot: 'bg-slate-950' };
-      case 'pending': return { color: 'text-slate-400 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-400' };
-      case 'cancelled': return { color: 'text-slate-400 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-400' };
-      default: return { color: 'text-blue-950 bg-muted', ring: 'ring-slate-100', dot: 'bg-slate-900' };
-    }
+  const filtered = filterDisputes(disputes, searchTerm);
+
+  const handleOpenDetails = (dispute: LegalDispute) => {
+    setSelectedDispute(dispute);
+    setIsDetailsOpen(true);
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'completed': return t('pm.legal.status.completed');
-      case 'inProgress': return t('pm.legal.status.review');
-      case 'pending': return t('pm.legal.status.pending');
-      case 'cancelled': return t('bm.status.cancelled');
-      default: return status;
-    }
+  const handleCloseDetails = () => {
+    setIsDetailsOpen(false);
+    setSelectedDispute(null);
   };
 
-  const filteredDisputes = disputes.filter(dispute =>
-    dispute.disputeNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dispute.disputeType?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
   if (!isOpen) {
-    return <ComingSoonOverlay sectionName={t('disputes.title')} message={message} isAdmin={isAdmin} />;
+    return (
+      <ComingSoonOverlay
+        sectionName={getDisputeText("disputes.title", language, t)}
+        message={message}
+        isAdmin={isAdmin}
+      />
+    );
   }
 
+  const pageTitle = getDisputeText("disputes.title", language, t);
+
   return (
-    <div className="min-h-screen bg-muted/50 pb-12 overflow-x-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader theme="light" title={t('disputes.title')} />
+    <div
+      className="calm-page calm-screen min-h-screen bg-muted/50 pb-12 overflow-x-hidden"
+      dir={language === "ar" ? "rtl" : "ltr"}
+    >
+      <MobileAppHeader theme="light" title={pageTitle} />
 
-      {/* Premium Header Container */}
-      <section className="relative overflow-hidden mb-8 md:mb-12 p-3 sm:p-6 md:p-12 rounded-b-[1.25rem] bg-slate-950 text-white shadow-2xl">
+      {/* Header Container */}
+      <section className="calm-panel relative overflow-hidden mb-8 md:mb-12 p-4 sm:p-6 md:p-12 rounded-b-[1.25rem] bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-sm dark:shadow-2xl">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-slate-600 rounded-full blur-[100px]" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
+          <div className="calm-decoration absolute -top-24 -right-24 w-96 h-96 bg-primary dark:bg-slate-600 rounded-full blur-[100px]" />
+          <div className="calm-decoration absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-900 rounded-full blur-[100px]" />
         </div>
-          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6">
-                  <div className="space-y-3">
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-card/10 backdrop-blur-xl border border-white/20 text-[9px] font-black uppercase tracking-[0.2em]"
-                      >
-                        <ShieldAlert className="w-3 h-3 text-slate-300" />
-                        Legal Protection
-                      </motion.div>
-                      <motion.h1
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="text-2xl md:text-2xl sm:text-4xl font-black tracking-tight leading-tight"
-                      >
-                          {t('disputes.title')}
-                      </motion.h1>
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-white/50 font-medium max-w-xl text-sm md:text-base leading-relaxed"
-                      >
-                        {t('bm.disputes.title')}: {t('disputes.tab.disputes')}, {t('disputes.tab.service_requests')}، المتابعة القانونية، وفض الخلافات بمهنية وشفافية تامة.
-                      </motion.p>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                      <div className="glass p-3 sm:p-6 rounded-[1.25rem] bg-card/10 border-white/10 text-center min-w-[160px]">
-                          <p className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-1">قضايا تحت المراجعة</p>
-                          <p className="text-xl sm:text-3xl font-black tabular-nums">{disputes.filter(d => d.status === 'inProgress').length}</p>
-                          <div className="mt-1 text-[9px] font-black uppercase tracking-widest text-white/30">تتطلب تدخل سريع</div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-6">
-        <SegmentedTabs defaultValue="disputes" className="w-full space-y-10" onValueChange={(v) => console.log(v)}>
-          <div className="flex justify-center mb-8 w-full">
-            <SegmentedList className="inline-flex h-16 items-center justify-start md:justify-center rounded-2xl bg-card border border p-1.5 shadow-xl shadow-stone-400 overflow-x-auto overflow-y-hidden max-w-full scrollbar-none max-md:h-auto max-md:bg-transparent max-md:border-0 max-md:p-0 max-md:rounded-none max-md:shadow-none max-md:overflow-visible">
-              <SegmentedTrigger value="disputes" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
-                <Gavel className="w-4 h-4" />
-                {t('disputes.tab.disputes')}
-              </SegmentedTrigger>
-              <SegmentedTrigger value="service_requests" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
-                <Scale className="w-4 h-4" />
-                {t('disputes.tab.service_requests')}
-              </SegmentedTrigger>
-              <SegmentedTrigger value="new_request" className="px-3 sm:px-4 md:px-8 shrink-0 rounded-xl h-12 gap-2 sm:gap-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-black text-[10px] md:text-xs transition-all max-md:flex-1 max-md:justify-center max-md:rounded-full max-md:text-[11px]">
-                <PlusCircle className="w-4 h-4" />
-                طلب جديد
-              </SegmentedTrigger>
-            </SegmentedList>
-
-          </div>
-
-          <TabsContent value="disputes" className="m-0 space-y-10">
-            {/* Search & Filter Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="relative w-full md:w-80 group">
-                    <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors`} />
-                    <input
-                        placeholder="ابحث عن قضية..."
-                        className="h-12 w-full rounded-xl border border bg-card px-4 md:px-12 text-sm font-bold focus:border-slate-900 transition-all outline-none"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-
-                <div className="flex gap-2 w-full md:w-auto">
-                  <Button variant="outline" className="flex-1 md:flex-none h-12 px-6 rounded-xl border font-bold text-xs uppercase tracking-widest gap-2 hover:bg-muted transition-all">
-                    <Filter className="w-4 h-4" />
-                    تصفية
-                  </Button>
-                </div>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
+            <div className="space-y-3">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="calm-panel inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted dark:bg-card/10 backdrop-blur-xl border border-border dark:border-white/20 text-[10px] font-black uppercase tracking-[0.2em]"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-primary dark:text-slate-300" />
+                Legal Protection &amp; Resolution
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight"
+              >
+                {pageTitle}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-muted-foreground dark:text-white/60 font-medium max-w-xl text-sm md:text-base leading-relaxed"
+              >
+                {language === "ar"
+                  ? "إدارة النزاعات العقارية، ومتابعة قضايا فض الخلافات، والخدمات القانونية بمهنية وشفافية متكاملة."
+                  : "Comprehensive real estate dispute resolution, case arbitration, and transparent legal management."}
+              </motion.p>
             </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-80 rounded-[1.25rem] bg-muted/50 animate-pulse" />)}
-          </div>
-        ) : filteredDisputes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-slate-400 glass rounded-[1.25rem] border-2 border-dashed border bg-card/30 text-center">
-              <div className="w-24 h-24 bg-card rounded-3xl flex items-center justify-center shadow-xl mb-8">
-                  <Gavel className="w-12 h-12 text-slate-200" />
+            <div className="flex items-center gap-4">
+              <div className="calm-panel glass p-4 sm:p-6 rounded-[1.25rem] bg-card/60 dark:bg-card/10 border border-border dark:border-white/10 text-center min-w-[160px] shadow-sm">
+                <p className="text-muted-foreground dark:text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">
+                  {getDisputeText("disputes.activeReviews", language, t)}
+                </p>
+                <p className="text-2xl sm:text-3xl font-black tabular-nums text-foreground dark:text-white">
+                  {disputes.filter((d) => d.status === "inProgress" || d.status === "in_progress").length}
+                </p>
+                <div className="mt-1 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:text-white/40">
+                  {getDisputeText("disputes.activeReviewsSub", language, t)}
+                </div>
               </div>
-              <p className="text-xl font-black uppercase tracking-widest opacity-40">{t('disputes.empty')}</p>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredDisputes.map((dispute, idx) => {
-                const status = getStatusConfig(dispute.status);
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    key={dispute.id}
-                    className="bg-card border border rounded-[1.25rem] group hover:border-slate-900 transition-all duration-300 overflow-hidden"
-                  >
-                    <div className="p-4 sm:p-8 space-y-6">
-                      {/* Card Header */}
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-3">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${status.color} ${status.ring.replace('ring-', 'border')}`}>
-                            <div className={`w-1 h-1 rounded-full ${status.dot} ${dispute.status === 'inProgress' ? 'animate-pulse' : ''}`} />
-                            {getStatusLabel(dispute.status)}
-                          </div>
-                          <h3 className="text-xl font-black text-blue-950 group-hover:text-blue-900 transition-colors leading-[1.3]">
-                            {dispute.disputeType}
-                          </h3>
-                        </div>
-                        <div className="p-3 bg-muted rounded-xl group-hover:rotate-6 transition-transform border border">
-                          <Gavel className="w-5 h-5 text-slate-400" />
-                        </div>
-                      </div>
+        </div>
+      </section>
 
-                      {/* Details Info */}
-                      <div className="grid grid-cols-1 gap-3 pt-6 border-t border">
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted border border">
-                          <div className="flex items-center gap-3">
-                             <div className="w-9 h-9 rounded-lg bg-slate-950 text-white flex items-center justify-center font-black text-[10px]">A</div>
-                            <div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('disputes.firstParty')}</p>
-                               <p className="text-xs font-bold text-blue-950">{typeof dispute.firstParty === 'object' ? (dispute.firstParty as any).name : dispute.firstParty}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <SegmentedTabs defaultValue="disputes" className="w-full space-y-8">
+          <div className="flex justify-center mb-6 w-full">
+            <SegmentedList className="inline-flex h-14 items-center justify-start md:justify-center rounded-2xl bg-card border border-border p-1.5 shadow-sm overflow-x-auto max-w-full">
+              <SegmentedTrigger
+                value="disputes"
+                className="px-4 md:px-8 shrink-0 rounded-xl h-11 gap-2 font-black text-xs transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <Gavel className="w-4 h-4" />
+                {getDisputeText("disputes.tab.disputes", language, t)}
+              </SegmentedTrigger>
+              <SegmentedTrigger
+                value="service_requests"
+                className="px-4 md:px-8 shrink-0 rounded-xl h-11 gap-2 font-black text-xs transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <Scale className="w-4 h-4" />
+                {getDisputeText("disputes.tab.service_requests", language, t)}
+              </SegmentedTrigger>
+              <SegmentedTrigger
+                value="new_request"
+                className="px-4 md:px-8 shrink-0 rounded-xl h-11 gap-2 font-black text-xs transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <PlusCircle className="w-4 h-4" />
+                {getDisputeText("disputes.newRequest", language, t)}
+              </SegmentedTrigger>
+            </SegmentedList>
+          </div>
+
+          <TabsContent value="disputes" className="m-0 space-y-6">
+            {/* Search & Actions Bar */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-96 group">
+                <Search
+                  className={`absolute ${
+                    language === "ar" ? "right-4" : "left-4"
+                  } top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-foreground transition-colors`}
+                />
+                <input
+                  type="text"
+                  placeholder={getDisputeText("disputes.searchPlaceholder", language, t)}
+                  className={`h-12 w-full rounded-xl border border-border bg-card ${
+                    language === "ar" ? "pr-11 pl-4" : "pl-11 pr-4"
+                  } text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none`}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <Button
+                  onClick={fetchDisputes}
+                  variant="outline"
+                  size="sm"
+                  disabled={loading}
+                  className="h-11 px-4 rounded-xl border-border font-bold text-xs gap-2"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                  {language === "ar" ? "تحديث" : "Refresh"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Error state with retry */}
+            {error ? (
+              <div
+                role="alert"
+                className="calm-panel p-8 rounded-2xl bg-destructive/10 border border-destructive/20 text-center space-y-4"
+              >
+                <div className="w-12 h-12 mx-auto rounded-full bg-destructive/20 text-destructive flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6" />
+                </div>
+                <div className="space-y-1 max-w-md mx-auto">
+                  <p className="font-bold text-base text-foreground dark:text-white">{error}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {language === "ar"
+                      ? "تعذر الاتصال بالخادم لجلب بيانات النزاعات. لم يتم فقدان أي بيانات."
+                      : "Server communication failed. Please retry to fetch the latest cases."}
+                  </p>
+                </div>
+                <Button
+                  onClick={fetchDisputes}
+                  disabled={loading}
+                  className="px-6 py-2.5 rounded-xl font-bold text-xs gap-2"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                  {getDisputeText("disputes.retry", language, t)}
+                </Button>
+              </div>
+            ) : loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="h-72 rounded-[1.25rem] bg-muted/60 animate-pulse border border-border/50" />
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="calm-panel flex flex-col items-center justify-center py-24 text-muted-foreground glass rounded-[1.25rem] border border-dashed border-border bg-card/40 text-center">
+                <div className="calm-panel w-20 h-20 bg-muted/80 rounded-3xl flex items-center justify-center shadow-sm mb-6">
+                  <Gavel className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <p className="text-base font-bold text-foreground">
+                  {getDisputeText("disputes.empty", language, t)}
+                </p>
+                {searchTerm && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {language === "ar" ? "جرّب البحث بكلمات مفتاحية أخرى." : "Try searching with different terms."}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((dispute, idx) => {
+                    const statusCfg = getDisputeStatusConfig(dispute.status);
+                    const firstParty = safeExtractParty(dispute.firstParty);
+                    const secondParty = safeExtractParty(dispute.secondParty);
+
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        key={dispute.id}
+                        className="calm-panel bg-card border border-border rounded-[1.25rem] hover:border-primary/40 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                      >
+                        <div className="p-5 sm:p-6 space-y-5">
+                          {/* Card Header */}
+                          <div className="flex justify-between items-start gap-3">
+                            <div className="space-y-2">
+                              <div
+                                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${statusCfg.badgeClass}`}
+                              >
+                                <div className={`w-1.5 h-1.5 rounded-full ${statusCfg.dotClass}`} />
+                                {language === "ar" ? statusCfg.labelAr : statusCfg.labelEn}
+                              </div>
+                              <h3 className="text-lg font-black text-foreground dark:text-white leading-tight">
+                                {dispute.disputeType || (language === "ar" ? "نزاع عقاري" : "Dispute")}
+                              </h3>
+                            </div>
+                            <div className="p-2.5 bg-muted rounded-xl border border-border shrink-0">
+                              <Gavel className="w-5 h-5 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          {/* Parties Information (Guarded against typeof null === 'object') */}
+                          <div className="space-y-2.5 pt-4 border-t border-border">
+                            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-black text-xs shrink-0">
+                                {language === "ar" ? "أ" : "A"}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                  {getDisputeText("disputes.firstParty", language, t)}
+                                </p>
+                                <p className="text-xs font-bold text-foreground truncate">
+                                  {firstParty.name}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+                              <div className="w-8 h-8 rounded-lg bg-muted text-muted-foreground flex items-center justify-center font-black text-xs shrink-0">
+                                {language === "ar" ? "ب" : "B"}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                  {getDisputeText("disputes.secondParty", language, t)}
+                                </p>
+                                <p className="text-xs font-bold text-foreground truncate">
+                                  {secondParty.name}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer Info */}
+                          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground pt-2 border-t border-border/60">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span>
+                                {dispute.createdAt
+                                  ? new Date(dispute.createdAt).toLocaleDateString(
+                                      language === "ar" ? "ar-SA" : "en-US"
+                                    )
+                                  : "—"}
+                              </span>
+                            </div>
+                            <div className="font-mono bg-muted px-2.5 py-1 rounded-lg text-[11px]">
+                              #{dispute.disputeNumber || dispute.id?.slice(0, 8)}
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-muted border border">
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-muted text-slate-900 flex items-center justify-center font-black text-[10px]">B</div>
-                            <div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('disputes.secondParty')}</p>
-                               <p className="text-xs font-bold text-blue-950">{typeof dispute.secondParty === 'object' ? (dispute.secondParty as any).name : dispute.secondParty}</p>
-                            </div>
-                          </div>
+
+                        {/* Action Button - Connected to Details Dialog */}
+                        <div className="p-5 sm:p-6 pt-0">
+                          <Button
+                            onClick={() => handleOpenDetails(dispute)}
+                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-bold text-xs uppercase tracking-wider gap-2 shadow-sm transition-all"
+                          >
+                            <span>{getDisputeText("disputes.details", language, t)}</span>
+                            <ArrowRight
+                              className={`w-3.5 h-3.5 ${language === "ar" ? "rotate-180" : ""}`}
+                            />
+                          </Button>
                         </div>
-                      </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            )}
+          </TabsContent>
 
-                      {/* Footer Info */}
-                      <div className="flex items-center justify-between text-xs font-black text-slate-400 uppercase tracking-widest pt-2">
-                         <div className="flex items-center gap-2">
-                           <Calendar className="w-3.5 h-3.5" />
-                           {new Date(dispute.createdAt).toLocaleDateString('ar-SA')}
-                         </div>
-                         <div className="font-mono bg-muted px-3 py-1 rounded-lg">
-                           #{dispute.disputeNumber}
-                         </div>
-                      </div>
+          <TabsContent value="service_requests" className="m-0">
+            <ServiceRequestsTable
+              title={getDisputeText("disputes.tab.service_requests", language, t)}
+              subtitle={
+                language === "ar"
+                  ? "إدارة طلبات المراجعة القانونية والاستشارات"
+                  : "Manage legal review requests and advisory services"
+              }
+              department="legal"
+            />
+          </TabsContent>
 
-                      {/* Action Button */}
-                      <Button className="w-full h-12 bg-slate-950 hover:bg-slate-900 text-white rounded-xl font-bold tracking-widest text-[10px] uppercase gap-2 mt-2 transition-all shadow-lg shadow-blue-900/10">
-                        {t('disputes.details')}
-                        <ArrowRight className={`w-3.5 h-3.5 ${language === 'ar' ? 'rotate-180' : ''}`} />
-                      </Button>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        )}
-      </TabsContent>
-
-      <TabsContent value="service_requests" className="m-0">
-         <ServiceRequestsTable
-            title={t('disputes.tab.service_requests')}
-            subtitle="إدارة طلبات المراجعة القانونية والاستشارات"
-            department="legal"
-         />
-      </TabsContent>
-
-      <TabsContent value="new_request" className="m-0">
-         <div className="bg-slate-950 rounded-[1.25rem] border border-slate-800 p-4 sm:p-8 md:p-12 shadow-2xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-slate-800/10 blur-3xl -mr-32 -mt-32 opacity-50" />
-           <div className="text-center mb-10 relative z-10">
-             <h2 className="text-xl sm:text-2xl font-black text-white mb-2">تقديم طلب جديد</h2>
-             <p className="text-slate-400 text-sm font-bold">اختر نوع الخدمة واملأ التفاصيل المطلوبة</p>
-           </div>
-           <div className="relative z-10">
-             <LegalRequestFlow onSuccessRedirect="/disputes" />
-           </div>
-         </div>
-      </TabsContent>
-
-    </SegmentedTabs>
-
-
+          <TabsContent value="new_request" className="m-0">
+            <div className="calm-panel bg-card rounded-[1.25rem] border border-border p-4 sm:p-8 md:p-12 shadow-sm relative overflow-hidden">
+              <div className="text-center mb-8 relative z-10">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground mb-2">
+                  {language === "ar" ? "تقديم طلب قانوني جديد" : "Submit New Legal Request"}
+                </h2>
+                <p className="text-muted-foreground text-sm font-medium">
+                  {language === "ar"
+                    ? "اختر نوع الخدمة القانونية واملأ التفاصيل المطلوبة بدقة"
+                    : "Select service type and provide required case information"}
+                </p>
+              </div>
+              <div className="relative z-10">
+                <LegalRequestFlow onSuccessRedirect="/disputes" />
+              </div>
+            </div>
+          </TabsContent>
+        </SegmentedTabs>
       </div>
 
-      {/* Navigation Floating Button */}
+      {/* Accessible Details Dialog */}
+      <DisputeDetailsDialog
+        isOpen={isDetailsOpen}
+        onClose={handleCloseDetails}
+        dispute={selectedDispute}
+        language={language}
+      />
+
+      {/* Back to details navigation button */}
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => router.push('/details')}
-        className="fixed bottom-8 left-8 w-16 h-16 rounded-full bg-slate-950 text-white flex items-center justify-center shadow-2xl z-50 group border border-white/10"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => router.push("/details")}
+        aria-label={language === "ar" ? "الرجوع" : "Go back"}
+        className="fixed bottom-8 left-8 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-2xl z-40 border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
-        <div className="absolute inset-0 bg-slate-600 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 -z-10" />
-        <ChevronLeft className={`w-8 h-8 ${language === 'ar' ? 'rotate-180' : ''}`} />
+        <ChevronLeft className={`w-6 h-6 ${language === "ar" ? "rotate-180" : ""}`} />
       </motion.button>
     </div>
   );

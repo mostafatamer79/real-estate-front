@@ -1,0 +1,72 @@
+[
+  {
+    "width": 320,
+    "mode": "view",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "manage",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "agent",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "agent-properties",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "client",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "retry",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "view",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "manage",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "agent",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "agent-properties",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "client",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "retry",
+    "passed": true
+  }
+]

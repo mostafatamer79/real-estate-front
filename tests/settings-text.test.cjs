@@ -1,0 +1,4 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const ts=require('typescript');
+const moduleCode=ts.transpileModule(fs.readFileSync(require.resolve('../lib/settings-text.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;const loaded={exports:{}};new Function('module','exports',moduleCode)(loaded,loaded.exports);const {mergeSettingsTextEdits}=loaded.exports;
+test('saving layout controls preserves simultaneous heading and pin-copy edits',()=>{const baseline={ar_title:'old',en_title:'old',details_design:'old layout'};assert.deepEqual(mergeSettingsTextEdits(baseline,{...baseline,ar_title:'جديد',en_title:'New'},{...baseline,details_design:'new layout'}),{ar_title:'جديد',en_title:'New',details_design:'new layout'});});
+test('resetting a text override is not undone by the stale control-panel copy',()=>{assert.deepEqual(mergeSettingsTextEdits({ar_title:'old'},{},{ar_title:'old'}),{});});

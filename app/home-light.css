@@ -1,0 +1,278 @@
+/* Homepage refinements are deliberately limited to the daylight appearance. */
+html:not(.dark) .home-dashboard {
+  padding-top: 28px;
+  background: var(--site-light-background, #dbe4f2);
+}
+
+html:not(.dark) .home-greeting {
+  display: flex;
+  padding: 24px 28px;
+  margin-bottom: 36px;
+  background: #f2f2f2;
+  border: 1px solid #dddddd;
+  border-radius: 18px;
+}
+
+html:not(.dark) .home-greeting h1 {
+  margin-top: 8px;
+  font-size: clamp(24px, 2.6vw, 36px);
+  line-height: 1.5;
+  color: #262626;
+}
+
+html:not(.dark) .home-greeting p {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: #606060;
+}
+
+html:not(.dark) .home-greeting > .calm-icon {
+  width: 56px;
+  height: 56px;
+  background: #303030;
+  color: #fff;
+  border-color: #303030;
+}
+
+html:not(.dark) .home-section-heading {
+  margin-bottom: 18px;
+}
+
+html:not(.dark) .home-section-heading::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  margin-inline-start: 10px;
+  background: #dddddd;
+}
+
+html:not(.dark) .home-section-heading h2 {
+  color: #303030 !important;
+  font-weight: 700;
+}
+
+html:not(.dark) .home-section-heading .wow-accent::after {
+  display: none;
+}
+
+html:not(.dark) .home-dashboard #tour-target-map > .absolute {
+  display: none;
+}
+
+html:not(.dark) .home-dashboard #tour-target-map > .calm-panel {
+  border-radius: 18px;
+  border: 1px solid #d8d8d8;
+}
+
+html:not(.dark) .home-dashboard #tour-target-map > button {
+  margin-top: 14px;
+  background: #303030;
+  color: #fff;
+  border-color: #303030;
+  font-weight: 650;
+}
+
+html:not(.dark) .home-dashboard .home-action-grid {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  box-shadow: none !important;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  overflow: visible;
+  backdrop-filter: none;
+}
+
+html:not(.dark) .home-dashboard .home-action-grid > div:not(.calm-decoration) {
+  min-width: 0;
+  padding: 18px 8px 16px;
+  border: 1px solid #dddddd;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--surface-shadow);
+}
+
+html:not(.dark) .home-dashboard .home-action-grid button {
+  width: 64px;
+  height: 64px;
+  max-width: none;
+  border: 0;
+  border-radius: 14px;
+  background: #eeeeee;
+}
+
+html:not(.dark) .home-dashboard .home-action-grid button img {
+  opacity: 0.75;
+}
+
+html:not(.dark) .home-dashboard .home-action-label {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 650;
+}
+
+html:not(.dark) .home-dashboard [data-home-section="charts"] .calm-chart {
+  padding: 24px;
+  border: 0;
+  background: transparent;
+}
+
+html:not(.dark) .home-dashboard [data-home-section="charts"] > .grid > .calm-panel {
+  border-radius: 16px;
+}
+
+html:not(.dark) .home-dashboard .calm-chart:has(> .flex-1) {
+  min-height: 260px;
+}
+
+html:not(.dark) .home-public {
+  background: linear-gradient(150deg, #ededed, #f8f8f8 55%, #f4f4f4);
+}
+
+html:not(.dark) .home-public-hero {
+  max-width: 880px;
+  padding-block: 18px 48px;
+}
+
+html:not(.dark) .home-public-hero h1 {
+  color: #262626;
+  font-size: clamp(34px, 4.8vw, 62px);
+  line-height: 1.55;
+}
+
+html:not(.dark) .home-public .home-public-primary {
+  background: #303030;
+  color: #fff;
+  box-shadow: 0 6px 16px -10px rgb(33 63 42 / 0.5);
+}
+
+html:not(.dark) .home-public article {
+  background: #fff;
+  border: 1px solid #dddddd;
+  box-shadow: var(--surface-shadow);
+}
+
+html:not(.dark) .home-public article h3 {
+  color: #303030;
+}
+
+@media (max-width: 767px) {
+  html:not(.dark) .home-greeting {
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+
+  html:not(.dark) .home-dashboard .home-action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  html:not(.dark) .home-dashboard .home-action-grid > div:not(.calm-decoration) {
+    padding: 14px 6px;
+  }
+
+  html:not(.dark) .home-dashboard .home-action-label {
+    font-size: 12px;
+  }
+
+  html:not(.dark) .home-dashboard [data-home-section="charts"] .calm-chart {
+    padding: 18px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html:not(.dark) .home-dashboard #tour-target-map > button:hover,
+  html:not(.dark) .home-public .home-public-primary:hover {
+    background: #1f1f1f;
+    color: #fff;
+  }
+}
+
+/* Improve daylight depth with white and neutral gray surfaces. */
+html:not(.dark) .home-dashboard {
+  background: linear-gradient(155deg, #eeeeee 0%, #f7f7f7 48%, #f2f2f2 100%);
+  --chart-line: #525252;
+  --chart-category-1: #404040;
+  --chart-category-2: #737373;
+  --chart-category-3: #a3a3a3;
+  --chart-category-4: #525252;
+}
+html:not(.dark) .home-greeting {
+  background: linear-gradient(120deg, #f0f0f0, #fafafa);
+  border-color: #d6d6d6;
+}
+html:not(.dark) .home-greeting :is(h1, p),
+html:not(.dark) .home-section-heading h2 { color: #262626 !important; }
+html:not(.dark) .home-section-heading h2 { font-size: clamp(18px, 1.6vw, 23px); }
+html:not(.dark) .home-section-heading::after { background: #d6d6d6; }
+html:not(.dark) .home-dashboard :is(.calm-panel:not(.home-action-grid), .home-action-grid > div:not(.calm-decoration)) {
+  background: linear-gradient(145deg, #ffffff 0%, #f6f6f6 100%);
+  border-color: #d6d6d6;
+  box-shadow: 0 5px 18px -10px rgb(0 0 0 / 0.16) !important;
+}
+html:not(.dark) .home-dashboard .calm-group {
+  padding: clamp(16px, 2vw, 24px);
+  background: linear-gradient(135deg, #e9e9e9, #f3f3f3);
+  border: 1px solid #d4d4d4;
+}
+html:not(.dark) .home-dashboard :is(.calm-icon, .home-action-grid button),
+html:not(.dark) .home-greeting > .calm-icon {
+  background: linear-gradient(135deg, #eeeeee, #e3e3e3);
+  color: #454545;
+  border-color: #d4d4d4;
+}
+html:not(.dark) .home-dashboard #tour-target-map > button {
+  min-height: 52px;
+  background: linear-gradient(110deg, #454545, #303030);
+  font-size: 16px;
+}
+html:not(.dark) .home-dashboard .home-action-label { font-size: 15px; color: #262626; }
+html:not(.dark) .home-dashboard .calm-chart { min-height: 360px; color: #262626; }
+html:not(.dark) .home-dashboard .calm-chart :is([class*="text-[9px]"], [class*="text-[10px]"], [class*="text-[11px]"]) { font-size: 12px; line-height: 1.6; }
+html:not(.dark) .home-dashboard .calm-chart [class*="font-black"] { font-size: 32px; }
+html:not(.dark) .home-dashboard .calm-chart .relative.w-44 { width: 208px; height: 208px; }
+html:not(.dark) .home-dashboard .calm-chart .relative.h-44 { height: 208px; margin-top: 24px; }
+html:not(.dark) .home-dashboard .calm-chart .text-rose-300 { color: #a52849; background: #fce5eb; }
+html:not(.dark) .home-dashboard .calm-chart .text-emerald-300 { color: #176047; background: #def3e9; }
+html:not(.dark) .home-dashboard .calm-chart [class*="group-hover/leg:text-"]:hover { color: #262626; }
+html:not(.dark) .nafath-verification {
+  padding: 18px;
+  border: 1px solid #d4d4d4;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fafafa, #f0f0f0);
+  color: #262626;
+}
+html:not(.dark) .nafath-verification p { font-size: 14px; line-height: 1.9; }
+html:not(.dark) .nafath-verification button { min-height: 48px; white-space: normal; height: auto; padding-block: 12px; line-height: 1.7; }
+html:not(.dark) .mobile-footer {
+  background: linear-gradient(120deg, #ededed, #f5f5f5);
+  border-color: #d6d6d6;
+}
+html:not(.dark) .mobile-footer :is(h3, a, p, span, svg) { color: #404040; }
+html:not(.dark) .mobile-footer h3 { font-size: 16px; color: #262626; }
+html:not(.dark) .mobile-footer img:not([src*="sbc-verification"]) { filter: brightness(0); opacity: 0.8; }
+html:not(.dark) .mobile-footer a { font-size: 14px; }
+html:not(.dark) .mobile-footer > .md\:block { padding-top: 40px; }
+@media (max-width: 767px) {
+  html:not(.dark) .home-dashboard .home-action-label { font-size: 13px; }
+  html:not(.dark) .home-dashboard .calm-chart { min-height: 340px; }
+}
+
+html:not(.dark) .home-dashboard .calm-chart [class*="font-black"] { color: #262626; }
+@media (hover: hover) and (pointer: fine) {
+  html:not(.dark) .home-dashboard #tour-target-map > button:hover { background: #1f1f1f; }
+}
+
+html:not(.dark) .home-dashboard .chart-line {
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+  animation: none;
+}
+html:not(.dark) .mobile-footer img:not([src*="sbc-verification"]) {
+  filter: brightness(0) !important;
+}
+html:not(.dark) .mobile-footer [class*="blur-"] { display: none; }

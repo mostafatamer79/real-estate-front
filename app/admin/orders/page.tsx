@@ -184,10 +184,10 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
   };
 
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
   const pillBtn = (active: boolean) =>
     `h-10 px-4 rounded-2xl text-xs font-black transition-all border ${
-      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-card text-slate-500 border hover:border"
+      active ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950 shadow-sm" : "bg-card text-muted-foreground dark:text-slate-500 border hover:border"
     }`;
 
   const selectRegisteredUser = (u: any) => {
@@ -206,31 +206,31 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
   const showDetailedFields = ["فيلا", "شقة", "قصر", "عمارة", "مكتب"].includes(form.propertyType);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
-        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="calm-panel bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white">
+          <div className="calm-icon w-12 h-12 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center text-foreground dark:text-white">
             {initialData ? <Edit2 className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">{initialData ? "تعديل طلب عقاري" : "إضافة طلب عقاري جديد"}</h2>
-            <p className="text-xs text-slate-400 font-bold">يرجى إدخال تفاصيل الطلب وتخصيصه لعميل</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">يرجى إدخال تفاصيل الطلب وتخصيصه لعميل</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Client Selection Section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
-                <p className="text-[11px] font-bold text-slate-400 mt-1">
+                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">معلومات العميل</h3>
+                <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 mt-1">
                   اختر عميلًا مسجلًا أو أدخل بيانات عميل مجهول.
                 </p>
               </div>
-              <div className="flex p-1 bg-card rounded-2xl border border w-fit">
+              <div className="calm-panel flex p-1 bg-card rounded-2xl border border w-fit">
                 <button
                   type="button"
                   className={pillBtn(clientMode === "registered")}
@@ -257,7 +257,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                 <div className="md:col-span-2 space-y-1 relative">
                   <label className={labelCls}>ابحث عن عميل</label>
                   <div className="relative">
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
                     <input
                       value={userSearch}
                       onChange={(e) => {
@@ -272,7 +272,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                       <button
                         type="button"
                         onClick={clearRegisteredUser}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-300 hover:text-slate-950 hover:bg-muted transition-colors"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-muted-foreground dark:text-slate-300 hover:text-slate-950 hover:bg-muted transition-colors"
                         title="مسح"
                       >
                         <X className="w-4 h-4" />
@@ -281,9 +281,9 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                   </div>
 
                   {userSearch && !form.userId && (
-                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <div className="calm-panel absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-sm dark:shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                       {loadingUsers ? (
-                        <div className="p-4 text-center text-[10px] font-bold text-slate-400">جارٍ التحميل...</div>
+                        <div className="p-4 text-center text-[10px] font-bold text-muted-foreground dark:text-slate-400">جارٍ التحميل...</div>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                           <button
@@ -293,14 +293,14 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                             className="w-full px-4 py-3 text-right hover:bg-muted flex items-center justify-between border-b border last:border-0"
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-8 h-8 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                              <div className="calm-icon w-8 h-8 rounded-full bg-background dark:bg-slate-950 text-foreground dark:text-white flex items-center justify-center text-[10px] font-black shrink-0">
                                 {(u.firstName?.[0] || u.email?.[0] || "?").toUpperCase()}
                               </div>
                               <div className="flex flex-col min-w-0">
                                 <span className="text-xs font-bold text-slate-950 truncate">
                                   {u.firstName} {u.lastName}
                                 </span>
-                                <span className="text-[10px] text-slate-400 font-bold truncate">
+                                <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold truncate">
                                   {u.phone || u.email}
                                 </span>
                               </div>
@@ -309,7 +309,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                           </button>
                         ))
                       ) : (
-                        <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>
+                        <div className="p-4 text-center text-[10px] font-bold text-muted-foreground dark:text-slate-400">لا يوجد نتائج</div>
                       )}
                     </div>
                   )}
@@ -317,7 +317,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
                 <div className="space-y-1">
                   <label className={labelCls}>النتيجة</label>
-                  <div className="h-11 px-4 rounded-xl border border bg-card flex items-center justify-between">
+                  <div className="calm-panel h-11 px-4 rounded-xl border border bg-card flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-950 truncate">
                       {form.userId ? userSearch : "لم يتم اختيار عميل"}
                     </span>
@@ -356,7 +356,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
 
           {/* Property Details */}
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">تفاصيل الطلب الأساسية</h3>
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">تفاصيل الطلب الأساسية</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1">
@@ -380,7 +380,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     سكني
@@ -391,7 +391,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     تجاري
@@ -491,7 +491,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
           {/* Detailed Specifications Section */}
           {showDetailedFields && (
             <div className="space-y-4 pt-2">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">تفاصيل البناء المطلوبة</h3>
+              <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">تفاصيل البناء المطلوبة</h3>
               
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                 <div className="space-y-1">
@@ -644,7 +644,7 @@ function CreateOrderModal({ onClose, onSuccess, initialData = null }: { onClose:
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-slate-950 text-white hover:bg-slate-900 text-sm font-black shadow-xl shadow-stone-400/10">
+          <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white hover:bg-card hover:dark:bg-slate-900 text-sm font-black shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400/10">
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (initialData ? "تحديث الطلب" : "إرسال الطلب")}
           </Button>
         </form>
@@ -685,9 +685,9 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
     };
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-[95vw] sm:max-w-md rounded-2xl p-4 sm:p-8 shadow-2xl relative">
-                <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="calm-panel bg-card w-[95vw] sm:max-w-md rounded-2xl p-4 sm:p-8 shadow-sm dark:shadow-2xl relative">
+                <button onClick={onClose} className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
                 
                 <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2">
                     <UserCheck className="w-6 h-6" />
@@ -705,7 +705,7 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
                     </div>
 
                     <div className="relative">
-                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
                         <Input 
                             value={search} 
                             onChange={e => setSearch(e.target.value)} 
@@ -723,9 +723,9 @@ function AssignOrderModal({ order, onClose, onSuccess }: { order: any; onClose: 
                             >
                                 <div className="text-right">
                                     <p className="text-sm font-bold text-slate-900">{u.firstName} {u.lastName}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase">{u.role}</p>
+                                    <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold uppercase">{u.role}</p>
                                 </div>
-                                <ArrowRight className={`w-4 h-4 text-slate-200 group-hover:text-slate-950 group-hover:translate-x-1 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                                <ArrowRight className={`w-4 h-4 text-foreground dark:text-slate-200 group-hover:text-slate-950 group-hover:translate-x-1 ${language === 'ar' ? 'rotate-180' : ''}`} />
                             </button>
                         ))}
                     </div>
@@ -878,7 +878,7 @@ export default function OrdersPage() {
       case 'in_progress': return <Badge className="bg-blue-50 text-blue-600 border-blue-100 font-bold px-3 py-1 rounded-full ring-1 ring-blue-200/50">قيد المعالجة</Badge>;
       case 'completed': return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-bold px-3 py-1 rounded-full ring-1 ring-emerald-200/50">مكتمل</Badge>;
       case 'cancelled': return <Badge className="bg-rose-50 text-rose-600 border-rose-100 font-bold px-3 py-1 rounded-full ring-1 ring-rose-200/50">ملغي</Badge>;
-      default: return <Badge className="bg-muted text-slate-400 border font-bold px-3 py-1 rounded-full">{status}</Badge>;
+      default: return <Badge className="bg-muted text-muted-foreground dark:text-slate-400 border font-bold px-3 py-1 rounded-full">{status}</Badge>;
     }
   };
 
@@ -895,11 +895,11 @@ export default function OrdersPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 mb-1">إدارة الطلبات العقارية</h1>
-          <p className="text-slate-400 text-xs font-bold">إضافة، تعديل، وتعيين الطلبات للوسطاء والموظفين</p>
+          <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold">إضافة، تعديل، وتعيين الطلبات للوسطاء والموظفين</p>
         </div>
         <Button 
           onClick={() => { setSelectedOrder(null); setShowCreate(true); }} 
-          className="flex items-center gap-2 bg-slate-950 text-white px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-sm"
+          className="flex items-center gap-2 bg-background dark:bg-slate-950 text-foreground dark:text-white px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-card hover:dark:bg-slate-900 transition-all shadow-sm"
         >
           <Plus className="w-4 h-4" /> إضافة طلب جديد
         </Button>
@@ -908,29 +908,29 @@ export default function OrdersPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {stats.map((s, i) => (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="bg-card p-5 rounded-2xl border border shadow-sm flex items-center gap-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="calm-panel bg-card p-5 rounded-2xl border border shadow-sm flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl ${s.color} flex items-center justify-center shrink-0`}>
                     <s.icon className="w-6 h-6" />
                 </div>
                 <div>
                     <p className="text-xl sm:text-2xl font-black text-slate-950">{s.value}</p>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{s.label}</p>
+                    <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{s.label}</p>
                 </div>
             </motion.div>
         ))}
       </div>
 
       {/* Filters & Table */}
-      <div className="bg-card border border rounded-2xl shadow-sm overflow-hidden">
+      <div className="calm-panel bg-card border border rounded-2xl shadow-sm overflow-hidden">
         <div className="p-3 sm:p-6 border-b border grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             <div className="relative w-full md:col-span-2">
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="بحث في العقار، المدينة، العميل..." className="h-11 pr-11 rounded-xl bg-card border focus:border-slate-950" />
             </div>
             <div className="flex items-center gap-3 w-full md:col-span-2">
                 <div className="flex items-center gap-2 p-1.5 bg-muted rounded-2xl">
                     {['all', 'pending', 'in_progress', 'completed'].map(s => (
-                        <button key={s} onClick={() => setStatusFilter(s)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${statusFilter === s ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                        <button key={s} onClick={() => setStatusFilter(s)} className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all ${statusFilter === s ? 'bg-card text-slate-950 shadow-sm' : 'text-muted-foreground dark:text-slate-500 hover:text-slate-700'}`}>
                             {s === 'all' ? 'الكل' : s === 'pending' ? 'المعلق' : s === 'in_progress' ? 'قيد العمل' : 'المكتمل'}
                         </button>
                     ))}
@@ -962,31 +962,31 @@ export default function OrdersPage() {
                 <TableHeader className="bg-muted/50">
                     <TableRow>
                         <TableHead className="w-20 text-center font-black px-3 py-3 sm:px-6 sm:py-4">ID</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">نوع العقار</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">العميل</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">التفاصيل</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">المسؤول</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">السعر</TableHead>
-                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-slate-400 uppercase tracking-widest text-[10px]">الحالة</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">نوع العقار</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">العميل</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">التفاصيل</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">المسؤول</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">السعر</TableHead>
+                        <TableHead className="font-black px-3 py-3 sm:px-6 sm:py-4 text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-[10px]">الحالة</TableHead>
                         <TableHead className="w-10 px-3 py-3 sm:px-6 sm:py-4"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {loading ? (
-                        <TableRow><TableCell colSpan={8} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-200" /></TableCell></TableRow>
+                        <TableRow><TableCell colSpan={8} className="py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-foreground dark:text-slate-200" /></TableCell></TableRow>
                     ) : filteredOrders.length === 0 ? (
-                        <TableRow><TableCell colSpan={8} className="py-20 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={8} className="py-20 text-center font-bold text-muted-foreground dark:text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</TableCell></TableRow>
                     ) : paginatedOrders.map(order => (
                         <TableRow key={order.id} className="group hover:bg-muted/50 transition-colors">
-                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-center font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</TableCell>
+                            <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-center font-mono text-[10px] text-muted-foreground dark:text-slate-400">#{order.id.substring(0, 4)}</TableCell>
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-400 group-hover:bg-card group-hover:text-slate-950 transition-all border border-transparent group-hover:border">
+                                    <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-400 group-hover:bg-card group-hover:text-slate-950 transition-all border border-transparent group-hover:border">
                                         <Building className="w-5 h-5" />
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-slate-950">{order.propertyType}</p>
-                                        <p className={`text-[10px] font-black uppercase tracking-tighter ${order.orderType === 'buy' ? 'text-blue-500' : 'text-slate-400'}`}>
+                                        <p className={`text-[10px] font-black uppercase tracking-tighter ${order.orderType === 'buy' ? 'text-blue-500' : 'text-muted-foreground dark:text-slate-400'}`}>
                                             {order.orderType === 'buy' ? 'شراء' : 'إيجار'}
                                         </p>
                                     </div>
@@ -995,22 +995,22 @@ export default function OrdersPage() {
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 {order.user ? (
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-[10px] font-black">
+                                        <div className="calm-icon w-8 h-8 rounded-full bg-card dark:bg-slate-900 flex items-center justify-center text-foreground dark:text-white text-[10px] font-black">
                                             {order.user.firstName?.[0]}
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xs font-bold text-slate-900">{order.user.firstName} {order.user.lastName}</p>
-                                            <p className="text-[10px] text-slate-400 font-bold">{order.user.phone}</p>
+                                            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{order.user.phone}</p>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 italic">
-                                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-300">
+                                        <div className="calm-icon w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-300">
                                             <UserIcon className="w-4 h-4" />
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xs font-bold text-slate-400">{order.clientName || 'مجهول'}</p>
-                                            <p className="text-[10px] text-slate-300 font-bold">{order.clientPhone || 'بدون هاتف'}</p>
+                                            <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{order.clientName || 'مجهول'}</p>
+                                            <p className="text-[10px] text-muted-foreground dark:text-slate-300 font-bold">{order.clientPhone || 'بدون هاتف'}</p>
                                         </div>
                                     </div>
                                 )}
@@ -1018,12 +1018,12 @@ export default function OrdersPage() {
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
-                                        <MapPin className="w-3 h-3 text-slate-400" />
+                                        <MapPin className="w-3 h-3 text-muted-foreground dark:text-slate-400" />
                                         {order.city} • {order.neighborhood}
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
-                                        {order.rooms > 0 && <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
+                                        <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
+                                        {order.rooms > 0 && <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
                                     </div>
                                 </div>
                             </TableCell>
@@ -1036,23 +1036,23 @@ export default function OrdersPage() {
                                         <span className="text-xs font-bold text-slate-700">{order.assignedTo.firstName}</span>
                                     </div>
                                 ) : (
-                                    <button onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="text-[10px] font-black text-slate-300 hover:text-slate-950 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                                    <button onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="text-[10px] font-black text-muted-foreground dark:text-slate-300 hover:text-slate-950 uppercase tracking-widest flex items-center gap-1 transition-colors">
                                         <UserCheck className="w-3 h-3" /> تعيين مسؤول
                                     </button>
                                 )}
                             </TableCell>
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
-                                <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
+                                <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-muted-foreground dark:text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
                             </TableCell>
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">{getStatusBadge(order.status)}</TableCell>
                             <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-muted">
-                                            <MoreVertical className="w-5 h-5 text-slate-400" />
+                                            <MoreVertical className="w-5 h-5 text-muted-foreground dark:text-slate-400" />
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border">
+                                    <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-sm dark:shadow-2xl border">
                                         {(order.user?.id || order.userId) && (
                                             <DropdownMenuItem onClick={() => handleOpenChat(order.user?.id || order.userId)} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
                                                 <MessageSquare className="w-4 h-4" /> مراسلة العميل
@@ -1068,7 +1068,7 @@ export default function OrdersPage() {
                                             <UserCheck className="w-4 h-4" /> تغيير المسؤول
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator className="bg-muted my-1" />
-                                        <div className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
+                                        <div className="px-3 py-2 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
                                         {['pending', 'in_progress', 'completed', 'cancelled'].map(s => (
                                             <DropdownMenuItem key={s} onClick={() => handleUpdateStatus(order.id, s)} className="rounded-xl font-bold py-2 text-slate-600 hover:text-slate-950 gap-3">
                                                 <div className={`w-2 h-2 rounded-full ${s === 'pending' ? 'bg-amber-500' : s === 'in_progress' ? 'bg-blue-500' : s === 'completed' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
@@ -1093,56 +1093,56 @@ export default function OrdersPage() {
         <div className="md:hidden space-y-3 p-4">
           {loading ? (
             <div className="py-12 text-center">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-200" />
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-foreground dark:text-slate-200" />
             </div>
           ) : filteredOrders.length === 0 ? (
-            <p className="py-12 text-center font-bold text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</p>
+            <p className="py-12 text-center font-bold text-muted-foreground dark:text-slate-300 italic">لا يوجد طلبات مطابقة للبحث</p>
           ) : (
             paginatedOrders.map(order => (
-              <div key={order.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+              <div key={order.id} className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-400 border border-transparent">
+                    <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-400 border border-transparent">
                       <Building className="w-5 h-5" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-950">{order.propertyType}</p>
-                      <p className={`text-[10px] font-black uppercase tracking-tighter ${order.orderType === 'buy' ? 'text-blue-500' : 'text-slate-400'}`}>
+                      <p className={`text-[10px] font-black uppercase tracking-tighter ${order.orderType === 'buy' ? 'text-blue-500' : 'text-muted-foreground dark:text-slate-400'}`}>
                         {order.orderType === 'buy' ? 'شراء' : 'إيجار'}
                       </p>
                     </div>
                   </div>
-                  <span className="font-mono text-[10px] text-slate-400">#{order.id.substring(0, 4)}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground dark:text-slate-400">#{order.id.substring(0, 4)}</span>
                 </div>
                 <div className="space-y-2 text-xs">
                   {order.user ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-[10px] font-black">
+                      <div className="calm-icon w-8 h-8 rounded-full bg-card dark:bg-slate-900 flex items-center justify-center text-foreground dark:text-white text-[10px] font-black">
                         {order.user.firstName?.[0]}
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-900">{order.user.firstName} {order.user.lastName}</p>
-                        <p className="text-[10px] text-slate-400 font-bold">{order.user.phone}</p>
+                        <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{order.user.phone}</p>
                       </div>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 italic">
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-300">
+                      <div className="calm-icon w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-300">
                         <UserIcon className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400">{order.clientName || 'مجهول'}</p>
-                        <p className="text-[10px] text-slate-300 font-bold">{order.clientPhone || 'بدون هاتف'}</p>
+                        <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{order.clientName || 'مجهول'}</p>
+                        <p className="text-[10px] text-muted-foreground dark:text-slate-300 font-bold">{order.clientPhone || 'بدون هاتف'}</p>
                       </div>
                     </div>
                   )}
                   <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
-                    <MapPin className="w-3 h-3 text-slate-400" />
+                    <MapPin className="w-3 h-3 text-muted-foreground dark:text-slate-400" />
                     {order.city} • {order.neighborhood}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
-                    {order.rooms > 0 && <span className="text-[10px] font-bold text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
+                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.area} م²</span>
+                    {order.rooms > 0 && <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 bg-muted px-2 py-0.5 rounded-md">{order.rooms} غرف</span>}
                   </div>
                   <div className="flex items-center justify-between pt-1">
                     <div>
@@ -1154,22 +1154,22 @@ export default function OrdersPage() {
                           <span className="text-xs font-bold text-slate-700">{order.assignedTo.firstName}</span>
                         </div>
                       ) : (
-                        <button onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="text-[10px] font-black text-slate-300 hover:text-slate-950 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                        <button onClick={() => { setAssigningOrder(order); setShowAssign(true); }} className="text-[10px] font-black text-muted-foreground dark:text-slate-300 hover:text-slate-950 uppercase tracking-widest flex items-center gap-1 transition-colors">
                           <UserCheck className="w-3 h-3" /> تعيين مسؤول
                         </button>
                       )}
                     </div>
-                    <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
+                    <p className="text-sm font-black text-slate-950">{order.price?.toLocaleString()} <span className="text-[10px] text-muted-foreground dark:text-slate-400"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span></p>
                   </div>
                   <div className="flex items-center justify-between pt-2">
                     {getStatusBadge(order.status)}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-muted">
-                          <MoreVertical className="w-5 h-5 text-slate-400" />
+                          <MoreVertical className="w-5 h-5 text-muted-foreground dark:text-slate-400" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border">
+                      <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-sm dark:shadow-2xl border">
                         {(order.user?.id || order.userId) && (
                           <DropdownMenuItem onClick={() => handleOpenChat(order.user?.id || order.userId)} className="rounded-xl font-bold py-3 text-slate-700 gap-3 cursor-pointer">
                             <MessageSquare className="w-4 h-4" /> مراسلة العميل
@@ -1185,7 +1185,7 @@ export default function OrdersPage() {
                           <UserCheck className="w-4 h-4" /> تغيير المسؤول
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-muted my-1" />
-                        <div className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
+                        <div className="px-3 py-2 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">تغيير الحالة</div>
                         {['pending', 'in_progress', 'completed', 'cancelled'].map(s => (
                           <DropdownMenuItem key={s} onClick={() => handleUpdateStatus(order.id, s)} className="rounded-xl font-bold py-2 text-slate-600 hover:text-slate-950 gap-3">
                             <div className={`w-2 h-2 rounded-full ${s === 'pending' ? 'bg-amber-500' : s === 'in_progress' ? 'bg-blue-500' : s === 'completed' ? 'bg-emerald-500' : 'bg-rose-500'}`} />

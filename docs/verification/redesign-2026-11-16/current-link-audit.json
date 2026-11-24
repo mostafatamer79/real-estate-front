@@ -1,0 +1,2772 @@
+{
+  "scope": "Static internal navigation and route data only; not UI or endpoint validation",
+  "pages": [
+    "/about",
+    "/admin/customer-service",
+    "/admin/dashboard",
+    "/admin/info-content",
+    "/admin/legal",
+    "/admin/map-control",
+    "/admin/marketing",
+    "/admin/offers",
+    "/admin/operations",
+    "/admin/opinions",
+    "/admin/orders",
+    "/admin/packages",
+    "/admin",
+    "/admin/properties-management",
+    "/admin/purchase-requests",
+    "/admin/service-providers",
+    "/admin/service-requests",
+    "/admin/services",
+    "/admin/settings",
+    "/admin/subscriptions",
+    "/admin/transactions",
+    "/admin/trends",
+    "/admin/users/[id]",
+    "/admin/users",
+    "/admin/visit-requests",
+    "/admin/wallet",
+    "/buildingmanagement",
+    "/chat/[roomId]",
+    "/chat",
+    "/checkout",
+    "/complete-profile",
+    "/customerservice/contact",
+    "/customerservice/faq",
+    "/customerservice",
+    "/customerservice/support",
+    "/department-hub",
+    "/details",
+    "/disputes",
+    "/financial",
+    "/home",
+    "/info",
+    "/internal/[dept]",
+    "/internal/[dept]/requests",
+    "/internal/chat/[roomId]",
+    "/internal/chat",
+    "/internal",
+    "/internal/renew-subscription",
+    "/login",
+    "/marketing",
+    "/nafath-login",
+    "/offers/[id]/edit",
+    "/offers/[id]",
+    "/offers/new",
+    "/offers",
+    "/orders/[id]",
+    "/orders",
+    "/",
+    "/profile",
+    "/scan-map",
+    "/service-providers",
+    "/services/form",
+    "/services/legal",
+    "/services/legal-requests",
+    "/services/my-requests",
+    "/services",
+    "/services/provider-requests",
+    "/share-opinion",
+    "/subscriptions/new",
+    "/verify-otp",
+    "/wallet"
+  ],
+  "links": [
+    {
+      "file": "app/admin/customer-service/page.tsx",
+      "line": 443,
+      "target": "/internal/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 26,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 27,
+      "target": "/admin/subscriptions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 28,
+      "target": "/admin/map-control",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 29,
+      "target": "/admin/operations",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 30,
+      "target": "/admin/trends",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 31,
+      "target": "/admin/customer-service",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 32,
+      "target": "/admin/settings",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 33,
+      "target": "/admin/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 34,
+      "target": "/admin/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 35,
+      "target": "/admin/marketing",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 36,
+      "target": "/admin/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 37,
+      "target": "/admin/properties-management",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 38,
+      "target": "/admin/legal",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 39,
+      "target": "/admin/services?type=post_purchase",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 75,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 81,
+      "target": "/admin/operations",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 87,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 93,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 121,
+      "target": "/admin/services",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 128,
+      "target": "/admin/legal",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 135,
+      "target": "/admin/marketing",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 142,
+      "target": "/admin/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 149,
+      "target": "/admin/services?type=post_purchase",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 156,
+      "target": "/admin/services?type=construction",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 163,
+      "target": "/admin/services?type=other",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 77,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 81,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 84,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 104,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 110,
+      "target": "/admin/wallet?section=financial",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 111,
+      "target": "/admin/wallet?section=transactions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 112,
+      "target": "/admin/wallet?section=payments",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 113,
+      "target": "/admin/wallet?section=expenses",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 114,
+      "target": "/admin/wallet?section=reports",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 115,
+      "target": "/admin/wallet?section=settlements",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 116,
+      "target": "/admin/wallet?section=service_requests",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 122,
+      "target": "/admin/dashboard",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 123,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 124,
+      "target": "/admin/subscriptions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 126,
+      "target": "/admin/map-control",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 127,
+      "target": "/admin/operations",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 128,
+      "target": "/admin/trends",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 129,
+      "target": "/admin/customer-service",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 130,
+      "target": "/internal/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 131,
+      "target": "/admin/settings",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 132,
+      "target": "/admin/info-content",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 139,
+      "target": "/admin/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 140,
+      "target": "/admin/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 141,
+      "target": "/admin/marketing",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 142,
+      "target": "/admin/properties-management",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 143,
+      "target": "/admin/legal",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 149,
+      "target": "/admin/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 150,
+      "target": "/admin/wallet?tab=invoices",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 151,
+      "target": "/admin/wallet?tab=commissions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 152,
+      "target": "/admin/wallet?tab=files",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 153,
+      "target": "/admin/wallet?tab=investments",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 159,
+      "target": "/admin/service-providers",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 160,
+      "target": "/admin/services?type=post_purchase",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 161,
+      "target": "/admin/services?type=legal",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 162,
+      "target": "/admin/services?type=construction",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 163,
+      "target": "/admin/services?type=marketing",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 164,
+      "target": "/admin/services?type=other",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 176,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 384,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 398,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 595,
+      "target": "/admin/services?type=legal",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 596,
+      "target": "/admin/services?type=legal_disputes",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 597,
+      "target": "/admin/services?type=legal_contracts",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 598,
+      "target": "/admin/services?type=legal_documentation",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 599,
+      "target": "/admin/services?type=legal_other",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/map-control/page.tsx",
+      "line": 65,
+      "target": "/scan-map",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/operations/page.tsx",
+      "line": 80,
+      "target": "/admin/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/operations/page.tsx",
+      "line": 96,
+      "target": "/admin/transactions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/packages/page.tsx",
+      "line": 254,
+      "target": "/admin/subscriptions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/packages/page.tsx",
+      "line": 266,
+      "target": "/admin/subscriptions",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 105,
+      "target": "/admin/properties-management",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 106,
+      "target": "/admin/properties-management?tab=tenants",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 107,
+      "target": "/admin/properties-management?tab=leases",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 108,
+      "target": "/admin/properties-management?tab=payments",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 109,
+      "target": "/admin/properties-management?tab=maintenance",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/service-providers/page.tsx",
+      "line": 178,
+      "target": "/service-providers",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/subscriptions/page.tsx",
+      "line": 1060,
+      "target": "/admin/packages",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 362,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 485,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 496,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 555,
+      "target": "/department-hub",
+      "status": "route"
+    },
+    {
+      "file": "app/buildingmanagement/disputes/new.tsx",
+      "line": 239,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/chat/[roomId]/page.tsx",
+      "line": 379,
+      "target": "/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/chat/page.tsx",
+      "line": 228,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/chat/page.tsx",
+      "line": 449,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/complete-profile/page.tsx",
+      "line": 106,
+      "target": "/login?next=%2Fcomplete-profile",
+      "status": "route"
+    },
+    {
+      "file": "app/complete-profile/page.tsx",
+      "line": 186,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/complete-profile/page.tsx",
+      "line": 230,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/complete-profile/page.tsx",
+      "line": 376,
+      "target": "/customerservice/support",
+      "status": "route"
+    },
+    {
+      "file": "app/customerservice/faq/page.tsx",
+      "line": 218,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 393,
+      "target": "/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 405,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 428,
+      "target": "/internal/properties?view=properties&section=orders",
+      "status": "route"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 402,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 403,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 404,
+      "target": "/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 405,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 457,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/disputes/page.tsx",
+      "line": 54,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/disputes/page.tsx",
+      "line": 62,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/disputes/page.tsx",
+      "line": 65,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/disputes/page.tsx",
+      "line": 439,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/info/page.tsx",
+      "line": 255,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 184,
+      "target": "/department-hub",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 194,
+      "target": "/department-hub",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 367,
+      "target": "/internal/employees?view=employees&section=users",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 370,
+      "target": "/internal/properties?view=properties&section=properties",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 371,
+      "target": "/internal/properties?view=properties&section=properties",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 372,
+      "target": "/internal/properties?view=properties&section=offers",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 373,
+      "target": "/internal/properties?view=properties&section=orders",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 376,
+      "target": "/internal/marketing?view=marketing&section=marketing",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 379,
+      "target": "/internal/legal?view=legal&section=legal",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 477,
+      "target": "/internal/properties?view=properties&section=orders",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/requests/page.tsx",
+      "line": 487,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/requests/page.tsx",
+      "line": 499,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/[dept]/requests/page.tsx",
+      "line": 503,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/chat/[roomId]/page.tsx",
+      "line": 377,
+      "target": "/internal/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/chat/page.tsx",
+      "line": 324,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 168,
+      "target": "/subscriptions/new?mode=packages",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 178,
+      "target": "/subscriptions/new?mode=custom",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 188,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 220,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 288,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 298,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 449,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 209,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 225,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 254,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 280,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 405,
+      "target": "/internal/renew-subscription",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 465,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 473,
+      "target": "/internal/renew-subscription",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 481,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 489,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 619,
+      "target": "/internal/renew-subscription",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 629,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 653,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 759,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 891,
+      "target": "/internal/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/offers/OffersClient.tsx",
+      "line": 795,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 884,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 1736,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 861,
+      "target": "/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 948,
+      "target": "/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 957,
+      "target": "/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/orders/page.tsx",
+      "line": 293,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/profile/page.tsx",
+      "line": 231,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/profile/page.tsx",
+      "line": 258,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/profile/page.tsx",
+      "line": 590,
+      "target": "/customerservice/support",
+      "status": "route"
+    },
+    {
+      "file": "app/scan-map/page.tsx",
+      "line": 108,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 452,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 882,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/services/form/page.tsx",
+      "line": 182,
+      "target": "/services/legal",
+      "status": "route"
+    },
+    {
+      "file": "app/services/legal/page.tsx",
+      "line": 39,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/legal/page.tsx",
+      "line": 44,
+      "target": "/services/legal?preview=1",
+      "status": "route"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 267,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 461,
+      "target": "/services/provider-requests",
+      "status": "route"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 464,
+      "target": "/services/legal-requests",
+      "status": "route"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 467,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/services/page.tsx",
+      "line": 133,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/services/page.tsx",
+      "line": 181,
+      "target": "/service-providers",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 226,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 232,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 255,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 259,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 369,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 578,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 585,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 590,
+      "target": "/wallet?tab=invoices",
+      "status": "route"
+    },
+    {
+      "file": "app/share-opinion/page.tsx",
+      "line": 61,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/share-opinion/page.tsx",
+      "line": 88,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/AdminImpersonationReturn.tsx",
+      "line": 50,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 59,
+      "target": "/about",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 60,
+      "target": "/info?tab=terms",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 61,
+      "target": "/info?tab=usage",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 65,
+      "target": "/customerservice/faq",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 66,
+      "target": "/share-opinion",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 109,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 241,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 116,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 176,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 195,
+      "target": "/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 210,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 233,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 264,
+      "target": "/chat",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 302,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 327,
+      "target": "/admin/dashboard",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 334,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 345,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 369,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 414,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 452,
+      "target": "/admin/dashboard",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 460,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 472,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 495,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/HomePage.tsx",
+      "line": 23,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/HomePage.tsx",
+      "line": 26,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/HomePage.tsx",
+      "line": 28,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/HomePage.tsx",
+      "line": 32,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/HomePage.tsx",
+      "line": 35,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/MobileAppHeader.tsx",
+      "line": 56,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/MobileAppHeader.tsx",
+      "line": 61,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/PageWrapper.tsx",
+      "line": 69,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 177,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 178,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 179,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 180,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 181,
+      "target": "/orders",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 182,
+      "target": "/buildingmanagement",
+      "status": "route"
+    },
+    {
+      "file": "app/src/components/QuickActions.tsx",
+      "line": 183,
+      "target": "/scan-map",
+      "status": "route"
+    },
+    {
+      "file": "app/subscriptions/new/page.tsx",
+      "line": 166,
+      "target": "/admin/users",
+      "status": "route"
+    },
+    {
+      "file": "app/subscriptions/new/page.tsx",
+      "line": 371,
+      "target": "/department-hub",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 162,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 257,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 375,
+      "target": "/service-providers",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 381,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 385,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 387,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 591,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "app/wallet/components/WalletSidebar.tsx",
+      "line": 81,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 11,
+      "target": "/about",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 12,
+      "target": "/customerservice/contact",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 13,
+      "target": "/customerservice/faq",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 14,
+      "target": "/info?tab=terms",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 15,
+      "target": "/info?tab=usage",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 16,
+      "target": "/share-opinion",
+      "status": "route"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 28,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/ComingSoonOverlay.tsx",
+      "line": 84,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/ComingSoonOverlay.tsx",
+      "line": 93,
+      "target": "/admin/settings",
+      "status": "route"
+    },
+    {
+      "file": "components/Payment/CheckoutHandoff.tsx",
+      "line": 84,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "components/Payment/CheckoutHandoff.tsx",
+      "line": 152,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "components/Payment/CheckoutHandoff.tsx",
+      "line": 235,
+      "target": "/wallet",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 96,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 99,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 101,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 105,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 135,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 162,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 247,
+      "target": "/verify-otp",
+      "status": "route"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 356,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "components/chat/chat-modal.tsx",
+      "line": 56,
+      "target": "/socket.io",
+      "status": "transport"
+    },
+    {
+      "file": "components/cinematic/CinematicHero.tsx",
+      "line": 36,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/CinematicHero.tsx",
+      "line": 40,
+      "target": "/about",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 32,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 37,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 38,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 44,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 50,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 55,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 62,
+      "target": "/internal",
+      "status": "route"
+    },
+    {
+      "file": "components/cinematic/HomeWalkthrough.tsx",
+      "line": 68,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 393,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 699,
+      "target": "/customerservice",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 709,
+      "target": "/customerservice/contact",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 719,
+      "target": "/customerservice/support",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 734,
+      "target": "/customerservice/faq",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 744,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 840,
+      "target": "/customerservice/support",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 866,
+      "target": "/customerservice/faq",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 892,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 917,
+      "target": "/customerservice/contact",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 985,
+      "target": "/customerservice/support",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 1030,
+      "target": "/customerservice/contact",
+      "status": "route"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 1406,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/details/DetailsNeighborhood.tsx",
+      "line": 61,
+      "target": "/scan-map",
+      "status": "route"
+    },
+    {
+      "file": "components/financial/FinancialWorkspace.tsx",
+      "line": 52,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/financial/FinancialWorkspace.tsx",
+      "line": 55,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/financial/FinancialWorkspace.tsx",
+      "line": 228,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 345,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 353,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 361,
+      "target": "/services/legal",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 393,
+      "target": "/services/legal",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 479,
+      "target": "/services/legal",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 797,
+      "target": "/wallet?tab=invoices",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/LegalRequestsWorkspace.tsx",
+      "line": 110,
+      "target": "/services",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/LegalRequestsWorkspace.tsx",
+      "line": 124,
+      "target": "/services/form?type=legal",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/LegalRequestsWorkspace.tsx",
+      "line": 139,
+      "target": "/services/form?type=legal",
+      "status": "route"
+    },
+    {
+      "file": "components/legal/LegalRequestsWorkspace.tsx",
+      "line": 183,
+      "target": "/services/form?type=legal",
+      "status": "route"
+    },
+    {
+      "file": "components/marketing/MarketingWorkspace.tsx",
+      "line": 41,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/marketing/MarketingWorkspace.tsx",
+      "line": 44,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/modals/offer-details-modal.tsx",
+      "line": 78,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/profile/NafathVerification.tsx",
+      "line": 251,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/properties/BuildingManagementWorkspace.tsx",
+      "line": 3318,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "components/properties/BuildingManagementWorkspace.tsx",
+      "line": 6156,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "components/properties/BuildingManagementWorkspace.tsx",
+      "line": 6164,
+      "target": "/internal/renew-subscription",
+      "status": "route"
+    },
+    {
+      "file": "components/properties/BuildingManagementWorkspace.tsx",
+      "line": 6172,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/providers/ProviderRequestPanel.tsx",
+      "line": 169,
+      "target": "/wallet?tab=invoices",
+      "status": "route"
+    },
+    {
+      "file": "components/providers/ProviderSpecializationsEditor.tsx",
+      "line": 18,
+      "target": "/admin/services?panel=pricing",
+      "status": "route"
+    },
+    {
+      "file": "components/providers/ProviderSpecializationsEditor.tsx",
+      "line": 18,
+      "target": "/admin/services?panel=forms",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat08/before-state/BuildingManagementWorkspace.tsx",
+      "line": 3287,
+      "target": "/offers",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat08/before-state/BuildingManagementWorkspace.tsx",
+      "line": 6043,
+      "target": "/subscriptions/new",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat08/before-state/BuildingManagementWorkspace.tsx",
+      "line": 6051,
+      "target": "/internal/renew-subscription",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat08/before-state/BuildingManagementWorkspace.tsx",
+      "line": 6059,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/FinancialStandalone.tsx",
+      "line": 78,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/FinancialStandalone.tsx",
+      "line": 81,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/FinancialStandalone.tsx",
+      "line": 84,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/FinancialStandalone.tsx",
+      "line": 314,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/MarketingStandalone.tsx",
+      "line": 59,
+      "target": "/",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/MarketingStandalone.tsx",
+      "line": 62,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/MarketingStandalone.tsx",
+      "line": 65,
+      "target": "/login",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat09/MarketingStandalone.tsx",
+      "line": 211,
+      "target": "/details",
+      "status": "route"
+    },
+    {
+      "file": "components/redesign/chat12/ScanMapControls.tsx",
+      "line": 414,
+      "target": "/wallet?tab=files",
+      "status": "route"
+    },
+    {
+      "file": "components/seo/HomeRedirect.tsx",
+      "line": 15,
+      "target": "/profile",
+      "status": "route"
+    },
+    {
+      "file": "components/services/DynamicServiceForm.tsx",
+      "line": 427,
+      "target": "/info?tab=usage",
+      "status": "route"
+    },
+    {
+      "file": "components/services/DynamicServiceForm.tsx",
+      "line": 437,
+      "target": "/info?tab=terms",
+      "status": "route"
+    },
+    {
+      "file": "components/subscriptions/DepartmentSubscriptionsPage.tsx",
+      "line": 167,
+      "target": "/wallet",
+      "status": "route"
+    }
+  ],
+  "dynamic": [
+    {
+      "file": "app/admin/customer-service/page.tsx",
+      "line": 47,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 229,
+      "expression": "stat.href"
+    },
+    {
+      "file": "app/admin/dashboard/page.tsx",
+      "line": 262,
+      "expression": "bucket.href"
+    },
+    {
+      "file": "app/admin/layout.tsx",
+      "line": 311,
+      "expression": "item.href"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 568,
+      "expression": "`/chat/${data.chatRoomId}`"
+    },
+    {
+      "file": "app/admin/legal/page.tsx",
+      "line": 763,
+      "expression": "tab.href"
+    },
+    {
+      "file": "app/admin/orders/page.tsx",
+      "line": 773,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 80,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/properties-management/page.tsx",
+      "line": 485,
+      "expression": "tab.href"
+    },
+    {
+      "file": "app/admin/purchase-requests/page.tsx",
+      "line": 51,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/service-providers/page.tsx",
+      "line": 269,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/service-providers/page.tsx",
+      "line": 342,
+      "expression": "selected.providerProfile.licenseDocument"
+    },
+    {
+      "file": "app/admin/service-requests/page.tsx",
+      "line": 90,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/services/page.tsx",
+      "line": 472,
+      "expression": "`/chat/${chatRoomId}`"
+    },
+    {
+      "file": "app/admin/services/page.tsx",
+      "line": 558,
+      "expression": "`/admin/services?type=${tab.type}`"
+    },
+    {
+      "file": "app/admin/services/page.tsx",
+      "line": 1231,
+      "expression": "`/admin/services?type=${category.id || slugifyCustomCategory(category.title)}`"
+    },
+    {
+      "file": "app/admin/services/page.tsx",
+      "line": 1246,
+      "expression": "`/admin/services?type=${service.category === \"postPurchase\" ? \"post_purchase\" : service.category}`"
+    },
+    {
+      "file": "app/admin/transactions/page.tsx",
+      "line": 73,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 621,
+      "expression": "user.licenseDocument"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 656,
+      "expression": "`/offers/${offer.id}`"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 675,
+      "expression": "`/admin/service-requests?requestId=${request.id}`"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 704,
+      "expression": "`/admin/service-requests?requestId=${request.id}`"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 937,
+      "expression": "file.url"
+    },
+    {
+      "file": "app/admin/users/[id]/page.tsx",
+      "line": 960,
+      "expression": "`/admin/service-requests?requestId=${investment.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 465,
+      "expression": "`/internal/chat/${data.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 837,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 901,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 929,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 994,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 1049,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/users/page.tsx",
+      "line": 1074,
+      "expression": "`/admin/users/${user.id}`"
+    },
+    {
+      "file": "app/admin/visit-requests/page.tsx",
+      "line": 50,
+      "expression": "`/chat/${data.id}`"
+    },
+    {
+      "file": "app/chat/page.tsx",
+      "line": 506,
+      "expression": "`/chat/${chat.id}`"
+    },
+    {
+      "file": "app/chat/page.tsx",
+      "line": 510,
+      "expression": "`/chat/${chat.id}`"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 69,
+      "expression": "DEPARTMENT_HUB_LINKS.properties.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 76,
+      "expression": "DEPARTMENT_HUB_LINKS.finance.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 83,
+      "expression": "DEPARTMENT_HUB_LINKS.legal.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 90,
+      "expression": "DEPARTMENT_HUB_LINKS.marketing.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 97,
+      "expression": "DEPARTMENT_HUB_LINKS.employees.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 228,
+      "expression": "d.href"
+    },
+    {
+      "file": "app/department-hub/page.tsx",
+      "line": 352,
+      "expression": "disabled ? \"#\" : d.href"
+    },
+    {
+      "file": "app/details/page.tsx",
+      "line": 454,
+      "expression": "item.href"
+    },
+    {
+      "file": "app/info/page.tsx",
+      "line": 119,
+      "expression": "`/info?${params.toString()}`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 165,
+      "expression": "navResolution.targetUrl"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 182,
+      "expression": "`/internal/${accessibleDept}`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 252,
+      "expression": "`/internal/${dept}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 278,
+      "expression": "`/internal/${dept}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 308,
+      "expression": "`/internal/${dept}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 319,
+      "expression": "`/internal/${dept}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 437,
+      "expression": "disabled ? '#' : q.href"
+    },
+    {
+      "file": "app/internal/[dept]/page.tsx",
+      "line": 586,
+      "expression": "`/internal/${dept}/requests`"
+    },
+    {
+      "file": "app/internal/[dept]/requests/page.tsx",
+      "line": 497,
+      "expression": "`/internal/${canonicalDeptSlug(fallback) || fallback}/requests`"
+    },
+    {
+      "file": "app/internal/chat/page.tsx",
+      "line": 284,
+      "expression": "`/internal/chat/${targetRoomId}`"
+    },
+    {
+      "file": "app/internal/chat/page.tsx",
+      "line": 660,
+      "expression": "`/internal/chat/${chat.id}`"
+    },
+    {
+      "file": "app/internal/chat/page.tsx",
+      "line": 664,
+      "expression": "`/internal/chat/${chat.id}`"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 57,
+      "expression": "loginHref(\"/internal/renew-subscription\")"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 70,
+      "expression": "loginHref(\"/internal/renew-subscription\")"
+    },
+    {
+      "file": "app/internal/renew-subscription/page.tsx",
+      "line": 279,
+      "expression": "`/wallet?subscription=${currentSub.id}`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 83,
+      "expression": "disabled ? \"#\" : href"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 224,
+      "expression": "`/internal/${fallback}`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 276,
+      "expression": "session.returnTo || \"/admin/users\""
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 384,
+      "expression": "`/internal/${deptSlug}?view=marketing&section=marketing`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 386,
+      "expression": "`/internal/${deptSlug}?view=financial&section=financial`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 387,
+      "expression": "`/internal/${deptSlug}?view=financial&section=transactions`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 388,
+      "expression": "`/internal/${deptSlug}?view=financial&section=payments`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 389,
+      "expression": "`/internal/${deptSlug}?view=financial&section=expenses`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 390,
+      "expression": "`/internal/${deptSlug}?view=financial&section=reports`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 391,
+      "expression": "`/internal/${deptSlug}?view=financial&section=settlements`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 392,
+      "expression": "`/internal/${deptSlug}?view=financial&section=service_requests`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 394,
+      "expression": "`/internal/${deptSlug}?view=legal&section=legal`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 396,
+      "expression": "`/internal/${deptSlug}?view=properties&section=dashboard`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 397,
+      "expression": "`/internal/${deptSlug}?view=properties&section=offers`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 399,
+      "expression": "`/internal/${deptSlug}?view=employees&section=users`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 403,
+      "expression": "isHub ? \"/internal\" : `/internal/${deptSlug}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 404,
+      "expression": "isHub ? `/internal/properties?view=requests` : `/internal/${deptSlug}?view=requests`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 684,
+      "expression": "`/internal/${dSlug}?view=dashboard`"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 701,
+      "expression": "item.href"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 722,
+      "expression": "item.href"
+    },
+    {
+      "file": "app/internal/shell.tsx",
+      "line": 744,
+      "expression": "item.href"
+    },
+    {
+      "file": "app/offers/OffersClient.tsx",
+      "line": 1182,
+      "expression": "`/offers/${offer.id}`"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 517,
+      "expression": "loginHref(`/offers/${offer.id}`)"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 586,
+      "expression": "`/chat/${roomId}`"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 694,
+      "expression": "target"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 789,
+      "expression": "loginHref(`/offers/${offerId}`)"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 867,
+      "expression": "`/offers/${offer.id}/edit`"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 905,
+      "expression": "loginHref(`/offers/${offerId}`)"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 1379,
+      "expression": "safeHttpUrl(offer.locationUrl)!"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 1539,
+      "expression": "doc"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 1559,
+      "expression": "safeHttpUrl(offer.checkImage) || '#'"
+    },
+    {
+      "file": "app/offers/[id]/page.tsx",
+      "line": 1973,
+      "expression": "svc.type === 'legal' ? '/services/legal' : `/services/form?type=${svc.type}`"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 615,
+      "expression": "loginHref(`/orders/${order.id}`)"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 1475,
+      "expression": "`mailto:${orderUser.email}`"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 1503,
+      "expression": "`tel:${orderUser.phone}`"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 1555,
+      "expression": "`tel:${clientPhoneVal}`"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 1606,
+      "expression": "`mailto:${assignedSpecialist.email}`"
+    },
+    {
+      "file": "app/orders/[id]/page.tsx",
+      "line": 1618,
+      "expression": "`tel:${assignedSpecialist.phone}`"
+    },
+    {
+      "file": "app/orders/page.tsx",
+      "line": 1257,
+      "expression": "`/orders/${order.id}`"
+    },
+    {
+      "file": "app/profile/page.tsx",
+      "line": 108,
+      "expression": "loginHref('/profile')"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 250,
+      "expression": "loginHref(\"/service-providers\")"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 471,
+      "expression": "trackingContract.clientRequestsHref"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 475,
+      "expression": "trackingContract.providerRequestsHref"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 635,
+      "expression": "profile.licenseDocument"
+    },
+    {
+      "file": "app/service-providers/page.tsx",
+      "line": 1149,
+      "expression": "licenseDocument"
+    },
+    {
+      "file": "app/services/form/page.tsx",
+      "line": 162,
+      "expression": "serviceType === 'legal' ? '/services/legal' : '/services'"
+    },
+    {
+      "file": "app/services/form/page.tsx",
+      "line": 172,
+      "expression": "serviceType === 'legal' ? '/services/legal' : '/services'"
+    },
+    {
+      "file": "app/services/legal/page.tsx",
+      "line": 64,
+      "expression": "href + (admin && preview ? '&preview=1' : '')"
+    },
+    {
+      "file": "app/services/legal/page.tsx",
+      "line": 64,
+      "expression": "href + '&preview=1'"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 107,
+      "expression": "loginHref('/services/my-requests')"
+    },
+    {
+      "file": "app/services/my-requests/page.tsx",
+      "line": 251,
+      "expression": "`/chat?roomId=${encodeURIComponent(roomId)}`"
+    },
+    {
+      "file": "app/services/page.tsx",
+      "line": 173,
+      "expression": "requestTrackingHref(user)"
+    },
+    {
+      "file": "app/services/page.tsx",
+      "line": 293,
+      "expression": "previewHref"
+    },
+    {
+      "file": "app/services/page.tsx",
+      "line": 327,
+      "expression": "href"
+    },
+    {
+      "file": "app/services/provider-requests/page.tsx",
+      "line": 163,
+      "expression": "loginHref(\"/services/provider-requests\")"
+    },
+    {
+      "file": "app/src/components/AdminImpersonationReturn.tsx",
+      "line": 44,
+      "expression": "session.returnTo || \"/admin/users\""
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 142,
+      "expression": "link.href"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 162,
+      "expression": "link.href"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 182,
+      "expression": "`mailto:${settings.contactEmail}`"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 192,
+      "expression": "`tel:${settings.contactPhone}`"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 204,
+      "expression": "getXProfileUrl(settings.contactTwitter)"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 264,
+      "expression": "link.href"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 284,
+      "expression": "link.href"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 306,
+      "expression": "`mailto:${settings.contactEmail}`"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 318,
+      "expression": "`tel:${settings.contactPhone}`"
+    },
+    {
+      "file": "app/src/components/Footer.tsx",
+      "line": 330,
+      "expression": "getXProfileUrl(settings.contactTwitter)"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 284,
+      "expression": "requestTrackingHref(user)"
+    },
+    {
+      "file": "app/src/components/Header.tsx",
+      "line": 434,
+      "expression": "requestTrackingHref(user)"
+    },
+    {
+      "file": "app/src/components/NotificationBell.tsx",
+      "line": 127,
+      "expression": "href"
+    },
+    {
+      "file": "app/src/components/PageWrapper.tsx",
+      "line": 39,
+      "expression": "loginHref(window.location.pathname + window.location.search)"
+    },
+    {
+      "file": "app/subscriptions/new/page.tsx",
+      "line": 161,
+      "expression": "session.returnTo || \"/admin/users\""
+    },
+    {
+      "file": "app/subscriptions/new/page.tsx",
+      "line": 373,
+      "expression": "`/wallet?subscription=${response.data?.id}`"
+    },
+    {
+      "file": "app/subscriptions/new/page.tsx",
+      "line": 973,
+      "expression": "`/wallet?subscription=${sub.id}`"
+    },
+    {
+      "file": "app/verify-otp/page.tsx",
+      "line": 369,
+      "expression": "returnTo"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 32,
+      "expression": "link.href"
+    },
+    {
+      "file": "components/BusinessVerificationFooter.tsx",
+      "line": 34,
+      "expression": "verificationUrl"
+    },
+    {
+      "file": "components/HomeAccountLink.tsx",
+      "line": 16,
+      "expression": "isAuthenticated ? \"/details\" : \"/login\""
+    },
+    {
+      "file": "components/Payment/CheckoutHandoff.tsx",
+      "line": 145,
+      "expression": "buildGuestLoginUrl(target)"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 92,
+      "expression": "next"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 137,
+      "expression": "destination"
+    },
+    {
+      "file": "components/auth/SignIn.tsx",
+      "line": 152,
+      "expression": "publicLoginExit(returnTo)"
+    },
+    {
+      "file": "components/cinematic/Offer3DMedia.tsx",
+      "line": 26,
+      "expression": "url"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 766,
+      "expression": "`tel:${settings.contactPhone}`"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 780,
+      "expression": "`mailto:${settings.contactEmail || \"support@example.com\"}`"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 795,
+      "expression": "getXProfileUrl(settings.contactTwitter || \"\")"
+    },
+    {
+      "file": "components/customer-service/CustomerServicePage.tsx",
+      "line": 1022,
+      "expression": "`/login?redirect=${encodeURIComponent(actualSourcePath)}`"
+    },
+    {
+      "file": "components/legal/ClientLegalRequests.tsx",
+      "line": 156,
+      "expression": "loginHref(\"/services/legal-requests\")"
+    },
+    {
+      "file": "components/modals/offer-details-modal.tsx",
+      "line": 105,
+      "expression": "`${chatBasePath}/${room.id}`"
+    },
+    {
+      "file": "components/modals/offer-details-modal.tsx",
+      "line": 181,
+      "expression": "activeOffer.locationUrl"
+    },
+    {
+      "file": "components/modals/order-details-modal.tsx",
+      "line": 93,
+      "expression": "`${chatBasePath}/${room.id}`"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 58,
+      "expression": "loginHref(edit ? `/offers/${offerId}/edit` : '/offers/new')"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 63,
+      "expression": "back"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 68,
+      "expression": "`/offers/${response.data.id || offerId}`"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 80,
+      "expression": "back"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 89,
+      "expression": "loginHref(edit ? `/offers/${offerId}/edit` : '/offers/new')"
+    },
+    {
+      "file": "components/offers/OfferEditor.tsx",
+      "line": 96,
+      "expression": "back"
+    },
+    {
+      "file": "components/properties/BuildingManagementWorkspace.tsx",
+      "line": 1157,
+      "expression": "`/chat/${room.id}`"
+    },
+    {
+      "file": "components/providers/ProviderRequestPanel.tsx",
+      "line": 149,
+      "expression": "`tel:${contact.phone.replace(/[^+\\d]/g, \"\")}`"
+    },
+    {
+      "file": "components/providers/ServiceCategoryTree.tsx",
+      "line": 83,
+      "expression": "`/admin/services?panel=pricing&type=${encodeURIComponent(child.id)}`"
+    },
+    {
+      "file": "components/redesign/chat08/before-state/BuildingManagementWorkspace.tsx",
+      "line": 1126,
+      "expression": "`/chat/${room.id}`"
+    },
+    {
+      "file": "components/seo/HomeRedirect.tsx",
+      "line": 13,
+      "expression": "user && (user.role === \"admin\" || (user.firstName && user.lastName)) ? \"/details\" : \"/profile\""
+    },
+    {
+      "file": "components/services/DynamicServiceForm.tsx",
+      "line": 262,
+      "expression": "loginHref(window.location.pathname + window.location.search)"
+    },
+    {
+      "file": "components/services/DynamicServiceForm.tsx",
+      "line": 302,
+      "expression": "successRedirect"
+    },
+    {
+      "file": "components/shared/ServiceRequestsTable.tsx",
+      "line": 198,
+      "expression": "`/chat/${data.chatRoomId}`"
+    },
+    {
+      "file": "components/subscriptions/DepartmentSubscriptionsPage.tsx",
+      "line": 136,
+      "expression": "`/wallet?subscription=${response.data.id}`"
+    },
+    {
+      "file": "components/subscriptions/DepartmentSubscriptionsPage.tsx",
+      "line": 304,
+      "expression": "`/wallet?subscription=${sub.id}`"
+    }
+  ],
+  "missing": []
+}

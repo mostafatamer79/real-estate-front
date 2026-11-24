@@ -1,0 +1,146 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "invalid email blocked",
+      "failed request retained input",
+      "method switching preserved email",
+      "mobile/desktop form",
+      "no overflow",
+      "OTP request actual payload",
+      "six-digit verification actual payload",
+      "successful return to details",
+      "safe target cleared",
+      "no page errors"
+    ]
+  }
+]

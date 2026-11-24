@@ -1,0 +1,1229 @@
+/* app/subscriptions/new/subscription-redesign.module.css
+   Editorial Subscription Selection Workspace (Pearl & Royal Navy #0b192c with Brass accents)
+   Scoped CSS Module for /subscriptions/new
+*/
+
+.subscriptionPage {
+  /* Editorial Palette Tokens — Pearl & Royal Navy with Restrained Brass */
+  --sq-page-bg: var(--site-light-background, #dbe4f2);
+  --sq-surface: #ffffff;
+  --sq-surface-subtle: #faf9f6;
+  --sq-surface-secondary: #f0efe9;
+  --sq-input-bg: #ffffff;
+  --sq-ink: #0b192c;
+  --sq-ink-soft: #526071;
+  --sq-muted: #526071;
+  --sq-border: #e2ded6;
+  --sq-border-subtle: #eceae3;
+
+  /* Brass Accents */
+  --sq-brass: #c5a880;
+  --sq-brass-deep: #8d6c38;
+  --sq-brass-tint: rgba(197, 168, 128, 0.12);
+  --sq-brass-border: rgba(197, 168, 128, 0.38);
+
+  /* Button Tokens */
+  --sq-primary-btn-bg: #0b192c;
+  --sq-primary-btn-text: #ffffff;
+  --sq-primary-btn-hover: #16273f;
+  --sq-secondary-btn-bg: #f0efe9;
+  --sq-secondary-btn-text: #0b192c;
+  --sq-focus-outline: #8d6c38;
+
+  /* Elevation */
+  --sq-card-shadow: 0 4px 20px rgba(11, 25, 44, 0.04);
+  --sq-card-hover-shadow: 0 10px 28px -6px rgba(11, 25, 44, 0.1);
+
+  /* Semantic States */
+  --sq-status-success-bg: #e6f2eb;
+  --sq-status-success-text: #21613c;
+  --sq-status-warning-bg: #fff1d6;
+  --sq-status-warning-text: #805400;
+  --sq-status-warning-border: rgba(141, 108, 56, 0.35);
+  --sq-status-error-bg: #fbe9e7;
+  --sq-status-error-text: #a12622;
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--sq-page-bg) !important;
+  color: var(--sq-ink) !important;
+  overflow-x: clip;
+}
+
+/* Dark Mode Scoped Tokens */
+:global(.dark) .subscriptionPage {
+  --sq-page-bg: #0b192c;
+  --sq-surface: #101e30;
+  --sq-surface-subtle: #0d1827;
+  --sq-surface-secondary: #182940;
+  --sq-input-bg: #0d1827;
+  --sq-ink: #f1f5f9;
+  --sq-ink-soft: #94a3b8;
+  --sq-muted: #94a3b8;
+  --sq-border: #23354f;
+  --sq-border-subtle: #1c2b40;
+
+  /* Brass Accents (Dark) */
+  --sq-brass: #d4af37;
+  --sq-brass-deep: #e5be48;
+  --sq-brass-tint: rgba(212, 175, 55, 0.14);
+  --sq-brass-border: rgba(212, 175, 55, 0.42);
+
+  /* Button Tokens (Dark) */
+  --sq-primary-btn-bg: #f1f5f9;
+  --sq-primary-btn-text: #0b192c;
+  --sq-primary-btn-hover: #ffffff;
+  --sq-secondary-btn-bg: #182940;
+  --sq-secondary-btn-text: #f1f5f9;
+  --sq-focus-outline: #d4af37;
+
+  /* Elevation (Dark) */
+  --sq-card-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --sq-card-hover-shadow: 0 14px 38px -8px rgba(0, 0, 0, 0.65);
+
+  /* Semantic States (Dark) */
+  --sq-status-success-bg: #18372b;
+  --sq-status-success-text: #a7e3be;
+  --sq-status-warning-bg: #3a2e18;
+  --sq-status-warning-text: #f3d28a;
+  --sq-status-warning-border: rgba(212, 175, 55, 0.4);
+  --sq-status-error-bg: #3b2025;
+  --sq-status-error-text: #ffb4ab;
+
+  background-color: #0b192c !important;
+  color: var(--sq-ink) !important;
+}
+
+/* Background Atmosphere */
+.ambientBackground {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambientGlow {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 8%;
+  width: 46vw;
+  height: 420px;
+  background: radial-gradient(circle at 60% 15%, rgba(197, 168, 128, 0.09), transparent 70%);
+  filter: blur(55px);
+}
+
+:global(.dark) .ambientGlow {
+  background: radial-gradient(circle at 60% 15%, rgba(212, 175, 55, 0.09), transparent 72%);
+}
+
+/* Page Shell */
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 32px, 1240px);
+  margin-inline: auto;
+  padding-block: clamp(14px, 2vw, 28px) clamp(48px, 6vw, 80px);
+}
+
+/* ==========================================================================
+   1. Editorial Hero + Mode Switch
+   ========================================================================== */
+
+.topNav {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 18px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sq-ink);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.backButton:hover {
+  border-color: var(--sq-brass-border);
+  background: var(--sq-brass-tint);
+}
+
+.heroSection {
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sq-ink-soft);
+  margin-bottom: 10px;
+}
+
+.heroEyebrowRule {
+  width: 30px;
+  height: 1px;
+  background: var(--sq-brass-deep);
+  border-radius: 0;
+}
+
+.heroTitle {
+  font-size: clamp(28px, 4.2vw, 46px);
+  line-height: 1.22;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--sq-ink);
+  margin-bottom: 10px;
+  text-wrap: balance;
+}
+
+.heroDescription {
+  font-size: clamp(13px, 1.3vw, 15px);
+  line-height: 1.7;
+  color: var(--sq-muted);
+  max-width: 640px;
+  margin-bottom: 20px;
+}
+
+.modeSwitch {
+  display: inline-flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 12px;
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border);
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.modeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 18px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sq-muted);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.modeButton:hover {
+  color: var(--sq-ink);
+}
+
+.modeButton[aria-pressed="true"] {
+  background: var(--sq-ink);
+  color: var(--sq-surface);
+}
+
+:global(.dark) .modeButton[aria-pressed="true"] {
+  background: var(--sq-brass);
+  color: #0b192c;
+}
+
+/* ==========================================================================
+   2. Workspace Grid
+   ========================================================================== */
+
+.workspaceGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+  gap: clamp(16px, 2vw, 28px);
+  align-items: start;
+}
+
+@media (max-width: 1023px) {
+  .workspaceGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.panel {
+  background: var(--sq-surface);
+  border: 1px solid var(--sq-border);
+  border-radius: 16px;
+  box-shadow: var(--sq-card-shadow);
+  padding: clamp(16px, 2.4vw, 28px);
+}
+
+.panelHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.panelHeadingIcon {
+  color: var(--sq-brass-deep);
+  flex-shrink: 0;
+}
+
+:global(.dark) .panelHeadingIcon {
+  color: var(--sq-brass);
+}
+
+.panelTitle {
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--sq-ink);
+}
+
+.panelHint {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--sq-muted);
+  margin: -10px 0 16px;
+}
+
+/* ==========================================================================
+   3. Shared Status Blocks — loading / empty / error / retry differ visibly
+   ========================================================================== */
+
+.statusBlock {
+  padding: clamp(24px, 4vw, 44px) 8px;
+  text-align: center;
+}
+
+.statusLoadingLabel,
+.statusEmptyLabel,
+.statusErrorLabel {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.statusLoadingLabel {
+  color: var(--sq-muted);
+  margin-bottom: 14px;
+}
+
+.statusLoadingBar {
+  display: block;
+  width: min(220px, 70%);
+  height: 6px;
+  margin-inline: auto;
+  border-radius: 999px;
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.statusLoadingBar::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: -40%;
+  width: 40%;
+  border-radius: inherit;
+  background: var(--sq-brass);
+  animation: sq-loading-sweep 1.1s ease-in-out infinite;
+}
+
+@keyframes sq-loading-sweep {
+  from { inset-inline-start: -40%; }
+  to { inset-inline-start: 100%; }
+}
+
+.statusEmptyLabel {
+  color: var(--sq-muted);
+  padding: 10px 0;
+}
+
+.statusErrorBlock {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--sq-status-error-bg);
+  border: 1px solid var(--sq-status-error-text);
+}
+
+.statusErrorLabel {
+  color: var(--sq-status-error-text);
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background: var(--sq-primary-btn-bg);
+  color: var(--sq-primary-btn-text);
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background: var(--sq-primary-btn-hover);
+}
+
+.retryButton:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* Quote unavailable banner — distinct from empty and loading states */
+.quoteUnavailableBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--sq-status-warning-bg);
+  border: 1px solid var(--sq-status-warning-border);
+  margin-bottom: 16px;
+}
+
+.quoteUnavailableTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--sq-status-warning-text);
+}
+
+.quoteUnavailableText {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--sq-status-warning-text);
+}
+
+.quoteUnavailableBanner .retryButton {
+  align-self: flex-start;
+}
+
+/* ==========================================================================
+   4. Package Cards (selection via stretched button, previews stay separate)
+   ========================================================================== */
+
+.packageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: 14px;
+}
+
+.packageCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.packageCard:hover {
+  border-color: var(--sq-brass-border);
+  box-shadow: var(--sq-card-hover-shadow);
+}
+
+.packageCard.isSelected {
+  border-color: var(--sq-ink);
+  background: var(--sq-surface-subtle);
+  box-shadow: var(--sq-card-shadow);
+}
+
+/* Visible non-color-only selected marker (absolute, inside the card). */
+.packageSelectedBadge {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--sq-status-success-text);
+  background: var(--sq-status-success-bg);
+}
+
+:global(.dark) .packageCard.isSelected {
+  border-color: var(--sq-brass);
+  background: var(--sq-surface-subtle);
+}
+
+/* Stretched selection button: one big native target, preview chips sit above it */
+.packageSelectButton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: inherit;
+  font: inherit;
+}
+
+.packageChipRow {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.packageName {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--sq-ink);
+  margin-bottom: 4px;
+}
+
+.packageDescription {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--sq-muted);
+  margin-bottom: 12px;
+  min-height: 32px;
+}
+
+.packagePriceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.packagePrice {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--sq-ink);
+}
+
+.packagePricePeriod {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-muted);
+}
+
+.packageDiscountBadge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sq-status-success-text);
+  background: var(--sq-status-success-bg);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.departmentChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface-subtle);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-ink-soft);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.departmentChip:hover {
+  border-color: var(--sq-brass-border);
+  background: var(--sq-brass-tint);
+}
+
+/* Chip without a preview key: rendered as a plain span, so no pointer affordance. */
+.departmentChipStatic {
+  cursor: default;
+}
+
+.departmentChipStatic:hover {
+  border-color: var(--sq-border);
+  background: var(--sq-surface-subtle);
+}
+
+.packagePriceTag {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sq-muted);
+}
+
+/* ==========================================================================
+   5. Custom Department Selection (fieldset + native checkboxes)
+   ========================================================================== */
+
+.departmentFieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.departmentLegend {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sq-muted);
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.departmentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .departmentList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.departmentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.departmentRow:hover {
+  border-color: var(--sq-brass-border);
+}
+
+.departmentRow.isSelected {
+  border-color: var(--sq-ink);
+  background: var(--sq-surface-subtle);
+}
+
+:global(.dark) .departmentRow.isSelected {
+  border-color: var(--sq-brass);
+}
+
+.departmentRowMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Stacked name + price chips inside a department row label. */
+.departmentDetails {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Native checkbox, custom visual */
+.departmentCheckbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  border-radius: 6px;
+  border: 2px solid var(--sq-border);
+  background: var(--sq-input-bg);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-grid;
+  place-content: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.departmentCheckbox::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: var(--sq-primary-btn-text);
+}
+
+.departmentCheckbox:checked {
+  background: var(--sq-ink);
+  border-color: var(--sq-ink);
+}
+
+:global(.dark) .departmentCheckbox:checked {
+  background: var(--sq-brass);
+  border-color: var(--sq-brass);
+}
+
+.departmentCheckbox:checked::before {
+  transform: scale(1);
+}
+
+:global(.dark) .departmentCheckbox:checked::before {
+  background: #0b192c;
+}
+
+.departmentName {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--sq-ink);
+  line-height: 1.4;
+}
+
+.departmentPriceChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.departmentPriceChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-ink-soft);
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border-subtle);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+.priceUnknownChip {
+  color: var(--sq-status-warning-text);
+  border-style: dashed;
+  border-color: var(--sq-status-warning-border);
+}
+
+.departmentPreviewButton {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-ink-soft);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.departmentPreviewButton:hover {
+  border-color: var(--sq-brass-border);
+  background: var(--sq-brass-tint);
+  color: var(--sq-ink);
+}
+
+/* Employee seats field */
+.seatsField {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--sq-border-subtle);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sq-muted);
+  margin-bottom: 8px;
+}
+
+.seatsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.seatsInput {
+  width: 130px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-input-bg);
+  color: var(--sq-ink);
+  font-size: 14px;
+  font-weight: 700;
+  transition: border-color 0.2s ease;
+}
+
+.seatsInput:focus {
+  border-color: var(--sq-brass-deep);
+  outline: none;
+}
+
+.seatsUnitPrice {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sq-muted);
+}
+
+/* ==========================================================================
+   6. Details / Quote Panel
+   ========================================================================== */
+
+.durationGroup {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.durationButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sq-muted);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.durationButton:hover {
+  border-color: var(--sq-brass-border);
+  color: var(--sq-ink);
+}
+
+.durationButton[aria-pressed="true"] {
+  background: var(--sq-ink);
+  border-color: var(--sq-ink);
+  color: var(--sq-surface);
+}
+
+:global(.dark) .durationButton[aria-pressed="true"] {
+  background: var(--sq-brass);
+  border-color: var(--sq-brass);
+  color: #0b192c;
+}
+
+.detailsField {
+  margin-bottom: 14px;
+}
+
+.fieldInput,
+.fieldTextarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-input-bg);
+  color: var(--sq-ink);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 0.2s ease;
+}
+
+.fieldTextarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.fieldInput:focus,
+.fieldTextarea:focus {
+  border-color: var(--sq-brass-deep);
+  outline: none;
+}
+
+/* Quote breakdown — one flat bordered section, no nested cards */
+.quoteSection {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--sq-border);
+}
+
+.quoteSelectionLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.quoteSelectionTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--sq-ink);
+}
+
+.quotePeriodTag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-muted);
+}
+
+.quoteSelectionChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.quoteSelectionChip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sq-ink-soft);
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border-subtle);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.quoteLines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.quoteLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--sq-border-subtle);
+  font-size: 13px;
+}
+
+.quoteLineLabel {
+  font-weight: 700;
+  color: var(--sq-ink-soft);
+}
+
+.quoteLineLabelQualified {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sq-muted);
+}
+
+.quoteLinePrice {
+  font-weight: 800;
+  color: var(--sq-ink);
+  white-space: nowrap;
+}
+
+.quoteLinePriceUnknown {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sq-status-warning-text);
+}
+
+.quoteTotalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.quoteTotalLabel {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--sq-muted);
+}
+
+.quoteTotalValue {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--sq-ink);
+}
+
+.quoteTotalValueUnknown {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 800;
+  color: var(--sq-status-warning-text);
+}
+
+.quoteFootnote {
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--sq-muted);
+  margin-top: 10px;
+}
+
+.submitButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 18px;
+  margin-top: 16px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--sq-primary-btn-bg);
+  color: var(--sq-primary-btn-text);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--sq-primary-btn-hover);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submitHint {
+  font-size: 11px;
+  line-height: 1.6;
+  font-weight: 700;
+  color: var(--sq-status-warning-text);
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   7. Previous Subscriptions
+   ========================================================================== */
+
+.previousSection {
+  margin-top: clamp(16px, 2.4vw, 28px);
+}
+
+.previousList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.previousRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface-subtle);
+}
+
+@media (min-width: 640px) {
+  .previousRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+}
+
+.previousName {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--sq-ink);
+}
+
+.previousMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sq-muted);
+}
+
+.previousStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--sq-surface-secondary);
+  border: 1px solid var(--sq-border-subtle);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sq-ink-soft);
+  white-space: nowrap;
+}
+
+.previousWalletButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--sq-border);
+  background: var(--sq-surface);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sq-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.previousWalletButton:hover {
+  border-color: var(--sq-brass-border);
+  background: var(--sq-brass-tint);
+}
+
+/* ==========================================================================
+   8. Focus, Motion, Responsive
+   ========================================================================== */
+
+.subscriptionPage :is(a, button, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--sq-focus-outline);
+  outline-offset: 3px;
+}
+
+.subscriptionPage :is(a, button, input, textarea, [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusLoadingBar::after {
+    animation: none !important;
+  }
+
+  .subscriptionPage *,
+  .subscriptionPage *::before,
+  .subscriptionPage *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (max-width: 1439px) {
+  .shell {
+    width: min(100% - 32px, 1240px);
+  }
+}
+
+@media (max-width: 767px) {
+  .shell {
+    width: min(100% - 24px, 100%);
+    padding-block: 12px 56px;
+  }
+
+  /* MobileAppHeader owns the back affordance on small screens. */
+  .topNav {
+    display: none;
+  }
+
+  .heroTitle {
+    font-size: 30px;
+  }
+
+  .modeSwitch {
+    width: 100%;
+  }
+
+  .modeButton {
+    flex: 1;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .departmentRow {
+    flex-wrap: wrap;
+  }
+
+  .departmentPreviewButton {
+    min-height: 40px;
+    padding: 0 10px;
+  }
+
+  .departmentRowMain {
+    flex-basis: calc(100% - 54px);
+  }
+}
+
+@media (max-width: 400px) {
+  .shell {
+    width: calc(100% - 20px);
+  }
+
+  .heroTitle {
+    font-size: 26px;
+  }
+
+  .packageGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .packageSelectButton {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .seatsInput {
+    width: 110px;
+  }
+
+  .quoteTotalValue {
+    font-size: 22px;
+  }
+}

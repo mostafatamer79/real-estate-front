@@ -189,7 +189,7 @@ export default function AdminInfoContentPage() {
     <div className="p-6 lg:p-4 sm:p-8 space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card dark:bg-slate-900 text-foreground dark:text-white text-[9px] font-black uppercase tracking-widest">
             <Scale className="w-3 h-3" />
             {t("admin.info_content.title") || (isRtl ? "المحتوى القانوني" : "Legal / Info Content")}
           </div>
@@ -214,7 +214,7 @@ export default function AdminInfoContentPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div className="font-black text-slate-950">{t("admin.info_content.tabs") || (isRtl ? "التبويبات المتاحة" : "Available Tabs")}</div>
               <div className="flex items-center gap-2">
-                <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={() => { resetTabForm(); setSelectedTabId(null); }}>
+                <Button type="button" className="h-9 rounded-xl bg-card dark:bg-slate-900 hover:bg-black text-foreground dark:text-white text-[10px] font-black uppercase tracking-widest" onClick={() => { resetTabForm(); setSelectedTabId(null); }}>
                   {t("admin.info_content.addTab") || (isRtl ? "إضافة تبويب جديد" : "Add New Tab")}
                   <Plus className="w-4 h-4 ml-2" />
                 </Button>
@@ -229,22 +229,22 @@ export default function AdminInfoContentPage() {
                   <div
                     key={tab.id}
                     onClick={() => { setSelectedTabId(tab.id); resetTabForm(); }}
-                    className={`shrink-0 cursor-pointer transition-all rounded-xl border ${active ? "border-slate-900 bg-slate-900 text-white shadow-md" : "border bg-card text-slate-600 hover:border-slate-300"} p-3 flex items-center gap-3 min-w-[200px]`}
+                    className={`shrink-0 cursor-pointer transition-all rounded-xl border ${active ? "border-border dark:border-slate-900 bg-card dark:bg-slate-900 text-foreground dark:text-white shadow-md" : "border bg-card text-slate-600 hover:border-slate-300"} p-3 flex items-center gap-3 min-w-[200px]`}
                   >
                     <div className="flex-1">
-                      <div className={`text-sm font-black ${active ? "text-white" : "text-slate-950"}`}>{isRtl ? tab.titleAr : tab.titleEn}</div>
-                      <div className={`text-[10px] font-black uppercase tracking-widest ${active ? "text-slate-400" : "text-slate-500"}`}>
+                      <div className={`text-sm font-black ${active ? "text-foreground dark:text-white" : "text-slate-950"}`}>{isRtl ? tab.titleAr : tab.titleEn}</div>
+                      <div className={`text-[10px] font-black uppercase tracking-widest ${active ? "text-muted-foreground dark:text-slate-400" : "text-muted-foreground dark:text-slate-500"}`}>
                         key: {tab.key}
                       </div>
                     </div>
                     <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                      <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${active ? "text-slate-300 hover:text-white hover:bg-card/10" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditTab(tab)} title={isRtl ? "تعديل" : "Edit"}>
+                      <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${active ? "text-muted-foreground dark:text-slate-300 hover:text-foreground hover:dark:text-white hover:bg-muted hover:dark:bg-card/10" : "text-muted-foreground dark:text-slate-400 hover:text-slate-900"}`} onClick={() => startEditTab(tab)} title={isRtl ? "تعديل" : "Edit"}>
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button
                         type="button"
                         variant="ghost"
-                        className={`h-8 w-8 p-0 rounded-lg ${active ? "text-red-400 hover:text-red-300 hover:bg-red-500/10" : "text-slate-400 hover:text-red-600 hover:bg-red-50"}`}
+                        className={`h-8 w-8 p-0 rounded-lg ${active ? "text-red-400 hover:text-red-300 hover:bg-red-500/10" : "text-muted-foreground dark:text-slate-400 hover:text-red-600 hover:bg-red-50"}`}
                         onClick={() =>
                           setConfirm({
                             type: "deleteTab",
@@ -265,26 +265,26 @@ export default function AdminInfoContentPage() {
 
             {/* Tab Form (shown if editing a tab or adding a new tab) */}
             {(!selectedTabId || editingTabId) && (
-              <div className="mt-4 p-4 border border rounded-xl bg-muted">
+              <div className="calm-panel mt-4 p-4 border border rounded-xl bg-muted">
                 <div className="text-sm font-black text-slate-800 mb-3">
                   {editingTabId ? (t("admin.info_content.editTab") || (isRtl ? "تعديل تبويب" : "Edit tab")) : (t("admin.info_content.addTab") || (isRtl ? "إضافة تبويب" : "Add tab"))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-black text-slate-500">Key (Identifier)</Label>
+                    <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Key (Identifier)</Label>
                     <Input value={tabForm.key} onChange={(e) => setTabForm((p) => ({ ...p, key: e.target.value }))} dir="ltr" className="bg-card" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-black text-slate-500">Title (AR)</Label>
+                    <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Title (AR)</Label>
                     <Input value={tabForm.titleAr} onChange={(e) => setTabForm((p) => ({ ...p, titleAr: e.target.value }))} className="bg-card" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-black text-slate-500">Title (EN)</Label>
+                    <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Title (EN)</Label>
                     <Input value={tabForm.titleEn} onChange={(e) => setTabForm((p) => ({ ...p, titleEn: e.target.value }))} dir="ltr" className="bg-card" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitTab} disabled={savingTab || !tabForm.key.trim() || !tabForm.titleAr.trim() || !tabForm.titleEn.trim()}>
+                  <Button type="button" className="h-9 rounded-xl bg-card dark:bg-slate-900 hover:bg-black text-foreground dark:text-white text-[10px] font-black uppercase tracking-widest" onClick={submitTab} disabled={savingTab || !tabForm.key.trim() || !tabForm.titleAr.trim() || !tabForm.titleEn.trim()}>
                     {savingTab ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingTabId ? (t("common.update") || (isRtl ? "تحديث التبويب" : "Update Tab")) : (t("common.add") || (isRtl ? "حفظ التبويب" : "Save Tab"))}
                   </Button>
                   <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-card" onClick={() => { resetTabForm(); if (!editingTabId && tabs.length > 0) setSelectedTabId(tabs[0].id); }}>
@@ -313,30 +313,30 @@ export default function AdminInfoContentPage() {
                 </div>
 
                 {/* Block Form */}
-                <div className="p-4 border border rounded-xl bg-muted space-y-4">
+                <div className="calm-panel p-4 border border rounded-xl bg-muted space-y-4">
                   <div className="text-sm font-black text-slate-800">
                     {editingBlockId ? (isRtl ? "تعديل البند" : "Edit Block") : (isRtl ? "إضافة بند جديد" : "Add New Block")}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-black text-slate-500">Label (AR) - اختياري</Label>
+                      <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Label (AR) - اختياري</Label>
                       <Input value={blockForm.labelAr} onChange={(e) => setBlockForm((p) => ({ ...p, labelAr: e.target.value }))} className="bg-card" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-black text-slate-500">Label (EN) - Optional</Label>
+                      <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Label (EN) - Optional</Label>
                       <Input value={blockForm.labelEn} onChange={(e) => setBlockForm((p) => ({ ...p, labelEn: e.target.value }))} dir="ltr" className="bg-card" />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
-                      <Label className="text-xs font-black text-slate-500">Text (AR) - ابدأ بـ (-) أو (*) لإنشاء قائمة</Label>
+                      <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Text (AR) - ابدأ بـ (-) أو (*) لإنشاء قائمة</Label>
                       <Textarea value={blockForm.textAr} onChange={(e) => setBlockForm((p) => ({ ...p, textAr: e.target.value }))} className="min-h-[120px] bg-card" />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
-                      <Label className="text-xs font-black text-slate-500">Text (EN) - Start with (-) or (*) to create a list</Label>
+                      <Label className="text-xs font-black text-muted-foreground dark:text-slate-500">Text (EN) - Start with (-) or (*) to create a list</Label>
                       <Textarea value={blockForm.textEn} onChange={(e) => setBlockForm((p) => ({ ...p, textEn: e.target.value }))} className="min-h-[120px] bg-card" dir="ltr" />
                     </div>
                   </div>
                   <div className="flex items-center gap-2 pt-2">
-                    <Button type="button" className="h-9 rounded-xl bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest" onClick={submitBlock} disabled={savingBlock || !blockForm.textAr.trim() || !blockForm.textEn.trim()}>
+                    <Button type="button" className="h-9 rounded-xl bg-card dark:bg-slate-900 hover:bg-black text-foreground dark:text-white text-[10px] font-black uppercase tracking-widest" onClick={submitBlock} disabled={savingBlock || !blockForm.textAr.trim() || !blockForm.textEn.trim()}>
                       {savingBlock ? (t("common.loading") || (isRtl ? "جارٍ الحفظ..." : "Saving...")) : editingBlockId ? (t("common.update") || (isRtl ? "تحديث البند" : "Update Block")) : (t("common.add") || (isRtl ? "حفظ البند" : "Save Block"))}
                     </Button>
                     <Button type="button" variant="outline" className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest bg-card" onClick={resetBlockForm}>
@@ -349,11 +349,11 @@ export default function AdminInfoContentPage() {
                 <div className="space-y-2">
                   <div className="text-sm font-black text-slate-800">{isRtl ? "البنود الحالية" : "Current Blocks"}</div>
                   {blocksForTab.length === 0 ? (
-                    <div className="text-sm font-medium text-slate-500 p-4 border border-dashed border rounded-xl text-center">
+                    <div className="text-sm font-medium text-muted-foreground dark:text-slate-500 p-4 border border-dashed border rounded-xl text-center">
                       {isRtl ? "لا يوجد بنود. أضف بنداً جديداً لرؤيته في المعاينة." : "No blocks. Add a new block to see it in preview."}
                     </div>
                   ) : (
-                    <div className="divide-y divide-slate-100 border border rounded-xl overflow-hidden bg-card">
+                    <div className="calm-panel divide-y divide-slate-100 border border rounded-xl overflow-hidden bg-card">
                       {blocksForTab.map((b, idx) => (
                         <div
                           key={b.id}
@@ -372,39 +372,39 @@ export default function AdminInfoContentPage() {
                         >
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                             <div className="flex-1 min-w-0 flex items-start gap-3">
-                              <div className="mt-1 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-500 transition-colors">
+                              <div className="mt-1 text-muted-foreground dark:text-slate-300 cursor-grab active:cursor-grabbing hover:text-muted-foreground hover:dark:text-slate-500 transition-colors">
                                 <GripVertical className="w-4 h-4" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="shrink-0 text-[10px] font-black text-slate-500 bg-muted px-1.5 py-0.5 rounded-md">
+                                  <span className="shrink-0 text-[10px] font-black text-muted-foreground dark:text-slate-500 bg-muted px-1.5 py-0.5 rounded-md">
                                     #{idx + 1}
                                   </span>
                                   <div className="text-slate-900 font-bold text-sm truncate">{(isRtl ? b.labelAr : b.labelEn) || (isRtl ? "بدون عنوان" : "Untitled")}</div>
                                 </div>
-                                <div className="text-slate-500 text-xs line-clamp-2 leading-relaxed">{isRtl ? b.textAr : b.textEn}</div>
+                                <div className="text-muted-foreground dark:text-slate-500 text-xs line-clamp-2 leading-relaxed">{isRtl ? b.textAr : b.textEn}</div>
                               </div>
                             </div>
                             <div className="flex items-center justify-end sm:justify-start flex-wrap gap-1.5 shrink-0 mt-3 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100">
-                               <Button type="button" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-slate-900" onClick={async () => {
+                               <Button type="button" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-muted-foreground dark:text-slate-400 hover:text-slate-900" onClick={async () => {
                                  const i = blocksForTab.findIndex((x) => x.id === b.id);
                                  await persistBlockOrder(moveInArray(blocksForTab, i, i - 1));
                                }}>
                                  <ChevronUp className="w-4 h-4" />
                                </Button>
-                               <Button type="button" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-slate-900" onClick={async () => {
+                               <Button type="button" variant="ghost" className="h-8 w-8 p-0 rounded-lg text-muted-foreground dark:text-slate-400 hover:text-slate-900" onClick={async () => {
                                  const i = blocksForTab.findIndex((x) => x.id === b.id);
                                  await persistBlockOrder(moveInArray(blocksForTab, i, i + 1));
                                }}>
                                  <ChevronDown className="w-4 h-4" />
                                </Button>
-                               <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${editingBlockId === b.id ? "text-slate-900 bg-muted" : "text-slate-400 hover:text-slate-900"}`} onClick={() => startEditBlock(b)}>
+                               <Button type="button" variant="ghost" className={`h-8 w-8 p-0 rounded-lg ${editingBlockId === b.id ? "text-slate-900 bg-muted" : "text-muted-foreground dark:text-slate-400 hover:text-slate-900"}`} onClick={() => startEditBlock(b)}>
                                  <Pencil className="w-4 h-4" />
                                </Button>
                                <Button
                                  type="button"
                                  variant="ghost"
-                                 className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                 className="h-8 w-8 p-0 rounded-lg text-muted-foreground dark:text-slate-400 hover:text-red-600 hover:bg-red-50"
                                  onClick={() =>
                                    setConfirm({
                                      type: "deleteBlock",
@@ -428,8 +428,8 @@ export default function AdminInfoContentPage() {
 
             {/* Right: Live Preview */}
             <Card className="border overflow-hidden bg-muted flex flex-col h-[70vh] min-h-[600px] lg:sticky lg:top-6">
-              <div className="bg-slate-900 p-3 text-center shrink-0">
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/70 flex items-center justify-center gap-2">
+              <div className="bg-card dark:bg-slate-900 p-3 text-center shrink-0">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-white/70 flex items-center justify-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   {isRtl ? "معاينة حية (كما تظهر للمستخدم)" : "Live Preview (User View)"}
                 </span>
@@ -443,11 +443,11 @@ export default function AdminInfoContentPage() {
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute inset-0 bg-card/20 pointer-events-none z-0" />
+                <div className="absolute inset-0 bg-muted dark:bg-card/20 pointer-events-none z-0" />
                 <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-6 lg:p-4 sm:p-8 z-10 bg-transparent">
                   
                   {/* Preview Content matching Modal */}
-                  <div className="w-[95vw] sm:max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-4 sm:p-8 rounded-[1.25rem] shadow-xl border border-white/40">
+                  <div className="calm-panel w-[95vw] sm:max-w-2xl mx-auto bg-card/80 backdrop-blur-md p-6 lg:p-4 sm:p-8 rounded-[1.25rem] shadow-sm dark:shadow-xl border border-border dark:border-white/40">
                     <div className="text-center mb-8">
                       <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
                         {isRtl ? selectedTab.titleAr : selectedTab.titleEn}
@@ -455,7 +455,7 @@ export default function AdminInfoContentPage() {
                     </div>
 
                     {blocksForTab.length === 0 ? (
-                      <div className="text-center text-slate-500 py-10 font-medium text-sm">
+                      <div className="text-center text-muted-foreground dark:text-slate-500 py-10 font-medium text-sm">
                         {isRtl ? "لا يوجد محتوى. سيظهر هنا بعد الإضافة." : "No content. Will appear here after adding."}
                       </div>
                     ) : (
@@ -478,7 +478,7 @@ export default function AdminInfoContentPage() {
                               return (
                                 <ul key={idx} className="space-y-3 mb-6 bg-muted p-5 rounded-2xl border border">
                                   <li className="flex items-start gap-3">
-                                    <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                                    <CheckCircle2 className="w-4 h-4 text-muted-foreground dark:text-slate-500 shrink-0 mt-0.5" />
                                     <span className="text-sm font-medium text-slate-700 leading-relaxed">{line.replace(/^[-*]/, '').trim()}</span>
                                   </li>
                                 </ul>

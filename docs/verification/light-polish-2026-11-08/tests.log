@@ -1,0 +1,166 @@
+TAP version 13
+# Subtest: tests/checkout-handoff.test.cjs
+ok 1 - tests/checkout-handoff.test.cjs
+  ---
+  duration_ms: 350.072565
+  type: 'test'
+  ...
+# Subtest: tests/client-profile-behavior.test.cjs
+ok 2 - tests/client-profile-behavior.test.cjs
+  ---
+  duration_ms: 339.736846
+  type: 'test'
+  ...
+# Subtest: tests/department-permissions.test.cjs
+ok 3 - tests/department-permissions.test.cjs
+  ---
+  duration_ms: 32.082435
+  type: 'test'
+  ...
+# Subtest: tests/financial-arabic-rtl.test.cjs
+ok 4 - tests/financial-arabic-rtl.test.cjs
+  ---
+  duration_ms: 39.724202
+  type: 'test'
+  ...
+# Subtest: tests/footer-internal-navigation.test.cjs
+ok 5 - tests/footer-internal-navigation.test.cjs
+  ---
+  duration_ms: 35.612296
+  type: 'test'
+  ...
+# Subtest: tests/footer-mobile-contact.test.cjs
+ok 6 - tests/footer-mobile-contact.test.cjs
+  ---
+  duration_ms: 31.01437
+  type: 'test'
+  ...
+# Subtest: tests/form-control-styling.test.cjs
+ok 7 - tests/form-control-styling.test.cjs
+  ---
+  duration_ms: 67.457366
+  type: 'test'
+  ...
+# Subtest: tests/geidea-checkout.test.cjs
+ok 8 - tests/geidea-checkout.test.cjs
+  ---
+  duration_ms: 401.251392
+  type: 'test'
+  ...
+# Subtest: tests/header-mobile-neutral.test.cjs
+ok 9 - tests/header-mobile-neutral.test.cjs
+  ---
+  duration_ms: 30.15433
+  type: 'test'
+  ...
+# Subtest: tests/mobile-header-footer-polish.test.cjs
+ok 10 - tests/mobile-header-footer-polish.test.cjs
+  ---
+  duration_ms: 32.643091
+  type: 'test'
+  ...
+# Subtest: tests/mobile-performance-baseline.test.cjs
+ok 11 - tests/mobile-performance-baseline.test.cjs
+  ---
+  duration_ms: 46.607232
+  type: 'test'
+  ...
+# Subtest: tests/mobile-property-management.test.cjs
+ok 12 - tests/mobile-property-management.test.cjs
+  ---
+  duration_ms: 34.714805
+  type: 'test'
+  ...
+# Subtest: tests/nafath-availability.test.cjs
+ok 13 - tests/nafath-availability.test.cjs
+  ---
+  duration_ms: 319.572521
+  type: 'test'
+  ...
+# Subtest: tests/nafath-flow.test.cjs
+ok 14 - tests/nafath-flow.test.cjs
+  ---
+  duration_ms: 632.785184
+  type: 'test'
+  ...
+# Subtest: tests/nafath-public-route.test.cjs
+ok 15 - tests/nafath-public-route.test.cjs
+  ---
+  duration_ms: 76.713518
+  type: 'test'
+  ...
+# Subtest: tests/payment-routing.test.cjs
+ok 16 - tests/payment-routing.test.cjs
+  ---
+  duration_ms: 479.212839
+  type: 'test'
+  ...
+# Subtest: tests/profile-mobile-header.test.cjs
+ok 17 - tests/profile-mobile-header.test.cjs
+  ---
+  duration_ms: 34.501008
+  type: 'test'
+  ...
+# Subtest: tests/seo-guest-offers.test.cjs
+ok 18 - tests/seo-guest-offers.test.cjs
+  ---
+  duration_ms: 440.75538
+  type: 'test'
+  ...
+# Subtest: tests/seo-routes.test.cjs
+ok 19 - tests/seo-routes.test.cjs
+  ---
+  duration_ms: 442.985109
+  type: 'test'
+  ...
+# Subtest: tests/seo.test.cjs
+ok 20 - tests/seo.test.cjs
+  ---
+  duration_ms: 463.754024
+  type: 'test'
+  ...
+# Subtest: tests/service-category-removal.test.cjs
+ok 21 - tests/service-category-removal.test.cjs
+  ---
+  duration_ms: 68.649993
+  type: 'test'
+  ...
+# Subtest: tests/service-navigation.test.cjs
+ok 22 - tests/service-navigation.test.cjs
+  ---
+  duration_ms: 284.716332
+  type: 'test'
+  ...
+# Subtest: tests/subscription-custom-option.test.cjs
+ok 23 - tests/subscription-custom-option.test.cjs
+  ---
+  duration_ms: 42.848197
+  type: 'test'
+  ...
+# Subtest: tests/subscription-preview-scope.test.cjs
+ok 24 - tests/subscription-preview-scope.test.cjs
+  ---
+  duration_ms: 94.492904
+  type: 'test'
+  ...
+# Subtest: tests/verify-otp-header-back.test.cjs
+ok 25 - tests/verify-otp-header-back.test.cjs
+  ---
+  duration_ms: 43.282501
+  type: 'test'
+  ...
+# Subtest: tests/wallet-invoice-cover.test.cjs
+ok 26 - tests/wallet-invoice-cover.test.cjs
+  ---
+  duration_ms: 32.855811
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 657.305798

@@ -1,0 +1,41 @@
+{
+  "chat": 4,
+  "slug": "customer-support",
+  "status": "NOT_READY",
+  "reviewGroup": 2,
+  "routes": [
+    "/customerservice",
+    "/customerservice/contact",
+    "/customerservice/support"
+  ],
+  "touchedFiles": [
+    "components/customer-service/CustomerServicePage.tsx",
+    "components/customer-service/customer-service.module.css",
+    "app/customerservice/page.tsx",
+    "app/customerservice/contact/page.tsx",
+    "app/customerservice/support/page.tsx",
+    "lib/redesign-chat04-support.ts",
+    "public/artworks/chat04-concierge.svg",
+    "tests/redesign-support-state.test.cjs",
+    "tests/parallel-chat04-support.test.cjs",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-04.md"
+  ],
+  "tests": {
+    "redesignSupportState": {
+      "command": "node --test tests/redesign-support-state.test.cjs",
+      "passed": 6,
+      "failed": 0
+    },
+    "parallelChat04Support": {
+      "command": "node --test tests/parallel-chat04-support.test.cjs",
+      "passed": 7,
+      "failed": 0
+    },
+    "scopedEslint": {
+      "command": "npx eslint components/customer-service/CustomerServicePage.tsx app/customerservice/page.tsx app/customerservice/contact/page.tsx app/customerservice/support/page.tsx lib/redesign-chat04-support.ts tests/redesign-support-state.test.cjs tests/parallel-chat04-support.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "renderedBrowserChecks": "PENDING"
+}

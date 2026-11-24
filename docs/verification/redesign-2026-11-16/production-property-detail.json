@@ -1,0 +1,126 @@
+{
+  "base": "http://127.0.0.1:3402",
+  "mode": "Next production build; synthetic APIs",
+  "cases": [
+    {
+      "width": 320,
+      "theme": "light",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "gallery next and thumbnails",
+        "fullscreen navigation and Escape",
+        "share and report dialogs",
+        "purchase failure remains open then retry succeeds",
+        "owner delete cancel causes no DELETE",
+        "owner edit link renders editor",
+        "no overflow or page errors"
+      ]
+    }
+  ]
+}

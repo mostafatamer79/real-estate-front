@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>الاتجاه B — السكينة المعمارية والهدوء الفاخر (The Quiet Sanctuary)</title>
+  <style>
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype');
+      font-weight: 600;
+      font-display: swap;
+    }
+
+    :root {
+      --bg-stone: #f8f6f0;
+      --bg-surface: #ffffff;
+      --bg-card: #f2efe7;
+      --bronze: #966f33;
+      --bronze-light: #f7eedf;
+      --charcoal: #171b21;
+      --muted: #5e6878;
+      --border: rgba(150, 111, 51, 0.22);
+      --radius: 20px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-stone);
+      color: var(--charcoal);
+      font-family: 'Plex', serif;
+      line-height: 1.8;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+
+    /* Minimal Editorial Header */
+    header {
+      padding: 32px 6vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-mark {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-mark::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--bronze);
+      border-radius: 50%;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 200ms;
+    }
+    .nav-links a:hover { color: var(--bronze); }
+
+    /* Editorial Split Hero */
+    .hero-split {
+      min-height: calc(100vh - 90px);
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      align-items: center;
+      padding: 60px 6vw;
+      gap: 60px;
+    }
+    @media (max-width: 960px) {
+      .hero-split { grid-template-columns: 1fr; }
+    }
+    .hero-text {
+      max-width: 620px;
+    }
+    .editorial-tag {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--bronze);
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .hero-heading {
+      font-size: clamp(40px, 5.5vw, 78px);
+      line-height: 1.15;
+      font-weight: 600;
+      color: var(--charcoal);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    .hero-paragraph {
+      font-size: clamp(16px, 1.4vw, 20px);
+      line-height: 2;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    /* Nested Button-in-button */
+    .cta-sanctuary {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--charcoal);
+      color: #ffffff;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 250ms var(--ease);
+    }
+    .cta-sanctuary:hover {
+      background: var(--bronze);
+      transform: translateY(-2px);
+    }
+    .cta-sanctuary:active { transform: scale(0.97); }
+    .cta-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* Architectural Visual Pavilion */
+    .pavilion-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 20px 50px -15px rgba(23, 27, 33, 0.08);
+    }
+    .pavilion-inner {
+      background: var(--bg-card);
+      border-radius: calc(var(--radius) - 6px);
+      padding: 32px;
+      text-align: center;
+    }
+    .sculpture-svg {
+      width: 100%;
+      height: 280px;
+    }
+
+    /* Tactile Material Swatches */
+    .materials-section {
+      padding: 100px 6vw;
+      border-top: 1px solid var(--border);
+    }
+    .section-title-wrap {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 50px;
+    }
+    .section-title-wrap h2 {
+      font-size: clamp(28px, 3.5vw, 44px);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .swatch-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .swatch-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: right;
+      transition: transform 200ms var(--ease);
+      cursor: pointer;
+    }
+    .swatch-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--bronze);
+    }
+    .swatch-sample {
+      height: 100px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(0,0,0,0.5);
+    }
+
+    /* Choice Bar */
+    .choice-bar {
+      position: fixed;
+      bottom: 24px;
+      inset-inline: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .choice-bar button {
+      pointer-events: auto;
+      background: var(--bronze);
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(150, 111, 51, 0.35);
+      transition: transform 200ms ease;
+    }
+    .choice-bar button:hover { transform: scale(1.04); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-mark">الوساطة الرقمية • B (The Quiet Sanctuary)</div>
+    <ul class="nav-links">
+      <li><a href="#about">فلسفة البناء</a></li>
+      <li><a href="#materials">المواد الطبيعية</a></li>
+      <li><a href="#residences">المحميات السكنية</a></li>
+    </ul>
+    <a href="#residences" class="cta-sanctuary">
+      <span>حجز موعد خاص</span>
+      <span class="cta-circle">←</span>
+    </a>
+  </header>
+
+  <main>
+    <section class="hero-split">
+      <div class="hero-text">
+        <span class="editorial-tag">أصول سكنية هادئة • شمال الرياض</span>
+        <h1 class="hero-heading">عمارة تتنفس، وسكينة تدوم.</h1>
+        <p class="hero-paragraph">
+          نبتعد عن صخب المدن النمطية لنبني ملاذاً سكنياً يعيد تعريف الخصوصية، مستوحى من كلاسيكية الترافرتين وأفنية الضوء النجدية.
+        </p>
+        <a href="#residences" class="cta-sanctuary">
+          <span>استكشف المحميات السكنية</span>
+          <span class="cta-circle">←</span>
+        </a>
+      </div>
+
+      <div class="pavilion-card">
+        <div class="pavilion-inner">
+          <svg class="sculpture-svg" viewBox="0 0 400 280" fill="none">
+            <!-- Architectural Arch with soft shadows -->
+            <path d="M 80 250 V 130 A 120 120 0 0 1 320 130 V 250" stroke="#966f33" stroke-width="2.5" fill="none"/>
+            <path d="M 110 250 V 140 A 90 90 0 0 1 290 140 V 250" stroke="#171b21" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+            <circle cx="200" cy="130" r="40" fill="#f8f6f0" stroke="#966f33" stroke-width="1.5"/>
+            <line x1="200" y1="20" x2="200" y2="90" stroke="#966f33" stroke-width="1.5"/>
+            <text x="200" y="270" text-anchor="middle" fill="#966f33" font-size="12" font-family="monospace">HONED TRAVERTINE // RIYADH</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Material Palette -->
+    <section class="materials-section" id="materials">
+      <div class="section-title-wrap">
+        <h2>نقاء المواد الطبيعية</h2>
+        <p>عناصر تم اختيارها لتتكيف مع مناخ الصحراء وتبعث على السكينة والهدوء.</p>
+      </div>
+
+      <div class="swatch-grid">
+        <div class="swatch-item">
+          <div class="swatch-sample" style="background:#ebe5d8; border:1px solid #d8cfbe;">ترافرتين روماني</div>
+          <h3 style="font-size:16px; margin-bottom:4px;">حجر مسامي عازل</h3>
+          <p style="font-size:13px; color:var(--muted);">يعكس ضوء الشمس ويبرد الواجهات طبيعياً.</p>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-sample" style="background:#3b3226; color:#ffffff;">برونز معتق</div>
+          <h3 style="font-size:16px; margin-bottom:4px;">معدن معمر</h3>
+          <p style="font-size:13px; color:var(--muted);">تفاصيل يدوية مقاومة لعوامل الطقس.</p>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-sample" style="background:#e4eef2; border:1px solid #c2dbe4;">زجاج Low-E</div>
+          <h3 style="font-size:16px; margin-bottom:4px;">إنفاذية كريستالية</h3>
+          <p style="font-size:13px; color:var(--muted);">عزل حراري بنسبة 99% مع إضاءة طبيعية كاملة.</p>
+        </div>
+        <div class="swatch-item">
+          <div class="swatch-sample" style="background:#0e2838; color:#ffffff;">أحواض مائية</div>
+          <h3 style="font-size:16px; margin-bottom:4px;">تلطيف هوائي</h3>
+          <p style="font-size:13px; color:var(--muted);">مسطحات تخفض درجة حرارة الفناء بمقدار 4 درجات.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Choice Bar -->
+  <div class="choice-bar">
+    <button onclick="parent.postMessage('select_B', '*')">✦ اختيار الاتجاه B (The Quiet Sanctuary) ↗</button>
+  </div>
+
+</body>
+</html>

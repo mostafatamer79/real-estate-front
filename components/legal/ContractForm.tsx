@@ -339,7 +339,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         </div>
 
         {hasAgent && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-card rounded border">
+          <div className="calm-panel grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-card rounded border">
             <div>
               <Label>{t('legal.contract.agentName')} *</Label>
               <Input
@@ -417,7 +417,7 @@ export function ContractForm({ onSuccess, onCancel }: ContractFormProps) {
         )}
 
         {isReviewMode && (
-          <div className="p-4 bg-muted border border-blue-200 rounded-lg">
+          <div className="calm-panel p-4 bg-muted border border-blue-200 rounded-lg">
             <p className="text-sm text-blue-800">{t('legal.contract.reviewModeDesc')}</p>
           </div>
         )}

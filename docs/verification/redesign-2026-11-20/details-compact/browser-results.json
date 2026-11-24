@@ -1,0 +1,74 @@
+[
+  {
+    "name": "studio",
+    "width": 1440,
+    "heroHeight": 253,
+    "pass": true
+  },
+  {
+    "name": "studio",
+    "width": 390,
+    "heroHeight": 270,
+    "pass": true
+  },
+  {
+    "name": "studio",
+    "width": 320,
+    "heroHeight": 320,
+    "pass": true
+  },
+  {
+    "name": "lens",
+    "width": 1440,
+    "heroHeight": 253,
+    "pass": true
+  },
+  {
+    "name": "lens",
+    "width": 390,
+    "heroHeight": 270,
+    "pass": true
+  },
+  {
+    "name": "lens",
+    "width": 320,
+    "heroHeight": 320,
+    "pass": true
+  },
+  {
+    "name": "focus",
+    "width": 1440,
+    "heroHeight": 211,
+    "pass": true
+  },
+  {
+    "name": "focus",
+    "width": 390,
+    "heroHeight": 262,
+    "pass": true
+  },
+  {
+    "name": "focus",
+    "width": 320,
+    "heroHeight": 312,
+    "pass": true
+  },
+  {
+    "name": "folio",
+    "width": 1440,
+    "heroHeight": 245,
+    "pass": true
+  },
+  {
+    "name": "folio",
+    "width": 390,
+    "heroHeight": 271,
+    "pass": true
+  },
+  {
+    "name": "folio",
+    "width": 320,
+    "heroHeight": 321,
+    "pass": true
+  }
+]

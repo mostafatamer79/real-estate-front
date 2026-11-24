@@ -423,26 +423,26 @@ export default function AdminPropertiesManagementPage() {
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+          <div className="inline-flex items-center gap-2 rounded-full bg-card dark:bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
             <Building2 className="h-3.5 w-3.5" />
             {isRtl ? "الإدارات" : "Departments"}
           </div>
           <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {isRtl ? "إدارة الأملاك" : "Properties Management"}
           </h1>
-          <p className="text-sm font-bold text-slate-400">
+          <p className="text-sm font-bold text-muted-foreground dark:text-slate-400">
             {isRtl ? "عرض وتحكم إداري في كل أملاك المستخدمين وتوابعها." : "Admin control over all user properties and related records."}
           </p>
         </div>
 
         <div className="flex w-full flex-col sm:flex-row gap-3 md:w-auto">
           <div className="relative w-full sm:w-80">
-            <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
+            <Search className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400 ${isRtl ? "right-4" : "left-4"}`} />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder={isRtl ? "بحث في الأملاك..." : "Search properties..."}
-              className={`h-12 w-full rounded-2xl border border bg-card px-11 text-sm font-bold outline-none focus:border-slate-900`}
+              className={`h-12 w-full rounded-2xl border border bg-card px-11 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900`}
             />
           </div>
           <button
@@ -451,7 +451,7 @@ export default function AdminPropertiesManagementPage() {
               setForm(emptyForms[activeTab]);
               setIsCreateOpen(true);
             }}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-stone-400/10 hover:bg-slate-800 transition-colors"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-6 text-xs font-black uppercase tracking-widest text-foreground dark:text-white shadow-lg shadow-primary/5 dark:shadow-stone-400/10 hover:bg-muted hover:dark:bg-slate-800 transition-colors"
           >
             <Plus className="h-4 w-4" />
             {isRtl ? "تحديث" : "Add New"}
@@ -460,21 +460,21 @@ export default function AdminPropertiesManagementPage() {
       </header>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "إجمالي الأملاك" : "Total properties"}</p>
           <p className="mt-1 text-xl sm:text-3xl font-black text-slate-950">{properties.length}</p>
         </div>
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "نتائج البحث" : "Filtered"}</p>
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "نتائج البحث" : "Filtered"}</p>
           <p className="mt-1 text-xl sm:text-3xl font-black text-slate-950">{filteredProperties.length}</p>
         </div>
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "صفحة التحكم" : "Control page"}</p>
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "صفحة التحكم" : "Control page"}</p>
           <p className="mt-1 text-lg font-black text-slate-950">{isRtl ? "إدارية فقط" : "Admin only"}</p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-2 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-2 shadow-sm">
         <div className="flex gap-2 overflow-x-auto">
           {propertyTabs.map((tab) => {
             const Icon = tab.icon;
@@ -484,12 +484,12 @@ export default function AdminPropertiesManagementPage() {
                 key={tab.id}
                 href={tab.href}
                 className={`flex min-w-fit flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-widest transition-all ${
-                  active ? "bg-slate-950 text-white shadow-lg shadow-stone-400/10" : "text-slate-500 hover:bg-muted hover:text-slate-950"
+                  active ? "bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-lg shadow-primary/5 dark:shadow-stone-400/10" : "text-muted-foreground dark:text-slate-500 hover:bg-muted hover:text-slate-950"
                 }`}
               >
                 <Icon className="h-4 w-4" />
                 <span>{tab.label}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-card/15 text-white" : "bg-muted text-slate-500"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-muted dark:bg-card/15 text-foreground dark:text-white" : "bg-muted text-muted-foreground dark:text-slate-500"}`}>
                   {tab.count}
                 </span>
               </Link>
@@ -498,28 +498,28 @@ export default function AdminPropertiesManagementPage() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border bg-card shadow-sm">
+      <section className="calm-panel overflow-hidden rounded-2xl border border bg-card shadow-sm">
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full min-w-[900px] text-right">
             <thead className="bg-muted/70">
               <tr>
-                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل" : "Record"}</th>
-                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "المالك/الطرف" : "Owner/Party"}</th>
-                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "التفاصيل" : "Details"}</th>
-                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "الحالة/التاريخ" : "Status/Date"}</th>
-                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{isRtl ? "إجراء" : "Action"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "السجل" : "Record"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "المالك/الطرف" : "Owner/Party"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "التفاصيل" : "Details"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "الحالة/التاريخ" : "Status/Date"}</th>
+                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "إجراء" : "Action"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
-                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-300" />
+                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground dark:text-slate-300" />
                   </td>
                 </tr>
               ) : paginatedProperties.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-20 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+                  <td colSpan={5} className="py-20 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
                     {isRtl ? "لا توجد أملاك" : "No properties"}
                   </td>
                 </tr>
@@ -539,24 +539,24 @@ export default function AdminPropertiesManagementPage() {
                   <tr key={property.id} className="hover:bg-muted/50">
                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-500">
+                        <div className="calm-icon flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-muted-foreground dark:text-slate-500">
                           {activeTab === "tenants" ? <User className="h-5 w-5" /> : activeTab === "leases" ? <FileText className="h-5 w-5" /> : activeTab === "payments" ? <CreditCard className="h-5 w-5" /> : activeTab === "maintenance" ? <Wrench className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
                         </div>
                         <div>
                           <p className="text-sm font-black text-slate-950">{title}</p>
-                          <p className="font-mono text-[10px] font-bold text-slate-400">#{String(property.id).slice(0, 8)}</p>
+                          <p className="font-mono text-[10px] font-bold text-muted-foreground dark:text-slate-400">#{String(property.id).slice(0, 8)}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                        <User className="h-4 w-4 text-slate-300" />
+                        <User className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                         {ownerName}
                       </div>
                     </td>
                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                        <MapPin className="h-4 w-4 text-slate-300" />
+                        <MapPin className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                         {details}
                       </div>
                     </td>
@@ -570,7 +570,7 @@ export default function AdminPropertiesManagementPage() {
                               handleToggleActive(property.id, property.isActive);
                             }}
                             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                              property.isActive ? "bg-slate-900" : "bg-muted"
+                              property.isActive ? "bg-card dark:bg-slate-900" : "bg-muted"
                             }`}
                           >
                             <span
@@ -585,7 +585,7 @@ export default function AdminPropertiesManagementPage() {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 text-xs font-black text-slate-700">
-                          <Calendar className="h-4 w-4 text-slate-300" />
+                          <Calendar className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                           {property.status || property.paymentStatus || property.createdAt?.slice?.(0, 10) || "—"}
                         </div>
                       )}
@@ -639,10 +639,10 @@ export default function AdminPropertiesManagementPage() {
         <div className="md:hidden space-y-3 p-4">
           {loading ? (
             <div className="py-12 text-center">
-              <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-300" />
+              <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground dark:text-slate-300" />
             </div>
           ) : paginatedProperties.length === 0 ? (
-            <p className="py-12 text-center text-xs font-black uppercase tracking-widest text-slate-300">
+            <p className="py-12 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
               {isRtl ? "لا توجد أملاك" : "No properties"}
             </p>
           ) : (
@@ -658,23 +658,23 @@ export default function AdminPropertiesManagementPage() {
                     ? `${property.property?.name || property.propertyId || "—"} - ${property.unit?.name || property.unitId || "—"}`
                     : [property.city, property.neighborhood, property.type || property.propertyType].filter(Boolean).join(" - ") || "—";
               return (
-                <div key={property.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                <div key={property.id} className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-500">
+                    <div className="calm-icon flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-muted-foreground dark:text-slate-500">
                       {activeTab === "tenants" ? <User className="h-5 w-5" /> : activeTab === "leases" ? <FileText className="h-5 w-5" /> : activeTab === "payments" ? <CreditCard className="h-5 w-5" /> : activeTab === "maintenance" ? <Wrench className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
                     </div>
                     <div>
                       <p className="text-sm font-black text-slate-950">{title}</p>
-                      <p className="font-mono text-[10px] font-bold text-slate-400">#{String(property.id).slice(0, 8)}</p>
+                      <p className="font-mono text-[10px] font-bold text-muted-foreground dark:text-slate-400">#{String(property.id).slice(0, 8)}</p>
                     </div>
                   </div>
                   <div className="space-y-2 text-xs font-bold text-slate-600">
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-slate-300" />
+                      <User className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                       {ownerName}
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-slate-300" />
+                      <MapPin className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                       {details}
                     </div>
                     {isPropertyRow ? (
@@ -686,7 +686,7 @@ export default function AdminPropertiesManagementPage() {
                             handleToggleActive(property.id, property.isActive);
                           }}
                           className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                            property.isActive ? "bg-slate-900" : "bg-muted"
+                            property.isActive ? "bg-card dark:bg-slate-900" : "bg-muted"
                           }`}
                         >
                           <span
@@ -699,7 +699,7 @@ export default function AdminPropertiesManagementPage() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-xs font-black text-slate-700">
-                        <Calendar className="h-4 w-4 text-slate-300" />
+                        <Calendar className="h-4 w-4 text-muted-foreground dark:text-slate-300" />
                         {property.status || property.paymentStatus || property.createdAt?.slice?.(0, 10) || "—"}
                       </div>
                     )}
@@ -756,19 +756,19 @@ export default function AdminPropertiesManagementPage() {
       </section>
 
       {viewingRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-card/40 dark:bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="calm-panel w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm dark:shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900">
                   {isRtl ? "تفاصيل السجل" : "Record Details"}
                 </h3>
-                <p className="font-mono text-xs text-slate-400 mt-1">ID: {viewingRecord.id}</p>
+                <p className="font-mono text-xs text-muted-foreground dark:text-slate-400 mt-1">ID: {viewingRecord.id}</p>
               </div>
               <button
                 onClick={() => setViewingRecord(null)}
-                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -780,8 +780,8 @@ export default function AdminPropertiesManagementPage() {
                 {formFields.map(([key, label]) => {
                   const val = viewingRecord[String(key)];
                   return (
-                    <div key={key} className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                    <div key={key} className="calm-panel p-4 rounded-2xl bg-muted/50 border border space-y-1">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{label}</span>
                       <p className="text-sm font-bold text-slate-800">
                         {val === true ? (isRtl ? "نعم" : "Yes") : val === false ? (isRtl ? "لا" : "No") : val || "—"}
                       </p>
@@ -793,8 +793,8 @@ export default function AdminPropertiesManagementPage() {
               {/* Additional fields not in formFields, like dates & relationship objects */}
               <div className="border-t border pt-4 mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {viewingRecord.createdAt && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                       {isRtl ? "تاريخ الإنشاء" : "Created At"}
                     </span>
                     <p className="text-sm font-bold text-slate-800">
@@ -803,8 +803,8 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.updatedAt && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border space-y-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                       {isRtl ? "تاريخ التحديث" : "Updated At"}
                     </span>
                     <p className="text-sm font-bold text-slate-800">
@@ -813,9 +813,9 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.owner && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                         {isRtl ? "بيانات المالك" : "Owner Details"}
                       </span>
                       <p className="text-sm font-bold text-slate-800">
@@ -825,7 +825,7 @@ export default function AdminPropertiesManagementPage() {
                     {viewingRecord.owner.id && (
                       <button
                         onClick={() => handleOpenChat(viewingRecord.owner.id)}
-                        className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                        className="flex h-10 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-4 text-xs font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors gap-2 shrink-0"
                       >
                         <MessageSquare className="h-4 w-4" />
                         {isRtl ? "فتح الشات" : "Open Chat"}
@@ -834,9 +834,9 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.tenant && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border flex items-center justify-between sm:col-span-2">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                         {isRtl ? "بيانات المستأجر" : "Tenant Details"}
                       </span>
                       <p className="text-sm font-bold text-slate-800">
@@ -846,7 +846,7 @@ export default function AdminPropertiesManagementPage() {
                     {viewingRecord.tenant.userId && (
                       <button
                         onClick={() => handleOpenChat(viewingRecord.tenant.userId)}
-                        className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                        className="flex h-10 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-4 text-xs font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors gap-2 shrink-0"
                       >
                         <MessageSquare className="h-4 w-4" />
                         {isRtl ? "فتح الشات" : "Open Chat"}
@@ -856,8 +856,8 @@ export default function AdminPropertiesManagementPage() {
                 )}
 
                 {viewingRecord.unit && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                       {isRtl ? "بيانات الوحدة" : "Unit Details"}
                     </span>
                     <p className="text-sm font-bold text-slate-800">
@@ -866,8 +866,8 @@ export default function AdminPropertiesManagementPage() {
                   </div>
                 )}
                 {viewingRecord.property && (
-                  <div className="p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="calm-panel p-4 rounded-2xl bg-muted/50 border border space-y-1 sm:col-span-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                       {isRtl ? "بيانات العقار" : "Property Details"}
                     </span>
                     <p className="text-sm font-bold text-slate-800">
@@ -882,7 +882,7 @@ export default function AdminPropertiesManagementPage() {
             <div className="border-t border bg-muted/30 px-8 py-5 flex justify-end">
               <button
                 onClick={() => setViewingRecord(null)}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 transition-colors"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors"
               >
                 {isRtl ? "إغلاق" : "Close"}
               </button>
@@ -893,8 +893,8 @@ export default function AdminPropertiesManagementPage() {
 
       {/* Standard Create/Edit Form Modal */}
       {(isCreateOpen || editingId !== null) && (activeTab !== "properties" || editingId !== null) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-card/40 dark:bg-slate-900/40 p-4 backdrop-blur-sm">
+          <div className="calm-panel w-[95vw] sm:max-w-2xl overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm dark:shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border bg-muted/50 px-8 py-6">
               <div>
@@ -904,13 +904,13 @@ export default function AdminPropertiesManagementPage() {
                     : (isRtl ? "إضافة سجل جديد" : "Add New Record")
                   }
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-muted-foreground dark:text-slate-400 mt-1">
                   {isRtl ? "أدخل البيانات المطلوبة بالأسفل" : "Fill in the required information below"}
                 </p>
               </div>
               <button
                 onClick={handleCloseFormModal}
-                className="rounded-xl border border bg-card p-2 text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
+                className="rounded-xl border border bg-card p-2 text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:shadow-sm transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -925,7 +925,7 @@ export default function AdminPropertiesManagementPage() {
                     const options = typeString.replace("select:", "").split(",");
                     return (
                       <div key={key} className="space-y-1.5">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{label}</span>
                         <select
                           value={form[String(key)] || ""}
                           onChange={(event) => setForm((current) => ({ ...current, [String(key)]: event.target.value }))}
@@ -938,7 +938,7 @@ export default function AdminPropertiesManagementPage() {
                   }
                   return (
                     <div key={key} className="space-y-1.5">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{label}</span>
                       <input
                         type={typeString}
                         value={form[String(key)] || ""}
@@ -964,7 +964,7 @@ export default function AdminPropertiesManagementPage() {
                 type="button"
                 onClick={saveRecord}
                 disabled={saving}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50 hover:bg-slate-800 transition-colors"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-6 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50 hover:bg-muted hover:dark:bg-slate-800 transition-colors"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {editingId ? (isRtl ? "حفظ التعديل" : "Save") : (isRtl ? "إضافة" : "Create")}

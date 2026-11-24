@@ -1,0 +1,381 @@
+/* Scoped semantic design tokens and styles for Offers (/offers) and Orders (/orders)
+   Maintains harmony with Details and Services design direction:
+   Light mode: Homepage cream & stone palette (#F5F4F0 page, #EDEDE7 cards, #E9E6DF secondary, #24333D text, #5F6B71 secondary text)
+   Dark mode: Shared footer navy gradient (#101827 -> #0F172A, #1B2835 cards, #243344 secondary, #EDF1F5 text, #ACBAC7 secondary text)
+*/
+
+.offers-page-root,
+.orders-page-root {
+  --oo-page-bg: var(--site-light-background, #dbe4f2);
+  --oo-card-bg: #edede7;
+  --oo-surface-secondary: #e9e6df;
+  --oo-input-bg: #f5f4f0;
+  --oo-text-main: #24333d;
+  --oo-text-secondary: #5f6b71;
+  --oo-border: #d7dad4;
+  --oo-primary-btn-bg: #2c414e;
+  --oo-primary-btn-text: #ffffff;
+  --oo-btn-primary-text: #ffffff;
+  --oo-secondary-btn-bg: transparent;
+  --oo-secondary-btn-text: #24333d;
+  --oo-tab-selected-bg: #2c414e;
+  --oo-tab-selected-text: #ffffff;
+  --oo-tab-inactive-text: #5f6b71;
+  --oo-focus-outline: #405b6f;
+  --oo-image-placeholder: #e9e6df;
+
+  /* Semantic status colors */
+  --oo-status-success-bg: #e6f2eb;
+  --oo-status-success-text: #21613c;
+  --oo-status-pending-bg: #fff1d6;
+  --oo-status-pending-text: #805400;
+  --oo-status-error-bg: #fbe9e7;
+  --oo-status-error-text: #a12622;
+
+  background-color: var(--oo-page-bg) !important;
+  color: var(--oo-text-main) !important;
+  min-height: 100dvh;
+}
+
+/* Dark Mode Scoped Tokens */
+html.dark .offers-page-root,
+html.dark .orders-page-root,
+.dark .offers-page-root,
+.dark .orders-page-root {
+  --oo-page-bg: #101827;
+  --oo-card-bg: #1b2835;
+  --oo-surface-secondary: #243344;
+  --oo-input-bg: #152231;
+  --oo-text-main: #edf1f5;
+  --oo-text-secondary: #acbac7;
+  --oo-border: #354554;
+  --oo-primary-btn-bg: #dce8f1;
+  --oo-primary-btn-text: #192a37;
+  --oo-btn-primary-text: #192a37;
+  --oo-secondary-btn-bg: transparent;
+  --oo-secondary-btn-text: #edf1f5;
+  --oo-tab-selected-bg: #dce8f1;
+  --oo-tab-selected-text: #192a37;
+  --oo-tab-inactive-text: #acbac7;
+  --oo-focus-outline: #b5d3e8;
+  --oo-image-placeholder: #152231;
+
+  /* Semantic status colors (dark) */
+  --oo-status-success-bg: #18372b;
+  --oo-status-success-text: #a7e3be;
+  --oo-status-pending-bg: #3a2e18;
+  --oo-status-pending-text: #f3d28a;
+  --oo-status-error-bg: #3b2025;
+  --oo-status-error-text: #ffb4ab;
+
+  background: linear-gradient(140deg, #101827 0%, #0f172a 100%) !important;
+  color: var(--oo-text-main) !important;
+}
+
+/* Base resets & surfaces */
+.offers-page-root .oo-panel,
+.orders-page-root .oo-panel {
+  background-color: var(--oo-card-bg);
+  border: 1px solid var(--oo-border);
+  color: var(--oo-text-main);
+}
+
+.offers-page-root .oo-secondary-surface,
+.orders-page-root .oo-secondary-surface {
+  background-color: var(--oo-surface-secondary);
+  border: 1px solid var(--oo-border);
+  color: var(--oo-text-main);
+}
+
+/* Inputs & Form Controls */
+.offers-page-root .oo-input,
+.orders-page-root .oo-input {
+  background-color: var(--oo-input-bg) !important;
+  border: 1px solid var(--oo-border) !important;
+  color: var(--oo-text-main) !important;
+}
+
+.offers-page-root .oo-input::placeholder,
+.orders-page-root .oo-input::placeholder {
+  color: var(--oo-text-secondary) !important;
+  opacity: 0.85;
+}
+
+.offers-page-root .oo-input:focus-visible,
+.orders-page-root .oo-input:focus-visible {
+  outline: 2px solid var(--oo-focus-outline) !important;
+  outline-offset: 1px;
+}
+
+/* Primary Button */
+.oo-btn-primary {
+  background-color: var(--oo-primary-btn-bg) !important;
+  color: var(--oo-btn-primary-text) !important;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.oo-btn-primary:hover {
+  opacity: 0.92;
+}
+
+.oo-btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary Button */
+.oo-btn-secondary {
+  background-color: var(--oo-secondary-btn-bg) !important;
+  color: var(--oo-secondary-btn-text) !important;
+  border: 1px solid var(--oo-border);
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.oo-btn-secondary:hover {
+  background-color: var(--oo-surface-secondary) !important;
+}
+
+.oo-btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Destructive Button / Action */
+.oo-btn-destructive {
+  background-color: transparent !important;
+  color: var(--oo-status-error-text) !important;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease;
+}
+
+.oo-btn-destructive:hover {
+  background-color: var(--oo-status-error-bg) !important;
+}
+
+/* Tabs */
+.oo-tabs-container {
+  background-color: var(--oo-card-bg);
+  border: 1px solid var(--oo-border);
+}
+
+.oo-tab-trigger[data-state="active"] {
+  background-color: var(--oo-tab-selected-bg) !important;
+  color: var(--oo-tab-selected-text) !important;
+}
+
+.oo-tab-trigger[data-state="inactive"] {
+  color: var(--oo-tab-inactive-text) !important;
+}
+
+.oo-tab-trigger[data-state="inactive"]:hover {
+  color: var(--oo-text-main) !important;
+}
+
+/* Status Badges */
+.oo-badge-success {
+  background-color: var(--oo-status-success-bg) !important;
+  color: var(--oo-status-success-text) !important;
+}
+
+.oo-badge-pending {
+  background-color: var(--oo-status-pending-bg) !important;
+  color: var(--oo-status-pending-text) !important;
+}
+
+.oo-badge-error {
+  background-color: var(--oo-status-error-bg) !important;
+  color: var(--oo-status-error-text) !important;
+}
+
+/* Offers Hero Banner */
+.offers-hero-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  min-height: 280px;
+  box-shadow: 0 16px 36px -24px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 767px) {
+  .offers-hero-banner {
+    min-height: 180px;
+    border-radius: 0.75rem;
+  }
+}
+
+.offers-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to top,
+    rgba(16, 24, 39, 0.94) 0%,
+    rgba(16, 24, 39, 0.7) 48%,
+    rgba(16, 24, 39, 0.25) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.25rem, 3.5vw, 2.5rem);
+  color: #ffffff;
+}
+
+/* Filter Drawer / Sidebar */
+.offers-sidebar {
+  background-color: var(--oo-card-bg);
+  border-color: var(--oo-border);
+  color: var(--oo-text-main);
+}
+
+.offers-drawer-backdrop {
+  background-color: rgba(16, 24, 39, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+/* Offer Card */
+.oo-offer-card {
+  background-color: var(--oo-card-bg);
+  border: 1px solid var(--oo-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.oo-offer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.12);
+}
+
+html.dark .oo-offer-card:hover,
+.dark .oo-offer-card:hover {
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.45);
+}
+
+.oo-offer-thumbnail {
+  background-color: var(--oo-image-placeholder);
+  aspect-ratio: 16 / 10;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stagger & Reveal animations */
+@keyframes ooFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.oo-reveal {
+  animation: ooFadeInUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+  @media (prefers-reduced-motion: reduce) {
+  .oo-reveal,
+  .oo-offer-card,
+  .oo-order-card,
+  .oo-btn-primary,
+  .oo-btn-secondary {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Order Form & Card Helpers */
+.orders-page-root .oo-card {
+  background-color: var(--oo-card-bg);
+  border: 1px solid var(--oo-border);
+  border-radius: 1.25rem;
+  color: var(--oo-text-main);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.05);
+}
+
+.dark .orders-page-root .oo-card {
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.35);
+}
+
+.orders-page-root .oo-order-card {
+  background-color: var(--oo-card-bg);
+  border: 1px solid var(--oo-border);
+  border-radius: 1.25rem;
+  color: var(--oo-text-main);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.orders-page-root .oo-order-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--oo-focus-outline);
+  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.08);
+}
+
+.dark .orders-page-root .oo-order-card:hover {
+  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.4);
+}
+
+.oo-purpose-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.875rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--oo-border);
+  background-color: var(--oo-surface-secondary);
+  color: var(--oo-text-main);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.oo-purpose-btn:hover {
+  border-color: var(--oo-focus-outline);
+}
+
+.oo-purpose-btn[data-selected="true"] {
+  background-color: var(--oo-primary-btn-bg);
+  color: var(--oo-btn-primary-text);
+  border-color: var(--oo-primary-btn-bg);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
+}
+
+.oo-amenity-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  background-color: var(--oo-surface-secondary);
+  border: 1px solid var(--oo-border);
+  color: var(--oo-text-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.oo-amenity-chip:hover {
+  border-color: var(--oo-focus-outline);
+}
+
+.oo-amenity-chip[data-checked="true"] {
+  background-color: var(--oo-card-bg);
+  border-color: var(--oo-primary-btn-bg);
+  box-shadow: 0 0 0 1px var(--oo-primary-btn-bg);
+}
+
+.oo-input-error {
+  border-color: var(--oo-status-error-text) !important;
+  box-shadow: 0 0 0 1px var(--oo-status-error-text) !important;
+}
+

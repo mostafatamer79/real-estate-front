@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ConfirmDialogProvider } from "@/components/ui/confirm-dialog-provider";
-import Header from "./src/components/Header";
+import { SiteHeader, SiteFooter } from "@/components/HomeDemoChrome";
 import PageWrapper from "./src/components/PageWrapper";
 import AdminImpersonationReturn from "./src/components/AdminImpersonationReturn";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -12,7 +12,7 @@ import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import BusinessVerificationFooter from "@/components/BusinessVerificationFooter";
+import ThemeToggle from "./src/components/ThemeToggle";
 import { SITE_NAME, SITE_DESCRIPTION, getSiteUrl, buildPageMetadata } from "@/lib/seo";
 
 const geistSans = Geist({
@@ -55,6 +55,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      {/* Anti-FOUT: synchronously apply .dark before first paint */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('digital-brokerage-theme');var d=window.matchMedia('(prefers-color-scheme:dark)').matches;if(s==='dark'||(s===null&&d)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background overscroll-none`}
         suppressHydrationWarning
@@ -92,14 +100,15 @@ export default function RootLayout({
             <NotificationProvider>
               <ConfirmDialogProvider>
                 <TooltipProvider>
-                  <div className="flex flex-col min-h-screen">
-                    <Header />
+                  <div className="calm-page calm-screen flex flex-col min-h-screen">
+                    <SiteHeader />
                     <PageWrapper>
                       {children}
                     </PageWrapper>
-                    <BusinessVerificationFooter />
+                    <SiteFooter />
                     <AdminImpersonationReturn />
                   </div>
+                  <ThemeToggle />
                   <Toaster />
                   <SonnerToaster
                     richColors

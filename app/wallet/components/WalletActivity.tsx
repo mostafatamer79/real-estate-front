@@ -1,5 +1,7 @@
 "use client";
 
+import styles from '../wallet-redesign.module.css';
+
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { SaudiRiyalAmount } from '@/components/ui/saudi-riyal';
@@ -17,7 +19,7 @@ export default function WalletActivity({ entries }: { entries: WalletEntry[] }) 
     ? { completed: 'مكتملة', pending: 'قيد المعالجة', failed: 'فشلت', cancelled: 'ملغاة' }
     : { completed: 'Completed', pending: 'Pending', failed: 'Failed', cancelled: 'Cancelled' };
   return (
-    <section className="mt-6 rounded-2xl border bg-white p-5" dir={ar ? 'rtl' : 'ltr'}>
+    <section className={styles.activityPanel} dir={ar ? 'rtl' : 'ltr'}>
       <h2 className="mb-4 text-lg font-bold">{ar ? 'سجل المدفوعات والمحفظة' : 'Payments and wallet activity'}</h2>
       {!entries.length ? <p className="text-sm text-slate-500">{ar ? 'لا توجد حركات حتى الآن.' : 'No activity yet.'}</p> : (
         <ul className="divide-y">

@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>التفاصيل — معرض الاتجاهات والتصاميم الحركية الفاخرة</title>
+  <link rel="stylesheet" href="details-elite.css">
+  <style>
+    /* Master Chooser Hub Custom Styling */
+    .hub-container {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 30px 24px 80px;
+    }
+
+    .hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 36px;
+    }
+
+    .hub-title-block h1 {
+      font-size: clamp(28px, 3.8vw, 46px);
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--text-primary);
+    }
+    .hub-title-block p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      max-width: 70ch;
+    }
+
+    /* Workspace Stage: Sidebar + Viewport */
+    .hub-stage {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* Direction Cards Navigation */
+    .direction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .direction-card {
+      background: var(--bezel-core-bg);
+      border: 1px solid var(--border-card);
+      border-radius: 18px;
+      padding: 20px;
+      text-align: right;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--duration-base) var(--ease-spring);
+      user-select: none;
+    }
+
+    .direction-card:hover {
+      transform: translateX(-4px);
+      border-color: var(--accent-gold);
+    }
+
+    .direction-card.active {
+      background: var(--surface-hover);
+      border-color: var(--accent-gold);
+      box-shadow: 0 8px 24px -4px var(--accent-gold-glow);
+    }
+
+    .direction-card-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .direction-card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 4px 0 8px;
+    }
+
+    .direction-card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .direction-card-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+    }
+
+    /* Viewer Screen & Responsive Frame */
+    .viewer-panel {
+      position: sticky;
+      top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .viewer-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 20px;
+      background: var(--bezel-shell-bg);
+      border: 1px solid var(--bezel-shell-border);
+      border-radius: 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .device-switcher {
+      display: flex;
+      background: var(--surface-hover);
+      border: 1px solid var(--border-card);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .device-btn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: none;
+      background: none;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--duration-fast) var(--ease-smooth);
+    }
+
+    .device-btn.active {
+      background: var(--bezel-core-bg);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* The Viewport Frame Container */
+    .frame-wrapper {
+      position: relative;
+      width: 100%;
+      height: 820px;
+      background: var(--bezel-shell-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.2);
+    }
+
+    .preview-iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      transition: width var(--duration-motion) var(--ease-spring);
+    }
+
+    /* Device size simulations */
+    .frame-wrapper.mode-desktop .preview-iframe {
+      width: 100%;
+      max-width: 100%;
+    }
+    .frame-wrapper.mode-tablet .preview-iframe {
+      width: 768px;
+      border-inline: 1px solid var(--border-subtle);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+    }
+    .frame-wrapper.mode-mobile .preview-iframe {
+      width: 390px;
+      border-inline: 1px solid var(--border-subtle);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Selection Confirmation Banner */
+    .selection-banner {
+      margin-top: 24px;
+      padding: 18px 24px;
+      background: var(--accent-gold-soft);
+      border: 1px solid var(--accent-gold-glow);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    @media (max-width: 1080px) {
+      .hub-stage {
+        grid-template-columns: 1fr;
+      }
+      .viewer-panel {
+        position: static;
+      }
+      .frame-wrapper {
+        height: 650px;
+      }
+    }
+  </style>
+</head>
+<body class="dark">
+  <div class="hub-container">
+
+    <!-- MASTER HEADER -->
+    <header class="hub-header">
+      <div class="hub-title-block">
+        <div class="eyebrow-badge" style="margin-bottom: 8px;">
+          ✦ مختبر التصميم المتقدم والموشن جرافيكس
+        </div>
+        <h1>اختر الاتجاه الأمثل لصفحة التفاصيل (/details)</h1>
+        <p>
+          استكشف أربعة اتجاهات حركية فائقة التخصيص، تم بناؤها بمعايير وكالات التصميم العالمية (Awwwards-Tier)، تدعم السحب الثلاثي، المحاكاة المكانية، الحركات الفيزيائية، وأنظمة العرض المتجاوبة.
+        </p>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button id="theme-toggle" class="btn-outline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <span>تبديل المظهر</span>
+        </button>
+        <a href="/details" class="btn-outline">العودة للمنصة ↗</a>
+      </div>
+    </header>
+
+    <!-- HUB STAGE -->
+    <div class="hub-stage">
+
+      <!-- LEFT: SELECTION CARDS & FEATURE MATRIX -->
+      <aside>
+        <div class="direction-list">
+
+          <!-- 01 -->
+          <div class="direction-card active" data-src="details-kinetic-sanctuary.html" data-id="sanctuary">
+            <span class="direction-card-num">الاتجاه 01</span>
+            <h3 class="direction-card-title">المحراب المعماري الحركي (Kinetic Sanctuary)</h3>
+            <p class="direction-card-desc">
+              تكوين Asymmetrical Bento فاخر بدرجات الفانتابلاك والذهب المعماري، خطوط CAD هندسية حية، وبوابة خريطة ثلاثية الأبعاد بمدى تفاعلي كامل.
+            </p>
+            <span class="direction-card-badge">الأكثر فخامة واكتمالاً</span>
+          </div>
+
+          <!-- 02 -->
+          <div class="direction-card" data-src="details-editorial-atelier.html" data-id="atelier">
+            <span class="direction-card-num">الاتجاه 02</span>
+            <h3 class="direction-card-title">الأتيلييه التحريري الفاخر (Editorial Atelier)</h3>
+            <p class="direction-card-desc">
+              تصميم تحريري نخبوي يدمج الخريطة المكانية الثابتة بجانب تدفق تاريخي للمحطات الاستثمارية والعقود بروح صحفية معمارية راقية.
+            </p>
+            <span class="direction-card-badge">تحريري · قراءة سلسة</span>
+          </div>
+
+          <!-- 03 -->
+          <div class="direction-card" data-src="details-spatial-command.html" data-id="command">
+            <span class="direction-card-num">الاتجاه 03</span>
+            <h3 class="direction-card-title">مرصد القيادة المكانية (Spatial Command)</h3>
+            <p class="direction-card-desc">
+              لوحة قيادة تنفيذية بألوان الكحلي والزمرد الفوسفوري، رادار نبضي تفاعلي، بطاقات ثلاثية الأبعاد تميل بحركة المؤشر، ومؤشرات لحظية.
+            </p>
+            <span class="direction-card-badge">تنفيذي · عالي التقنية</span>
+          </div>
+
+          <!-- 04 -->
+          <div class="direction-card" data-src="details-neo-glass.html" data-id="neoglass">
+            <span class="direction-card-num">الاتجاه 04</span>
+            <h3 class="direction-card-title">الواجهة البلورية التفاعلية (Neo-Glass Studio)</h3>
+            <p class="direction-card-desc">
+              أسطح زجاجية مطفية ذات عمق لمسي مستوحاة من فلسفة Apple، نوافذ أكورديون ارتدادية ناعمة، وشريط تمرير عائم فائق المرونة.
+            </p>
+            <span class="direction-card-badge">زجاجي ناعم · تفاعل لمسي</span>
+          </div>
+
+        </div>
+
+        <!-- SELECTION ACTION BOX -->
+        <div class="selection-banner" style="margin-top: 24px;">
+          <div>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">الاتجاه المختار حالياً:</span>
+            <div id="selected-label" style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 2px;">
+              01 — المحراب المعماري الحركي
+            </div>
+          </div>
+          <button id="confirm-selection-btn" class="btn-island" style="background: var(--accent-gold); color: #fff;">
+            <span>اعتماد هذا التصميم</span>
+            <div class="btn-bubble" style="background: #fff; color: var(--accent-gold);">✓</div>
+          </button>
+        </div>
+      </aside>
+
+      <!-- RIGHT: INTERACTIVE VIEWER -->
+      <section class="viewer-panel">
+        <div class="viewer-toolbar">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <strong id="active-direction-heading" style="font-size: 15px; font-weight: 600;">معاينة: المحراب المعماري الحركي</strong>
+            <a id="fullscreen-btn" href="details-kinetic-sanctuary.html" target="_blank" class="btn-outline" style="padding: 4px 12px; font-size: 11px;">
+              فتح ملء الشاشة ↗
+            </a>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- MOTION AUTOPLAY TOUR -->
+            <button id="tour-btn" class="btn-outline" aria-pressed="false" style="font-size: 12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span>جولة الحركة التلقائية</span>
+            </button>
+
+            <!-- DEVICE SWITCHER -->
+            <div class="device-switcher" role="group" aria-label="أبعاد العرض">
+              <button class="device-btn active" data-mode="desktop">كمبيوتر (1440)</button>
+              <button class="device-btn" data-mode="tablet">تابلت (768)</button>
+              <button class="device-btn" data-mode="mobile">هاتف (390)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- IFRAME STAGE -->
+        <div class="frame-wrapper mode-desktop" id="frame-stage">
+          <iframe id="main-preview-frame" class="preview-iframe" src="details-kinetic-sanctuary.html" title="معاينة التصميم الحركي"></iframe>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // Master Chooser Controller
+    const cards = document.querySelectorAll('.direction-card');
+    const iframe = document.getElementById('main-preview-frame');
+    const frameStage = document.getElementById('frame-stage');
+    const activeHeading = document.getElementById('active-direction-heading');
+    const selectedLabel = document.getElementById('selected-label');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const deviceBtns = document.querySelectorAll('.device-btn');
+    const themeBtn = document.getElementById('theme-toggle');
+    const tourBtn = document.getElementById('tour-btn');
+    const confirmBtn = document.getElementById('confirm-selection-btn');
+
+    let currentSelectedId = 'sanctuary';
+
+    // 1. Direction Switcher
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        const src = card.getAttribute('data-src');
+        const title = card.querySelector('.direction-card-title').textContent;
+        currentSelectedId = card.getAttribute('data-id');
+
+        iframe.src = src;
+        activeHeading.textContent = `معاينة: ${title}`;
+        selectedLabel.textContent = title;
+        fullscreenBtn.href = src;
+
+        // Stop any running tour
+        stopTour();
+      });
+    });
+
+    // 2. Responsive Device Modes
+    deviceBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        deviceBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const mode = btn.getAttribute('data-mode');
+        frameStage.className = `frame-wrapper mode-${mode}`;
+      });
+    });
+
+    // 3. Theme Synchronization
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      // Post message into iframe
+      try {
+        iframe.contentWindow.postMessage({ type: 'THEME_SYNC', dark: isDark }, '*');
+      } catch (err) {}
+    });
+
+    // Ensure initial theme sync on iframe load
+    iframe.addEventListener('load', () => {
+      const isDark = document.body.classList.contains('dark');
+      try {
+        iframe.contentWindow.postMessage({ type: 'THEME_SYNC', dark: isDark }, '*');
+      } catch (err) {}
+    });
+
+    // 4. Motion Tour Autoplay (Scroll choreography)
+    let tourActive = false;
+    let tourFrame = 0;
+
+    function stopTour() {
+      tourActive = false;
+      cancelAnimationFrame(tourFrame);
+      tourBtn.setAttribute('aria-pressed', 'false');
+      tourBtn.querySelector('span').textContent = 'جولة الحركة التلقائية';
+    }
+
+    tourBtn.addEventListener('click', () => {
+      if (tourActive) {
+        stopTour();
+        return;
+      }
+
+      tourActive = true;
+      tourBtn.setAttribute('aria-pressed', 'true');
+      tourBtn.querySelector('span').textContent = 'إيقاف الجولة';
+
+      const win = iframe.contentWindow;
+      if (!win) return;
+
+      const doc = win.document;
+      const totalScroll = doc.documentElement.scrollHeight - win.innerHeight;
+      const duration = 12000;
+      const startTime = performance.now();
+
+      function step(now) {
+        if (!tourActive) return;
+        const progress = Math.min((now - startTime) / duration, 1);
+        // Smooth sine ease
+        const ease = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+        win.scrollTo({ top: totalScroll * ease, behavior: 'instant' });
+
+        if (progress < 1) {
+          tourFrame = requestAnimationFrame(step);
+        } else {
+          stopTour();
+        }
+      }
+
+      tourFrame = requestAnimationFrame(step);
+    });
+
+    // 5. Confirm Selection
+    confirmBtn.addEventListener('click', () => {
+      const activeCard = document.querySelector('.direction-card.active');
+      const title = activeCard.querySelector('.direction-card-title').textContent;
+      confirmBtn.innerHTML = '<span>تم الاختيار والاعتماد بنجاح!</span> <div class="btn-bubble" style="background:#fff; color:var(--accent-gold);">✓</div>';
+      confirmBtn.style.background = '#10b981';
+      alert(`تهانينا! تم تسجيل اختيارك: [${title}].\nيمكنك الآن إبلاغي أو متابعة تطبيق هذا الاتجاه في مساحة العمل.`);
+    });
+  </script>
+</body>
+</html>

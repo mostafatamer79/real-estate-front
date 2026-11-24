@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import VerificationQr from "@/components/VerificationQr";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import {
@@ -97,7 +98,7 @@ export default function Footer() {
           ════════════════════════════════════════════════════ */}
       <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 relative z-10">
         <motion.div
-          initial="hidden"
+          initial={settings.isDark ? "hidden" : false}
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
@@ -126,6 +127,7 @@ export default function Footer() {
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
             </Link>
+            <VerificationQr />
           </motion.div>
 
           {/* Platform */}
@@ -215,7 +217,7 @@ export default function Footer() {
 
         {/* Desktop Bottom Bar */}
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={settings.isDark ? { opacity: 0 } : false}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
@@ -233,9 +235,9 @@ export default function Footer() {
       {/* ════════════════════════════════════════════════════
           MOBILE LAYOUT (Refined, Clean & High-End - Aqar / Bayut inspired)
           ════════════════════════════════════════════════════ */}
-      <div className="md:hidden relative z-10 px-5 pt-7 pb-6 space-y-6">
+      <div className="cinematic-footer-mobile md:hidden relative z-10 px-5 pt-7 pb-6 space-y-6">
         {/* Top: Logo & Social Buttons */}
-        <div className="flex items-center justify-between">
+        <div className="cinematic-footer-brand flex items-center justify-between">
           <Link href="/" className="inline-flex items-center active:opacity-75 transition-opacity">
             <img
               src={settings?.logoWhiteUrl || "/icons/white.png"}
@@ -245,6 +247,8 @@ export default function Footer() {
           </Link>
 
         </div>
+
+        <div className="cinematic-footer-qr"><VerificationQr /></div>
 
         {/* Clean 2-Column Links with Icons */}
         <div className="grid grid-cols-2 gap-5 pt-1">

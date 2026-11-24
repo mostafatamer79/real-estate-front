@@ -25,9 +25,9 @@ export default function ProfileCard() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-800 rounded-xl p-3 backdrop-blur-sm border border-slate-700 transition-colors"
+        className="flex items-center gap-3 bg-muted/80 dark:bg-slate-800/80 hover:bg-muted hover:dark:bg-slate-800 rounded-xl p-3 backdrop-blur-sm border border-border dark:border-slate-700 transition-colors"
       >
-        <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+        <div className="calm-icon w-10 h-10 bg-primary dark:bg-slate-600 rounded-full flex items-center justify-center">
           <User className="w-5 h-5" />
         </div>
         <div className="text-right">
@@ -37,7 +37,7 @@ export default function ProfileCard() {
               : 'مستخدم'
             }
           </div>
-          <div className="text-xs text-white/60">{getRoleText(user.role)}</div>
+          <div className="text-xs text-muted-foreground dark:text-white/60">{getRoleText(user.role)}</div>
         </div>
       </button>
 
@@ -48,11 +48,11 @@ export default function ProfileCard() {
             onClick={() => setIsOpen(false)}
           />
           
-          <div className="absolute top-full right-0 left-auto mt-2 w-72 sm:w-80 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 overflow-hidden">
+          <div className="calm-panel absolute top-full right-0 left-auto mt-2 w-72 sm:w-80 bg-muted dark:bg-slate-800 rounded-xl border border-border dark:border-slate-700 shadow-sm dark:shadow-xl z-50 overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-slate-700">
+            <div className="p-4 border-b border-border dark:border-slate-700">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center">
+                <div className="calm-icon w-12 h-12 bg-primary dark:bg-slate-600 rounded-full flex items-center justify-center">
                   <User className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
@@ -62,7 +62,7 @@ export default function ProfileCard() {
                       : 'مستخدم'
                     }
                   </div>
-                  <div className="text-sm text-white/60 flex items-center gap-2 mt-1">
+                  <div className="text-sm text-muted-foreground dark:text-white/60 flex items-center gap-2 mt-1">
                     <Shield className="w-3 h-3" />
                     {getRoleText(user.role)}
                   </div>
@@ -72,7 +72,7 @@ export default function ProfileCard() {
               {/* Verification Status */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-white/60">حالة الحساب:</span>
+                  <span className="text-sm text-muted-foreground dark:text-white/60">حالة الحساب:</span>
                   <VerificationBadge 
                     status={user.nafathVerifiedAt ? VerifyStatus.VERIFIED : VerifyStatus.PENDING}
                   />
@@ -80,7 +80,7 @@ export default function ProfileCard() {
                 
                 {user.role === Role.AGENT && user.agentVerificationStatus && (
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white/60">حالة الوسيط:</span>
+                    <span className="text-sm text-muted-foreground dark:text-white/60">حالة الوسيط:</span>
                     <VerificationBadge 
                       status={user.agentVerificationStatus as VerifyStatus}
                       type="agent"
@@ -91,24 +91,24 @@ export default function ProfileCard() {
             </div>
 
             {/* Contact Info */}
-            <div className="p-4 border-b border-slate-700 space-y-3">
+            <div className="p-4 border-b border-border dark:border-slate-700 space-y-3">
               {user.email && (
                 <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-white/40" />
+                  <Mail className="w-4 h-4 text-muted-foreground dark:text-white/40" />
                   <span className="text-sm">{user.email}</span>
                 </div>
               )}
               
               {user.phone && (
                 <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-white/40" />
+                  <Phone className="w-4 h-4 text-muted-foreground dark:text-white/40" />
                   <span className="text-sm">{user.phone}</span>
                 </div>
               )}
               
               {user.city && user.country && (
                 <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 text-white/40">📍</div>
+                  <div className="w-4 h-4 text-muted-foreground dark:text-white/40">📍</div>
                   <span className="text-sm">{user.city}, {user.country}</span>
                 </div>
               )}

@@ -214,7 +214,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="calm-overlay sm:w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-sm dark:shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="sr-only">
           <DialogTitle>{campaign ? (isRtl ? 'تعديل الإعلان' : 'Edit campaign') : t('admin.marketing.create')}</DialogTitle>
           <DialogDescription>
@@ -232,7 +232,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">
                 {campaign ? (isRtl ? 'تعديل الإعلان' : 'Edit campaign') : (isRtl ? 'إنشاء إعلان' : t('admin.marketing.create'))}
               </h2>
-              <p className="text-[11px] text-slate-500 font-bold mt-1">
+              <p className="text-[11px] text-muted-foreground dark:text-slate-500 font-bold mt-1">
                 {campaign ? (isRtl ? 'تحديث الإعلان الحالي' : 'Update existing marketing campaign') : (isRtl ? 'إعلان يظهر في صفحة التفاصيل' : 'Ad visible on details page')}
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
         <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <Mail className="w-3 h-3" />
                 {isRtl ? 'عنوان الإعلان' : 'Ad title'}
               </label>
@@ -258,7 +258,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
             {/* Category */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <Type className="w-3 h-3" />
                 {isRtl ? 'الفئة' : t('admin.marketing.table.category')}
               </label>
@@ -278,16 +278,16 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             {/* Source Type */}
             {formData.category !== 'custom' && (
               <div className="space-y-2 md:col-span-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                   <Target className="w-3 h-3" />
                   {isRtl ? 'مصدر بيانات الإعلان' : 'Ad Data Source'}
                 </label>
-                <div className="flex bg-muted p-1 rounded-xl border border">
+                <div className="calm-panel flex bg-muted p-1 rounded-xl border border">
                   <button
                     type="button"
                     onClick={() => setSourceType('new')}
                     className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                      sourceType === 'new' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                      sourceType === 'new' ? 'bg-card text-slate-900 shadow-sm' : 'text-muted-foreground dark:text-slate-400 hover:text-slate-700'
                     }`}
                   >
                     {isRtl ? 'إنشاء بيانات جديدة للإعلان' : 'Create new data'}
@@ -296,7 +296,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     type="button"
                     onClick={() => setSourceType('existing')}
                     className={`flex-1 py-2 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                      sourceType === 'existing' ? 'bg-card text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700'
+                      sourceType === 'existing' ? 'bg-card text-slate-900 shadow-sm' : 'text-muted-foreground dark:text-slate-400 hover:text-slate-700'
                     }`}
                   >
                     {isRtl ? 'ربط بعنصر موجود مسبقاً' : 'Link existing item'}
@@ -308,7 +308,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             {/* Linked Resource Selector */}
             {sourceType === 'existing' && formData.category !== 'custom' && (
               <div className="space-y-2 md:col-span-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                   <Type className="w-3 h-3" />
                   {isRtl ? 'اختر العنصر المرتبط' : 'Choose Linked Item'}
                 </label>
@@ -360,7 +360,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
             {/* Target Role */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <CheckCircle className="w-3 h-3" />
                 {isRtl ? 'الدور المستهدف' : t('admin.marketing.table.role')}
               </label>
@@ -379,7 +379,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
             {/* Assigned To */}
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <CheckCircle className="w-3 h-3" />
                 {isRtl ? 'مسند إلى' : 'Assigned to'}
               </label>
@@ -398,7 +398,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
 
-              <div className="md:col-span-2 bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4 my-2 text-right">
+              <div className="calm-panel md:col-span-2 bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4 my-2 text-right">
                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-600" />
                   {isRtl ? 'تفاصيل ومواصفات العقار للإعلان' : 'Ad Property Specifications'}
@@ -406,19 +406,19 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
-                    <div className="flex bg-card p-1 rounded-xl border border-slate-200/60 gap-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
+                    <div className="calm-panel flex bg-card p-1 rounded-xl border border-slate-200/60 gap-1">
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'residential', propertyType: 'فيلا' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white' : 'text-muted-foreground dark:text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'سكني' : 'Residential'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'commercial', propertyType: 'مكتب' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white' : 'text-muted-foreground dark:text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'تجاري' : 'Commercial'}
                       </button>
@@ -426,7 +426,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع العقار' : 'Type'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'نوع العقار' : 'Type'}</label>
                     <select
                       value={formData.propertyType}
                       onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
@@ -439,7 +439,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع الصفقة' : 'Deal type'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'نوع الصفقة' : 'Deal type'}</label>
                     <select
                       value={formData.dealType}
                       onChange={(e) => setFormData({ ...formData, dealType: e.target.value })}
@@ -455,7 +455,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'من سعر' : 'Price From'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block flex items-center gap-1">{isRtl ? 'من سعر' : 'Price From'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                         <input
                           type="number"
                           value={formData.details?.priceFrom || ''}
@@ -466,7 +466,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'إلى سعر' : 'Price To'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block flex items-center gap-1">{isRtl ? 'إلى سعر' : 'Price To'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                         <input
                           type="number"
                           value={formData.details?.priceTo || ''}
@@ -479,7 +479,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'من مساحة (م²)' : 'Area From (m²)'}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'من مساحة (م²)' : 'Area From (m²)'}</label>
                         <input
                           type="number"
                           value={formData.details?.areaFrom || ''}
@@ -490,7 +490,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'إلى مساحة (م²)' : 'Area To (m²)'}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'إلى مساحة (م²)' : 'Area To (m²)'}</label>
                         <input
                           type="number"
                           value={formData.details?.areaTo || ''}
@@ -504,7 +504,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                       <input
                         type="number"
                         value={formData.price || ''}
@@ -515,7 +515,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
                       <input
                         type="number"
                         value={formData.area || ''}
@@ -529,7 +529,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
                     <input
                       type="text"
                       value={formData.city}
@@ -540,7 +540,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الحي' : 'Neighborhood'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'الحي' : 'Neighborhood'}</label>
                     <input
                       type="text"
                       value={formData.neighborhood}
@@ -553,7 +553,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الغرف' : 'Rooms'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد الغرف' : 'Rooms'}</label>
                     <input
                       type="number"
                       value={formData.details?.rooms || ''}
@@ -564,7 +564,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الحمامات' : 'Bathrooms'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد الحمامات' : 'Bathrooms'}</label>
                     <input
                       type="number"
                       value={formData.details?.bathrooms || ''}
@@ -575,7 +575,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عمر العقار' : 'Property Age'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عمر العقار' : 'Property Age'}</label>
                     <input
                       type="text"
                       value={formData.details?.propertyAge || ''}
@@ -588,45 +588,45 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الصالات' : 'Living Rooms'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد الصالات' : 'Living Rooms'}</label>
                     <input type="number" value={formData.details?.livingRooms || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, livingRooms: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد المطابخ' : 'Kitchens'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد المطابخ' : 'Kitchens'}</label>
                     <input type="number" value={formData.details?.kitchens || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, kitchens: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الأدوار' : 'Floors'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد الأدوار' : 'Floors'}</label>
                     <input type="number" value={formData.details?.floors || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, floors: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عدد الشقق' : 'Apartments'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عدد الشقق' : 'Apartments'}</label>
                     <input type="number" value={formData.details?.apartments || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, apartments: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'مساحة البناء' : 'Building Area'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'مساحة البناء' : 'Building Area'}</label>
                     <input type="number" value={formData.details?.buildingArea || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, buildingArea: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الطول' : 'Length'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'الطول' : 'Length'}</label>
                     <input type="number" value={formData.details?.length || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, length: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'العرض' : 'Width'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'العرض' : 'Width'}</label>
                     <input type="number" value={formData.details?.width || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, width: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'عرض الشارع' : 'Street Width'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'عرض الشارع' : 'Street Width'}</label>
                     <input type="number" value={formData.details?.streetWidth || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, streetWidth: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors" placeholder="0" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الواجهة' : 'Direction'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'الواجهة' : 'Direction'}</label>
                     <select value={formData.details?.direction || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, direction: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="شمالي">شمالي</option>
@@ -636,7 +636,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع الصك' : 'Deed Type'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'نوع الصك' : 'Deed Type'}</label>
                     <select value={formData.details?.deedType || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, deedType: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="إلكتروني">إلكتروني</option>
@@ -645,7 +645,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'حالة العقار' : 'Condition'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'حالة العقار' : 'Condition'}</label>
                     <select value={formData.details?.propertyCondition || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, propertyCondition: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="جديد">جديد</option>
@@ -655,7 +655,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'التأثيث' : 'Furniture'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'التأثيث' : 'Furniture'}</label>
                     <select value={formData.details?.furnitureStatus || ''} onChange={(e) => setFormData({ ...formData, details: { ...formData.details, furnitureStatus: e.target.value } })} className="w-full h-[38px] bg-card border border rounded-xl px-3 text-xs font-bold outline-none focus:border-slate-950 transition-colors">
                       <option value="">{isRtl ? 'الكل' : 'All'}</option>
                       <option value="مؤثث">مؤثث</option>
@@ -688,7 +688,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
                 {formData.category !== 'orders' && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5">
                       <Upload className="w-3.5 h-3.5" />
                       {isRtl ? 'تحميل صور إضافية للإعلان' : 'Upload Additional Ad Images'}
                     </label>
@@ -710,10 +710,10 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                     )}
                     {formData.mediaFiles && formData.mediaFiles.length > 0 && (
                       <div className="space-y-1">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الصور الحالية:' : 'Current Images:'}</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'الصور الحالية:' : 'Current Images:'}</span>
                         <div className="flex flex-wrap gap-2">
                           {formData.mediaFiles.map((url: string, idx: number) => (
-                            <div key={idx} className="relative w-14 h-14 rounded-lg overflow-hidden border border shadow-sm shrink-0 bg-muted">
+                            <div key={idx} className="calm-panel relative w-14 h-14 rounded-lg overflow-hidden border border shadow-sm shrink-0 bg-muted">
                               <img src={url} alt="ad property" className="w-full h-full object-cover" />
                             </div>
                           ))}
@@ -725,17 +725,17 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
               </div>
             {/* Status */}
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'الحالة' : t('admin.marketing.table.status')}
               </label>
-              <div className="flex items-center justify-between gap-3 p-3 bg-muted border border rounded-xl h-[46px]">
+              <div className="calm-panel flex items-center justify-between gap-3 p-3 bg-muted border border rounded-xl h-[46px]">
                 <span className="text-sm font-bold text-slate-700">{formData.isActive ? (isRtl ? 'نشط' : 'Active') : (isRtl ? 'متوقف' : 'Paused')}</span>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    formData.isActive ? 'bg-slate-900' : 'bg-slate-300'
+                    formData.isActive ? 'bg-card dark:bg-slate-900' : 'bg-slate-300'
                   }`}
                 >
                   <span
@@ -748,7 +748,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'ترتيب الظهور' : 'Sort order'}
               </label>
@@ -761,7 +761,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'نوع الجدولة' : 'Schedule type'}
               </label>
@@ -769,14 +769,14 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, scheduleMode: 'manual' })}
-                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'manual' ? 'border-slate-900 bg-muted text-slate-950' : 'border bg-card text-slate-500'}`}
+                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'manual' ? 'border-border dark:border-slate-900 bg-muted text-slate-950' : 'border bg-card text-muted-foreground dark:text-slate-500'}`}
                 >
                   {isRtl ? 'يدوي حتى الإيقاف' : 'Manual until off'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, scheduleMode: 'date_range' })}
-                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'date_range' ? 'border-slate-900 bg-muted text-slate-950' : 'border bg-card text-slate-500'}`}
+                  className={`rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-widest ${formData.scheduleMode === 'date_range' ? 'border-border dark:border-slate-900 bg-muted text-slate-950' : 'border bg-card text-muted-foreground dark:text-slate-500'}`}
                 >
                   {isRtl ? 'من تاريخ إلى تاريخ' : 'From date to date'}
                 </button>
@@ -784,7 +784,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'تكرار إرسال البريد الإلكتروني' : 'Email Send Frequency'}
               </label>
@@ -803,7 +803,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             {formData.scheduleMode === 'date_range' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                     <AlertCircle className="w-3 h-3" />
                     {isRtl ? 'تاريخ البداية' : 'Start date'}
                   </label>
@@ -815,7 +815,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                     <AlertCircle className="w-3 h-3" />
                     {isRtl ? 'تاريخ النهاية' : 'End date'}
                   </label>
@@ -832,7 +832,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
           {/* Content */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
               <Mail className="w-3 h-3" />
               {isRtl ? 'المحتوى' : `${t('admin.marketing.table.content')} (HTML Allowed)`}
             </label>
@@ -850,17 +850,17 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-muted transition-all"
+              className="px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest text-muted-foreground dark:text-slate-500 hover:bg-muted transition-all"
             >
               {isRtl ? 'إلغاء' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-slate-950 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-border dark:border-white/30 border-t-border dark:border-t-white rounded-full animate-spin" />
               ) : (
                 <Send className="w-5 h-5" />
               )}

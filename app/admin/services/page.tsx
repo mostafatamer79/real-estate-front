@@ -1,5 +1,7 @@
 "use client";
 
+import { loadServiceRequestPages } from "@/lib/service-request-pages";
+import ProviderRequestPanel from "@/components/providers/ProviderRequestPanel";
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -43,6 +45,8 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
+  getServiceDisplayName,
+  LEGAL_SERVICE_OPTIONS,
   CustomServiceCategory,
   CustomServiceItem,
   getServiceNamesForCategory,
@@ -62,6 +66,7 @@ export default function AdminServicesManagementPage() {
   const { settings, saveSettings, isLoading, refetch } = useSettings();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [editingService, setEditingService] = useState<{ name: string; displayName: string; description: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [savePopupOpen, setSavePopupOpen] = useState(false);
@@ -73,7 +78,7 @@ export default function AdminServicesManagementPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestPage, setRequestPage] = useState(1);
-  const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability" | "forms">("requests");
+  const [activePanel, setActivePanel] = useState<"requests" | "pricing" | "availability" | "forms">(["requests","pricing","availability","forms"].includes(searchParams.get("panel") || "") ? searchParams.get("panel") as "requests"|"pricing"|"availability"|"forms" : "pricing");
   const [requestDrafts, setRequestDrafts] = useState<Record<string, { status: string; price: string; targetDepartment: string; description: string; assignedAgentId: string }>>({});
   const [invoiceDrafts, setInvoiceDrafts] = useState<Record<string, string>>({});
   const [agents, setAgents] = useState<any[]>([]);
@@ -158,11 +163,7 @@ export default function AdminServicesManagementPage() {
     ...Object.fromEntries(
       [...Object.keys(SERVICE_CATALOG), ...localCustomCategories.map((category) => category.id)].map((id) => [id, getServiceNamesForCategory(id, localCustomServices)])
     ),
-    legal: ["المنازعات العقارية", "العقود", "التوثيق", "أخرى"],
-    legal_disputes: ["نزاعات الملكية", "عقود البيع والإيجار", "قضايا الرهن العقاري", "مخالفات البناء", "نزع الملكية للمصلحة العامة", "مشاكل في مشاريع التطوير", "قضايا التركات العقارية", "أخرى"],
-    legal_contracts: ["عقد بيع", "عقد إيجار", "عقد الانتفاع العقاري", "عقد الهبة العقاري", "عقد الرهن العقاري", "عقد الاستثمار العقاري", "مراجعة العقود", "أخرى"],
-    legal_documentation: ["توثيق", "توثيق صك الملكية", "توثيق مستندات البيع", "توثيق بيانات الأطراف", "أخرى"],
-    legal_other: ["استشارة قانونية", "تقرير قانوني", "خدمة قانونية مخصصة", "أخرى"],
+    ...Object.fromEntries(Object.keys(LEGAL_SERVICE_OPTIONS).map(id => [id, getServiceNamesForCategory(id, localCustomServices)])),
   };
 
   const activeCategoryConfig = pricingCategories.find((category) => category.id === activeServiceCategory) || serviceCategories[0];
@@ -182,13 +183,16 @@ export default function AdminServicesManagementPage() {
   const deleteCustomService = async (service: string) => {
     const ok = await confirmDialog({
       title: "حذف الخدمة؟",
-      description: "سيتم حذف الخدمة المضافة من القائمة ولن تظهر للعملاء بعد الحفظ.",
+      description: "ستُحذف الخدمة من القوائم الجديدة بعد الحفظ، مع الاحتفاظ بالطلبات والفواتير السابقة.",
       confirmLabel: "حذف الخدمة",
       cancelLabel: "إلغاء",
       destructive: true,
     });
     if (!ok) return;
-    setLocalCustomServices((current) => current.filter((item) => !(item.category === activeServiceCategory && item.name === service)));
+    setLocalCustomServices((current) => [...current.filter(item => !(item.category === activeServiceCategory && item.name === service)), {
+      id: current.find(item => item.category === activeServiceCategory && item.name === service)?.id || `base_${activeServiceCategory}_${service}`,
+      category: activeServiceCategory, name: service, status: 'disabled', deleted: true,
+    }]);
     setLocalServicePrices((current) => {
       const next = { ...current };
       delete next[makeServicePriceKey(activeServiceCategory, service)];
@@ -311,9 +315,8 @@ export default function AdminServicesManagementPage() {
   const loadRequests = async () => {
     setLoadingRequests(true);
     try {
-      const response = await api.get("/service-requests", { params: { page: 1, limit: 200 } });
-      const data = response.data;
-      setRequests(Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : []);
+      const items = await loadServiceRequestPages<any>(params => api.get('/service-requests', {params:{...params,category:activeServiceCategory.startsWith('legal')?'legal':activeServiceCategory}}));
+      setRequests(items);
     } catch {
       toast.error("تعذر تحميل طلبات الخدمات");
       setRequests([]);
@@ -335,8 +338,9 @@ export default function AdminServicesManagementPage() {
 
   useEffect(() => {
     loadRequests();
-    loadAgents();
-  }, []);
+  }, [activeServiceCategory]);
+
+  useEffect(() => { loadAgents(); }, []);
 
 
 
@@ -513,7 +517,7 @@ export default function AdminServicesManagementPage() {
   if (isLoading || !settings) return (
     <div className="min-h-[400px] flex flex-col items-center justify-center gap-4">
       <Loader2 className="w-10 h-10 animate-spin text-slate-900" />
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">جاري تحميل إعدادات النظام...</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">جاري تحميل إعدادات النظام...</p>
     </div>
   );
 
@@ -521,14 +525,14 @@ export default function AdminServicesManagementPage() {
     <div className="space-y-10 p-6 lg:p-4 sm:p-8 pb-20">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card dark:bg-slate-900 text-foreground dark:text-white text-[9px] font-black uppercase tracking-widest">
             <Settings2 className="w-3 h-3" />
             تكوين الخدمات
           </div>
           <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {t('admin.services_mgmt.title') === 'admin.services_mgmt.title' ? "إدارة الخدمات والتسعير" : t('admin.services_mgmt.title')}
           </h1>
-          <p className="text-slate-500 font-medium text-sm">
+          <p className="text-muted-foreground dark:text-slate-500 font-medium text-sm">
             التحكم في ظهور الخدمات للعملاء، ضبط الأسعار، وتعديل حالات التوفر
           </p>
         </div>
@@ -536,7 +540,7 @@ export default function AdminServicesManagementPage() {
         <button 
           onClick={() => setConfirmSaveOpen(true)}
           disabled={saving}
-          className="bg-slate-950 text-white px-8 py-4 rounded-[1rem] text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-2xl shadow-stone-400/20 disabled:opacity-50"
+          className="bg-background dark:bg-slate-950 text-foreground dark:text-white px-8 py-4 rounded-[1rem] text-[11px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all flex items-center gap-3 shadow-sm dark:shadow-2xl shadow-primary/5 dark:shadow-stone-400/20 disabled:opacity-50"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           حفظ جميع التغييرات
@@ -554,8 +558,8 @@ export default function AdminServicesManagementPage() {
               onClick={() => router.push(`/admin/services?type=${tab.type}`)}
               className={`flex items-center gap-2 whitespace-nowrap rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
                 isActive
-                  ? "border-slate-950 bg-slate-950 text-white"
-                  : "border-transparent bg-muted text-slate-500 hover:bg-slate-200"
+                  ? "border-slate-950 bg-background dark:bg-slate-950 text-foreground dark:text-white"
+                  : "border-transparent bg-muted text-muted-foreground dark:text-slate-500 hover:bg-slate-200"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -581,19 +585,19 @@ export default function AdminServicesManagementPage() {
               type="button"
               onClick={() => setActivePanel(panel.id as "requests" | "pricing" | "availability" | "forms")}
               className={`rounded-2xl border p-5 text-right transition-all ${
-                active ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-stone-400/10" : "border bg-card text-slate-600 hover:border-slate-300"
+                active ? "border-slate-950 bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-lg shadow-primary/5 dark:shadow-stone-400/10" : "border bg-card text-slate-600 hover:border-slate-300"
               }`}
             >
               <div className="flex items-start justify-between gap-4">
-                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-card/10 text-white" : "bg-muted text-slate-400"}`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-muted dark:bg-card/10 text-foreground dark:text-white" : "bg-muted text-muted-foreground dark:text-slate-400"}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-black ${active ? "bg-card text-slate-950" : "bg-muted text-slate-500"}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-black ${active ? "bg-card text-slate-950" : "bg-muted text-muted-foreground dark:text-slate-500"}`}>
                   {panel.count}
                 </span>
               </div>
               <p className="mt-4 text-sm font-black">{panel.label}</p>
-              <p className={`mt-1 text-[11px] font-bold leading-5 ${active ? "text-white/60" : "text-slate-400"}`}>{panel.desc}</p>
+              <p className={`mt-1 text-[11px] font-bold leading-5 ${active ? "text-muted-foreground dark:text-white/60" : "text-muted-foreground dark:text-slate-400"}`}>{panel.desc}</p>
             </button>
           );
         })}
@@ -603,14 +607,14 @@ export default function AdminServicesManagementPage() {
         <div className={`lg:col-span-2 space-y-8 ${activePanel !== "availability" ? "hidden" : ""}`}>
           <div className="flex flex-col gap-3 border-b border pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <LayoutGrid className="w-5 h-5 text-slate-400" />
+              <LayoutGrid className="w-5 h-5 text-muted-foreground dark:text-slate-400" />
               <h2 className="text-lg font-black text-slate-900">أقسام الخدمات وتوفرها</h2>
             </div>
             {!isLegalServicesPage && (
               <button
                 type="button"
                 onClick={() => setShowCreateCategoryModal(true)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black transition-all"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-black hover:text-white transition-all"
               >
                 <Plus className="h-4 w-4" />
                 إضافة تصنيف
@@ -623,27 +627,27 @@ export default function AdminServicesManagementPage() {
               const customCategory = isCustomCategory(cat.id);
               const status = localCustomCategories.find((category) => category.id === cat.id)?.status || localModuleFlags[`services_${cat.id}`] || 'enabled';
               return (
-                <div key={cat.id} className="p-3 sm:p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-slate-900/10 transition-all flex items-center justify-between group">
+                <div key={cat.id} className="calm-panel p-3 sm:p-6 bg-card border border rounded-[1.25rem] shadow-sm hover:border-border hover:dark:border-slate-900/10 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-muted text-slate-600 flex items-center justify-center border border">
+                    <div className="calm-icon w-14 h-14 rounded-2xl bg-muted text-slate-600 flex items-center justify-center border border">
                       <cat.icon className="w-7 h-7" />
                     </div>
                     <div>
                       <h3 className="font-black text-slate-900">{cat.label}</h3>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ID: services_{cat.id}</p>
+                      <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">ID: services_{cat.id}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setCategoryStatus(cat.id, 'enabled')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-slate-950 text-white border-slate-950' : 'bg-muted text-slate-400 border hover:border'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'enabled' ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950' : 'bg-muted text-muted-foreground dark:text-slate-400 border hover:border'}`}
                     >
                       نشط
                     </button>
                     <button
                       onClick={() => setCategoryStatus(cat.id, 'soon')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-muted text-slate-400 border hover:border'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'soon' ? 'ring-2 ring-slate-900/5' : 'bg-muted text-muted-foreground dark:text-slate-400 border hover:border'}`}
                       style={
                         status === 'soon'
                           ? {
@@ -658,7 +662,7 @@ export default function AdminServicesManagementPage() {
                     </button>
                     <button
                       onClick={() => setCategoryStatus(cat.id, 'disabled')}
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-muted text-slate-400 border hover:border'}`}
+                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${status === 'disabled' ? 'bg-red-500 text-white border-red-500' : 'bg-muted text-muted-foreground dark:text-slate-400 border hover:border'}`}
                     >
                       معطل
                     </button>
@@ -683,26 +687,26 @@ export default function AdminServicesManagementPage() {
         </div>
 
         <div className={`lg:col-span-3 space-y-6 ${activePanel !== "pricing" ? "hidden" : ""}`}>
-          <div className="rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm">
+          <div className="calm-panel rounded-[1.25rem] border border bg-card p-3 sm:p-6 shadow-sm">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+                <div className="calm-icon flex h-12 w-12 items-center justify-center rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white">
                   <SaudiRiyalIcon className="h-6 w-6" />
                 </div>
                 <div>
                   <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">تسعير {activeCategoryConfig.label}</h2>
-                  <p className="mt-1 text-sm font-bold text-slate-500">حدد سعر كل خدمة كما سيظهر في الطلبات الجديدة والفواتير.</p>
+                  <p className="mt-1 text-sm font-bold text-muted-foreground dark:text-slate-500">حدد سعر كل خدمة كما سيظهر في الطلبات الجديدة والفواتير.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
+                <div className="calm-panel rounded-2xl border border bg-muted px-4 py-3 text-center">
                   <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{visibleActiveCategoryServices.length}</p>
-                  <p className="text-[10px] font-black text-slate-400">خدمة</p>
+                  <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400">خدمة</p>
                 </div>
-                <div className="rounded-2xl border border bg-muted px-4 py-3 text-center">
+                <div className="calm-panel rounded-2xl border border bg-muted px-4 py-3 text-center">
                   <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{pricedServicesCount}</p>
-                  <p className="text-[10px] font-black text-slate-400">مسعرة</p>
+                  <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400">مسعرة</p>
                 </div>
                 <div className="col-span-2 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-right sm:col-span-1">
                   <div className="flex items-start gap-2 text-amber-700">
@@ -715,7 +719,7 @@ export default function AdminServicesManagementPage() {
 
             <div className="mt-6 flex flex-col gap-3 border-t border pt-5 md:flex-row md:items-center md:justify-between">
               <div className="relative w-full md:w-[95vw] sm:max-w-md">
-                <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
                 <input
                   value={priceSearchTerm}
                   onChange={(event) => setPriceSearchTerm(event.target.value)}
@@ -733,7 +737,7 @@ export default function AdminServicesManagementPage() {
               <button
                 onClick={() => setConfirmSaveOpen(true)}
                 disabled={saving}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-white transition-all hover:bg-black disabled:opacity-50"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-foreground dark:text-white transition-all hover:bg-black hover:text-white disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 حفظ الأسعار
@@ -749,16 +753,16 @@ export default function AdminServicesManagementPage() {
               const status = getServiceItemStatus(activeServiceCategory, service);
               const custom = isCustomService(activeServiceCategory, service);
               return (
-                <div key={key} className="rounded-[1.25rem] border border bg-card p-5 shadow-sm transition-all hover:border-slate-300">
+                <div key={key} className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm transition-all hover:border-slate-300">
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <span className="mb-2 inline-flex rounded-full bg-muted px-2.5 py-1 text-[10px] font-black text-slate-400">
+                      <span className="mb-2 inline-flex rounded-full bg-muted px-2.5 py-1 text-[10px] font-black text-muted-foreground dark:text-slate-400">
                         خدمة {String(index + 1).padStart(2, "0")}
                       </span>
-                      <h3 className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{service}</h3>
+                      <h3 className="line-clamp-2 text-sm font-black leading-6 text-slate-950">{getServiceDisplayName(activeServiceCategory, service, localCustomServices)}</h3>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-2">
-                      <span className={`rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-muted text-slate-400"}`}>
+                      <span className={`rounded-full px-3 py-1 text-[10px] font-black ${hasPrice ? "bg-emerald-50 text-emerald-700" : "bg-muted text-muted-foreground dark:text-slate-400"}`}>
                         {hasPrice ? "مسعر" : "بدون سعر"}
                       </span>
                       <span className={`rounded-full px-3 py-1 text-[10px] font-black ${
@@ -773,17 +777,17 @@ export default function AdminServicesManagementPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border bg-muted p-2">
+                  <div className="calm-panel rounded-2xl border border bg-muted p-2">
                     <div className="flex items-center gap-2 rounded-xl bg-card px-3 py-2">
                       <input
                         type="number"
                         min="0"
                         value={value}
                         onChange={(event) => handlePriceChange(key, event.target.value)}
-                        className="h-10 min-w-0 flex-1 bg-transparent text-lg font-black tabular-nums text-slate-950 outline-none placeholder:text-slate-300"
+                        className="h-10 min-w-0 flex-1 bg-transparent text-lg font-black tabular-nums text-slate-950 outline-none placeholder:text-muted-foreground placeholder:dark:text-slate-300"
                         placeholder="0.00"
                       />
-                      <span className="rounded-lg bg-slate-950 px-3 py-2 text-[10px] font-black text-white"><SaudiRiyalSymbol iconClassName="h-4 w-4 text-white" /></span>
+                      <span className="rounded-lg bg-background dark:bg-slate-950 px-3 py-2 text-[10px] font-black text-foreground dark:text-white"><SaudiRiyalSymbol iconClassName="h-4 w-4 text-foreground dark:text-white" /></span>
                     </div>
                   </div>
 
@@ -791,34 +795,35 @@ export default function AdminServicesManagementPage() {
                     <button
                       type="button"
                       onClick={() => setServiceItemStatus(activeServiceCategory, service, "enabled")}
-                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "enabled" ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "enabled" ? "border-slate-950 bg-background dark:bg-slate-950 text-foreground dark:text-white" : "border bg-muted text-muted-foreground dark:text-slate-400 hover:border-slate-300"}`}
                     >
                       نشط
                     </button>
                     <button
                       type="button"
                       onClick={() => setServiceItemStatus(activeServiceCategory, service, "soon")}
-                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "soon" ? "border-amber-200 bg-amber-50 text-amber-700" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "soon" ? "border-amber-200 bg-amber-50 text-amber-700" : "border bg-muted text-muted-foreground dark:text-slate-400 hover:border-slate-300"}`}
                     >
                       قريباً
                     </button>
                     <button
                       type="button"
                       onClick={() => setServiceItemStatus(activeServiceCategory, service, "disabled")}
-                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "disabled" ? "border-red-100 bg-red-50 text-red-600" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                      className={`h-9 rounded-xl border px-2 text-[9px] font-black uppercase tracking-widest transition-all ${status === "disabled" ? "border-red-100 bg-red-50 text-red-600" : "border bg-muted text-muted-foreground dark:text-slate-400 hover:border-slate-300"}`}
                     >
                       إخفاء
                     </button>
                   </div>
 
-                  {custom && (
+                  <button type="button" onClick={() => setEditingService({ name: service, displayName: getServiceDisplayName(activeServiceCategory, service, localCustomServices), description: localCustomServices.find(item => item.category === activeServiceCategory && item.name === service)?.description || '' })} className="mt-3 h-10 w-full rounded-xl border border-border px-3 text-sm">إعادة تسمية الخدمة وتعديل التفاصيل</button>
+                  {(
                     <button
                       type="button"
                       onClick={() => deleteCustomService(service)}
                       className="mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-3 text-[9px] font-black uppercase tracking-widest text-red-600 transition-all hover:bg-red-100"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      حذف الخدمة المضافة
+                      حذف الخدمة
                     </button>
                   )}
                 </div>
@@ -827,8 +832,8 @@ export default function AdminServicesManagementPage() {
           </div>
 
           {filteredPricingServices.length === 0 && (
-            <div className="rounded-[1.25rem] border border-dashed border bg-card p-12 text-center">
-              <p className="text-sm font-black text-slate-400">لا توجد خدمة مطابقة للبحث</p>
+            <div className="calm-panel rounded-[1.25rem] border border-dashed border bg-card p-12 text-center">
+              <p className="text-sm font-black text-muted-foreground dark:text-slate-400">لا توجد خدمة مطابقة للبحث</p>
             </div>
           )}
         </div>
@@ -837,17 +842,17 @@ export default function AdminServicesManagementPage() {
       <section className={`space-y-6 border-t border pt-10 ${activePanel !== "requests" ? "hidden" : ""}`}>
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white">
+            <div className="inline-flex items-center gap-2 rounded-full bg-card dark:bg-slate-900 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white">
               <Wrench className="h-3 w-3" />
               إدارة طلبات الخدمات
             </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">طلبات {activeCategoryConfig.label}</h2>
-            <p className="text-sm font-medium text-slate-500">كل طلبات هذا القسم في مكان واحد: تعديل الحالة، تسعير الطلب، إرسال الفاتورة، والرد على العميل.</p>
+            <p className="text-sm font-medium text-muted-foreground dark:text-slate-500">كل طلبات هذا القسم في مكان واحد: تعديل الحالة، تسعير الطلب، إرسال الفاتورة، والرد على العميل.</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black transition-all"
+              className="inline-flex h-11 items-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-5 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-black hover:text-white transition-all"
             >
               <Plus className="h-4 w-4" />
               إضافة طلب خدمة
@@ -865,7 +870,7 @@ export default function AdminServicesManagementPage() {
 
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-end">
           <div className="relative w-full xl:w-96">
-            <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-slate-400" />
             <input
               type="text"
               value={searchTerm}
@@ -876,11 +881,11 @@ export default function AdminServicesManagementPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
+        <div className="calm-panel overflow-hidden rounded-[1.25rem] border border bg-card shadow-sm">
           {loadingRequests ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-slate-900" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">جاري تحميل الطلبات</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">جاري تحميل الطلبات</p>
             </div>
           ) : visibleServiceRequests.length ? (
             <>
@@ -888,15 +893,15 @@ export default function AdminServicesManagementPage() {
               <table className="w-full min-w-[1100px] text-right">
                 <thead>
                   <tr className="border-b border bg-muted/70">
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">العميل</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الخدمة</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الحالة</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الإدارة</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">مزود الخدمة</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">السعر</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">ملاحظات</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الفاتورة</th>
-                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">إجراءات</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">العميل</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">الخدمة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">الحالة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">الإدارة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">مزود الخدمة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">السعر</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">ملاحظات</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">الفاتورة</th>
+                    <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -907,12 +912,12 @@ export default function AdminServicesManagementPage() {
                       <tr className="align-top hover:bg-muted/50">
                         <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
-                          <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
-                          <p className="mt-1 text-[10px] font-black text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
+                          <p className="mt-1 text-[11px] font-bold text-muted-foreground dark:text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
+                          <p className="mt-1 text-[10px] font-black text-muted-foreground dark:text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
                         </td>
                         <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <p className="text-sm font-black text-slate-900">{request.serviceType || "—"}</p>
-                          <p className="mt-1 text-[11px] font-bold text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
+                          <p className="mt-1 text-[11px] font-bold text-muted-foreground dark:text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
                         </td>
                         <td className="px-3 py-3 sm:px-6 sm:py-4">
                           <select
@@ -982,7 +987,7 @@ export default function AdminServicesManagementPage() {
                             <button
                               disabled={saving}
                               onClick={() => sendInvoice(request)}
-                              className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                              className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50"
                             >
                               <SaudiRiyalIcon className="h-3.5 w-3.5" />
                               إرسال
@@ -994,7 +999,7 @@ export default function AdminServicesManagementPage() {
                             <button
                               disabled={saving}
                               onClick={() => saveRequest(request)}
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50"
                             >
                               <Save className="h-3.5 w-3.5" />
                               حفظ
@@ -1026,8 +1031,9 @@ export default function AdminServicesManagementPage() {
                       </tr>
                       {expandedRequestId === request.id && (
                         <tr className="bg-muted/30">
+                          <ProviderRequestPanel requestId={request.id} admin />
                           <td colSpan={9} className="px-3 py-3 sm:px-6 sm:py-4">
-                            <div className="rounded-2xl border border bg-card p-4" dir="rtl">
+                            <div className="calm-panel rounded-2xl border border bg-card p-4" dir="rtl">
                               <DynamicAnswersView request={request} />
                             </div>
                           </td>
@@ -1043,19 +1049,19 @@ export default function AdminServicesManagementPage() {
               {visibleServiceRequests.map((request) => {
                 const draft = getRequestDraft(request);
                 return (
-                  <div key={request.id} className="rounded-2xl border border bg-card p-4 shadow-sm space-y-3">
+                  <div key={request.id} className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm space-y-3">
                     <div>
                       <p className="text-sm font-black text-slate-900">{request.clientName || request.user?.firstName || "—"}</p>
-                      <p className="mt-1 text-[11px] font-bold text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
-                      <p className="mt-1 text-[10px] font-black text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
+                      <p className="mt-1 text-[11px] font-bold text-muted-foreground dark:text-slate-400">{request.phone || request.user?.phone || request.user?.email || "—"}</p>
+                      <p className="mt-1 text-[10px] font-black text-muted-foreground dark:text-slate-300">{request.city || "—"} · {request.district || "—"}</p>
                     </div>
                     <div>
                       <p className="text-sm font-black text-slate-900">{request.serviceType || "—"}</p>
-                      <p className="mt-1 text-[11px] font-bold text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
+                      <p className="mt-1 text-[11px] font-bold text-muted-foreground dark:text-slate-400">{new Date(request.createdAt).toLocaleDateString("ar-SA")}</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الحالة</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الحالة</label>
                         <select
                           value={draft.status}
                           onChange={(event) => updateRequestDraft(request, "status", event.target.value)}
@@ -1069,7 +1075,7 @@ export default function AdminServicesManagementPage() {
                         </select>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الإدارة</label>
                         <select
                           value={draft.targetDepartment}
                           onChange={(event) => updateRequestDraft(request, "targetDepartment", event.target.value)}
@@ -1083,7 +1089,7 @@ export default function AdminServicesManagementPage() {
                         </select>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">مزود الخدمة</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">مزود الخدمة</label>
                         <select
                           value={draft.assignedAgentId}
                           onChange={(event) => updateRequestDraft(request, "assignedAgentId", event.target.value)}
@@ -1098,7 +1104,7 @@ export default function AdminServicesManagementPage() {
                         </select>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">السعر</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">السعر</label>
                         <input
                           type="number"
                           min="0"
@@ -1108,7 +1114,7 @@ export default function AdminServicesManagementPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الفاتورة</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الفاتورة</label>
                         <input
                           type="number"
                           min="0"
@@ -1119,7 +1125,7 @@ export default function AdminServicesManagementPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ملاحظات</label>
+                      <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">ملاحظات</label>
                       <textarea
                         value={draft.description}
                         onChange={(event) => updateRequestDraft(request, "description", event.target.value)}
@@ -1130,7 +1136,7 @@ export default function AdminServicesManagementPage() {
                       <button
                         disabled={saving}
                         onClick={() => sendInvoice(request)}
-                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50"
                       >
                         <SaudiRiyalIcon className="h-3.5 w-3.5" />
                         إرسال فاتورة
@@ -1138,7 +1144,7 @@ export default function AdminServicesManagementPage() {
                       <button
                         disabled={saving}
                         onClick={() => saveRequest(request)}
-                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-3 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-50"
                       >
                         <Save className="h-3.5 w-3.5" />
                         حفظ
@@ -1167,7 +1173,8 @@ export default function AdminServicesManagementPage() {
                       </button>
                     </div>
                     {expandedRequestId === request.id && (
-                      <div className="rounded-2xl border border bg-muted/50 p-4" dir="rtl">
+                      <div className="calm-panel rounded-2xl border border bg-muted/50 p-4" dir="rtl">
+                      <ProviderRequestPanel requestId={request.id} admin />
                         <DynamicAnswersView request={request} />
                       </div>
                     )}
@@ -1177,7 +1184,7 @@ export default function AdminServicesManagementPage() {
             </div>
             </>
           ) : (
-            <div className="flex min-h-72 flex-col items-center justify-center gap-3 text-slate-300">
+            <div className="flex min-h-72 flex-col items-center justify-center gap-3 text-muted-foreground dark:text-slate-300">
               <MoreHorizontal className="h-10 w-10" />
               <p className="text-xs font-black uppercase tracking-widest">لا توجد طلبات في هذا القسم</p>
             </div>
@@ -1185,7 +1192,7 @@ export default function AdminServicesManagementPage() {
         </div>
 
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
             {filteredServiceRequests.length} طلب · صفحة {requestPage} من {requestTotalPages}
           </p>
           <div className="flex gap-2">
@@ -1199,7 +1206,7 @@ export default function AdminServicesManagementPage() {
             <button
               disabled={requestPage >= requestTotalPages}
               onClick={() => setRequestPage((page) => Math.min(requestTotalPages, page + 1))}
-              className="h-10 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-40"
+              className="h-10 rounded-xl bg-background dark:bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-40"
             >
               التالي
             </button>
@@ -1242,19 +1249,35 @@ export default function AdminServicesManagementPage() {
         />
       )}
 
+      <Dialog open={!!editingService} onOpenChange={open => { if (!open) setEditingService(null); }}>
+        <DialogContent dir="rtl">
+          <DialogHeader><DialogTitle>تعديل الخدمة</DialogTitle><DialogDescription>يتغير الاسم المعروض وتبقى الطلبات والأسعار السابقة مرتبطة بالخدمة. اضغط تطبيق التعديل ثم حفظ التغييرات لاعتماد الاسم الجديد.</DialogDescription></DialogHeader>
+          <label className="space-y-2">اسم الخدمة<input className="w-full rounded-lg border p-3" value={editingService?.displayName || ''} onChange={e => setEditingService(current => current && ({ ...current, displayName: e.target.value }))} /></label>
+          <label className="space-y-2">التفاصيل<textarea className="w-full rounded-lg border p-3" value={editingService?.description || ''} onChange={e => setEditingService(current => current && ({ ...current, description: e.target.value }))} /></label>
+          <DialogFooter><Button onClick={() => {
+            if (!editingService?.displayName.trim()) { toast.error('أدخل اسم الخدمة'); return; }
+            const { name, displayName, description } = editingService;
+            setLocalCustomServices(current => {
+              const existing = current.find(item => item.category === activeServiceCategory && item.name === name);
+              return [...current.filter(item => !(item.category === activeServiceCategory && item.name === name)), { ...(existing || { id: `base_${activeServiceCategory}_${name}`, category: activeServiceCategory, name, status: 'enabled' as const }), displayName: displayName.trim(), description: description.trim() }];
+            });
+            setEditingService(null);
+          }}>تطبيق التعديل</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
-        <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="calm-overlay w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-sm dark:shadow-2xl" dir="rtl">
           <div className="p-7">
             <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
               <AlertTriangle className="h-7 w-7" />
             </div>
             <DialogHeader className="space-y-2 text-right">
               <DialogTitle className="text-xl font-black text-slate-950">تأكيد حفظ التغييرات</DialogTitle>
-              <DialogDescription className="text-sm font-bold leading-6 text-slate-500">
+              <DialogDescription className="text-sm font-bold leading-6 text-muted-foreground dark:text-slate-500">
                 سيتم حفظ أسعار وإعدادات الخدمات الحالية. الأسعار الجديدة ستؤثر على الطلبات الجديدة في المنصة.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-6 rounded-2xl border border bg-muted p-4">
+            <div className="calm-panel mt-6 rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
                 <span>{pricedServicesCount} خدمة مسعرة</span>
@@ -1276,7 +1299,7 @@ export default function AdminServicesManagementPage() {
                   setConfirmSaveOpen(false);
                   await handleSave();
                 }}
-                className="h-12 rounded-2xl bg-slate-950 text-xs font-black text-white hover:bg-black disabled:opacity-50"
+                className="h-12 rounded-2xl bg-background dark:bg-slate-950 text-xs font-black text-foreground dark:text-white hover:bg-black hover:text-white disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "تأكيد الحفظ"}
               </Button>
@@ -1286,18 +1309,18 @@ export default function AdminServicesManagementPage() {
       </Dialog>
 
       <Dialog open={savePopupOpen} onOpenChange={setSavePopupOpen}>
-        <DialogContent className="w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-2xl" dir="rtl">
+        <DialogContent className="calm-overlay w-[95vw] sm:max-w-md rounded-[1.25rem] border border bg-card p-0 shadow-sm dark:shadow-2xl" dir="rtl">
           <div className="p-7 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
               <CheckCircle className="h-8 w-8" />
             </div>
             <DialogHeader className="space-y-2 text-center">
               <DialogTitle className="text-xl font-black text-slate-950">تم حفظ التغييرات</DialogTitle>
-              <DialogDescription className="text-sm font-bold leading-6 text-slate-500">
+              <DialogDescription className="text-sm font-bold leading-6 text-muted-foreground dark:text-slate-500">
                 تم تحديث إعدادات الخدمات والأسعار بنجاح. ستظهر الأسعار الجديدة على الطلبات الجديدة في المنصة.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-6 rounded-2xl border border bg-muted p-4">
+            <div className="calm-panel mt-6 rounded-2xl border border bg-muted p-4">
               <div className="flex items-center justify-between text-sm font-black text-slate-700">
                 <span>{activeCategoryConfig.label}</span>
                 <span>{pricedServicesCount} خدمة مسعرة</span>
@@ -1307,7 +1330,7 @@ export default function AdminServicesManagementPage() {
               <Button
                 type="button"
                 onClick={() => setSavePopupOpen(false)}
-                className="h-12 w-full rounded-2xl bg-slate-950 text-xs font-black text-white hover:bg-black"
+                className="h-12 w-full rounded-2xl bg-background dark:bg-slate-950 text-xs font-black text-foreground dark:text-white hover:bg-black hover:text-white"
               >
                 تم
               </Button>
@@ -1335,27 +1358,27 @@ function CreateServiceCategoryModal({ onClose, onCreate }: CreateServiceCategory
     index: "",
   });
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="calm-panel bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
         dir="rtl"
       >
-        <button type="button" onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors">
+        <button type="button" onClick={onClose} className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors">
           <X className="w-5 h-5" />
         </button>
 
         <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+          <div className="calm-icon flex h-12 w-12 items-center justify-center rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white">
             <LayoutGrid className="h-6 w-6" />
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">إضافة تصنيف جديد</h2>
-            <p className="text-xs text-slate-400 font-bold">سيظهر التصنيف كبطاقة جديدة في صفحة الخدمات حسب حالة الظهور.</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">سيظهر التصنيف كبطاقة جديدة في صفحة الخدمات حسب حالة الظهور.</p>
           </div>
         </div>
 
@@ -1422,7 +1445,7 @@ function CreateServiceCategoryModal({ onClose, onCreate }: CreateServiceCategory
                   key={status}
                   type="button"
                   onClick={() => setForm((current) => ({ ...current, status: status as ServiceItemStatus }))}
-                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-background dark:bg-slate-950 text-foreground dark:text-white" : "border bg-muted text-muted-foreground dark:text-slate-400 hover:border-slate-300"}`}
                 >
                   {label}
                 </button>
@@ -1431,7 +1454,7 @@ function CreateServiceCategoryModal({ onClose, onCreate }: CreateServiceCategory
           </div>
 
           <div className="flex gap-3 border-t border pt-5">
-            <button type="submit" className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-black">
+            <button type="submit" className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-foreground dark:text-white transition-all hover:bg-black hover:text-white">
               <Check className="h-4 w-4" />
               إضافة التصنيف
             </button>
@@ -1461,31 +1484,31 @@ function CreateServiceItemModal({ categories, defaultCategory, onClose, onCreate
     status: "enabled",
   });
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="calm-panel bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
         dir="rtl"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"
+          className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+          <div className="calm-icon flex h-12 w-12 items-center justify-center rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white">
             <Plus className="h-6 w-6" />
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">إضافة خدمة جديدة</h2>
-            <p className="text-xs text-slate-400 font-bold">ستضاف الخدمة إلى التصنيف المختار وتظهر في نموذج العميل حسب الحالة.</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">ستضاف الخدمة إلى التصنيف المختار وتظهر في نموذج العميل حسب الحالة.</p>
           </div>
         </div>
 
@@ -1544,7 +1567,7 @@ function CreateServiceItemModal({ categories, defaultCategory, onClose, onCreate
                   key={status}
                   type="button"
                   onClick={() => setForm((current) => ({ ...current, status: status as ServiceItemStatus }))}
-                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-slate-950 text-white" : "border bg-muted text-slate-400 hover:border-slate-300"}`}
+                  className={`h-10 rounded-xl border px-2 text-[10px] font-black uppercase tracking-widest transition-all ${form.status === status ? "border-slate-950 bg-background dark:bg-slate-950 text-foreground dark:text-white" : "border bg-muted text-muted-foreground dark:text-slate-400 hover:border-slate-300"}`}
                 >
                   {label}
                 </button>
@@ -1555,7 +1578,7 @@ function CreateServiceItemModal({ categories, defaultCategory, onClose, onCreate
           <div className="flex gap-3 border-t border pt-5">
             <button
               type="submit"
-              className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-black"
+              className="flex-1 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-background dark:bg-slate-950 px-5 text-xs font-black uppercase tracking-widest text-foreground dark:text-white transition-all hover:bg-black hover:text-white"
             >
               <Check className="h-4 w-4" />
               إضافة الخدمة
@@ -1687,47 +1710,47 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
   };
 
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
   const pillBtn = (active: boolean) =>
     `h-10 px-4 rounded-2xl text-xs font-black transition-all border ${
-      active ? "bg-slate-950 text-white border-slate-950 shadow-sm" : "bg-card text-slate-500 border hover:border"
+      active ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950 shadow-sm" : "bg-card text-muted-foreground dark:text-slate-500 border hover:border"
     }`;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-card w-[95vw] sm:max-w-2xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
+        className="calm-panel bg-card w-[95vw] sm:max-w-2xl rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar"
       >
         <button
           onClick={onClose}
-          className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"
+          className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white">
+          <div className="calm-icon w-12 h-12 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center text-foreground dark:text-white">
             <Plus className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">إضافة طلب خدمة جديد</h2>
-            <p className="text-xs text-slate-400 font-bold">إنشاء طلب خدمة وتعيين العميل والتفاصيل المطلوبة</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">إنشاء طلب خدمة وتعيين العميل والتفاصيل المطلوبة</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 text-right" dir="rtl">
           {/* Client Selection Section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">معلومات العميل</h3>
-                <p className="text-[11px] font-bold text-slate-400 mt-1">
+                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">معلومات العميل</h3>
+                <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 mt-1">
                   اختر عميلاً مسجلاً أو أدخل بيانات عميل مجهول.
                 </p>
               </div>
-              <div className="flex p-1 bg-card rounded-2xl border border w-fit">
+              <div className="calm-panel flex p-1 bg-card rounded-2xl border border w-fit">
                 <button
                   type="button"
                   className={pillBtn(clientMode === "registered")}
@@ -1766,10 +1789,10 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                     className={inputCls}
                   />
                   {loadingUsers && (
-                    <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-slate-400" />
+                    <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground dark:text-slate-400" />
                   )}
                   {userSearch && !form.userId && filteredUsers.length > 0 && (
-                    <div className="absolute right-0 left-0 top-full mt-2 bg-card border border rounded-2xl shadow-xl z-50 max-h-60 overflow-y-auto p-2">
+                    <div className="calm-panel absolute right-0 left-0 top-full mt-2 bg-card border border rounded-2xl shadow-sm dark:shadow-xl z-50 max-h-60 overflow-y-auto p-2">
                       {filteredUsers.map((u) => (
                         <button
                           key={u.id}
@@ -1781,11 +1804,11 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
                             <div className="text-sm font-black text-slate-800">
                               {u.firstName || ""} {u.lastName || ""}
                             </div>
-                            <div className="text-[11px] font-bold text-slate-400 mt-1">
+                            <div className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 mt-1">
                               {u.phone || u.email || "لا يوجد اتصال"}
                             </div>
                           </div>
-                          <UserCheck className="w-4 h-4 text-slate-300 group-hover:text-slate-950 transition-colors" />
+                          <UserCheck className="w-4 h-4 text-muted-foreground dark:text-slate-300 group-hover:text-slate-950 transition-colors" />
                         </button>
                       ))}
                     </div>
@@ -1915,7 +1938,7 @@ function CreateServiceRequestModal({ onClose, onSuccess }: CreateServiceRequestM
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-slate-950 hover:bg-black text-white h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="flex-1 bg-background dark:bg-slate-950 hover:bg-black hover:text-white text-foreground dark:text-white h-12 rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

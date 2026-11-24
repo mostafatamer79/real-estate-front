@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,6 +24,7 @@ import BrokerModal from './BrokerModal'
 import CommissionRequestModal from './CommissionRequestModal'
 import { commissionApi } from '@/lib/api'
 import toast from 'react-hot-toast'
+import { submitCommission } from '@/lib/commission-submission'
 
 interface CommissionFormProps {
     onClose: () => void;
@@ -32,6 +33,7 @@ interface CommissionFormProps {
 
 const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) => {
     const { t } = useLanguage()
+    const draftId = useRef<string | undefined>(undefined)
 
     // Form State
     const [commissionForm, setCommissionForm] = useState<CommissionFormData>({
@@ -82,7 +84,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
 
     // Request Modal State
     const [showRequestModal, setShowRequestModal] = useState(false)
-    const [requestStatus, setRequestStatus] = useState<'pending' | 'accepted' | 'rejected'>('pending')
+    const [requestStatus, setRequestStatus] = useState<string>('pending')
     const [requestNumber, setRequestNumber] = useState('')
     const [requestDate, setRequestDate] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -157,12 +159,12 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                 notes: commissionForm.specifications
             };
 
-            const response = await commissionApi.create(payload);
+            const response = await submitCommission(commissionApi, payload, draftId.current, id => { draftId.current = id; });
             
             if (response.data) {
-                setRequestStatus('pending')
-                setRequestNumber(response.data.commissionNumber)
-                setRequestDate(new Date(response.data.createdAt).toLocaleDateString('en-CA'))
+                setRequestStatus(response.data.status)
+                setRequestNumber(response.data.commissionNumber || response.data.id)
+                setRequestDate(new Date(response.data.createdAt || Date.now()).toLocaleDateString('en-CA'))
                 setShowRequestModal(true)
                 toast.success(t('wallet.commission.success') || 'تم إرسال الطلب بنجاح');
                 if (onSuccess) {
@@ -170,8 +172,8 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                 }
             }
         } catch (error: any) {
-            console.error("Submission failed:", error); console.error("Response data:", error.response?.data); toast.error(error.response?.data?.message || "حدث خطأ أثناء إرسال الطلب");
-            toast.error(t('common.error') || 'حدث خطأ أثناء إرسال الطلب');
+            console.error("Commission submission failed:", error);
+            toast.error(error.response?.data?.message || t('common.error') || 'حدث خطأ أثناء إرسال الطلب');
         } finally {
             setIsSubmitting(false)
         }
@@ -195,7 +197,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
 
     return (
         <div className='flex-1'>
-            <Card className='wallet-form-container !bg-white/30 backdrop-blur-xl border !border-white/30 shadow-xl rounded-xl p-4 sm:p-6 overflow-y-auto max-h-[calc(100dvh-2rem)]'>
+            <Card className='calm-panel wallet-form-container !bg-white/30 backdrop-blur-xl border !border-border dark:!border-white/30 shadow-sm dark:shadow-xl rounded-xl p-4 sm:p-6 overflow-y-auto max-h-[calc(100dvh-2rem)]'>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl sm:text-2xl font-bold text-black">{t('wallet.commission.title')}</h2>
@@ -257,7 +259,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         <h3 className="text-xl font-bold text-right border-b pb-2">{t('wallet.commission.form.party')}</h3>
                         
                         {/* Owner/Seller Section */}
-                        <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
+                        <div className="calm-panel bg-muted dark:bg-white/20 border border-border dark:border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.ownerData')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -329,7 +331,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         </div>
 
                         {/* Buyer Section */}
-                        <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
+                        <div className="calm-panel bg-muted dark:bg-white/20 border border-border dark:border-white/25 p-4 rounded-lg space-y-3">
                             <h4 className="font-semibold text-right">{t('wallet.commission.buyerData')}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -395,8 +397,8 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold text-right border-b pb-2">{t('wallet.commission.brokersData')}</h3>
                         <div className="hidden md:block overflow-x-auto">
-                            <Table className="bg-transparent border border-white/20">
-                                <TableHeader className="bg-slate-900/5">
+                            <Table className="bg-transparent border border-border dark:border-white/20">
+                                <TableHeader className="bg-card/5 dark:bg-slate-900/5">
                                     <TableRow>
                                         <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.form.name')}</TableHead>
                                         <TableHead className="text-right px-3 py-3 sm:px-6 sm:py-4">{t('wallet.commission.falLicense')}</TableHead>
@@ -448,7 +450,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                     ))}
                                     {brokers.length === 0 && (
                                         <TableRow>
-                                            <TableCell colSpan={6} className="text-center text-gray-500 px-3 py-3 sm:px-6 sm:py-4">
+                                            <TableCell colSpan={6} className="text-center text-muted-foreground dark:text-gray-500 px-3 py-3 sm:px-6 sm:py-4">
                                                 {t('wallet.brokers.empty')}
                                             </TableCell>
                                         </TableRow>
@@ -460,10 +462,10 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                         {/* Mobile broker cards */}
                         <div className='md:hidden mt-4 space-y-3'>
                             {brokers.map((broker) => (
-                                <div key={broker.id} className='bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl p-4 shadow-sm'>
+                                <div key={broker.id} className='calm-panel bg-white/40 backdrop-blur-md border border-border dark:border-white/40 rounded-2xl p-4 shadow-sm'>
                                     <div className='flex items-start justify-between gap-3 mb-3'>
                                         <div className='min-w-0'>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.form.name')}</p>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 mb-1'>{t('wallet.commission.form.name')}</p>
                                             <p className='font-bold text-slate-900 truncate'>{broker.name}</p>
                                         </div>
                                         <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
@@ -472,15 +474,15 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                     </div>
                                     <div className='grid grid-cols-2 gap-3 mb-3'>
                                         <div className='min-w-0'>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.falLicense')}</p>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 mb-1'>{t('wallet.commission.falLicense')}</p>
                                             <p className='text-sm font-medium text-slate-700 truncate'>{broker.license}</p>
                                         </div>
                                         <div className='min-w-0'>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.mobile')}</p>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 mb-1'>{t('wallet.commission.mobile')}</p>
                                             <p className='text-sm text-slate-600 truncate'>{broker.mobile}</p>
                                         </div>
                                         <div className='min-w-0 col-span-2'>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1'>{t('wallet.commission.email')}</p>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 mb-1'>{t('wallet.commission.email')}</p>
                                             <p className='text-sm text-slate-600 truncate'>{broker.email}</p>
                                         </div>
                                     </div>
@@ -515,7 +517,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                 </div>
                             ))}
                             {brokers.length === 0 && (
-                                <div className='rounded-2xl bg-white/30 border border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400'>
+                                <div className='calm-panel rounded-2xl bg-white/30 border border-border dark:border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400'>
                                     {t('wallet.brokers.empty')}
                                 </div>
                             )}
@@ -541,7 +543,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* 4. Property Data Section */}
-                    <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
+                    <div className="calm-panel bg-muted dark:bg-white/20 border border-border dark:border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.propertyData')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -657,7 +659,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     </div>
 
                     {/* 5. Contract Values Section */}
-                     <div className="bg-white/20 border border-white/25 p-4 rounded-lg space-y-3">
+                     <div className="calm-panel bg-muted dark:bg-white/20 border border-border dark:border-white/25 p-4 rounded-lg space-y-3">
                         <h4 className="font-semibold text-right">{t('wallet.commission.contractValues')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -677,7 +679,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                     placeholder={t('wallet.commission.amountAfterDiscount')}
                                     className="text-right"
                                 />
-                                <p className="text-xs text-gray-500 mt-1 text-right">
+                                <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1 text-right">
                                     {t('wallet.commission.calc.after15')}
                                 </p>
                             </div>
@@ -699,7 +701,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                                     className="text-right"
                                 />
                                 {commissionForm.commission && (
-                                    <p className="text-xs text-gray-500 mt-1 text-right">
+                                    <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1 text-right">
                                         {t('wallet.commission.valueReal', { amount: commissionForm.commission })}
                                     </p>
                                 )}
@@ -711,7 +713,7 @@ const CommissionForm: React.FC<CommissionFormProps> = ({ onClose, onSuccess }) =
                     <Button 
                         onClick={handleCommissionSubmit}
                         disabled={isSubmitting}
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 text-lg font-bold rounded-xl shadow-lg mt-8"
+                        className="w-full bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white py-6 text-lg font-bold rounded-xl shadow-lg mt-8"
                     >
                         {isSubmitting ? t('common.loading') : t('wallet.commission.submit')}
                     </Button>

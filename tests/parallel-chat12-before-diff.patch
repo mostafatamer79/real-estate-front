@@ -1,0 +1,299 @@
+diff --git a/app/scan-map/page.tsx b/app/scan-map/page.tsx
+index 2395bed..418aa21 100644
+--- a/app/scan-map/page.tsx
++++ b/app/scan-map/page.tsx
+@@ -18,8 +18,8 @@ import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+ const MapLoading = () => {
+   const { t } = useLanguage();
+   return (
+-    <div className="h-[70vh] bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl animate-pulse flex items-center justify-center">
+-      <div className="text-slate-400">{t('scan.loadingMap')}</div>
++    <div className="h-[70vh] bg-gradient-to-br from-muted dark:from-slate-800 to-card dark:to-slate-900 rounded-xl animate-pulse flex items-center justify-center">
++      <div className="text-muted-foreground dark:text-slate-400">{t('scan.loadingMap')}</div>
+     </div>
+   );
+ };
+@@ -312,26 +312,26 @@ export default function ScanMapPage() {
+   }
+ 
+   return (
+-    <div className="min-h-dvh-safe bg-gradient-to-br from-slate-950 to-slate-900 text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
++    <div className="calm-page calm-screen min-h-dvh-safe bg-gradient-to-br from-background dark:from-slate-950 to-card dark:to-slate-900 text-foreground dark:text-white p-4 md:p-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+       {generatingReport && (
+-        <div className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+-          <div className="w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-4 sm:p-8 text-center">
++        <div className="fixed inset-0 z-[9999] bg-background/85 dark:bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
++          <div className="calm-panel w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border border-border dark:border-white/10 bg-card dark:bg-slate-900 shadow-sm dark:shadow-2xl p-4 sm:p-8 text-center">
+             <div className="mx-auto mb-5 h-16 w-16 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 flex items-center justify-center">
+               <Loader2 className="h-8 w-8 animate-spin text-emerald-300" />
+             </div>
+             <h2 className="text-xl font-black mb-2">جاري إنشاء التقرير الذكي</h2>
+-            <p className="text-sm text-slate-400 leading-7">
++            <p className="text-sm text-muted-foreground dark:text-slate-400 leading-7">
+               يتم الآن توليد PDF و Excel، إضافة صورة الخريطة، حساب المؤشرات، وبناء الرسوم البيانية ثلاثية الأبعاد. الرجاء الانتظار حتى يكتمل الحفظ في صفحة الملفات.
+             </p>
+-            <div className="mt-6 h-2 rounded-full bg-slate-800 overflow-hidden">
++            <div className="mt-6 h-2 rounded-full bg-muted dark:bg-slate-800 overflow-hidden">
+               <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 animate-pulse" />
+             </div>
+           </div>
+         </div>
+       )}
+       {isDisclaimerOpen && (
+-        <div className="fixed inset-0 z-[9998] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+-          <div className="w-[95vw] sm:max-w-3xl max-h-[88vh] overflow-y-auto rounded-[1.25rem] border border-white/10 bg-card text-slate-950 shadow-2xl" dir="rtl">
++        <div className="fixed inset-0 z-[9998] bg-background/85 dark:bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
++          <div className="calm-panel w-[95vw] sm:max-w-3xl max-h-[88vh] overflow-y-auto rounded-[1.25rem] border border-border dark:border-white/10 bg-card text-slate-950 shadow-sm dark:shadow-2xl" dir="rtl">
+ 
+ 
+             <div className="border-t border bg-card px-6 pt-8 pb-5 sm:px-8 sm:pt-10">
+@@ -362,7 +362,7 @@ export default function ScanMapPage() {
+                     setIsDisclaimerOpen(false);
+                     scanArea();
+                   }}
+-                  className="h-12 rounded-2xl bg-slate-950 px-6 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40 hover:bg-black"
++                  className="h-12 rounded-2xl bg-background dark:bg-slate-950 px-6 text-sm font-black text-foreground dark:text-white disabled:cursor-not-allowed disabled:opacity-40 hover:bg-black"
+                 >
+                   أوافق وابدأ المسح
+                 </button>
+@@ -376,15 +376,15 @@ export default function ScanMapPage() {
+         <button
+           type="button"
+           onClick={handleBack}
+-          className="mb-6 inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-card/10 px-4 text-[11px] font-black uppercase tracking-widest text-slate-200 backdrop-blur-sm transition-all hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-white"
++          className="mb-6 inline-flex h-11 items-center gap-2 rounded-2xl border border-border dark:border-white/10 bg-muted dark:bg-card/10 px-4 text-[11px] font-black uppercase tracking-widest text-foreground dark:text-slate-200 backdrop-blur-sm transition-all hover:border-emerald-400/50 hover:bg-emerald-400/10 hover:text-foreground hover:dark:text-white"
+         >
+           {language === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+           {language === 'ar' ? 'رجوع' : 'Back'}
+         </button>
+-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 text-slate-400">
++        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-2 text-muted-foreground dark:text-slate-400">
+            {t('scan.title')}
+         </h1>
+-        <p className="text-slate-400 text-center text-sm md:text-base">
++        <p className="text-muted-foreground dark:text-slate-400 text-center text-sm md:text-base">
+           {t('scan.desc')}
+         </p>
+       </header>
+@@ -393,27 +393,27 @@ export default function ScanMapPage() {
+         {/* Left Column - Controls & Info */}
+         <div className="lg:col-span-1 space-y-6">
+           {/* Location Card */}
+-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
++          <div className="calm-panel bg-muted/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-border dark:border-slate-700">
+             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+               {t('scan.propertyLocation')}
+             </h2>
+ 
+             <div className="space-y-4">
+               {/* Location Display */}
+-              <div className="bg-slate-900/80 p-4 rounded-xl">
++              <div className="bg-card/80 dark:bg-slate-900/80 p-4 rounded-xl">
+                 <div className="flex justify-between items-center mb-2">
+-                  <span className="text-slate-400 text-sm">{t('scan.coordinates')}:</span>
++                  <span className="text-muted-foreground dark:text-slate-400 text-sm">{t('scan.coordinates')}:</span>
+                   <button
+                     onClick={() => setIsSelectingLocation(!isSelectingLocation)}
+                     className={`text-xs px-3 py-2.5 sm:py-1.5 rounded-lg transition-colors ${
+                       isSelectingLocation
+                         ? 'bg-yellow-600 hover:bg-yellow-700'
+-                        : 'bg-slate-700 hover:bg-slate-600'
++                        : 'bg-muted dark:bg-slate-700 hover:bg-primary dark:bg-slate-600'
+                     }`}
+                   >
+                   </button>
+                 </div>
+-                <div className="font-mono text-sm bg-slate-800 p-2 rounded-lg text-center">
++                <div className="font-mono text-sm bg-muted dark:bg-slate-800 p-2 rounded-lg text-center">
+                   {propertyLocation[0].toFixed(6)}
+                   <br />
+                   {propertyLocation[1].toFixed(6)}
+@@ -430,9 +430,9 @@ export default function ScanMapPage() {
+                   step="100"
+                   value={searchRadius}
+                   onChange={(e) => setSearchRadius(Number(e.target.value))}
+-                  className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500"
++                  className="w-full h-2 bg-muted dark:bg-slate-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500"
+                 />
+-                <div className="flex justify-between text-xs text-slate-500 mt-1">
++                <div className="flex justify-between text-xs text-muted-foreground dark:text-slate-500 mt-1">
+                   <span>500 {t('scan.unit.meter')}</span>
+                   <span>2.5 {t('scan.unit.km')}</span>
+                   <span>5 {t('scan.unit.km')}</span>
+@@ -461,7 +461,7 @@ export default function ScanMapPage() {
+                 <div className="flex gap-2">
+                   <button
+                     onClick={resetToDefault}
+-                    className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
++                    className="flex-1 bg-muted dark:bg-slate-700 hover:bg-primary dark:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                   >
+                     {t('scan.default')}
+                   </button>
+@@ -469,7 +469,7 @@ export default function ScanMapPage() {
+                   {hasPlaces && (
+                     <button
+                       onClick={() => setShowTable(!showTable)}
+-                      className="flex-1 bg-slate-700 hover:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
++                      className="flex-1 bg-muted dark:bg-slate-700 hover:bg-primary dark:bg-slate-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                     >
+                       {showTable ? t('scan.hideTable') : t('scan.showTable')}
+                     </button>
+@@ -478,16 +478,16 @@ export default function ScanMapPage() {
+               </div>
+ 
+               {/* Neighborhood Report Service Card */}
+-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700 mt-6 bg-gradient-to-br from-slate-800 to-slate-950/30">
++              <div className="calm-panel bg-muted/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-border dark:border-slate-700 mt-6 bg-gradient-to-br from-muted dark:from-slate-800 to-background/30 dark:to-slate-950/30">
+                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                   {t('scan.neighborReport')}
+                 </h2>
+                 {!isMapFree && (
+-                  <p className="text-xs text-slate-400 mb-4">
++                  <p className="text-xs text-muted-foreground dark:text-slate-400 mb-4">
+                     {t('scan.paymentRequired')}
+                   </p>
+                 )}
+-                <div className="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl mb-4">
++                <div className="flex items-center justify-between bg-card/60 dark:bg-slate-900/60 p-3 rounded-xl mb-4">
+                   <span className="text-sm">{t('scan.price')}</span>
+                   <span className="font-bold text-emerald-400">
+                     {isMapFree ? (language === 'ar' ? 'مجاني' : 'Free') : <SaudiRiyalAmount amount={reportPrice} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />}
+@@ -502,7 +502,7 @@ export default function ScanMapPage() {
+                   <button
+                     onClick={handleRequestReport}
+                     disabled={creatingInvoice}
+-                    className="w-full bg-slate-600 hover:bg-slate-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
++                    className="w-full bg-primary dark:bg-slate-600 hover:bg-slate-500 disabled:opacity-50 px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                   >
+                     {creatingInvoice ? (
+                       <span className="animate-spin text-lg">⟳</span>
+@@ -519,7 +519,7 @@ export default function ScanMapPage() {
+ 
+           {/* Results Summary Card */}
+           {hasPlaces && (
+-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-700">
++            <div className="calm-panel bg-muted/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-border dark:border-slate-700">
+               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                 {t('scan.results')}
+               </h2>
+@@ -527,25 +527,25 @@ export default function ScanMapPage() {
+               <div className="space-y-4">
+                 {/* Stats */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+-                  <div className="bg-slate-900/80 p-4 rounded-xl text-center">
++                  <div className="bg-card/80 dark:bg-slate-900/80 p-4 rounded-xl text-center">
+                     <div className="text-xl sm:text-2xl font-bold text-emerald-400">{places.length}</div>
+-                    <div className="text-sm text-slate-400">{t('scan.placesCount')}</div>
++                    <div className="text-sm text-muted-foreground dark:text-slate-400">{t('scan.placesCount')}</div>
+                   </div>
+-                  <div className="bg-slate-900/80 p-4 rounded-xl text-center">
++                  <div className="bg-card/80 dark:bg-slate-900/80 p-4 rounded-xl text-center">
+                     <div className="text-xl sm:text-2xl font-bold text-blue-400">{uniqueTypes}</div>
+-                    <div className="text-sm text-slate-400">{t('scan.typesCount')}</div>
++                    <div className="text-sm text-muted-foreground dark:text-slate-400">{t('scan.typesCount')}</div>
+                   </div>
+                 </div>
+ 
+                 {/* Top Types */}
+                 {typeCounts.length > 0 && (
+                   <div>
+-                    <h3 className="text-sm font-semibold text-slate-300 mb-2">{t('scan.topTypes')}:</h3>
++                    <h3 className="text-sm font-semibold text-muted-foreground dark:text-slate-300 mb-2">{t('scan.topTypes')}:</h3>
+                     <div className="space-y-2">
+                       {typeCounts.map(([type, count]) => (
+-                        <div key={type} className="flex items-center justify-between bg-slate-900/60 p-2 rounded-lg">
++                        <div key={type} className="flex items-center justify-between bg-card/60 dark:bg-slate-900/60 p-2 rounded-lg">
+                           <span className="text-sm truncate">{type}</span>
+-                          <span className="bg-slate-800 px-2 py-1 rounded text-xs min-w-[2rem] text-center">{count}</span>
++                          <span className="bg-muted dark:bg-slate-800 px-2 py-1 rounded text-xs min-w-[2rem] text-center">{count}</span>
+                         </div>
+                       ))}
+                     </div>
+@@ -601,7 +601,7 @@ export default function ScanMapPage() {
+         {/* Right Column - Map & Table */}
+         <div className="lg:col-span-2 space-y-6">
+           {/* Map Card */}
+-          <div ref={mapCaptureRef} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-1 border border-slate-700 overflow-hidden">
++          <div ref={mapCaptureRef} className="calm-panel bg-muted/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-1 border border-border dark:border-slate-700 overflow-hidden">
+             <Map
+               center={propertyLocation}
+               zoom={dynamicZoom}
+@@ -617,15 +617,15 @@ export default function ScanMapPage() {
+ 
+           {/* Results Table */}
+           {showTable && hasPlaces && (
+-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
+-              <div className="p-4 bg-slate-800/70 border-b border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
++            <div className="calm-panel bg-muted/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-border dark:border-slate-700 overflow-hidden">
++              <div className="p-4 bg-muted/70 dark:bg-slate-800/70 border-b border-border dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                 <h2 className="text-lg font-bold flex items-center gap-2">
+                   {t('scan.table.results')} ({places.length} {t('scan.table.places')})
+                 </h2>
+                 <div className="flex gap-2">
+                   <button
+                     onClick={() => setShowTable(false)}
+-                    className="text-sm bg-slate-700 hover:bg-slate-600 px-3 py-2.5 sm:py-1.5 rounded-lg transition-colors"
++                    className="text-sm bg-muted dark:bg-slate-700 hover:bg-primary dark:bg-slate-600 px-3 py-2.5 sm:py-1.5 rounded-lg transition-colors"
+                   >
+                     {t('scan.table.close')}
+                   </button>
+@@ -634,13 +634,13 @@ export default function ScanMapPage() {
+ 
+               <div className="overflow-x-auto max-h-[500px]">
+                 <table className="w-full">
+-                  <thead className="bg-slate-800/80 sticky top-0">
++                  <thead className="bg-muted/80 dark:bg-slate-800/80 sticky top-0">
+                     <tr>
+-                      <th className="p-3 text-right font-semibold text-slate-300">#</th>
+-                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.name')}</th>
+-                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.type')}</th>
+-                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.distance')}</th>
+-                      <th className="p-3 text-right font-semibold text-slate-300">{t('scan.table.coords')}</th>
++                      <th className="p-3 text-right font-semibold text-muted-foreground dark:text-slate-300">#</th>
++                      <th className="p-3 text-right font-semibold text-muted-foreground dark:text-slate-300">{t('scan.table.name')}</th>
++                      <th className="p-3 text-right font-semibold text-muted-foreground dark:text-slate-300">{t('scan.table.type')}</th>
++                      <th className="p-3 text-right font-semibold text-muted-foreground dark:text-slate-300">{t('scan.table.distance')}</th>
++                      <th className="p-3 text-right font-semibold text-muted-foreground dark:text-slate-300">{t('scan.table.coords')}</th>
+                     </tr>
+                   </thead>
+                   <tbody>
+@@ -653,17 +653,17 @@ export default function ScanMapPage() {
+                       return (
+                         <tr
+                           key={place.id}
+-                          className="border-b border-slate-700/50 hover:bg-slate-800/30 transition-colors"
++                          className="border-b border-border dark:border-slate-700/50 hover:bg-muted/30 hover:dark:bg-slate-800/30 transition-colors"
+                         >
+-                          <td className="p-3 text-center text-slate-400">{index + 1}</td>
++                          <td className="p-3 text-center text-muted-foreground dark:text-slate-400">{index + 1}</td>
+                           <td className="p-3">
+                             <div className="font-medium max-w-[200px] truncate">{place.name}</div>
+                             {place.city && (
+-                              <div className="text-xs text-slate-500">{place.city}</div>
++                              <div className="text-xs text-muted-foreground dark:text-slate-500">{place.city}</div>
+                             )}
+                           </td>
+                           <td className="p-3">
+-                            <span className="inline-block px-3 py-1 bg-slate-800 rounded-full text-sm max-w-[150px] truncate">
++                            <span className="inline-block px-3 py-1 bg-muted dark:bg-slate-800 rounded-full text-sm max-w-[150px] truncate">
+                               {place.type}
+                             </span>
+                           </td>
+@@ -675,7 +675,7 @@ export default function ScanMapPage() {
+                             </div>
+                           </td>
+                           <td className="p-3">
+-                            <div className="text-xs font-mono text-slate-400">
++                            <div className="text-xs font-mono text-muted-foreground dark:text-slate-400">
+                               {place.latitude.toFixed(4)}
+                               <br />
+                               {place.longitude.toFixed(4)}
+@@ -689,7 +689,7 @@ export default function ScanMapPage() {
+               </div>
+ 
+               {/* Table Footer */}
+-              <div className="p-4 bg-slate-800/70 border-t border-slate-700 text-sm text-slate-400">
++              <div className="p-4 bg-muted/70 dark:bg-slate-800/70 border-t border-border dark:border-slate-700 text-sm text-muted-foreground dark:text-slate-400">
+                 {t('scan.footer.found', { count: places.length, radius: searchRadius.toLocaleString() })}
+               </div>
+             </div>

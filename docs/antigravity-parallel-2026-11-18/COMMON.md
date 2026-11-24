@@ -1,0 +1,27 @@
+# Shared instructions — read once in every implementation chat
+
+Project: `/home/mostafa/Work/mostakl/realestate/real-estate-front` (Next.js/React/TypeScript). This is the frontend checkout; its parent is not the Git repository. Follow applicable project instructions. This is a bounded implementer chat, not a lead/reviewer. Do not launch other agents, AGY/OpenCode subprocesses or additional chats. Use Antigravity's configured model; do not switch services or paid models.
+
+## Ownership and current work
+
+Only write the files/new prefixes assigned in your CHAT file and your own report. Other files are read-only. Preserve the large pre-existing dirty tree and other workers' edits. Never reset, stash, clean, stage, commit, push or deploy. Never edit dependencies, lockfiles, `.env`, credentials, backend, `app/globals.css`, shared layouts/header/footer, shared UI/modal primitives, or shared API clients. `/admin` and ALL `/admin/*`, `/`, `/home` are excluded. Business/property/internal management is INCLUDED. Do not change an excluded page indirectly through a shared component: inspect its consumers first. For shared admin consumers use an assigned standalone copy with corrected imports; leave the original unchanged. Existing user work takes precedence over old snapshots.
+
+Before editing, read START_HERE.md, your CHAT file, and relevant REVIEW_*.md under `docs/verification/redesign-2026-11-18`. Check the active-owner/handover condition. If another process owns your files, do not edit or start a duplicate replacement; report the conflict. Files not listed require coordinator reassignment, not opportunistic edits. No task is done because another worker said so.
+
+## Design and real behavior
+
+The user wants a dramatically stronger Marcelo-inspired realestate UI: original architectural artwork where useful, confident typography, pearl/navy/brass, spatial composition, restrained motion. Operational/data pages should be precise and open, not decorative card stacks. Read relevant local design/motion/accessibility skills rather than loading every skill. Keep real claims, real listing media and existing APIs; do not invent trust badges, accreditation, encryption, live status, statistics, prices, payment completion or provider approval. No repeated decorative hero across pages. Do not create synthetic listing photos. Create new assets only within your assigned prefix, and record provenance; use real image generation if available, never label a placeholder as generated artwork. Use existing image/motion utilities read-only. Avoid heavy new dependencies. Source structure alone does not prove a visually impressive result.
+
+Preserve actual permissions/settings, hidden/soon/admin-preview gates, deep links, query parameters, server-authoritative financial/auth state, draft values and public contracts. Verify what the backend really returns READ ONLY. Do not implement new backend features to conceal missing contracts. AR/EN, light/dark, 320/390/768/1024/1440px, short mobile height and keyboard use matter. All visible controls/links need actual behavior, labels/focus and suitable touch targets. Prevent nested main elements, clipped descendants, duplicate submissions, stale/unmounted async writes and false empty/zero states. Use the existing accessible modal primitive; portal tokens need their own scoped ancestor. CSS Modules require local selectors, including focus and reduced-motion rules.
+
+## Page-by-page and verification
+
+Complete and verify one assigned page before moving to the next. Read each source region once where possible; keep output concise and avoid repeated whole-file/repository dumps. Do not add private React simulators or tests that reimplement the production logic. Meaningful pure helpers must be imported by production and tested directly. Do not weaken existing tests or retain hidden dummy DOM for obsolete assertions.
+
+Workers run scoped `npx eslint <owned changed TS/TSX files>` and relevant focused `node --test <test-file>` only. Do NOT run full build/typecheck/full tests, start multiple Next servers, install packages or compete over `.next`; Codex will run central `npx tsc --noEmit`, `node --test tests/*.test.cjs`, `npm run build -- --webpack`, and `node scripts/audit-redesign-links.cjs` after writes settle. One coordinator-owned local frontend server can serve browser checks; a new port alone does not isolate Next's build directory/lock.
+
+Browser tests use synthetic accounts and intercepted API responses on localhost only; intercept writes and external services before interaction. Never send real OTP/payment/withdrawal/chat/legal/provider mutations. Check actual rendered UI, every owned control, local links, failure/retry/empty/loading, permissions and responsive bounds. A route existing or HTTP200 is not UI verification. If a browser/server is unavailable, mark rendered checks PENDING and give exact steps; do not certify completion.
+
+## Deliverable
+
+Leave changes uncommitted. Write only your report `reports/chat-XX.md` (and optional JSON) in this pack directory. Include: touched/created files; per-page outcome; relevant behavior and payload changes; commands and actual results; browser combinations and screenshots if actually run; unresolved findings, contract limitations and deviations. Mark NOT READY when checks fail or required browser checks remain. The four existing Codex chats review only; Codex integrates and independently verifies. Do not claim platform completion or reviewer approval.

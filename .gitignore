@@ -41,6 +41,7 @@ next-env.d.ts
 config.bat
 
 # Local environment files
+.env*.local
 !.env.example
 
 graphify-out/

@@ -1,0 +1,162 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "pagination and page boundaries",
+      "locked contact hidden",
+      "wallet destination",
+      "no client assignment mutation",
+      "malformed offers recover",
+      "contact failure recover",
+      "actual unlocked phone link",
+      "list failure retry",
+      "malformed list error",
+      "empty CTA",
+      "single main",
+      "no clipped descendants or page errors"
+    ]
+  }
+]

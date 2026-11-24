@@ -1,0 +1,146 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct artwork",
+      "four category destinations",
+      "disabled category absent",
+      "soon categories non-navigable",
+      "custom category escaping",
+      "request tracking and provider links",
+      "section closed message",
+      "no nested anchors",
+      "no overflow",
+      "no page errors"
+    ]
+  }
+]

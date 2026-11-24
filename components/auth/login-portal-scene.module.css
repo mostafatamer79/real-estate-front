@@ -1,0 +1,13 @@
+.sceneContainer { position:absolute; inset:0; overflow:hidden; background:#102332; }
+.fallback { object-fit:cover; }
+.canvas { position:absolute; inset:0; }
+.canvas canvas { display:block; width:100%; height:100%; touch-action:pan-y; cursor:grab; }
+.canvas canvas:active { cursor:grabbing; }
+.sceneCaption { position:absolute; inset-block-start:32px; inset-inline:28px; color:#efe5d1; font-size:14px; font-weight:550; line-height:1.5; max-width:none; text-align:center; pointer-events:none; }
+.controls { position:absolute; inset-inline:28px; inset-block-end:24px; display:flex; align-items:center; justify-content:center; gap:14px; z-index:5; }
+.controls button { display:grid; place-items:center; min-width:44px; min-height:44px; border-radius:50%; border:1px solid #dfd1b680; background:#102332eb; color:#f1e4ce; cursor:pointer; }
+.controls button:hover { background:#2c414e; }
+.controls button:focus-visible,.controls input:focus-visible { outline:2px solid #f2d5a0; outline-offset:4px; }
+.controls svg { width:16px; height:16px; }
+.controls input { width:clamp(80px,12vw,160px); min-height:44px; accent-color:#d7bb88; cursor:ew-resize; }
+@media(max-width:1023px) { .sceneCaption { inset-block-start:16px; inset-inline:20px; font-size:13px; max-width:none; } .controls { inset-block-end:12px; inset-inline:16px; gap:10px; } }

@@ -1,0 +1,93 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "route": "/login",
+      "expectedDark": false,
+      "url": "/login",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/login",
+      "expectedDark": true,
+      "url": "/login",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/details",
+      "expectedDark": false,
+      "url": "/details",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/details",
+      "expectedDark": true,
+      "url": "/details",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/login",
+      "expectedDark": false,
+      "url": "/login",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/login",
+      "expectedDark": true,
+      "url": "/login",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/details",
+      "expectedDark": false,
+      "url": "/details",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/details",
+      "expectedDark": true,
+      "url": "/details",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

@@ -23,6 +23,7 @@ interface ChatModalProps {
   userId: string;
   userName: string;
   otherUserName: string;
+  readOnly?: boolean;
 }
 
 export default function SimpleChatModal({
@@ -32,6 +33,7 @@ export default function SimpleChatModal({
   userId,
   userName,
   otherUserName,
+  readOnly = false,
 }: ChatModalProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -44,30 +46,60 @@ export default function SimpleChatModal({
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3030/api";
     const socketBaseUrl = apiUrl.replace(/\/api\/?$/, "");
+    let active = true;
+    setMessages([]);
+    setNewMessage("");
+    setLoading(true);
 
     // Connect to Socket.IO
     const newSocket = io(`${socketBaseUrl}/chat`, {
       path: "/socket.io",
-      query: { userId },
-      auth: { userId },
+      auth: { token: localStorage.getItem("token") },
       transports: ["websocket", "polling"],
     });
 
     setSocket(newSocket);
 
-    // Join room
-    newSocket.emit("joinRoom", { roomId });
-
-    // Listen for messages
-    newSocket.on("receiveMessage", (message: Message) => {
-      setMessages((prev) => [...prev, message]);
-      scrollToBottom();
+    // Socket.IO room membership is lost on reconnect.
+    newSocket.on("connect", () => {
+      newSocket.emit("joinRoom", { roomId });
+      void fetchPreviousMessages();
     });
 
-    // Fetch previous messages
-    fetchPreviousMessages();
+    // Listen for messages
+    newSocket.on("receiveMessage", (event: Message | { message: Message }) => {
+      if (!active) return;
+      const message = "message" in event ? event.message : event;
+      setMessages((prev) => prev.some((item) => item.id === message.id) ? prev : [...prev, message]);
+    });
+
+    // Keep messages received while history is loading, and ignore stale room responses.
+    const fetchPreviousMessages = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${apiUrl}/chat/${roomId}/messages`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const history: Message[] = await res.json();
+          if (active) {
+            setMessages((current) => {
+              const byId = new Map(history.map((message) => [message.id, message]));
+              for (const message of current) byId.set(message.id, message);
+              return [...byId.values()].sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch messages", error);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    void fetchPreviousMessages();
 
     return () => {
+      active = false;
       newSocket.disconnect();
     };
   }, [isOpen, roomId, userId]);
@@ -76,37 +108,17 @@ export default function SimpleChatModal({
     scrollToBottom();
   }, [messages]);
 
-  const fetchPreviousMessages = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${roomId}/messages`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch messages", error);
-    } finally {
-        setLoading(false);
-    }
-  };
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !socket) return;
+    if (readOnly || !newMessage.trim() || !socket) return;
 
     // Send via socket
     socket.emit("sendMessage", {
       roomId,
-      senderId: userId,
       content: newMessage,
     });
 
@@ -117,9 +129,9 @@ export default function SimpleChatModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" dir="rtl">
-      <div className="bg-card rounded-xl w-[95vw] sm:max-w-md h-[85dvh] max-h-[90dvh] flex flex-col shadow-2xl">
+      <div className="calm-panel bg-card rounded-xl w-[95vw] sm:max-w-md h-[85dvh] max-h-[90dvh] flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="p-4 border-b flex justify-between items-center bg-muted rounded-t-xl">
+        <div className="calm-panel p-4 border-b flex justify-between items-center bg-muted rounded-t-xl">
           <div>
             <h3 className="font-bold text-gray-800">محادثة مع {otherUserName}</h3>
             <span className="text-xs text-green-500 flex items-center gap-1">
@@ -173,10 +185,11 @@ export default function SimpleChatModal({
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t bg-card rounded-b-xl">
+        <div className="calm-panel p-4 border-t bg-card rounded-b-xl">
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"
+              disabled={readOnly}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="اكتب رسالتك هنا..."
@@ -184,7 +197,7 @@ export default function SimpleChatModal({
             />
             <button
               type="submit"
-              disabled={!newMessage.trim()}
+              disabled={readOnly || !newMessage.trim()}
               className="p-3 sm:p-2 bg-slate-600 text-white rounded-full hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-5 h-5" />

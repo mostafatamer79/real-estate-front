@@ -8,7 +8,13 @@ async function openOffers(token) {
   const effects = [];
   const calls = { listings: [], incomingBookings: 0, myBookings: 0 };
   const noop = () => {};
-  const react = { useState: initial => [initial, noop], useEffect: effect => effects.push(effect) };
+  const react = {
+    useState: initial => [initial, noop],
+    useEffect: effect => effects.push(effect),
+    useRef: initial => ({ current: initial ?? null }),
+    useMemo: fn => fn(),
+    useCallback: fn => fn,
+  };
   const api = {
     offersApi: { findAll: async options => { calls.listings.push(options); return { data: [] }; } },
     bookingsApi: {
@@ -27,6 +33,7 @@ async function openOffers(token) {
       if (name === 'react/jsx-runtime') return { jsx: noop, jsxs: noop };
       if (name === 'next/navigation') return { useRouter: () => ({ push: noop }) };
       if (name === '@/context/LanguageContext') return { useLanguage: () => ({ t: key => key, language: 'ar' }) };
+      if (name === '@/context/SettingsContext') return { useSettings: () => ({ settings: { isDark: false } }) };
       if (name === '@/hooks/useSectionGuard') return { useSectionGuard: () => ({ isOpen: false }) };
       if (name === '@/lib/api') return api;
       return otherUi;

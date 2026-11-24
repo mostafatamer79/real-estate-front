@@ -1,0 +1,62 @@
+[
+  {
+    "name": "details-path-journey",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-path-journey",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "name": "details-layered-scenes",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-layered-scenes",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "name": "details-horizontal-gallery",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-horizontal-gallery",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "name": "details-map-first",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-map-first",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "name": "details-property-observatory",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-property-observatory",
+    "width": 390,
+    "pass": true
+  },
+  {
+    "name": "details-spatial-sequence",
+    "width": 1440,
+    "pass": true
+  },
+  {
+    "name": "details-spatial-sequence",
+    "width": 390,
+    "pass": true
+  }
+]

@@ -1,0 +1,30 @@
+const {user:baseUser,responseFor}=require('./details-ui.cjs');
+const {offers}=require('./offers-ui.cjs');
+const user={...baseUser,firstName:'Local',lastName:'Reviewer',role:'admin',departments:['properties','legal','marketing','finance','employees'],departmentPermissions:{properties:'manage',legal:'manage',marketing:'manage',finance:'manage',employees:'manage'},nafathVerifiedAt:null};
+const settings=[...responseFor('/api/settings/public'),{key:'login_phone_status',value:'enabled'},{key:'login_email_status',value:'enabled'},{key:'ui_is_map_free',value:'true'}];
+const profile={status:'approved',kind:'general',city:'الرياض',deliveryModes:['online','in_person'],requestedCategories:['legal'],categories:['legal'],licenseNumber:'LOCAL-123',licenseDocument:'/fixtures/license.pdf',licenseIssueDate:'2025-01-01',licenseExpiryDate:'2028-12-31',agreementType:'percentage',agreementValue:10,minOffer:100,maxOffer:10000};
+const summary={totalUsers:3,activeOperations:2,totalRevenue:1200,conversionRate:0,totalSales:1000,totalRentals:200,totalCommission:100,totalExpenses:50,totalTax:15,netProfit:1235,invoiceStats:{paidCount:0,unpaidCount:0,draftCount:0,paidTotal:0,outstandingTotal:0},recentTransactions:[],monthlyTotals:[],expenseBreakdown:[]};
+function fixture(path,actor=user){
+ if(path.endsWith('/settings/public'))return settings;
+ if(path.endsWith('/user/profile'))return actor;
+ if(path.endsWith('/service-providers/me'))return profile;
+ if(path.endsWith('/service-providers/controls'))return {notaryPlatformFee:10,onlineAllCities:true};
+ if(path.endsWith('/service-providers/opportunities')||path.endsWith('/service-providers/my-requests'))return {items:[],total:0,page:1};
+ if(path.endsWith('/service-providers/specializations'))return [{id:'legal-local',title:'Legal fixture',categories:['legal'],enabled:true}];
+ if(path.endsWith('/service-providers/registration-fields'))return [];
+ if(/customer-service\/(faqs|faq-categories|feedback\/my)$/.test(path))return {success:true,data:[]};
+ if(path.endsWith('/financial/workspace-summary'))return summary;
+ if(path.endsWith('/financial/wallet'))return {balance:500,transactions:[]};
+ if(path.endsWith('/dashboard/manager'))return {totalProperties:0,totalUsers:0,totalRevenue:0,totalOrders:0,totalOffers:0,latestOrders:[],latestOffers:[],moduleStats:{}};
+ if(path.endsWith('/subscriptions/department-pricing'))return {departmentPrices:{properties:{monthly:100,yearly:1000},legal:{monthly:100,yearly:1000},marketing:{monthly:100,yearly:1000},finance:{monthly:100,yearly:1000},employees:{monthly:100,yearly:1000}},employeeSeatMonthlyPrice:10,employeeSeatYearlyPrice:100};
+ if(path.endsWith('/subscriptions/status'))return {active:true,hasActiveSubscription:true,subscription:{id:'local-sub',status:'active',endDate:'2028-01-01',departments:['properties','legal']}};
+ if(path.endsWith('/service-requests'))return {items:[],total:0,totalPages:0,page:1,limit:30};
+ if(path.includes('/service-requests/by-department/'))return [];
+ if(path.endsWith('/offers'))return offers;
+ if(path.includes('/offers/'))return offers.find(x=>path.endsWith('/'+x.id))||{};
+ if(path.includes('/legal-services/disputes'))return {items:[],data:[],total:0};
+ if(path.endsWith('/user'))return [];
+ if(path.includes('/info')||path.includes('/content/public'))return [];
+ return responseFor(path);
+}
+module.exports={user,settings,profile,summary,fixture};

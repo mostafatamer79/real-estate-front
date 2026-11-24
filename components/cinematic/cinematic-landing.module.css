@@ -1,0 +1,1844 @@
+/* =========================================================================
+   CINEMATIC ARCHITECTURAL LANDING — PURE ANIMATED SVG EDITION
+   Awwwards & Masterpiece Architectural Experience
+   Obsidian & Champagne Gold • Responsive • Pure SVG Motion
+   ========================================================================= */
+
+.landingRoot {
+  --arch-stone: #f8fafc;
+  --arch-sand: #ebe6dd;
+  --arch-obsidian: #06090f;
+  --arch-surface: #0b111a;
+  --arch-card: #0e1622;
+  --arch-gold: #d4af37;
+  --arch-gold-bright: #f3e5ab;
+  --arch-gold-soft: rgba(212, 175, 55, 0.12);
+  --arch-gold-glow: rgba(212, 175, 55, 0.35);
+  --arch-teal: #2dd4bf;
+  --arch-teal-glow: rgba(45, 212, 191, 0.25);
+  --arch-border: rgba(212, 175, 55, 0.22);
+  --arch-border-teal: rgba(45, 212, 191, 0.25);
+  --arch-hairline: rgba(255, 255, 255, 0.08);
+
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--arch-obsidian);
+  color: var(--arch-stone);
+  font-family: inherit;
+  direction: inherit;
+  overflow-x: clip;
+}
+
+/* Light mode overrides */
+:global(html:not(.dark)) .landingRoot {
+  --arch-stone: #0f172a;
+  --arch-sand: #475569;
+  --arch-obsidian: #f7f5f0;
+  --arch-surface: #ffffff;
+  --arch-card: #f0ede6;
+  --arch-gold: #b38234;
+  --arch-gold-bright: #8a6220;
+  --arch-gold-soft: rgba(179, 130, 52, 0.1);
+  --arch-gold-glow: rgba(179, 130, 52, 0.2);
+  --arch-teal: #0f766e;
+  --arch-teal-glow: rgba(15, 118, 110, 0.15);
+  --arch-border: rgba(179, 130, 52, 0.28);
+  --arch-border-teal: rgba(15, 118, 110, 0.25);
+  --arch-hairline: rgba(15, 23, 42, 0.1);
+}
+
+/* =========================================================================
+   1. SVG KEYFRAME ANIMATIONS
+   ========================================================================= */
+@keyframes laserScanAnim {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(520px); opacity: 0; }
+}
+
+@keyframes waveShimmer1 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes waveShimmer2 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(35px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes radarSpinAnim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulsePingAnim {
+  0% { r: 10px; opacity: 0.8; }
+  70% { r: 28px; opacity: 0; }
+  100% { r: 28px; opacity: 0; }
+}
+
+@keyframes beamSweepLeft {
+  0% { transform: rotate(-5deg); transform-origin: 680px 320px; }
+  50% { transform: rotate(15deg); transform-origin: 680px 320px; }
+  100% { transform: rotate(-5deg); transform-origin: 680px 320px; }
+}
+
+@keyframes beamSweepRight {
+  0% { transform: rotate(5deg); transform-origin: 760px 320px; }
+  50% { transform: rotate(-15deg); transform-origin: 760px 320px; }
+  100% { transform: rotate(5deg); transform-origin: 760px 320px; }
+}
+
+.landingRoot :global(.svg-laser-scan) {
+  animation: laserScanAnim 7s ease-in-out infinite;
+}
+
+.landingRoot :global(.svg-wave-1) {
+  animation: waveShimmer1 9s ease-in-out infinite;
+}
+
+.landingRoot :global(.svg-wave-2) {
+  animation: waveShimmer2 11s ease-in-out infinite;
+}
+
+.landingRoot :global(.svg-compass-spin) {
+  animation: radarSpinAnim 24s linear infinite;
+  transform-origin: center;
+}
+
+.landingRoot :global(.svg-pulse-ring) {
+  animation: pulsePingAnim 2.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.landingRoot :global(.svg-beam-left) {
+  animation: beamSweepLeft 12s ease-in-out infinite;
+}
+
+.landingRoot :global(.svg-beam-right) {
+  animation: beamSweepRight 14s ease-in-out infinite;
+}
+
+/* =========================================================================
+   2. FLOATING NAVIGATION BAR
+   ========================================================================= */
+.cinematicNav {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2.5rem;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 1px solid transparent;
+}
+
+.navScrolled {
+  background-color: rgba(6, 9, 15, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom-color: var(--arch-border);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+:global(html:not(.dark)) .navScrolled {
+  background-color: rgba(247, 245, 240, 0.92);
+  border-bottom-color: rgba(179, 130, 52, 0.2);
+}
+
+.navBrand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.navLogo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.navBrandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.navBrandTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.navBrandSub {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--arch-gold);
+  font-weight: 700;
+}
+
+.navCenter {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .navCenter {
+    display: none;
+  }
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--arch-stone);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.82;
+  transition: all 0.2s ease;
+  padding-block: 0.25rem;
+}
+
+.navLink:hover {
+  opacity: 1;
+  color: var(--arch-gold);
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.langBtn {
+  background: var(--arch-gold-soft);
+  border: 1px solid var(--arch-border);
+  color: var(--arch-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.langBtn:hover {
+  background: var(--arch-gold);
+  color: #06090f;
+}
+
+/* =========================================================================
+   3. CAD TELEMETRY OVERLAY & ACT RADAR
+   ========================================================================= */
+.cadOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  padding: 5.5rem 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  mix-blend-mode: difference;
+  opacity: 0.65;
+}
+
+.cadTopBar, .cadBottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+}
+
+.cadCrosshair {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--arch-gold);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.actRadar {
+  position: fixed;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+}
+
+[dir="ltr"] .actRadar {
+  left: auto;
+  right: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .actRadar {
+    display: none;
+  }
+}
+
+.radarList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.radarBtn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  opacity: 0.45;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.radarActive {
+  opacity: 1;
+}
+
+.radarDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--arch-stone);
+  transition: all 0.3s ease;
+}
+
+.radarActive .radarDot {
+  background-color: var(--arch-gold);
+  transform: scale(1.6);
+  box-shadow: 0 0 10px var(--arch-gold);
+}
+
+.radarLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--arch-stone);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.radarActive .radarLabel {
+  color: var(--arch-gold);
+}
+
+.particleCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* =========================================================================
+   4. ACT 1: HERO SECTION & ANIMATED FACADE SVG
+   ========================================================================= */
+.heroSection {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 7.5rem 2rem 4rem;
+  overflow: hidden;
+}
+
+.heroSvgWrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.heroFacadeSvg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, transparent 20%, rgba(6, 9, 15, 0.75) 85%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+:global(html:not(.dark)) .heroVignette {
+  background: radial-gradient(circle at 50% 45%, transparent 20%, rgba(247, 245, 240, 0.7) 85%);
+}
+
+.heroContentContainer {
+  position: relative;
+  z-index: 5;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.heroBadgeRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.heroPillBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  background-color: rgba(14, 22, 34, 0.85);
+  border: 1px solid var(--arch-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--arch-gold-bright);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:global(html:not(.dark)) .heroPillBadge {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.heroTitles {
+  max-width: 900px;
+  margin-bottom: 2.25rem;
+}
+
+.heroEyebrow {
+  display: block;
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--arch-teal);
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.heroMainTitle {
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, #ffffff 30%, var(--arch-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+:global(html:not(.dark)) .heroMainTitle {
+  background: linear-gradient(135deg, #0f172a 30%, #b38234 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitle {
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--arch-sand);
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* SEARCH CONSOLE BOX */
+.searchConsoleBox {
+  width: 100%;
+  max-width: 1080px;
+  background-color: rgba(14, 22, 34, 0.88);
+  border: 1px solid var(--arch-border);
+  border-radius: 20px;
+  padding: 1.25rem;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6), 0 0 25px var(--arch-gold-soft);
+  margin-bottom: 2.5rem;
+}
+
+:global(html:not(.dark)) .searchConsoleBox {
+  background-color: rgba(255, 255, 255, 0.92);
+  border-color: rgba(179, 130, 52, 0.25);
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+}
+
+.searchGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .searchGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.searchField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: start;
+}
+
+.searchLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--arch-gold);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.searchSelect {
+  width: 100%;
+  background-color: rgba(6, 9, 15, 0.8);
+  border: 1px solid var(--arch-hairline);
+  color: var(--arch-stone);
+  font-size: 0.85rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+:global(html:not(.dark)) .searchSelect {
+  background-color: #f7f5f0;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+.searchSelect:focus {
+  border-color: var(--arch-gold);
+}
+
+.searchSubmitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.6rem;
+  background: linear-gradient(135deg, var(--arch-gold) 0%, #b38234 100%);
+  color: #06090f;
+  font-weight: 800;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 8px 24px var(--arch-gold-glow);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  height: 48px;
+  align-self: flex-end;
+}
+
+.searchSubmitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--arch-gold-glow);
+}
+
+/* 4 METRIC CARDS */
+.metricCounterRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1080px;
+}
+
+@media (max-width: 768px) {
+  .metricCounterRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metricCard {
+  background-color: rgba(11, 17, 26, 0.7);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 16px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.25s ease;
+}
+
+.metricCard:hover {
+  border-color: var(--arch-border);
+}
+
+:global(html:not(.dark)) .metricCard {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.metricValue {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--arch-gold-bright);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: -0.02em;
+}
+
+:global(html:not(.dark)) .metricValue {
+  color: #b38234;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+  font-weight: 600;
+}
+
+/* =========================================================================
+   5. ACT 2: BANAN 3D & MASTERPLAN EXPLORER (ANIMATED SVG)
+   ========================================================================= */
+.masterplanSection {
+  position: relative;
+  padding: 6rem 2rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sectionHeaderWrap {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 3rem;
+}
+
+.sectionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--arch-gold);
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+}
+
+.sectionDesc {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--arch-sand);
+  margin: 0;
+}
+
+.viewModeSwitcher {
+  display: inline-flex;
+  gap: 0.5rem;
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-border);
+  border-radius: 9999px;
+  padding: 0.35rem;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .viewModeSwitcher {
+    flex-direction: column;
+    border-radius: 16px;
+  }
+}
+
+.viewTabBtn {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px;
+  color: var(--arch-stone);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.viewTabActive {
+  background: var(--arch-gold);
+  color: #06090f;
+  box-shadow: 0 4px 16px var(--arch-gold-glow);
+}
+
+.masterplanStage {
+  position: relative;
+  width: 100%;
+  border-radius: 24px;
+  border: 1px solid var(--arch-border);
+  background-color: var(--arch-card);
+  overflow: hidden;
+  box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.7);
+  margin-bottom: 3rem;
+}
+
+.threeSceneContainer {
+  position: relative;
+  width: 100%;
+  min-height: 580px;
+}
+
+.scene3dLoader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 480px;
+  color: var(--arch-sand);
+  font-size: 0.9rem;
+}
+
+.loaderSpinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--arch-hairline);
+  border-top-color: var(--arch-gold);
+  border-radius: 50%;
+  animation: radarSpinAnim 0.8s linear infinite;
+}
+
+.vectorMasterplanContainer {
+  position: relative;
+  width: 100%;
+}
+
+.masterplanSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hotspotDetailCard {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  max-width: 380px;
+  width: calc(100% - 4rem);
+  background-color: rgba(8, 14, 24, 0.94);
+  border: 1px solid var(--arch-gold);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.8);
+  z-index: 20;
+}
+
+[dir="ltr"] .hotspotDetailCard {
+  right: auto;
+  left: 2rem;
+}
+
+.hotspotCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.hotspotCardTag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arch-teal);
+  background-color: var(--arch-teal-glow);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.hotspotCloseBtn {
+  background: none;
+  border: none;
+  color: var(--arch-stone);
+  cursor: pointer;
+  padding: 0.2rem;
+  opacity: 0.7;
+}
+
+.hotspotCardTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+
+.hotspotCardDesc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--arch-sand);
+  margin: 0 0 1rem;
+}
+
+.hotspotCardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--arch-gold);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+/* MATERIAL PALETTE DOCK */
+.materialDockWrap {
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-border);
+  border-radius: 20px;
+  padding: 1.75rem;
+}
+
+.materialDockHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.materialDockEyebrow {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--arch-gold);
+}
+
+.materialDockSub {
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+}
+
+.materialGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .materialGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .materialGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.materialCard {
+  background-color: var(--arch-card);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 14px;
+  padding: 1.1rem;
+  text-align: start;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.materialCard:hover {
+  border-color: var(--arch-border);
+  transform: translateY(-2px);
+}
+
+.materialCardActive {
+  border-color: var(--arch-gold);
+  background-color: rgba(212, 175, 55, 0.08);
+  box-shadow: 0 8px 20px -5px var(--arch-gold-soft);
+}
+
+.materialCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.materialNumber {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  color: var(--arch-gold);
+  font-weight: 700;
+}
+
+.materialBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--arch-teal);
+}
+
+.materialTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 0.35rem;
+}
+
+.materialDesc {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--arch-sand);
+  margin: 0;
+}
+
+/* =========================================================================
+   6. ACT 3: CURATED ESTATES (BLUEPRINT VECTOR SVGS)
+   ========================================================================= */
+.collectionsSection {
+  position: relative;
+  padding: 6rem 2rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.estateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+}
+
+@media (max-width: 900px) {
+  .estateGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.estateCard {
+  background-color: var(--arch-card);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 22px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.estateCard:hover {
+  border-color: var(--arch-gold);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px -15px var(--arch-gold-soft);
+}
+
+.estateSvgWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: #080c14;
+  border-bottom: 1px solid var(--arch-hairline);
+}
+
+.estateSvgElement {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.estateBadgeTag {
+  position: absolute;
+  top: 1rem;
+  inset-inline-start: 1rem;
+  background-color: rgba(8, 14, 24, 0.85);
+  border: 1px solid var(--arch-border);
+  color: var(--arch-gold-bright);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.estateCardBody {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.estateMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--arch-teal);
+}
+
+.estatePrice {
+  color: var(--arch-gold-bright);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+}
+
+.estateTitle {
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.35;
+  margin: 0 0 0.75rem;
+}
+
+.estateSummary {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--arch-sand);
+  margin: 0 0 1.25rem;
+  flex: 1;
+}
+
+.estateSpecsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+  font-family: var(--font-mono, monospace);
+  margin-bottom: 1.5rem;
+  padding-block: 0.5rem;
+  border-block: 1px solid var(--arch-hairline);
+}
+
+.estateActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-border);
+  border-radius: 10px;
+  color: var(--arch-gold);
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.estateActionBtn:hover {
+  background-color: var(--arch-gold);
+  color: #06090f;
+}
+
+/* SECTION CTA BANNER */
+.sectionCtaBanner {
+  background: linear-gradient(135deg, rgba(14, 22, 34, 0.95) 0%, rgba(20, 32, 48, 0.95) 100%);
+  border: 1px solid var(--arch-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+:global(html:not(.dark)) .sectionCtaBanner {
+  background: linear-gradient(135deg, #ffffff 0%, #f0ede6 100%);
+}
+
+.ctaBannerText h3 {
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem;
+}
+
+.ctaBannerText p {
+  font-size: 0.9rem;
+  color: var(--arch-sand);
+  margin: 0;
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+.ctaBannerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.primaryGoldBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  background: linear-gradient(135deg, var(--arch-gold) 0%, #b38234 100%);
+  color: #06090f;
+  font-weight: 800;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--arch-gold-glow);
+  transition: all 0.25s ease;
+}
+
+.primaryGoldBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--arch-gold-glow);
+}
+
+.secondaryGlassBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-border);
+  color: var(--arch-stone);
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.secondaryGlassBtn:hover {
+  border-color: var(--arch-gold);
+  color: var(--arch-gold);
+}
+
+/* =========================================================================
+   7. ACT 4: ATELIER & FINANCIAL ROI CALCULATOR
+   ========================================================================= */
+.atelierSection {
+  position: relative;
+  padding: 6rem 2rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.atelierTwoColGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2.5rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .atelierTwoColGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.calculatorCard {
+  background-color: var(--arch-card);
+  border: 1px solid var(--arch-border);
+  border-radius: 22px;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+}
+
+.calculatorCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.calculatorTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.calculatorBadge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--arch-teal);
+  background-color: var(--arch-teal-glow);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+}
+
+.calcSliderGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.calcLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.calcValDisplay {
+  color: var(--arch-gold);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+}
+
+.rangeSlider {
+  width: 100%;
+  accent-color: var(--arch-gold);
+  cursor: pointer;
+}
+
+.sliderMinMax {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--arch-sand);
+  font-family: var(--font-mono, monospace);
+}
+
+.calcResultsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.calcResultBox {
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.calcResultLabel {
+  font-size: 0.7rem;
+  color: var(--arch-sand);
+  font-weight: 600;
+}
+
+.calcResultValue {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--arch-stone);
+  font-family: var(--font-mono, monospace);
+}
+
+.calcResultValueHighlight {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--arch-gold);
+  font-family: var(--font-mono, monospace);
+}
+
+.calcCurrency {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--arch-sand);
+}
+
+.calcCtaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, var(--arch-gold) 0%, #b38234 100%);
+  color: #06090f;
+  font-weight: 800;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: auto;
+}
+
+.calcCtaBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px var(--arch-gold-glow);
+}
+
+/* SERVICES ATELIER COLUMN */
+.servicesAtelierCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.servicesColHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.servicesColTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.servicesColSub {
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+}
+
+.servicesSvgStage {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--arch-border);
+  background-color: var(--arch-card);
+  overflow: hidden;
+  box-shadow: 0 15px 40px -15px rgba(0, 0, 0, 0.6);
+}
+
+.servicesSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.servicesStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.serviceItemCard {
+  background-color: var(--arch-card);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s ease;
+}
+
+.serviceItemCard:hover {
+  border-color: var(--arch-border);
+  transform: translateX(-4px);
+}
+
+[dir="ltr"] .serviceItemCard:hover {
+  transform: translateX(4px);
+}
+
+.serviceItemIconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-border);
+  color: var(--arch-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.serviceItemText {
+  flex: 1;
+}
+
+.serviceItemText h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 0.25rem;
+}
+
+.serviceItemText p {
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.serviceItemArrow {
+  color: var(--arch-gold);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.serviceItemCard:hover .serviceItemArrow {
+  opacity: 1;
+}
+
+/* =========================================================================
+   8. ACT 5: FINALE & REGULATORY TRUST (ANIMATED SKYLINE SVG)
+   ========================================================================= */
+.finaleSection {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem 2rem 2rem;
+  overflow: hidden;
+}
+
+.finaleSvgBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.finaleSkylineSvg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.finaleOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, transparent 20%, rgba(6, 9, 15, 0.85) 90%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.finaleContentWrap {
+  position: relative;
+  z-index: 5;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.finaleHeroBox {
+  text-align: center;
+  max-width: 820px;
+  margin-bottom: 4rem;
+}
+
+.finaleMainHeading {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0.75rem 0 1.25rem;
+  background: linear-gradient(135deg, #ffffff 40%, var(--arch-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.finaleSubHeading {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--arch-sand);
+  margin: 0 auto 2.25rem;
+}
+
+.finaleActionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.finalePrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, var(--arch-gold) 0%, #b38234 100%);
+  color: #06090f;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 30px var(--arch-gold-glow);
+  transition: all 0.25s ease;
+}
+
+.finalePrimaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px var(--arch-gold-glow);
+}
+
+.finaleSecondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 2rem;
+  background-color: rgba(14, 22, 34, 0.85);
+  border: 1px solid var(--arch-border);
+  color: var(--arch-stone);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.finaleSecondaryBtn:hover {
+  border-color: var(--arch-gold);
+  color: var(--arch-gold);
+}
+
+/* REGULATORY TRUST BADGES */
+.regulatoryTrustContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  margin-bottom: 4rem;
+}
+
+@media (max-width: 900px) {
+  .regulatoryTrustContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .regulatoryTrustContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trustItem {
+  background-color: rgba(11, 17, 26, 0.75);
+  border: 1px solid var(--arch-hairline);
+  border-radius: 16px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.trustSealSvgWrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.trustText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: start;
+}
+
+.trustText strong {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--arch-stone);
+}
+
+.trustText span {
+  font-size: 0.7rem;
+  color: var(--arch-sand);
+}
+
+/* LANDING FOOTER */
+.landingFooter {
+  width: 100%;
+  border-top: 1px solid var(--arch-hairline);
+  padding-top: 2.5rem;
+}
+
+.footerUpperRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.footerBrandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footerBrandDesc {
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+}
+
+.footerNavigationLinks {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.footerNavLink {
+  color: var(--arch-stone);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.footerNavLink:hover {
+  opacity: 1;
+  color: var(--arch-gold);
+}
+
+.backToTopBtn {
+  background: var(--arch-surface);
+  border: 1px solid var(--arch-hairline);
+  color: var(--arch-stone);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.backToTopBtn:hover {
+  border-color: var(--arch-gold);
+  color: var(--arch-gold);
+}
+
+.footerLowerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--arch-sand);
+}
+
+.footerLegalLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footerLegalLinks a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footerLegalLinks a:hover {
+  color: var(--arch-gold);
+}
+
+/* =========================================================================
+   9. VIP CONSULTATION / TOUR MODAL
+   ========================================================================= */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modalBackdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(6, 9, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modalContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 520px;
+  background-color: var(--arch-card);
+  border: 1px solid var(--arch-border);
+  border-radius: 24px;
+  padding: 2.25rem;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.modalHeading {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  color: var(--arch-stone);
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.7;
+}
+
+.modalCloseBtn:hover {
+  opacity: 1;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: start;
+}
+
+.formGroup label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--arch-stone);
+}
+
+.formInput, .formSelect {
+  width: 100%;
+  background-color: var(--arch-surface);
+  border: 1px solid var(--arch-hairline);
+  color: var(--arch-stone);
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.formInput:focus, .formSelect:focus {
+  border-color: var(--arch-gold);
+}
+
+.formDisclaimer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--arch-sand);
+  margin: 0;
+}
+
+.modalSubmitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, var(--arch-gold) 0%, #b38234 100%);
+  color: #06090f;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.modalSubmitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px var(--arch-gold-glow);
+}
+
+.modalSuccessBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  gap: 1rem;
+}
+
+.modalSuccessBox h4 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.modalSuccessBox p {
+  font-size: 0.85rem;
+  color: var(--arch-sand);
+  margin: 0;
+  line-height: 1.7;
+}

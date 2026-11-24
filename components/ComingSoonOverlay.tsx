@@ -18,15 +18,15 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
     const displayMsg = message || t('coming_soon_global') || "هذه الخدمة ستتوفر قريباً جداً في نظامنا المطور.";
 
     return (
-        <div className="w-full min-h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden px-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="calm-page calm-screen w-full min-h-screen bg-background dark:bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden px-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {/* Ultra-premium background effects */}
-            <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[60%] bg-indigo-500/10 rounded-full blur-[180px] animate-pulse" />
-            <div className="absolute bottom-[-10%] right-[-5%] w-[60%] h-[50%] bg-blue-600/10 rounded-full blur-[160px] animate-pulse delay-1000" />
+            <div className="calm-decoration absolute top-[-20%] left-[-10%] w-[70%] h-[60%] bg-indigo-500/10 rounded-full blur-[180px] animate-pulse" />
+            <div className="calm-decoration absolute bottom-[-10%] right-[-5%] w-[60%] h-[50%] bg-blue-600/10 rounded-full blur-[160px] animate-pulse delay-1000" />
             
             {/* Animated mesh gradient */}
             <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-400 rounded-full blur-[120px] animate-float" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-[120px] animate-float-delayed" />
+                <div className="calm-decoration absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-400 rounded-full blur-[120px] animate-float" />
+                <div className="calm-decoration absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-[120px] animate-float-delayed" />
             </div>
 
             <motion.div
@@ -43,12 +43,12 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                             scale: [1, 1.05, 1]
                         }}
                         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-24 h-24 rounded-[1rem] bg-slate-900/50 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative z-10"
+                        className="calm-panel w-24 h-24 rounded-[1rem] bg-card/50 dark:bg-slate-900/50 backdrop-blur-xl border border-border dark:border-white/10 flex items-center justify-center shadow-[0_8px_28px_rgba(32,59,50,0.07)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative z-10"
                     >
                         <Clock className="w-10 h-10 text-indigo-400" />
                     </motion.div>
                     {/* Radial glows around icon */}
-                    <div className="absolute -inset-4 bg-indigo-500/20 blur-3xl rounded-full -z-10" />
+                    <div className="calm-decoration absolute -inset-4 bg-indigo-500/20 blur-3xl rounded-full -z-10" />
                     <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/40 to-transparent blur-xl rounded-[1rem] opacity-50" />
                 </div>
 
@@ -65,7 +65,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                     </motion.div>
 
                     <div className="space-y-2">
-                        <h1 className="text-4xl md:text-3xl md:text-6xl font-black text-white tracking-tight leading-tight">
+                        <h1 className="text-4xl md:text-3xl md:text-6xl font-black text-foreground dark:text-white tracking-tight leading-tight">
                             {sectionName || "الخدمة"}
                             <span className="block bg-gradient-to-r from-indigo-400 via-blue-400 to-slate-400 bg-clip-text text-transparent mt-2">
                                 {language === 'ar' ? 'قريباً جداً' : 'Coming Soon'}
@@ -73,7 +73,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                         </h1>
                     </div>
 
-                    <p className="text-slate-400/80 text-lg font-medium leading-relaxed max-w-sm mx-auto">
+                    <p className="text-muted-foreground dark:text-slate-400/80 text-lg font-medium leading-relaxed max-w-sm mx-auto">
                         {displayMsg}
                     </p>
                 </div>
@@ -82,7 +82,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm pt-4">
                     <Link
                         href="/details"
-                        className="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-card/5 hover:bg-card/10 border border-white/10 hover:border-white/20 text-white text-sm font-black transition-all group backdrop-blur-md"
+                        className="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-muted dark:bg-card/5 hover:bg-muted hover:dark:bg-card/10 border border-border dark:border-white/10 hover:border-border hover:dark:border-white/20 text-foreground dark:text-white text-sm font-black transition-all group backdrop-blur-md"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" />
                         {language === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}
@@ -91,7 +91,7 @@ export default function ComingSoonOverlay({ message, sectionName, isAdmin }: Com
                     {isAdmin && (
                         <Link
                             href="/admin/settings"
-                            className="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black transition-all shadow-[0_10px_20px_rgba(79,70,229,0.2)]"
+                            className="calm-primary flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black transition-all shadow-[0_10px_20px_rgba(79,70,229,0.2)]"
                         >
                             ⚙️ {language === 'ar' ? 'تعديل الخدمة' : 'Admin Edit'}
                         </Link>

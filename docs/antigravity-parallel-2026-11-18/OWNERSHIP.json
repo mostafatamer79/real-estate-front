@@ -1,0 +1,324 @@
+{
+  "created": "2026-11-18",
+  "frontendRoot": "/home/mostafa/Work/mostakl/realestate/real-estate-front",
+  "chats": [
+    {
+      "n": 1,
+      "slug": "login-otp-nafath",
+      "review": 1,
+      "routes": [
+        "/login",
+        "/verify-otp",
+        "/nafath-login"
+      ],
+      "files": [
+        "components/auth/SignIn.tsx",
+        "components/auth/sign-in.module.css",
+        "app/verify-otp/page.tsx",
+        "app/verify-otp/verify-otp.module.css",
+        "app/login/page.tsx",
+        "app/nafath-login/page.tsx",
+        "tests/otp-navigation-cancellation.test.cjs"
+      ],
+      "task": "Finish the login visual correction, then OTP behavior, then verify the Nafath route contract. Review1 found the returned login still uses separated rounded cards instead of the requested immersive threshold composition; inspect rendered views before redesigning. One artwork instance already exists; keep it responsive. Remove unsupported accreditation claims (main already removed one: do not reintroduce it). Preserve method settings, keyboard tabs, input values, safe return destinations and normalization contract. Verify the actual supported phone convention before changing normalization; submit/store the same canonical identifier. Review1 found support-link cancellation also fires on Ctrl/Cmd-click: cancel only navigation leaving this page, using the installed Next Link navigation semantics. Preserve Back/unmount cancellation, expiry/resend guards and distinct invalid-code/offline/server/malformed-response feedback. Validate real success fields before storage. /nafath-login currently redirects to /profile; do not simulate a standalone Nafath identity service. Render AR/EN/theme/mobile/tablet/desktop before calling the result visually ready.",
+      "newprefix": [
+        "components/redesign/chat01/",
+        "lib/redesign-chat01-",
+        "tests/parallel-chat01-",
+        "scripts/parallel-chat01-",
+        "public/artworks/chat01-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-01.md"
+    },
+    {
+      "n": 2,
+      "slug": "provider-registration",
+      "review": 2,
+      "routes": [
+        "/service-providers"
+      ],
+      "files": [
+        "app/service-providers/page.tsx",
+        "app/service-providers/provider-registration.module.css",
+        "tests/redesign-provider-registration.test.cjs"
+      ],
+      "task": "Correct and finish provider onboarding and opportunities using REVIEW_2. Main scoped reduced-motion selectors already; preserve that. Fix portal-local light/dark tokens, readable gold-button text, and stale opportunity pagination: old-page requests must not remain actionable as the new page loads/fails. Narrow the draft-persistence copy to what is implemented; navigation currently discards component state. Preserve dirty form/upload references through language changes, retries and background refresh. Preserve grants, expired-license blocking, real offer constraints/delivery modes and server approval. Distinguish provider opportunities from client-owned request tracking; do not claim /services/provider-requests shows assigned provider work without checking its owner-only backend contract. Keep actual multipart upload validation, long form and short-height offer dialog usable. Tests must exercise production helpers/behavior, not duplicated state simulations.",
+      "newprefix": [
+        "components/redesign/chat02/",
+        "lib/redesign-chat02-",
+        "tests/parallel-chat02-",
+        "scripts/parallel-chat02-",
+        "public/artworks/chat02-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-02.md"
+    },
+    {
+      "n": 3,
+      "slug": "wallet-checkout",
+      "review": 3,
+      "routes": [
+        "/wallet",
+        "/checkout"
+      ],
+      "files": [
+        "app/wallet/page.tsx",
+        "app/wallet/wallet-redesign.module.css",
+        "app/wallet/components/InvoicesSection.tsx",
+        "app/wallet/components/WalletSidebar.tsx",
+        "components/Payment/CheckoutHandoff.tsx",
+        "app/checkout/page.tsx",
+        "lib/redesign-wallet-amount.ts",
+        "tests/redesign-wallet-amount.test.cjs"
+      ],
+      "task": "Finish wallet corrections from REVIEW_3, then checkout handoff. Main fixed CSS purity and lowered the mobile dock below z50 dialogs; retain those fixes. An old displayed balance becomes stale after failed refresh: mark unavailable and block withdrawals both in UI AND handler until fresh confirmation. Preserve invoice/subscription ledger sources independently so one endpoint failure does not delete cached rows from the other. Show commission/files failures with retry instead of successful empty content. Validate finite positive money at 2-decimal precision against current confirmed balance and guard duplicate pending actions. Preserve invoice types, document/receipt ownership and real gateway contracts; no local mark-paid/activation. Checkout guests need a real login link with a validated single target and wallet/back navigation. Preserve query target allowlists; real success remains server-confirmed. Keep existing wallet invoice tests. Shared PaymentMethodsModal, Geidea, receipt/PDF primitives and API clients are READ ONLY.",
+      "newprefix": [
+        "components/redesign/chat03/",
+        "lib/redesign-chat03-",
+        "tests/parallel-chat03-",
+        "scripts/parallel-chat03-",
+        "public/artworks/chat03-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-03.md"
+    },
+    {
+      "n": 4,
+      "slug": "customer-support",
+      "review": 2,
+      "routes": [
+        "/customerservice",
+        "/customerservice/contact",
+        "/customerservice/support"
+      ],
+      "files": [
+        "components/customer-service/CustomerServicePage.tsx",
+        "components/customer-service/customer-service.module.css",
+        "app/customerservice/page.tsx",
+        "app/customerservice/contact/page.tsx",
+        "app/customerservice/support/page.tsx",
+        "tests/redesign-support-state.test.cjs"
+      ],
+      "hold": "support",
+      "task": "HANDOVER lane: existing AGY recovery owns a subset of these files. Do not write until it has finished and Codex/user has handed over; then inspect its actual diff and retain useful work. Finish route-aware customer hub/contact/support without duplicate components or false promises. Feedback and replies need synchronous pending guards; history failures must not masquerade as empty; reply failures retain draft; avoid duplicate refresh after send. Preserve cached selected tickets and detect malformed/stale responses. Submit actual source route; use associated labels, accessible scrollable dialogs, FAQ/catalog navigation and actual section settings. FAQ page belongs to chat11: link it but do not edit it. /admin/customer-service is a distinct excluded page. Complete correctness before additional visual expansion.",
+      "newprefix": [
+        "components/redesign/chat04/",
+        "lib/redesign-chat04-",
+        "tests/parallel-chat04-",
+        "scripts/parallel-chat04-",
+        "public/artworks/chat04-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-04.md"
+    },
+    {
+      "n": 5,
+      "slug": "subscriptions-renewal",
+      "review": 3,
+      "routes": [
+        "/subscriptions/new",
+        "/internal/renew-subscription"
+      ],
+      "files": [
+        "app/subscriptions/new/page.tsx",
+        "app/subscriptions/new/subscription-redesign.module.css",
+        "app/internal/renew-subscription/page.tsx",
+        "lib/redesign-subscription-quote.ts",
+        "tests/redesign-subscription-quote.test.cjs"
+      ],
+      "hold": "subscriptions",
+      "task": "HANDOVER lane: wait for existing AGY subscription recovery to finish and release files, then inspect real integration. Earlier OpenCode produced a helper and large unused CSS while the page remained unchanged. Integrate pricing availability and actual helper: missing/failed prices must never submit a false free quote; explicit real zero stays valid. Keep department/seat/billing/promo/preview/permission/server recalculation contracts and preserve selections through language/failures. Do not activate subscriptions locally. Add bounded meaningful tests importing the actual production helper. Only after the new-subscription page is checked, finish internal renewal with real plan/price/status, guest return target, pending/retry and existing payment flow; no invented renewal endpoint or confirmed-payment claim. New CSS must be used and scoped, not another unintegrated artifact.",
+      "newprefix": [
+        "components/redesign/chat05/",
+        "lib/redesign-chat05-",
+        "tests/parallel-chat05-",
+        "scripts/parallel-chat05-",
+        "public/artworks/chat05-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-05.md"
+    },
+    {
+      "n": 6,
+      "slug": "department-routing",
+      "review": 4,
+      "routes": [
+        "/department-hub",
+        "/internal/[dept]"
+      ],
+      "files": [
+        "app/department-hub/page.tsx",
+        "app/department-hub/department-hub-redesign.module.css",
+        "app/internal/[dept]/page.tsx",
+        "lib/redesign-department-navigation.ts",
+        "tests/redesign-department-navigation.test.cjs"
+      ],
+      "hold": "departments",
+      "task": "HANDOVER lane: wait for AGY department recovery and release before writing. Fix route selection and hub permissions from REVIEW_4. Shared BuildingManagementWorkspace reads raw URL section as well as initial props: changing initialSection alone cannot fix unsupported section=dashboard/payments. Use canonical supported section values, preserve meaningful authorized subsections and financial subtab through the actual prop/query contract. Defaults: properties->properties, legal->legal, marketing->marketing, employees->users, finance->financial. Keep direct entry, hub link, reload and Back consistent without redirect loops/render-side navigation. Support finance/financial alias consistently with existing guards; explicit denies remain denied. Hub summary failure is unavailable/retry, never confirmed zero. Shared workspace belongs to chat08 and is READ ONLY here. Publish the canonical mapping in your report before chat08 starts. Preserve existing module/coming-soon/preview logic.",
+      "newprefix": [
+        "components/redesign/chat06/",
+        "lib/redesign-chat06-",
+        "tests/parallel-chat06-",
+        "scripts/parallel-chat06-",
+        "public/artworks/chat06-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-06.md"
+    },
+    {
+      "n": 7,
+      "slug": "messaging",
+      "review": 4,
+      "routes": [
+        "/chat",
+        "/chat/[roomId]",
+        "/internal/chat",
+        "/internal/chat/[roomId]"
+      ],
+      "files": [
+        "app/chat/page.tsx",
+        "app/chat/[roomId]/page.tsx",
+        "app/internal/chat/page.tsx",
+        "app/internal/chat/[roomId]/page.tsx",
+        "components/chat/chat-lists-redesign.module.css",
+        "tests/redesign-chat-lists.test.cjs"
+      ],
+      "task": "Finish chat-list corrections first, then each room. REVIEW_4 identified a fetch loop: fetch callback depends on currentUser while its effect reparses a fresh user object and sets it repeatedly. Use stable identity/ref or separate hydration, bounded StrictMode requests, explicit error/retry and safe stale handling. Validate null/non-object participant entries and optional name/phone types before trim/render. Internal new-chat dialog needs actual focus trap, Escape, initial focus and restoration using existing read-only primitives. Rooms currently clear drafts on socket.emit without delivery confirmation. Inspect existing chat client and backend gateway READ ONLY; use only the actual acknowledgement/event contract. Preserve recoverable draft on disconnect/rejection and avoid duplicate sends/reconnection duplication. Do not invent an ack, fake delivered/read status or new server protocol. AR/EN direction, accessible composer/back/send and actual timestamps. Scope leaves shared lib/chat and shared chat-modal primitives unchanged. Report if server contract prevents delivery proof.",
+      "newprefix": [
+        "components/redesign/chat07/",
+        "lib/redesign-chat07-",
+        "tests/parallel-chat07-",
+        "scripts/parallel-chat07-",
+        "public/artworks/chat07-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-07.md"
+    },
+    {
+      "n": 8,
+      "slug": "business-management",
+      "review": 3,
+      "routes": [
+        "/buildingmanagement",
+        "/internal"
+      ],
+      "files": [
+        "components/properties/BuildingManagementWorkspace.tsx",
+        "app/buildingmanagement/page.tsx",
+        "app/internal/page.tsx"
+      ],
+      "depends": [
+        "06"
+      ],
+      "task": "Start only after chat06 has finalized canonical routing, and preserve its initialSection/initialFinancialTab contract. Finish the BUSINESS/property management workspace, not /admin. Read the large file by relevant symbols/regions, not repeated whole-file dumps. Preserve actual portfolio/tenant/lease/payment/navigation/permission behavior and all dirty work; do not rewrite the whole 6K-line module. Known issues: 21rem drawer exceeds320px, toggle lacks accessible name/expanded state; offer-map overlay lacks proper dialog semantics/focus/Escape/return; financial mutation controls require actual permission-aware UI, pending guard and truthful status. Use existing accessible primitives read-only. Unknown financial data must not look like confirmed zero. One module/section at a time with functional checks, then wrapper routes. Do not modify FinancialWorkspace, MarketingWorkspace, API clients or shared dialogs; those may have excluded admin consumers. Financial/marketing originals remain read-only; avoid coupling chat09 standalone copies into this shared workspace without coordinator integration.",
+      "newprefix": [
+        "components/redesign/chat08/",
+        "lib/redesign-chat08-",
+        "tests/parallel-chat08-",
+        "scripts/parallel-chat08-",
+        "public/artworks/chat08-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-08.md"
+    },
+    {
+      "n": 9,
+      "slug": "financial-marketing",
+      "review": 3,
+      "routes": [
+        "/financial",
+        "/marketing"
+      ],
+      "files": [
+        "app/financial/page.tsx",
+        "app/marketing/page.tsx"
+      ],
+      "newprefix": [
+        "components/redesign/chat09/",
+        "lib/redesign-chat09-",
+        "tests/parallel-chat09-",
+        "scripts/parallel-chat09-",
+        "public/artworks/chat09-"
+      ],
+      "task": "Finish standalone financial and marketing pages sequentially. IMPORTANT: original components/financial/FinancialWorkspace.tsx and components/marketing/MarketingWorkspace.tsx are imported by excluded /admin routes and business management. They are READ ONLY. Use owned standalone copies/adapters under components/redesign/chat09/ with correctly resolved imports and the actual API contract; preserve all existing standalone tabs/actions/permissions rather than replacing them with a cosmetic placeholder. Existing nested managers can be consumed read-only; if a required fix lives in a forbidden shared child, report the dependency rather than mutating it. Original financial summary failures render zero KPIs; standalone must show unavailable/retry and retain confirmed data appropriately. Marketing uses real campaigns/requests/upload/status and permissions, no invented campaign/revenue/approval statistics. Scope all CSS to owned roots; no .dark/global leakage. Verify through main that original admin imports and default behavior are byte-unchanged. Backend must remain unchanged.",
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-09.md"
+    },
+    {
+      "n": 10,
+      "slug": "department-requests-disputes",
+      "review": 4,
+      "routes": [
+        "/internal/[dept]/requests",
+        "/disputes"
+      ],
+      "files": [
+        "app/internal/[dept]/requests/page.tsx",
+        "app/disputes/page.tsx"
+      ],
+      "depends": [
+        "06"
+      ],
+      "task": "After chat06 publishes department access/navigation mapping, finish departmental request list/detail/actions, then disputes. Preserve existing authorization, prices, invoice decisions and chat destinations. Catch list/detail/chat failures as recoverable errors, not false empty success, and discard stale route responses. Tests need direct entry, forbidden roles, actual department grants, status/currency0, failure retry and every visible row/action. Disputes details button currently has no handler and nullable parties crash because typeof null==='object'; add actual accessible details dialog or a verified existing destination and safe parties. Keep complete descriptions accessible. Shared ServiceRequestsTable, LegalRequestFlow, chat-modal, financial APIs and modal primitives are read-only, including any admin consumers. Use owned local adapters if necessary; no simulated legal encryption or fabricated licensing/status metadata.",
+      "newprefix": [
+        "components/redesign/chat10/",
+        "lib/redesign-chat10-",
+        "tests/parallel-chat10-",
+        "scripts/parallel-chat10-",
+        "public/artworks/chat10-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-10.md"
+    },
+    {
+      "n": 11,
+      "slug": "public-content-faq",
+      "review": 2,
+      "routes": [
+        "/about",
+        "/info",
+        "/share-opinion",
+        "/customerservice/faq"
+      ],
+      "files": [
+        "app/about/page.tsx",
+        "app/info/page.tsx",
+        "app/share-opinion/page.tsx",
+        "app/customerservice/faq/page.tsx"
+      ],
+      "task": "Finish these smaller pages ONE AT A TIME. About: strong coherent brand composition, genuine capabilities only, deterministic direct-entry back and reduced-motion behavior. Info: real published/legal content and settings, distinguish loading/error/empty and preserve tab/deep-link behavior; do not invent legal policies, certification or contract terms. Opinion: AR/EN and direction, real labelled form fields, validation/pending guard/failure preservation and cancel delayed navigation on unmount. FAQ: published successful empty state must not silently become Arabic fallback; localized loading/error/retry, preserve orphaned categories instead of dropping questions, real expand/collapse semantics and deterministic customer-service destination. Chat04 owns CustomerServicePage/contact/support: do not edit them. Link them via verified routes. Actual source-language business content may remain its published language; distinguish that from untranslated UI. Avoid repeated decorative art. Shared terms modal/footer/header/translation dictionaries are read-only; keep added UI copy local.",
+      "newprefix": [
+        "components/redesign/chat11/",
+        "lib/redesign-chat11-",
+        "tests/parallel-chat11-",
+        "scripts/parallel-chat11-",
+        "public/artworks/chat11-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-11.md"
+    },
+    {
+      "n": 12,
+      "slug": "scan-map",
+      "review": 4,
+      "routes": [
+        "/scan-map"
+      ],
+      "files": [
+        "app/scan-map/page.tsx"
+      ],
+      "task": "Finish the real scan-map workflow with a refined map-first composition and clear usable mobile controls. Shared app/src/components/Map and PaymentMethodsModal are READ ONLY (other pages/admin may consume them). Use owned local wrappers/adapters rather than altering shared contracts. Preserve actual places/selected district/report/payment flow and section/preview flags. Distinguish unavailable geolocation/maps/network/report/pricing from valid empty/zero. Protect draft selection, busy races, rerender/unmount and retry. Reports/results must be real server data; never fake generated analysis or settlement, and do not issue real payment/report mutations during checks. Use intercepted tiles/geolocation/API and explicitly note limits. Accessible map controls, named dialogs/focus/Escape, short-height mobile layout, layered payment/modal controls and all real links matter. No invented legal/property/AI reliability claims or report endpoints.",
+      "newprefix": [
+        "components/redesign/chat12/",
+        "lib/redesign-chat12-",
+        "tests/parallel-chat12-",
+        "scripts/parallel-chat12-",
+        "public/artworks/chat12-"
+      ],
+      "report": "docs/antigravity-parallel-2026-11-18/reports/chat-12.md"
+    }
+  ],
+  "pendingRoutesCovered": 26,
+  "additionalReopenedRoutes": [
+    "/login",
+    "/verify-otp"
+  ],
+  "maximumConcurrentImplementers": 6,
+  "excluded": [
+    "/",
+    "/home",
+    "/admin",
+    "/admin/*"
+  ],
+  "warning": "Handover locks must be checked live. This manifest does not release active existing workers."
+}

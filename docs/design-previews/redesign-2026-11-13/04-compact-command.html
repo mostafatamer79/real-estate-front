@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>التحكم السريع | الوساطة الرقمية</title>
+  <style>:root{font-family:Tahoma,"Segoe UI",sans-serif;--ease:cubic-bezier(.16,1,.3,1);--back:#e9e8e6;--surface:#fff;--surface-2:#f5f4f2;--surface-3:#eeece9;--ink:#222321;--muted:#6a6b68;--line:#dfddd9;--accent:#30302e;--on-accent:#fff;--shadow:0 35px 90px #2423201c;color-scheme:light}
+body.dark{--back:#0e1012;--surface:#181b1e;--surface-2:#202428;--surface-3:#2a2e32;--ink:#f3f1ee;--muted:#b2b4b5;--line:#373b3e;--accent:#eceae6;--on-accent:#17191b;--shadow:0 35px 100px #0009;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--back);color:var(--ink);transition:background .35s,color .35s}button,input,select,textarea{font:inherit}button,select{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.studio-bar{position:sticky;z-index:40;top:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;min-height:73px;padding:10px 22px;background:#222320;color:white;box-shadow:0 12px 28px #0003}.studio-mark{display:flex;align-items:center;gap:12px}.studio-mark strong{display:block;font-size:13px}.studio-mark small{display:block;color:#c5c4c1;font-size:10px;margin-top:4px}.studio-dot{width:14px;height:14px;border:3px solid white;border-radius:50%;box-shadow:0 0 0 4px #ffffff25}.studio-actions,.studio-variants{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.studio-actions label{font-size:11px}.studio-actions select,.studio-actions button,.studio-variants a{min-height:37px;padding:8px 11px;border:1px solid #ffffff35;border-radius:7px;background:#383936;color:white;font-size:11px}.studio-actions select{width:235px;background:#f3f2ef;color:#222}.studio-actions button:hover,.studio-variants a:hover{background:#53544e}.studio-variants a[aria-current=page]{background:white;color:#222}.prototype-frame{padding:24px 28px 60px}.prototype-caption{max-width:1440px;display:flex;justify-content:space-between;gap:12px;margin:0 auto 11px;font-size:10px;color:var(--muted)}#route-path{direction:ltr}.site{display:grid;grid-template-columns:1fr;max-width:1440px;min-height:850px;margin:auto;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}.site-main{min-width:0}.site-rail{display:none}.site-header{display:flex;align-items:center;justify-content:space-between;gap:20px;height:75px;padding:0 clamp(24px,5vw,72px);border-bottom:1px solid var(--line);background:var(--surface)}.site-brand{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;white-space:nowrap}.site-brand img{width:35px;height:35px;object-fit:contain}.dark .site-brand img,.dark .rail-brand img{filter:invert(1)}.site-header nav{display:flex;align-items:center;gap:26px;font-size:12px}.site-header nav a{padding:27px 0;color:var(--muted);border-bottom:2px solid transparent}.site-header nav a:hover,.site-header nav a.is-active{color:var(--ink);border-color:var(--ink)}.header-end{display:flex;align-items:center;gap:15px;color:var(--muted);font-size:11px}.avatar{width:37px;height:37px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-weight:800}.screen{padding:clamp(26px,4.2vw,60px) clamp(24px,5vw,72px) 85px;min-height:750px;view-transition-name:screen}.breadcrumb{margin-bottom:28px;color:var(--muted);font-size:11px}.breadcrumb b{color:var(--ink)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.95fr);align-items:center;gap:clamp(24px,4vw,60px);margin-bottom:44px}.hero.no-visual{grid-template-columns:1fr;margin-bottom:30px}.hero-copy{min-width:0;position:relative;z-index:1}.hero-title{max-width:740px;margin:0 0 18px;font-size:clamp(36px,4.4vw,64px);line-height:1.32;letter-spacing:-.035em;text-wrap:balance}.hero-desc{max-width:540px;margin:0;color:var(--muted);font-size:14px;line-height:2}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}.action{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:47px;padding:11px 19px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:12px;font-weight:800;transition:transform .25s var(--ease),background .25s,box-shadow .25s}.action:hover{transform:translateY(-3px);background:var(--surface-2);box-shadow:0 12px 25px #0002}.action.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.arrow{font-size:17px}.hero-visual{position:relative;min-height:360px;border-radius:12px;overflow:hidden;background:var(--surface-3)}.hero-visual img,.feature-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.hero-visual:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#0009)}.visual-caption{position:absolute;z-index:1;bottom:22px;right:24px;color:white;font-size:11px;line-height:1.7}.visual-caption strong{display:block;font-size:17px}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:32px 0 19px;padding-top:20px;border-top:1px solid var(--line)}.section-heading h2{margin:0;font-size:clamp(20px,2vw,27px)}.section-heading span{color:var(--muted);font-size:11px}
+.service-strips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.service-strip{position:relative;min-height:175px;padding:22px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;transition:transform .3s var(--ease),box-shadow .3s}.service-strip:hover{transform:translateY(-5px);box-shadow:0 19px 30px #0002}.service-strip span{display:block;font-size:11px;color:var(--muted);margin-bottom:24px}.service-strip h3{margin:0 0 8px;font-size:17px}.service-strip p{margin:0;color:var(--muted);font-size:11px;line-height:1.9}.service-strip b{position:absolute;left:20px;bottom:17px;font-size:19px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:25px}.metric{padding:21px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px}.metric small,.metric span{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;margin:7px 0;font-size:28px}.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(230px,.65fr);gap:14px;margin-bottom:29px}.panel,.form-card,.side-note{min-width:0;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px}.panel.soft,.side-note{background:var(--surface-2)}.panel h3{margin:0 0 9px;font-size:16px}.panel p,.side-note p{margin:0;color:var(--muted);font-size:11px;line-height:1.9}.panel-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:16px}.panel-head span{font-size:11px;color:var(--muted)}.map-preview{min-height:215px;position:relative;overflow:hidden;border-radius:7px;background:var(--surface-3)}.map-preview:before{content:"";position:absolute;inset:-20%;background:linear-gradient(16deg,transparent 47%,var(--surface) 47% 50%,transparent 50%),linear-gradient(115deg,transparent 45%,var(--surface) 45% 48%,transparent 48%);opacity:.6}.map-preview:after{content:"";position:absolute;top:45%;left:51%;width:22px;height:22px;border:5px solid var(--surface);border-radius:50%;background:var(--accent);box-shadow:0 0 0 10px #7774}.map-label{position:absolute;bottom:15px;right:15px;padding:8px 11px;background:var(--surface);border-radius:6px;font-size:10px}.activity-row{display:flex;align-items:start;gap:11px;padding:15px 0;border-bottom:1px solid var(--line)}.activity-row:last-child{border:0}.activity-row i{flex:none;width:7px;height:7px;margin-top:7px;background:var(--ink);border-radius:50%}.activity-row strong{display:block;font-size:11px}.activity-row small{display:block;margin-top:5px;color:var(--muted);font-size:10px}.chart{display:flex;align-items:end;gap:10px;height:195px;padding-top:14px;border-bottom:1px solid var(--line)}.chart i{flex:1;height:var(--h);background:linear-gradient(var(--ink),var(--surface-3));border-radius:5px 5px 0 0;transform-origin:bottom}
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}.filter-bar button{padding:9px 15px;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:11px}.filter-bar button.is-active{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}.catalog-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(230px,.8fr);gap:15px}.feature-photo{position:relative;min-height:315px;border-radius:10px;overflow:hidden;background:var(--surface-3)}.feature-photo span{position:absolute;bottom:13px;right:13px;padding:7px 10px;background:var(--surface);color:var(--ink);border-radius:6px;font-size:10px}.catalog-list{display:grid;gap:10px}.catalog-item{padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:9px;transition:transform .2s,box-shadow .2s}.catalog-item:hover{transform:translateY(-3px);box-shadow:0 10px 20px #0002}.catalog-item strong{display:block;font-size:13px}.catalog-item small{display:block;margin-top:8px;color:var(--muted);font-size:10px}.records-layout{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:16px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.table-wrap table{border-collapse:collapse;min-width:560px;width:100%;text-align:right}.table-wrap th,.table-wrap td{padding:15px;border-bottom:1px solid var(--line);font-size:11px}.table-wrap th{background:var(--surface-2)}.table-wrap tbody tr:hover{background:var(--surface-2)}.pill{display:inline-flex;padding:5px 9px;border:1px solid var(--line);border-radius:100px;background:var(--surface-2);font-size:10px}.side-note strong{font-size:14px}.form-layout{display:grid;grid-template-columns:175px minmax(0,1fr);gap:24px}.steps{border-left:1px solid var(--line)}.steps div{padding:10px 16px;color:var(--muted);font-size:11px}.steps .active{color:var(--ink);font-weight:800}.form-card h2{margin:0 0 20px;font-size:19px}.fields{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.field{display:grid;gap:8px;font-size:11px;font-weight:700}.field.full{grid-column:1/-1}.field input,.field select,.field textarea{min-height:45px;width:100%;padding:11px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;color:var(--ink)}.field textarea{min-height:110px}.chat-layout{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:390px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.chat-list{background:var(--surface-2);border-left:1px solid var(--line)}.chat-list div{padding:18px;border-bottom:1px solid var(--line);font-size:11px}.chat-list .active{background:var(--surface-3);font-weight:800}.chat-room{padding:22px}.chat-room h3{font-size:15px}.bubble{width:fit-content;max-width:75%;margin-top:14px;padding:13px 16px;background:var(--surface-3);border-radius:12px;font-size:11px}.bubble.reply{margin-right:auto;background:var(--surface-2)}.chat-input{margin-top:65px;padding:13px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:11px}.article-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:60px}.article-layout article p{color:var(--muted);font-size:13px;line-height:2}.article-layout article h2{font-size:22px}.article-layout aside{padding-top:15px;border-top:1px solid var(--line);font-size:11px}.article-layout aside div{padding:12px 0;border-bottom:1px solid var(--line)}.toast{position:fixed;z-index:100;bottom:22px;left:22px;padding:12px 17px;background:var(--accent);color:var(--on-accent);border-radius:8px;font-size:12px;opacity:0;transform:translateY(15px);pointer-events:none;transition:opacity .25s,transform .25s}.toast.show{opacity:1;transform:none}
+/* The offers route has its own real workflow instead of the generic catalog. */
+.offers-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:22px}.offers-head h1{font-size:clamp(34px,4vw,58px);line-height:1.2;margin:0 0 8px}.offers-head p{margin:0;color:var(--muted);font-size:12px}.offers-layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:19px}.offers-filter{align-self:start;padding:20px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}.offers-filter h2{margin:0 0 16px;font-size:17px}.offers-filter .field{margin-bottom:15px}.offers-filter .range{display:grid;grid-template-columns:1fr 1fr;gap:8px}.offers-filter .filter-actions{display:flex;gap:8px;margin-top:19px}.offers-content{min-width:0}.offers-tabs{display:flex;gap:5px;margin-bottom:16px;padding:5px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;width:max-content;max-width:100%}.offers-tabs button{padding:9px 15px;background:transparent;border:0;border-radius:7px;color:var(--muted);font-size:11px}.offers-tabs button.is-active{background:var(--accent);color:var(--on-accent)}.offers-meta{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px;color:var(--muted);font-size:11px}.offer-card{display:grid;grid-template-columns:210px minmax(0,1fr);gap:17px;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:11px;margin-bottom:12px}.offer-card img{width:100%;height:100%;min-height:177px;object-fit:cover}.offer-card-content{padding:18px 3px 18px 18px}.offer-card-content h3{margin:0 0 9px;font-size:17px}.offer-card-content p{color:var(--muted);font-size:11px}.offer-card-content strong{display:block;margin:15px 0;font-size:20px}.offer-card-content .action{min-height:38px}.offer-empty{padding:42px 25px;text-align:center;background:var(--surface-2);border:1px dashed var(--line);border-radius:11px}.offer-empty b{display:block;margin-bottom:8px;font-size:16px}.offer-empty p{margin:0 0 18px;color:var(--muted);font-size:11px}.offer-empty .action{margin:auto}
+/* Gallery: image-led public experience with search pulled forward. */
+.gallery .site-header{border-bottom:0}.gallery .screen{padding-top:22px}.gallery .hero{min-height:510px;grid-template-columns:.85fr 1.15fr;gap:0;background:var(--surface-2);border-radius:16px;overflow:hidden}.gallery .hero-copy{padding:40px clamp(25px,4vw,60px)}.gallery .hero-visual{min-height:510px;border-radius:0}.gallery .hero-title{font-size:clamp(43px,5.2vw,78px)}.gallery .service-strip{border-radius:3px}.gallery .offers-layout{grid-template-columns:1fr}.gallery .offers-filter{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end}.gallery .offers-filter h2{grid-column:1/-1}.gallery .offers-filter .field{margin:0}.gallery .offers-filter .filter-actions{grid-column:1/-1;margin:0}.gallery .offers-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gallery .offers-tabs,.gallery .offers-meta,.gallery .offer-empty{grid-column:1/-1}.gallery .offer-card{grid-template-columns:1fr}.gallery .offer-card img{height:200px;min-height:0}.gallery .offer-card-content{padding:18px}
+/* Workspace: persistent navigation and broad dashboard panels. */
+.workspace .site{grid-template-columns:225px minmax(0,1fr)}.workspace .site-rail,.compact .site-rail{display:flex;flex-direction:column;padding:23px 14px;background:var(--surface-2);border-left:1px solid var(--line)}.rail-brand{display:flex;align-items:center;gap:10px;padding:4px 9px 30px;font-weight:800;font-size:14px;line-height:1.5}.rail-brand img{width:37px;height:37px;object-fit:contain}.site-rail p{padding:0 12px;color:var(--muted);font-size:10px}.site-rail a{padding:12px 13px;border-radius:8px;color:var(--muted);font-size:11px;transition:background .2s,transform .2s}.site-rail a:hover,.site-rail a.is-active{background:var(--surface-3);color:var(--ink);transform:translateX(-2px)}.rail-bottom{margin-top:auto;padding:20px 10px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.8}.workspace .site-header nav,.compact .site-header nav{display:none}.workspace .screen{padding:28px 34px 70px}.workspace .hero{grid-template-columns:1fr 280px;gap:20px}.workspace .hero-visual{min-height:220px}.workspace .hero-title{font-size:clamp(32px,3.5vw,49px)}.workspace .offers-layout{grid-template-columns:255px minmax(0,1fr)}
+/* Editorial: asymmetric type and strong architectural lines. */
+.editorial .site-header{height:88px;border-bottom:0}.editorial .screen{padding-top:8px}.editorial .breadcrumb{padding-top:13px;border-top:1px solid var(--ink)}.editorial .hero{grid-template-columns:.8fr 1.2fr;gap:18px;min-height:570px}.editorial .hero-copy{padding:25px 3vw 25px 0}.editorial .hero-visual{min-height:550px;border-radius:0}.editorial .hero-title{font-size:clamp(48px,5.5vw,86px);line-height:1.2}.editorial .hero.no-visual{min-height:0}.editorial .hero.no-visual .hero-copy{padding:0}.editorial .section-heading{border-top:2px solid var(--ink)}.editorial .service-strips{gap:0}.editorial .service-strip{border-radius:0;border-left:0;background:var(--surface);min-height:225px}.editorial .metric,.editorial .panel,.editorial .form-card,.editorial .offers-filter,.editorial .offer-card{border-radius:0}.editorial .offers-head{padding:20px 0 32px;border-bottom:2px solid var(--ink)}.editorial .offers-head h1{font-size:clamp(48px,5vw,76px)}.editorial .offers-layout{grid-template-columns:250px minmax(0,1fr)}
+/* Compact: tighter density and a dark rail for quick operations. */
+.compact .site{grid-template-columns:210px minmax(0,1fr)}.compact .site-rail{background:#292b2b;color:#f4f3f0;border:0}.compact .site-rail a{color:#c7c8c6}.compact .site-rail a:hover,.compact .site-rail a.is-active{background:#454847;color:white}.compact .rail-brand img{filter:invert(1)}.compact .site-rail p,.compact .rail-bottom{color:#b0b4b1}.compact .screen{padding:25px 30px 60px}.compact .site-header{height:62px;padding:0 30px}.compact .hero{grid-template-columns:1fr 240px;gap:18px;margin-bottom:23px}.compact .hero-visual{min-height:170px}.compact .hero-title{font-size:clamp(29px,3vw,43px);margin-bottom:9px}.compact .hero-desc{font-size:12px}.compact .hero-actions{margin-top:16px}.compact .metrics{gap:7px}.compact .metric{padding:14px}.compact .metric strong{font-size:23px}.compact .dashboard-grid{gap:8px}.compact .offers-layout{grid-template-columns:235px minmax(0,1fr);gap:10px}.compact .offers-filter{padding:15px}.compact .offer-card{grid-template-columns:150px 1fr}.compact .offer-card img{min-height:135px}.compact .offer-card-content{padding:13px}.compact .offer-card-content strong{margin:7px 0;font-size:16px}
+@keyframes reveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes photo-reveal{from{clip-path:inset(0 100% 0 0);transform:scale(1.04)}to{clip-path:inset(0);transform:scale(1)}}@keyframes grow{from{transform:scaleY(.05)}to{transform:scaleY(1)}}.screen .hero-title,.screen .offers-head h1{animation:reveal .55s var(--ease) both}.screen .hero-visual,.screen .feature-photo{animation:photo-reveal .8s var(--ease) .08s both}.screen .hero-desc,.screen .hero-actions,.screen .offers-tabs{animation:reveal .48s var(--ease) .12s both}.screen .metric,.screen .panel,.screen .service-strip,.screen .offer-card,.screen .offers-filter{animation:reveal .5s var(--ease) both}.screen .metric:nth-child(2),.screen .offer-card:nth-child(2){animation-delay:.07s}.screen .metric:nth-child(3),.screen .offer-card:nth-child(3){animation-delay:.14s}.chart i{animation:grow .7s var(--ease) .15s both}.motion-off *,.motion-off *:before,.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}::view-transition-old(screen){animation:.15s ease-out both reveal}::view-transition-new(screen){animation:.3s var(--ease) both reveal}
+@media(max-width:1100px){.studio-bar{align-items:start}.studio-variants{width:100%}.studio-actions{flex:1;justify-content:flex-end}.gallery .offers-filter{grid-template-columns:repeat(2,1fr)}}@media(max-width:800px){.prototype-frame{padding:12px}.site,.workspace .site,.compact .site{display:block}.site-rail,.workspace .site-rail,.compact .site-rail{display:none}.site-header nav{display:none}.screen,.workspace .screen,.compact .screen{padding:25px 18px 60px}.hero,.gallery .hero,.editorial .hero,.workspace .hero,.compact .hero{grid-template-columns:1fr;min-height:0}.hero-visual,.gallery .hero-visual,.editorial .hero-visual{min-height:270px}.gallery .hero-copy,.editorial .hero-copy{padding:26px}.hero-title,.gallery .hero-title,.editorial .hero-title{font-size:clamp(32px,8vw,52px)}.service-strips,.dashboard-grid,.catalog-layout,.records-layout,.article-layout,.form-layout,.offers-layout,.workspace .offers-layout,.editorial .offers-layout,.compact .offers-layout{grid-template-columns:1fr}.offers-filter{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.offers-filter h2,.offers-filter .filter-actions{grid-column:1/-1}.offers-filter .field{margin:0}.gallery .offers-content{display:block}.offer-card,.compact .offer-card{grid-template-columns:145px 1fr}.studio-actions select{width:175px}.metrics{grid-template-columns:1fr 1fr}.service-strips{grid-template-columns:1fr}.prototype-caption span:last-child{display:none}}@media(max-width:520px){.studio-bar{padding:11px}.studio-mark{width:100%}.studio-actions{justify-content:start}.studio-actions select{width:100%;flex:1}.studio-variants a{flex:1;text-align:center}.site-header{padding:0 17px}.header-end span{display:none}.metrics{grid-template-columns:1fr}.offers-filter,.gallery .offers-filter{grid-template-columns:1fr}.offer-card,.compact .offer-card{grid-template-columns:1fr}.offer-card img,.compact .offer-card img{height:190px;min-height:0}.offer-card-content{padding:15px}.offers-head{display:block}.offers-head .action{margin-top:15px}.offers-tabs{width:100%;overflow:auto}.offers-tabs button{white-space:nowrap}.fields{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Shared art direction for the four preview routes. The source app keeps its neutral palette. */
+.home-cover { position:relative; min-height:630px; display:flex; align-items:center; overflow:hidden; isolation:isolate; background:var(--surface-3); }
+.home-cover-image,.home-cover-image img,.home-cover-shade { position:absolute; inset:0; width:100%; height:100%; }
+.home-cover-image img { object-fit:cover; object-position:center; }
+.home-cover-shade { z-index:1; background:linear-gradient(270deg,#0b0b0bd9 0%,#1117 48%,transparent 80%); }
+.home-cover-content { position:relative; z-index:2; max-width:700px; padding:70px; color:white; }
+.home-kicker,.micro-label { display:block; font-size:11px; font-weight:800; letter-spacing:.04em; }
+.home-cover h1 { font-size:clamp(59px,7vw,112px); line-height:1.05; letter-spacing:-.07em; margin:25px 0 20px; }
+.home-cover p { max-width:460px; font-size:14px; line-height:2; margin:0; color:#f5f2ee; }
+.home-cover .action.primary { background:#fff; border-color:#fff; color:#1b1b1b; }
+.home-cover .action:not(.primary) { background:#ffffff23; border-color:#ffffff60; color:#fff; backdrop-filter:blur(12px); }
+.home-cover-index { position:absolute; z-index:2; left:28px; right:28px; bottom:24px; display:flex; justify-content:space-between; color:#fff; font-size:11px; }
+.home-intro { display:grid; grid-template-columns:160px minmax(0,1fr) 250px; align-items:start; gap:25px; padding:57px 0; border-bottom:1px solid var(--line); }
+.home-intro span { color:var(--muted); font-size:11px; }
+.home-intro strong { font-size:clamp(27px,3.2vw,47px); line-height:1.36; letter-spacing:-.035em; }
+.home-intro p { margin:0; color:var(--muted); font-size:12px; line-height:2; }
+.offers-visual { position:relative; height:310px; overflow:hidden; isolation:isolate; margin-bottom:28px; background:#262626; border-radius:14px; }
+.offers-visual img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 47%; }
+.offers-visual:after { content:""; position:absolute; inset:0; background:linear-gradient(270deg,#101010d8,#16161610 80%); }
+.offers-visual>div { position:absolute; z-index:1; right:36px; top:36px; color:#fff; }
+.offers-visual>div span { display:block; font-size:11px; margin-bottom:16px; }
+.offers-visual strong { font-size:clamp(38px,4.6vw,65px); line-height:1.18; letter-spacing:-.05em; }
+.offers-visual-number { position:absolute; z-index:1; bottom:22px; left:24px; color:white; font-size:10px; }
+.offers-head .micro-label { color:var(--muted); margin-bottom:10px; }
+.dashboard-mast { position:relative; display:flex; flex-direction:column; justify-content:space-between; min-height:265px; margin-bottom:28px; padding:27px 32px; overflow:hidden; background:linear-gradient(125deg,#1d1e20,#333537 58%,#191a1c); color:#fff; border-radius:13px; isolation:isolate; }
+.dashboard-mast:before { content:""; position:absolute; z-index:-1; left:-100px; top:-180px; width:500px; height:500px; border:1px solid #ffffff2b; border-radius:50%; box-shadow:0 0 0 90px #ffffff07,0 0 0 180px #ffffff05; }
+.dashboard-mast span,.dashboard-mast small { font-size:10px; letter-spacing:.04em; color:#c4c6c7; }
+.dashboard-mast b { font-size:clamp(34px,4vw,58px); line-height:1.12; letter-spacing:-.04em; }
+.dark .dashboard-mast { background:linear-gradient(125deg,#272b2f,#15181c 70%); border:1px solid #414449; }
+
+/* 01: property gallery — image as canvas, controls as floating objects. */
+.gallery .site { border:0; border-radius:20px; }
+.gallery .site-header { position:relative; z-index:2; border:0; background:var(--surface); }
+.gallery .screen { padding:0 0 70px; }
+.gallery .screen>:not(.home-cover):not(.offers-visual) { margin-right:clamp(28px,5vw,72px); margin-left:clamp(28px,5vw,72px); }
+.gallery .home-cover { min-height:690px; margin:0 17px 22px; border-radius:16px; }
+.gallery .home-cover-image img { object-position:center 47%; transform:scale(1.07); animation:gallery-drift 12s ease-out both; }
+.gallery .home-cover-shade { background:linear-gradient(270deg,#0b0b0be8,#1717174d 60%,transparent 92%); }
+.gallery .home-cover-content { padding-right:clamp(40px,6vw,95px); }
+.gallery .home-cover h1 { font-size:clamp(70px,7vw,118px); }
+.gallery .home-intro { grid-template-columns:150px 1fr 300px; }
+.gallery .service-strip { border:0; border-radius:16px; min-height:240px; padding:27px; background:linear-gradient(140deg,var(--surface-2),var(--surface-3)); }
+.gallery .service-strip h3 { font-size:22px; }
+.gallery .offers-visual { height:440px; margin:0 17px 28px; border-radius:16px; }
+.gallery .offers-head { margin-top:-93px; position:relative; z-index:2; padding:23px 29px; background:var(--surface); border-radius:14px; box-shadow:0 20px 60px #0002; }
+.gallery .offers-head h1 { font-size:38px; }
+.gallery .offers-filter { margin-top:7px; border:0; box-shadow:0 15px 40px #0001; border-radius:14px; }
+.gallery .offer-card { border:0; box-shadow:0 8px 28px #0001; border-radius:14px; overflow:hidden; }
+.gallery .offer-card:hover img { transform:scale(1.05); }
+.gallery .offer-card img { transition:transform .7s var(--ease); }
+.gallery .dashboard-mast { min-height:320px; border-radius:16px; background:linear-gradient(270deg,#181818e3,#18181821),url('architecture-concept.png') center/cover; }
+.gallery .dashboard-mast b { font-size:clamp(44px,5.4vw,75px); }
+
+/* 02: precision workspace — strong hierarchy, exact spacing and persistent nav. */
+.workspace .site { grid-template-columns:238px minmax(0,1fr); }
+.workspace .site-rail { background:var(--surface-2); border-left:1px solid var(--line); }
+.workspace .site-header { border-bottom:1px solid var(--line); }
+.workspace .screen { padding-top:0; }
+.workspace .dashboard-mast { margin:25px -34px 31px; border-radius:0; min-height:260px; padding:32px 38px; }
+.workspace .dashboard-mast:after { content:"01 / 03"; position:absolute; left:35px; top:34px; font-size:11px; letter-spacing:.15em; }
+.workspace .metric { border-radius:0; border-top:3px solid var(--ink); background:var(--surface); }
+.workspace .metric strong { font-size:35px; }
+.workspace .panel { border-radius:5px; }
+.workspace .home-cover { min-height:500px; margin:0 -34px; }
+.workspace .home-cover h1 { font-size:clamp(60px,5.6vw,92px); }
+.workspace .home-intro { grid-template-columns:1fr 2fr; }
+.workspace .home-intro p { grid-column:2; max-width:500px; }
+.workspace .service-strip { border-radius:2px; min-height:200px; }
+.workspace .offers-visual { height:210px; margin:0 -34px 25px; border-radius:0; }
+.workspace .offers-visual strong { font-size:42px; }
+.workspace .offers-head { border-bottom:2px solid var(--ink); padding-bottom:24px; }
+.workspace .offers-filter { background:var(--surface); border-radius:4px; border-top:3px solid var(--ink); }
+.workspace .offer-card { border-radius:5px; }
+
+/* 03: editorial residence — asymmetry, oversize typography and architectural rules. */
+.editorial .site { border:0; }
+.editorial .site-header { border-bottom:2px solid var(--ink); margin:0 clamp(28px,5vw,72px); padding:0; }
+.editorial .screen { padding-top:24px; }
+.editorial .home-cover { min-height:680px; display:grid; grid-template-columns:1fr 1fr; background:var(--surface); overflow:visible; }
+.editorial .home-cover-image { position:relative; grid-column:2; grid-row:1; min-height:680px; }
+.editorial .home-cover-image img { object-position:62% center; }
+.editorial .home-cover-shade { display:none; }
+.editorial .home-cover-content { grid-column:1; grid-row:1; align-self:center; padding:40px 24px 40px 0; color:var(--ink); }
+.editorial .home-cover h1 { font-size:clamp(65px,6.5vw,112px); letter-spacing:-.075em; }
+.editorial .home-cover p { color:var(--muted); }
+.editorial .home-cover .action.primary { background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+.editorial .home-cover .action:not(.primary) { background:transparent; border-color:var(--line); color:var(--ink); backdrop-filter:none; }
+.editorial .home-cover-index { right:50%; left:auto; bottom:20px; width:40%; color:var(--muted); }
+.editorial .home-intro { grid-template-columns:1fr 2fr; border-top:2px solid var(--ink); padding:70px 0; }
+.editorial .home-intro strong { font-size:clamp(36px,4vw,61px); }
+.editorial .home-intro p { grid-column:2; max-width:560px; }
+.editorial .service-strip { border:0; border-top:2px solid var(--ink); padding:25px; }
+.editorial .service-strip h3 { font-size:22px; }
+.editorial .offers-visual { height:360px; border-radius:0; }
+.editorial .offers-visual img { object-position:55% 48%; }
+.editorial .offers-visual:after { background:linear-gradient(270deg,#101010cb,transparent 72%); }
+.editorial .offers-head { margin-top:40px; border-bottom:2px solid var(--ink); }
+.editorial .offers-head h1 { font-size:clamp(62px,6vw,95px); }
+.editorial .offers-filter { background:transparent; border:0; border-top:2px solid var(--ink); padding:22px 0; }
+.editorial .offer-card { border:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.editorial .dashboard-mast { border-radius:0; background:var(--surface); color:var(--ink); border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); }
+.editorial .dashboard-mast:before { border-color:var(--line); }
+.editorial .dashboard-mast span,.editorial .dashboard-mast small { color:var(--muted); }
+.editorial .dashboard-mast b { font-size:clamp(50px,6vw,88px); }
+
+/* 04: compact command — dark spine, light data canvas and dense actionable rows. */
+.compact .site { grid-template-columns:215px minmax(0,1fr); }
+.compact .site-rail { background:#17191b; color:#f3f3f0; }
+.compact .site-rail a { border-right:2px solid transparent; border-radius:2px; }
+.compact .site-rail a.is-active { border-right-color:#f5f4ef; background:#343638; }
+.compact .site-header { background:var(--surface-2); border-bottom:1px solid var(--line); }
+.compact .screen { background:var(--surface-2); }
+.compact .dashboard-mast { min-height:190px; border-radius:5px; margin-bottom:18px; padding:20px 24px; }
+.compact .dashboard-mast b { font-size:clamp(32px,3.7vw,51px); }
+.compact .metric { border-radius:4px; padding:15px 17px; background:var(--surface); }
+.compact .metric strong { font-size:30px; }
+.compact .panel { border-radius:4px; padding:16px; }
+.compact .home-cover { min-height:470px; border-radius:5px; }
+.compact .home-cover-shade { background:linear-gradient(270deg,#0b0b0bef,#15151588 65%,transparent); }
+.compact .home-cover-content { padding:40px; }
+.compact .home-cover h1 { font-size:clamp(55px,5.2vw,82px); }
+.compact .home-intro { grid-template-columns:1fr 2fr; padding:36px 0; }
+.compact .home-intro p { grid-column:2; }
+.compact .service-strips { gap:6px; }
+.compact .service-strip { min-height:145px; padding:16px; border-radius:4px; background:var(--surface); }
+.compact .service-strip h3 { font-size:15px; }
+.compact .offers-visual { height:160px; border-radius:4px; margin-bottom:15px; }
+.compact .offers-visual>div { top:22px; right:24px; }
+.compact .offers-visual strong { font-size:32px; }
+.compact .offers-head { margin-bottom:15px; }
+.compact .offers-head h1 { font-size:32px; }
+.compact .offers-filter { border-radius:4px; background:var(--surface); }
+.compact .offer-card { border-radius:3px; margin-bottom:6px; }
+.compact .offers-tabs { border-radius:4px; }
+.compact .offers-tabs button { border-radius:3px; }
+
+@keyframes gallery-drift { from { transform:scale(1.09) translateX(12px); } to { transform:scale(1) translateX(0); } }
+@keyframes headline-enter { from { opacity:0; transform:translateY(40px); filter:blur(8px); } to { opacity:1; transform:translateY(0); filter:blur(0); } }
+.home-cover h1,.offers-visual strong,.dashboard-mast b { animation:headline-enter .8s var(--ease) both; }
+.home-cover p,.home-cover .hero-actions { animation:reveal .7s var(--ease) .18s both; }
+.offers-visual img { transition:transform 1.2s var(--ease); }
+.offers-visual:hover img { transform:scale(1.05); }
+.compact .metric:hover,.workspace .metric:hover { transform:translateY(-4px); }
+.home-cover .action:hover { transform:translateY(-4px); }
+
+@media(max-width:800px) {
+  .gallery .screen { padding:0 0 50px; }
+  .gallery .home-cover { margin:0 10px 15px; }
+  .gallery .screen>:not(.home-cover):not(.offers-visual) { margin-right:20px; margin-left:20px; }
+  .home-cover,.gallery .home-cover,.workspace .home-cover,.editorial .home-cover,.compact .home-cover { min-height:540px; }
+  .home-cover-content,.gallery .home-cover-content,.compact .home-cover-content { padding:28px; }
+  .home-cover h1,.gallery .home-cover h1,.compact .home-cover h1 { font-size:clamp(53px,9vw,78px); }
+  .home-intro,.gallery .home-intro,.workspace .home-intro,.editorial .home-intro,.compact .home-intro { display:block; padding:32px 0; }
+  .home-intro strong { display:block; margin:13px 0; }
+  .editorial .home-cover { display:block; min-height:0; }
+  .editorial .home-cover-image { min-height:340px; height:340px; }
+  .editorial .home-cover-content { padding:30px 0; }
+  .editorial .home-cover h1 { font-size:clamp(54px,9vw,80px); }
+  .editorial .home-cover-index { display:none; }
+  .workspace .dashboard-mast,.workspace .home-cover,.workspace .offers-visual { margin-left:-18px; margin-right:-18px; }
+  .gallery .offers-visual { margin:0 10px 25px; }
+  .gallery .offers-head { margin-top:-65px; padding:18px; }
+  .offers-visual,.gallery .offers-visual,.workspace .offers-visual,.editorial .offers-visual,.compact .offers-visual { height:260px; }
+  .offers-visual strong { font-size:clamp(36px,7vw,53px); }
+  .dashboard-mast { min-height:220px; }
+}
+@media(max-width:520px) {
+  .home-cover,.gallery .home-cover,.workspace .home-cover,.compact .home-cover { min-height:520px; }
+  .home-cover h1,.gallery .home-cover h1 { font-size:clamp(51px,12vw,70px); }
+  .home-cover-shade { background:linear-gradient(270deg,#0b0b0be8,#13131382); }
+  .home-cover-content { padding:22px; }
+  .home-cover-index { left:18px; right:18px; }
+  .offers-visual>div { right:20px; top:22px; }
+  .offers-visual strong { font-size:36px; }
+  .gallery .offers-head { display:block; }
+  .dashboard-mast b { font-size:34px; }
+}
+@media(prefers-reduced-motion:reduce) { .home-cover-image img,.home-cover h1,.offers-visual strong,.dashboard-mast b { animation:none!important; } }
+.embed .studio-bar,.embed .prototype-caption { display:none; }
+.embed .prototype-frame { padding:0; }
+.embed .site { width:100%; max-width:none; min-height:900px; border:0; border-radius:0; box-shadow:none; }
+</style>
+</head>
+<body class="compact">
+  <header class="studio-bar">
+    <div class="studio-mark"><span class="studio-dot"></span><div><strong>التحكم السريع</strong><small>كثافة أعلى ووصول أسرع إلى الإجراءات</small></div></div>
+    <div class="studio-actions">
+      <label for="page-picker">الصفحة</label><select id="page-picker" aria-label="اختر صفحة للمعاينة"></select>
+      <button id="theme" type="button" aria-pressed="false">الوضع الداكن ◐</button>
+      <button id="replay" type="button" aria-label="إعادة تشغيل الحركة">إعادة الحركة ↻</button>
+      <button id="pause" type="button" aria-pressed="false">إيقاف الحركة</button>
+    </div>
+    <nav class="studio-variants" aria-label="اتجاهات التصميم"><a href="01-immersive-gallery.html" data-variant="gallery">01 · المعرض العقاري</a><a href="02-precision-workspace.html" data-variant="workspace">02 · مساحة العمل</a><a href="03-editorial-residence.html" data-variant="editorial">03 · الواجهة التحريرية</a><a href="04-compact-command.html" data-variant="compact">04 · التحكم السريع</a></nav>
+  </header>
+  <div class="prototype-frame">
+    <div class="prototype-caption"><span>معاينة تصميمية · وضعان لكل قالب</span><span id="route-path">/</span><span>المحتوى والبيانات توضيحية</span></div>
+    <div class="site">
+      <aside class="site-rail" aria-label="التنقل الجانبي">
+        <div class="rail-brand"><img src="brand.png" alt="شعار الوساطة الرقمية"><span>الوساطة<br>الرقمية</span></div>
+        <p>مساحة العمل</p>
+        <a href="#%2Fdetails">لوحة المعلومات</a><a href="#%2Foffers">العروض العقارية</a><a href="#%2Forders">الطلبات</a><a href="#%2Fservices">الخدمات</a><a href="#%2Fwallet">المحفظة</a><a href="#%2Fprofile">الملف الشخصي</a>
+        <div class="rail-bottom">استكشف الاتجاهات<br><span>2026</span></div>
+      </aside>
+      <div class="site-main">
+        <header class="site-header"><a class="site-brand" href="#%2F"><img src="brand.png" alt="شعار الوساطة الرقمية"><span>الوساطة الرقمية</span></a><nav aria-label="التنقل الرئيسي"><a href="#%2F">الرئيسية</a><a href="#%2Foffers">العروض</a><a href="#%2Fservices">الخدمات</a><a href="#%2Fabout">عن المنصة</a></nav><div class="header-end"><span>العربية</span><button type="button" class="avatar" aria-label="الحساب">م</button></div></header>
+        <main id="screen" class="screen" aria-live="polite"></main>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script id="route-data" type="application/json">[{"route":"/","title":"الصفحة الرئيسية","group":"الصفحات العامة","kind":"public"},{"route":"/about","title":"عن المنصة","group":"عن المنصة","kind":"article"},{"route":"/admin","title":"الإدارة","group":"الإدارة","kind":"dashboard"},{"route":"/admin/customer-service","title":"الإدارة / خدمة العملاء","group":"الإدارة","kind":"records"},{"route":"/admin/dashboard","title":"الإدارة / لوحة التحكم","group":"الإدارة","kind":"dashboard"},{"route":"/admin/info-content","title":"الإدارة / المحتوى التعريفي","group":"الإدارة","kind":"records"},{"route":"/admin/legal","title":"الإدارة / الخدمات القانونية","group":"الإدارة","kind":"catalog"},{"route":"/admin/map-control","title":"الإدارة / إدارة الخريطة","group":"الإدارة","kind":"map"},{"route":"/admin/marketing","title":"الإدارة / التسويق العقاري","group":"الإدارة","kind":"dashboard"},{"route":"/admin/offers","title":"الإدارة / العروض العقارية","group":"الإدارة","kind":"catalog"},{"route":"/admin/operations","title":"الإدارة / العمليات","group":"الإدارة","kind":"records"},{"route":"/admin/opinions","title":"الإدارة / الآراء","group":"الإدارة","kind":"records"},{"route":"/admin/orders","title":"الإدارة / الطلبات","group":"الإدارة","kind":"records"},{"route":"/admin/packages","title":"الإدارة / الباقات","group":"الإدارة","kind":"records"},{"route":"/admin/properties-management","title":"الإدارة / إدارة العقارات","group":"الإدارة","kind":"records"},{"route":"/admin/purchase-requests","title":"الإدارة / طلبات الشراء","group":"الإدارة","kind":"records"},{"route":"/admin/service-providers","title":"الإدارة / مقدمو الخدمات","group":"الإدارة","kind":"catalog"},{"route":"/admin/service-requests","title":"الإدارة / طلبات الخدمات","group":"الإدارة","kind":"records"},{"route":"/admin/services","title":"الإدارة / الخدمات العقارية","group":"الإدارة","kind":"catalog"},{"route":"/admin/settings","title":"الإدارة / الإعدادات","group":"الإدارة","kind":"form"},{"route":"/admin/subscriptions","title":"الإدارة / الاشتراكات","group":"الإدارة","kind":"records"},{"route":"/admin/transactions","title":"الإدارة / المعاملات","group":"الإدارة","kind":"records"},{"route":"/admin/trends","title":"الإدارة / الاتجاهات","group":"الإدارة","kind":"records"},{"route":"/admin/users","title":"الإدارة / المستخدمون","group":"الإدارة","kind":"records"},{"route":"/admin/users/[id]","title":"الإدارة / المستخدمون / التفاصيل","group":"الإدارة","kind":"detail"},{"route":"/admin/visit-requests","title":"الإدارة / طلبات الزيارة","group":"الإدارة","kind":"records"},{"route":"/admin/wallet","title":"الإدارة / المحفظة","group":"الإدارة","kind":"dashboard"},{"route":"/buildingmanagement","title":"إدارة المباني","group":"إدارة المباني","kind":"dashboard"},{"route":"/chat","title":"المحادثات","group":"المحادثات","kind":"chat"},{"route":"/chat/[roomId]","title":"المحادثات / المحادثة","group":"المحادثات","kind":"chat"},{"route":"/checkout","title":"الدفع","group":"الدفع","kind":"form"},{"route":"/complete-profile","title":"إكمال الملف الشخصي","group":"إكمال الملف الشخصي","kind":"auth"},{"route":"/customerservice","title":"خدمة العملاء","group":"خدمة العملاء","kind":"records"},{"route":"/customerservice/contact","title":"خدمة العملاء / تواصل معنا","group":"خدمة العملاء","kind":"form"},{"route":"/customerservice/faq","title":"خدمة العملاء / الأسئلة الشائعة","group":"خدمة العملاء","kind":"article"},{"route":"/customerservice/support","title":"خدمة العملاء / الدعم الفني","group":"خدمة العملاء","kind":"form"},{"route":"/department-hub","title":"مركز الأقسام","group":"مركز الأقسام","kind":"dashboard"},{"route":"/details","title":"لوحة المعلومات","group":"لوحة المعلومات","kind":"dashboard"},{"route":"/disputes","title":"النزاعات","group":"النزاعات","kind":"records"},{"route":"/financial","title":"المالية","group":"المالية","kind":"dashboard"},{"route":"/home","title":"الرئيسية","group":"الرئيسية","kind":"dashboard"},{"route":"/info","title":"معلومات المنصة","group":"معلومات المنصة","kind":"article"},{"route":"/internal","title":"مساحة العمل","group":"مساحة العمل","kind":"dashboard"},{"route":"/internal/[dept]","title":"مساحة العمل / القسم","group":"مساحة العمل","kind":"dashboard"},{"route":"/internal/[dept]/requests","title":"مساحة العمل / القسم / requests","group":"مساحة العمل","kind":"records"},{"route":"/internal/chat","title":"مساحة العمل / المحادثات","group":"مساحة العمل","kind":"chat"},{"route":"/internal/chat/[roomId]","title":"مساحة العمل / المحادثات / المحادثة","group":"مساحة العمل","kind":"chat"},{"route":"/internal/renew-subscription","title":"مساحة العمل / تجديد الاشتراك","group":"مساحة العمل","kind":"form"},{"route":"/login","title":"تسجيل الدخول","group":"تسجيل الدخول","kind":"auth"},{"route":"/marketing","title":"التسويق العقاري","group":"التسويق العقاري","kind":"dashboard"},{"route":"/nafath-login","title":"الدخول عبر نفاذ","group":"الدخول عبر نفاذ","kind":"auth"},{"route":"/offers","title":"العروض العقارية","group":"العروض العقارية","kind":"catalog"},{"route":"/offers/[id]","title":"العروض العقارية / التفاصيل","group":"العروض العقارية","kind":"detail"},{"route":"/offers/new","title":"العروض العقارية / جديد","group":"العروض العقارية","kind":"form"},{"route":"/orders","title":"الطلبات","group":"الطلبات","kind":"records"},{"route":"/orders/[id]","title":"الطلبات / التفاصيل","group":"الطلبات","kind":"detail"},{"route":"/profile","title":"الملف الشخصي","group":"الملف الشخصي","kind":"account"},{"route":"/scan-map","title":"الخريطة","group":"الخريطة","kind":"map"},{"route":"/service-providers","title":"مقدمو الخدمات","group":"مقدمو الخدمات","kind":"catalog"},{"route":"/services","title":"الخدمات العقارية","group":"الخدمات العقارية","kind":"catalog"},{"route":"/services/form","title":"الخدمات العقارية / نموذج الخدمة","group":"الخدمات العقارية","kind":"form"},{"route":"/services/legal","title":"الخدمات العقارية / الخدمات القانونية","group":"الخدمات العقارية","kind":"catalog"},{"route":"/services/legal-requests","title":"الخدمات العقارية / الطلبات القانونية","group":"الخدمات العقارية","kind":"records"},{"route":"/services/my-requests","title":"الخدمات العقارية / طلباتي","group":"الخدمات العقارية","kind":"records"},{"route":"/services/provider-requests","title":"الخدمات العقارية / طلبات مقدمي الخدمات","group":"الخدمات العقارية","kind":"records"},{"route":"/share-opinion","title":"شارك رأيك","group":"شارك رأيك","kind":"form"},{"route":"/subscriptions/new","title":"الاشتراكات / جديد","group":"الاشتراكات","kind":"form"},{"route":"/verify-otp","title":"رمز التحقق","group":"رمز التحقق","kind":"auth"},{"route":"/wallet","title":"المحفظة","group":"المحفظة","kind":"dashboard"}]</script>
+  <script>const pages = JSON.parse(document.getElementById('route-data').textContent);
+if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+const screen = document.getElementById('screen');
+const picker = document.getElementById('page-picker');
+const routePath = document.getElementById('route-path');
+const toast = document.getElementById('toast');
+const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const lastName = page => page.title.split(' / ').at(-1);
+const link = (route, text, primary = false) => `<a class="action ${primary ? 'primary' : ''}" href="#${encodeURIComponent(route)}">${text}<span class="arrow" aria-hidden="true">←</span></a>`;
+const demoButton = (text, primary = false) => `<button class="action ${primary ? 'primary' : ''}" type="button" data-demo="true">${text}<span class="arrow" aria-hidden="true">←</span></button>`;
+const photo = `<div class="hero-visual"><img src="architecture-concept.png" alt="تصور معماري توضيحي لمبنى سكني حديث"><div class="visual-caption"><strong>مساحة تستحق الاكتشاف</strong>صورة تصورّية للمعاينة فقط</div></div>`;
+function heading(page, text, description, actions = '', withPhoto = false) {
+  return `<div class="breadcrumb">الرئيسية / <b>${escapeHtml(page.title)}</b></div><section class="hero ${withPhoto ? '' : 'no-visual'}"><div class="hero-copy"><h1 class="hero-title">${text}</h1><p class="hero-desc">${description}</p><div class="hero-actions">${actions}</div></div>${withPhoto ? photo : ''}</section>`;
+}
+function sectionTitle(title, aside = '') { return `<div class="section-heading"><h2>${title}</h2><span>${aside}</span></div>`; }
+function services() {
+  const items = [
+    ['01','العروض العقارية','استعرض العروض حسب المدينة والحي والمساحة والسعر.'],
+    ['02','إدارة الأملاك','تابع العقارات والوحدات والعقود والصيانة من حسابك.'],
+    ['03','الخدمات المساندة','التسويق والخدمات القانونية والبناء وما بعد الشراء.']
+  ];
+  return `<div class="service-strips">${items.map(([n,title,description]) => `<article class="service-strip"><span>${n}</span><h3>${title}</h3><p>${description}</p><b aria-hidden="true">↗</b></article>`).join('')}</div>`;
+}
+function metrics(admin = false) {
+  const items = admin ? [['إجمالي المستخدمين','120','معاينة'],['الطلبات المفتوحة','18','معاينة'],['العمليات النشطة','8','معاينة']] : [['العقارات المسجلة','20','معاينة'],['الطلبات قيد المتابعة','8','معاينة'],['الزيارات القادمة','4','معاينة']];
+  return `<div class="metrics">${items.map(([label,value,caption]) => `<div class="metric"><small>${label}</small><strong>${value}</strong><span>${caption} · قيمة توضيحية</span></div>`).join('')}</div>`;
+}
+function dashboard(page) {
+  const admin = page.route.startsWith('/admin');
+  const lead = admin ? 'راقب عمل المنصة من مكان واحد، وانتقل بسرعة إلى الطلبات التي تحتاج قرارًا.' : 'خريطة أعمالك العقارية، طلباتك، والفرص التي تهمك في نظرة واحدة.';
+  const first = admin ? 'طلبات المنصة' : 'الخريطة التفاعلية';
+  const focus = admin ? `<div class="activity"><div class="activity-row"><i></i><div><strong>طلبات الخدمات</strong><small>مراجعة الطلبات الجديدة</small></div></div><div class="activity-row"><i></i><div><strong>إدارة المستخدمين</strong><small>متابعة الحسابات</small></div></div><div class="activity-row"><i></i><div><strong>العروض العقارية</strong><small>عرض المحتوى النشط</small></div></div></div>` : `<div class="map-preview"><span class="map-label">معاينة موقع توضيحية</span></div>`;
+  return `<div class="dashboard-mast"><span>مساحة العمل / نظرة شاملة</span><b>كل قرار يبدأ<br>برؤية أوضح.</b><small>متابعة. تحليل. تنفيذ.</small></div>` + heading(page, escapeHtml(lastName(page)), lead, link(admin ? '/admin/service-requests' : '/offers',admin ? 'فتح الطلبات' : 'استعراض العروض',true)) + metrics(admin) + `<div class="dashboard-grid"><section class="panel"><div class="panel-head"><h3>${first}</h3><span>معاينة</span></div>${focus}</section><section class="panel soft"><div class="panel-head"><h3>آخر النشاطات</h3><span>اليوم</span></div><div class="activity"><div class="activity-row"><i></i><div><strong>طلب جديد</strong><small>يظهر هنا النشاط المرتبط بحسابك</small></div></div><div class="activity-row"><i></i><div><strong>تحديث حالة</strong><small>تظهر التفاصيل الفعلية في الموقع</small></div></div><div class="activity-row"><i></i><div><strong>موعد قادم</strong><small>تنبيه واضح للخطوة التالية</small></div></div></div></section></div>${sectionTitle('التحليلات والاتجاهات','عرض توضيحي')}<div class="panel"><h3>اتجاه النشاط</h3><p>تظهر القيم الحقيقية عند ربط التصميم ببيانات المنصة.</p><div class="chart"><i style="--h:36%"></i><i style="--h:52%"></i><i style="--h:43%"></i><i style="--h:70%"></i><i style="--h:61%"></i><i style="--h:85%"></i><i style="--h:74%"></i></div></div>`;
+}
+function publicPage(page) {
+  return `<div class="home-cover"><div class="home-cover-image"><img src="architecture-concept.png" alt="تصور معماري لمبنى سكني حديث في السعودية"></div><div class="home-cover-shade"></div><div class="home-cover-content"><span class="home-kicker">الوساطة الرقمية / منصة عقارية سعودية</span><h1>من المكان<br>تبدأ الحكاية.</h1><p>استكشف العروض العقارية، أنجز طلباتك، وتابع خدماتك في تجربة واضحة من أول خطوة.</p><div class="hero-actions">${link('/offers','استكشف العروض',true)}${link('/services','اكتشف الخدمات')}</div></div><div class="home-cover-index"><span>01 / 04</span><span>اكتشف المساحات ↙</span></div></div><div class="home-intro"><span>المنصة في لمحة</span><strong>عقار. خدمة. متابعة.<br>كلها في مساحة واحدة.</strong><p>من البحث عن المكان المناسب إلى إدارة الخطوات اللاحقة، صممنا المسارات لتبقى القرارات واضحة.</p></div>${sectionTitle('ما الذي يمكنك إنجازه؟','ثلاثة مسارات رئيسية')}${services()}`;
+}
+function catalog(page) {
+  return heading(page,escapeHtml(lastName(page)),'استكشف الخيارات العقارية والخدمات المتاحة، ثم انتقل إلى التفاصيل التي تناسب احتياجك.',demoButton('ابدأ البحث',true),true) + `<div class="filter-bar"><button class="is-active" type="button">الكل</button><button type="button">العروض</button><button type="button">الخدمات</button><button type="button">حسب المدينة</button></div><div class="catalog-layout"><div class="feature-photo"><img src="architecture-concept.png" alt="تصور معماري توضيحي"><span>صورة توضيحية للمعاينة</span></div><div class="catalog-list"><div class="catalog-item"><strong>العروض والطلبات العقارية</strong><small>استكشاف · مقارنة · متابعة</small></div><div class="catalog-item"><strong>إدارة الأملاك والمباني</strong><small>الوحدات · العقود · الصيانة</small></div><div class="catalog-item"><strong>الخدمات العقارية المساندة</strong><small>تسويق · قانونية · ما بعد الشراء</small></div></div></div>`;
+}
+function offers(page) {
+  return `<div class="breadcrumb">الرئيسية / <b>العروض العقارية</b></div>
+    <div class="offers-visual"><img src="architecture-concept.png" alt="تصور معماري توضيحي"><div><span>اكتشف العقار المناسب</span><strong>مساحات جديدة.<br>فرص أقرب.</strong></div><span class="offers-visual-number">01 / بحث العقارات</span></div>
+    <div class="offers-head"><div><span class="micro-label">استكشف / قارن / تابع</span><h1>العروض العقارية</h1><p>ابحث حسب نوع العقار، المنطقة، المساحة والسعر. هذه بيانات توضيحية للتصميم.</p></div>${link('/offers/new','أضف عرضًا',true)}</div>
+    <div class="offers-layout">
+      <aside class="offers-filter" aria-label="فلاتر البحث"><h2>بحث العقارات</h2>
+        <label class="field">نوع العقار<select id="offer-type"><option value="">كل الأنواع</option><option value="residential">سكني</option><option value="commercial">تجاري</option></select></label>
+        <label class="field">المدينة<select id="offer-city"><option value="">كل المدن</option><option value="riyadh">الرياض</option><option value="jeddah">جدة</option><option value="dammam">الدمام</option></select></label>
+        <label class="field">المساحة (متر مربع)<span class="range"><input id="offer-area-from" type="number" min="0" placeholder="من"><input id="offer-area-to" type="number" min="0" placeholder="إلى"></span></label>
+        <label class="field">السعر (ر.س)<span class="range"><input id="offer-price-from" type="number" min="0" placeholder="من"><input id="offer-price-to" type="number" min="0" placeholder="إلى"></span></label>
+        <label class="field">الحي<input id="offer-district" type="search" placeholder="اسم الحي"></label>
+        <div class="filter-actions"><button type="button" class="action primary" id="apply-offer-filters">عرض النتائج</button><button type="button" class="action" id="clear-offer-filters">مسح</button></div>
+      </aside>
+      <div class="offers-content"><div class="offers-tabs" role="tablist" aria-label="العروض والمواعيد"><button type="button" role="tab" aria-selected="true" class="is-active" data-offer-tab="all">كل العروض</button><button type="button" role="tab" aria-selected="false" data-offer-tab="my">عروضي</button><button type="button" role="tab" aria-selected="false" data-offer-tab="appointments">مواعيدي</button></div><div class="offers-meta"><span id="offers-count">عرض 3 نتائج توضيحية</span><span>استكشف المقارنة بين القوالب</span></div><div id="offers-results"></div></div>
+    </div>`;
+}
+const demoOffers = [
+  {title:'شقة سكنية · حي الياسمين',city:'riyadh',district:'الياسمين',type:'residential',area:184,price:920000,location:'الرياض',detail:'3 غرف · 3 دورات مياه · 184 م²'},
+  {title:'فيلا مستقلة · حي النرجس',city:'riyadh',district:'النرجس',type:'residential',area:320,price:1950000,location:'الرياض',detail:'5 غرف · موقف خاص · 320 م²'},
+  {title:'مكتب تجاري · حي الروضة',city:'jeddah',district:'الروضة',type:'commercial',area:132,price:710000,location:'جدة',detail:'مساحة عمل مرنة · 132 م²'},
+];
+let offerTab = 'all';
+function renderOffers() {
+  const target = document.getElementById('offers-results');
+  if (!target) return;
+  const field = id => document.getElementById(id)?.value || '';
+  const type = field('offer-type'), city = field('offer-city'), district = field('offer-district').trim();
+  const areaFrom = Number(field('offer-area-from')) || 0, areaTo = Number(field('offer-area-to')) || Infinity;
+  const priceFrom = Number(field('offer-price-from')) || 0, priceTo = Number(field('offer-price-to')) || Infinity;
+  const matches = offerTab === 'all' ? demoOffers.filter(offer => (!type || offer.type === type) && (!city || offer.city === city) && (!district || offer.district.includes(district)) && offer.area >= areaFrom && offer.area <= areaTo && offer.price >= priceFrom && offer.price <= priceTo) : [];
+  document.getElementById('offers-count').textContent = offerTab === 'all' ? `عرض ${matches.length} نتائج توضيحية` : offerTab === 'my' ? 'عروضك' : 'مواعيدك';
+  target.innerHTML = matches.length ? matches.map(offer => `<article class="offer-card"><img src="architecture-concept.png" alt="تصور معماري توضيحي للعقار"><div class="offer-card-content"><h3>${offer.title}</h3><p>${offer.location} · ${offer.detail}</p><strong>${offer.price.toLocaleString('ar-SA')} ر.س</strong>${link('/offers/[id]','عرض التفاصيل')}</div></article>`).join('') : `<div class="offer-empty"><b>${offerTab === 'appointments' ? 'لا توجد مواعيد في هذه المعاينة' : offerTab === 'my' ? 'لا توجد عروض خاصة بحساب تجريبي' : 'لا توجد عروض تطابق الفلاتر'}</b><p>${offerTab === 'all' ? 'جرّب توسيع نطاق البحث أو مسح الفلاتر.' : 'تظهر البيانات الفعلية بعد تسجيل الدخول إلى الموقع.'}</p>${offerTab === 'all' ? '<button class="action" type="button" id="empty-clear-filters">مسح الفلاتر</button>' : ''}</div>`;
+}
+function records(page) {
+  const title = escapeHtml(lastName(page));
+  return heading(page,title,'ابحث في السجلات وتابع الحالات والإجراءات المرتبطة بهذه الصفحة.',demoButton('إضافة جديد',true)) + `<div class="filter-bar"><button class="is-active" type="button">الكل</button><button type="button">قيد المتابعة</button><button type="button">مكتمل</button></div><div class="records-layout"><div class="table-wrap"><table><thead><tr><th>العنصر</th><th>النوع</th><th>الحالة</th><th>آخر تحديث</th></tr></thead><tbody><tr><td>طلب توضيحي 01</td><td>${title}</td><td><span class="pill">قيد المتابعة</span></td><td>اليوم</td></tr><tr><td>طلب توضيحي 02</td><td>${title}</td><td><span class="pill">مكتمل</span></td><td>أمس</td></tr><tr><td>طلب توضيحي 03</td><td>${title}</td><td><span class="pill">بانتظار الإجراء</span></td><td>—</td></tr></tbody></table></div><aside class="side-note"><strong>كل ما تحتاجه في مكان واحد</strong><p>البيانات في هذه المعاينة توضيحية. في الصفحة الحية تظهر السجلات الفعلية وإجراءاتها.</p></aside></div>`;
+}
+function form(page, auth = false) {
+  return heading(page,escapeHtml(lastName(page)),auth ? 'أكمل الوصول إلى حسابك بخطوات واضحة.' : 'أدخل المعلومات المطلوبة، ثم راجعها قبل المتابعة.',demoButton('المساعدة')) + `<div class="form-layout"><div class="steps"><div class="active">01 · البيانات</div><div>02 · المراجعة</div><div>03 · الإرسال</div></div><form class="form-card" id="demo-form"><h2>${escapeHtml(lastName(page))}</h2><div class="fields"><label class="field">الاسم أو العنوان<input type="text" placeholder="اكتب هنا" required></label><label class="field">نوع الطلب<select><option>اختر من القائمة</option><option>استفسار</option><option>طلب خدمة</option></select></label><label class="field full">التفاصيل<textarea placeholder="أضف التفاصيل المناسبة"></textarea></label></div><div class="hero-actions">${demoButton('متابعة',true)}${demoButton('حفظ لاحقًا')}</div></form></div>`;
+}
+function chat(page) {
+  return heading(page,escapeHtml(lastName(page)),'رسائلك وطلباتك في سياق واحد يسهل متابعته.') + `<div class="chat-layout"><aside class="chat-list"><div class="active">محادثة توضيحية 01<br><small>آخر رسالة اليوم</small></div><div>محادثة توضيحية 02</div><div>محادثة توضيحية 03</div></aside><div class="chat-room"><h3>محادثة توضيحية</h3><div class="bubble">مرحبًا، كيف يمكننا مساعدتك؟</div><div class="bubble reply">أرغب في متابعة طلبي.</div><div class="chat-input">اكتب رسالة... (معاينة فقط)</div></div></div>`;
+}
+function map(page) {
+  return heading(page,escapeHtml(lastName(page)),'استكشف العقارات والمناطق على خريطة واضحة، مع أدوات بحث سهلة الوصول.') + `<div class="filter-bar"><button class="is-active" type="button">الكل</button><button type="button">العقارات</button><button type="button">الخدمات</button></div><div class="map-preview" style="min-height:420px"><span class="map-label">الخريطة هنا توضيحية</span></div>`;
+}
+function article(page) {
+  return heading(page,escapeHtml(lastName(page)),'معلومات واضحة عن المنصة وخدماتها، منظمة لتصل إلى الإجابة بسرعة.',link('/services','استكشف الخدمات',true)) + `<div class="article-layout"><article><h2>عن الوساطة الرقمية</h2><p>تجمع المنصة العروض العقارية والخدمات المرتبطة بها في تجربة واحدة. يمكنك استعراض العروض، متابعة الطلبات، والتعرف على الخدمات المساندة.</p><h2>كيف تبدأ؟</h2><p>ابدأ بتصفح العروض أو الخدمات، ثم اختر ما يناسب احتياجك. تتغير الخطوات اللاحقة بحسب نوع الخدمة.</p></article><aside><strong>في هذه الصفحة</strong><div>عن المنصة</div><div>الخدمات</div><div>الخطوات التالية</div></aside></div>`;
+}
+function account(page) {
+  return heading(page,'ملفك الشخصي','راجع بياناتك، حالة التحقق، وتفضيلات التواصل من مكان واحد.',demoButton('تعديل البيانات',true)) + `<div class="dashboard-grid"><section class="panel soft"><div class="panel-head"><h3>المعلومات الشخصية</h3><span>حساب تجريبي</span></div><div class="activity"><div class="activity-row"><i></i><div><strong>الاسم</strong><small>يظهر اسم المستخدم هنا</small></div></div><div class="activity-row"><i></i><div><strong>التواصل</strong><small>تظهر بيانات الاتصال هنا</small></div></div></div></section><section class="panel"><h3>حالة الحساب</h3><p>تظهر حالة التحقق والبيانات الناقصة بوضوح، مع الخطوة التالية.</p><div class="hero-actions">${demoButton('عرض التفاصيل')}</div></section></div>`;
+}
+function detail(page) {
+  return heading(page,escapeHtml(page.title.replace(' / التفاصيل','')),'تفاصيل العنصر، حالته الحالية، والخطوات المتاحة للمتابعة.',demoButton('متابعة الطلب',true)) + `<div class="dashboard-grid"><section class="panel"><h3>نظرة عامة</h3><p>المعلومات الأساسية لهذا العنصر تظهر هنا بشكل منظم.</p><div class="activity"><div class="activity-row"><i></i><div><strong>الحالة الحالية</strong><small>قيد المتابعة · توضيحي</small></div></div><div class="activity-row"><i></i><div><strong>التفاصيل</strong><small>وصف ومرفقات مرتبطة بالعنصر</small></div></div></div></section><section class="panel soft"><h3>الخطوة التالية</h3><p>إجراء واضح بحسب نوع العنصر وصلاحيات المستخدم.</p><div class="hero-actions">${demoButton('عرض الإجراء')}</div></section></div>`;
+}
+function content(page) {
+  if (page.route === '/offers') return offers(page);
+  switch(page.kind) {
+    case 'public': return publicPage(page);
+    case 'dashboard': return dashboard(page);
+    case 'catalog': return catalog(page);
+    case 'records': return records(page);
+    case 'form': return form(page);
+    case 'auth': return form(page,true);
+    case 'chat': return chat(page);
+    case 'map': return map(page);
+    case 'article': return article(page);
+    case 'account': return account(page);
+    case 'detail': return detail(page);
+  }
+  return records(page);
+}
+function selectedPage() {
+  let route;
+  try { route = decodeURIComponent(location.hash.slice(1)) || '/'; } catch { route = '/'; }
+  return pages.find(page => page.route === route) || pages.find(page => page.route === '/');
+}
+function draw(replay = false) {
+  const page = selectedPage();
+  const update = () => {
+    screen.innerHTML = content(page);
+    if (page.route === '/offers') { offerTab = 'all'; renderOffers(); }
+    picker.value = page.route;
+    routePath.textContent = page.route;
+    document.title = page.title + ' | التحكم السريع';
+    document.querySelectorAll('.studio-variants a').forEach(anchor => anchor.href = anchor.getAttribute('href').split('#')[0] + '#' + encodeURIComponent(page.route));
+    document.querySelectorAll('.site-header nav a,.site-rail a').forEach(anchor => { const href = anchor.getAttribute('href'); anchor.classList.toggle('is-active', href === '#' + encodeURIComponent(page.route)); });
+  };
+  if (!replay && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches && !document.body.classList.contains('motion-off')) document.startViewTransition(update);
+  else update();
+}
+function showToast(message) { toast.textContent = message; toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove('show'),2400); }
+const groups = pages.reduce((acc,page) => { (acc[page.group] ??= []).push(page); return acc; },{});
+picker.innerHTML = Object.entries(groups).map(([group,items]) => `<optgroup label="${escapeHtml(group)}">${items.map(page => `<option value="${escapeHtml(page.route)}">${escapeHtml(page.title)} · ${escapeHtml(page.route)}</option>`).join('')}</optgroup>`).join('');
+picker.addEventListener('change', () => { location.hash = encodeURIComponent(picker.value); });
+window.addEventListener('hashchange', () => draw());
+document.getElementById('replay').addEventListener('click', () => draw(true));
+document.getElementById('pause').addEventListener('click', event => { const off = document.body.classList.toggle('motion-off'); event.currentTarget.setAttribute('aria-pressed',String(off)); event.currentTarget.textContent = off ? 'تشغيل الحركة' : 'إيقاف الحركة'; });
+screen.addEventListener('click', event => { if (event.target.closest('[data-demo]')) showToast('هذا نموذج تصميمي فقط؛ لا يرسل بيانات.'); });
+screen.addEventListener('click', event => { const chip = event.target.closest('.filter-bar button'); if (chip) { chip.parentElement.querySelectorAll('button').forEach(item => item.classList.remove('is-active')); chip.classList.add('is-active'); } });
+screen.addEventListener('click', event => {
+  const tab = event.target.closest('[data-offer-tab]');
+  if (tab) { offerTab = tab.dataset.offerTab; screen.querySelectorAll('[data-offer-tab]').forEach(item => { const active = item === tab; item.classList.toggle('is-active', active); item.setAttribute('aria-selected', String(active)); }); renderOffers(); }
+  if (event.target.closest('#apply-offer-filters')) renderOffers();
+  if (event.target.closest('#clear-offer-filters,#empty-clear-filters')) { screen.querySelectorAll('.offers-filter input').forEach(input => input.value = ''); screen.querySelectorAll('.offers-filter select').forEach(select => select.selectedIndex = 0); renderOffers(); }
+});
+const themeButton = document.getElementById('theme');
+let savedTheme = 'light';
+try { savedTheme = localStorage.getItem('redesign-preview-theme') || 'light'; } catch { /* Local file previews can have an opaque origin. */ }
+if (new URLSearchParams(location.search).get('theme') === 'dark') savedTheme = 'dark';
+if (new URLSearchParams(location.search).get('theme') === 'light') savedTheme = 'light';
+if (savedTheme === 'dark') document.body.classList.add('dark');
+themeButton.setAttribute('aria-pressed', String(document.body.classList.contains('dark')));
+themeButton.textContent = document.body.classList.contains('dark') ? 'الوضع الفاتح ◑' : 'الوضع الداكن ◐';
+themeButton.addEventListener('click', () => { const dark = document.body.classList.toggle('dark'); themeButton.setAttribute('aria-pressed', String(dark)); themeButton.textContent = dark ? 'الوضع الفاتح ◑' : 'الوضع الداكن ◐'; try { localStorage.setItem('redesign-preview-theme', dark ? 'dark' : 'light'); } catch { /* The toggle still works in this page. */ } });
+screen.addEventListener('submit', event => event.preventDefault());
+document.querySelectorAll('.studio-variants a').forEach(anchor => { if (anchor.dataset.variant === 'compact') anchor.setAttribute('aria-current','page'); });
+draw(true);
+</script>
+</body>
+</html>

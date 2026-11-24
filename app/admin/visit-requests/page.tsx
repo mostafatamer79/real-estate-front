@@ -172,7 +172,7 @@ export default function VisitRequestsPage() {
         </div>
       </div>
 
-      <div className="bg-card border border rounded-[1.25rem] overflow-hidden shadow-sm">
+      <div className="calm-panel bg-card border border rounded-[1.25rem] overflow-hidden shadow-sm">
         <div className="overflow-x-auto w-full">
 <Table>
           <TableHeader className="bg-muted/50">
@@ -202,7 +202,7 @@ export default function VisitRequestsPage() {
                     <TableCell className="font-mono text-xs text-slate-500">#{req.id.substring(0, 8)}</TableCell>
                     <TableCell>
                         <div className="flex items-center gap-2">
-                             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-500">
+                             <div className="calm-icon w-8 h-8 rounded-full bg-muted flex items-center justify-center text-slate-500">
                                 <User className="w-4 h-4" />
                             </div>
                             <span className="font-bold text-slate-700">{req.user?.firstName} {req.user?.lastName}</span>

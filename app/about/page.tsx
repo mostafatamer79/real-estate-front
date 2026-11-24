@@ -1,60 +1,99 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowUp,
   ChevronDown,
   ArrowRight,
   ArrowLeft,
+  Wallet,
+  Wrench,
+  Building2,
+  FileSearch,
+  Compass,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
-import { useRouter } from "next/navigation";
+import { safeNavigateBack } from "@/lib/redesign-chat11-content";
 
-const capabilities = [
+interface CapabilityItem {
+  icon: React.ElementType;
+  titleAr: string;
+  titleEn: string;
+  textAr: string;
+  textEn: string;
+  pointsAr: string[];
+  pointsEn: string[];
+}
+
+const capabilities: CapabilityItem[] = [
   {
-    title: "المحفظة والمالية",
-    text: "تبدأ الدورة بضبط التعاملات؛ حيث تغطي المحفظة الفواتير، والعمولات، والملفات، والاستثمارات، مما يتيح للمستفيدين تتبع الحركة المالية والتدفقات النقدية بدقة ووضوح.",
-    points: ["فواتير", "عمولات", "مستندات", "استثمارات"],
+    icon: Wallet,
+    titleAr: "المحفظة والمالية",
+    titleEn: "Wallet & Financials",
+    textAr: "تبدأ الدورة بضبط التعاملات؛ حيث تغطي المحفظة الفواتير، والعمولات، والملفات، والاستثمارات، مما يتيح للمستفيدين تتبع الحركة المالية والتدفقات النقدية بدقة ووضوح.",
+    textEn: "The transaction lifecycle begins with verified financial governance: invoices, commissions, escrow documents, and property investments, enabling transparent cash flow tracking.",
+    pointsAr: ["فواتير", "عمولات", "مستندات", "استثمارات"],
+    pointsEn: ["Invoices", "Commissions", "Documents", "Investments"],
   },
   {
-    title: "الخدمات",
-    text: "وامتداداً لتلبية الاحتياجات، توفر المنصة للمستفيدين منظومة متكاملة تشمل خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمقاولات، وخدمات التسويق، وغيرها، مع إتاحة تسعير مستقل ومحدد لكل خدمة.",
-    points: ["خدمات ما بعد الشراء", "الخدمات القانونية", "البناء والمقاولات", "خدمات التسويق", "أخرى"],
+    icon: Wrench,
+    titleAr: "منظومة الخدمات العقارية",
+    titleEn: "Professional Real Estate Services",
+    textAr: "توفر المنصة للمستفيدين منظومة متكاملة تشمل خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمقاولات، وخدمات التسويق، وغيرها، مع إتاحة تسعير مستقل ومحدد لكل خدمة.",
+    textEn: "Comprehensive professional service ecosystem encompassing post-purchase assistance, legal consulting, contracting and construction, and verified marketing with independent pricing per service.",
+    pointsAr: ["خدمات ما بعد الشراء", "الخدمات القانونية", "البناء والمقاولات", "خدمات التسويق", "أخرى"],
+    pointsEn: ["After-sales", "Legal services", "Construction", "Marketing", "Other"],
   },
   {
-    title: "العروض",
-    text: "وفي الجانب العقاري التفاعلي، يتيح النظام للمستفيدين طرح عروضهم العقارية لتجمعها المنصة وتيسر إدارتها في مسار موحد، يسهل من خلاله متابعة حالة العرض، والتواصل اللحظي، وحفظ الملفات المرتبطة به.",
-    points: ["إضافة عروض", "إدارة العروض", "ملاحظات وتعديل", "تواصل مرن ولحظي"],
+    icon: Building2,
+    titleAr: "إدارة وطرح العروض",
+    titleEn: "Property Offers & Listings",
+    textAr: "وفي الجانب العقاري التفاعلي، يتيح النظام للمستفيدين طرح عروضهم العقارية لتجمعها المنصة وتيسر إدارتها في مسار موحد، يسهل من خلاله متابعة حالة العرض، والتواصل اللحظي، وحفظ الملفات المرتبطة به.",
+    textEn: "An interactive property marketplace enabling users to publish, manage, and track real estate offers within a unified pipeline with instant communication and verified records.",
+    pointsAr: ["إضافة عروض", "إدارة العروض", "ملاحظات وتعديل", "تواصل مرن ولحظي"],
+    pointsEn: ["Create offers", "Offer management", "Notes & revisions", "Real-time chat"],
   },
   {
-    title: "الطلبات",
-    text: "وختاماً لتلبية متطلبات السوق، تمكن المنصة المستفيدين من تقديم طلباتهم العقارية بدقة، لتتولى المنصة فلترتها ومطابقتها ذكياً مع العروض المتاحة، تسريعاً لعملية التنفيذ وإتمام الصفقات.",
-    points: ["إضافة طلبات", "متابعة حالة الطلب", "مطابقة ذكية", "أرشيف الطلبات"],
+    icon: FileSearch,
+    titleAr: "طلبات الشراء والاستئجار",
+    titleEn: "Property Requests & Inquiries",
+    textAr: "تمكن المنصة المستفيدين من تقديم طلباتهم العقارية بدقة، لتتولى المنصة فلترتها ومطابقتها ذكياً مع العروض المتاحة، تسريعاً لعملية التنفيذ وإتمام الصفقات.",
+    textEn: "Targeted property requisition system that accurately captures buyer/renter requirements, intelligently matching them against verified listings for faster transaction closing.",
+    pointsAr: ["إضافة طلبات", "متابعة حالة الطلب", "مطابقة ذكية", "أرشيف الطلبات"],
+    pointsEn: ["Submit requests", "Status tracking", "Smart matching", "Request archive"],
   },
 ];
+
 function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
   const { settings } = useSettings();
+  const logoSrc = settings.isDark
+    ? settings.logoWhiteUrl || "/icons/white.png"
+    : settings.logoBlackUrl || "/icons/black.png";
+
   return (
     <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-8 lg:px-12 sm:py-10">
-      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-card/[0.028] p-4 shadow-2xl shadow-black/30 [contain:paint] sm:p-6 lg:p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.09),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
+      <div className="calm-panel relative overflow-hidden rounded-[1.75rem] border border-border dark:border-white/10 bg-card/[0.028] p-4 shadow-sm dark:shadow-2xl shadow-black/30 [contain:paint] sm:p-6 lg:p-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.08),transparent_40%),linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100%_100%,44px_44px,44px_44px] opacity-70" />
+
         {!reduceMotion && (
           <>
             <motion.div
               initial={{ y: "-120%", opacity: 0 }}
-              whileInView={{ y: "340%", opacity: [0, 0.8, 0] }}
+              whileInView={{ y: "340%", opacity: [0, 0.7, 0] }}
               viewport={{ once: false }}
-              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-[14%] top-0 h-24 w-px bg-gradient-to-b from-transparent via-white/45 to-transparent [will-change:transform,opacity]"
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              className="motion-reduce:hidden absolute left-[14%] top-0 h-24 w-px bg-gradient-to-b from-transparent via-amber-400/40 to-transparent [will-change:transform,opacity]"
             />
             <motion.div
               initial={{ x: isRtl ? "-140%" : "140%" }}
               whileInView={{ x: isRtl ? "260%" : "-260%" }}
               viewport={{ once: false }}
-              transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-[48%] h-px w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent [will-change:transform]"
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="motion-reduce:hidden absolute top-[48%] h-px w-1/2 bg-gradient-to-r from-transparent via-blue-400/30 to-transparent [will-change:transform]"
             />
           </>
         )}
@@ -67,63 +106,47 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
             transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-4 sm:space-y-6 w-full min-w-0"
           >
-            <h2 className="text-xl font-black leading-[1.4] text-white sm:text-2xl lg:text-3xl">
-              تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي.
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isRtl ? "البنية التقنية للبيانات العقارية" : "Real Estate Intelligence Engine"}</span>
+            </div>
+            <h2 className="text-xl font-black leading-[1.4] text-foreground dark:text-white sm:text-2xl lg:text-3xl">
+              {isRtl
+                ? "تجربة رقمية موحدة تجمع بين الخرائط الذكية ومسح الأحياء المدعوم بالذكاء الاصطناعي."
+                : "A unified digital experience combining smart maps and AI-assisted district scanning."}
             </h2>
-            <p className="w-full max-w-2xl text-xs font-bold leading-relaxed text-white/66">
-              هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها بالذكاء الاصطناعي إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة.
+            <p className="w-full max-w-2xl text-xs sm:text-sm font-bold leading-relaxed text-muted-foreground dark:text-white/70">
+              {isRtl
+                ? "هنا تكمن كفاءة المنصة؛ حيث تبدأ العملية بمسح الحي جغرافياً، ليقوم النظام بتحليل البيانات وتحويلها إلى مسار متكامل يشمل الخرائط التفاعلية والتقارير الفنية المؤتمتة لدعم اتخاذ القرار."
+                : "Platform efficiency begins with geographical district scanning. The system processes spatial parameters into an integrated pipeline of interactive maps and automated technical reports to support decisive actions."}
             </p>
           </motion.div>
 
-          <div className="relative min-h-[340px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-3 sm:p-5">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:46px_46px] opacity-35" />
-            <motion.div
-              animate={reduceMotion ? undefined : { rotate: -360 }}
-              transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-              className="absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/12 [will-change:transform]"
+          <div className="calm-panel relative min-h-[320px] overflow-hidden rounded-[1.5rem] border border-border dark:border-white/10 bg-background/80 dark:bg-slate-950/80 p-4 sm:p-6 flex items-center justify-center">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:46px_46px] opacity-40" />
+
+            <div
+              className={`absolute h-[260px] w-[260px] rounded-full border border-dashed border-border dark:border-white/15 ${
+                reduceMotion ? "" : "animate-[spin_60s_linear_infinite]"
+              }`}
             />
-            <motion.div
-              animate={reduceMotion ? undefined : { scale: [1, 1.08, 1], opacity: [0.35, 0.78, 0.35] }}
-              transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-card/[0.025] [will-change:transform,opacity]"
+            <div
+              className={`absolute h-40 w-40 rounded-full border border-amber-500/20 bg-amber-500/5 ${
+                reduceMotion ? "" : "animate-pulse"
+              }`}
             />
-            {!reduceMotion && (
-              <motion.div
-                initial={{ y: "-20%" }}
-                animate={{ y: "640%" }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-6 right-6 top-0 h-14 bg-gradient-to-b from-white/[0.12] to-transparent [will-change:transform]"
-              />
-            )}
 
-            <div className="relative flex min-h-[300px] items-center justify-center">
-
-              {/* Glowing animated orb background */}
-              <motion.div
-                animate={reduceMotion ? undefined : { scale: [1, 1.2, 1], filter: ["blur(20px)", "blur(40px)", "blur(20px)"], opacity: [0.4, 0.7, 0.4] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute h-28 w-28 rounded-full bg-blue-600/40"
-              />
-              <motion.div
-                animate={reduceMotion ? undefined : { rotate: 360, scale: [1, 1.05, 1] }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute h-[200px] w-[200px] rounded-full border border-dashed border-blue-400/40"
-              />
-              <motion.div
-                animate={reduceMotion ? undefined : { rotate: -360, scale: [1, 1.1, 1] }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="absolute h-[280px] w-[280px] rounded-full border border-dotted border-indigo-400/30"
-              />
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="relative z-10 flex h-36 w-36 items-center justify-center rounded-full border border-white/10 bg-slate-950/80 shadow-[0_0_40px_rgba(59,130,246,0.35)] backdrop-blur-xl"
-              >
-                <img src={settings?.logoWhiteUrl || '/icons/white.png'} alt="شعار المنصة" className="w-20 object-contain" />
-              </motion.div>
-
+            <div className="relative z-10 flex h-36 w-36 items-center justify-center rounded-full border border-border dark:border-white/10 bg-background/90 dark:bg-slate-950/90 shadow-[0_0_35px_rgba(197,168,128,0.2)] backdrop-blur-xl">
+              <div className="relative w-20 h-20">
+                <Image
+                  src={logoSrc}
+                  alt={isRtl ? "شعار المنصة" : "Platform Logo"}
+                  fill
+                  sizes="80px"
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -132,353 +155,246 @@ function CommandRoom({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: bo
   );
 }
 
-// ScannerStory Removed
-
-// function OperatingTimeline({ reduceMotion, isRtl }: { reduceMotion: boolean; isRtl: boolean }) {
-//   const containerRef = useRef<HTMLElement>(null);
-//   const { scrollYProgress } = useScroll({
-//     target: containerRef,
-//     offset: ["start center", "end center"],
-//   });
-
-//   return (
-//     <section ref={containerRef} className="relative border-y border-white/10 bg-card/[0.014] px-5 py-24 sm:px-8 lg:px-12">
-//       <div className="mx-auto max-w-7xl">
-//         <div className="mb-14 w-[95vw] sm:max-w-3xl space-y-4">
-//           <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Full Operating Flow</p>
-//           <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">كل إدارة تتحرك في نفس النظام، لكن لكل واحدة مسارها الخاص.</h2>
-//           <p className="text-base font-bold leading-8 text-white/65">
-//             الصفحة توضح كيف ترتبط الأقسام ببعضها بدون تكرار أو ضياع بيانات: الخريطة، الطلبات، التسويق، القانونية، المحفظة، وخدمة العملاء.
-//           </p>
-//         </div>
-
-//         <div className="relative">
-//           <div className="absolute bottom-0 top-0 hidden w-px bg-card/10 md:block" style={{ right: isRtl ? "50%" : undefined, left: isRtl ? undefined : "50%" }} />
-//           {!reduceMotion && (
-//             <motion.div
-//               className="absolute bottom-0 top-0 hidden w-0.5 bg-gradient-to-b from-blue-500 via-indigo-400 to-transparent md:block origin-top shadow-[0_0_20px_rgba(99,102,241,0.8)]"
-//               style={{
-//                 right: isRtl ? "50%" : undefined,
-//                 left: isRtl ? undefined : "50%",
-//                 scaleY: scrollYProgress,
-//               }}
-//             />
-//           )}
-//           <div className="space-y-5">
-//             {timeline.map((item, index) => (
-//               <motion.article
-//                 key={item.title}
-//                 initial={{ x: reduceMotion ? 0 : index % 2 === 0 ? 44 : -44, y: reduceMotion ? 0 : 16 }}
-//                 whileInView={{ x: 0, y: 0 }}
-//                 viewport={{ once: true, margin: "-120px" }}
-//                 transition={{ duration: reduceMotion ? 0 : 0.65, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-//                 className={`relative grid gap-5 md:grid-cols-2 md:items-center ${index % 2 === 0 ? "" : "md:[&>div:first-child]:col-start-2"}`}
-//               >
-//                 <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/78 p-3 sm:p-6 shadow-2xl shadow-black/20 [will-change:transform]">
-//                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-card/[0.04]">
-//                     <item.icon className="h-5 w-5 text-white/65" />
-//                   </div>
-//                   <h3 className="text-xl font-black text-white">{item.title}</h3>
-//                   <p className="mt-3 text-sm font-bold leading-7 text-white/63">{item.text}</p>
-//                 </div>
-//                 <div className="hidden md:block" />
-//                 <motion.span
-//                   animate={reduceMotion ? undefined : { scale: [1, 1.28, 1], opacity: [0.4, 1, 0.4] }}
-//                   transition={{ duration: 2.4, repeat: Infinity, delay: index * 0.2 }}
-//                   className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-slate-900 shadow-[0_0_24px_rgba(255,255,255,0.28)] md:block z-10"
-//                 >
-//                   <motion.div
-//                     className="absolute inset-1 rounded-full bg-card"
-//                     style={{
-//                       scale: scrollYProgress,
-//                       opacity: scrollYProgress
-//                     }}
-//                   />
-//                 </motion.span>
-//               </motion.article>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
 export default function AboutPage() {
   const router = useRouter();
   const { language } = useLanguage();
   const { settings } = useSettings();
   const isRtl = language === "ar";
   const reduceMotion = Boolean(useReducedMotion());
+
   const { scrollYProgress } = useScroll();
-  const backgroundShift = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -120]);
+  const backgroundShift = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -80]);
   const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 680);
+    const handleScroll = () => setShowScrollTop(window.scrollY > 600);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", updateMousePosition);
-    return () => window.removeEventListener("mousemove", updateMousePosition);
-  }, []);
+  const logoSrc = useMemo(() => {
+    return settings.isDark
+      ? settings.logoWhiteUrl || "/icons/white.png"
+      : settings.logoBlackUrl || "/icons/black.png";
+  }, [settings.isDark, settings.logoWhiteUrl, settings.logoBlackUrl]);
+
+  const handleBack = () => {
+    safeNavigateBack(router, "/");
+  };
+
+  const handleScrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
+
+  const handleScrollDown = () => {
+    window.scrollTo({
+      top: typeof window !== "undefined" ? window.innerHeight : 800,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-slate-950 text-white" dir={isRtl ? "rtl" : "ltr"}>
-      <motion.div
-        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
-        animate={{
-          background: `radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59,130,246,0.08), transparent 40%)`,
-        }}
-      />
+    <main
+      className="calm-page calm-screen min-h-screen overflow-x-hidden bg-background dark:bg-slate-950 text-foreground dark:text-white"
+      dir={isRtl ? "rtl" : "ltr"}
+    >
+      {/* Scroll progress bar */}
       <motion.div
         style={{ scaleX: progressScale, transformOrigin: isRtl ? "right" : "left" }}
-        className="fixed inset-x-0 top-0 z-[60] h-1 bg-gradient-to-r from-blue-500 to-indigo-500 [will-change:transform] shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+        className="fixed inset-x-0 top-0 z-[60] h-1 bg-gradient-to-r from-amber-500 via-blue-500 to-indigo-500 [will-change:transform] shadow-[0_0_12px_rgba(197,168,128,0.5)]"
       />
+
+      {/* Subtle architectural ambient background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <motion.div
           style={{ y: backgroundShift }}
-          animate={reduceMotion ? undefined : { scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-[6%] top-[10%] h-[40rem] w-[40rem] rounded-full bg-blue-600/10 blur-[100px] [will-change:transform]"
+          className="calm-decoration absolute right-[6%] top-[10%] h-[36rem] w-[36rem] rounded-full bg-blue-600/10 blur-[90px] [will-change:transform]"
         />
         <motion.div
           style={{ y: backgroundShift }}
-          animate={reduceMotion ? undefined : { scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[12%] left-[8%] h-[48rem] w-[48rem] rounded-full bg-indigo-600/10 blur-[100px] [will-change:transform]"
+          className="calm-decoration absolute bottom-[12%] left-[8%] h-[42rem] w-[42rem] rounded-full bg-amber-600/10 blur-[100px] [will-change:transform]"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:76px_76px] opacity-20 [mask-image:radial-gradient(circle_at_top,black,transparent_72%)]" />
-        {!reduceMotion && (
-            <></>
-        )}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:76px_76px] opacity-25 [mask-image:radial-gradient(circle_at_top,black,transparent_75%)]" />
       </div>
 
+      {/* Floating scroll to top button */}
       {showScrollTop && (
-        <motion.button
+        <button
           type="button"
-          initial={{ y: 18, opacity: 0, scale: 0.92 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          whileHover={reduceMotion ? undefined : { y: -4 }}
-          whileTap={{ scale: 0.96 }}
-          transition={{ duration: reduceMotion ? 0 : 0.25 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="العودة للأعلى"
-          className={`fixed bottom-6 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-slate-950/85 text-white shadow-2xl shadow-black/35 backdrop-blur-xl transition-colors hover:bg-card hover:text-slate-950 ${isRtl ? "left-6" : "right-6"}`}
+          onClick={handleScrollTop}
+          aria-label={isRtl ? "العودة للأعلى" : "Scroll to top"}
+          className={`fixed bottom-6 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-border dark:border-white/12 bg-background/90 dark:bg-slate-950/90 text-foreground dark:text-white shadow-lg backdrop-blur-xl transition-transform hover:scale-105 active:scale-95 ${
+            isRtl ? "left-6" : "right-6"
+          }`}
         >
           <ArrowUp className="h-5 w-5" />
-        </motion.button>
+        </button>
       )}
 
-      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-12 px-4 pb-14 pt-24 sm:px-8 lg:px-12 lg:pt-32">
+      {/* Hero Header Section */}
+      <section className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-10 px-4 pb-14 pt-24 sm:px-8 lg:px-12 lg:pt-32">
         <div className="absolute top-24 sm:top-28 z-20">
           <button
             type="button"
-            onClick={() => router.back()}
-            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 text-xs font-black text-white/70 transition-all hover:bg-white/10 hover:text-white backdrop-blur-md shadow-lg"
+            onClick={handleBack}
+            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-border dark:border-white/10 bg-muted/80 dark:bg-white/5 px-4 text-xs font-black text-muted-foreground dark:text-white/75 transition-all hover:bg-muted hover:dark:bg-white/10 hover:text-foreground hover:dark:text-white backdrop-blur-md shadow-sm"
           >
             {isRtl ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
             {isRtl ? "العودة" : "Go Back"}
           </button>
         </div>
+
         <div className="space-y-8 text-center max-w-4xl mx-auto mt-12">
           <motion.div
-            initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6 relative z-10"
           >
-            <motion.h1
-              animate={reduceMotion ? undefined : { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              className="text-3xl font-black leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white sm:text-4xl lg:text-5xl drop-shadow-sm"
-              style={{ backgroundSize: "200% auto" }}
-            >
-              من نحن
-            </motion.h1>
-            <p className="mx-auto max-w-4xl text-sm font-bold leading-loose text-white/75 sm:text-base">
-              نحن منصة "الوساطة الرقمية" منصة سعودية متخصصة في قطاع تكنولوجيا العقار انطلقنا لنقدم نموذجاً متطوراً يجمع بين الحلول التقنية المبتكرة والالتزام بالأنظمة، حيث نوفر بيئة رقمية متكاملة لخدمات الوساطة وإدارة العقارات، تهدف إلى تسهيل التعاملات العقارية، وتسريع إجراءاتها، ورفع كفاءتها، بما يضمن حقوق جميع الأطراف ويوفر تجربة مستخدم آمنة وموثوقة.
-              <br /><br />
-              ونعتمد في أعمالنا على بنية تحتية تقنية متقدمة تحمي البيانات وتضمن سرية المعلومات، مع التزامنا الكامل باللوائح والتشريعات التي تنظم القطاع العقاري في المملكة العربية السعودية، لنكون الشريك الرقمي الموثوق في تطوير التعاملات العقارية وتنظيمها.
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+              {isRtl ? "الوساطة الرقمية السعودية" : "Saudi Digital Brokerage"}
+            </div>
+
+            <h1 className="text-3xl font-black leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl drop-shadow-sm text-foreground dark:text-white">
+              {isRtl ? "من نحن" : "About Us"}
+            </h1>
+
+            <p className="mx-auto max-w-4xl text-sm font-bold leading-loose text-foreground/80 dark:text-white/80 sm:text-base">
+              {isRtl ? (
+                <>
+                  نحن منصة &quot;الوساطة الرقمية&quot; منصة سعودية متخصصة في قطاع تكنولوجيا العقار انطلقنا لنقدم نموذجاً متطوراً يجمع بين الحلول التقنية المبتكرة والالتزام بالأنظمة، حيث نوفر بيئة رقمية متكاملة لخدمات الوساطة وإدارة العقارات، تهدف إلى تسهيل التعاملات العقارية، وتسريع إجراءاتها، ورفع كفاءتها، بما يضمن حقوق جميع الأطراف ويوفر تجربة مستخدم آمنة وموثوقة.
+                  <br /><br />
+                  ونعتمد في أعمالنا على بنية تحتية تقنية متقدمة تحمي البيانات وتضمن سرية المعلومات، مع التزامنا الكامل باللوائح والتشريعات التي تنظم القطاع العقاري في المملكة العربية السعودية، لنكون الشريك الرقمي الموثوق في تطوير التعاملات العقارية وتنظيمها.
+                </>
+              ) : (
+                <>
+                  We are &quot;Digital Brokerage&quot;, a Saudi platform specializing in property technology. We launched to provide an advanced model merging innovative digital solutions with strict regulatory compliance. We deliver a cohesive ecosystem for real estate brokerage and property operations, designed to accelerate transaction workflows and uphold operational integrity for all participants.
+                  <br /><br />
+                  Our engineering foundation safeguards sensitive transactional data and adheres strictly to the regulatory statutes established across the Kingdom of Saudi Arabia, positioning our platform as a dependable digital partner in real estate governance.
+                </>
+              )}
             </p>
           </motion.div>
         </div>
 
         {/* Scroll Down Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <motion.button
-            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: "smooth" })}
-            animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2 text-white/40 hover:text-blue-400 transition-colors group"
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={handleScrollDown}
+            aria-label={isRtl ? "التمرير للأسفل" : "Scroll down"}
+            className="flex flex-col items-center gap-2 text-muted-foreground dark:text-white/50 hover:text-amber-600 hover:dark:text-amber-400 transition-colors group cursor-pointer"
           >
             <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-current p-1">
-              <motion.div
-                animate={reduceMotion ? undefined : { y: [0, 12, 0], opacity: [1, 0, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                className="h-2 w-1 rounded-full bg-current"
-              />
+              <div className="h-2 w-1 rounded-full bg-current animate-bounce" />
             </div>
-            <span className="text-[10px] font-black tracking-[0.2em] opacity-0 transition-opacity group-hover:opacity-100">
-              اكتشف
+            <span className="text-[10px] font-black tracking-[0.2em] opacity-80 group-hover:opacity-100">
+              {isRtl ? "اكتشف" : "Discover"}
             </span>
-            <ChevronDown className="h-4 w-4 absolute -bottom-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-          </motion.button>
-        </motion.div>
+            <ChevronDown className="h-4 w-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+          </button>
+        </div>
       </section>
 
+      {/* Intelligence & Map Architecture */}
       <CommandRoom reduceMotion={reduceMotion} isRtl={isRtl} />
 
-
-
-      <section className="relative mx-auto max-w-7xl px-4 py-12 sm:py-24 sm:px-8 lg:px-12">
-        <div className="mb-12 space-y-4">
-          <h2 className="text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية.</h2>
-          <p className="text-xs sm:text-sm font-bold leading-loose text-white/65 lg:whitespace-nowrap">
-            صُممت المنصة لتكامل أقسامها وترابطها، بما يضمن ربط كافة الإجراءات والعمليات بسياقها التنظيمي داخل النظام، لتوفير تجربة شاملة تمكّن المستفيدين عبر الأقسام التالية:
+      {/* Operational Capabilities Grid */}
+      <section className="relative mx-auto max-w-7xl px-4 py-12 sm:py-20 sm:px-8 lg:px-12">
+        <div className="mb-12 space-y-4 max-w-3xl">
+          <h2 className="text-2xl font-black leading-[1.4] text-foreground dark:text-white sm:text-3xl lg:text-4xl">
+            {isRtl
+              ? "كل جزء في المنصة يخدم قراراً أو إجراءً داخل الرحلة العقارية."
+              : "Every platform component powers a concrete decision in the real estate journey."}
+          </h2>
+          <p className="text-xs sm:text-sm font-bold leading-loose text-muted-foreground dark:text-white/70">
+            {isRtl
+              ? "صُممت المنصة لتكامل أقسامها وترابطها، بما يضمن ربط كافة الإجراءات والعمليات بسياقها التنظيمي داخل النظام، لتوفير تجربة شاملة تمكّن المستفيدين عبر المسارات التالية:"
+              : "Built for systemic cohesion, our architecture connects every procedure directly to its verifiable regulatory record across four primary functional pillars:"}
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          {capabilities.map((item, index) => (
-            <motion.article
-              key={item.title}
-              initial={{ y: reduceMotion ? 0 : 22 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: reduceMotion ? 0 : 0.58, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
-            >
-              <div className="mb-6 flex items-center justify-between gap-4">
-                <span className="text-sm font-black text-blue-200/85">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-black text-white">{item.title}</h3>
-              <p className="mt-4 text-xs font-bold leading-relaxed text-white/65">{item.text}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {item.points.map((point) => (
-                  <span key={point} className="rounded-full bg-card/[0.055] px-3 py-1.5 text-[10px] font-black text-white/55">
-                    {point}
+        <div className="grid gap-6 md:grid-cols-2">
+          {capabilities.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.article
+                key={item.titleEn}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                className="group rounded-[1.25rem] border border-border dark:border-white/10 bg-card/[0.03] p-5 sm:p-7 transition-all duration-300 hover:border-amber-500/30 hover:bg-card/[0.06] hover:shadow-lg [will-change:transform]"
+              >
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border dark:border-white/10 bg-muted/60 dark:bg-white/5 text-amber-600 dark:text-amber-400">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <span className="text-xs font-black text-muted-foreground dark:text-white/40 tracking-widest font-mono">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                ))}
-              </div>
-            </motion.article>
-          ))}
+                </div>
+
+                <h3 className="text-lg sm:text-xl font-black text-foreground dark:text-white">
+                  {isRtl ? item.titleAr : item.titleEn}
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm font-medium leading-relaxed text-muted-foreground dark:text-white/65">
+                  {isRtl ? item.textAr : item.textEn}
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {(isRtl ? item.pointsAr : item.pointsEn).map((point) => (
+                    <span
+                      key={point}
+                      className="rounded-full border border-border dark:border-white/10 bg-muted/50 dark:bg-white/5 px-3 py-1 text-[11px] font-bold text-foreground/80 dark:text-white/70"
+                    >
+                      {point}
+                    </span>
+                  ))}
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </section>
 
-      {/* <OperatingTimeline reduceMotion={reduceMotion} isRtl={isRtl} /> */}
-
-      {/* <ServiceMatrix reduceMotion={reduceMotion} /> */}
-
-      {/* <section className="relative border-y border-white/10 bg-slate-950 px-5 py-24 sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="space-y-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">How It Works</p>
-            <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">من أول نقرة حتى إغلاق العملية.</h2>
-            <p className="text-base font-bold leading-8 text-white/65">
-              المنصة مبنية حول خط تشغيل واضح. لا يضيع الطلب بين الصفحات، ولا تنفصل الفاتورة عن الخدمة، ولا تصبح المحادثة خارج سياق العملية.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {journey.map((item, index) => (
-              <motion.div
-                key={item}
-                initial={{ x: reduceMotion ? 0 : isRtl ? -18 : 18 }}
-                whileInView={{ x: 0 }}
-                viewport={{ once: true, margin: "-120px" }}
-                transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
-                whileHover={reduceMotion ? undefined : { x: isRtl ? -10 : 10, backgroundColor: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.2)" }}
-                className="flex items-center gap-4 rounded-3xl border border-white/10 bg-card/[0.02] p-5 transition-all duration-300 [will-change:transform]"
-              >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 text-sm font-black text-white/55 transition-colors duration-300 group-hover:bg-blue-500/10 group-hover:text-blue-400">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <p className="text-sm font-black leading-7 text-white/75">{item}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section className="relative mx-auto max-w-7xl px-4 py-24 sm:px-8 lg:px-12">
-        <div className="mb-12 w-full max-w-3xl space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">Operations</p>
-          <h2 className="text-3xl font-black leading-tight text-white sm:text-3xl md:text-5xl">الإدارة ترى الصورة كاملة.</h2>
-          <p className="text-base font-bold leading-8 text-white/65">
-            لوحة الإدارة ليست مجرد قوائم. هي مساحة تشغيل تسمح بالتحكم في الخدمات، الأسعار، الأقسام، حالة الطلبات، المحادثات، الملفات، والفواتير.
-          </p>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-1 md:grid-cols-2">
-          {operations.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ y: reduceMotion ? 0 : 18 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: reduceMotion ? 0 : 0.5, delay: index * 0.05 }}
-              whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02, boxShadow: "0 20px 40px -10px rgba(59,130,246,0.15)", borderColor: "rgba(255,255,255,0.2)" }}
-              className="group rounded-[1.25rem] border border-white/10 bg-card/[0.02] p-3 sm:p-6 transition-all duration-300 hover:bg-card/[0.06] [will-change:transform]"
-            >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-white/65 transition-colors duration-300 group-hover:border-blue-500/30 group-hover:text-blue-400 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                <item.icon className="h-5 w-5" />
-              </div>
-              <h3 className="text-xl font-black text-white">{item.title}</h3>
-              <p className="mt-3 text-sm font-bold leading-7 text-white/65">{item.text}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section> */}
-
+      {/* Bottom Mission Section */}
       <section className="relative px-4 pb-28 sm:px-8 lg:px-12">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-20px" }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative mx-auto overflow-hidden rounded-[1rem] border border-white/10 bg-slate-950/40 p-5 text-center sm:p-12 shadow-[0_0_80px_rgba(59,130,246,0.15)] backdrop-blur-xl"
+          transition={{ duration: reduceMotion ? 0 : 0.6, ease: "easeOut" }}
+          className="calm-panel relative mx-auto overflow-hidden rounded-[1.5rem] border border-border dark:border-white/10 bg-card/40 dark:bg-slate-950/50 p-6 text-center sm:p-14 shadow-lg backdrop-blur-xl max-w-7xl"
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
-          <h2 className="relative z-10 mx-auto mt-6 max-w-4xl text-2xl font-black leading-[1.4] text-white sm:text-3xl lg:text-4xl">هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق.</h2>
-          <p className="relative z-10 mx-auto mt-6 text-xs sm:text-sm font-bold leading-loose text-white/75 lg:whitespace-nowrap">
-            تجمع الوساطة الرقمية الأدوات التي يحتاجها المستفيد ومقدم الخدمة في منصة واحدة؛ لتتحول العملية العقارية من صفحات منفصلة إلى تجربة تشغيل واضحة ومتكاملة.
+          <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 to-transparent pointer-events-none" />
+          <h2 className="relative z-10 mx-auto max-w-4xl text-2xl font-black leading-[1.4] text-foreground dark:text-white sm:text-3xl lg:text-4xl">
+            {isRtl
+              ? "هدفنا أن تكون كل خطوة عقارية قابلة للفهم، المتابعة، والتوثيق."
+              : "Our objective: make every real estate step transparent, trackable, and documented."}
+          </h2>
+          <p className="relative z-10 mx-auto mt-6 max-w-3xl text-xs sm:text-sm font-bold leading-loose text-muted-foreground dark:text-white/75">
+            {isRtl
+              ? "تجمع الوساطة الرقمية الأدوات التي يحتاجها المستفيد ومقدم الخدمة في منصة واحدة؛ لتتحول العملية العقارية من إجراءات متفرقة إلى تجربة تشغيل واضحة ومتكاملة."
+              : "Digital Brokerage consolidates the verified toolsets required by both clients and licensed practitioners, transforming disparate procedures into an integrated operational workflow."}
           </p>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="relative z-10 mx-auto mt-10 flex justify-center relative group"
-          >
-            <motion.div
-              animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 mx-auto w-32 h-32 bg-blue-500/20 blur-[40px] rounded-full"
-            />
-            <motion.img 
-              src={settings?.logoWhiteUrl || '/icons/white.png'} 
-              alt="شعار المنصة" 
-              className="h-24 sm:h-32 w-auto object-contain relative z-10" 
-              animate={{ y: [0, -8, 0], filter: ["drop-shadow(0px 0px 0px rgba(59,130,246,0))", "drop-shadow(0px 10px 20px rgba(59,130,246,0.2))", "drop-shadow(0px 0px 0px rgba(59,130,246,0))"] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </motion.div>
+
+          <div className="relative z-10 mx-auto mt-10 flex justify-center">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36">
+              <Image
+                src={logoSrc}
+                alt={isRtl ? "شعار المنصة" : "Platform Logo"}
+                fill
+                sizes="(max-width: 640px) 112px, 144px"
+                className="object-contain"
+              />
+            </div>
+          </div>
         </motion.div>
       </section>
     </main>

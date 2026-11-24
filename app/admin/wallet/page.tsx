@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import FinancialPage from "@/app/financial/page";
+import FinancialPage from "@/components/financial/FinancialWorkspace";
 
 export default function AdminWalletPage() {
   const searchParams = useSearchParams();

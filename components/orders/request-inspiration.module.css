@@ -1,0 +1,19 @@
+.panel { overflow:hidden; border:1px solid var(--oo-border); border-radius:24px; background:var(--oo-surface); }
+.art { position:relative; overflow:hidden; background:#102534; }
+.art svg { display:block; width:100%; height:auto; }
+.artCaption { position:absolute; inset-inline:20px; bottom:18px; color:#eee2c8; font-size:12px; text-align:center; }
+.copy { padding:28px 24px 20px; }
+.eyebrow { display:flex; align-items:center; gap:8px; color:var(--oo-gold); font-size:12px; font-weight:600; }
+.copy h2 { margin:14px 0 12px; color:var(--oo-text-main); font-size:clamp(24px,2.3vw,32px); line-height:1.5; font-weight:700; letter-spacing:-.025em; }
+.copy p { color:var(--oo-text-secondary); font-size:14px; line-height:1.9; }
+.intent { display:flex; flex-direction:column; gap:9px; margin-top:24px; padding-block:20px; border-block:1px solid var(--oo-border); overflow-wrap:anywhere; }
+.intent > span:first-child { font-size:12px; color:var(--oo-text-secondary); }
+.intent strong { font-size:19px; color:var(--oo-text-main); }
+.location { display:flex; align-items:flex-start; gap:7px; color:var(--oo-text-secondary); font-size:13px; line-height:1.8; }
+.location svg { flex-shrink:0; margin-top:4px; color:var(--oo-gold); }
+.copy .note { font-size:12px; margin:16px 0 0; }
+.marker { animation:floatMarker 5s ease-in-out infinite; }
+@keyframes floatMarker { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+@media (max-width:1023px) and (min-width:640px) { .panel { display:grid; grid-template-columns: .85fr 1.15fr; align-items:center; } .art { height:100%; } .art svg { height:100%; object-fit:cover; } .copy { padding:24px; } }
+@media (max-width:639px) { .panel { border-radius:18px; } .art { height:190px; } .art svg { height:280px; width:100%; position:absolute; top:-44px; } .artCaption { bottom:10px; } .copy { padding:20px; } .copy h2 { font-size:24px; margin-block:8px; } .intent { margin-top:16px; padding-block:14px; } .copy .note { display:none; } }
+@media (prefers-reduced-motion:reduce) { .marker { animation:none; } }

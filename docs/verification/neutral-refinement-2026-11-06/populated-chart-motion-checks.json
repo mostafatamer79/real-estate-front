@@ -1,0 +1,57 @@
+{
+  "results": [
+    {
+      "reduced": false,
+      "hover": true,
+      "lineAnimation": "chart-line-draw",
+      "chartColors": [
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgba(51, 65, 85, 0.5)",
+        "rgb(66, 117, 101)",
+        "rgb(140, 152, 145)",
+        "rgb(189, 197, 191)"
+      ],
+      "transform": "matrix(1, 0, 0, 1, 0, -2)",
+      "shadow": "rgba(24, 32, 28, 0.075) 0px 5px 16px 0px",
+      "transition": "box-shadow, border-color, background-color"
+    },
+    {
+      "reduced": true,
+      "hover": true,
+      "lineAnimation": "none",
+      "chartColors": [
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgb(30, 41, 59)",
+        "rgba(51, 65, 85, 0.5)",
+        "rgb(66, 117, 101)",
+        "rgb(140, 152, 145)",
+        "rgb(189, 197, 191)"
+      ],
+      "transform": "none",
+      "shadow": "rgba(24, 32, 28, 0.075) 0px 5px 16px 0px",
+      "transition": "border-color, background-color"
+    }
+  ],
+  "errors": []
+}

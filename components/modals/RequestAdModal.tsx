@@ -98,7 +98,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <DialogContent className="calm-overlay sm:w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar p-0 bg-card rounded-[1rem] border-0 shadow-sm dark:shadow-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
         <DialogHeader className="sr-only">
           <DialogTitle>{isRtl ? 'طلب إضافة إعلان' : 'Request Ad'}</DialogTitle>
           <DialogDescription>
@@ -116,7 +116,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
               <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">
                 {isRtl ? 'طلب إعلان جديد' : 'Request New Ad'}
               </h2>
-              <p className="text-[11px] text-slate-500 font-bold mt-1">
+              <p className="text-[11px] text-muted-foreground dark:text-slate-500 font-bold mt-1">
                 {isRtl ? 'سيتم مراجعة طلبك من قبل الإدارة' : 'Your request will be reviewed by admin'}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <Mail className="w-3 h-3" />
                 {isRtl ? 'عنوان الإعلان' : 'Ad title'}
               </label>
@@ -143,7 +143,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
             {/* Category */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <Type className="w-3 h-3" />
                 {isRtl ? 'نوع الإعلان' : 'Ad Category'}
               </label>
@@ -162,7 +162,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
             {/* Property details logic if not custom */}
             {formData.category !== 'custom' && (
-              <div className="md:col-span-2 bg-muted/50 p-5 rounded-2xl border border space-y-4 my-2 text-right">
+              <div className="calm-panel md:col-span-2 bg-muted/50 p-5 rounded-2xl border border space-y-4 my-2 text-right">
                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-600" />
                   {isRtl ? 'تفاصيل ومواصفات العقار للإعلان' : 'Ad Property Specifications'}
@@ -170,19 +170,19 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
-                    <div className="flex bg-card p-1 rounded-xl border border gap-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'تصنيف العقار' : 'Category'}</label>
+                    <div className="calm-panel flex bg-card p-1 rounded-xl border border gap-1">
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'residential', propertyType: 'فيلا' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'residential' ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white' : 'text-muted-foreground dark:text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'سكني' : 'Residential'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, mainCategory: 'commercial', propertyType: 'مكتب' })}
-                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:bg-muted'}`}
+                        className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors ${formData.mainCategory === 'commercial' ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white' : 'text-muted-foreground dark:text-slate-500 hover:bg-muted'}`}
                       >
                         {isRtl ? 'تجاري' : 'Commercial'}
                       </button>
@@ -190,7 +190,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع العقار' : 'Type'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'نوع العقار' : 'Type'}</label>
                     <select
                       value={formData.propertyType}
                       onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
@@ -203,7 +203,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'نوع الصفقة' : 'Deal type'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'نوع الصفقة' : 'Deal type'}</label>
                     <select
                       value={formData.dealType}
                       onChange={(e) => setFormData({ ...formData, dealType: e.target.value })}
@@ -217,7 +217,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block flex items-center gap-1">{isRtl ? 'السعر' : 'Price'} <SaudiRiyalSymbol iconClassName="h-3 w-3" /></label>
                     <input
                       type="number"
                       value={formData.price || ''}
@@ -228,7 +228,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'المساحة (م²)' : 'Area (m²)'}</label>
                     <input
                       type="number"
                       value={formData.area || ''}
@@ -241,7 +241,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'المدينة' : 'City'}</label>
                     <input
                       type="text"
                       value={formData.city}
@@ -252,7 +252,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">{isRtl ? 'الحي' : 'Neighborhood'}</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 block">{isRtl ? 'الحي' : 'Neighborhood'}</label>
                     <input
                       type="text"
                       value={formData.neighborhood}
@@ -266,7 +266,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
             )}
 
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5 px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
                 {isRtl ? 'تفاصيل ومحتوى الإعلان' : 'Ad Details & Content'}
               </label>
@@ -280,7 +280,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5">
                 <Upload className="w-3.5 h-3.5" />
                 {isRtl ? 'تحميل صور للإعلان' : 'Upload Ad Images'}
               </label>
@@ -315,10 +315,10 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-3 bg-blue-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg flex items-center gap-2 disabled:opacity-50"
+              className="calm-primary px-8 py-3 bg-blue-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-lg flex items-center gap-2 disabled:opacity-50"
             >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-border dark:border-white/30 border-t-border dark:border-t-white rounded-full animate-spin" />
               ) : (
                 <Send className="w-4 h-4" />
               )}

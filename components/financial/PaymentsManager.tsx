@@ -141,7 +141,7 @@ export default function PaymentsManager() {
                 <CardContent>
                     {/* Payment Form */}
                     {showForm && (
-                        <div className="mb-6 p-3 sm:p-6 bg-muted rounded-lg border">
+                        <div className="calm-panel mb-6 p-3 sm:p-6 bg-muted rounded-lg border">
                             <h3 className="text-lg font-semibold mb-4">{t('fin.payment.record')}</h3>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

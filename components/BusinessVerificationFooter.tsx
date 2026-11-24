@@ -26,7 +26,7 @@ export default function BusinessVerificationFooter() {
       <div className={styles.inner}>
         <div className={styles.grid}>
           <Link href="/" className={styles.brand} aria-label={isArabic ? "الوساطة الرقمية — الصفحة الرئيسية" : "Digital Brokerage — Home"}>
-            <Image src={settings.logoWhiteUrl || "/icons/white.png"} alt={isArabic ? "الوساطة الرقمية" : "Digital Brokerage"} width={170} height={90} unoptimized />
+            <Image src={settings.isDark ? (settings.logoWhiteUrl || "/icons/white.png") : (settings.logoBlackUrl || "/icons/black.png")} alt={isArabic ? "الوساطة الرقمية" : "Digital Brokerage"} width={170} height={90} unoptimized />
           </Link>
           <nav className={styles.links} aria-label={isArabic ? "روابط الموقع" : "Site links"}>
             {footerLinks.map(link => <Link key={link.href} href={link.href}>{isArabic ? link.ar : link.en}</Link>)}

@@ -1,0 +1,186 @@
+/* components/redesign/chat03/checkout.module.css
+   Pearl / Navy / Brass Editorial Styling for Checkout Handoff
+*/
+
+.checkoutRoot {
+  --co-pearl: #f5f4f0;
+  --co-pearl-subtle: #faf9f6;
+  --co-surface: #ffffff;
+  --co-surface-elevated: #ffffff;
+  --co-surface-muted: #f8fafc;
+  --co-navy: #0b192c;
+  --co-navy-deep: #071220;
+  --co-text-main: #0b192c;
+  --co-text-secondary: #475569;
+  --co-text-muted: #64748b;
+  --co-border: #e2ded6;
+  --co-border-subtle: #edebe4;
+
+  /* Brass / Gold Tokens */
+  --co-brass: #946528;
+  --co-brass-hover: #7d5420;
+  --co-brass-tint: rgba(148, 101, 40, 0.08);
+  --co-brass-border: rgba(148, 101, 40, 0.28);
+
+  position: relative;
+  width: 100%;
+  min-height: 80dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+}
+
+:global(.dark) .checkoutRoot {
+  --co-pearl: #0b192c;
+  --co-pearl-subtle: #071220;
+  --co-surface: #102138;
+  --co-surface-elevated: #152740;
+  --co-surface-muted: #162b47;
+  --co-navy: #f5f4f0;
+  --co-navy-deep: #060b13;
+  --co-text-main: #f5f4f0;
+  --co-text-secondary: #9bb0c6;
+  --co-text-muted: #7d93aa;
+  --co-border: #1e3655;
+  --co-border-subtle: #172b43;
+
+  --co-brass: #e6bb78;
+  --co-brass-hover: #ffd38c;
+  --co-brass-tint: rgba(230, 187, 120, 0.12);
+  --co-brass-border: rgba(230, 187, 120, 0.35);
+}
+
+.checkoutCard {
+  width: 100%;
+  max-width: 32rem;
+  background-color: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(11, 25, 44, 0.06);
+}
+
+@media (min-width: 640px) {
+  .checkoutCard {
+    padding: 2.5rem 2rem;
+  }
+}
+
+.checkoutHeader {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.iconShield {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background-color: var(--co-brass-tint);
+  border: 1px solid var(--co-brass-border);
+  color: var(--co-brass);
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--co-text-main);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--co-text-secondary);
+  line-height: 1.5;
+}
+
+.targetSummaryBox {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--co-surface-muted);
+  border: 1px solid var(--co-border-subtle);
+  margin-bottom: 1.5rem;
+}
+
+.primaryActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.875rem;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  background-color: var(--co-brass);
+  color: #ffffff;
+  border: 1px solid var(--co-brass);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+:global(.dark) .primaryActionBtn {
+  background-color: var(--co-brass);
+  color: #0b192c;
+  border-color: var(--co-brass);
+}
+
+.primaryActionBtn:hover:not(:disabled) {
+  background-color: var(--co-brass-hover);
+  transform: translateY(-1px);
+}
+
+.primaryActionBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.secondaryActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background-color: transparent;
+  color: var(--co-text-secondary);
+  border: 1px solid var(--co-border);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.secondaryActionBtn:hover {
+  background-color: var(--co-brass-tint);
+  border-color: var(--co-brass-border);
+  color: var(--co-text-main);
+}
+
+/* Accessibility Focus States */
+.checkoutRoot :focus-visible {
+  outline: 2px solid var(--co-brass) !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .checkoutRoot *, .checkoutRoot *::before, .checkoutRoot *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

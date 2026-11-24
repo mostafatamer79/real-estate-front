@@ -86,7 +86,7 @@ export default function UserWallet() {
 
     return (
         <div className="space-y-6">
-            <Card className='bg-card rounded-xl shadow-lg'>
+            <Card className='calm-panel bg-card rounded-xl shadow-lg'>
                 <CardHeader className='pb-4'>
                     <CardTitle className='text-2xl font-bold text-black text-right'>المحفظة</CardTitle>
                 </CardHeader>
@@ -104,12 +104,12 @@ export default function UserWallet() {
 
                         {/* Right Side - Action Buttons */}
                         <div className='flex gap-3 w-full md:w-auto flex-wrap md:flex-nowrap'>
-                            <Button className='px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg text-sm whitespace-nowrap'>
+                            <Button className='px-6 py-4 bg-muted dark:bg-slate-800 hover:bg-muted hover:dark:bg-slate-700 text-foreground dark:text-white font-semibold rounded-lg text-sm whitespace-nowrap'>
                                 إضافة رصيد
                             </Button>
                             <Button 
                                 onClick={() => setShowWithdrawModal(true)}
-                                className='px-6 py-4 text-white bg-slate-800 hover:bg-slate-700 font-semibold rounded-lg text-sm whitespace-nowrap'>
+                                className='px-6 py-4 text-foreground dark:text-white bg-muted dark:bg-slate-800 hover:bg-muted hover:dark:bg-slate-700 font-semibold rounded-lg text-sm whitespace-nowrap'>
                                 سحب رصيد
                             </Button>
                         </div>
@@ -156,7 +156,7 @@ export default function UserWallet() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center py-6 text-gray-500">
+                                    <TableCell colSpan={6} className="text-center py-6 text-muted-foreground dark:text-gray-500">
                                         لا توجد عمليات مسجلة
                                     </TableCell>
                                 </TableRow>
@@ -175,7 +175,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-[95vw] sm:max-w-md mx-4 text-black p-3 sm:p-6 max-h-[90vh] overflow-y-auto"
+                        className="calm-panel calm-interactive bg-card border border rounded-xl shadow-sm dark:shadow-2xl w-[95vw] sm:max-w-md mx-4 text-black p-3 sm:p-6 max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                          <h2 className="text-xl font-bold mb-4">طلب سحب رصيد</h2>
@@ -184,7 +184,7 @@ export default function UserWallet() {
                                  <div>
                                      <Label>المبلغ المراد سحبه</Label>
                                      <Input type="number" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} placeholder="0.00" />
-                                     <p className="text-sm text-gray-500 mt-1">الرصيد المتاح: <SaudiRiyalAmount amount={walletData?.balance || 0} locale="ar-SA" iconClassName='h-3 w-3 text-gray-500' /></p>
+                                     <p className="text-sm text-muted-foreground dark:text-gray-500 mt-1">الرصيد المتاح: <SaudiRiyalAmount amount={walletData?.balance || 0} locale="ar-SA" iconClassName='h-3 w-3 text-muted-foreground dark:text-gray-500' /></p>
                                  </div>
                                  <div className="flex gap-2 justify-end">
                                      <Button type="button" variant="ghost" onClick={() => setShowWithdrawModal(false)}>إلغاء</Button>
@@ -206,7 +206,7 @@ export default function UserWallet() {
                     dir="rtl"
                 >
                     <div
-                        className="bg-card border border rounded-xl shadow-2xl w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto"
+                        className="calm-panel calm-interactive bg-card border border rounded-xl shadow-sm dark:shadow-2xl w-[95vw] sm:max-w-2xl mx-4 text-black animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between p-3 sm:p-6 border-b border">
@@ -215,25 +215,25 @@ export default function UserWallet() {
                                 onClick={() => setShowPaymentModal(false)}
                                 className="p-2 hover:bg-muted rounded-full transition-colors"
                             >
-                                <X className="h-6 w-6 text-gray-400" />
+                                <X className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
                             </button>
                         </div>
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-muted dark:bg-slate-800 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-700 border-2 border-border dark:border-gray-700 hover:border-border hover:dark:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <span className="font-semibold">الدفع من الرصيد</span>
                                 <Wallet className="h-5 w-5" />
                             </button>
 
-                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-muted dark:bg-slate-800 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-700 border-2 border-border dark:border-gray-700 hover:border-border hover:dark:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <span className="font-semibold">دفع ببطاقات الائتمان</span>
                                 <CreditCard className="h-5 w-5" />
                             </button>
                         </div>
                         <div className="p-3 sm:p-6 pt-0">
-                            <button className="w-full p-4 bg-slate-800 text-white hover:bg-slate-700 border-2 border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
+                            <button className="w-full p-4 bg-muted dark:bg-slate-800 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-700 border-2 border-border dark:border-gray-700 hover:border-border hover:dark:border-gray-600 rounded-lg transition-all duration-200 flex items-center justify-between">
                                 <div className="text-right">
                                     <div className="font-semibold">دفع من تابي وتمارا</div>
-                                    <div className="text-sm text-gray-400 mt-1">12 قسط</div>
+                                    <div className="text-sm text-muted-foreground dark:text-gray-400 mt-1">12 قسط</div>
                                 </div>
                                 <Receipt className="h-5 w-5" />
                             </button>

@@ -31,6 +31,9 @@ export interface CustomServiceItem {
   id: string;
   category: string;
   name: string;
+  displayName?: string;
+  description?: string;
+  deleted?: boolean;
   status: ServiceItemStatus;
   createdAt?: string;
 }
@@ -148,6 +151,9 @@ export const parseCustomServices = (raw: string | undefined | null): CustomServi
           id: String(item.id || `${category}_${name}`),
           category,
           name,
+          displayName: typeof item.displayName === 'string' ? item.displayName.trim() : undefined,
+          description: typeof item.description === 'string' ? item.description.trim() : undefined,
+          deleted: item.deleted === true,
           status: normalizeServiceStatus(item.status),
           createdAt: typeof item.createdAt === 'string' ? item.createdAt : undefined,
         };
@@ -167,7 +173,49 @@ export const getServiceNamesForCategory = (
   category: string,
   customServices: CustomServiceItem[] | undefined,
 ) => {
-  const base = SERVICE_CATALOG[category as ServiceCategoryId]?.options || [];
+  const base = category === 'legal' ? LEGAL_SERVICE_OPTIONS.legal : SERVICE_CATALOG[category as ServiceCategoryId]?.options || LEGAL_SERVICE_OPTIONS[category] || [];
   const custom = getCustomServicesForCategory(customServices, category).map((service) => service.name);
-  return Array.from(new Set([...base, ...custom]));
+  const removed = new Set(getCustomServicesForCategory(customServices, category).filter(item => item.deleted).map(item => item.name));
+  return Array.from(new Set([...base, ...custom])).filter(name => !removed.has(name));
 };
+
+export const LEGAL_SERVICE_OPTIONS: Record<string, string[]> = {
+  legal: ['المنازعات العقارية', 'العقود', 'التوثيق', 'أخرى'],
+  legal_disputes: ['نزاعات الملكية', 'عقود البيع والإيجار', 'قضايا الرهن العقاري', 'مخالفات البناء', 'نزع الملكية للمصلحة العامة', 'مشاكل في مشاريع التطوير', 'قضايا التركات العقارية', 'أخرى'],
+  legal_contracts: ['عقد بيع', 'عقد إيجار', 'عقد الانتفاع العقاري', 'عقد الهبة العقاري', 'عقد الرهن العقاري', 'عقد الاستثمار العقاري', 'مراجعة العقود', 'أخرى'],
+  legal_documentation: ['توثيق', 'توثيق صك الملكية', 'توثيق مستندات البيع', 'توثيق بيانات الأطراف', 'أخرى'],
+  legal_other: ['استشارة قانونية', 'تقرير قانوني', 'خدمة قانونية مخصصة', 'أخرى'],
+};
+export function getServiceDisplayName(category: string, name: string, custom: CustomServiceItem[] | undefined) {
+  return custom?.find(item => item.category === category && item.name === name)?.displayName || name;
+}
+
+// Labels may change, but submitted values stay stable for forms and historical data.
+export function applyCatalogToForm(
+  def: import('@/types/service-form').ServiceFormDef,
+  category: string,
+  custom: CustomServiceItem[] = [],
+  flags: Record<string, ServiceItemStatus> = {},
+): import('@/types/service-form').ServiceFormDef {
+  const normalized = (value: string) => value.replace(/[أإآ]/g, 'ا').trim();
+  const changes = custom.filter(item => item.category === category);
+  const known = getServiceNamesForCategory(category, custom);
+  const matches = (target: string) => target === 'serviceType' || target === 'metadata.catalogService'
+    || (category === 'legal_disputes' && target === 'metadata.disputeType')
+    || (category === 'legal_contracts' && target === 'metadata.type');
+  const fields = [...def.fields];
+  if (category.startsWith('legal_') && !fields.some(field => matches(field.target) && field.options) && known.length) {
+    fields.unshift({ id: 'catalogService', type: 'select', label: 'الخدمة المطلوبة', target: 'metadata.catalogService', options: known.map(name => ({ value: name, label: name })) });
+  }
+  return { ...def, fields: fields.map(field => {
+    if (!matches(field.target) || !field.options) return field;
+    const options = [...field.options];
+    for (const item of changes) if (!options.some(option => normalized(option.value) === normalized(item.name))) options.push({ value: item.name, label: item.name });
+    return { ...field, options: options.flatMap(option => {
+      const change = changes.find(item => normalized(item.name) === normalized(option.value));
+      const status = change?.status || flags[makeServiceItemFlagKey(category, option.value)] || option.status || 'enabled';
+      if (change?.deleted || status === 'disabled') return [];
+      return [{ ...option, label: change?.displayName || option.label, status, disabled: option.disabled || status === 'soon' }];
+    }) };
+  }) };
+}

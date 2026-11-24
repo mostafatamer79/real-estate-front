@@ -221,13 +221,13 @@ export default function DepartmentFeaturePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-1rem)] overflow-x-hidden overflow-y-auto rounded-[1.25rem] border border bg-card p-0 sm:max-w-5xl sm:max-h-[90vh]" dir={direction}>
-        <div className="border-b border bg-slate-950 px-4 py-4 sm:px-6 sm:py-5 text-white">
+      <DialogContent className="calm-overlay w-full max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-1rem)] overflow-x-hidden overflow-y-auto rounded-[1.25rem] border border bg-card p-0 sm:max-w-5xl sm:max-h-[90vh]" dir={direction}>
+        <div className="border-b border bg-background dark:bg-slate-950 px-4 py-4 sm:px-6 sm:py-5 text-foreground dark:text-white">
           <DialogHeader className="space-y-2 text-right">
             <DialogTitle className="text-lg leading-[1.6] sm:text-2xl sm:leading-tight font-black">
               {language === "ar" ? "معاينة الأقسام قبل الاشتراك" : "Department Preview Before Subscription"}
             </DialogTitle>
-              <DialogDescription className="max-w-full break-words text-sm leading-[1.9] font-bold text-white/70">
+              <DialogDescription className="max-w-full break-words text-sm leading-[1.9] font-bold text-muted-foreground dark:text-white/70">
                 {language === "ar"
                 ? `هذه معاينة لخصائص ${packageName ? `باقة «${packageName}»` : "القسم"} والواجهات فقط. لا يمكن إنشاء أو تعديل أي بيانات من هنا.`
                 : "This is a read-only preview of features and interfaces. No data can be created or edited here."}
@@ -248,7 +248,7 @@ export default function DepartmentFeaturePreviewDialog({
                     onClick={() => setActiveDepartment(department.id)}
                     className={`shrink-0 min-w-[11rem] lg:w-full lg:min-w-0 rounded-2xl border px-4 py-3 text-right transition-colors ${
                       active
-                        ? "border-slate-900 bg-slate-900 text-white"
+                        ? "border-border dark:border-slate-900 bg-card dark:bg-slate-900 text-foreground dark:text-white"
                         : "border bg-card text-slate-700 hover:bg-muted"
                     }`}
                   >
@@ -258,7 +258,7 @@ export default function DepartmentFeaturePreviewDialog({
                         <div className="truncate text-sm font-black">
                           {language === "ar" ? department.titleAr : department.titleEn}
                         </div>
-                        <div className={`mt-1 truncate text-[11px] font-bold ${active ? "text-white/70" : "text-slate-400"}`}>
+                        <div className={`mt-1 truncate text-[11px] font-bold ${active ? "text-muted-foreground dark:text-white/70" : "text-muted-foreground dark:text-slate-400"}`}>
                           {language === "ar" ? "عرض فقط" : "Preview only"}
                         </div>
                       </div>
@@ -270,17 +270,17 @@ export default function DepartmentFeaturePreviewDialog({
           </aside>
 
           <div className="p-3 sm:p-6">
-            <div className="rounded-[1rem] border border bg-muted p-5">
+            <div className="calm-panel rounded-[1rem] border border bg-muted p-5">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2 text-right">
                   <div className="text-xl sm:text-2xl font-black text-slate-950">
                     {language === "ar" ? currentDepartment.titleAr : currentDepartment.titleEn}
                   </div>
-                  <p className="break-words text-sm leading-[1.9] font-bold text-slate-500">
+                  <p className="break-words text-sm leading-[1.9] font-bold text-muted-foreground dark:text-slate-500">
                     {language === "ar" ? currentDepartment.subtitleAr : currentDepartment.subtitleEn}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-dashed border-slate-300 bg-card px-4 py-3 text-[11px] font-black text-slate-500">
+                <div className="calm-panel rounded-2xl border border-dashed border-slate-300 bg-card px-4 py-3 text-[11px] font-black text-muted-foreground dark:text-slate-500">
                   {language === "ar" ? "وضع استعراض بدون إنشاء أو تعديل" : "Read-only mode with no create or edit actions"}
                 </div>
               </div>
@@ -295,7 +295,7 @@ export default function DepartmentFeaturePreviewDialog({
             </div>
 
             <div className="mt-6">
-              <div className="mb-3 text-xs font-black text-slate-400">
+              <div className="mb-3 text-xs font-black text-muted-foreground dark:text-slate-400">
                 {language === "ar" ? "أقسام المعاينة" : "Preview sections"}
               </div>
               <div className="flex flex-wrap gap-2">
@@ -309,7 +309,7 @@ export default function DepartmentFeaturePreviewDialog({
                       onClick={() => setActiveSection(section.id)}
                       className={`inline-flex h-11 items-center gap-2 rounded-2xl border px-4 text-sm font-black transition-colors ${
                         active
-                          ? "border-slate-900 bg-slate-900 text-white"
+                          ? "border-border dark:border-slate-900 bg-card dark:bg-slate-900 text-foreground dark:text-white"
                           : "border bg-card text-slate-700 hover:bg-muted"
                       }`}
                     >
@@ -322,18 +322,18 @@ export default function DepartmentFeaturePreviewDialog({
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-              <div className="rounded-[1rem] border border bg-card p-5 shadow-sm">
+              <div className="calm-panel rounded-[1rem] border border bg-card p-5 shadow-sm">
                 <div className="mb-2 text-lg font-black text-slate-950">
                   {language === "ar" ? currentSection.titleAr : currentSection.titleEn}
                 </div>
-                <p className="break-words text-sm leading-[1.9] font-bold text-slate-500">
+                <p className="break-words text-sm leading-[1.9] font-bold text-muted-foreground dark:text-slate-500">
                   {language === "ar" ? currentSection.descriptionAr : currentSection.descriptionEn}
                 </p>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-1 md:grid-cols-2">
                   {[1, 2, 3, 4].map((index) => (
-                    <div key={index} className="rounded-2xl border border bg-muted p-4">
-                      <div className="text-xs font-black text-slate-400">
+                    <div key={index} className="calm-panel rounded-2xl border border bg-muted p-4">
+                      <div className="text-xs font-black text-muted-foreground dark:text-slate-400">
                         {language === "ar" ? `بطاقة عرض ${index}` : `Preview card ${index}`}
                       </div>
                       <div className="mt-2 h-3 w-2/3 rounded-full bg-muted" />
@@ -348,7 +348,7 @@ export default function DepartmentFeaturePreviewDialog({
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-[1rem] border border bg-muted p-5">
+                <div className="calm-panel rounded-[1rem] border border bg-muted p-5">
                   <div className="text-sm font-black text-slate-950">
                     {language === "ar" ? "ما الذي ستحصل عليه" : "What you will get"}
                   </div>
@@ -361,11 +361,11 @@ export default function DepartmentFeaturePreviewDialog({
                   </div>
                 </div>
 
-                <div className="rounded-[1rem] border border-dashed border-slate-300 bg-card p-5">
+                <div className="calm-panel rounded-[1rem] border border-dashed border-slate-300 bg-card p-5">
                   <div className="text-sm font-black text-slate-950">
                     {language === "ar" ? "بعد تفعيل الاشتراك" : "After subscription activation"}
                   </div>
-                  <p className="mt-2 text-sm font-bold text-slate-500">
+                  <p className="mt-2 text-sm font-bold text-muted-foreground dark:text-slate-500">
                     {language === "ar"
                       ? "تظهر لك الواجهة الكاملة للقسم مع الصلاحيات المناسبة لخطة الاشتراك."
                       : "You will get the full department workspace with the permissions allowed by your subscription."}

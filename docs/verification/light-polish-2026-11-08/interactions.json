@@ -1,0 +1,36 @@
+[
+  {
+    "width": 1440,
+    "originalServiceLayout": true,
+    "darkPersistence": true,
+    "lightSwitch": true,
+    "overflow": false,
+    "contrast": 13.06
+  },
+  {
+    "width": 390,
+    "originalServiceLayout": true,
+    "darkPersistence": true,
+    "lightSwitch": true,
+    "overflow": false,
+    "contrast": 13.06
+  },
+  {
+    "customCategories": true,
+    "hiddenCategories": true,
+    "soonDisabled": true,
+    "adminPreview": true
+  },
+  {
+    "keyboardRouting": true
+  },
+  {
+    "englishLTR": true
+  },
+  {
+    "keyboardTooltip": true
+  },
+  {
+    "emptyCharts": true
+  }
+]

@@ -1,0 +1,138 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation prevents POST",
+      "server failure preserves fields",
+      "numeric payload unchanged",
+      "success personal orders tab",
+      "detail link",
+      "delete cancel performs no mutation",
+      "delete confirm removes local fixture",
+      "no overflow",
+      "no page exceptions"
+    ]
+  }
+]

@@ -1,0 +1,292 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "route": "/services",
+      "dark": false,
+      "status": 200,
+      "url": "/services",
+      "overflow": false,
+      "title": "الخدمات العقارية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 5,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "dark": false,
+      "status": 200,
+      "url": "/wallet",
+      "overflow": false,
+      "title": "المحفظة والفواتير | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nالقائمة الرئيسية\nالفواتير\n\nإدارة الفواتير والمدفوعات\n\nالعمولات\n\nإدارة ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المحفظة المالية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "القائمة الرئيسية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/department-hub",
+      "dark": false,
+      "status": 200,
+      "url": "/department-hub",
+      "overflow": false,
+      "title": "الأقسام | الوساطة الرقمية",
+      "text": "مركز الإدارات\nDEPT\nلوحة التحكم\nP\nمركز الإدارات\nأهلاً، Preview\n\nإليك نظرة عامة على الأقسام\n",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "مركز الإدارات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "أهلاً، Preview"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/marketing",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/about",
+      "dark": false,
+      "status": 200,
+      "url": "/about",
+      "overflow": false,
+      "title": "عن الوساطة الرقمية | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالرئيسية\nعن الوساطة الرقمية\n\nتعرف على ال",
+      "panels": 3,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "عن الوساطة الرقمية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "من نحن"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/orders",
+      "overflow": false,
+      "title": "الطلبات العقارية | الوساطة الرقمية",
+      "text": "رجوع\nطلب عقار جديد\n\nسجل طلبك وسنقوم بالبحث عن العقار المناسب لك\n\nإنشاء طلب\nطلباتي\nتفاصيل إ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "طلب عقار جديد"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/services",
+      "dark": true,
+      "url": "/services",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "dark": true,
+      "url": "/wallet",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/department-hub",
+      "dark": true,
+      "url": "/department-hub",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/services",
+      "dark": false,
+      "status": 200,
+      "url": "/services",
+      "overflow": false,
+      "title": "الخدمات العقارية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 5,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "dark": false,
+      "status": 200,
+      "url": "/wallet",
+      "overflow": false,
+      "title": "المحفظة والفواتير | الوساطة الرقمية",
+      "text": "المحفظة المالية\nEN\nالفواتير\nالعمولات\nالملفات\nالاستثمارات\nقريباً\nإضافة رصيد\nقريباً\nسحب رصيد",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المحفظة المالية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "القائمة الرئيسية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/department-hub",
+      "dark": false,
+      "status": 200,
+      "url": "/department-hub",
+      "overflow": false,
+      "title": "الأقسام | الوساطة الرقمية",
+      "text": "مركز الإدارات\nEN\nمركز الإدارات\nأهلاً، Preview\n\nإليك نظرة عامة على الأقسام\n\nالأقسام\n5\nإدارة",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "مركز الإدارات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "أهلاً، Preview"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/marketing",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/about",
+      "dark": false,
+      "status": 200,
+      "url": "/about",
+      "overflow": false,
+      "title": "عن الوساطة الرقمية | الوساطة الرقمية",
+      "text": "الرئيسية\nعن الوساطة الرقمية\n\nتعرف على الوساطة الرقمية ومنظومة الخدمات العقارية: العروض وال",
+      "panels": 3,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "عن الوساطة الرقمية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "من نحن"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/orders",
+      "overflow": false,
+      "title": "الطلبات العقارية | الوساطة الرقمية",
+      "text": "رجوع\nطلب عقار جديد\n\nسجل طلبك وسنقوم بالبحث عن العقار المناسب لك\n\nإنشاء طلب\nطلباتي\nتفاصيل إ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "طلب عقار جديد"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/services",
+      "dark": true,
+      "url": "/services",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "dark": true,
+      "url": "/wallet",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/department-hub",
+      "dark": true,
+      "url": "/department-hub",
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "writes": []
+}

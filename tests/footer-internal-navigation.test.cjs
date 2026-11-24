@@ -5,13 +5,14 @@ const { join } = require("node:path");
 
 const projectRoot = join(__dirname, "..");
 
-test("footer keeps its original dark palette and omits the Contact Us navigation link", () => {
+test("footer restores its previous appearance and keeps contacts with QR only", () => {
   const footer = readFileSync(join(projectRoot, "app/src/components/Footer.tsx"), "utf8");
 
   assert.match(footer, /border-slate-800 bg-slate-950 text-white/);
   assert.doesNotMatch(footer, /t\("footer\.contact_us"\)/);
   assert.doesNotMatch(footer, /Mobile Contact Strip/);
   assert.match(footer, /mobile-contact-block/);
+  assert.match(footer, /<VerificationQr \/>/);
 });
 
 test("internal properties navigation omits the Orders entry", () => {

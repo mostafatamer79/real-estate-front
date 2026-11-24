@@ -1,0 +1,142 @@
+{
+  "base": "http://127.0.0.1:3402",
+  "mode": "Next production build; synthetic APIs",
+  "cases": [
+    {
+      "width": 320,
+      "theme": "light",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "lang": "ar",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "lang": "en",
+      "passed": true,
+      "checks": [
+        "chat initialization error and retry",
+        "actual request data and localized status",
+        "client contact visibility preserved",
+        "zero room values rendered",
+        "no clipped descendants",
+        "land hides house specifications",
+        "back leads to orders",
+        "server failure and retry",
+        "no horizontal overflow or page exceptions"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "close protected return",
+    "passed": true
+  },
+  {
+    "name": "close public return",
+    "passed": true
+  },
+  {
+    "name": "back protected referrer",
+    "passed": true
+  },
+  {
+    "name": "back public referrer",
+    "passed": true
+  },
+  {
+    "name": "cancel OTP verification",
+    "passed": true
+  }
+]

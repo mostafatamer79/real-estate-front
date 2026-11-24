@@ -1,0 +1,478 @@
+[
+  {
+    "template": "/about",
+    "route": "/about",
+    "status": 200,
+    "title": "عن الوساطة الرقمية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/customer-service",
+    "route": "/admin/customer-service",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/dashboard",
+    "route": "/admin/dashboard",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/info-content",
+    "route": "/admin/info-content",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/legal",
+    "route": "/admin/legal",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/map-control",
+    "route": "/admin/map-control",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/marketing",
+    "route": "/admin/marketing",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/offers",
+    "route": "/admin/offers",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/operations",
+    "route": "/admin/operations",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/opinions",
+    "route": "/admin/opinions",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/orders",
+    "route": "/admin/orders",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/packages",
+    "route": "/admin/packages",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin",
+    "route": "/admin",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/properties-management",
+    "route": "/admin/properties-management",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/purchase-requests",
+    "route": "/admin/purchase-requests",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/service-providers",
+    "route": "/admin/service-providers",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/service-requests",
+    "route": "/admin/service-requests",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/services",
+    "route": "/admin/services",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/settings",
+    "route": "/admin/settings",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/subscriptions",
+    "route": "/admin/subscriptions",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/transactions",
+    "route": "/admin/transactions",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/trends",
+    "route": "/admin/trends",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/users/[id]",
+    "route": "/admin/users/12345678-1234-4234-8234-123456789abc",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/users",
+    "route": "/admin/users",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/visit-requests",
+    "route": "/admin/visit-requests",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/admin/wallet",
+    "route": "/admin/wallet",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/buildingmanagement",
+    "route": "/buildingmanagement",
+    "status": 200,
+    "title": "إدارة الأملاك والمباني | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/chat/[roomId]",
+    "route": "/chat/12345678-1234-4234-8234-123456789abc",
+    "status": 200,
+    "title": "المحادثات | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/chat",
+    "route": "/chat",
+    "status": 200,
+    "title": "المحادثات | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/checkout",
+    "route": "/checkout",
+    "status": 200,
+    "title": "الدفع | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/complete-profile",
+    "route": "/complete-profile",
+    "status": 200,
+    "title": "استكمال الملف الشخصي | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/customerservice/contact",
+    "route": "/customerservice/contact",
+    "status": 200,
+    "title": "اتصل بنا | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/customerservice/faq",
+    "route": "/customerservice/faq",
+    "status": 200,
+    "title": "الأسئلة الشائعة عن الخدمات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/customerservice",
+    "route": "/customerservice",
+    "status": 200,
+    "title": "خدمة العملاء والتواصل | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/customerservice/support",
+    "route": "/customerservice/support",
+    "status": 200,
+    "title": "الدعم الفني | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/department-hub",
+    "route": "/department-hub",
+    "status": 200,
+    "title": "الأقسام | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/details",
+    "route": "/details",
+    "status": 200,
+    "title": "لوحة المعلومات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/disputes",
+    "route": "/disputes",
+    "status": 200,
+    "title": "المنازعات | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/financial",
+    "route": "/financial",
+    "status": 200,
+    "title": "الخدمات المالية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/info",
+    "route": "/info",
+    "status": 200,
+    "title": "الشروط والسياسات ومعلومات المنصة | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal/[dept]",
+    "route": "/internal/finance",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal/[dept]/requests",
+    "route": "/internal/finance/requests",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal/chat/[roomId]",
+    "route": "/internal/chat/12345678-1234-4234-8234-123456789abc",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal/chat",
+    "route": "/internal/chat",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal",
+    "route": "/internal",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/internal/renew-subscription",
+    "route": "/internal/renew-subscription",
+    "status": 200,
+    "title": "بوابة الموظفين | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/login",
+    "route": "/login",
+    "status": 200,
+    "title": "تسجيل الدخول | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/marketing",
+    "route": "/marketing",
+    "status": 200,
+    "title": "التسويق العقاري | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/nafath-login",
+    "route": "/nafath-login",
+    "status": 200,
+    "title": "الملف الشخصي | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/offers/[id]/edit",
+    "route": "/offers/12345678-1234-4234-8234-123456789abc/edit",
+    "status": 200,
+    "title": "تعديل العرض العقاري",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/offers/[id]",
+    "route": "/offers/12345678-1234-4234-8234-123456789abc",
+    "status": 200,
+    "title": "فيلا - الرياض - حي الاختبار المحلي | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/offers/new",
+    "route": "/offers/new",
+    "status": 200,
+    "title": "إضافة عرض عقاري | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/offers",
+    "route": "/offers",
+    "status": 200,
+    "title": "العروض العقارية في السعودية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/orders/[id]",
+    "route": "/orders/12345678-1234-4234-8234-123456789abc",
+    "status": 200,
+    "title": "الطلبات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/orders",
+    "route": "/orders",
+    "status": 200,
+    "title": "الطلبات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/profile",
+    "route": "/profile",
+    "status": 200,
+    "title": "الملف الشخصي | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/scan-map",
+    "route": "/scan-map",
+    "status": 200,
+    "title": "المسح العقاري | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/service-providers",
+    "route": "/service-providers",
+    "status": 200,
+    "title": "الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services/form",
+    "route": "/services/form",
+    "status": 200,
+    "title": "طلب خدمة عقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services/legal",
+    "route": "/services/legal",
+    "status": 200,
+    "title": "الخدمات القانونية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services/legal-requests",
+    "route": "/services/legal-requests",
+    "status": 200,
+    "title": "الطلبات القانونية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services/my-requests",
+    "route": "/services/my-requests",
+    "status": 200,
+    "title": "طلبات الخدمات | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services",
+    "route": "/services",
+    "status": 200,
+    "title": "الخدمات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/services/provider-requests",
+    "route": "/services/provider-requests",
+    "status": 200,
+    "title": "الخدمات العقارية | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/share-opinion",
+    "route": "/share-opinion",
+    "status": 200,
+    "title": "شاركنا رأيك | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/subscriptions/new",
+    "route": "/subscriptions/new",
+    "status": 200,
+    "title": "الاشتراكات | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/verify-otp",
+    "route": "/verify-otp",
+    "status": 200,
+    "title": "التحقق من البريد الإلكتروني | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  },
+  {
+    "template": "/wallet",
+    "route": "/wallet",
+    "status": 200,
+    "title": "المحفظة والفواتير | الوساطة الرقمية",
+    "scope": "HTTP render only; client UI and workflows still require per-page review"
+  }
+]

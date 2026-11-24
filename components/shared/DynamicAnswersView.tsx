@@ -123,7 +123,7 @@ export default function DynamicAnswersView({ request }: { request: any }) {
   return (
     <div className="space-y-4 pt-4 border-t border">
       {rows.length > 0 && (
-        <div className="p-4 bg-muted rounded-2xl border border">
+        <div className="calm-panel p-4 bg-muted rounded-2xl border border">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
             إجابات النموذج
           </p>
@@ -141,7 +141,7 @@ export default function DynamicAnswersView({ request }: { request: any }) {
       )}
 
       {extras.length > 0 && (
-        <div className="p-4 bg-muted rounded-2xl border border">
+        <div className="calm-panel p-4 bg-muted rounded-2xl border border">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
             بيانات إضافية
           </p>

@@ -39,20 +39,20 @@ export function NewPropertyModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border border-gray-800 rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="calm-panel bg-card dark:bg-slate-900 border border-border dark:border-gray-800 rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-sm dark:shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Header */}
-        <div className="relative p-3 sm:p-6 border-b border-gray-800 bg-slate-900/50">
+        <div className="relative p-3 sm:p-6 border-b border-border dark:border-gray-800 bg-card/50 dark:bg-slate-900/50">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <h3 className="text-xl font-bold text-foreground dark:text-white flex items-center gap-2">
                 <PlusIcon className="w-5 h-5 text-blue-500" />
                 {t('bm.offer.new')} - {t('pm.properties')}
               </h3>
-              <p className="text-gray-400 text-sm mt-1">{t('action.assetManagement')}</p>
+              <p className="text-muted-foreground dark:text-gray-400 text-sm mt-1">{t('action.assetManagement')}</p>
             </div>
             <button 
               onClick={onClose} 
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-gray-400 hover:text-white rounded-full transition-colors"
+              className="p-2 bg-muted dark:bg-slate-800 hover:bg-muted hover:dark:bg-slate-700 text-muted-foreground dark:text-gray-400 hover:text-foreground hover:dark:text-white rounded-full transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -63,7 +63,7 @@ export function NewPropertyModal({
         <form onSubmit={onSubmit} className="p-4 sm:p-8 space-y-6">
           {/* Property Name */}
           <div className="space-y-2">
-            <Label className="text-gray-300 flex items-center gap-2 ml-1">
+            <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
               <Building className="w-4 h-4 text-blue-500" />
               {t('pm.field.propertyName')}
             </Label>
@@ -72,24 +72,24 @@ export function NewPropertyModal({
               value={data.name || ''}
               onChange={(e) => setData({ ...data, name: e.target.value })}
               placeholder={t('pm.field.propertyName')}
-              className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
+              className="bg-background dark:bg-slate-950 border-border dark:border-gray-800 text-foreground dark:text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Property Type */}
             <div className="space-y-2">
-              <Label className="text-gray-300 flex items-center gap-2 ml-1">
+              <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
                 <Home className="w-4 h-4 text-blue-500" />
                 {t('bm.offer.type')}
               </Label>
               <select 
-                className="w-full h-12 px-4 rounded-xl border border-gray-800 bg-slate-950 text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full h-12 px-4 rounded-xl border border-border dark:border-gray-800 bg-background dark:bg-slate-950 text-foreground dark:text-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 value={data.type || 'building'}
                 onChange={(e) => setData({ ...data, type: e.target.value as any })}
               >
                 {propertyTypes.map(type => (
-                  <option key={type.value} value={type.value} className="bg-slate-900">
+                  <option key={type.value} value={type.value} className="bg-card dark:bg-slate-900">
                     {type.label}
                   </option>
                 ))}
@@ -98,7 +98,7 @@ export function NewPropertyModal({
 
             {/* Deed Number */}
             <div className="space-y-2">
-              <Label className="text-gray-300 flex items-center gap-2 ml-1">
+              <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
                 <Hash className="w-4 h-4 text-blue-500" />
                 {t('bm.offer.deedNumber')}
               </Label>
@@ -106,14 +106,14 @@ export function NewPropertyModal({
                 value={data.deedNumber || ''}
                 onChange={(e) => setData({ ...data, deedNumber: e.target.value })}
                 placeholder="0000000000"
-                className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
+                className="bg-background dark:bg-slate-950 border-border dark:border-gray-800 text-foreground dark:text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
               />
             </div>
           </div>
 
           {/* Location URL */}
           <div className="space-y-2">
-            <Label className="text-gray-300 flex items-center gap-2 ml-1">
+            <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
               <MapPin className="w-4 h-4 text-blue-500" />
               {t('bm.offer.location')}
             </Label>
@@ -122,7 +122,7 @@ export function NewPropertyModal({
                 value={data.locationUrl || ''}
                 onChange={(e) => setData({ ...data, locationUrl: e.target.value })}
                 placeholder="https://maps.google.com/..."
-                className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl pl-4 pr-10"
+                className="bg-background dark:bg-slate-950 border-border dark:border-gray-800 text-foreground dark:text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl pl-4 pr-10"
               />
               <Map className="absolute right-3 top-3.5 w-5 h-5 text-gray-600" />
             </div>
@@ -131,7 +131,7 @@ export function NewPropertyModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Price */}
             <div className="space-y-2">
-              <Label className="text-gray-300 flex items-center gap-2 ml-1">
+              <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
                 <SaudiRiyalIcon className="w-4 h-4 text-blue-500" />
                 {t('pm.field.purchasePrice')}
               </Label>
@@ -140,15 +140,15 @@ export function NewPropertyModal({
                   type="number"
                   value={data.purchasePrice ?? 0}
                   onChange={(e) => setData({ ...data, purchasePrice: Number(e.target.value) })}
-                  className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl pl-4 pr-12"
+                  className="bg-background dark:bg-slate-950 border-border dark:border-gray-800 text-foreground dark:text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl pl-4 pr-12"
                 />
-                <span className="absolute right-4 top-3.5 text-gray-500 text-sm"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
+                <span className="absolute right-4 top-3.5 text-muted-foreground dark:text-gray-500 text-sm"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
               </div>
             </div>
 
             {/* Construction Year */}
             <div className="space-y-2">
-              <Label className="text-gray-300 flex items-center gap-2 ml-1">
+              <Label className="text-muted-foreground dark:text-gray-300 flex items-center gap-2 ml-1">
                 <Home className="w-4 h-4 text-blue-500" />
                 {t('pm.field.constructionDate')}
               </Label>
@@ -157,7 +157,7 @@ export function NewPropertyModal({
                 value={data.constructionDate || ''}
                 onChange={(e) => setData({ ...data, constructionDate: e.target.value })}
                 placeholder="2024"
-                className="bg-slate-950 border-gray-800 text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
+                className="bg-background dark:bg-slate-950 border-border dark:border-gray-800 text-foreground dark:text-white placeholder:text-gray-600 focus:ring-blue-500/20 focus:border-blue-500 h-12 rounded-xl px-4"
               />
             </div>
           </div>
@@ -167,14 +167,14 @@ export function NewPropertyModal({
             <Button 
               type="button" 
               variant="outline" 
-              className="flex-1 h-12 rounded-xl border-gray-800 text-gray-300 hover:bg-slate-800 hover:text-white transition-all font-medium" 
+              className="flex-1 h-12 rounded-xl border-border dark:border-gray-800 text-muted-foreground dark:text-gray-300 hover:bg-muted hover:dark:bg-slate-800 hover:text-foreground hover:dark:text-white transition-all font-medium"
               onClick={onClose}
             >
               {t('common.cancel')}
             </Button>
             <Button 
               type="submit" 
-              className="flex-1 h-12 rounded-xl bg-slate-600 hover:bg-slate-700 text-white transition-all font-bold shadow-lg shadow-blue-500/20" 
+              className="flex-1 h-12 rounded-xl bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 text-primary-foreground dark:text-white transition-all font-bold shadow-lg shadow-blue-500/20"
               disabled={loading}
             >
               {loading ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : t('common.save')}

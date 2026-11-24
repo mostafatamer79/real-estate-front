@@ -1,0 +1,33 @@
+{
+  "chat": 10,
+  "slug": "department-requests-disputes",
+  "status": "NOT_READY",
+  "statusReason": "Rendered browser checks pending coordinator-owned localhost server; all unit/contract tests and scoped lint pass cleanly",
+  "reviewGroup": 4,
+  "routes": [
+    "/internal/[dept]/requests",
+    "/disputes"
+  ],
+  "filesModified": [
+    "app/internal/[dept]/requests/page.tsx",
+    "app/disputes/page.tsx"
+  ],
+  "filesCreated": [
+    "components/redesign/chat10/DisputeDetailsDialog.tsx",
+    "lib/redesign-chat10-disputes.ts",
+    "lib/redesign-chat10-requests.ts",
+    "tests/parallel-chat10-requests-disputes.test.cjs",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-10.md",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-10.json"
+  ],
+  "testResults": {
+    "command": "node --test tests/parallel-chat10-requests-disputes.test.cjs",
+    "passed": 11,
+    "failed": 0
+  },
+  "eslintResults": {
+    "command": "npx eslint app/internal/[dept]/requests/page.tsx app/disputes/page.tsx components/redesign/chat10/DisputeDetailsDialog.tsx lib/redesign-chat10-disputes.ts lib/redesign-chat10-requests.ts",
+    "errors": 0,
+    "warnings": 0
+  }
+}

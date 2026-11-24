@@ -51,14 +51,14 @@ export default function AdminOpinionsPage() {
   return (
     <div className="p-3 sm:p-6 md:p-10 space-y-8" dir="rtl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-3xl border border shadow-sm">
+      <div className="calm-panel flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-3xl border border shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center">
+          <div className="calm-icon w-12 h-12 rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white flex items-center justify-center">
             <MessageSquareHeart className="w-6 h-6" />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900">آراء العملاء</h1>
-            <p className="text-sm font-bold text-slate-500 mt-1">
+            <p className="text-sm font-bold text-muted-foreground dark:text-slate-500 mt-1">
               اطلع على آراء ومقترحات العملاء التي تم إرسالها عبر الموقع
             </p>
           </div>
@@ -74,12 +74,12 @@ export default function AdminOpinionsPage() {
 
       {/* Content */}
       {loading ? (
-        <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3">
+        <div className="h-64 flex flex-col items-center justify-center text-muted-foreground dark:text-slate-400 gap-3">
           <Loader2 className="w-8 h-8 animate-spin" />
           <p className="font-bold text-sm uppercase tracking-widest">جاري التحميل...</p>
         </div>
       ) : opinions.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3 bg-card rounded-3xl border border border-dashed">
+        <div className="calm-panel h-64 flex flex-col items-center justify-center text-muted-foreground dark:text-slate-400 gap-3 bg-card rounded-3xl border border border-dashed">
           <MessageSquareHeart className="w-10 h-10 opacity-50" />
           <p className="font-bold text-sm">لا توجد آراء مسجلة حتى الآن</p>
         </div>
@@ -100,13 +100,13 @@ export default function AdminOpinionsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-sm font-black text-slate-900">{opinion.name}</h3>
-                  <p className="text-xs font-bold text-slate-500 mt-1" dir="ltr">{opinion.email || 'بدون بريد إلكتروني'}</p>
+                  <p className="text-xs font-bold text-muted-foreground dark:text-slate-500 mt-1" dir="ltr">{opinion.email || 'بدون بريد إلكتروني'}</p>
                 </div>
-                <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-muted px-2 py-1 rounded-lg">
+                <div className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 whitespace-nowrap bg-muted px-2 py-1 rounded-lg">
                   {new Date(opinion.createdAt).toLocaleString('ar-SA')}
                 </div>
               </div>
-              <div className="flex-1 bg-muted rounded-2xl p-4 border border">
+              <div className="calm-panel flex-1 bg-muted rounded-2xl p-4 border border">
                 <p className="text-sm font-bold text-slate-700 whitespace-pre-wrap leading-relaxed">
                   {opinion.message}
                 </p>
@@ -116,7 +116,7 @@ export default function AdminOpinionsPage() {
                   <button
                     onClick={() => handleMarkAsRead(opinion.id)}
                     disabled={markingId === opinion.id}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-colors disabled:opacity-50"
                   >
                     {markingId === opinion.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                     تحديد كمقروء

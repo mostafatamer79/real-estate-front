@@ -1,4 +1,5 @@
 "use client";
+import { requestTrackingHref } from "@/lib/auth-navigation";
 import React, { useEffect, useState } from "react";
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -6,7 +7,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useLanguage } from "@/context/LanguageContext";
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings, resolveSurfaceColor } from "@/context/SettingsContext";
 import NotificationBell from "./NotificationBell";
 import SoonBadge from "./SoonBadge";
 import {
@@ -164,7 +165,7 @@ export default function Header() {
   return (
     <header
       dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`mobile-header-shell ${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-slate-950 border-b border-white/10 max-md:bg-slate-950 max-md:border-b-white/[0.08] ${
+      className={`mobile-header-shell ${isMobileHiddenRoute ? 'hidden md:flex md:flex-col' : 'flex flex-col'} fixed top-0 left-0 right-0 h-16 z-[9999] transition-transform duration-300 bg-background dark:bg-slate-950 border-b border-border dark:border-white/10 max-md:bg-background max-md:dark:bg-slate-950 max-md:border-border max-md:dark:border-b-white/[0.08] ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
@@ -175,7 +176,7 @@ export default function Header() {
           onClick={() => router.push('/details')}
         >
           <Image
-            src={settings.logoWhiteUrl || '/icons/white.png'}
+            src={settings.isDark ? (settings.logoWhiteUrl || "/icons/white.png") : (settings.logoBlackUrl || "/icons/black.png")}
             alt={t('project.name')}
             width={280}
             height={settings.logoHeight || 40}
@@ -193,7 +194,7 @@ export default function Header() {
               id="tour-target-mobile-chat"
               href="/chat"
               aria-label={t('chat.title')}
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08]"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-border dark:border-white/10 bg-muted dark:bg-white/[0.04] text-foreground dark:text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-muted hover:dark:bg-white/[0.08]"
             >
               <MessageSquare className="h-4.5 w-4.5" />
               {unreadChatCount > 0 && (
@@ -213,12 +214,12 @@ export default function Header() {
                   event.preventDefault();
                 }
               }}
-              className={`flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-white/[0.08] ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
+              className={`flex h-10 w-10 items-center justify-center rounded-xl border border-border dark:border-white/10 bg-muted dark:bg-white/[0.04] text-foreground dark:text-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition-all hover:bg-muted hover:dark:bg-white/[0.08] ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
             >
               <Headset className="h-4.5 w-4.5" />
             </Link>
           )}
-          {user && <NotificationBell variant="dark" buttonClassName="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80 !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.16)] hover:bg-white/[0.08]" />}
+          {user && <NotificationBell variant="dark" buttonClassName="flex h-10 w-10 items-center justify-center rounded-xl border border-border dark:border-white/10 bg-muted dark:bg-white/[0.04] text-foreground dark:text-white/80 !p-0 shadow-[0_8px_24px_rgba(0,0,0,0.16)] hover:bg-muted hover:dark:bg-white/[0.08]" />}
         </div>
 
         {/* Desktop Navigation */}
@@ -230,7 +231,7 @@ export default function Header() {
                   <Link
                     id="tour-target-customer-service"
                     href="/customerservice"
-                    className={`flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
+                    className={`flex items-center gap-2 text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white text-sm font-medium transition-colors ${settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN ? 'opacity-40 grayscale' : ''}`}
                     onClick={(e) => {
                       if (settings.sectionFlags.customerservice === 'closed' && user?.role !== Role.ADMIN) e.preventDefault();
                     }}
@@ -248,7 +249,7 @@ export default function Header() {
 
              <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium uppercase transition-colors"
+                className="flex items-center gap-2 text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white text-sm font-medium uppercase transition-colors"
              >
                 <Languages className="w-4 h-4" />
                 {language === 'ar' ? 'English' : 'العربية'}
@@ -261,13 +262,13 @@ export default function Header() {
                   <Link
                     id="tour-target-chat"
                     href="/chat"
-                    className="text-white/70 hover:text-white transition-colors relative"
+                    className="text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white transition-colors relative"
                     title={t('chat.title')}
                   >
                     <MessageSquare
                       className="w-5 h-5"
                       style={{
-                        color: settings?.headerChatColor || undefined,
+                        color: resolveSurfaceColor(settings?.headerChatColor, settings.isDark),
                         width: settings?.headerChatSize ? `${settings.headerChatSize}px` : undefined,
                         height: settings?.headerChatSize ? `${settings.headerChatSize}px` : undefined,
                       }}
@@ -280,8 +281,9 @@ export default function Header() {
                   </Link>
 
                   <Link
-                    href="/services/my-requests"
-                    className="text-white/70 hover:text-white transition-colors relative"
+                    href={requestTrackingHref(user)}
+                    aria-label={t('header.myRequests')}
+                    className="text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white transition-colors relative"
                     title={t('header.myRequests')}
                   >
                     <Image
@@ -289,21 +291,21 @@ export default function Header() {
                       alt=""
                       width={36}
                       height={36}
-                      className="h-9 w-9 object-contain brightness-0 invert"
+                      className="h-9 w-9 object-contain brightness-0 dark:invert"
                     />
                   </Link>
 
-                  <div className="h-6 w-px bg-card/10 mx-2"></div>
+                  <div className="h-6 w-px bg-muted dark:bg-card/10 mx-2"></div>
 
                   <Link
                     id="tour-target-header-profile"
                     href="/profile"
-                    className="flex items-center gap-2 text-white bg-card/5 hover:bg-card/10 px-4 py-2 rounded-full border border-white/10 transition-all"
+                    className="flex items-center gap-2 text-foreground dark:text-white bg-muted dark:bg-card/5 hover:bg-muted hover:dark:bg-card/10 px-4 py-2 rounded-full border border-border dark:border-white/10 transition-all"
                   >
                     <User
                       className="w-4 h-4"
                       style={{
-                        color: settings?.headerProfileColor || undefined,
+                        color: resolveSurfaceColor(settings?.headerProfileColor, settings.isDark),
                         width: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
                         height: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
                       }}
@@ -311,7 +313,7 @@ export default function Header() {
                     <span
                       className="text-sm"
                       style={{
-                        color: settings?.headerProfileColor || undefined,
+                        color: resolveSurfaceColor(settings?.headerProfileColor, settings.isDark),
                         fontSize: settings?.headerProfileSize ? `${settings.headerProfileSize}px` : undefined,
                       }}
                     >
@@ -354,7 +356,7 @@ export default function Header() {
 
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-white/70 hover:text-red-400 transition-colors"
+                    className="p-2 text-muted-foreground dark:text-white/70 hover:text-red-700 hover:dark:text-red-400 transition-colors"
                     title={t('header.logout')}
                   >
                     <LogOut className="w-5 h-5" />
@@ -365,7 +367,7 @@ export default function Header() {
             {!user && (
                 <button
                   onClick={() => router.push('/login')}
-                  className="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-semibold rounded-full shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5"
+                  className="px-6 py-2 bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 text-primary-foreground dark:text-white text-sm font-semibold rounded-full shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5"
                 >
                   {t('header.login')}
                 </button>
@@ -375,7 +377,7 @@ export default function Header() {
         {/* Mobile Menu Toggle */}
         <button
           id="tour-target-mobile-menu"
-          className="mobile-header-menu-button md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all hover:bg-white/[0.08]"
+          className="mobile-header-menu-button md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-border dark:border-white/10 bg-muted dark:bg-white/[0.04] text-foreground dark:text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-all hover:bg-muted hover:dark:bg-white/[0.08]"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -391,7 +393,7 @@ export default function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed inset-0 top-16 bg-black/50 backdrop-blur-sm z-30"
+            className="calm-decoration md:hidden fixed inset-0 top-16 bg-black/50 backdrop-blur-sm z-30"
             onClick={() => setIsMenuOpen(false)}
             aria-hidden="true"
           />
@@ -400,7 +402,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30, mass: 0.8 }}
-            className="mobile-menu-panel md:hidden absolute top-16 left-0 right-0 bg-slate-950/95 border-b border-white/[0.08] flex flex-col p-3 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+            className="mobile-menu-panel md:hidden absolute top-16 left-0 right-0 bg-background/95 dark:bg-slate-950/95 border-b border-border dark:border-white/[0.08] flex flex-col p-3 gap-1 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-[0_8px_28px_rgba(32,59,50,0.07)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl"
           >
              {/* Top highlight line */}
              <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -410,7 +412,7 @@ export default function Header() {
                   <Link
                     id="tour-target-mobile-profile"
                     href="/profile"
-                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                    className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="w-5 h-5" />
@@ -422,15 +424,16 @@ export default function Header() {
                     type="button"
                     onClick={() => { toggleLanguage(); setIsMenuOpen(false); }}
                     aria-label={language === 'ar' ? 'English' : 'العربية'}
-                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                    className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                   >
                     <Languages className="w-5 h-5" />
                     {language === 'ar' ? 'English' : 'العربية'}
                   </button>
 
                   <Link
-                    href="/services/my-requests"
-                    className="flex items-center gap-3 py-3.5 px-3 text-white text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                    href={requestTrackingHref(user)}
+                    aria-label={t('header.myRequests')}
+                    className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Image
@@ -438,7 +441,7 @@ export default function Header() {
                       alt=""
                       width={36}
                       height={36}
-                      className="h-9 w-9 object-contain brightness-0 invert"
+                      className="h-9 w-9 object-contain brightness-0 dark:invert"
                     />
                     {t('header.myRequests')}
                   </Link>
@@ -447,7 +450,7 @@ export default function Header() {
                     <>
                       <Link
                         href="/admin/dashboard"
-                        className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                        className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -455,7 +458,7 @@ export default function Header() {
                       </Link>
                       <Link
                         href="/internal"
-                        className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                        className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                         onClick={() => setIsMenuOpen(false)}
                       >
                           <LayoutDashboard className="w-5 h-5" />
@@ -467,7 +470,7 @@ export default function Header() {
                   {user && ((user.departments && user.departments.length > 0) || (user.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && user.role !== Role.ADMIN && (
                     <Link
                       href="/internal"
-                      className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                      className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                         <LayoutDashboard className="w-5 h-5" />
@@ -481,7 +484,7 @@ export default function Header() {
 
                   <button
                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                    className="flex items-center gap-3 py-3.5 px-3 text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-white/5 transition-all duration-200 active:scale-[0.98]"
+                    className="flex items-center gap-3 py-3.5 px-3 text-foreground dark:text-white/80 text-base sm:text-lg font-medium rounded-xl hover:bg-muted hover:dark:bg-white/5 transition-all duration-200 active:scale-[0.98]"
                   >
                     <LogOut className="w-5 h-5" />
                     {t('header.logout')}
@@ -490,7 +493,7 @@ export default function Header() {
              ) : (
                 <button
                   onClick={() => { router.push('/login'); setIsMenuOpen(false); }}
-                  className="w-full py-3 bg-slate-800 text-white text-base sm:text-lg font-semibold rounded-xl border border-white/10 shadow-sm active:scale-[0.98] transition-all duration-200"
+                  className="w-full py-3 bg-muted dark:bg-slate-800 text-foreground dark:text-white text-base sm:text-lg font-semibold rounded-xl border border-border dark:border-white/10 shadow-sm active:scale-[0.98] transition-all duration-200"
                 >
                   {t('header.login')}
                 </button>

@@ -1,12 +1,12 @@
 .footer {
-  --footer-surface: #111b17;
-  --footer-text: #e6eee8;
-  --footer-link: #c1d1c6;
-  --footer-hover: #fff;
-  --footer-muted: #a3b7aa;
-  --footer-border: #2b3c32;
-  --footer-divider: #29392f;
-  color-scheme: dark;
+  --footer-surface: var(--card);
+  --footer-text: var(--foreground);
+  --footer-link: var(--muted-foreground);
+  --footer-hover: var(--foreground);
+  --footer-muted: var(--muted-foreground);
+  --footer-border: var(--border);
+  --footer-divider: var(--border);
+  color-scheme: inherit;
   position: relative;
   margin-top: auto;
   border-top: 1px solid var(--footer-border);

@@ -187,35 +187,35 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
   };
 
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
 
   // Check if detailed specifications should be shown based on property type
   const showDetailedFields = ["فيلا", "شقة", "قصر", "عمارة", "مكتب"].includes(form.propertyType);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
-        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="calm-panel bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white">
+          <div className="calm-icon w-12 h-12 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center text-foreground dark:text-white">
             <Plus className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">إضافة عرض عقاري جديد</h2>
-            <p className="text-xs text-slate-400 font-bold">إنشاء عرض وتخصيصه لمستخدم معين أو تركه مجهولاً</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">إنشاء عرض وتخصيصه لمستخدم معين أو تركه مجهولاً</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
                   <input 
                     value={userSearch} 
                     onChange={e => { 
@@ -239,7 +239,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                   )}
                 </div>
                 {userSearch && !form.userId && (
-                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <div className="calm-panel absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-sm dark:shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                     {filteredUsers.length > 0 ? filteredUsers.map(u => (
                       <button 
                         key={u.id} 
@@ -252,11 +252,11 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                       >
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
-                          <span className="text-[10px] text-slate-400 font-bold">{u.email || u.phone}</span>
+                          <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{u.email || u.phone}</span>
                         </div>
-                        <CheckCircle className="w-4 h-4 text-slate-200" />
+                        <CheckCircle className="w-4 h-4 text-foreground dark:text-slate-200" />
                       </button>
-                    )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+                    )) : <div className="p-4 text-center text-[10px] font-bold text-muted-foreground dark:text-slate-400">لا يوجد نتائج</div>}
                   </div>
                 )}
               </div>
@@ -291,7 +291,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
@@ -303,7 +303,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     سكني
@@ -314,7 +314,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     تجاري
@@ -500,8 +500,8 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
+            <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+              <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
@@ -598,7 +598,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasMaidRoom}
                     onChange={e => setForm((f: any) => ({ ...f, hasMaidRoom: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
                 </label>
@@ -608,7 +608,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasRoof}
                     onChange={e => setForm((f: any) => ({ ...f, hasRoof: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">روف / سطح</span>
                 </label>
@@ -618,7 +618,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasExternalAnnex}
                     onChange={e => setForm((f: any) => ({ ...f, hasExternalAnnex: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">ملحق خارجي</span>
                 </label>
@@ -628,7 +628,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasGarage}
                     onChange={e => setForm((f: any) => ({ ...f, hasGarage: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">كراج سيارة</span>
                 </label>
@@ -638,7 +638,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasPool}
                     onChange={e => setForm((f: any) => ({ ...f, hasPool: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">مسبح</span>
                 </label>
@@ -648,7 +648,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                     type="checkbox"
                     checked={form.hasElevator}
                     onChange={e => setForm((f: any) => ({ ...f, hasElevator: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">مصعد</span>
                 </label>
@@ -657,8 +657,8 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           )}
 
           {/* Media upload section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المرفقات والوسائط</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -730,7 +730,7 @@ function CreateOfferModal({ onClose, onSuccess }: { onClose: () => void; onSucce
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-stone-400/20"
+            className="w-full h-14 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400/20"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             نشر العرض الآن
@@ -872,35 +872,35 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
   };
 
   const inputCls = "w-full h-11 bg-muted border-transparent border focus:border-slate-950 rounded-xl px-4 text-sm font-bold outline-none transition-all";
-  const labelCls = "text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5";
+  const labelCls = "text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block mb-1.5";
 
   // Check if detailed specifications should be shown based on property type
   const showDetailedFields = ["فيلا", "شقة", "قصر", "عمارة", "مكتب"].includes(form.propertyType);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
-        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="calm-panel bg-card w-full max-w-4xl rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+        <button onClick={onClose} className="absolute left-8 top-8 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white">
+          <div className="calm-icon w-12 h-12 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center text-foreground dark:text-white">
             <Edit2 className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-950">تعديل العرض العقاري</h2>
-            <p className="text-xs text-slate-400 font-bold">تعديل بيانات العرض العقاري الحالي وحفظ التغييرات</p>
+            <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">تعديل بيانات العرض العقاري الحالي وحفظ التغييرات</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">معلومات المعلن</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1 relative">
                 <label className={labelCls}>المعلن (اختياري)</label>
                 <div className="relative">
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
                   <input 
                     value={userSearch} 
                     onChange={e => { 
@@ -924,7 +924,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                   )}
                 </div>
                 {userSearch && !form.userId && (
-                  <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <div className="calm-panel absolute top-full left-0 right-0 z-50 mt-1 bg-card border border rounded-xl shadow-sm dark:shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                     {filteredUsers.length > 0 ? filteredUsers.map(u => (
                       <button 
                         key={u.id} 
@@ -937,11 +937,11 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                       >
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-slate-950">{u.firstName} {u.lastName}</span>
-                          <span className="text-[10px] text-slate-400 font-bold">{u.email || u.phone}</span>
+                          <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold">{u.email || u.phone}</span>
                         </div>
-                        <CheckCircle className="w-4 h-4 text-slate-200" />
+                        <CheckCircle className="w-4 h-4 text-foreground dark:text-slate-200" />
                       </button>
-                    )) : <div className="p-4 text-center text-[10px] font-bold text-slate-400">لا يوجد نتائج</div>}
+                    )) : <div className="p-4 text-center text-[10px] font-bold text-muted-foreground dark:text-slate-400">لا يوجد نتائج</div>}
                   </div>
                 )}
               </div>
@@ -976,7 +976,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">بيانات العقار الأساسية</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1">
@@ -988,7 +988,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "residential"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     سكني
@@ -999,7 +999,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     className={`flex-1 h-9 rounded-lg text-xs font-black transition-all ${
                       form.mainCategory === "commercial"
                         ? "bg-card text-slate-950 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     تجاري
@@ -1185,8 +1185,8 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
 
           {/* Detailed Property specifications (shown only when applicable) */}
           {showDetailedFields && (
-            <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
+            <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+              <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المواصفات التفصيلية</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
@@ -1283,7 +1283,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasMaidRoom}
                     onChange={e => setForm((f: any) => ({ ...f, hasMaidRoom: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">غرفة خادمة</span>
                 </label>
@@ -1293,7 +1293,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasRoof}
                     onChange={e => setForm((f: any) => ({ ...f, hasRoof: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">روف / سطح</span>
                 </label>
@@ -1303,7 +1303,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasExternalAnnex}
                     onChange={e => setForm((f: any) => ({ ...f, hasExternalAnnex: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">ملحق خارجي</span>
                 </label>
@@ -1313,7 +1313,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasGarage}
                     onChange={e => setForm((f: any) => ({ ...f, hasGarage: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">كراج سيارة</span>
                 </label>
@@ -1323,7 +1323,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasPool}
                     onChange={e => setForm((f: any) => ({ ...f, hasPool: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">مسبح</span>
                 </label>
@@ -1333,7 +1333,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
                     type="checkbox"
                     checked={form.hasElevator}
                     onChange={e => setForm((f: any) => ({ ...f, hasElevator: e.target.checked }))}
-                    className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                    className="rounded border-slate-300 text-slate-900 focus:ring-border focus:dark:ring-slate-900 w-4 h-4"
                   />
                   <span className="text-xs font-bold text-slate-700">مصعد</span>
                 </label>
@@ -1342,8 +1342,8 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           )}
 
           {/* Media upload section */}
-          <div className="bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">المرفقات والوسائط الجديدة (اختياري)</h3>
+          <div className="calm-panel bg-muted/50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المرفقات والوسائط الجديدة (اختياري)</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -1415,7 +1415,7 @@ function EditOfferModal({ offer, onClose, onSuccess }: { offer: any; onClose: ()
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full h-14 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-stone-400/20"
+            className="w-full h-14 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2 mt-4 shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400/20"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             حفظ التعديلات
@@ -1648,14 +1648,14 @@ export default function AdminOffersPage() {
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card dark:bg-slate-900 text-foreground dark:text-white text-[9px] font-black uppercase tracking-widest">
             <Tag className="w-3 h-3" />
             إدارة المحتوى
           </div>
           <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">
             {t('admin.offers.title') || "إدارة العروض العقارية"}
           </h1>
-          <p className="text-slate-500 font-medium text-sm">
+          <p className="text-muted-foreground dark:text-slate-500 font-medium text-sm">
             عرض وتعديل والتحكم في جميع العروض المنشورة في المنصة
           </p>
         </div>
@@ -1663,25 +1663,25 @@ export default function AdminOffersPage() {
         <div className="grid w-full gap-3 md:w-auto md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="h-12 px-6 bg-slate-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-stone-400/20"
+            className="h-12 px-6 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-lg shadow-primary/5 dark:shadow-stone-400/20"
           >
             <Plus className="w-4 h-4" />
             إضافة عرض
           </button>
           <div className="relative md:col-span-2">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
             <input 
               type="text" 
               placeholder={t('admin.search') || "بحث..."} 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pr-10 pl-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 w-full md:w-64 text-sm font-bold shadow-sm transition-all"
+              className="pr-10 pl-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-border focus:dark:ring-slate-900 w-full md:w-64 text-sm font-bold shadow-sm transition-all"
             />
           </div>
           <select 
             value={statusFilter} 
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer"
+            className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-border focus:dark:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer"
           >
             <option value="all">كل الحالات</option>
             <option value="published">منشور</option>
@@ -1689,16 +1689,16 @@ export default function AdminOffersPage() {
             <option value="draft">مسودة</option>
             <option value="sold">تم البيع</option>
           </select>
-          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+          <select value={propertyTypeFilter} onChange={(e) => setPropertyTypeFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-border focus:dark:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
             <option value="all">الكل (سكني/تجاري)</option>
             <option value="residential">سكني</option>
             <option value="commercial">تجاري</option>
           </select>
-          <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
+          <select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-border focus:dark:ring-slate-900 text-sm font-bold shadow-sm cursor-pointer">
             <option value="all">كل المعلنين</option>
             <option value="my_offers">العروض التي نشرتها</option>
           </select>
-          <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm font-bold shadow-sm">
+          <select value={activeFilter} onChange={(e) => setActiveFilter(e.target.value)} className="px-4 py-2.5 rounded-2xl border border bg-card focus:outline-none focus:ring-2 focus:ring-border focus:dark:ring-slate-900 text-sm font-bold shadow-sm">
             <option value="all">كل الظهور</option>
             <option value="visible">ظاهر</option>
             <option value="hidden">مخفي</option>
@@ -1712,25 +1712,25 @@ export default function AdminOffersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
+         <div className="calm-panel p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
+            <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-1">إجمالي العروض</p>
             <p className="text-xl sm:text-3xl font-black text-slate-950 tabular-nums">{offers.length}</p>
          </div>
-         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
+         <div className="calm-panel p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">عروض نشطة</p>
             <p className="text-xl sm:text-3xl font-black text-emerald-600 tabular-nums">{offers.filter(o => o.status === 'published' || o.status === 'active').length}</p>
          </div>
-         <div className="p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
+         <div className="calm-panel p-3 sm:p-6 bg-card border border rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">بانتظار المراجعة</p>
             <p className="text-xl sm:text-3xl font-black text-amber-600 tabular-nums">{offers.filter(o => o.status === 'draft').length}</p>
          </div>
-         <div className="p-3 sm:p-6 bg-card border border-red-100 rounded-3xl shadow-sm">
+         <div className="calm-panel p-3 sm:p-6 bg-card border border-red-100 rounded-3xl shadow-sm">
             <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">بلاغات العروض</p>
             <p className="text-xl sm:text-3xl font-black text-red-600 tabular-nums">{reports.length}</p>
          </div>
       </div>
 
-      <div className="bg-card border border rounded-[1.25rem] p-3 sm:p-6 shadow-sm">
+      <div className="calm-panel bg-card border border rounded-[1.25rem] p-3 sm:p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
@@ -1738,7 +1738,7 @@ export default function AdminOffersPage() {
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-950">بلاغات العروض</h2>
-              <p className="text-xs font-bold text-slate-400">مراجعة البلاغات واتخاذ إجراء على العرض عند الحاجة</p>
+              <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">مراجعة البلاغات واتخاذ إجراء على العرض عند الحاجة</p>
             </div>
           </div>
           <select
@@ -1756,26 +1756,26 @@ export default function AdminOffersPage() {
 
         {reportsLoading ? (
           <div className="py-10 flex justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground dark:text-slate-400" />
           </div>
         ) : reports.length === 0 ? (
-          <div className="rounded-2xl bg-muted py-10 text-center text-sm font-bold text-slate-400">
+          <div className="rounded-2xl bg-muted py-10 text-center text-sm font-bold text-muted-foreground dark:text-slate-400">
             لا توجد بلاغات في هذه الحالة
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-4">
             {reports.map((report) => (
-              <div key={report.id} className="rounded-3xl border border bg-muted/60 p-5 space-y-4">
+              <div key={report.id} className="calm-panel rounded-3xl border border bg-muted/60 p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       {getReportStatusBadge(report.status)}
-                      <span className="text-[10px] font-black text-slate-400">{new Date(report.createdAt).toLocaleString('ar-SA')}</span>
+                      <span className="text-[10px] font-black text-muted-foreground dark:text-slate-400">{new Date(report.createdAt).toLocaleString('ar-SA')}</span>
                     </div>
                     <h3 className="text-sm font-black text-slate-950 truncate">
                       {report.offer?.propertyType || "عرض عقاري"} - {report.offer?.city || "بدون مدينة"}
                     </h3>
-                    <p className="text-xs font-bold text-slate-500 mt-1">
+                    <p className="text-xs font-bold text-muted-foreground dark:text-slate-500 mt-1">
                       السبب: {getReportReasonLabel(report.reason)}
                     </p>
                   </div>
@@ -1789,12 +1789,12 @@ export default function AdminOffersPage() {
                 </div>
 
                 {report.message && (
-                  <div className="rounded-2xl bg-card border border p-3 text-sm font-bold text-slate-600 leading-relaxed">
+                  <div className="calm-panel rounded-2xl bg-card border border p-3 text-sm font-bold text-slate-600 leading-relaxed">
                     {report.message}
                   </div>
                 )}
 
-                <div className="flex items-center justify-between gap-3 text-xs font-bold text-slate-500">
+                <div className="flex items-center justify-between gap-3 text-xs font-bold text-muted-foreground dark:text-slate-500">
                   <span>المبلغ: {report.reporter ? `${report.reporter.firstName || ''} ${report.reporter.lastName || ''}`.trim() || report.reporter.email || 'مستخدم' : 'مستخدم غير معروف'}</span>
                   <span className="font-mono">#{report.id.slice(0, 8)}</span>
                 </div>
@@ -1828,7 +1828,7 @@ export default function AdminOffersPage() {
         )}
       </div>
 
-      <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-xl">
+      <div className="calm-panel bg-card border border rounded-[1rem] overflow-hidden shadow-sm dark:shadow-xl">
         <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader className="bg-muted/50">
@@ -1846,8 +1846,8 @@ export default function AdminOffersPage() {
                   <TableRow>
                       <TableCell colSpan={6} className="text-center py-20">
                         <div className="flex flex-col items-center gap-3">
-                          <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
-                          <p className="text-xs font-black text-slate-400 uppercase tracking-widest">جاري تحميل البيانات...</p>
+                          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-400" />
+                          <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">جاري تحميل البيانات...</p>
                         </div>
                       </TableCell>
                   </TableRow>
@@ -1855,8 +1855,8 @@ export default function AdminOffersPage() {
                   <TableRow>
                       <TableCell colSpan={6} className="text-center py-20">
                         <div className="flex flex-col items-center gap-3">
-                          <AlertCircle className="w-12 h-12 text-slate-200" />
-                          <p className="text-sm font-bold text-slate-400">لا توجد عروض تطابق بحثك</p>
+                          <AlertCircle className="w-12 h-12 text-foreground dark:text-slate-200" />
+                          <p className="text-sm font-bold text-muted-foreground dark:text-slate-400">لا توجد عروض تطابق بحثك</p>
                         </div>
                       </TableCell>
                   </TableRow>
@@ -1866,23 +1866,23 @@ export default function AdminOffersPage() {
                       <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                         <div className="flex flex-col">
                           <span className="font-black text-slate-900 text-sm">{offer.propertyType}</span>
-                          <span className="font-mono text-[9px] text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</span>
+                          <span className="font-mono text-[9px] text-muted-foreground dark:text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</span>
                         </div>
                       </TableCell>
                       <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-slate-200/50">
+                              <div className="calm-icon w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-500 font-black text-xs border border-slate-200/50">
                                   {offer.user?.firstName?.[0] || <UserIcon className="w-4 h-4" />}
                               </div>
                               <div className="flex flex-col">
                                 <span className="font-bold text-slate-700 text-xs">{offer.user?.firstName} {offer.user?.lastName}</span>
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{offer.user?.role}</span>
+                                <span className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{offer.user?.role}</span>
                               </div>
                           </div>
                       </TableCell>
                       <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
                           <div className="flex items-center gap-2">
-                              <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                              <MapPin className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
                               <span className="font-bold text-slate-900 text-xs">{offer.city} - {offer.neighborhood}</span>
                           </div>
                       </TableCell>
@@ -1891,7 +1891,7 @@ export default function AdminOffersPage() {
                             <span className="font-black text-slate-950 text-sm">
                               {new Intl.NumberFormat('ar-SA').format(offer.price)}
                             </span>
-                            <span className="text-[9px] font-black text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
+                            <span className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></span>
                           </div>
                       </TableCell>
                       <TableCell className="px-3 py-3 sm:px-6 sm:py-4">
@@ -1900,11 +1900,11 @@ export default function AdminOffersPage() {
                       <TableCell className="px-3 py-3 sm:px-6 sm:py-4 text-left">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
+                            <button className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground dark:text-slate-400 hover:text-slate-950">
                               <MoreVertical className="w-5 h-5" />
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border">
+                          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-sm dark:shadow-2xl border">
                             <DropdownMenuItem 
                               onClick={() => window.open(`/offers/${offer.id}`, '_blank')}
                               className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
@@ -1974,27 +1974,27 @@ export default function AdminOffersPage() {
         <div className="md:hidden space-y-3 p-4">
           {loading ? (
             <div className="py-12 text-center">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-400" />
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-muted-foreground dark:text-slate-400" />
             </div>
           ) : filteredOffers.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-sm font-bold text-slate-400">لا توجد عروض تطابق بحثك</p>
+              <p className="text-sm font-bold text-muted-foreground dark:text-slate-400">لا توجد عروض تطابق بحثك</p>
             </div>
           ) : (
             paginatedOffers.map((offer) => (
-              <div key={offer.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+              <div key={offer.id} className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
                     <p className="font-black text-slate-900 text-sm">{offer.propertyType}</p>
-                    <p className="font-mono text-[9px] text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</p>
+                    <p className="font-mono text-[9px] text-muted-foreground dark:text-slate-400 uppercase tracking-tighter">ID: {offer.id.substring(0, 8)}</p>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="p-2 hover:bg-muted rounded-xl transition-colors text-slate-400 hover:text-slate-950">
+                      <button className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground dark:text-slate-400 hover:text-slate-950">
                         <MoreVertical className="w-5 h-5" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border">
+                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-sm dark:shadow-2xl border">
                       <DropdownMenuItem 
                         onClick={() => window.open(`/offers/${offer.id}`, '_blank')}
                         className="rounded-xl px-3 py-2.5 text-xs font-bold gap-3 cursor-pointer"
@@ -2051,22 +2051,22 @@ export default function AdminOffersPage() {
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-slate-500 font-black text-xs border border-slate-200/50">
+                    <div className="calm-icon w-9 h-9 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-500 font-black text-xs border border-slate-200/50">
                       {offer.user?.firstName?.[0] || <UserIcon className="w-4 h-4" />}
                     </div>
                     <div>
                       <p className="font-bold text-slate-700 text-xs">{offer.user?.firstName} {offer.user?.lastName}</p>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{offer.user?.role}</p>
+                      <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{offer.user?.role}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 font-bold text-slate-900">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <MapPin className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
                     {offer.city} - {offer.neighborhood}
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-black text-slate-950 text-sm">{new Intl.NumberFormat('ar-SA').format(offer.price)}</p>
-                      <p className="text-[9px] font-black text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></p>
+                      <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase"><SaudiRiyalSymbol iconClassName="h-3 w-3" /></p>
                     </div>
                     {getStatusBadge(offer.status)}
                   </div>

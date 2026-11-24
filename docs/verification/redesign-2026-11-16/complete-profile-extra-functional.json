@@ -1,0 +1,62 @@
+[
+  {
+    "width": 320,
+    "scenario": "unsupported",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "scenario": "owner",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "scenario": "office",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "scenario": "malformed",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "scenario": "guest",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "scenario": "missing-user",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "unsupported",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "owner",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "office",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "malformed",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "guest",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "scenario": "missing-user",
+    "passed": true
+  }
+]

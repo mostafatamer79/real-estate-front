@@ -1,0 +1,46 @@
+{
+  "completedOn": "2026-11-09",
+  "routeChecks": 120,
+  "distinctRoutes": 59,
+  "widths": [
+    390,
+    1440
+  ],
+  "javascriptErrors": [],
+  "horizontalOverflow": [],
+  "navigationFailures": [],
+  "interactions": [
+    {
+      "width": 1440,
+      "originalServiceLayout": true,
+      "darkPersistence": true,
+      "lightSwitch": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "originalServiceLayout": true,
+      "darkPersistence": true,
+      "lightSwitch": true,
+      "overflow": false
+    },
+    {
+      "customCategories": true,
+      "hiddenCategories": true,
+      "soonDisabled": true,
+      "adminPreview": true
+    },
+    {
+      "keyboardRouting": true
+    },
+    {
+      "englishLTR": true
+    },
+    {
+      "keyboardTooltip": true
+    },
+    {
+      "emptyCharts": true
+    }
+  ]
+}

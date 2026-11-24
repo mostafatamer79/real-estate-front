@@ -200,7 +200,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="rounded-xl border border-blue-100 bg-muted p-5">
+      <div className="calm-panel rounded-xl border border-blue-100 bg-muted p-5">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('legal.doc.new')}</h2>
         <p className="text-gray-600">{t('legal.doc.partyInfo')}</p>
       </div>
@@ -215,7 +215,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           onChange={(e) => handleFileSelect(e, 'firstId')}
         />
         {firstPartyIdFile && (
-          <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
+          <div className="calm-panel mt-2 flex items-center justify-between p-2 bg-card rounded border">
             <span className="text-sm truncate">{firstPartyIdFile.name}</span>
             <button type="button" onClick={() => removeFile('firstId')} className="text-red-500 hover:text-red-700">
               <X className="h-4 w-4" />
@@ -234,7 +234,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           onChange={(e) => handleFileSelect(e, 'secondId')}
         />
         {secondPartyIdFile && (
-          <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
+          <div className="calm-panel mt-2 flex items-center justify-between p-2 bg-card rounded border">
             <span className="text-sm truncate">{secondPartyIdFile.name}</span>
             <button type="button" onClick={() => removeFile('secondId')} className="text-red-500 hover:text-red-700">
               <X className="h-4 w-4" />
@@ -268,7 +268,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
           </div>
 
           {ownershipDeedFile && (
-            <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
+            <div className="calm-panel mt-2 flex items-center justify-between p-2 bg-card rounded border">
               <span className="text-sm truncate">{ownershipDeedFile.name}</span>
               <button
                 type="button"
@@ -323,7 +323,7 @@ export function DocumentationForm({ onSuccess, onCancel }: DocumentationFormProp
             </div>
 
             {saleAmountProofFile && (
-              <div className="mt-2 flex items-center justify-between p-2 bg-card rounded border">
+              <div className="calm-panel mt-2 flex items-center justify-between p-2 bg-card rounded border">
                 <span className="text-sm truncate">{saleAmountProofFile.name}</span>
                 <button
                   type="button"

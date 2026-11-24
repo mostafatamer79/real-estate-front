@@ -32,6 +32,10 @@ function render({ authenticated = true, paid = true, query = `invoiceId=${id}` }
     '@/hooks/useAuth': { useAuth: () => ({ isAuthenticated: authenticated, isLoading: false }) },
     '@/context/LanguageContext': { useLanguage: () => ({ language: 'en' }) },
     '@/lib/checkout-target': parser(),
+    '@/lib/redesign-chat03-checkout': compile('lib/redesign-chat03-checkout.ts'),
+    'next/link': { __esModule: true, default: 'a' },
+    'lucide-react': new Proxy({}, {get: () => 'span'}),
+    '@/components/redesign/chat03/checkout.module.css': {__esModule:true,default:new Proxy({}, {get:()=> 'scoped'})},
     '@/components/ui/button': { Button: 'button' },
     '@/hooks/useGeideaCheckout': { geideaEnabled: true, useGeideaCheckout: () => ({ processing: false, pending: false, error: null, pay: async target => { calls.push(['geidea', JSON.stringify(target)]); return paid; } }) },
     navigate: path => calls.push(['navigate', path]),
@@ -42,7 +46,7 @@ function render({ authenticated = true, paid = true, query = `invoiceId=${id}` }
     if (node && typeof node === 'object') { all.push(node); visit(node.props?.children); }
   }
   visit(component());
-  return { calls, button: all.find(x => x.type === 'button') };
+  return { calls, button: all.find(x => x.type === 'button'), links: all.filter(x => x.type === 'a') };
 }
 test('handoff uses verified Geidea checkout before returning to the wallet', async () => {
   const { button, calls } = render();
@@ -56,9 +60,11 @@ test('an unconfirmed payment stays in checkout', async () => {
   assert.equal(calls.some(x => x[0] === 'navigate'), false);
 });
 test('handoff cannot start payment without authentication', async () => {
-  const { button, calls } = render({ authenticated: false });
-  assert.equal(button.props.disabled, true);
-  await button.props.onClick();
+  const { button, calls, links } = render({ authenticated: false });
+  assert.equal(button, undefined);
+  const login = links.find(x => x.props.href.startsWith('/login?'));
+  assert.ok(login, 'guest has a real sign-in destination');
+  assert.equal(new URLSearchParams(login.props.href.split('?')[1]).get('next'), '/checkout?invoiceId=' + id);
   assert.deepEqual(calls, []);
 });
 test('invalid handoff does not offer a payment action', () => {

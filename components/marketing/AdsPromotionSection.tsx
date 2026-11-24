@@ -201,7 +201,7 @@ export default function AdsPromotionSection() {
                             { 
                                 id: 'analytics', 
                                 icon: BarChart3, 
-                                color: 'bg-gradient-to-br from-slate-700 to-slate-900', 
+                                color: 'bg-gradient-to-br from-muted dark:from-slate-700 to-card dark:to-slate-900',
                                 title: t('marketing.ads.performance'), 
                                 desc: t('marketing.stats.trend'), 
                                 badge: t('marketing.ads.manage'),
@@ -213,20 +213,20 @@ export default function AdsPromotionSection() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                whileHover={{ y: -5, scale: 1.01 }}
+                                whileHover={{ y: -2, scale: 1.01 }}
                                 onClick={item.action}
-                                className="group bg-card border border rounded-[1rem] p-4 sm:p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-xl shadow-stone-400 relative overflow-hidden"
+                                className="calm-panel calm-interactive group bg-card border border rounded-[1rem] p-4 sm:p-8 flex flex-col hover:border-blue-200 transition-all cursor-pointer shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 relative overflow-hidden"
                             >
                                 <div className="flex justify-between items-start mb-6">
-                                    <div className={`w-14 h-14 rounded-2xl ${item.color} text-white flex items-center justify-center shadow-lg`}>
+                                    <div className={`w-14 h-14 rounded-2xl ${item.color} text-foreground dark:text-white flex items-center justify-center shadow-lg`}>
                                         <item.icon className="w-7 h-7" />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                         {item.badge}
                                     </span>
                                 </div>
                                 <h3 className="font-black text-lg mb-3 text-slate-900 tracking-tight leading-tight">{item.title}</h3>
-                                <p className="text-xs text-slate-500 font-medium leading-relaxed flex-1">{item.desc}</p>
+                                <p className="text-xs text-muted-foreground dark:text-slate-500 font-medium leading-relaxed flex-1">{item.desc}</p>
                                 
                                 <div className="mt-8 flex items-center gap-2 text-blue-600 font-black text-[10px] uppercase tracking-widest">
                                     <span>{t('marketing.ads.manage')}</span>
@@ -237,20 +237,20 @@ export default function AdsPromotionSection() {
                     </div>
 
                     {/* Quick Stats Banner */}
-                    <div className="bg-slate-900 rounded-[1.25rem] p-10 flex flex-wrap gap-12 items-center justify-between text-white shadow-2xl shadow-blue-900/20">
+                    <div className="calm-panel bg-card dark:bg-slate-900 rounded-[1.25rem] p-10 flex flex-wrap gap-12 items-center justify-between text-foreground dark:text-white shadow-sm dark:shadow-2xl shadow-blue-900/20">
                         <div className="flex items-center gap-3 md:gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-card/10 flex items-center justify-center">
+                            <div className="calm-icon w-16 h-16 rounded-2xl bg-muted dark:bg-card/10 flex items-center justify-center">
                                 <Mail className="w-8 h-8 text-blue-400" />
                             </div>
                             <div>
                                 <h4 className="text-xl sm:text-2xl font-black">{t('marketing.campaign.overview')}</h4>
-                                <p className="text-white/40 text-xs font-bold mt-1">{t('marketing.history.desc')}</p>
+                                <p className="text-muted-foreground dark:text-white/40 text-xs font-bold mt-1">{t('marketing.history.desc')}</p>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-10">
                             {stats.map((stat, i) => (
                                 <div key={i} className="space-y-1">
-                                    <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
+                                    <p className="text-muted-foreground dark:text-white/40 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
                                     <div className="flex items-baseline gap-3">
                                         <span className="text-xl sm:text-2xl font-black">{stat.value}</span>
                                         <span className={`text-[10px] font-bold ${stat.color}`}>{stat.trend}</span>
@@ -284,19 +284,19 @@ export default function AdsPromotionSection() {
                         </Button>
                     </div>
 
-                    <div className="bg-card rounded-[1.25rem] overflow-hidden border border shadow-2xl shadow-stone-400">
+                    <div className="calm-panel bg-card rounded-[1.25rem] overflow-hidden border border shadow-sm dark:shadow-2xl shadow-primary/5 dark:shadow-stone-400">
                         <div className="p-10 border-b border bg-muted/30">
                             <h4 className="text-xl sm:text-2xl font-black text-slate-900">{t('marketing.history.title')}</h4>
-                            <p className="text-slate-400 text-xs font-bold mt-1">{t('marketing.ads.performance')}</p>
+                            <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold mt-1">{t('marketing.ads.performance')}</p>
                         </div>
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader className="bg-muted/50">
                                     <TableRow className="hover:bg-transparent border">
-                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.title')}</TableHead>
-                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.photo.type')}</TableHead>
-                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('orders.rooms')}</TableHead>
-                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.status')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.title')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.photo.type')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-[0.2em] text-center">{t('orders.rooms')}</TableHead>
+                                        <TableHead className="px-4 md:px-10 py-6 text-[11px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-[0.2em] text-center">{t('marketing.table.status')}</TableHead>
                                         <TableHead className="px-4 md:px-10 py-6 text-right"></TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -306,9 +306,9 @@ export default function AdsPromotionSection() {
                                             <TableCell colSpan={5} className='text-center py-32'>
                                                 <div className="flex flex-col items-center gap-3 md:gap-6 opacity-20">
                                                     <div className="p-4 sm:p-8 bg-muted rounded-full">
-                                                        <Mail className="w-12 h-12 text-slate-400" />
+                                                        <Mail className="w-12 h-12 text-muted-foreground dark:text-slate-400" />
                                                     </div>
-                                                    <p className="font-black text-sm uppercase tracking-[0.3em] text-slate-500">{t('marketing.noRequests')}</p>
+                                                    <p className="font-black text-sm uppercase tracking-[0.3em] text-muted-foreground dark:text-slate-500">{t('marketing.noRequests')}</p>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -317,7 +317,7 @@ export default function AdsPromotionSection() {
                                             <TableCell className="px-4 md:px-10 py-4 md:py-8">
                                                 <div className="text-right">
                                                     <p className="font-black text-slate-900 text-sm mb-0.5">{camp.subject || 'Weekly Newsletter'}</p>
-                                                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
+                                                    <p className="text-[9px] text-muted-foreground dark:text-slate-400 font-black uppercase tracking-widest">
                                                         {new Date(camp.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
                                                     </p>
                                                 </div>
@@ -343,7 +343,7 @@ export default function AdsPromotionSection() {
                                             </TableCell>
                                             <TableCell className="px-4 md:px-10 py-4 md:py-8">
                                                 <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border
-                                                    ${camp.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-muted text-slate-400 border'}`}>
+                                                    ${camp.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-muted text-muted-foreground dark:text-slate-400 border'}`}>
                                                     {camp.isActive ? t('marketing.status.active') : t('marketing.status.cancelled')}
                                                 </span>
                                             </TableCell>
@@ -355,7 +355,7 @@ export default function AdsPromotionSection() {
                                                         setSelectedCampaign(camp);
                                                         setView('analytics');
                                                     }}
-                                                    className="w-10 h-10 rounded-xl hover:bg-slate-900 hover:text-white transition-all"
+                                                    className="w-10 h-10 rounded-xl hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all"
                                                 >
                                                     <ArrowUpRight className="w-4 h-4" />
                                                 </Button>
@@ -371,22 +371,22 @@ export default function AdsPromotionSection() {
 
             {/* Email Wizard Modal */}
             <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
-                <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1.25rem] p-0 overflow-hidden border-none shadow-3xl">
-                    <div className="bg-slate-900 p-10 text-white">
+                <DialogContent className="calm-overlay w-[95vw] sm:max-w-2xl bg-card rounded-[1.25rem] p-0 overflow-hidden border-none shadow-3xl">
+                    <div className="bg-card dark:bg-slate-900 p-10 text-foreground dark:text-white">
                         <div className="flex justify-between items-center mb-8">
                             <span className="px-4 py-2 bg-blue-500 rounded-xl text-[10px] font-black uppercase tracking-widest">
                                 {t('marketing.wizard.step' + wizardStep)}
                             </span>
                             <div className="flex gap-2">
                                 {[1, 2, 3, 4].map(s => (
-                                    <div key={s} className={`h-1.5 w-8 rounded-full transition-all ${s <= wizardStep ? 'bg-blue-400' : 'bg-card/10'}`} />
+                                    <div key={s} className={`h-1.5 w-8 rounded-full transition-all ${s <= wizardStep ? 'bg-blue-400' : 'bg-muted dark:bg-card/10'}`} />
                                 ))}
                             </div>
                         </div>
-                        <DialogTitle className="text-xl sm:text-3xl font-black tracking-tight text-white">
+                        <DialogTitle className="text-xl sm:text-3xl font-black tracking-tight text-foreground dark:text-white">
                             {t('marketing.ads.create')}
                         </DialogTitle>
-                        <DialogDescription className="text-white/40 text-xs font-bold mt-2">
+                        <DialogDescription className="text-muted-foreground dark:text-white/40 text-xs font-bold mt-2">
                             {t('marketing.campaign.plan')}
                         </DialogDescription>
                     </div>
@@ -402,7 +402,7 @@ export default function AdsPromotionSection() {
                                     className="space-y-8"
                                 >
                                     <div className="space-y-4">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.category')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.category')}</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {[
                                                 { id: 'offers', labelAr: 'العروض', labelEn: 'Offers' },
@@ -424,7 +424,7 @@ export default function AdsPromotionSection() {
                                     </div>
 
                                     <div className="space-y-6 pt-4 border-t border">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.linkResource')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.linkResource')}</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
                                             {[
                                                 { id: 'none', label: t('marketing.wizard.noLink') },
@@ -438,7 +438,7 @@ export default function AdsPromotionSection() {
                                                     type="button"
                                                     onClick={() => setEmailWizardData({...emailWizardData, linkedResourceType: type.id, linkedResourceId: ''})}
                                                     className={`py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
-                                                        emailWizardData.linkedResourceType === type.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-card text-slate-400 border'
+                                                        emailWizardData.linkedResourceType === type.id ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900' : 'bg-card text-muted-foreground dark:text-slate-400 border'
                                                     }`}
                                                 >
                                                     {type.label}
@@ -448,7 +448,7 @@ export default function AdsPromotionSection() {
 
                                         {emailWizardData.linkedResourceType !== 'none' && (
                                             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                                                <label className="text-[10px] font-black text-slate-400">{t('marketing.wizard.selectResource')}</label>
+                                                <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400">{t('marketing.wizard.selectResource')}</label>
                                                 <Select 
                                                     value={emailWizardData.linkedResourceId} 
                                                     onValueChange={(val) => setEmailWizardData({...emailWizardData, linkedResourceId: val})}
@@ -470,7 +470,7 @@ export default function AdsPromotionSection() {
                                                             <SelectItem key={p.id} value={p.id}>{p.name || `Property #${p.id.slice(0,8)}`}</SelectItem>
                                                         ))}
                                                         {(emailWizardData.linkedResourceType === 'order' ? resources.orders : emailWizardData.linkedResourceType === 'appointment' ? resources.appointments : emailWizardData.linkedResourceType === 'offer' ? resources.offers : resources.properties).length === 0 && (
-                                                            <div className="p-4 text-center text-xs text-slate-400">{t('marketing.noRequests')}</div>
+                                                            <div className="p-4 text-center text-xs text-muted-foreground dark:text-slate-400">{t('marketing.noRequests')}</div>
                                                         )}
                                                     </SelectContent>
                                                 </Select>
@@ -479,7 +479,7 @@ export default function AdsPromotionSection() {
                                     </div>
 
                                     <div className="space-y-4 pt-4 border-t border">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.audience')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.audience')}</label>
                                         <Select 
                                             value={emailWizardData.targetRole} 
                                             onValueChange={(val) => setEmailWizardData({...emailWizardData, targetRole: val})}
@@ -509,7 +509,7 @@ export default function AdsPromotionSection() {
                                     className="space-y-8"
                                 >
                                     <div className="space-y-4">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.subject')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.subject')}</label>
                                         <Input 
                                             placeholder={t('marketing.wizard.placeholder.subject')}
                                             className="h-14 rounded-2xl border font-bold bg-muted text-right"
@@ -518,7 +518,7 @@ export default function AdsPromotionSection() {
                                         />
                                     </div>
                                     <div className="space-y-4">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.body')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.body')}</label>
                                         <Textarea 
                                             placeholder={t('marketing.wizard.placeholder.body')}
                                             className="min-h-[150px] rounded-[1.25rem] border font-bold bg-muted p-3 sm:p-6 text-right"
@@ -538,7 +538,7 @@ export default function AdsPromotionSection() {
                                     className="space-y-8"
                                 >
                                     <div className="space-y-4">
-                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('marketing.wizard.frequency')}</label>
+                                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('marketing.wizard.frequency')}</label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {[
                                                 { id: 'daily', labelAr: 'يومي', labelEn: 'Daily', icon: '📅' },
@@ -570,15 +570,15 @@ export default function AdsPromotionSection() {
                                     animate={{ opacity: 1, x: 0 }} 
                                     className="space-y-8"
                                 >
-                                    <div className="p-4 sm:p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
+                                    <div className="calm-panel p-4 sm:p-8 bg-muted rounded-[1rem] space-y-6 border border shadow-sm">
                                         <h4 className="font-black text-xl text-slate-900 border-b border pb-4">{t('marketing.wizard.review.summary')}</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.category')}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.wizard.category')}</p>
                                                 <p className="font-black text-slate-800 uppercase">{emailWizardData.category}</p>
                                             </div>
                                             <div className="space-y-1 text-left">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.audience')}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.wizard.audience')}</p>
                                                 <p className="font-black text-slate-800">{
                                                     ({
                                                         all: language === 'ar' ? 'جميع المستخدمين' : 'All Users',
@@ -591,17 +591,17 @@ export default function AdsPromotionSection() {
                                                 }</p>
                                             </div>
                                             <div className="space-y-1 col-span-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.linkResource')}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.wizard.linkResource')}</p>
                                                 <p className="font-black text-blue-600">
                                                     {emailWizardData.linkedResourceType !== 'none' ? `${emailWizardData.linkedResourceType}: ${emailWizardData.linkedResourceId}` : t('marketing.wizard.noLink')}
                                                 </p>
                                             </div>
                                             <div className="space-y-1 col-span-2">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.subject')}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.wizard.subject')}</p>
                                                 <p className="font-black text-slate-800">{emailWizardData.subject}</p>
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('marketing.wizard.frequency')}</p>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.wizard.frequency')}</p>
                                                 <p className="font-black text-slate-800">{
                                                     ({
                                                         daily: language === 'ar' ? 'يومي' : 'Daily',
@@ -628,7 +628,7 @@ export default function AdsPromotionSection() {
                                 </Button>
                             )}
                             <Button 
-                                className={`h-16 ${wizardStep === 1 ? 'w-full' : 'flex-[2]'} rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200`}
+                                className={`h-16 ${wizardStep === 1 ? 'w-full' : 'flex-[2]'} rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm dark:shadow-xl shadow-blue-200`}
                                 onClick={() => wizardStep < 4 ? setWizardStep(prev => prev + 1) : handleCreateCampaign()}
                                 disabled={loading}
                             >
@@ -650,7 +650,7 @@ export default function AdsPromotionSection() {
                         </Button>
                         <div className="text-right">
                             <h4 className="text-xl font-black text-slate-900">{selectedCampaign.subject}</h4>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{selectedCampaign.category}</p>
+                            <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold uppercase tracking-widest">{selectedCampaign.category}</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
@@ -660,8 +660,8 @@ export default function AdsPromotionSection() {
                             { label: t('marketing.stats.clickRate'), value: '12.1%', trend: '+2.1%', color: 'text-purple-600' },
                             { label: t('marketing.stats.delivery'), value: '99.8%', trend: 'Optimum', color: 'text-blue-400' },
                         ].map((stat, i) => (
-                            <div key={i} className="bg-card p-4 sm:p-8 rounded-[1rem] border border shadow-xl shadow-stone-400">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">{stat.label}</p>
+                            <div key={i} className="calm-panel bg-card p-4 sm:p-8 rounded-[1rem] border border shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 mb-4">{stat.label}</p>
                                 <div className="flex items-baseline gap-4">
                                     <span className="text-xl sm:text-3xl font-black text-slate-900">{stat.value}</span>
                                     <span className="text-[10px] font-bold text-emerald-500">{stat.trend}</span>
@@ -669,17 +669,17 @@ export default function AdsPromotionSection() {
                             </div>
                         ))}
                     </div>
-                    <div className="bg-card p-12 rounded-[1rem] border border shadow-3xl">
+                    <div className="calm-panel bg-card p-12 rounded-[1rem] border border shadow-3xl">
                         <div className="flex justify-between items-center mb-8">
                             <h4 className="text-xl font-black text-slate-900">{t('marketing.stats.trend')}</h4>
                             <div className="flex gap-4">
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full bg-blue-500" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.stats.sent')}</span>
+                                    <span className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.stats.sent')}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.stats.openRate')}</span>
+                                    <span className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.stats.openRate')}</span>
                                 </div>
                             </div>
                         </div>
@@ -698,7 +698,7 @@ export default function AdsPromotionSection() {
                                             className="w-full bg-emerald-500 rounded-t-xl opacity-60 group-hover:opacity-100 transition-all cursor-pointer relative"
                                         />
                                     </div>
-                                    <span className="text-[9px] font-black text-slate-400 text-center mt-2">D{i+1}</span>
+                                    <span className="text-[9px] font-black text-muted-foreground dark:text-slate-400 text-center mt-2">D{i+1}</span>
                                 </div>
                             ))}
                         </div>

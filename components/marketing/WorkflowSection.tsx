@@ -69,7 +69,7 @@ export default function WorkflowSection() {
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card/80 backdrop-blur-xl rounded-[1rem] overflow-hidden border border-white/60 shadow-2xl shadow-stone-400"
+            className="calm-panel bg-card/80 backdrop-blur-xl rounded-[1rem] overflow-hidden border border-border dark:border-white/60 shadow-sm dark:shadow-2xl shadow-primary/5 dark:shadow-stone-400"
         >
             <div className="p-4 sm:p-8 border-b border-/50 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 bg-card/50">
                 <div>
@@ -77,7 +77,7 @@ export default function WorkflowSection() {
                       {t('marketing.history.title')}
                       <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
                     </h4>
-                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1 ml-1">
+                    <p className="text-muted-foreground dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1 ml-1">
                         {t('marketing.history.desc') || (t('marketing.requests.count') + ': ' + filteredRequests.length)}
                     </p>
                 </div>
@@ -86,12 +86,12 @@ export default function WorkflowSection() {
                         <FileDown className="w-3.5 h-3.5" />
                         {t('marketing.btn.export')}
                     </Button>
-                    <div className="flex bg-muted/80 p-1.5 rounded-xl gap-1 border border-slate-200/50">
+                    <div className="calm-panel flex bg-muted/80 p-1.5 rounded-xl gap-1 border border-slate-200/50">
                       {['all', 'pending', 'completed'].map((f) => (
                         <button
                           key={f}
                           onClick={() => setStatusFilter(f as any)}
-                          className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f ? 'bg-card text-slate-900 shadow-md shadow-stone-400' : 'text-slate-400 hover:text-slate-600 hover:bg-card/50'}`}
+                          className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === f ? 'bg-card text-slate-900 shadow-md shadow-primary/5 dark:shadow-stone-400' : 'text-muted-foreground dark:text-slate-400 hover:text-slate-600 hover:bg-card/50'}`}
                         >
                           {f === 'all' ? t('marketing.filter.all') : t('marketing.status.' + f)}
                         </button>
@@ -104,10 +104,10 @@ export default function WorkflowSection() {
                 <Table>
                         <TableHeader className="bg-muted/80">
                             <TableRow className="hover:bg-transparent border">
-                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.request')}</TableHead>
-                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</TableHead>
-                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</TableHead>
-                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('common.actions')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.request')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</TableHead>
+                                <TableHead className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-center">{t('common.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y divide-slate-100/50">
@@ -116,9 +116,9 @@ export default function WorkflowSection() {
                                     <TableCell colSpan={4} className='text-center py-24'>
                                         <div className="flex flex-col items-center gap-4 opacity-30">
                                             <div className="p-4 bg-muted rounded-full">
-                                                <ClipboardList className="w-8 h-8 text-slate-400" />
+                                                <ClipboardList className="w-8 h-8 text-muted-foreground dark:text-slate-400" />
                                             </div>
-                                            <p className="font-black text-xs uppercase tracking-widest text-slate-400">{t('marketing.noRequests')}</p>
+                                            <p className="font-black text-xs uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('marketing.noRequests')}</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -133,23 +133,23 @@ export default function WorkflowSection() {
                                             </div>
                                             <div>
                                                 <p className="font-black text-slate-900 text-sm group-hover:text-slate-900 transition-colors">{t('marketing.type.' + req.type)}</p>
-                                                <p className="text-[10px] text-slate-400 mt-0.5 font-bold">#{req.id.substring(0, 8)}</p>
+                                                <p className="text-[10px] text-muted-foreground dark:text-slate-400 mt-0.5 font-bold">#{req.id.substring(0, 8)}</p>
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell className="px-3 py-3 sm:px-6 sm:py-5">
                                         <div className="flex flex-col gap-1">
                                             <span className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                                                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                                <Calendar className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
                                                 {new Date(req.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-CA')}
                                             </span>
-                                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(req.createdAt).toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                                            <span className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold uppercase tracking-wider">{new Date(req.createdAt).toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="px-3 py-3 sm:px-6 sm:py-5">
                                         <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-sm
-                                            ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
-                                              req.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
+                                            ${req.status === MarketingRequestStatus.PENDING ? 'bg-muted text-muted-foreground dark:text-slate-500 border' :
+                                              req.status === MarketingRequestStatus.COMPLETED ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900 shadow-primary/5 dark:shadow-stone-400/20' :
                                               req.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-muted text-slate-600 border'}`}>
                                             <div className={`w-1 h-1 rounded-full ${req.status === MarketingRequestStatus.PENDING ? 'bg-slate-400 animate-pulse' : 'bg-current'} ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'}`} />
                                             {t('marketing.status.' + req.status)}
@@ -164,7 +164,7 @@ export default function WorkflowSection() {
                                                     setSelectedRequest(req);
                                                     setIsDetailsOpen(true);
                                                 }}
-                                                className="w-9 h-9 rounded-lg border hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all"
+                                                className="w-9 h-9 rounded-lg border hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white hover:border-border hover:dark:border-slate-900 transition-all"
                                             >
                                                 <Eye className="w-4 h-4" />
                                             </Button>
@@ -172,7 +172,7 @@ export default function WorkflowSection() {
                                                 variant="outline" 
                                                 size="icon" 
                                                 onClick={() => handleDeleteRequest(req.id)}
-                                                className="w-9 h-9 rounded-lg border hover:bg-red-500 hover:text-white hover:border-red-500 transition-all text-slate-400"
+                                                className="w-9 h-9 rounded-lg border hover:bg-red-500 hover:text-foreground hover:dark:text-white hover:border-red-500 transition-all text-muted-foreground dark:text-slate-400"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </Button>
@@ -186,12 +186,12 @@ export default function WorkflowSection() {
 
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <DialogHeader className="p-4 sm:p-8 bg-slate-950 text-white">
+                <DialogContent className="calm-overlay w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-sm dark:shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <DialogHeader className="p-4 sm:p-8 bg-background dark:bg-slate-950 text-foreground dark:text-white">
                         <DialogTitle className="text-xl sm:text-2xl font-black">
                             {selectedRequest && t(`marketing.type.${selectedRequest.type}`)}
                         </DialogTitle>
-                        <p className="text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
+                        <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
                             #{selectedRequest?.id.substring(0, 8)}
                         </p>
                     </DialogHeader>
@@ -201,20 +201,20 @@ export default function WorkflowSection() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.status')}</label>
                                         <div className="flex items-center gap-3">
                                             <span className={`inline-flex items-center px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border
-                                                ${selectedRequest.status === MarketingRequestStatus.PENDING ? 'bg-muted text-slate-500 border' : 
-                                                  selectedRequest.status === MarketingRequestStatus.COMPLETED ? 'bg-slate-900 text-white border-slate-900 shadow-stone-400/20' : 
+                                                ${selectedRequest.status === MarketingRequestStatus.PENDING ? 'bg-muted text-muted-foreground dark:text-slate-500 border' :
+                                                  selectedRequest.status === MarketingRequestStatus.COMPLETED ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white border-border dark:border-slate-900 shadow-primary/5 dark:shadow-stone-400/20' :
                                                   selectedRequest.status === MarketingRequestStatus.IN_PROGRESS ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-muted text-slate-600 border'}`}>
                                                 {t('marketing.status.' + selectedRequest.status)}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
+                                            <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <Calendar className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">
@@ -228,7 +228,7 @@ export default function WorkflowSection() {
 
                                 <div className="space-y-6">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('pm.field.propertyName')}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('pm.field.propertyName')}</label>
                                         <div className="flex items-center gap-3">
                                             <span className="font-bold text-slate-900">
                                                 {selectedRequest.details?.propertyId || t('common.noData')}
@@ -236,7 +236,7 @@ export default function WorkflowSection() {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('pm.field.notes')}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('pm.field.notes')}</label>
                                         <p className="font-medium text-slate-600 text-sm">
                                             {selectedRequest.details?.notes || t('common.noData')}
                                         </p>
@@ -246,14 +246,14 @@ export default function WorkflowSection() {
                             
                             {selectedRequest.details?.platform && (
                                 <div className="space-y-2 pt-6 border-t border">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform</label>
+                                    <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">Platform</label>
                                     <p className="text-sm font-medium text-slate-600 p-4 bg-muted rounded-2xl">{selectedRequest.details?.platform?.join?.(', ') || selectedRequest.details?.platform}</p>
                                 </div>
                             )}
 
                              {selectedRequest.details?.preferredDate && (
                                 <div className="pt-6 border-t border flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400 text-[10px] font-bold">
                                         <Clock className="w-3.5 h-3.5" />
                                         <span>تاريخ مفضل: {new Date(selectedRequest.details?.preferredDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</span>
                                     </div>

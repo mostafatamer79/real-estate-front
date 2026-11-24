@@ -84,7 +84,7 @@ export function buildPageMetadata(
   const siteName = options.siteName || SITE_NAME;
   const pageTitle = path === "/" ? title : `${title} | ${siteName}`;
   const url = absoluteUrl(path === "/customerservice/contact" ? "/customerservice" : path);
-  const image = shareImage(options.image) || absoluteUrl("/icons/icon-512x512.png");
+  const image = shareImage(options.image) || absoluteUrl("/opengraph-image");
   const index = options.index ?? isPublicBrowsingPath(path);
   return {
     title: pageTitle,

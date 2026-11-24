@@ -1,67 +1,110 @@
-"use client";
-import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Scale } from "lucide-react";
-import { motion } from "framer-motion";
-import { useLanguage } from "@/context/LanguageContext";
-import LegalRequestFlow from "@/components/legal/LegalRequestFlow";
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, ArrowRight, FileText, Loader2, MoreHorizontal, Scale, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { useSettings } from '@/context/SettingsContext';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { legalServiceCopy } from '@/components/services/legal-service-copy';
+import { LEGAL_SUBCATEGORIES, getServiceDisplayName, getServiceNamesForCategory } from '@/lib/service-catalog';
+import styles from '../services-redesign.module.css';
+import { servicePageAccess } from '@/lib/service-page-access';
 
-export default function LegalServiceSelectionPage() {
-  const router = useRouter();
+const icons = { disputes: Scale, contracts: FileText, documentation: ShieldCheck, other: MoreHorizontal };
+function LegalSelection() {
   const { language } = useLanguage();
-  const isRtl = language === "ar";
+  const { settings, isLoading } = useSettings();
+  const { user, isLoading: authLoading } = useAuth();
+  const search = useSearchParams();
+  const ar = language === 'ar';
+  const admin = user?.role === 'admin';
+  const preview = search.get('preview') === '1';
+  const section = settings.sectionFlags.services;
+  const status = settings.moduleFlags.services_legal || 'enabled';
+  const unavailable = servicePageAccess({ section, category: status, admin, preview }) !== 'enabled';
+  const availableNames = getServiceNamesForCategory('legal', settings.customServices);
+  const categories = LEGAL_SUBCATEGORIES.filter(category => availableNames.includes(category.title) && settings.moduleFlags[category.formKey] !== 'disabled');
+
+  const Back = ar ? ArrowRight : ArrowLeft;
+  const Forward = ar ? ArrowLeft : ArrowRight;
+  const previewLabel = ar ? "معاينة كمسؤول" : "Admin preview";
 
   return (
-    <section className="w-full min-h-screen bg-slate-950 text-white overflow-x-hidden pb-12" dir={isRtl ? "rtl" : "ltr"}>
-      <MobileAppHeader theme="dark" title="الخدمات القانونية" />
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
-        <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
-        <div className="absolute top-[45%] right-[20%] w-[25%] h-[25%] rounded-full bg-gray-500/4 blur-[100px]" />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto w-full px-6 pt-10 pb-16">
-        <div>
-          <motion.button
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => router.push("/services")}
-            className="hidden md:flex group items-center gap-2 text-slate-600 hover:text-slate-500 transition-colors text-[10px] font-bold uppercase tracking-widest"
-          >
-            <span className="w-6 h-6 rounded-full bg-card/[0.02] border border-white/[0.06] group-hover:bg-card/[0.05] flex items-center justify-center transition-all duration-200">
-              <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
-            </span>
-            {isRtl ? "العودة للخدمات" : "Back to services"}
-          </motion.button>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="pt-10 pb-8"
-          >
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/5 border border-white/10 mb-3">
-              <Scale className="w-3 h-3 text-slate-400" />
-              <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{isRtl ? "خدمات المنصة" : "Platform services"}</p>
-            </div>
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 font-mono">02</p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-[-0.03em] leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
-              {isRtl ? "الخدمات القانونية" : "Legal services"}
-            </h1>
-            <p className="text-white/40 text-sm w-full sm:max-w-lg leading-relaxed">
-              {isRtl ? "اختر نوع الخدمة القانونية، ثم أكمل تفاصيل الطلب في النموذج." : "Choose a legal service, then complete its request form."}
-            </p>
-          </motion.div>
-
-          <div className="h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6" />
-
-          <LegalRequestFlow
-            selectionOnly
-            onCategorySelect={(category) => router.push(`/services/form?type=legal&category=${category}`)}
-          />
-        </div>
+    <section className={styles.page} dir={ar ? "rtl" : "ltr"} aria-labelledby="legal-page-title">
+      <div className={styles.shell}>
+        <Button asChild variant="ghost" className={styles.back}>
+          <Link href="/services"><Back aria-hidden="true" />{ar ? "العودة للخدمات" : "Back to services"}</Link>
+        </Button>
+        {isLoading || authLoading ? (
+          <p role="status" className={styles.loading}>
+            <Loader2 aria-hidden="true" className="animate-spin motion-reduce:animate-none" />
+            {ar ? "جارٍ تحميل الخدمات…" : "Loading services…"}
+          </p>
+        ) : unavailable ? (
+          <header className={styles.intro}>
+            <h1 id="legal-page-title">{status === "soon"
+              ? (ar ? "هذه الخدمة ستتوفر قريبًا" : "This service is coming soon")
+              : (ar ? "هذه الخدمة غير متاحة حاليًا" : "This service is currently unavailable")}</h1>
+            <p role="status">{(section !== "open" && !admin ? settings.sectionMessages.services : settings.moduleMessages.services_legal)
+              || (ar ? "يمكنك العودة لاستعراض الخدمات المتاحة." : "Return to explore the available services.")}</p>
+            {admin && status === "soon" && (
+              <Button asChild variant="outline" className={styles.action}>
+                <Link href="/services/legal?preview=1">{previewLabel}<Forward aria-hidden="true" /></Link>
+              </Button>
+            )}
+          </header>
+        ) : (
+          <>
+            <header className={styles.intro}>
+              <h1 id="legal-page-title">{ar ? "الخدمات القانونية" : "Legal services"}</h1>
+              <p>{ar ? "اختر نوع الخدمة القانونية لفتح النموذج المخصص." : "Choose a legal specialty to open its request form."}</p>
+              {preview && admin && <p role="status">{ar ? "أنت في وضع معاينة المسؤول." : "You are viewing an admin preview."}</p>}
+            </header>
+            <section className={styles.directory} aria-labelledby="legal-directory">
+              <h2 id="legal-directory">{ar ? "التخصصات القانونية" : "Legal specialties"}</h2>
+              {categories.length > 0 ? (
+                <ul className={styles.directoryList}>
+                  {categories.map(category => {
+                    const Icon = icons[category.id];
+                    const soon = settings.moduleFlags[category.formKey] === "soon";
+                    const configuredName = getServiceDisplayName("legal", category.title, settings.customServices);
+                    const copy = legalServiceCopy[category.id];
+                    const title = configuredName !== category.title || ar ? configuredName : copy.title;
+                    const href = `/services/form?type=legal&category=${encodeURIComponent(category.id)}`;
+                    return (
+                      <li key={category.id}>
+                        <span className={styles.icon}><Icon aria-hidden="true" /></span>
+                        <div className={styles.categoryCopy}>
+                          <h3>{title}</h3>
+                          <p>{ar ? category.description : copy.description}</p>
+                        </div>
+                        <div className={styles.statusActions}>
+                          {soon && <span className={styles.soon}>{ar ? "قريبًا" : "Soon"}</span>}
+                          {(!soon || admin) && (
+                            <Button asChild variant="outline" className={styles.action}>
+                              <Link href={href + (admin && (preview || soon) ? "&preview=1" : "")}>
+                                {soon ? previewLabel : ar ? "ابدأ الطلب" : "Start request"}
+                                <Forward aria-hidden="true" />
+                              </Link>
+                            </Button>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : <p role="status">{ar ? "لا توجد خدمات قانونية متاحة حاليًا." : "No legal services are currently available."}</p>}
+            </section>
+          </>
+        )}
       </div>
     </section>
   );
+}
+
+export default function LegalServiceSelectionPage() {
+  return <Suspense fallback={<div className={styles.page} aria-busy="true" />}><LegalSelection /></Suspense>;
 }

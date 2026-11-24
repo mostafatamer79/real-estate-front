@@ -1,300 +1,589 @@
 "use client";
-import MobileAppHeader from '@/app/src/components/MobileAppHeader';
-import PullToRefresh from '@/components/shared/PullToRefresh';
 
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { MessageCircle, Search, User, Clock, CheckCheck, ArrowRight } from "lucide-react";
+import {
+  MessageCircle,
+  Search,
+  User,
+  Clock,
+  ArrowRight,
+  ArrowLeft,
+  AlertCircle,
+  RotateCcw,
+  X,
+  ExternalLink,
+} from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { chatApi } from "@/lib/chat";
-import { motion } from "framer-motion";
+import { canNavigateBack } from "@/lib/workspace-usability";
+import PullToRefresh from "@/components/shared/PullToRefresh";
+import {
+  Participant,
+  sanitizeParticipants,
+  safeParticipantName,
+  getParticipantInitials,
+  normalizeSearchText,
+  formatConversationTime,
+} from "@/lib/redesign-chat07-chat-utils";
+import styles from "@/components/chat/chat-lists-redesign.module.css";
 
 interface ChatRoom {
   id: string;
-  name: string;
+  name?: string | null;
   lastMessage?: {
-    content: string;
-    sender: {
-      id: string;
-      firstName: string;
-      lastName: string;
-    };
-    createdAt: string;
-  };
-  participants: Array<{
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }>;
+    content?: string | null;
+    sender?: {
+      id?: string | number | null;
+      firstName?: string | null;
+      lastName?: string | null;
+    } | null;
+    createdAt?: string | null;
+  } | null;
+  participants: Participant[];
   unreadCount: number;
-  offerId?: string;
-  otherParticipant?: any;
+  offerId?: string | null;
+  otherParticipant?: Participant | null;
+}
+
+interface StoredUser {
+  id?: string | number;
+  userId?: string | number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
 }
 
 export default function NormalChatPage() {
   const router = useRouter();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
+  const isRtl = language === "ar";
 
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<StoredUser | null>(null);
+
+  const isMountedRef = useRef(true);
+  const fetchSeqRef = useRef(0);
+  const currentUserRef = useRef<StoredUser | null>(null);
 
   useEffect(() => {
-    const fetchUser = () => {
-      if (typeof window !== 'undefined') {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            return JSON.parse(userData);
-          } catch (err) {
-            console.error('Failed to parse user data:', err);
-          }
-        }
-      }
-      return null;
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
     };
-
-    const u = fetchUser();
-    if (u) setCurrentUser(u);
-    fetchChats(u);
   }, []);
 
-  const fetchChats = async (user?: any) => {
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  const fetchChats = useCallback(async (user?: StoredUser | null) => {
+    const seq = ++fetchSeqRef.current;
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      const data = await chatApi.getUserRooms();
-      const rooms = data.data || data;
-      const dedupedRooms = Array.isArray(rooms)
-        ? Array.from(new Map(rooms.map((r: any) => [r.id, r])).values())
-        : [];
+      const response = await chatApi.getUserRooms();
+      if (!isMountedRef.current || seq !== fetchSeqRef.current) return;
 
-      const meId = user?.id || user?.userId || currentUser?.id || currentUser?.userId;
+      const rawRooms = Array.isArray(response)
+        ? response
+        : (response && typeof response === "object" && "data" in response && Array.isArray((response as { data: unknown }).data)
+            ? (response as { data: unknown[] }).data
+            : []);
 
-      const transformedRooms: ChatRoom[] = dedupedRooms.map((room: any) => {
-        const otherParticipant = room.participants?.find(
-          (p: any) => (meId ? String(p.id) !== String(meId) : true)
-        );
+      const dedupedMap = new Map<string, unknown>();
+      for (const r of rawRooms) {
+        if (r && typeof r === "object" && "id" in r && (r as { id: unknown }).id != null) {
+          dedupedMap.set(String((r as { id: unknown }).id), r);
+        }
+      }
+      const dedupedRooms = Array.from(dedupedMap.values());
+
+      const activeUser = user !== undefined ? user : currentUserRef.current;
+      const meId = activeUser?.id ?? activeUser?.userId;
+
+      const transformed: ChatRoom[] = dedupedRooms.map((raw) => {
+        const room = raw as {
+          id: string | number;
+          name?: string | null;
+          lastMessage?: {
+            content?: string | null;
+            sender?: {
+              id?: string | number | null;
+              firstName?: string | null;
+              lastName?: string | null;
+            } | null;
+            createdAt?: string | null;
+          } | null;
+          participants?: unknown;
+          unreadCount?: unknown;
+          offerId?: string | number | null;
+        };
+
+        const participants: Participant[] = sanitizeParticipants(room.participants);
+
+        const otherParticipant = participants.find(
+          (p) => (meId != null && p.id != null ? String(p.id) !== String(meId) : true)
+        ) || null;
+
+        const rawUnread = room.unreadCount;
+        const validUnread = typeof rawUnread === "number" && Number.isFinite(rawUnread) && rawUnread > 0
+          ? Math.floor(rawUnread)
+          : 0;
 
         return {
-          id: room.id,
-          name: room.name,
-          lastMessage: room.lastMessage,
-          participants: room.participants || [],
-          unreadCount: room.unreadCount || 0,
-          offerId: room.offerId,
+          id: String(room.id),
+          name: room.name ?? null,
+          lastMessage: room.lastMessage
+            ? {
+                content: room.lastMessage.content ?? "",
+                sender: room.lastMessage.sender ?? null,
+                createdAt: room.lastMessage.createdAt ?? null,
+              }
+            : null,
+          participants,
+          unreadCount: validUnread,
+          offerId: room.offerId != null ? String(room.offerId) : null,
           otherParticipant,
         };
       });
 
-      // Sort chats from the last sent message (most recent first)
-      transformedRooms.sort((a, b) => {
-        const dateA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : 0;
-        const dateB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : 0;
-        return dateB - dateA;
+      // Sort descending by last message date
+      transformed.sort((a, b) => {
+        const timeA = a.lastMessage?.createdAt ? Date.parse(a.lastMessage.createdAt) : 0;
+        const timeB = b.lastMessage?.createdAt ? Date.parse(b.lastMessage.createdAt) : 0;
+        const validA = Number.isFinite(timeA) ? timeA : 0;
+        const validB = Number.isFinite(timeB) ? timeB : 0;
+        return validB - validA;
       });
 
-      setChats(transformedRooms);
-      window.dispatchEvent(new Event('refresh-notifications'));
-    } catch (error) {
-      console.error('Error fetching chats:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getParticipantName = (participant: any, fallbackName: string) => {
-    if (!participant) return fallbackName;
-    const first = participant.firstName || '';
-    const last = participant.lastName || '';
-    const fullName = `${first} ${last}`.trim();
-    if (fullName) return fullName;
-    if (participant.email) return participant.email;
-    return fallbackName;
-  };
-
-  const getFullName = (firstName: string | null = '', lastName: string | null = '') => {
-    const first = firstName || '';
-    const last = lastName || '';
-    return `${first} ${last}`.trim() || 'مستخدم';
-  };
-
-  const filteredChats = chats.filter(chat => {
-    const searchLower = searchQuery.toLowerCase();
-    if (chat.name.toLowerCase().includes(searchLower)) return true;
-    if (chat.participants.some(p =>
-      getFullName(p.firstName, p.lastName).toLowerCase().includes(searchLower) ||
-      p.email?.toLowerCase().includes(searchLower)
-    )) return true;
-    return false;
-  });
-
-  const formatTime = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-      if (diffInHours < 24) {
-        return date.toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      } else if (diffInHours < 48) {
-        return 'أمس';
-      } else {
-        return date.toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
-          month: 'short', day: 'numeric'
-        });
+      setChats(transformed);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("refresh-notifications"));
       }
-    } catch {
-      return 'الآن';
+    } catch (err: unknown) {
+      if (!isMountedRef.current || seq !== fetchSeqRef.current) return;
+      console.error("Error fetching chats:", err);
+      const msg = err instanceof Error ? err.message : "";
+      setError(
+        msg ||
+          (isRtl
+            ? "تعذر تحميل المحادثات. يرجى التحقق من اتصالك والمحاولة مجددًا."
+            : "Unable to load conversations. Please check your connection and try again.")
+      );
+    } finally {
+      if (isMountedRef.current && seq === fetchSeqRef.current) {
+        setLoading(false);
+      }
     }
+  }, [isRtl]);
+
+  useEffect(() => {
+    let u: StoredUser | null = null;
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        try {
+          u = JSON.parse(userData) as StoredUser;
+          currentUserRef.current = u;
+          setCurrentUser(u);
+        } catch (err) {
+          console.error("Failed to parse user data:", err);
+        }
+      }
+    }
+    void fetchChats(u);
+  }, [fetchChats]);
+
+  const handleSafeBack = () => {
+    if (typeof window !== "undefined") {
+      const navigation = (window as Window & {
+        navigation?: {
+          currentEntry?: { index: number };
+          entries: () => Array<{ index: number; url?: string }>;
+        };
+      }).navigation;
+      const currentEntry = navigation?.currentEntry;
+      const previousUrl = currentEntry
+        ? navigation?.entries().find((entry) => entry.index === currentEntry.index - 1)?.url
+        : undefined;
+
+      if (
+        canNavigateBack(
+          window.location.href,
+          window.history.length,
+          document.referrer,
+          currentEntry ? { index: currentEntry.index, previousUrl } : undefined
+        )
+      ) {
+        router.back();
+        return;
+      }
+    }
+    router.push("/details");
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-muted pb-12" dir="rtl">
-        <div className="px-4 py-6 mx-auto max-w-5xl space-y-6">
-          {/* Skeleton — chat header card */}
-          <div className="rounded-2xl border border bg-card p-4 sm:p-6 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="wow-skeleton h-12 w-12 rounded-xl shrink-0" />
-              <div className="space-y-2 flex-1">
-                <div className="wow-skeleton h-5 w-36 rounded-lg" />
-                <div className="wow-skeleton h-3.5 w-64 max-w-full rounded-lg" />
-              </div>
-            </div>
-          </div>
-          {/* Skeleton — search */}
-          <div className="wow-skeleton h-14 rounded-xl" />
-          {/* Skeleton — chat rows */}
-          <div className="space-y-3">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="rounded-2xl border border bg-card p-4 shadow-sm flex items-center gap-4">
-                <div className="wow-skeleton h-12 w-12 rounded-full shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="wow-skeleton h-4 w-1/3 rounded-lg" />
-                  <div className="wow-skeleton h-3 w-2/3 rounded-lg" />
-                </div>
-                <div className="wow-skeleton h-3 w-10 rounded-lg shrink-0" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredChats = useMemo(() => {
+    const q = normalizeSearchText(searchQuery);
+    if (!q) return chats;
 
-  const unreadTotal = chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
+    return chats.filter((chat) => {
+      const otherName = safeParticipantName(
+        chat.otherParticipant,
+        chat.name,
+        isRtl ? "مستخدم" : "User"
+      );
+      if (normalizeSearchText(otherName).includes(q)) return true;
+      if (normalizeSearchText(chat.name).includes(q)) return true;
+      if (chat.lastMessage?.content && normalizeSearchText(chat.lastMessage.content).includes(q))
+        return true;
+      for (const p of chat.participants) {
+        const pFull = safeParticipantName(p, "", "");
+        if (pFull && normalizeSearchText(pFull).includes(q)) return true;
+        if (p.email && normalizeSearchText(p.email).includes(q)) return true;
+        if (p.phone && normalizeSearchText(p.phone).includes(q)) return true;
+      }
+      return false;
+    });
+  }, [chats, searchQuery, isRtl]);
+
+  const unreadTotal = useMemo(
+    () => chats.reduce((total, chat) => total + (chat.unreadCount || 0), 0),
+    [chats]
+  );
 
   return (
     <PullToRefresh onRefresh={() => fetchChats()}>
-    <div className="min-h-screen bg-muted pb-12" dir="rtl">
-      <MobileAppHeader theme="light" title="محادثاتي" />
-      <div className="px-4 py-6 mx-auto max-w-5xl space-y-6">
-      <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm wow-reveal">
-        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white">
-              <MessageCircle className="h-7 w-7" />
+      <div className={styles.inboxPage} dir={isRtl ? "rtl" : "ltr"}>
+        <div className={styles.inboxShell}>
+          {/* Static Navigation Bar */}
+          <nav
+            className={styles.navBar}
+            aria-label={isRtl ? "شريط التنقل العلوي للمحادثات" : "Conversations navigation"}
+          >
+            <div className={styles.navBreadcrumb}>
+              <span className={styles.navTag}>
+                <MessageCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>{isRtl ? "المحادثات" : "Inbox"}</span>
+              </span>
             </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">محادثاتي</h1>
-              <p className="mt-1 text-sm font-bold text-slate-500">متابعة المحادثات والردود من مكان واحد.</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
-              <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{chats.length.toLocaleString("ar-SA")}</p>
-              <p className="text-[10px] font-black text-slate-400">محادثة</p>
-            </div>
-            <div className="rounded-xl border border bg-muted px-4 py-3 text-center">
-              <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{unreadTotal.toLocaleString("ar-SA")}</p>
-              <p className="text-[10px] font-black text-slate-400">غير مقروءة</p>
-            </div>
+
             <button
               type="button"
-              onClick={() => router.push("/details")}
-              className="inline-flex h-12 items-center gap-2 rounded-xl bg-slate-950 px-5 text-xs font-black text-white transition-all hover:bg-black"
+              onClick={handleSafeBack}
+              className={styles.backButton}
+              aria-label={isRtl ? "الرجوع للصفحة السابقة" : "Go back"}
             >
-              <span>العودة</span>
-              <ArrowRight className="h-5 w-5" />
+              {isRtl ? (
+                <>
+                  <span>العودة</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </>
+              ) : (
+                <>
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  <span>Back</span>
+                </>
+              )}
             </button>
-          </div>
+          </nav>
+
+          {/* Editorial Header Card */}
+          <header className={styles.headerCard}>
+            <div className={styles.headerInfo}>
+              <div className={styles.headerIcon} aria-hidden="true">
+                <MessageCircle className="w-6 h-6" />
+              </div>
+              <div className={styles.headerTextGroup}>
+                <h1 className={styles.headerTitle}>
+                  {isRtl ? "محادثاتي" : "My Conversations"}
+                </h1>
+                <p className={styles.headerSubtitle}>
+                  {isRtl
+                    ? "متابعة المحادثات والردود والتواصل المباشر في مكان واحد."
+                    : "Track messages, responses, and direct discussions in one place."}
+                </p>
+              </div>
+            </div>
+
+            <div className={styles.headerActions}>
+              <div
+                className={styles.statBadge}
+                aria-label={`${chats.length} ${isRtl ? "محادثات" : "conversations"}`}
+              >
+                <span className={styles.statNumber}>
+                  {chats.length.toLocaleString(isRtl ? "ar-SA" : "en-US")}
+                </span>
+                <span className={styles.statLabel}>{isRtl ? "محادثة" : "Chats"}</span>
+              </div>
+
+              <div
+                className={`${styles.statBadge} ${unreadTotal > 0 ? styles.statBadgeUnread : ""}`}
+                aria-label={`${unreadTotal} ${isRtl ? "رسائل غير مقروءة" : "unread messages"}`}
+              >
+                <span className={styles.statNumber}>
+                  {unreadTotal.toLocaleString(isRtl ? "ar-SA" : "en-US")}
+                </span>
+                <span className={styles.statLabel}>{isRtl ? "غير مقروءة" : "Unread"}</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Search and Refresh Section */}
+          <section
+            className={styles.toolbarSection}
+            aria-label={isRtl ? "أدوات البحث والتحديث" : "Search and refresh tools"}
+          >
+            <div className={styles.searchWrapper}>
+              <Search className={styles.searchIcon} aria-hidden="true" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  isRtl
+                    ? "ابحث باسم المشارك، البريد، أو نص الرسالة..."
+                    : "Search by participant, email, or message..."
+                }
+                className={styles.searchInput}
+                aria-label={isRtl ? "بحث في المحادثات" : "Search conversations"}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className={styles.clearSearchBtn}
+                  aria-label={isRtl ? "مسح نص البحث" : "Clear search"}
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => fetchChats()}
+              disabled={loading}
+              className={styles.refreshButton}
+              aria-label={isRtl ? "تحديث قائمة المحادثات" : "Refresh conversations"}
+            >
+              <RotateCcw
+                className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                aria-hidden="true"
+              />
+              <span>{isRtl ? "تحديث" : "Refresh"}</span>
+            </button>
+          </section>
+
+          {/* Explicit Error State */}
+          {error && (
+            <div
+              className={styles.errorCard}
+              role="alert"
+              aria-live="assertive"
+            >
+              <div className={styles.errorContent}>
+                <AlertCircle className={styles.errorIcon} aria-hidden="true" />
+                <div className={styles.errorTextGroup}>
+                  <h2 className={styles.errorTitle}>
+                    {isRtl ? "تعذر تحميل المحادثات" : "Could not load conversations"}
+                  </h2>
+                  <p className={styles.errorDescription}>{error}</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => fetchChats()}
+                className={styles.retryBtn}
+              >
+                <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                <span>{isRtl ? "إعادة المحاولة" : "Try again"}</span>
+              </button>
+            </div>
+          )}
+
+          {/* Content Area */}
+          <section aria-label={isRtl ? "قائمة المحادثات" : "Conversation list"}>
+            {loading ? (
+              <div
+                className={styles.conversationList}
+                role="status"
+                aria-busy="true"
+                aria-label={isRtl ? "جارٍ تحميل المحادثات..." : "Loading conversations..."}
+              >
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <div key={i} className={styles.skeletonCard}>
+                    <div className={`${styles.skeletonAvatar} ${styles.skeletonPulse}`} />
+                    <div className={styles.skeletonContent}>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className={`${styles.skeletonLineTitle} ${styles.skeletonPulse}`} />
+                        <div className={`${styles.skeletonLineTime} ${styles.skeletonPulse}`} />
+                      </div>
+                      <div className={`${styles.skeletonLineSubtitle} ${styles.skeletonPulse}`} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : !error && chats.length === 0 ? (
+              /* Genuine Empty State */
+              <div className={styles.emptyCard}>
+                <div className={styles.emptyIconWrapper} aria-hidden="true">
+                  <MessageCircle className="w-8 h-8" />
+                </div>
+                <h2 className={styles.emptyTitle}>
+                  {isRtl ? "لا توجد محادثات حتى الآن" : "No conversations yet"}
+                </h2>
+                <p className={styles.emptyDescription}>
+                  {isRtl
+                    ? "عند التواصل مع المعلن أو إرسال استفسار حول عقار أو طلب خدمة، ستظهر جميع محادثاتك هنا."
+                    : "When you contact an advertiser or inquiry about a property or service, your conversations will appear here."}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => router.push("/offers")}
+                  className={styles.emptyActionBtn}
+                >
+                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                  <span>{isRtl ? "استكشف العروض العقارية" : "Explore Property Offers"}</span>
+                </button>
+              </div>
+            ) : !error && filteredChats.length === 0 ? (
+              /* Search Empty State */
+              <div className={styles.emptyCard}>
+                <div className={styles.emptyIconWrapper} aria-hidden="true">
+                  <Search className="w-8 h-8" />
+                </div>
+                <h2 className={styles.emptyTitle}>
+                  {isRtl ? "لا توجد نتائج بحث مطابقة" : "No matching conversations"}
+                </h2>
+                <p className={styles.emptyDescription}>
+                  {isRtl
+                    ? `لم نتمكن من العثور على محادثات تطابق "${searchQuery}". جرّب كلمة بحث أخرى أو امسح الحقل.`
+                    : `We couldn't find any conversations matching "${searchQuery}". Try another keyword or clear the search.`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className={styles.emptyActionBtn}
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                  <span>{isRtl ? "مسح البحث" : "Clear search"}</span>
+                </button>
+              </div>
+            ) : (
+              /* Conversation Rows */
+              <div className={styles.conversationList}>
+                {filteredChats.map((chat) => {
+                  const participantName = safeParticipantName(
+                    chat.otherParticipant,
+                    chat.name,
+                    isRtl ? "مستخدم" : "User"
+                  );
+                  const initials = getParticipantInitials(participantName);
+                  const timeDisplay = formatConversationTime(
+                    chat.lastMessage?.createdAt,
+                    isRtl
+                  );
+                  const hasUnread = chat.unreadCount > 0;
+                  const snippet =
+                    chat.lastMessage && chat.lastMessage.content
+                      ? chat.lastMessage.content
+                      : isRtl
+                      ? "ابدأ محادثة جديدة"
+                      : "Start a new conversation";
+
+                  return (
+                    <div
+                      key={chat.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => router.push(`/chat/${chat.id}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          router.push(`/chat/${chat.id}`);
+                        }
+                      }}
+                      className={`${styles.conversationRow} ${
+                        hasUnread ? styles.conversationRowUnread : ""
+                      }`}
+                      aria-label={`${participantName}, ${hasUnread ? `${chat.unreadCount} ${isRtl ? "رسائل غير مقروءة" : "unread"}` : ""}`}
+                    >
+                      <div className={styles.avatarContainer}>
+                        <div className={styles.avatarBox}>
+                          {initials ? (
+                            <span>{initials}</span>
+                          ) : (
+                            <User className="w-5 h-5" aria-hidden="true" />
+                          )}
+                        </div>
+                        {hasUnread && (
+                          <span
+                            className={styles.unreadDotIndicator}
+                            aria-hidden="true"
+                          >
+                            {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.rowContent}>
+                        <div className={styles.rowTop}>
+                          <h2
+                            className={`${styles.participantName} ${
+                              hasUnread ? styles.participantNameUnread : ""
+                            }`}
+                          >
+                            {participantName}
+                          </h2>
+                          {timeDisplay && (
+                            <span className={styles.timestamp}>
+                              <Clock className="w-3 h-3 inline-block mx-1" aria-hidden="true" />
+                              {timeDisplay}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className={styles.rowBottom}>
+                          <p
+                            className={`${styles.messageSnippet} ${
+                              hasUnread ? styles.messageSnippetUnread : ""
+                            }`}
+                          >
+                            {snippet}
+                          </p>
+
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            {chat.offerId && (
+                              <span className={styles.offerTag}>
+                                {isRtl ? "عرض عقاري" : "Offer"}
+                              </span>
+                            )}
+                            {hasUnread && (
+                              <span
+                                className={styles.unreadCountPill}
+                                aria-label={`${chat.unreadCount} ${isRtl ? "غير مقروءة" : "unread"}`}
+                              >
+                                {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
         </div>
       </div>
-
-      <div className="relative">
-        <Search className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-        <input 
-          type="text"
-          placeholder="ابحث باسم العميل، البريد، أو اسم المحادثة..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="h-14 w-full rounded-xl border border bg-card pr-14 pl-4 text-sm font-bold shadow-sm outline-none transition-all focus:border-slate-950"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-3">
-        {filteredChats.length === 0 ? (
-          <div className="rounded-2xl border border bg-card p-14 text-center shadow-sm wow-pop">
-            <MessageCircle className="mx-auto mb-4 h-16 w-16 text-slate-200" />
-            <h3 className="text-lg font-black text-slate-800">لا توجد محادثات مطابقة</h3>
-            <p className="mt-1 text-sm font-bold text-slate-400">جرّب بحثًا آخر أو ابدأ محادثة من صفحة العرض أو الطلب.</p>
-          </div>
-        ) : (
-          filteredChats.map((chat) => (
-            <motion.div
-              key={chat.id}
-              whileHover={{ y: -2, scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push(`/chat/${chat.id}`)}
-              className={`group flex cursor-pointer items-center gap-4 rounded-2xl border bg-card p-5 transition-all hover:border-slate-950 hover:shadow-sm max-md:p-4 ${
-                chat.unreadCount > 0 ? "border-slate-950" : "border"
-              }`}
-            >
-              <div className="relative shrink-0">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border bg-muted transition-colors group-hover:bg-slate-950">
-                  <User className="h-7 w-7 text-slate-400 transition-colors group-hover:text-white" />
-                </div>
-                {chat.unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white shadow-lg">
-                    {chat.unreadCount}
-                  </span>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-black text-slate-900 truncate">
-                    {getParticipantName(chat.otherParticipant, chat.name)}
-                  </h4>
-                  {chat.lastMessage && (
-                    <span className="flex shrink-0 items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      <Clock className="h-3 w-3" />
-                      {formatTime(chat.lastMessage.createdAt)}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className={`text-sm truncate max-w-[80%] ${chat.unreadCount > 0 ? 'font-black text-slate-950' : 'font-medium text-slate-500'}`}>
-                    {chat.lastMessage ? chat.lastMessage.content : "ابدأ محادثة جديدة"}
-                  </p>
-                  {chat.unreadCount > 0 ? (
-                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
-                  ) : (
-                    <CheckCheck className="h-4 w-4 text-slate-300" />
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))
-        )}
-      </div>
-      </div>
-    </div>
     </PullToRefresh>
   );
 }

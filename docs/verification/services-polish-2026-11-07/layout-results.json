@@ -1,0 +1,87 @@
+[
+  {
+    "width": 1440,
+    "overflow": false,
+    "heading": {
+      "x": 470.359375,
+      "y": 140,
+      "bottom": 249.296875
+    },
+    "actions": {
+      "x": 132,
+      "y": 199.296875,
+      "bottom": 249.296875
+    },
+    "cards": 5
+  },
+  {
+    "width": 1024,
+    "overflow": false,
+    "heading": {
+      "x": 370.359375,
+      "y": 140,
+      "bottom": 232.875
+    },
+    "actions": {
+      "x": 32,
+      "y": 182.875,
+      "bottom": 232.875
+    },
+    "cards": 5
+  },
+  {
+    "width": 768,
+    "overflow": false,
+    "heading": {
+      "x": 32,
+      "y": 124,
+      "bottom": 211.6875
+    },
+    "actions": {
+      "x": 32,
+      "y": 235.6875,
+      "bottom": 285.6875
+    },
+    "cards": 5
+  },
+  {
+    "width": 390,
+    "overflow": false,
+    "heading": {
+      "x": 20,
+      "y": 96,
+      "bottom": 202.375
+    },
+    "actions": {
+      "x": 20,
+      "y": 226.375,
+      "bottom": 276.375
+    },
+    "cards": 5
+  },
+  {
+    "width": 320,
+    "overflow": false,
+    "heading": {
+      "x": 20,
+      "y": 96,
+      "bottom": 202.375
+    },
+    "actions": {
+      "x": 20,
+      "y": 226.375,
+      "bottom": 291.5625
+    },
+    "cards": 5
+  },
+  {
+    "reduced": false,
+    "transform": "matrix(1, 0, 0, 1, 0, -2.9771)",
+    "opacity": "1"
+  },
+  {
+    "reduced": true,
+    "transform": "none",
+    "opacity": "1"
+  }
+]

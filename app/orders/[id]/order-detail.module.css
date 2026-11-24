@@ -1,0 +1,1736 @@
+/* app/orders/[id]/order-detail.module.css
+   Architectural Editorial Operational Request Details (Marcelo-inspired aesthetic)
+   Scoped CSS Module for /orders/[id]
+   Palette: Pearl #f5f4f0 / Royal Navy #0b192c / Readable Gold (#946528 light, #e6bb78 dark)
+   Open linework, ruled specifications, precision geometry, zero rounded-card stacks.
+*/
+
+.orderDetailRoot {
+  /* Scoped Palette Tokens — Light Mode (Pearl #f5f4f0 & Navy #0b192c) */
+  --od-page-bg: var(--site-light-background, #dbe4f2);
+  --od-surface: #ffffff;
+  --od-surface-subtle: #faf9f6;
+  --od-surface-secondary: #f0efe9;
+  --od-surface-elevated: #ffffff;
+  --od-input-bg: #ffffff;
+  --od-navy: #0b192c;
+  --od-navy-muted: #1c2e46;
+  --od-text-main: #0b192c;
+  --od-text-secondary: #475569;
+  --od-text-muted: #64748b;
+  --od-border: #e2ded6;
+  --od-border-subtle: #eceae3;
+  --od-border-strong: #0b192c;
+
+  /* Readable Warm Gold (Light Mode: #946528) */
+  --od-gold: #946528;
+  --od-gold-deep: #754e1c;
+  --od-gold-tint: rgba(148, 101, 40, 0.08);
+  --od-gold-border: rgba(148, 101, 40, 0.32);
+
+  /* Status Colors (Light) */
+  --od-status-pending-bg: #fffbeb;
+  --od-status-pending-text: #92400e;
+  --od-status-pending-border: #fde68a;
+
+  --od-status-progress-bg: #eff6ff;
+  --od-status-progress-text: #1e40af;
+  --od-status-progress-border: #bfdbfe;
+
+  --od-status-completed-bg: #ecfdf5;
+  --od-status-completed-text: #065f46;
+  --od-status-completed-border: #a7f3d0;
+
+  --od-status-cancelled-bg: #fef2f2;
+  --od-status-cancelled-text: #991b1b;
+  --od-status-cancelled-border: #fecaca;
+
+  /* Button & Action Tokens */
+  --od-btn-primary-bg: #0b192c;
+  --od-btn-primary-text: #ffffff;
+  --od-btn-secondary-bg: #f0efe9;
+  --od-btn-secondary-text: #0b192c;
+  --od-focus-ring: #946528;
+
+  /* Scope root token overrides to stop global calm/cinematic styles from washing page into grey boxes */
+  --background: var(--site-light-background, #dbe4f2) !important;
+  --foreground: #0b192c !important;
+  --card: #ffffff !important;
+  --card-foreground: #0b192c !important;
+  --muted: #f0efe9 !important;
+  --muted-foreground: #64748b !important;
+  --border: #e2ded6 !important;
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--od-page-bg) !important;
+  color: var(--od-text-main) !important;
+  font-family: inherit;
+  overflow-x: clip;
+}
+
+/* Dark Mode Scoped Tokens */
+:global(.dark) .orderDetailRoot {
+  --od-page-bg: #0b192c;
+  --od-surface: #102138;
+  --od-surface-subtle: #0d1a2d;
+  --od-surface-secondary: #162b47;
+  --od-surface-elevated: #152740;
+  --od-input-bg: #0d1a2d;
+  --od-navy: #f5f4f0;
+  --od-navy-muted: #c8d7e6;
+  --od-text-main: #f5f4f0;
+  --od-text-secondary: #9bb0c6;
+  --od-text-muted: #7d93aa;
+  --od-border: #1e3655;
+  --od-border-subtle: #172b43;
+  --od-border-strong: #e6bb78;
+
+  /* Readable Luminous Gold (Dark Mode: #e6bb78) */
+  --od-gold: #e6bb78;
+  --od-gold-deep: #ffd38c;
+  --od-gold-tint: rgba(230, 187, 120, 0.12);
+  --od-gold-border: rgba(230, 187, 120, 0.38);
+
+  /* Status Colors (Dark) */
+  --od-status-pending-bg: rgba(245, 158, 11, 0.14);
+  --od-status-pending-text: #fbbf24;
+  --od-status-pending-border: rgba(245, 158, 11, 0.35);
+
+  --od-status-progress-bg: rgba(59, 130, 246, 0.14);
+  --od-status-progress-text: #93c5fd;
+  --od-status-progress-border: rgba(59, 130, 246, 0.35);
+
+  --od-status-completed-bg: rgba(16, 185, 129, 0.14);
+  --od-status-completed-text: #6ee7b7;
+  --od-status-completed-border: rgba(16, 185, 129, 0.35);
+
+  --od-status-cancelled-bg: rgba(239, 68, 68, 0.14);
+  --od-status-cancelled-text: #fca5a5;
+  --od-status-cancelled-border: rgba(239, 68, 68, 0.35);
+
+  /* Button Tokens (Dark) */
+  --od-btn-primary-bg: #f5f4f0;
+  --od-btn-primary-text: #0b192c;
+  --od-btn-secondary-bg: #162b47;
+  --od-btn-secondary-text: #f5f4f0;
+  --od-focus-ring: #e6bb78;
+
+  --background: #0b192c !important;
+  --foreground: #f5f4f0 !important;
+  --card: #102138 !important;
+  --card-foreground: #f5f4f0 !important;
+  --muted: #162b47 !important;
+  --muted-foreground: #9bb0c6 !important;
+  --border: #1e3655 !important;
+
+  background-color: var(--od-page-bg) !important;
+  color: var(--od-text-main) !important;
+}
+
+/* Outer Container */
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1rem 0.875rem 3rem 0.875rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 1.5rem 1.25rem 3.5rem 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 2rem 2rem 4.5rem 2rem;
+  }
+}
+
+/* ==========================================================================
+   Top Navigation Bar & Breadcrumbs
+   ========================================================================== */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--od-border);
+}
+
+.breadcrumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--od-text-muted);
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--od-text-secondary);
+  text-decoration: none;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover,
+.breadcrumbLink:focus-visible {
+  color: var(--od-gold);
+  outline: none;
+}
+
+.breadcrumbSep {
+  opacity: 0.45;
+  color: var(--od-text-muted);
+  user-select: none;
+}
+
+.breadcrumbCurrent {
+  color: var(--od-text-main);
+  font-weight: 700;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  background-color: var(--od-surface);
+  color: var(--od-text-main);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.backButton:hover {
+  background-color: var(--od-surface-secondary);
+  border-color: var(--od-border-strong);
+  color: var(--od-text-main);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+.iconRtl {
+  width: 1rem;
+  height: 1rem;
+}
+
+.iconLtr {
+  width: 1rem;
+  height: 1rem;
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   Editorial Operational Header (Open Blueprint Linework)
+   ========================================================================== */
+.heroSection {
+  position: relative;
+  background-color: var(--od-surface);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .heroSection {
+    padding: 2rem 2.25rem;
+  }
+}
+
+/* Subtle architectural corner cross markers */
+.heroSection::before {
+  content: "+";
+  position: absolute;
+  top: -7px;
+  inset-inline-start: -6px;
+  font-size: 14px;
+  line-height: 14px;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--od-gold);
+  pointer-events: none;
+  user-select: none;
+}
+
+.heroSection::after {
+  content: "+";
+  position: absolute;
+  bottom: -8px;
+  inset-inline-end: -6px;
+  font-size: 14px;
+  line-height: 14px;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--od-gold);
+  pointer-events: none;
+  user-select: none;
+}
+
+.heroMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--od-border-subtle);
+}
+
+.badgeGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.dealBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: var(--od-navy);
+  color: var(--od-page-bg);
+  border-radius: 2px;
+}
+
+:global(.dark) .dealBadge {
+  background-color: var(--od-navy-muted);
+  color: var(--od-text-main);
+  border: 1px solid var(--od-border);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+
+.status_pending {
+  background-color: var(--od-status-pending-bg);
+  color: var(--od-status-pending-text);
+  border-color: var(--od-status-pending-border);
+}
+
+.status_in_progress {
+  background-color: var(--od-status-progress-bg);
+  color: var(--od-status-progress-text);
+  border-color: var(--od-status-progress-border);
+}
+
+.status_completed {
+  background-color: var(--od-status-completed-bg);
+  color: var(--od-status-completed-text);
+  border-color: var(--od-status-completed-border);
+}
+
+.status_cancelled {
+  background-color: var(--od-status-cancelled-bg);
+  color: var(--od-status-cancelled-text);
+  border-color: var(--od-status-cancelled-border);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.heroTimestamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--od-text-muted);
+  font-family: inherit;
+}
+
+.heroTitleArea {
+  margin: 1.25rem 0 1.5rem 0;
+}
+
+.blueprintMicroLabel {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--od-gold);
+  margin-bottom: 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.heroTitle {
+  font-size: clamp(1.625rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--od-text-main);
+  margin: 0 0 0.5rem 0;
+}
+
+.heroLocation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--od-text-secondary);
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.heroLocationIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+}
+
+.heroLocationCity {
+  font-weight: 700;
+  color: var(--od-text-main);
+}
+
+.heroLocationSep {
+  opacity: 0.5;
+  color: var(--od-text-muted);
+}
+
+/* ==========================================================================
+   Ruled Key Specifications Strip (Open Linework Figures)
+   ========================================================================== */
+.ruledFiguresBar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--od-border);
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  gap: 1.25rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .ruledFiguresBar {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+}
+
+.ruledFigureCell {
+  padding: 0.25rem 0.5rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .ruledFigureCell {
+    padding: 0 1rem;
+    border-inline-end: 1px solid var(--od-border);
+  }
+
+  .ruledFigureCell:last-child {
+    border-inline-end: none;
+  }
+}
+
+.ruledFigureLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--od-text-muted);
+  margin-bottom: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ruledFigureValue {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--od-text-main);
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.ruledFigureUnit {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--od-text-muted);
+}
+
+.refHash {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--od-gold);
+}
+
+.copyRefButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background-color: var(--od-surface-secondary);
+  border: 1px solid var(--od-border);
+  color: var(--od-text-secondary);
+  cursor: pointer;
+  margin-inline-start: 0.375rem;
+  transition: all 0.15s ease;
+}
+
+.copyRefButton:hover {
+  background-color: var(--od-surface);
+  color: var(--od-gold);
+  border-color: var(--od-gold);
+}
+
+.copyRefButton:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Content Layout Grid (Main Column + Side Operational Panel)
+   ========================================================================== */
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .layoutGrid {
+    grid-template-columns: minmax(0, 7.5fr) minmax(360px, 4.5fr);
+    gap: 2rem;
+  }
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==========================================================================
+   Architectural Specification Blocks (Ruled Open Linework)
+   ========================================================================== */
+.specBlock {
+  position: relative;
+  background-color: var(--od-surface);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  padding: 1.25rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .specBlock {
+    padding: 1.5rem 1.75rem;
+  }
+}
+
+.specBlockHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.875rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--od-border);
+}
+
+.specBlockTitle {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--od-text-main);
+  letter-spacing: -0.01em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.specBlockTitleIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+}
+
+.specBlockCategoryTag {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--od-gold);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Ruled Specification Table / Grid */
+.specGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--od-border-subtle);
+}
+
+@media (min-width: 640px) {
+  .specGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.specRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.875rem 0.75rem;
+  border-bottom: 1px solid var(--od-border-subtle);
+  border-inline-end: none;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .specRow:nth-child(odd) {
+    border-inline-end: 1px solid var(--od-border-subtle);
+  }
+}
+
+.specLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--od-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.25rem;
+}
+
+.specLabelIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.specValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--od-text-main);
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   Requested Features & Amenities Tags
+   ========================================================================== */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.featureTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--od-surface-subtle);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--od-text-main);
+  box-sizing: border-box;
+}
+
+.featureCheckIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Additional Details & Notes Section
+   ========================================================================== */
+.notesCallout {
+  position: relative;
+  border-inline-start: 3px solid var(--od-gold);
+  background-color: var(--od-surface-subtle);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 4px 4px 0;
+  border-top: 1px solid var(--od-border-subtle);
+  border-bottom: 1px solid var(--od-border-subtle);
+  border-inline-end: 1px solid var(--od-border-subtle);
+  box-sizing: border-box;
+}
+
+.notesText {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--od-text-secondary);
+  font-weight: 500;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Sidebar: Client & Stakeholder Information
+   ========================================================================== */
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--od-border-subtle);
+  margin-bottom: 1rem;
+}
+
+.profileAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  background-color: var(--od-navy);
+  color: var(--od-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 800;
+  border: 1px solid var(--od-border);
+  flex-shrink: 0;
+}
+
+:global(.dark) .profileAvatar {
+  background-color: var(--od-navy-muted);
+  color: var(--od-text-main);
+  border-color: var(--od-border);
+}
+
+.profileInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.profileName {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--od-text-main);
+  margin: 0 0 0.125rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileRoleBadge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--od-text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.verifiedBadge {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+}
+
+/* Contact Rows (Scoped to privacy gate) */
+.contactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--od-border-subtle);
+  font-size: 0.8125rem;
+  min-height: 44px;
+  gap: 0.5rem;
+}
+
+.contactRow:last-child {
+  border-bottom: none;
+}
+
+.contactLabelGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--od-text-muted);
+  font-weight: 600;
+}
+
+.contactIcon {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  color: var(--od-gold);
+  flex-shrink: 0;
+}
+
+.contactValueAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--od-text-main);
+  font-weight: 700;
+  text-decoration: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  transition: color 0.15s ease;
+}
+
+.contactValueAction:hover {
+  color: var(--od-gold);
+}
+
+.copyContactBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  color: var(--od-text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.copyContactBtn:hover {
+  color: var(--od-gold);
+  background-color: var(--od-surface-secondary);
+}
+
+.copyContactBtn:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Real Operational Chat Module (Architectural Ruled Panel)
+   ========================================================================== */
+.chatContainer {
+  position: relative;
+  background-color: var(--od-surface);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  box-sizing: border-box;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background-color: var(--od-surface-subtle);
+  border-bottom: 1px solid var(--od-border);
+  flex-shrink: 0;
+}
+
+.chatPartnerInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.chatAvatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chatAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  background-color: var(--od-navy);
+  color: var(--od-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  border: 1px solid var(--od-border);
+}
+
+:global(.dark) .chatAvatar {
+  background-color: var(--od-navy-muted);
+  color: var(--od-text-main);
+}
+
+.presenceDot {
+  position: absolute;
+  bottom: -2px;
+  inset-inline-end: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--od-surface);
+}
+
+.presenceOnline {
+  background-color: #10b981;
+}
+
+.presenceOffline {
+  background-color: #94a3b8;
+}
+
+.chatPartnerName {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--od-text-main);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.chatPresenceText {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--od-text-muted);
+  margin: 0.125rem 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Chat Messages Thread Viewport */
+.chatMessagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background-color: var(--od-surface-subtle);
+  scrollbar-width: thin;
+  scrollbar-color: var(--od-border) transparent;
+}
+
+.chatMessagesArea::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chatMessagesArea::-webkit-scrollbar-thumb {
+  background-color: var(--od-border);
+  border-radius: 2px;
+}
+
+.chatEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--od-text-muted);
+  padding: 1.5rem;
+  gap: 0.5rem;
+}
+
+.chatEmptyIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--od-gold);
+  opacity: 0.6;
+}
+
+.chatEmptyText {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.messageRow {
+  display: flex;
+  width: 100%;
+}
+
+.messageRowOwn {
+  justify-content: flex-end;
+}
+
+.messageRowOther {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  max-width: 82%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.messageBody {
+  padding: 0.625rem 0.875rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 600;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.messageBodyOwn {
+  background-color: var(--od-navy);
+  color: #ffffff;
+  border: 1px solid var(--od-navy);
+}
+
+:global(.dark) .messageBodyOwn {
+  background-color: #1e3655;
+  color: #ffffff;
+  border-color: #274770;
+}
+
+.messageBodyOther {
+  background-color: var(--od-surface);
+  color: var(--od-text-main);
+  border: 1px solid var(--od-border);
+}
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.6875rem;
+  color: var(--od-text-muted);
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.messageMetaOwn {
+  justify-content: flex-end;
+}
+
+.messageMetaOther {
+  justify-content: flex-start;
+}
+
+.readReceiptIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--od-gold);
+}
+
+/* Chat Input Bar */
+.chatInputBar {
+  padding: 0.75rem 1rem;
+  background-color: var(--od-surface);
+  border-top: 1px solid var(--od-border);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+.chatInput {
+  flex: 1;
+  min-height: 44px;
+  padding: 0.5rem 0.875rem;
+  background-color: var(--od-surface-secondary);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  color: var(--od-text-main);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.chatInput:focus {
+  border-color: var(--od-gold);
+  background-color: var(--od-surface);
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: -1px;
+}
+
+.chatInput::placeholder {
+  color: var(--od-text-muted);
+  font-weight: 500;
+}
+
+.chatSendBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.875rem;
+  background-color: var(--od-navy);
+  color: #ffffff;
+  border: 1px solid var(--od-navy);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+:global(.dark) .chatSendBtn {
+  background-color: var(--od-gold);
+  color: #0b192c;
+  border-color: var(--od-gold);
+}
+
+.chatSendBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.chatSendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.chatSendBtn:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+.sendIconRtl {
+  width: 1rem;
+  height: 1rem;
+  transform: rotate(180deg);
+}
+
+.sendIconLtr {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Auth / Wait Guard States for Chat */
+.chatPromptBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background-color: var(--od-surface-subtle);
+  border: 1px solid var(--od-border);
+  border-radius: 4px;
+  gap: 0.875rem;
+  box-sizing: border-box;
+}
+
+.chatPromptIcon {
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--od-gold);
+}
+
+.chatPromptText {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--od-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 280px;
+}
+
+.chatLoginLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  background-color: var(--od-navy);
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+:global(.dark) .chatLoginLink {
+  background-color: var(--od-gold);
+  color: #0b192c;
+}
+
+.chatLoginLink:hover {
+  opacity: 0.9;
+}
+
+.chatLoginLink:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Loading, Error, and Not Found Architectural Skeletons
+   ========================================================================== */
+.stateContainer {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  gap: 1.25rem;
+  box-sizing: border-box;
+}
+
+.stateIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--od-gold);
+}
+
+.stateTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--od-text-main);
+  margin: 0;
+}
+
+.stateMessage {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--od-text-secondary);
+  max-width: 420px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.5rem;
+  background-color: var(--od-navy);
+  color: #ffffff;
+  border: 1px solid var(--od-navy);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+:global(.dark) .retryButton {
+  background-color: var(--od-gold);
+  color: #0b192c;
+  border-color: var(--od-gold);
+}
+
+.retryButton:hover {
+  opacity: 0.9;
+}
+
+.retryButton:focus-visible {
+  outline: 2px solid var(--od-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Blueprint Loading Skeleton */
+.skeletonHeader {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(90deg, var(--od-surface-secondary) 25%, var(--od-surface-subtle) 50%, var(--od-surface-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  border: 1px solid var(--od-border);
+  margin-bottom: 2rem;
+}
+
+.skeletonBlock {
+  width: 100%;
+  height: 260px;
+  background: linear-gradient(90deg, var(--od-surface-secondary) 25%, var(--od-surface-subtle) 50%, var(--od-surface-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  border: 1px solid var(--od-border);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion Accessibility
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .skeletonHeader,
+  .skeletonBlock {
+    animation: none;
+  }
+
+  .backButton,
+  .chatSendBtn,
+  .copyRefButton,
+  .retryButton {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Keep the actual grid contents within narrow viewports; clipping is not sizing. */
+.orderDetailRoot .layoutGrid { grid-template-columns: minmax(0, 1fr); }
+.orderDetailRoot .layoutGrid > *,
+.orderDetailRoot .mainColumn,
+.orderDetailRoot .sideColumn,
+.orderDetailRoot .specBlock,
+.orderDetailRoot .chatContainer,
+.orderDetailRoot .heroSection { min-width: 0; max-width: 100%; }
+.orderDetailRoot .specBlockTitle { min-width: 0; overflow-wrap: anywhere; }
+.orderDetailRoot .contactRow { min-width: 0; gap: .75rem; flex-wrap: wrap; }
+.orderDetailRoot .specValue { overflow-wrap: anywhere; min-width: 0; }
+.orderDetailRoot .chatInput {
+  min-width: 0;
+  color: var(--od-text-main) !important;
+  background: var(--od-input-bg) !important;
+  -webkit-text-fill-color: var(--od-text-main) !important;
+}
+.orderDetailRoot .chatInput::placeholder {
+  color: var(--od-text-secondary) !important;
+  -webkit-text-fill-color: var(--od-text-secondary) !important;
+  opacity: 1;
+}
+.orderDetailRoot .heroSection,
+.orderDetailRoot .specBlock {
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--od-border);
+  border-radius: 0;
+  padding-inline: 0;
+}
+.orderDetailRoot .heroTitle { font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.25; }
+@media (min-width: 1024px) {
+  .orderDetailRoot .layoutGrid { grid-template-columns: minmax(0, 7.5fr) minmax(0, 4.5fr); }
+}
+
+/* User-selected 03 / Command Center */
+.orderDetailRoot {
+  --od-page-bg:#edf1f5;
+  --od-surface:#fff;
+  --od-surface-subtle:#f4f7fa;
+  --od-surface-secondary:#e8eff5;
+  --od-surface-elevated:#fff;
+  --od-input-bg:#f4f7fa;
+  --od-text-main:#182e41;
+  --od-text-secondary:#52677b;
+  --od-text-muted:#627488;
+  --od-border:#d6e0e9;
+  --od-border-subtle:#e4ebf1;
+  --od-border-strong:#426b86;
+  --od-gold:#426b86;
+  --od-gold-deep:#294e68;
+  --od-gold-tint:#edf3f7;
+  --od-gold-border:#b8cbd9;
+  --od-focus-ring:#426b86;
+  --od-btn-primary-bg:#182e41;
+  --od-btn-primary-text:#fff;
+  --od-btn-secondary-bg:#edf3f7;
+  --od-btn-secondary-text:#182e41;
+  --background:#edf1f5!important;
+  --foreground:#182e41!important;
+  --muted:#e8eff5!important;
+  --muted-foreground:#627488!important;
+  --border:#d6e0e9!important;
+}
+:global(.dark) .orderDetailRoot {
+  --od-page-bg:#0e1924;
+  --od-surface:#162432;
+  --od-surface-subtle:#12202d;
+  --od-surface-secondary:#21374b;
+  --od-surface-elevated:#1b2e40;
+  --od-input-bg:#0e1924;
+  --od-navy:#eef4f8;
+  --od-navy-muted:#b9ccdc;
+  --od-text-main:#eef4f8;
+  --od-text-secondary:#b4c5d4;
+  --od-text-muted:#a1b5c7;
+  --od-border:#2d4154;
+  --od-border-subtle:#25394c;
+  --od-border-strong:#a3c5de;
+  --od-gold:#a3c5de;
+  --od-gold-deep:#d6e8f6;
+  --od-gold-tint:#21374b;
+  --od-gold-border:#42617a;
+  --od-focus-ring:#a3c5de;
+  --od-btn-primary-bg:#eef4f8;
+  --od-btn-primary-text:#0e1924;
+  --od-btn-secondary-bg:#21374b;
+  --od-btn-secondary-text:#eef4f8;
+  --background:#0e1924!important;
+  --foreground:#eef4f8!important;
+  --card:#162432!important;
+  --card-foreground:#eef4f8!important;
+  --muted:#21374b!important;
+  --muted-foreground:#a1b5c7!important;
+  --border:#2d4154!important;
+}
+.topNav {
+  margin-bottom:1.25rem;
+  padding-bottom:1rem;
+}
+.motionControls {
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex-wrap:wrap;
+}
+.motionButton {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  min-height:44px;
+  padding:.6rem .8rem;
+  font:inherit;
+  font-size:.75rem;
+  background:var(--od-surface);
+  border:1px solid var(--od-border);
+  border-radius:8px;
+  color:var(--od-text-secondary);
+  cursor:pointer;
+}
+.motionButton:disabled {
+  cursor:default;
+  opacity:.75;
+}
+.motionButton:focus-visible {
+  outline:2px solid var(--od-focus-ring);
+  outline-offset:3px;
+}
+.orderDetailRoot .heroSection {
+  padding:1.5rem;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  isolation:isolate;
+  background:var(--od-surface);
+  border:1px solid var(--od-border);
+  border-radius:9px;
+}
+.heroSection::before,.heroSection::after {
+  content:none;
+}
+.heroMetaRow,.heroTitleArea,.ruledFiguresBar {
+  position:relative;
+  z-index:1;
+}
+.heroTitleArea {
+  margin-block:1.25rem;
+}
+.orderDetailRoot .heroTitle {
+  font-size:clamp(1.75rem,3vw,2.5rem);
+  line-height:1.35;
+  font-weight:600;
+}
+.blueprintMicroLabel {
+  color:var(--od-gold);
+  font-weight:500;
+  letter-spacing:.06em;
+}
+.dealBadge,.statusBadge,.profileRoleBadge {
+  border-radius:30px;
+}
+.ruledFiguresBar {
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:1px;
+  background:var(--od-border);
+  border:1px solid var(--od-border);
+  border-radius:8px;
+  overflow:hidden;
+  margin-top:1.5rem;
+  padding-top:0;
+}
+.ruledFigureCell {
+  padding:1rem;
+  min-width:0;
+  background:var(--od-surface-subtle);
+  border:0;
+}
+.ruledFigureValue {
+  font-size:clamp(1.2rem,2.3vw,1.8rem);
+  font-weight:500;
+  flex-wrap:wrap;
+  gap:.4rem;
+}
+.ruledFigureLabel {
+  font-size:.6875rem;
+  color:var(--od-text-muted);
+}
+.refHash {
+  font-size:.875rem;
+  letter-spacing:.03em;
+  overflow-wrap:anywhere;
+}
+.orderDetailRoot .layoutGrid {
+  gap:1rem;
+}
+.mainColumn,.sideColumn {
+  gap:1rem;
+}
+.orderDetailRoot .specBlock {
+  padding:1.25rem;
+  background:var(--od-surface);
+  border:1px solid var(--od-border);
+  border-radius:9px;
+  transition:border-color 180ms ease;
+}
+.specBlockHeader {
+  margin-bottom:.75rem;
+  padding-bottom:.875rem;
+}
+.orderDetailRoot .specBlockTitle {
+  font-size:.9375rem;
+  font-weight:600;
+  line-height:1.6;
+}
+.specBlockTitleIcon {
+  color:var(--od-gold);
+}
+.specGrid {
+  gap:0 1.5rem;
+}
+.specRow {
+  padding-block:.8rem;
+  gap:.75rem;
+}
+.specLabel {
+  font-size:.75rem;
+  color:var(--od-text-muted);
+}
+.specValue {
+  font-size:.8125rem;
+  color:var(--od-text-main);
+  font-weight:500;
+}
+.notesCallout {
+  border-radius:7px;
+  background:var(--od-surface-subtle);
+  border-color:var(--od-border);
+}
+.profileAvatar,.chatAvatar {
+  background:var(--od-surface-secondary);
+  color:var(--od-gold);
+}
+.chatContainer,.chatPromptBox {
+  border-radius:9px;
+  background:var(--od-surface);
+  border:1px solid var(--od-border);
+}
+.chatHeader {
+  background:var(--od-surface);
+  border-color:var(--od-border);
+}
+.chatMessagesArea {
+  background:var(--od-surface-subtle);
+  min-height:220px;
+  max-height:380px;
+}
+.chatInputBar {
+  background:var(--od-surface);
+  border-color:var(--od-border);
+  gap:.5rem;
+  padding:.875rem;
+}
+.chatInput {
+  border-radius:8px;
+  border:1px solid var(--od-border);
+}
+.chatSendBtn,.chatLoginLink,.retryButton,.backButton,.copyRefButton {
+  border-radius:8px;
+}
+.chatSendBtn,.retryButton,:global(.dark) .retryButton {
+  background:var(--od-btn-primary-bg);
+  color:var(--od-btn-primary-text);
+  border-color:var(--od-border);
+}
+.chatInput:focus {
+  border-color:var(--od-focus-ring);
+  outline-offset:2px;
+}
+.heroNetwork {
+  position:absolute;
+  inset-block-start:-5px;
+  inset-inline-end:-35px;
+  width:min(55%,500px);
+  height:250px;
+  pointer-events:none;
+  color:var(--od-gold);
+  opacity:.18;
+  z-index:0;
+}
+.networkLines {
+  stroke-width:1;
+  opacity:.6;
+}
+.networkTrace {
+  stroke-width:2;
+  stroke-dasharray:16 470;
+  animation:commandFlow 5s linear infinite;
+}
+.networkNode {
+  animation:commandBreathe 3s ease-in-out infinite;
+}
+.networkHouse {
+  animation:commandFloat 5s ease-in-out infinite;
+}
+.status_pending .statusDot,.status_in_progress .statusDot {
+  animation:commandBreathe 3s ease-in-out infinite;
+}
+@keyframes commandFlow {
+  to {
+    stroke-dashoffset:-486;
+  }
+}
+@keyframes commandBreathe {
+  0%,100% {
+    opacity:.55;
+  }
+  50% {
+    opacity:1;
+  }
+}
+@keyframes commandFloat {
+  0%,100% {
+    transform:translateY(0);
+  }
+  50% {
+    transform:translateY(-6px);
+  }
+}
+@media(hover:hover) {
+  .orderDetailRoot .specBlock:hover {
+    border-color:var(--od-gold-border);
+  }
+  .motionButton:hover:not(:disabled) {
+    border-color:var(--od-gold);
+  }
+  .motionButton:active:not(:disabled),.chatSendBtn:active:not(:disabled) {
+    transform:scale(.97);
+  }
+}
+@media(min-width:1024px) {
+  .orderDetailRoot .layoutGrid {
+    grid-template-columns:minmax(0,1fr) minmax(280px,320px);
+  }
+  .mainColumn {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    align-items:start;
+  }
+  .mainColumn>:first-child,.mainColumn>:last-child {
+    grid-column:1/-1;
+  }
+  .mainColumn>:not(:first-child):not(:last-child) .specGrid {
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+@media(max-width:767px) {
+  .orderDetailRoot .heroSection,.orderDetailRoot .specBlock {
+    padding:1rem;
+  }
+  .ruledFiguresBar {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .ruledFigureCell {
+    padding:.875rem .75rem;
+  }
+  .orderDetailRoot .heroTitle {
+    font-size:1.75rem;
+    overflow-wrap:anywhere;
+  }
+  .heroNetwork {
+    width:80%;
+    opacity:.12;
+  }
+  .motionControls {
+    width:100%;
+    justify-content:space-between;
+  }
+  .motionButton,.backButton {
+    font-size:.6875rem;
+  }
+}
+.orderDetailRoot[data-motion-paused="true"] *,.orderDetailRoot[data-motion-paused="true"] *::before,.orderDetailRoot[data-motion-paused="true"] *::after {
+  animation:none!important;
+  transition:none!important;
+  scroll-behavior:auto;
+}
+@media(prefers-reduced-motion:reduce) {
+  .orderDetailRoot *,.orderDetailRoot *::before,.orderDetailRoot *::after {
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto;
+  }
+}
+
+.orderDetailRoot .dealBadge,
+.orderDetailRoot .profileAvatar {
+  background: var(--od-surface-secondary);
+  color: var(--od-text-main);
+  border: 1px solid var(--od-border);
+}

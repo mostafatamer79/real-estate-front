@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>الاتجاه C — المدينة الحية والتحليق البانورامي (The 3D Living Metropolis)</title>
+  <style>
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype');
+      font-weight: 600;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(13, 19, 31, 0.85);
+      --gold: #d4af37;
+      --cyan: #2dd4bf;
+      --border: rgba(212, 175, 55, 0.25);
+      --text: #f8fafc;
+      --muted: #8492a6;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plex', -apple-system, sans-serif;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+
+    /* 3D Canvas Stage */
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* Floating Spatial HUD & Navigation */
+    .spatial-nav {
+      position: fixed;
+      top: 24px;
+      inset-inline: 4vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .spatial-nav * { pointer-events: auto; }
+    .nav-brand-tag {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-glow-dot {
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    .hud-telemetry {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-family: monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+    }
+
+    /* Floating Hero Mission Card */
+    .mission-card {
+      position: fixed;
+      top: 100px;
+      right: 4vw;
+      max-width: 440px;
+      width: calc(100% - 8vw);
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      z-index: 20;
+      box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
+    }
+    [dir="ltr"] .mission-card { right: auto; left: 4vw; }
+    @media (max-width: 768px) {
+      .mission-card { position: static; margin: 90px 4vw 20px; }
+    }
+    .mission-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .mission-title {
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .mission-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .control-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .control-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms;
+    }
+    .control-btn:hover {
+      background: var(--gold);
+      color: #07090e;
+    }
+
+    /* Spatial Hotspot Pin Overlays */
+    .spatial-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      cursor: pointer;
+      pointer-events: auto;
+      text-align: center;
+    }
+    .pin-pulse {
+      width: 14px; height: 14px;
+      background: var(--gold);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      margin: 0 auto;
+      box-shadow: 0 0 16px var(--gold);
+      animation: ping 2s infinite;
+    }
+    .pin-label {
+      background: rgba(7, 9, 14, 0.92);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+      white-space: nowrap;
+      color: var(--text);
+    }
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Choice Bar */
+    .choice-bar {
+      position: fixed;
+      bottom: 24px;
+      inset-inline: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .choice-bar button {
+      pointer-events: auto;
+      background: var(--cyan);
+      color: #07090e;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(45, 212, 191, 0.35);
+      transition: transform 200ms ease;
+    }
+    .choice-bar button:hover { transform: scale(1.04); }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Spatial Navigation -->
+  <div class="spatial-nav">
+    <div class="nav-brand-tag">
+      <span class="brand-glow-dot"></span>
+      <span>الوساطة الرقمية • C (3D Living Metropolis)</span>
+    </div>
+    <div class="hud-telemetry" id="telemetry">
+      DRONE CAM // ALT: 140M // HEADING: 042° // 60 FPS
+    </div>
+  </div>
+
+  <!-- Mission Card -->
+  <aside class="mission-card">
+    <span class="mission-tag">تحليق مباشر • شمال الرياض</span>
+    <h1 class="mission-title">مدينة بنان الذكية في فضاء ثلاثي الأبعاد.</h1>
+    <p class="mission-desc">
+      انقر واسحب بالفأرة أو المس الشاشة لتدوير الكاميرا واستكشاف مخطط بنان الحي، حركة المركبات، والواجهات المائية.
+    </p>
+
+    <div class="control-row">
+      <button class="control-btn" id="btnOverview">نظرة عامة</button>
+      <button class="control-btn" id="btnLagoon">البحيرة</button>
+      <button class="control-btn" id="btnTowers">الأبراج</button>
+      <button class="control-btn" id="btnNight">ليلي / نهاري</button>
+    </div>
+
+    <div style="font-size:12px; color:var(--muted); border-top:1px solid var(--border); padding-top:12px;">
+      ✦ تحكم ثلاثي الأبعاد فوري مدمج بدون صور خارجية.
+    </div>
+  </aside>
+
+  <!-- Interactive 3D Pins in HTML -->
+  <div class="spatial-pin" style="top:42%; left:52%;" onclick="alert('البحيرة الكريستالية والممشى المائي في بنان')">
+    <div class="pin-pulse"></div>
+    <div class="pin-label">البحيرة الكريستالية</div>
+  </div>
+  <div class="spatial-pin" style="top:32%; left:68%;" onclick="alert('المركز المالي وأبراج الأعمال الذكية')">
+    <div class="pin-pulse" style="background:var(--cyan); box-shadow:0 0 16px var(--cyan);"></div>
+    <div class="pin-label">المركز المالي KAFD-II</div>
+  </div>
+  <div class="spatial-pin" style="top:58%; left:36%;" onclick="alert('ضاحية فلل ريزيدنس بنان الخاصة')">
+    <div class="pin-pulse"></div>
+    <div class="pin-label">فلل ريزيدنس بنان</div>
+  </div>
+
+  <!-- Choice Bar -->
+  <div class="choice-bar">
+    <button onclick="parent.postMessage('select_C', '*')">✦ اختيار الاتجاه C (The 3D Living Metropolis) ↗</button>
+  </div>
+
+  <!-- Load Three.js from local vendor -->
+  <script src="/design-options/vendor/three.core.js"></script>
+  <script>
+    // Procedural 3D City Simulation
+    const container = document.getElementById('canvas-container');
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x07090e);
+    scene.fog = new THREE.FogExp2(0x07090e, 0.003);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+    camera.position.set(0, 160, 320);
+    camera.lookAt(0, 20, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Ambient & Directional Lighting
+    const ambientLight = new THREE.AmbientLight(0x223344, 1.2);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xd4af37, 2.5);
+    sunLight.position.set(100, 200, 100);
+    scene.add(sunLight);
+
+    // Ground Plane with Grid
+    const grid = new THREE.GridHelper(800, 50, 0xd4af37, 0x1a2638);
+    grid.position.y = -0.5;
+    scene.add(grid);
+
+    // Procedural City Buildings (Blocks)
+    const buildingGeo = new THREE.BoxGeometry(1, 1, 1);
+    const buildingMat = new THREE.MeshStandardMaterial({
+      color: 0x0f1c2e,
+      roughness: 0.3,
+      metalness: 0.8,
+    });
+    const goldEdgeMat = new THREE.MeshStandardMaterial({
+      color: 0xd4af37,
+      roughness: 0.2,
+      metalness: 0.9,
+    });
+
+    const cityGroup = new THREE.Group();
+    scene.add(cityGroup);
+
+    // Generate 48 procedural buildings of varied heights
+    for (let x = -180; x <= 180; x += 40) {
+      for (let z = -180; z <= 180; z += 40) {
+        if (Math.abs(x) < 30 && Math.abs(z) < 30) continue; // Leave center for water lagoon
+        const h = Math.random() * 90 + 20;
+        const b = new THREE.Mesh(buildingGeo, (Math.random() > 0.7 ? goldEdgeMat : buildingMat));
+        b.scale.set(24, h, 24);
+        b.position.set(x, h / 2, z);
+        cityGroup.add(b);
+      }
+    }
+
+    // Central Blue Crystal Lagoon
+    const lagoonGeo = new THREE.CylinderGeometry(45, 45, 2, 32);
+    const lagoonMat = new THREE.MeshStandardMaterial({
+      color: 0x0a4060,
+      roughness: 0.1,
+      metalness: 0.9,
+    });
+    const lagoon = new THREE.Mesh(lagoonGeo, lagoonMat);
+    lagoon.position.set(0, 0.5, 0);
+    scene.add(lagoon);
+
+    // Mouse / Touch Drag Orbit Interaction
+    let isDragging = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let camAngle = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouseX;
+      camAngle += deltaX * 0.005;
+      camera.position.x = Math.sin(camAngle) * 320;
+      camera.position.z = Math.cos(camAngle) * 320;
+      camera.lookAt(0, 20, 0);
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    // Animate Loop
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isDragging) {
+        camAngle += 0.0015;
+        camera.position.x = Math.sin(camAngle) * 320;
+        camera.position.z = Math.cos(camAngle) * 320;
+        camera.lookAt(0, 20, 0);
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Control Buttons
+    document.getElementById('btnOverview').onclick = () => {
+      camera.position.set(0, 240, 380);
+      camera.lookAt(0, 20, 0);
+    };
+    document.getElementById('btnLagoon').onclick = () => {
+      camera.position.set(0, 40, 90);
+      camera.lookAt(0, 10, 0);
+    };
+    document.getElementById('btnTowers').onclick = () => {
+      camera.position.set(140, 120, 140);
+      camera.lookAt(0, 50, 0);
+    };
+    let isDark = true;
+    document.getElementById('btnNight').onclick = () => {
+      isDark = !isDark;
+      scene.background.setHex(isDark ? 0x07090e : 0xd8e2ed);
+      scene.fog.color.setHex(isDark ? 0x07090e : 0xd8e2ed);
+      sunLight.intensity = isDark ? 2.5 : 4.0;
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,1229 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "route": "/services",
+      "dark": false,
+      "status": 200,
+      "url": "/services",
+      "overflow": false,
+      "title": "الخدمات العقارية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/services/legal",
+      "dark": false,
+      "status": 200,
+      "url": "/services/legal",
+      "overflow": false,
+      "title": "الخدمات القانونية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات القانونية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات القانونية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/services/my-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/services/my-requests",
+      "overflow": false,
+      "title": "طلبات الخدمات | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 2,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "طلبات الخدمات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة طلبات الخدمات"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/services/legal-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/services/legal-requests",
+      "overflow": false,
+      "title": "الطلبات القانونية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "legal.requests.title"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/marketing",
+      "overflow": false,
+      "title": "التسويق العقاري | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nحلول تسويقية متكاملة\nالمركز التسويقي\n\nحل",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "action.marketing"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المركز التسويقي"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/financial",
+      "dark": false,
+      "status": 200,
+      "url": "/financial",
+      "overflow": false,
+      "title": "الخدمات المالية | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالإدارة المالية والمحاسبية\n\nإدارة التدفق",
+      "panels": 10,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "admin.settings.financial"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "الإدارة المالية والمحاسبية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "dark": false,
+      "status": 200,
+      "url": "/wallet",
+      "overflow": false,
+      "title": "المحفظة والفواتير | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nالقائمة الرئيسية\nالفواتير\n\nإدارة الفواتير والمدفوعات\n\nالعمولات\n\nإدارة ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المحفظة المالية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "القائمة الرئيسية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/offers",
+      "dark": false,
+      "status": 200,
+      "url": "/offers",
+      "overflow": false,
+      "title": "العروض العقارية في السعودية | الوساطة الرقمية",
+      "text": "العودة للرئيسية\nبحث العقارات\nنوع العقار\nسكني\nتجاري\nالمساحة (متر مربع)\nالسعر (⃁)\nالمدينة\nال",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "العروض العقارية"
+        },
+        {
+          "color": "rgb(15, 23, 42)",
+          "text": "العروض العقارية في السعودية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/orders",
+      "overflow": false,
+      "title": "الطلبات العقارية | الوساطة الرقمية",
+      "text": "رجوع\nطلب عقار جديد\n\nسجل طلبك وسنقوم بالبحث عن العقار المناسب لك\n\nإنشاء طلب\nطلباتي\nتفاصيل إ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "طلب عقار جديد"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/chat",
+      "dark": false,
+      "status": 200,
+      "url": "/chat",
+      "overflow": false,
+      "title": "المحادثات | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nمحادثاتي\n\nمتابعة المحادثات والردود من مك",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "محادثاتي"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "محادثاتي"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/department-hub",
+      "dark": false,
+      "status": 200,
+      "url": "/department-hub",
+      "overflow": false,
+      "title": "الأقسام | الوساطة الرقمية",
+      "text": "مركز الإدارات\nDEPT\nلوحة التحكم\nP\nمركز الإدارات\nأهلاً، Preview\n\nإليك نظرة عامة على الأقسام\n",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "مركز الإدارات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "أهلاً، Preview"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/marketing",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nعرض جديد\nكل العروض\nإضافة عقار\n\nأدخل بيانات العقار الجديد\n",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/properties",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/properties",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/finance",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/finance",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\nادارة الطلبات\nادارة التسويق\nإدارة الاملاك\nال",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/legal",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/legal",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/internal/employees",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/employees",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/buildingmanagement",
+      "dark": false,
+      "status": 200,
+      "url": "/buildingmanagement",
+      "overflow": false,
+      "title": "إدارة الأملاك والمباني | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/profile",
+      "dark": false,
+      "status": 200,
+      "url": "/profile",
+      "overflow": false,
+      "title": "الملف الشخصي | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالملف الشخصي\nرجوع\nرفع الصورة\nPreview Acc",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "الملف الشخصي"
+        },
+        {
+          "color": "oklch(0.279 0.041 260.031)",
+          "text": "الملف الشخصي"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/customerservice",
+      "dark": false,
+      "status": 200,
+      "url": "/customerservice",
+      "overflow": false,
+      "title": "خدمة العملاء والتواصل | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالرئيسية\nخدمة العملاء والتواصل\n\nتواصل مع",
+      "panels": 5,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمة العملاء والتواصل"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "خدمة العملاء"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "خدمة العملاء"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/about",
+      "dark": false,
+      "status": 200,
+      "url": "/about",
+      "overflow": false,
+      "title": "عن الوساطة الرقمية | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالرئيسية\nعن الوساطة الرقمية\n\nتعرف على ال",
+      "panels": 3,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "عن الوساطة الرقمية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "من نحن"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/info",
+      "dark": false,
+      "status": 200,
+      "url": "/info",
+      "overflow": false,
+      "title": "الشروط والسياسات ومعلومات المنصة | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالرئيسية\nالشروط والسياسات ومعلومات المنص",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الشروط والسياسات ومعلومات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/share-opinion",
+      "dark": false,
+      "status": 200,
+      "url": "/share-opinion",
+      "overflow": false,
+      "title": "شاركنا رأيك | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nالعودة\nشاركنا رأيك\n\nملاحظاتك ومقترحاتك ت",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "شارك رأيك"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "شاركنا رأيك"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/subscriptions/new",
+      "dark": false,
+      "status": 200,
+      "url": "/subscriptions/new",
+      "overflow": false,
+      "title": "الاشتراكات | الوساطة الرقمية",
+      "text": "خدمة العملاء\nENGLISH\nPreview\nلوحة التحكم\nالإدارات\nرجوع\nالباقات المتاحة\n\nلا توجد باقات اشتر",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "subscriptions.management"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/admin/dashboard",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/dashboard",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "ADMIN\nالصفحة الرئيسية\nالإدارة المالية للمنصة\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقا",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "لوح التحكم"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/admin/service-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/service-requests",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "ADMIN\nالصفحة الرئيسية\nالإدارة المالية للمنصة\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقا",
+      "panels": 2,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "طلبات الخدمات"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/admin/users",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/users",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "ADMIN\nالصفحة الرئيسية\nالإدارة المالية للمنصة\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقا",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة المستخدمين"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/admin/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/orders",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "ADMIN\nالصفحة الرئيسية\nالإدارة المالية للمنصة\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة الطلبات العقارية"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "route": "/services",
+      "dark": true,
+      "url": "/services",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "dark": true,
+      "url": "/wallet",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/financial",
+      "dark": true,
+      "url": "/financial",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/orders",
+      "dark": true,
+      "url": "/orders",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/department-hub",
+      "dark": true,
+      "url": "/department-hub",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/internal/marketing",
+      "dark": true,
+      "url": "/internal/marketing",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/services",
+      "dark": false,
+      "status": 200,
+      "url": "/services",
+      "overflow": false,
+      "title": "الخدمات العقارية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/services/legal",
+      "dark": false,
+      "status": 200,
+      "url": "/services/legal",
+      "overflow": false,
+      "title": "الخدمات القانونية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات القانونية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات القانونية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/services/my-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/services/my-requests",
+      "overflow": false,
+      "title": "طلبات الخدمات | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 2,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "طلبات الخدمات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة طلبات الخدمات"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/services/legal-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/services/legal-requests",
+      "overflow": false,
+      "title": "الطلبات القانونية | الوساطة الرقمية",
+      "text": "الرئيسية\nالخدمات العقارية\n\nتعرف على خدمات ما بعد الشراء، والخدمات القانونية، والبناء والمق",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الخدمات العقارية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "legal.requests.title"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/marketing",
+      "overflow": false,
+      "title": "التسويق العقاري | الوساطة الرقمية",
+      "text": "action.marketing\nEN\nحلول تسويقية متكاملة\nالمركز التسويقي\n\nحلول استراتيجية للتصوير الاحتراف",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "action.marketing"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المركز التسويقي"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/financial",
+      "dark": false,
+      "status": 200,
+      "url": "/financial",
+      "overflow": false,
+      "title": "الخدمات المالية | الوساطة الرقمية",
+      "text": "admin.settings.financial\nEN\nالإدارة المالية والمحاسبية\n\nإدارة التدفقات النقدية، تتبع العمو",
+      "panels": 10,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "admin.settings.financial"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "الإدارة المالية والمحاسبية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "dark": false,
+      "status": 200,
+      "url": "/wallet",
+      "overflow": false,
+      "title": "المحفظة والفواتير | الوساطة الرقمية",
+      "text": "المحفظة المالية\nEN\nالفواتير\nالعمولات\nالملفات\nالاستثمارات\nقريباً\nإضافة رصيد\nقريباً\nسحب رصيد",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المحفظة المالية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "القائمة الرئيسية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/offers",
+      "dark": false,
+      "status": 200,
+      "url": "/offers",
+      "overflow": false,
+      "title": "العروض العقارية في السعودية | الوساطة الرقمية",
+      "text": "العروض العقارية\nEN\nالعودة للرئيسية\nبحث العقارات\nنوع العقار\nسكني\nتجاري\nالمساحة (متر مربع)\nا",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "العروض العقارية"
+        },
+        {
+          "color": "rgb(15, 23, 42)",
+          "text": "العروض العقارية في السعودية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/orders",
+      "overflow": false,
+      "title": "الطلبات العقارية | الوساطة الرقمية",
+      "text": "رجوع\nطلب عقار جديد\n\nسجل طلبك وسنقوم بالبحث عن العقار المناسب لك\n\nإنشاء طلب\nطلباتي\nتفاصيل إ",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "طلب عقار جديد"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/chat",
+      "dark": false,
+      "status": 200,
+      "url": "/chat",
+      "overflow": false,
+      "title": "المحادثات | الوساطة الرقمية",
+      "text": "محادثاتي\nEN\nمحادثاتي\n\nمتابعة المحادثات والردود من مكان واحد.\n\n٠\n\nمحادثة\n\n٠\n\nغير مقروءة\n\nال",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "محادثاتي"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "محادثاتي"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/department-hub",
+      "dark": false,
+      "status": 200,
+      "url": "/department-hub",
+      "overflow": false,
+      "title": "الأقسام | الوساطة الرقمية",
+      "text": "مركز الإدارات\nEN\nمركز الإدارات\nأهلاً، Preview\n\nإليك نظرة عامة على الأقسام\n\nالأقسام\n5\nإدارة",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "مركز الإدارات"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "أهلاً، Preview"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/marketing",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/marketing",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/properties",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/properties",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/finance",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/finance",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\nادارة الطلبات\nادارة التسويق\nإدارة الاملاك\nال",
+      "panels": 11,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/legal",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/legal",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/internal/employees",
+      "dark": false,
+      "status": 200,
+      "url": "/internal/employees",
+      "overflow": false,
+      "title": "بوابة الموظفين | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/buildingmanagement",
+      "dark": false,
+      "status": 200,
+      "url": "/buildingmanagement",
+      "overflow": false,
+      "title": "إدارة الأملاك والمباني | الوساطة الرقمية",
+      "text": "العودة إلى الرئيسية\nلوحة الإدارة\nادارة العروض\n\nمفعل\n\nادارة الطلبات\nادارة التسويق\nإدارة الا",
+      "panels": 6,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة الإدارة"
+        },
+        {
+          "color": "oklch(0.21 0.034 264.665)",
+          "text": "إضافة عقار"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/profile",
+      "dark": false,
+      "status": 200,
+      "url": "/profile",
+      "overflow": false,
+      "title": "الملف الشخصي | الوساطة الرقمية",
+      "text": "الملف الشخصي\nEN\nالملف الشخصي\nPreview Account\n\npreview@example.test\n\nالهوية غير موثقة\n\nخدمة",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "الملف الشخصي"
+        },
+        {
+          "color": "oklch(0.279 0.041 260.031)",
+          "text": "الملف الشخصي"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/customerservice",
+      "dark": false,
+      "status": 200,
+      "url": "/customerservice",
+      "overflow": false,
+      "title": "خدمة العملاء والتواصل | الوساطة الرقمية",
+      "text": "الرئيسية\nخدمة العملاء والتواصل\n\nتواصل مع فريق الوساطة الرقمية للاستفسار عن المنصة والخدمات",
+      "panels": 5,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "خدمة العملاء والتواصل"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "خدمة العملاء"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "خدمة العملاء"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/about",
+      "dark": false,
+      "status": 200,
+      "url": "/about",
+      "overflow": false,
+      "title": "عن الوساطة الرقمية | الوساطة الرقمية",
+      "text": "الرئيسية\nعن الوساطة الرقمية\n\nتعرف على الوساطة الرقمية ومنظومة الخدمات العقارية: العروض وال",
+      "panels": 3,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "عن الوساطة الرقمية"
+        },
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "من نحن"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/info",
+      "dark": false,
+      "status": 200,
+      "url": "/info",
+      "overflow": false,
+      "title": "الشروط والسياسات ومعلومات المنصة | الوساطة الرقمية",
+      "text": "الرئيسية\nالشروط والسياسات ومعلومات المنصة\n\nاطلع على معلومات الوساطة الرقمية والشروط والأحك",
+      "panels": 0,
+      "headings": [
+        {
+          "color": "rgb(37, 43, 40)",
+          "text": "الشروط والسياسات ومعلومات المنصة"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/share-opinion",
+      "dark": false,
+      "status": 200,
+      "url": "/share-opinion",
+      "overflow": false,
+      "title": "شاركنا رأيك | الوساطة الرقمية",
+      "text": "شارك رأيك\nEN\nشاركنا رأيك\n\nملاحظاتك ومقترحاتك تهمنا لتطوير تجربة أفضل لك ولجميع عملائنا في ",
+      "panels": 1,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "شارك رأيك"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "شاركنا رأيك"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/subscriptions/new",
+      "dark": false,
+      "status": 200,
+      "url": "/subscriptions/new",
+      "overflow": false,
+      "title": "الاشتراكات | الوساطة الرقمية",
+      "text": "subscriptions.management\nEN\nالباقات المتاحة\n\nلا توجد باقات اشتراك مفعلة حالياً\n\nتفاصيل الا",
+      "panels": 4,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "subscriptions.management"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/admin/dashboard",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/dashboard",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "الصفحة الرئيسية\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقارير\nالتسويات\nإدارة الخدمات\nلو",
+      "panels": 36,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "لوح التحكم"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/admin/service-requests",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/service-requests",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "الصفحة الرئيسية\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقارير\nالتسويات\nإدارة الخدمات\nلو",
+      "panels": 34,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "طلبات الخدمات"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/admin/users",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/users",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "الصفحة الرئيسية\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقارير\nالتسويات\nإدارة الخدمات\nلو",
+      "panels": 36,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة المستخدمين"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/admin/orders",
+      "dark": false,
+      "status": 200,
+      "url": "/admin/orders",
+      "overflow": false,
+      "title": "الوساطة الرقمية",
+      "text": "الصفحة الرئيسية\nلوحة مالية\nالعمليات\nالمدفوعات\nالمصروفات\nالتقارير\nالتسويات\nإدارة الخدمات\nلو",
+      "panels": 38,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "لوحة التحكم المركزية"
+        },
+        {
+          "color": "oklch(0.129 0.042 264.695)",
+          "text": "إدارة الطلبات العقارية"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "route": "/services",
+      "dark": true,
+      "url": "/services",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "dark": true,
+      "url": "/wallet",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/financial",
+      "dark": true,
+      "url": "/financial",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/orders",
+      "dark": true,
+      "url": "/orders",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/department-hub",
+      "dark": true,
+      "url": "/department-hub",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/internal/marketing",
+      "dark": true,
+      "url": "/internal/marketing",
+      "overflow": false
+    }
+  ],
+  "errors": [
+    {
+      "route": "/department-hub",
+      "message": "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <div className=\"max-w-[160...\">\n      <AnimatePresence mode=\"wait\">\n        <PresenceChild isPresent={true} initial={undefined} custom={undefined} presenceAffectsLayout={true} mode=\"wait\" ...>\n          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-16}} ...>\n            <div style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n              <motion.div variants={{hidden:{...}, ...}} initial=\"hidden\" animate=\"show\" className=\"space-y-8\">\n                <div className=\"space-y-8\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                  <motion.div variants={{hidden:{...}, ...}} className=\"calm-panel...\">\n                    <div className=\"calm-panel...\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                      <div>\n                      <div>\n                      <div className=\"relative f...\">\n                        <div>\n                        <div className=\"hidden md:...\">\n                          <Clock>\n+                         ٦‏/١١‏/٢٠٢٦، ٢:٠٦:٤٥ م\n-                         ٦‏/١١‏/٢٠٢٦، ٢:٠٦:٤٤ م\n                  ...\n"
+    },
+    {
+      "route": "/department-hub",
+      "message": "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <div className=\"max-w-[160...\">\n      <AnimatePresence mode=\"wait\">\n        <PresenceChild isPresent={true} initial={undefined} custom={undefined} presenceAffectsLayout={true} mode=\"wait\" ...>\n          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-16}} ...>\n            <div style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n              <motion.div variants={{hidden:{...}, ...}} initial=\"hidden\" animate=\"show\" className=\"space-y-8\">\n                <div className=\"space-y-8\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                  <motion.div variants={{hidden:{...}, ...}} className=\"calm-panel...\">\n                    <div className=\"calm-panel...\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                      <div>\n                      <div>\n                      <div className=\"relative f...\">\n                        <div>\n                        <div className=\"hidden md:...\">\n                          <Clock>\n+                         ٦‏/١١‏/٢٠٢٦، ٢:٠٧:٢٨ م\n-                         ٦‏/١١‏/٢٠٢٦، ٢:٠٧:٢٧ م\n                  ...\n"
+    },
+    {
+      "route": "/department-hub",
+      "message": "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <div className=\"max-w-[160...\">\n      <AnimatePresence mode=\"wait\">\n        <PresenceChild isPresent={true} initial={undefined} custom={undefined} presenceAffectsLayout={true} mode=\"wait\" ...>\n          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-16}} ...>\n            <div style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n              <motion.div variants={{hidden:{...}, ...}} initial=\"hidden\" animate=\"show\" className=\"space-y-8\">\n                <div className=\"space-y-8\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                  <motion.div variants={{hidden:{...}, ...}} className=\"calm-panel...\">\n                    <div className=\"calm-panel...\" style={{opacity:0, ...}} ref={function useMotionRef.useCallback}>\n                      <div>\n                      <div>\n                      <div className=\"relative f...\">\n                        <div>\n                        <div className=\"hidden md:...\">\n                          <Clock>\n+                         ٦‏/١١‏/٢٠٢٦، ٢:٠٧:٤٢ م\n-                         ٦‏/١١‏/٢٠٢٦، ٢:٠٧:٤١ م\n                  ...\n"
+    }
+  ],
+  "writes": []
+}

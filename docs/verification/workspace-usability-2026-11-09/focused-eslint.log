@@ -1,0 +1,20 @@
+
+/home/mostafa/Work/mostakl/realestate/real-estate-front/components/services/DynamicServiceForm.tsx
+   99:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  140:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/mostafa/Work/mostakl/realestate/real-estate-front/components/shared/ServiceRequestsTable.tsx
+   11:14  warning  'Mail' is defined but never used             @typescript-eslint/no-unused-vars
+   11:35  warning  'X' is defined but never used                @typescript-eslint/no-unused-vars
+   15:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+   37:46  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+   49:60  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  124:18  warning  'error' is defined but never used            @typescript-eslint/no-unused-vars
+  131:31  warning  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+✖ 13 problems (0 errors, 13 warnings)
+

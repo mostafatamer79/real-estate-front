@@ -8,7 +8,8 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  turbopack: {},
+  turbopack: { root: process.cwd() },
+  ...(process.env.NODE_ENV === "development" ? { experimental: { cpus: 2 } } : {}),
 };
 
 export default withPWA(nextConfig);

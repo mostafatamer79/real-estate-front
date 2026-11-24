@@ -26,7 +26,7 @@ const Map = dynamic(() => import('@/app/src/components/Map'), {
   ssr: false,
   loading: () => {
     const { t } = useLanguage();
-    return <div className="h-[400px] w-full bg-muted animate-pulse rounded-xl flex items-center justify-center text-gray-400">{t('map.loading')}</div>
+    return <div className="h-[400px] w-full bg-muted animate-pulse rounded-xl flex items-center justify-center text-muted-foreground dark:text-gray-400">{t('map.loading')}</div>
   }
 });
 
@@ -230,7 +230,7 @@ export function AddPropertyWizard({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
       <div 
-        className="bg-card rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-gray-200"
+        className="calm-panel bg-card rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-sm dark:shadow-2xl overflow-hidden ring-1 ring-gray-200"
         dir={isRtl ? 'rtl' : 'ltr'}
       >
         
@@ -238,7 +238,7 @@ export function AddPropertyWizard({
         <div className="p-5 border-b border flex justify-between items-center bg-muted/50">
           <div>
             <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2 bg-slate-600 rounded-lg text-white shadow-lg shadow-blue-600/20">
+              <div className="calm-panel p-2 bg-primary dark:bg-slate-600 rounded-lg text-primary-foreground dark:text-white shadow-lg shadow-blue-600/20">
                   <LayoutDashboard className="w-5 h-5" />
               </div>
               {t('bm.offer.new')}
@@ -249,7 +249,7 @@ export function AddPropertyWizard({
             variant="ghost" 
             size="icon" 
             onClick={onClose} 
-            className="rounded-full hover:bg-muted text-gray-500 transition-colors"
+            className="rounded-full hover:bg-muted text-muted-foreground dark:text-gray-500 transition-colors"
           >
             <X className="w-6 h-6" />
           </Button>
@@ -274,7 +274,7 @@ export function AddPropertyWizard({
                             >
                                 <span className={`
                                     flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold
-                                    ${activeTab === item.id ? 'bg-slate-600 text-white shadow-md shadow-blue-600/20' : 'bg-muted text-gray-600'}
+                                    ${activeTab === item.id ? 'bg-primary dark:bg-slate-600 text-primary-foreground dark:text-white shadow-md shadow-blue-600/20' : 'bg-muted text-gray-600'}
                                 `}>
                                     {idx + 1}
                                 </span>
@@ -312,7 +312,7 @@ export function AddPropertyWizard({
                                                     <Input 
                                                         value={propertyData.name}
                                                         onChange={e => setPropertyData({...propertyData, name: e.target.value})}
-                                                        className="bg-card border-gray-300 focus:border-blue-500 h-12 transition-all font-medium text-gray-900 placeholder:text-gray-400"
+                                                        className="bg-card border-gray-300 focus:border-blue-500 h-12 transition-all font-medium text-gray-900 placeholder:text-muted-foreground placeholder:dark:text-gray-400"
                                                         placeholder={t('pm.field.propertyName')}
                                                     />
                                                 </div>
@@ -334,9 +334,9 @@ export function AddPropertyWizard({
                                                         <Input 
                                                             value={propertyData.deedNumber}
                                                             onChange={e => setPropertyData({...propertyData, deedNumber: e.target.value})}
-                                                            className="bg-card border-gray-300 focus:border-blue-500 h-12 ps-10 font-medium text-gray-900 placeholder:text-gray-400"
+                                                            className="bg-card border-gray-300 focus:border-blue-500 h-12 ps-10 font-medium text-gray-900 placeholder:text-muted-foreground placeholder:dark:text-gray-400"
                                                         />
-                                                        <Hash className="absolute start-3 top-4 w-4 h-4 text-gray-500" />
+                                                        <Hash className="absolute start-3 top-4 w-4 h-4 text-muted-foreground dark:text-gray-500" />
                                                     </div>
                                                 </div>
                                                 
@@ -352,12 +352,12 @@ export function AddPropertyWizard({
                                                             placeholder="https://maps.google.com/?q=..." 
                                                             className="h-12 rounded-xl border bg-card ps-10"
                                                         />
-                                                        <MapIcon className="absolute top-3.5 w-5 h-5 text-gray-400 start-3" />
+                                                        <MapIcon className="absolute top-3.5 w-5 h-5 text-muted-foreground dark:text-gray-400 start-3" />
                                                     </div>
                                                     <Button 
                                                         type="button" 
                                                         onClick={() => setShowMap(true)} 
-                                                        className="h-12 w-12 rounded-xl bg-slate-600 hover:bg-slate-700 text-white p-0 flex items-center justify-center shadow-lg shadow-blue-600/20"
+                                                        className="h-12 w-12 rounded-xl bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 text-primary-foreground dark:text-white p-0 flex items-center justify-center shadow-lg shadow-blue-600/20"
                                                     >
                                                         <MapIcon className="w-6 h-6" />
                                                     </Button>
@@ -371,10 +371,10 @@ export function AddPropertyWizard({
                                                             value={propertyData.constructionDate}
                                                             onChange={e => setPropertyData({...propertyData, constructionDate: e.target.value})} 
                                                             type="text" 
-                                                            className="bg-card border-gray-300 focus:border-blue-500 h-12 ps-10 font-medium text-gray-900 placeholder:text-gray-400"
+                                                            className="bg-card border-gray-300 focus:border-blue-500 h-12 ps-10 font-medium text-gray-900 placeholder:text-muted-foreground placeholder:dark:text-gray-400"
                                                             placeholder="YYYY"
                                                         />
-                                                        <Calendar className="absolute start-3 top-4 w-4 h-4 text-gray-500" />
+                                                        <Calendar className="absolute start-3 top-4 w-4 h-4 text-muted-foreground dark:text-gray-500" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -856,7 +856,7 @@ export function AddPropertyWizard({
                                                         className="bg-card border-blue-200 h-11 text-gray-900"
                                                     />
                                                 </div>
-                                                <Button onClick={addUnit} className="bg-slate-600 hover:bg-slate-700 text-white h-11 px-6 rounded-xl shadow-md cursor-pointer w-full md:w-auto">
+                                                <Button onClick={addUnit} className="bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 text-primary-foreground dark:text-white h-11 px-6 rounded-xl shadow-md cursor-pointer w-full md:w-auto">
                                                     <Plus className="w-5 h-5" />
                                                     {t('common.add')}
                                                 </Button>
@@ -870,15 +870,15 @@ export function AddPropertyWizard({
                                                     initial={{ opacity: 0, scale: 0.98 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     key={idx} 
-                                                    className="bg-card p-4 rounded-2xl border border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between shadow-sm hover:shadow-md transition-shadow"
+                                                    className="calm-panel bg-card p-4 rounded-2xl border border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between shadow-sm hover:shadow-md transition-shadow"
                                                 >
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-blue-600 font-bold">
+                                                        <div className="calm-icon w-10 h-10 rounded-full bg-muted flex items-center justify-center text-blue-600 font-bold">
                                                             {unit.unitNumber}
                                                         </div>
                                                         <div>
                                                             <p className="font-bold text-gray-900">{t(`bm.prop.${unit.type === 'shop' ? 'shop' : unit.type === 'office' ? 'office' : 'apt'}`)}</p>
-                                                            <p className="text-sm text-gray-500">
+                                                            <p className="text-sm text-muted-foreground dark:text-gray-500">
                                                                 {unit.roomsCount} {t('offers.filter.rooms')} • {unit.area}m²
                                                                 {unit.expectedVacancyDate && ` • ${t('pm.field.expectedVacancyDate')}: ${unit.expectedVacancyDate}`}
                                                             </p>
@@ -900,7 +900,7 @@ export function AddPropertyWizard({
                                                 </motion.div>
                                             ))}
                                             {propertyData.units?.length === 0 && (
-                                                <div className="text-center py-8 text-gray-400 bg-card rounded-2xl border border-dashed border">
+                                                <div className="calm-panel text-center py-8 text-muted-foreground dark:text-gray-400 bg-card rounded-2xl border border-dashed border">
                                                     {t('pm.units.empty')}
                                                 </div>
                                             )}
@@ -925,7 +925,7 @@ export function AddPropertyWizard({
                                                     className={`
                                                         cursor-pointer p-4 rounded-2xl border flex items-center justify-between transition-all
                                                         ${editingUnitIndex === idx 
-                                                            ? 'bg-slate-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                                                            ? 'bg-primary dark:bg-slate-600 border-blue-600 text-primary-foreground dark:text-white shadow-lg shadow-blue-600/20'
                                                             : 'bg-card border text-gray-700 hover:border-blue-300 hover:bg-muted'}
                                                     `}
                                                 >
@@ -947,7 +947,7 @@ export function AddPropertyWizard({
                                                             {t('pm.tenant.details')}
                                                         </h4>
 
-                                                        <span className="text-sm font-medium text-gray-500">{t('pm.unit')} {propertyData.units?.[editingUnitIndex].unitNumber}</span>
+                                                        <span className="text-sm font-medium text-muted-foreground dark:text-gray-500">{t('pm.unit')} {propertyData.units?.[editingUnitIndex].unitNumber}</span>
                                                     </div>
 
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -976,7 +976,7 @@ export function AddPropertyWizard({
                                                                     onChange={e => setTempLease({...tempLease, annualRent: Number(e.target.value)})}
                                                                     className="bg-muted border h-11 ps-10 focus:bg-card transition-colors text-gray-900" 
                                                                 />
-                                                                <SaudiRiyalIcon className="absolute start-3 top-3.5 w-4 h-4 text-gray-400" />
+                                                                <SaudiRiyalIcon className="absolute start-3 top-3.5 w-4 h-4 text-muted-foreground dark:text-gray-400" />
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
@@ -1012,14 +1012,14 @@ export function AddPropertyWizard({
                                                     </div>
 
                                                     <div className="flex justify-end pt-4">
-                                                        <Button onClick={saveLease} className="bg-slate-600 text-white hover:bg-slate-700 h-12 px-8 rounded-xl shadow-lg shadow-blue-600/20">
+                                                        <Button onClick={saveLease} className="bg-primary dark:bg-slate-600 text-primary-foreground dark:text-white hover:bg-primary/90 hover:dark:bg-slate-700 h-12 px-8 rounded-xl shadow-lg shadow-blue-600/20">
                                                             {t('common.save')}
                                                         </Button>
                                                     </div>
                                                 </CardContent>
                                             </Card>
                                         ) : (
-                                            <div className="h-full flex flex-col items-center justify-center bg-card rounded-3xl border border-dashed border-gray-300 text-gray-400 p-10">
+                                            <div className="calm-panel h-full flex flex-col items-center justify-center bg-card rounded-3xl border border-dashed border-gray-300 text-muted-foreground dark:text-gray-400 p-10">
                                                 <Users className="w-16 h-16 mb-4 opacity-20" />
                                                 <p className="font-medium">{t('pm.tenants.desc')}</p>
                                                 <p className="text-sm mt-2 opacity-60">{t('pm.unit.selectHint')}</p>
@@ -1037,13 +1037,13 @@ export function AddPropertyWizard({
                                             <CreditCard className="w-10 h-10 text-blue-600" />
                                         </div>
                                         <h4 className="text-xl font-bold text-gray-900">{t('pm.financial.management')}</h4>
-                                        <p className="text-gray-500 w-full sm:max-w-md">{t('pm.financial.desc')}</p>
+                                        <p className="text-muted-foreground dark:text-gray-500 w-full sm:max-w-md">{t('pm.financial.desc')}</p>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full sm:max-w-lg mt-8">
-                                            <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
+                                            <div className="calm-panel p-4 rounded-2xl bg-muted border border flex items-center gap-3">
                                                 <div className="w-2 h-2 rounded-full bg-green-500" />
                                                 <span className="font-medium text-gray-700">{t('pm.financial.autoInvoice')}</span>
                                             </div>
-                                            <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
+                                            <div className="calm-panel p-4 rounded-2xl bg-muted border border flex items-center gap-3">
                                                 <div className="w-2 h-2 rounded-full bg-slate-500" />
                                                 <span className="font-medium text-gray-700">{t('pm.financial.paymentTrack')}</span>
                                             </div>
@@ -1058,7 +1058,7 @@ export function AddPropertyWizard({
                                     <Card className="bg-card border shadow-sm">
                                         <CardContent className="p-3 sm:p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.roi')}</h4>
-                                            <p className="text-gray-500 text-sm mb-6">{t('pm.roi.desc')}</p>
+                                            <p className="text-muted-foreground dark:text-gray-500 text-sm mb-6">{t('pm.roi.desc')}</p>
                                             <div className="space-y-4">
                                                 <div className="flex justify-between items-center p-3 bg-muted rounded-xl">
                                                     <span className="text-sm font-medium text-gray-600">{t('pm.roi.purchasePrice')}</span>
@@ -1075,9 +1075,9 @@ export function AddPropertyWizard({
                                     <Card className="bg-card border shadow-sm">
                                         <CardContent className="p-3 sm:p-6">
                                             <h4 className="text-lg font-bold text-gray-900 mb-2">{t('pm.tab.maintenance')}</h4>
-                                            <p className="text-gray-500 text-sm mb-6">{t('pm.maintenance.newPropDesc')}</p>
-                                            <div className="flex items-center justify-center p-4 sm:p-8 bg-muted rounded-2xl border border-dashed border">
-                                                <p className="text-gray-400 text-sm font-medium">{t('pm.maintenance.empty')}</p>
+                                            <p className="text-muted-foreground dark:text-gray-500 text-sm mb-6">{t('pm.maintenance.newPropDesc')}</p>
+                                            <div className="calm-panel flex items-center justify-center p-4 sm:p-8 bg-muted rounded-2xl border border-dashed border">
+                                                <p className="text-muted-foreground dark:text-gray-400 text-sm font-medium">{t('pm.maintenance.empty')}</p>
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -1118,7 +1118,7 @@ export function AddPropertyWizard({
                                     const idx = tabItems.findIndex(t => t.id === activeTab);
                                     if(idx < tabItems.length-1) setActiveTab(tabItems[idx+1].id);
                                 }}
-                                className="h-12 px-8 bg-slate-900 text-white hover:bg-black rounded-xl shadow-lg font-bold"
+                                className="h-12 px-8 bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-black rounded-xl shadow-lg font-bold"
                             >
                                 <span className="mx-2">{t('common.next')}</span>
                                 <ChevronRight className="w-5 h-5 rtl:rotate-180" />
@@ -1127,7 +1127,7 @@ export function AddPropertyWizard({
                             <Button 
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="h-12 px-4 md:px-10 bg-slate-600 text-white hover:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
+                                className="h-12 px-4 md:px-10 bg-primary dark:bg-slate-600 text-primary-foreground dark:text-white hover:bg-primary/90 hover:dark:bg-slate-700 rounded-xl shadow-lg shadow-blue-600/30 font-bold"
                             >
                                 {loading && <Loader2 className="w-5 h-5 me-2 animate-spin" />}
                                 {t('common.save')}
@@ -1143,7 +1143,7 @@ export function AddPropertyWizard({
       {/* MAP MODAL */}
       {showMap && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in">
-           <div className="bg-card w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl ring-1 ring-gray-200 flex flex-col max-h-[90vh]">
+           <div className="calm-panel bg-card w-full max-w-4xl rounded-3xl overflow-hidden shadow-sm dark:shadow-2xl ring-1 ring-gray-200 flex flex-col max-h-[90vh]">
                <div className="p-4 border-b border flex justify-between items-center bg-muted">
                    <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
                        <MapPin className="w-5 h-5 text-blue-600" />
@@ -1167,7 +1167,7 @@ export function AddPropertyWizard({
                </div>
                <div className="p-4 border-t border flex justify-end gap-3 bg-card">
                    <Button variant="outline" onClick={() => setShowMap(false)}>{t('common.close')}</Button>
-                   <Button className="bg-slate-600 hover:bg-slate-700 text-white" onClick={confirmLocation}>
+                   <Button className="bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 text-primary-foreground dark:text-white" onClick={confirmLocation}>
                        {t('common.save')}
                    </Button>
                </div>

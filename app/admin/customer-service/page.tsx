@@ -365,7 +365,7 @@ export default function AdminCustomerServicePage() {
 
   return (
     <div 
-      className="p-6 lg:p-4 sm:p-8 min-h-screen space-y-8" 
+      className="calm-page calm-screen p-6 lg:p-4 sm:p-8 min-h-screen space-y-8"
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundColor: settings.csBg || undefined,
@@ -376,7 +376,7 @@ export default function AdminCustomerServicePage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
           <div 
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-white text-[9px] font-black uppercase tracking-widest"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-foreground dark:text-white text-[9px] font-black uppercase tracking-widest"
             style={{
               backgroundColor: settings.csTextColor || '#0f172a',
               color: settings.csBg || '#ffffff',
@@ -493,7 +493,7 @@ export default function AdminCustomerServicePage() {
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (AR)</Label>
+                    <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (AR)</Label>
                     <Input 
                       value={categoryForm.nameAr} 
                       onChange={(e) => setCategoryForm((p) => ({ ...p, nameAr: e.target.value }))}
@@ -506,7 +506,7 @@ export default function AdminCustomerServicePage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (EN)</Label>
+                    <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Name (EN)</Label>
                     <Input 
                       value={categoryForm.nameEn} 
                       onChange={(e) => setCategoryForm((p) => ({ ...p, nameEn: e.target.value }))} 
@@ -523,7 +523,7 @@ export default function AdminCustomerServicePage() {
                 <div className="flex items-center gap-2">
                   <Button
                     type="button"
-                    className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-white"
+                    className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white"
                     onClick={submitCategory}
                     disabled={savingCategory || !categoryForm.nameAr.trim() || !categoryForm.nameEn.trim()}
                     style={{
@@ -551,7 +551,7 @@ export default function AdminCustomerServicePage() {
 
               <div className="pt-2 border-t border space-y-2">
                 {categories.length === 0 ? (
-                  <div className="text-sm font-medium text-slate-500">{isRtl ? "لا يوجد تصنيفات." : "No categories yet."}</div>
+                  <div className="text-sm font-medium text-muted-foreground dark:text-slate-500">{isRtl ? "لا يوجد تصنيفات." : "No categories yet."}</div>
                 ) : (
                   <div className="space-y-2">
                     {categories.map((c, idx) => {
@@ -581,7 +581,7 @@ export default function AdminCustomerServicePage() {
                                 await persistCategoryOrder(next);
                               }}
                             >
-                              <div className="mt-1 text-slate-400 cursor-grab active:cursor-grabbing">
+                              <div className="mt-1 text-muted-foreground dark:text-slate-400 cursor-grab active:cursor-grabbing">
                                 <GripVertical className="w-4 h-4" />
                               </div>
                               <button type="button" className="flex-1 text-start" onClick={() => setSelectedCategoryId(c.id)}>
@@ -597,7 +597,7 @@ export default function AdminCustomerServicePage() {
                                     >
                                       {c.nameAr}
                                     </div>
-                                    <div className="text-[11px] font-bold text-slate-400" dir="ltr">
+                                    <div className="text-[11px] font-bold text-muted-foreground dark:text-slate-400" dir="ltr">
                                       {c.nameEn}
                                     </div>
                                   </div>
@@ -605,7 +605,7 @@ export default function AdminCustomerServicePage() {
                                     #{idx + 1}
                                   </span>
                                 </div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                                   {isRtl ? "اسحب لتغيير الترتيب" : "Drag to reorder"}
                                 </div>
                               </button>
@@ -682,7 +682,7 @@ export default function AdminCustomerServicePage() {
               <div className="flex items-center justify-between gap-2">
                 <div className="font-black text-slate-950" style={{ color: settings.csTextColor || undefined }}>
                   {isRtl ? "أسئلة التصنيف" : "Category FAQs"}{" "}
-                  {selectedCategory ? <span className="text-slate-400 text-sm">{isRtl ? selectedCategory.nameAr : selectedCategory.nameEn}</span> : null}
+                  {selectedCategory ? <span className="text-muted-foreground dark:text-slate-400 text-sm">{isRtl ? selectedCategory.nameAr : selectedCategory.nameEn}</span> : null}
                 </div>
                 <Button type="button" variant="outline" className="h-9 rounded-xl" onClick={loadFaqs} disabled={loadingFaqs}>
                   <RefreshCcw className={`w-4 h-4 ${loadingFaqs ? "animate-spin" : ""}`} />
@@ -690,7 +690,7 @@ export default function AdminCustomerServicePage() {
               </div>
 
               {!selectedCategoryId ? (
-                <div className="text-sm font-medium text-slate-500">{t("common.selectFirst") || (isRtl ? "اختر تصنيفاً أولاً." : "Select a category first.")}</div>
+                <div className="text-sm font-medium text-muted-foreground dark:text-slate-500">{t("common.selectFirst") || (isRtl ? "اختر تصنيفاً أولاً." : "Select a category first.")}</div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                   {/* Form */}
@@ -699,7 +699,7 @@ export default function AdminCustomerServicePage() {
                       {editingFaqId ? (t("admin.customer_service.editQuestion") || (isRtl ? "تعديل سؤال" : "Edit question")) : (t("admin.customer_service.addQuestion") || (isRtl ? "إضافة سؤال" : "Add question"))}
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (AR)</Label>
+                      <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (AR)</Label>
                       <Textarea 
                         value={faqForm.questionAr} 
                         onChange={(e) => setFaqForm((p) => ({ ...p, questionAr: e.target.value }))} 
@@ -713,7 +713,7 @@ export default function AdminCustomerServicePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (AR)</Label>
+                      <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (AR)</Label>
                       <Textarea 
                         value={faqForm.answerAr} 
                         onChange={(e) => setFaqForm((p) => ({ ...p, answerAr: e.target.value }))} 
@@ -727,7 +727,7 @@ export default function AdminCustomerServicePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (EN)</Label>
+                      <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Question (EN)</Label>
                       <Textarea 
                         value={faqForm.questionEn} 
                         onChange={(e) => setFaqForm((p) => ({ ...p, questionEn: e.target.value }))} 
@@ -742,7 +742,7 @@ export default function AdminCustomerServicePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-black text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (EN)</Label>
+                      <Label className="text-[11px] font-black text-muted-foreground dark:text-slate-500" style={{ color: settings.csTextColor ? `${settings.csTextColor}cc` : undefined }}>Answer (EN)</Label>
                       <Textarea 
                         value={faqForm.answerEn} 
                         onChange={(e) => setFaqForm((p) => ({ ...p, answerEn: e.target.value }))} 
@@ -759,7 +759,7 @@ export default function AdminCustomerServicePage() {
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
-                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-white"
+                        className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white"
                         onClick={submitFaq}
                         disabled={
                           savingFaq ||
@@ -797,7 +797,7 @@ export default function AdminCustomerServicePage() {
                       {t("admin.customer_service.questionsList") || (isRtl ? "قائمة الأسئلة" : "Questions list")}
                     </div>
                     {selectedFaqs.length === 0 ? (
-                      <div className="text-sm font-medium text-slate-500">{t("common.noData") || (isRtl ? "لا يوجد أسئلة في هذا التصنيف." : "No questions in this category.")}</div>
+                      <div className="text-sm font-medium text-muted-foreground dark:text-slate-500">{t("common.noData") || (isRtl ? "لا يوجد أسئلة في هذا التصنيف." : "No questions in this category.")}</div>
                     ) : (
                       <div className="divide-y divide-slate-200 border border rounded-2xl overflow-hidden">
                         {selectedFaqs.map((q, idx) => (
@@ -839,7 +839,7 @@ export default function AdminCustomerServicePage() {
                                     >
                                       {q.questionAr}
                                     </div>
-                                    <div className="mt-1 text-[12px] font-medium text-slate-400" dir="ltr">
+                                    <div className="mt-1 text-[12px] font-medium text-muted-foreground dark:text-slate-400" dir="ltr">
                                       {q.questionEn}
                                     </div>
                                   </div>
@@ -856,7 +856,7 @@ export default function AdminCustomerServicePage() {
                                 >
                                   {q.answerAr}
                                 </div>
-                                <div className="mt-1 line-clamp-2 text-[12px] text-slate-400" dir="ltr">
+                                <div className="mt-1 line-clamp-2 text-[12px] text-muted-foreground dark:text-slate-400" dir="ltr">
                                   {q.answerEn}
                                 </div>
                                 <div className="text-[10px] font-black opacity-50 uppercase tracking-widest mt-2">
@@ -942,7 +942,7 @@ export default function AdminCustomerServicePage() {
             </div>
 
             {feedback.length === 0 ? (
-              <div className="text-sm font-medium text-slate-500">{t("common.noData") || (isRtl ? "لا توجد رسائل." : "No messages yet.")}</div>
+              <div className="text-sm font-medium text-muted-foreground dark:text-slate-500">{t("common.noData") || (isRtl ? "لا توجد رسائل." : "No messages yet.")}</div>
             ) : (
               <div className="divide-y divide-slate-200 border border rounded-2xl overflow-hidden">
                 {feedback.map((m) => (
@@ -1026,7 +1026,7 @@ export default function AdminCustomerServicePage() {
                       {m.question}
                     </div>
                     {m.adminReply && (
-                      <div className="rounded-2xl border border bg-muted/40 p-4">
+                      <div className="calm-panel rounded-2xl border border bg-muted/40 p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-700">
                           {isRtl ? "رد الإدارة" : "Admin reply"}
                         </div>
@@ -1038,11 +1038,11 @@ export default function AdminCustomerServicePage() {
                         >
                           {m.adminReply}
                         </div>
-                        {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-slate-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
+                        {m.adminRepliedAt && <div className="mt-2 text-[10px] font-black text-muted-foreground dark:text-slate-500">{new Date(m.adminRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
                     {m.userReply && (
-                      <div className="rounded-2xl border border bg-muted/40 p-4">
+                      <div className="calm-panel rounded-2xl border border bg-muted/40 p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-60">
                           {isRtl ? "رد العميل" : "Customer reply"}
                         </div>
@@ -1057,8 +1057,8 @@ export default function AdminCustomerServicePage() {
                         {m.userRepliedAt && <div className="mt-2 text-[10px] font-black opacity-45">{new Date(m.userRepliedAt).toLocaleString(isRtl ? "ar-SA" : "en-US")}</div>}
                       </div>
                     )}
-                    <div className="rounded-2xl border border bg-card/40 p-3">
-                      <Label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <div className="calm-panel rounded-2xl border border bg-card/40 p-3">
+                      <Label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-500">
                         {isRtl ? "اكتب رد الإدارة" : "Admin reply"}
                       </Label>
                       <Textarea
@@ -1070,7 +1070,7 @@ export default function AdminCustomerServicePage() {
                       <div className="mt-3 flex justify-end">
                         <Button
                           type="button"
-                          className="h-10 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-black"
+                          className="h-10 rounded-xl bg-card dark:bg-slate-900 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white hover:bg-black"
                           disabled={replyingFeedbackId === m.id || !(replyDrafts[m.id] || "").trim()}
                           onClick={() => submitAdminReply(m.id)}
                         >
@@ -1088,7 +1088,7 @@ export default function AdminCustomerServicePage() {
       )}
 
       {tab === "opinions" && (
-        <div className="bg-card rounded-3xl border border shadow-sm overflow-hidden">
+        <div className="calm-panel bg-card rounded-3xl border border shadow-sm overflow-hidden">
           <AdminOpinionsPage />
         </div>
       )}

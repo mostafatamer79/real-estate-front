@@ -108,13 +108,13 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" dir="rtl">
-      <div className="bg-slate-800 rounded-xl w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-muted dark:bg-slate-800 rounded-xl w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-3 sm:p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-white">تعديل الملف الشخصي</h2>
+            <h2 className="text-xl font-bold text-foreground dark:text-white">تعديل الملف الشخصي</h2>
             <button
               onClick={onClose}
-              className="text-white/70 hover:text-white"
+              className="text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -123,30 +123,30 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-200">الاسم الأول</label>
+                <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">الاسم الأول</label>
                 <input
                   type="text"
                   {...register('firstName')}
-                  className={`w-full px-3 py-2 bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-white ${errors.firstName ? 'border-red-500' : 'border-slate-600 focus:border-blue-500'}`}
+                  className={`w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-foreground dark:text-white ${errors.firstName ? 'border-red-500' : 'border-border dark:border-slate-600 focus:border-blue-500'}`}
                 />
                 {errors.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-200">الاسم الأخير</label>
+                <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">الاسم الأخير</label>
                 <input
                   type="text"
                   {...register('lastName')}
-                  className={`w-full px-3 py-2 bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-white ${errors.lastName ? 'border-red-500' : 'border-slate-600 focus:border-blue-500'}`}
+                  className={`w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border rounded-lg focus:outline-none text-sm text-foreground dark:text-white ${errors.lastName ? 'border-red-500' : 'border-border dark:border-slate-600 focus:border-blue-500'}`}
                 />
                 {errors.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-slate-200">نوع الحساب</label>
+              <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">نوع الحساب</label>
               <select
                 {...register('role')}
-                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
+                className="w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border border-border dark:border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-foreground dark:text-white"
               >
                 <option value={Role.USER}>مستخدم</option>
                 <option value={Role.AGENT}>مقدم الخدمة</option>
@@ -155,30 +155,30 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
 
             {selectedRole === Role.AGENT && (
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-200">رقم الرخصة المهنية</label>
+                <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">رقم الرخصة المهنية</label>
                 <input
                   type="text"
                   {...register('agentLicenseNumber')}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
+                  className="w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border border-border dark:border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-foreground dark:text-white"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-slate-200">العنوان</label>
+              <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">العنوان</label>
               <input
                 type="text"
                 {...register('address')}
-                className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
+                className="w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border border-border dark:border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-foreground dark:text-white"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-200">المدينة</label>
+                <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">المدينة</label>
                 <select
                   {...register('city')}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
+                  className="w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border border-border dark:border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-foreground dark:text-white"
                 >
                   <option value="الرياض">الرياض</option>
                   <option value="جدة">جدة</option>
@@ -186,10 +186,10 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-slate-200">الدولة</label>
+                <label className="block text-sm font-medium mb-1 text-foreground dark:text-slate-200">الدولة</label>
                 <select
                   {...register('country')}
-                  className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-white"
+                  className="w-full px-3 py-2 bg-muted/50 dark:bg-slate-700/50 border border-border dark:border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-foreground dark:text-white"
                 >
                   <option value="السعودية">السعودية</option>
                   <option value="الإمارات">الإمارات</option>
@@ -197,32 +197,32 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
                 </select>
               </div>
             </div>
-            <div className="bg-slate-700/30 p-4 rounded-xl border border-slate-600 space-y-3">
+            <div className="calm-panel bg-muted/30 dark:bg-slate-700/30 p-4 rounded-xl border border-border dark:border-slate-600 space-y-3">
               <h3 className="text-sm font-semibold text-blue-400 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4" />
                 الصلاحيات والوصول
               </h3>
               
               <div className="space-y-2">
-                <p className="text-xs text-slate-400">الأقسام المتاحة:</p>
+                <p className="text-xs text-muted-foreground dark:text-slate-400">الأقسام المتاحة:</p>
                 <div className="flex flex-wrap gap-2">
                   {user?.role === Role.ADMIN && <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30">جميع الأقسام</span>}
                   {(user?.role === Role.AGENT || user?.role === Role.BROKER) && <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded border border-indigo-500/30 flex items-center gap-1"><Building2 className="w-3 h-3" /> ادارة الاملاك</span>}
                   {user?.role === Role.MARKETING && <span className="text-[10px] bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30 flex items-center gap-1"><Briefcase className="w-3 h-3" /> ادارة التسويق</span>}
-                  {user?.role === Role.LEGAL && <span className="text-[10px] bg-slate-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 flex items-center gap-1"><Gavel className="w-3 h-3" /> ادارة القانونية</span>}
+                  {user?.role === Role.LEGAL && <span className="calm-panel text-[10px] bg-slate-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 flex items-center gap-1"><Gavel className="w-3 h-3" /> ادارة القانونية</span>}
                   {user?.role === Role.FINANCE && <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded border border-emerald-500/30 flex items-center gap-1"><Receipt className="w-3 h-3" /> الادارة المالية</span>}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs text-slate-400">الإجراءات المسموحة:</p>
+                <p className="text-xs text-muted-foreground dark:text-slate-400">الإجراءات المسموحة:</p>
                 <div className="flex flex-wrap gap-2">
                   {user?.role === Role.ADMIN ? (
-                    <span className="text-[10px] bg-slate-600/50 text-slate-200 px-2 py-1 rounded border border-slate-500/30">تحكم كامل</span>
+                    <span className="calm-panel text-[10px] bg-primary dark:bg-slate-600/50 text-foreground dark:text-slate-200 px-2 py-1 rounded border border-slate-500/30">تحكم كامل</span>
                   ) : (
                     <>
-                      <span className="text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><Eye className="w-3 h-3" /> عرض</span>
-                      {(user?.role === Role.AGENT || user?.role === Role.BROKER) && <span className="text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><PlusCircle className="w-3 h-3" /> إنشاء طلبات</span>}
+                      <span className="calm-panel text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><Eye className="w-3 h-3" /> عرض</span>
+                      {(user?.role === Role.AGENT || user?.role === Role.BROKER) && <span className="calm-panel text-[10px] bg-slate-500/10 text-blue-300 px-2 py-1 rounded border border-blue-500/20 flex items-center gap-1"><PlusCircle className="w-3 h-3" /> إنشاء طلبات</span>}
                       {[Role.MARKETING, Role.LEGAL, Role.FINANCE].includes(user?.role as Role) && (
                         <>
                           <span className="text-[10px] bg-green-500/10 text-green-300 px-2 py-1 rounded border border-green-500/20 flex items-center gap-1"><CheckSquare className="w-3 h-3" /> اعتماد</span>
@@ -239,14 +239,14 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium text-sm text-white transition-colors"
+                className="flex-1 py-2 bg-muted dark:bg-slate-700 hover:bg-primary dark:bg-slate-600 rounded-lg font-medium text-sm text-primary-foreground dark:text-white transition-colors"
               >
                 إلغاء
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex-1 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg font-medium text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-2 bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700 rounded-lg font-medium text-sm text-primary-foreground dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isSaving ? (
                   <>

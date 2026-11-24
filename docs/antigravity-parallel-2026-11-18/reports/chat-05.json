@@ -1,0 +1,55 @@
+{
+  "chat": 5,
+  "slug": "subscriptions-renewal",
+  "status": "NOT_READY",
+  "reviewGroup": 3,
+  "routes": [
+    "/subscriptions/new",
+    "/internal/renew-subscription"
+  ],
+  "touchedFiles": [
+    "app/subscriptions/new/page.tsx",
+    "app/subscriptions/new/subscription-redesign.module.css",
+    "app/internal/renew-subscription/page.tsx",
+    "lib/redesign-subscription-quote.ts",
+    "components/redesign/chat05/renew-subscription.module.css",
+    "public/artworks/chat05-subscriptions-arch.svg",
+    "tests/redesign-subscription-quote.test.cjs",
+    "tests/parallel-chat05-subscriptions-renewal.test.cjs",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-05.md",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-05.json"
+  ],
+  "tests": {
+    "redesignSubscriptionQuote": {
+      "command": "node --test tests/redesign-subscription-quote.test.cjs",
+      "passed": 9,
+      "failed": 0
+    },
+    "parallelChat05SubscriptionsRenewal": {
+      "command": "node --test tests/parallel-chat05-subscriptions-renewal.test.cjs",
+      "passed": 4,
+      "failed": 0
+    },
+    "packagePricing": {
+      "command": "node --test tests/package-pricing.test.cjs",
+      "passed": 2,
+      "failed": 0
+    },
+    "subscriptionCustomOption": {
+      "command": "node --test tests/subscription-custom-option.test.cjs",
+      "passed": 1,
+      "failed": 0
+    },
+    "subscriptionPreviewScope": {
+      "command": "node --test tests/subscription-preview-scope.test.cjs",
+      "passed": 2,
+      "failed": 0
+    },
+    "scopedEslint": {
+      "command": "npx eslint app/subscriptions/new/page.tsx lib/redesign-subscription-quote.ts app/internal/renew-subscription/page.tsx",
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "renderedBrowserChecks": "PENDING"
+}

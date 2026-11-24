@@ -1,0 +1,170 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "dark": false,
+      "links": [
+        {
+          "href": "/services/provider-requests",
+          "background": "rgb(36, 72, 61)",
+          "color": "rgb(255, 255, 255)",
+          "height": 46
+        },
+        {
+          "href": "/service-providers",
+          "background": "rgb(255, 255, 255)",
+          "color": "rgb(37, 43, 40)",
+          "height": 46
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "rgb(36, 72, 61)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 1001
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "links": [
+        {
+          "href": "/services/provider-requests",
+          "background": "rgb(220, 233, 224)",
+          "color": "rgb(25, 57, 46)",
+          "height": 46
+        },
+        {
+          "href": "/service-providers",
+          "background": "rgb(20, 30, 46)",
+          "color": "rgb(226, 232, 240)",
+          "height": 46
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "oklch(0.968 0.007 247.896)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 1001
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "links": [
+        {
+          "href": "/services/provider-requests",
+          "background": "rgb(36, 72, 61)",
+          "color": "rgb(255, 255, 255)",
+          "height": 46
+        },
+        {
+          "href": "/service-providers",
+          "background": "rgb(255, 255, 255)",
+          "color": "rgb(37, 43, 40)",
+          "height": 46
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "rgb(36, 72, 61)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 243.5
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "links": [
+        {
+          "href": "/services/provider-requests",
+          "background": "rgb(220, 233, 224)",
+          "color": "rgb(25, 57, 46)",
+          "height": 46
+        },
+        {
+          "href": "/service-providers",
+          "background": "rgb(20, 30, 46)",
+          "color": "rgb(226, 232, 240)",
+          "height": 46
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "oklch(0.968 0.007 247.896)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 243.5
+    }
+  ],
+  "errors": [],
+  "writes": []
+}

@@ -12,6 +12,8 @@ import { FileText, Download, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/context/LanguageContext'
 import InvoiceModal from '@/app/src/components/invoice'
+import { mapWalletInvoice } from '@/lib/wallet-invoice-data'
+import styles from '../wallet-redesign.module.css'
 
 interface FilesSectionProps {
     files: any[];
@@ -39,30 +41,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     const handleViewFile = (file: any) => {
         if (file.type === 'invoice' && file.raw) {
             const inv = file.raw;
-            const serviceRequest = {
-                id: inv.id,
-                invoiceNumber: inv.id.substring(0, 8).toUpperCase(), // or inv.invoiceNumber if available
-                createdAt: inv.createdAt,
-                clientName: 'N/A',
-                phone: 'N/A',
-                city: 'N/A',
-                district: 'N/A',
-                serviceType: inv.description || t('wallet.service.default'),
-                category: 'other',
-                quantity: 1,
-                price: Number(inv.amount),
-                description: inv.description,
-                status: 'completed',
-                paymentStatus: inv.status === 'paid' ? 'paid' : 'unpaid',
-                 estimatedCost: 0,
-                 finalCost: 0,
-                 assignedAgentId: null,
-                 assignedAt: null,
-                 completedAt: null,
-                 invoiceGenerated: true,
-                 userId: '',
-                 updatedAt: ''
-            };
+            const serviceRequest = mapWalletInvoice({ id: inv.id, service: inv.description, raw: inv });
             setSelectedInvoice(serviceRequest);
             setShowInvoiceModal(true);
         } else {
@@ -74,61 +53,61 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
     }
 
     return (
-        <Card className='w-full min-w-0 bg-white/30 backdrop-blur-xl border border-white/30 shadow-xl rounded-[1.25rem] overflow-hidden'>
+        <Card className={`${styles.walletContentCard} w-full min-w-0 rounded-xl overflow-hidden`}>
             <div className='w-full min-w-0 p-3.5 sm:p-8'>
                 <div className='mb-4 sm:mb-8'>
-                    <h2 className='text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1'>{t('wallet.files')}</h2>
-                    <p className='text-slate-500 font-bold text-xs sm:text-sm'>{t('wallet.desc.files')}</p>
+                    <h2 className='text-xl sm:text-2xl font-black text-[color:var(--w-text-main)] tracking-tight mb-1'>{t('wallet.files')}</h2>
+                    <p className='text-[color:var(--w-text-secondary)] font-bold text-xs sm:text-sm'>{t('wallet.desc.files')}</p>
                 </div>
 
-                <div className='hidden md:block rounded-2xl border border-white/30 overflow-hidden'>
+                <div className='hidden md:block rounded-2xl border border-border dark:border-white/30 overflow-hidden'>
                     <div className="overflow-x-auto w-full">
 <Table>
-                        <TableHeader className='bg-slate-900/5'>
+                        <TableHeader className='bg-card/5 dark:bg-slate-900/5'>
                             <TableRow>
-                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.table.service')}</TableHead>
-                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.commission.propertyType')}</TableHead>
-                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.table.date')}</TableHead>
-                                <TableHead className='text-center px-3 py-3 sm:px-6 sm:py-4 font-black text-slate-900'>{t('wallet.commission.actions')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-[color:var(--w-text-main)]'>{t('wallet.table.service')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-[color:var(--w-text-main)]'>{t('wallet.commission.propertyType')}</TableHead>
+                                <TableHead className='text-right px-3 py-3 sm:px-6 sm:py-4 font-black text-[color:var(--w-text-main)]'>{t('wallet.table.date')}</TableHead>
+                                <TableHead className='text-center px-3 py-3 sm:px-6 sm:py-4 font-black text-[color:var(--w-text-main)]'>{t('wallet.commission.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {files.map((file, index) => (
-                                <TableRow key={index} className='hover:bg-white/30 border-b border-slate-200/10 transition-colors group'>
+                                <TableRow key={index} className='hover:bg-[var(--w-surface-muted)] border-b border-slate-200/10 transition-colors group'>
                                     <TableCell className='px-3 py-3 sm:px-6 sm:py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <div className='p-2 bg-blue-50 text-blue-600 rounded-lg'>
+                                            <div className='p-2 bg-[var(--w-brass-tint)] text-[color:var(--w-brass)] rounded-lg'>
                                                 <FileText className='w-5 h-5' />
                                             </div>
                                             <div>
-                                                <span className='font-bold text-slate-700'>{file.name}</span>
+                                                <span className='font-bold text-[color:var(--w-text-main)]'>{file.name}</span>
                                                 {file.locationName && (
-                                                    <p className='text-[11px] font-bold text-slate-400 mt-1'>
+                                                    <p className='text-[11px] font-bold text-[color:var(--w-text-secondary)] mt-1'>
                                                         اسم المكان: {file.locationName}
                                                     </p>
                                                 )}
                                                 {file.description && !file.locationName && (
-                                                    <p className='text-[11px] font-bold text-slate-400 mt-1'>{file.description}</p>
+                                                    <p className='text-[11px] font-bold text-[color:var(--w-text-secondary)] mt-1'>{file.description}</p>
                                                 )}
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell className='text-right px-3 py-3 sm:px-6 sm:py-4'>
-                                        <span className='px-3 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest'>
+                                        <span className='px-3 py-1 bg-[var(--w-surface-muted)] text-[color:var(--w-text-secondary)] rounded-lg text-[10px] font-black uppercase tracking-widest'>
                                             {getFileTypeLabel(file)}
                                         </span>
                                     </TableCell>
-                                    <TableCell className='text-right text-slate-400 font-bold px-3 py-3 sm:px-6 sm:py-4'>
+                                    <TableCell className='text-right text-[color:var(--w-text-secondary)] font-bold px-3 py-3 sm:px-6 sm:py-4'>
                                         {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
                                     </TableCell>
                                     <TableCell className='text-center px-3 py-3 sm:px-6 sm:py-4'>
                                         <div className='flex items-center justify-center gap-2'>
-                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-[color:var(--w-text-secondary)] hover:text-[color:var(--w-text-main)]'
                                                 onClick={() => handleViewFile(file)}
                                             >
                                                 <Eye className='w-4 h-4' />
                                             </Button>
-                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-slate-400 hover:text-slate-900'
+                                            <Button variant='ghost' size='sm' className='h-10 w-10 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-muted text-[color:var(--w-text-secondary)] hover:text-[color:var(--w-text-main)]'
                                                 onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
                                             >
                                                 <Download className='w-4 h-4' />
@@ -139,7 +118,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                             ))}
                             {files.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={4} className='text-center px-3 py-3 sm:px-6 sm:py-4 text-slate-400'>
+                                    <TableCell colSpan={4} className='text-center px-3 py-3 sm:px-6 sm:py-4 text-[color:var(--w-text-secondary)]'>
                                         {t('common.noData')}
                                     </TableCell>
                                 </TableRow>
@@ -152,39 +131,39 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                 {/* Mobile file cards */}
                 <div className='md:hidden mt-3 space-y-3 w-full min-w-0'>
                     {files.map((file, index) => (
-                        <div key={index} className='bg-white/50 backdrop-blur-md border border-white/50 rounded-2xl p-3.5 sm:p-4 shadow-sm w-full min-w-0 overflow-hidden'>
+                        <div key={index} className='bg-[var(--w-surface-muted)] border border-[var(--w-border)] rounded-2xl p-3.5 sm:p-4 shadow-sm w-full min-w-0 overflow-hidden'>
                             <div className='flex items-start gap-3 mb-3 min-w-0'>
-                                <div className='p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0 mt-0.5'>
+                                <div className='p-2 bg-[var(--w-brass-tint)] text-[color:var(--w-brass)] rounded-lg shrink-0 mt-0.5'>
                                     <FileText className='w-5 h-5' />
                                 </div>
                                 <div className='min-w-0 flex-1'>
-                                    <p className='font-bold text-slate-900 text-sm break-words leading-snug' dir="auto">{file.name}</p>
+                                    <p className='font-bold text-[color:var(--w-text-main)] text-sm break-words leading-snug' dir="auto">{file.name}</p>
                                     {file.locationName && (
-                                        <p className='text-[11px] font-bold text-slate-500 mt-1 break-words'>
+                                        <p className='text-[11px] font-bold text-[color:var(--w-text-secondary)] mt-1 break-words'>
                                             اسم المكان: {file.locationName}
                                         </p>
                                     )}
                                     {file.description && !file.locationName && (
-                                        <p className='text-[11px] font-bold text-slate-500 mt-1 break-words'>{file.description}</p>
+                                        <p className='text-[11px] font-bold text-[color:var(--w-text-secondary)] mt-1 break-words'>{file.description}</p>
                                     )}
                                 </div>
                             </div>
                             <div className='flex items-center justify-between gap-2 pt-2 border-t border-slate-950/5 min-w-0'>
-                                <span className='px-2.5 py-1 bg-muted text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0'>
+                                <span className='px-2.5 py-1 bg-[var(--w-surface-muted)] text-[color:var(--w-text-secondary)] rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0'>
                                     {getFileTypeLabel(file)}
                                 </span>
                                 <div className='flex items-center gap-2'>
-                                    <span className='text-xs text-slate-400 font-bold font-mono'>
+                                    <span className='text-xs text-[color:var(--w-text-secondary)] font-bold font-mono'>
                                         {file.date ? new Date(file.date).toLocaleDateString('en-CA') : ''}
                                     </span>
                                     <div className='flex items-center gap-1'>
-                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-500 hover:text-slate-900'
+                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-[color:var(--w-text-secondary)] hover:text-[color:var(--w-text-main)]'
                                             onClick={() => handleViewFile(file)}
                                             title="عرض"
                                         >
                                             <Eye className='w-4 h-4' />
                                         </Button>
-                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-slate-500 hover:text-slate-900'
+                                        <Button variant='ghost' size='sm' className='h-8 w-8 p-0 rounded-full hover:bg-muted text-[color:var(--w-text-secondary)] hover:text-[color:var(--w-text-main)]'
                                             onClick={() => window.open(resolveFileUrl(file.url), '_blank')}
                                             title="تحميل"
                                         >
@@ -196,7 +175,7 @@ const FilesSection: React.FC<FilesSectionProps> = ({ files }) => {
                         </div>
                     ))}
                     {files.length === 0 && (
-                        <div className='rounded-2xl bg-white/30 border border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-slate-400'>
+                        <div className='calm-panel rounded-2xl bg-white/30 border border-border dark:border-white/30 py-10 text-center text-xs font-black uppercase tracking-widest text-[color:var(--w-text-secondary)]'>
                             {t('common.noData')}
                         </div>
                     )}

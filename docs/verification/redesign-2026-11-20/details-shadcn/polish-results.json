@@ -1,0 +1,107 @@
+[
+  {
+    "width": 595,
+    "language": "ar",
+    "theme": "light",
+    "palette": {
+      "background": "rgb(227, 234, 244)",
+      "card": "rgb(237, 242, 249)"
+    },
+    "checks": [
+      "login palette matches",
+      "section links reopen panels; scene controls remain removed",
+      "map canvas",
+      "single map title",
+      "five shortcuts",
+      "original website icons and keyboard map tabs",
+      "keyboard focus",
+      "no overflow",
+      "no page exceptions"
+    ],
+    "passed": true
+  },
+  {
+    "width": 595,
+    "language": "ar",
+    "theme": "dark",
+    "palette": {
+      "background": "rgb(16, 24, 39)",
+      "card": "rgb(28, 48, 75)"
+    },
+    "checks": [
+      "login palette matches",
+      "section links reopen panels; scene controls remain removed",
+      "map canvas",
+      "single map title",
+      "five shortcuts",
+      "original website icons and keyboard map tabs",
+      "keyboard focus",
+      "no overflow",
+      "no page exceptions"
+    ],
+    "passed": true
+  },
+  {
+    "width": 320,
+    "language": "ar",
+    "theme": "dark",
+    "palette": {
+      "background": "rgb(16, 24, 39)",
+      "card": "rgb(28, 48, 75)"
+    },
+    "checks": [
+      "login palette matches",
+      "section links reopen panels; scene controls remain removed",
+      "map canvas",
+      "single map title",
+      "five shortcuts",
+      "original website icons and keyboard map tabs",
+      "keyboard focus",
+      "no overflow",
+      "no page exceptions"
+    ],
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "language": "ar",
+    "theme": "dark",
+    "palette": {
+      "background": "rgb(16, 24, 39)",
+      "card": "rgb(28, 48, 75)"
+    },
+    "checks": [
+      "login palette matches",
+      "section links reopen panels; scene controls remain removed",
+      "map canvas",
+      "single map title",
+      "five shortcuts",
+      "original website icons and keyboard map tabs",
+      "keyboard focus",
+      "no overflow",
+      "no page exceptions"
+    ],
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "language": "en",
+    "theme": "light",
+    "palette": {
+      "background": "rgb(227, 234, 244)",
+      "card": "rgb(237, 242, 249)"
+    },
+    "checks": [
+      "login palette matches",
+      "section links reopen panels; scene controls remain removed",
+      "map canvas",
+      "single map title",
+      "five shortcuts",
+      "original website icons and keyboard map tabs",
+      "keyboard focus",
+      "no overflow",
+      "no page exceptions"
+    ],
+    "passed": true
+  }
+]

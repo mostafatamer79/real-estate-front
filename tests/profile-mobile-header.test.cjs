@@ -8,10 +8,6 @@ const profilePage = fs.readFileSync(
   'utf8'
 );
 
-test('profile mobile header hides notifications', () => {
-  assert.match(
-    profilePage,
-    /<MobileAppHeader theme="light" title=\{t\('profile\.title'\)\} onBack=\{handleBack\} \/>/
-  );
+test('profile does not enable extra page-level notifications', () => {
   assert.doesNotMatch(profilePage, /<MobileAppHeader[^>]*showNotifications/);
 });

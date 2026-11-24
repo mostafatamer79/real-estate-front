@@ -1,0 +1,28 @@
+{
+  "results": [
+    {
+      "width": 390,
+      "route": "/wallet",
+      "dark": false,
+      "status": 200,
+      "url": "/wallet",
+      "overflow": false,
+      "title": "المحفظة والفواتير | الوساطة الرقمية",
+      "text": "المحفظة المالية\nEN\nالفواتير\nالعمولات\nالملفات\nالاستثمارات\nقريباً\nإضافة رصيد\nقريباً\nسحب رصيد",
+      "bottomShadow": "rgba(24, 32, 28, 0.043) 0px -2px 12px 0px",
+      "panels": 7,
+      "headings": [
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "المحفظة المالية"
+        },
+        {
+          "color": "oklch(0.208 0.042 265.755)",
+          "text": "القائمة الرئيسية"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "writes": []
+}

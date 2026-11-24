@@ -300,7 +300,7 @@ export default function BuildingManagement() {
   const renderMainContent = () => {
     if (selectedSection !== "offers") {
       return (
-        <div className="p-3 sm:p-6 bg-muted rounded-lg border border">
+        <div className="calm-panel p-3 sm:p-6 bg-muted rounded-lg border border">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
             {sidebarItems.find((item) => item.id === selectedSection)?.label}
           </h2>
@@ -312,7 +312,7 @@ export default function BuildingManagement() {
     }
 
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-lg shadow-lg p-3 sm:p-6 mb-6">
+      <div className="calm-panel bg-card/80 backdrop-blur-sm rounded-lg shadow-lg p-3 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 bg-muted rounded-lg">
             <Home className="w-6 h-6 text-blue-600" />
@@ -328,9 +328,9 @@ export default function BuildingManagement() {
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">صور و فيديو ثلاثي الابعاد</h2>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-8 text-center">
-              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Upload className="w-12 h-12 text-muted-foreground dark:text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-2">اسحب وأفلت الملفات هنا أو انقر للتحميل</p>
-              <p className="text-sm text-gray-500 mb-4">يدعم الصور والفيديو بجميع الصيغ</p>
+              <p className="text-sm text-muted-foreground dark:text-gray-500 mb-4">يدعم الصور والفيديو بجميع الصيغ</p>
               <input
                 type="file"
                 multiple
@@ -342,7 +342,7 @@ export default function BuildingManagement() {
               />
               <label
                 htmlFor="file-upload"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary dark:bg-slate-600 text-primary-foreground dark:text-white rounded-lg hover:bg-primary/90 hover:dark:bg-slate-700 cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
                 رفع الملفات
@@ -365,7 +365,7 @@ export default function BuildingManagement() {
                       </button>
                       <div className="mt-2">
                         <p className="text-sm font-medium truncate">{file.name}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground dark:text-gray-500">
                           {(file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
@@ -439,7 +439,7 @@ export default function BuildingManagement() {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
-                  <span className="absolute left-3 top-3 text-gray-500">م²</span>
+                  <span className="absolute left-3 top-3 text-muted-foreground dark:text-gray-500">م²</span>
                 </div>
               </div>
 
@@ -499,7 +499,7 @@ export default function BuildingManagement() {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
-                  <span className="absolute left-3 top-3 text-gray-500"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
+                  <span className="absolute left-3 top-3 text-muted-foreground dark:text-gray-500"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                 </div>
               </div>
 
@@ -541,7 +541,7 @@ export default function BuildingManagement() {
                     onChange={handleInputChange}
                     className="w-full p-3 border border-gray-300 rounded-lg"
                   />
-                  <span className="absolute left-3 top-3 text-gray-500">م</span>
+                  <span className="absolute left-3 top-3 text-muted-foreground dark:text-gray-500">م</span>
                 </div>
               </div>
 
@@ -737,7 +737,7 @@ export default function BuildingManagement() {
                       onChange={handleInputChange}
                       className="w-full p-3 border border-gray-300 rounded-lg"
                     />
-                    <span className="absolute left-3 top-3 text-gray-500">م²</span>
+                    <span className="absolute left-3 top-3 text-muted-foreground dark:text-gray-500">م²</span>
                   </div>
                 </div>
 
@@ -845,10 +845,10 @@ export default function BuildingManagement() {
             <button
               type="submit"
               disabled={isSubmitting || offersLoading}
-              className="px-8 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-3 bg-primary dark:bg-slate-600 text-primary-foreground dark:text-white rounded-lg hover:bg-primary/90 hover:dark:bg-slate-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {(isSubmitting || offersLoading) && (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-border dark:border-white border-t-transparent rounded-full animate-spin"></div>
               )}
               {isSubmitting || offersLoading ? "جاري الحفظ..." : "حفظ العرض"}
             </button>
@@ -871,7 +871,7 @@ export default function BuildingManagement() {
       {/* Mobile sidebar toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-4 right-4 z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg shadow-lg flex items-center justify-center"
+        className="fixed top-4 right-4 z-50 lg:hidden w-10 h-10 bg-card dark:bg-slate-900 text-foreground dark:text-white rounded-lg shadow-lg flex items-center justify-center"
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -886,9 +886,9 @@ export default function BuildingManagement() {
         />
       )}
 
-      <div className="w-full min-h-screen bg-card flex" dir="rtl">
+      <div className="calm-page calm-screen w-full min-h-screen bg-card flex" dir="rtl">
         {/* Fixed Sidebar */}
-        <div className={`
+        <div className={`calm-page calm-screen
           fixed top-0 right-0 h-screen w-80 bg-muted border-l border p-3 sm:p-6 overflow-y-auto z-40
           transition-transform duration-300
           ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
@@ -908,7 +908,7 @@ export default function BuildingManagement() {
                   }}
                   className={`w-full p-4 rounded-lg text-right transition-colors ${
                     isSelected
-                      ? "bg-slate-700 text-white"
+                      ? "bg-muted dark:bg-slate-700 text-foreground dark:text-white"
                       : "bg-card text-gray-700 border border hover:bg-muted"
                   }`}
                 >

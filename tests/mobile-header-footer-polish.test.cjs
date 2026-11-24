@@ -29,8 +29,8 @@ test('mobile header uses a polished shell and motion with reduced-motion support
   assert.match(header, /mobile-menu-panel/);
   const drawer = header.slice(header.indexOf('mobile-menu-panel'));
   assert.equal(drawer.includes("t('header.customerService')"), false);
-  assert.equal(drawer.includes('toggleLanguage(); setIsMenuOpen(false)'), false);
-  assert.equal(drawer.includes('href="/profile"'), false);
+  assert.equal((header.match(/id="tour-target-mobile-profile"/g) || []).length, 1);
+  assert.equal((header.match(/id="tour-target-mobile-language"/g) || []).length, 1);
   assert.match(styles, /@keyframes mobileHeaderReveal/);
   assert.match(styles, /@keyframes mobileMenuReveal/);
   assert.match(styles, /@keyframes mobileMenuItemReveal/);

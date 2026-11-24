@@ -1,0 +1,991 @@
+/* app/details/details.module.css — Architectural Editorial Dashboard */
+
+.dashboard {
+  isolation: isolate;
+  padding-top: 28px;
+  min-height: 100dvh;
+  background: var(--background, #f5f4f0);
+  color: var(--foreground, #0b192c);
+  --background: #f5f4f0;
+  --surface-subtle: #faf9f6;
+  --foreground: #0b192c;
+  --navy-primary: #0b192c;
+  --navy-deep: #071220;
+  --navy-surface: #13243a;
+  --gold-accent: #c5a880;
+  --gold-hover: #b89758;
+  --gold-tint: rgba(197, 168, 128, 0.12);
+  --gold-border: rgba(197, 168, 128, 0.35);
+  --card: #ffffff;
+  --card-foreground: #0b192c;
+  --muted: #f0efe9;
+  --muted-foreground: #526071;
+  --border: #e2ded6;
+  --border-subtle: #eceae3;
+  --ring: #0b192c;
+  overflow-x: clip;
+}
+
+:global(.dark) .dashboard {
+  --background: #0b121e;
+  --surface-subtle: #101a2b;
+  --foreground: #f1f5f9;
+  --navy-primary: #f1f5f9;
+  --navy-deep: #060b13;
+  --navy-surface: #152236;
+  --gold-accent: #d4af37;
+  --gold-hover: #e5be48;
+  --gold-tint: rgba(212, 175, 55, 0.14);
+  --gold-border: rgba(212, 175, 55, 0.4);
+  --card: #121e30;
+  --card-foreground: #f1f5f9;
+  --muted: #17253a;
+  --muted-foreground: #94a3b8;
+  --border: #23354f;
+  --border-subtle: #1c2b40;
+  --ring: #d4af37;
+  background: linear-gradient(160deg, var(--background), #060b13);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 1360px;
+  margin-inline: auto;
+  padding: 8px 28px 72px;
+}
+
+/* ==========================================================================
+   1. Asymmetric Hero Section (Orientation + Wayfinding + 3D Stage)
+   ========================================================================== */
+
+.heroSection {
+  margin-bottom: 36px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.heroOrientationCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 36px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(11, 25, 44, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+:global(.dark) .heroOrientationCard {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+.heroTopMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.liveStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--gold-border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy-primary);
+  letter-spacing: 0.02em;
+}
+
+:global(.dark) .liveStatusPill {
+  color: var(--gold-accent);
+}
+
+.goldPulseDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-accent);
+  box-shadow: 0 0 8px var(--gold-accent);
+}
+
+.dateStamp {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.heroHeadBlock {
+  margin-bottom: 24px;
+}
+
+.heroDescription {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+  margin: 10px 0 0;
+  max-width: 620px;
+}
+
+/* Honest Wayfinding Navigation Pills */
+.wayfindingBlock {
+  margin-top: 8px;
+}
+
+.wayfindingLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-accent);
+  margin-bottom: 10px;
+}
+
+.wayfindingGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wayfindingPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.wayfindingPill:hover {
+  background: var(--card);
+  border-color: var(--gold-accent);
+  color: var(--navy-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 25, 44, 0.06);
+}
+
+.wayfindingPill:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Restrained Architectural Ticker */
+.tickerContainer {
+  margin-top: 24px;
+  padding: 10px 16px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tickerLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-accent);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tickerWindow {
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.tickerTrack {
+  display: inline-flex;
+  gap: 36px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  animation: tickerScroll 36s linear infinite;
+}
+
+.tickerItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tickerDot {
+  color: var(--gold-accent);
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tickerTrack {
+    animation: none;
+    white-space: normal;
+  }
+}
+
+/* Hero Stage Card (Framing 3D scene or atmospheric photography) */
+.heroStageCard {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(11, 25, 44, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+:global(.dark) .heroStageCard {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+.heroAtmosphereCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(11, 25, 44, 0.04);
+  position: relative;
+  overflow: hidden;
+  min-height: 380px;
+}
+
+.atmosphereImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.92;
+  filter: saturate(0.9);
+  transition: transform 0.6s ease-out;
+}
+
+.atmosphereOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 25, 44, 0.1) 0%, rgba(11, 25, 44, 0.82) 100%);
+  z-index: 1;
+}
+
+.atmosphereContent {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.atmosphereBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(11, 25, 44, 0.6);
+  border: 1px solid var(--gold-border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold-accent);
+  margin-bottom: 8px;
+}
+
+.atmosphereTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #ffffff;
+}
+
+.atmosphereSubtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   2. Data Alert & Retry Row
+   ========================================================================== */
+
+.retryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 14px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.retryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.retryBtn:hover:not(:disabled) {
+  background: var(--muted);
+  border-color: var(--gold-accent);
+}
+
+.retryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   3. Global Section Controls Bar (Count + Expand/Collapse All)
+   ========================================================================== */
+
+.sectionControlsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 14px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.sectionCountBadge {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionCountNum {
+  font-family: monospace, sans-serif;
+  color: var(--gold-accent);
+  font-weight: 800;
+}
+
+.toggleAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.toggleAllBtn:hover {
+  background: var(--card);
+  border-color: var(--gold-accent);
+  color: var(--navy-primary);
+}
+
+.toggleAllBtn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   4. Numbered Accessible Collapsible Operational Sections
+   ========================================================================== */
+
+.sectionsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionCard {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card);
+  overflow: hidden;
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+:global(.dark) .sectionCard {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.sectionCard:hover {
+  border-color: var(--gold-border);
+  box-shadow: 0 4px 18px rgba(11, 25, 44, 0.06);
+}
+
+.sectionHeaderBtn {
+  width: 100%;
+  min-height: 64px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: start;
+  color: var(--foreground);
+  transition: background-color 0.18s ease-out;
+}
+
+.sectionHeaderBtn:hover {
+  background: var(--surface-subtle);
+}
+
+.sectionHeaderBtn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.sectionHeaderMain {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sectionNum {
+  font-family: monospace, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gold-accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.sectionHeaderMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.sectionPreviewPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sectionChevron {
+  width: 18px;
+  height: 18px;
+  color: var(--muted-foreground);
+  transition: transform 0.22s ease-out;
+  flex-shrink: 0;
+}
+
+.sectionBody {
+  padding: 24px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-subtle);
+}
+
+/* ==========================================================================
+   5. Scoped Overrides for Child Components
+   ========================================================================== */
+
+/* Section Icons (Admin configurable) */
+.dashboard :global([data-details-heading-icon]) {
+  display: none;
+}
+.dashboard[data-section-icons="true"] :global([data-details-heading-icon]) {
+  display: flex;
+}
+
+/* Quick Actions scoped styling for variant=details */
+.dashboard :global([data-action-variant="details"] .home-action-grid) {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-grid > div) {
+  min-width: 0;
+  width: 100%;
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-grid button) {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 120px;
+  aspect-ratio: auto;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-subtle);
+  color: var(--foreground);
+  box-shadow: none;
+  transition: all 0.18s ease-out;
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-grid button:hover:not(:disabled)) {
+  background: var(--card);
+  border-color: var(--gold-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(11, 25, 44, 0.08);
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-grid button:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-label) {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--foreground);
+  text-align: center;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.dashboard :global([data-action-variant="details"] .home-action-grid img) {
+  filter: brightness(0);
+  opacity: 0.8;
+}
+
+:global(.dark) .dashboard :global([data-action-variant="details"] .home-action-grid img) {
+  filter: brightness(0) invert(1);
+}
+
+/* Stats (PropertyInfoCards) */
+.dashboard :global([data-home-section="stats"] .calm-group) {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.dashboard :global([data-home-section="stats"] [data-slot="card"]) {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  padding-block: 20px;
+}
+
+.dashboard :global([data-home-section="stats"] [data-slot="card-content"] .calm-panel) {
+  background: var(--surface-subtle) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: none !important;
+}
+
+.dashboard :global([data-home-section="stats"] [data-slot="card-footer"] button) {
+  min-height: 44px;
+  border-radius: 12px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-weight: 600;
+  transition: all 0.18s ease-out;
+}
+
+.dashboard :global([data-home-section="stats"] [data-slot="card-footer"] button:hover) {
+  background: var(--card);
+  border-color: var(--gold-accent);
+}
+
+/* Charts (PriceTrendChart & PropertyDistributionChart) */
+.dashboard :global([data-home-section="charts"] .calm-panel),
+.dashboard :global([data-home-section="charts"] .calm-chart) {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+.dashboard :global([data-details-chart-empty]) {
+  min-height: 220px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.dashboard :global([data-details-chart-empty] > .calm-panel) {
+  min-height: 80px;
+  background: var(--surface-subtle) !important;
+  border: 1px dashed var(--border) !important;
+}
+
+/* Cleanup old ambient effects on /details */
+.dashboard :global(.calm-decoration) {
+  display: none;
+}
+
+/* ==========================================================================
+   6. Responsive Layout & Mobile Refinements (390px Viewport Safe)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding-top: 18px;
+  }
+  .content {
+    padding: 4px 16px 48px;
+  }
+  .heroOrientationCard {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+  .heroStageCard,
+  .heroAtmosphereCard {
+    padding: 16px;
+    border-radius: 20px;
+  }
+  .sectionControlsBar {
+    padding: 10px 16px;
+  }
+  .sectionHeaderBtn {
+    padding: 14px 16px;
+    min-height: 56px;
+  }
+  .sectionBody {
+    padding: 16px 14px;
+  }
+  .sectionPreviewPill {
+    display: none;
+  }
+  .dashboard :global([data-action-variant="details"] .home-action-grid) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+  .dashboard :global([data-action-variant="details"] .home-action-grid button) {
+    min-height: 110px;
+    padding: 14px 8px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard :global([data-action-variant="details"] .home-action-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .heroTopMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .wayfindingGrid {
+    gap: 8px;
+  }
+  .wayfindingPill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .sectionHeaderMain {
+    gap: 10px;
+  }
+  .sectionTitle {
+    font-size: 16px;
+  }
+}
+
+/* The canvas belongs to the workspace; the scene is the editorial focal point. */
+.dashboard { --background:#f8fafc; --card:#fff; --foreground:#0b192c; --card-foreground:#0b192c; --muted:#f0f3f7; --muted-foreground:#475569; --border:#dce3eb; --surface-subtle:#f4f6f9; --gold-accent:#946528; --gold-tint:#f5ecdd; padding-top:32px; }
+:global(.dark) .dashboard { --background:#0b192c; --card:#13243a; --foreground:#f1f5f9; --card-foreground:#f1f5f9; --muted:#1b304a; --muted-foreground:#bfccda; --border:#2d435c; --surface-subtle:#152b44; --gold-accent:#e6bb78; --navy-primary:#f1f5f9; background:var(--background); }
+.heroGrid { grid-template-columns:1fr 1.15fr; align-items:center; gap:clamp(28px,4vw,64px); }
+.heroOrientationCard { padding:24px 0; border:0; border-radius:0; box-shadow:none; background:transparent; overflow:visible; }
+:global(.dark) .heroOrientationCard { box-shadow:none; }
+.heroTopMeta { margin-bottom:24px; }
+.liveStatusPill { padding:0; border:0; border-radius:0; background:none; font-size:14px; font-weight:600; color:var(--muted-foreground); }
+.goldPulseDot { box-shadow:none; width:24px; height:1px; border-radius:0; }
+.heroHeadBlock { margin-bottom:32px; }
+.heroDescription { font-size:16px; max-width:40ch; line-height:1.85; }
+.workspaceNote { display:flex; gap:12px; align-items:flex-start; max-width:42ch; padding-top:28px; margin-top:32px; border-top:1px solid var(--border); color:var(--muted-foreground); font-size:13px; line-height:1.8; }
+.workspaceNote svg { color:var(--gold-accent); flex-shrink:0; margin-top:3px; }
+.workspaceNote p { margin:0; }
+.heroStageCard { padding:22px; border:0; background:var(--card); box-shadow:0 16px 44px -32px #0b192c55; border-radius:24px; }
+:global(.dark) .heroStageCard { box-shadow:0 20px 48px -30px #0007; }
+.sectionControlsBar { background:transparent; border:0; padding:14px 0; margin-top:28px; margin-bottom:8px; border-bottom:1px solid var(--border); border-radius:0; box-shadow:none; }
+.sectionCard { box-shadow:none; border-radius:16px; }
+.sectionNum { font-variant-numeric:tabular-nums; }
+.wayfindingPill { transition:background-color 180ms ease-out,border-color 180ms ease-out,transform 180ms ease-out; min-width:44px; }
+.wayfindingPill:disabled { opacity:.55; cursor:not-allowed; }
+.wayfindingPill:active:not(:disabled) { transform:scale(.98); }
+.dashboard :global(button),.dashboard :global(a) { min-height:44px; }
+@media(hover:none) { .wayfindingPill:hover { transform:none; } }
+@media(max-width:1024px) { .heroGrid { grid-template-columns:1fr; gap:20px; } .heroOrientationCard { padding-block:12px; } .workspaceNote { margin-top:20px; padding-top:18px; } }
+@media(max-width:767px) { .dashboard { padding-top:20px; } .content { padding-inline:18px; } .heroStageCard { padding:14px; } .heroDescription { font-size:15px; } .heroTopMeta { margin-bottom:16px; } .heroHeadBlock { margin-bottom:24px; } .wayfindingGrid { gap:8px; } .wayfindingPill { padding:10px 13px; font-size:12px; } }
+@media(prefers-reduced-motion:reduce) { .dashboard *, .dashboard *::before,.dashboard *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+
+.dashboard :global(.text-muted-foreground) { color:var(--muted-foreground)!important; }
+.dashboard :global(.home-action-grid) { background:transparent!important; border:0!important; box-shadow:none!important; }
+.dashboard :global([data-cards-variant="details"] > div > [data-slot="card"]) { box-shadow:none; }
+
+.dashboard :global([data-cards-variant="details"] [data-slot="card"]) { padding-block:12px; border:0; box-shadow:none; background:transparent; }
+.dashboard :global([data-cards-variant="details"] [data-slot="card-content"] .py-10) { min-height:80px; padding-block:18px; flex-direction:row; gap:12px; background:transparent; border:0; }
+.dashboard :global([data-cards-variant="details"] [data-slot="card-content"] .py-10 .calm-icon) { width:28px; height:28px; margin:0; background:transparent; }
+
+/* Cinematic architectural opening: one spatial composition rather than card columns. */
+.heroSection { margin-inline: -28px; margin-top:-8px; margin-bottom:48px; }
+.heroGrid { position:relative; isolation:isolate; overflow:hidden; min-height:690px; padding:80px 44px 44px; gap:clamp(32px,4vw,60px); background:#0b192c; align-items:center; }
+.heroImage { position:absolute; inset:0; z-index:-2; background-image:linear-gradient(90deg,rgba(11,25,44,.84),rgba(11,25,44,.58) 46%,rgba(11,25,44,.87)),url('/artworks/details-district-v1.webp'); background-size:cover; background-position:center 55%; }
+.heroGrid::after { content:''; position:absolute; inset:20px; border:1px solid #e6bb7838; pointer-events:none; z-index:-1; }
+.heroChapter { position:absolute; inset-block-start:30px; inset-inline-start:44px; color:#e6bb78; font-size:11px; letter-spacing:.16em; font-weight:650; }
+.heroOrientationCard { padding:20px 0; color:#fff; min-width:0; }
+.heroTopMeta { margin-bottom:26px; }
+.heroOrientationCard .liveStatusPill { color:#e0e7ef; font-size:12px; }
+.heroOrientationCard .goldPulseDot { background:#e6bb78; width:36px; }
+.heroHeadBlock h1 { color:#fff; font-size:clamp(44px,5.1vw,76px); line-height:1.27; max-width:13ch; font-weight:700; }
+.heroOrientationCard .heroDescription { color:#d6e0ed; font-size:15px; max-width:35ch; margin-top:22px; }
+.heroOrientationCard .wayfindingGrid { display:grid; grid-template-columns:1fr 1fr; gap:0 22px; }
+.heroOrientationCard .wayfindingPill { border:0; border-bottom:1px solid #ffffff38; border-radius:0; background:transparent; color:#fff; padding:14px 0; font-size:12px; box-shadow:none; min-width:0; }
+.heroOrientationCard .wayfindingPill:hover { background:transparent; color:#e6bb78; transform:translateY(-2px); }
+.heroOrientationCard .wayfindingPill svg { color:#e6bb78; flex-shrink:0; }
+.routeArrow { margin-inline-start:auto; font-size:18px; color:#e6bb78; }
+.heroOrientationCard .wayfindingPill:focus-visible { outline-color:#e6bb78; outline-offset:4px; }
+.heroOrientationCard .workspaceNote { color:#c2cfde; border-color:#ffffff30; margin-top:28px; font-size:12px; padding-top:20px; }
+.heroOrientationCard .workspaceNote svg { color:#e6bb78; }
+.heroStageCard { position:relative; border-radius:3px 3px 32px 3px; padding:20px; box-shadow:0 35px 70px #0005; transform:translateY(12px); }
+.heroAtmosphereCard { min-height:480px; border-radius:3px 3px 32px 3px; border:1px solid #e6bb7870; }
+.heroAtmosphereCard .atmosphereImage { object-position:65% center; }
+.heroGrid { animation:details-stage-in 650ms cubic-bezier(.16,1,.3,1) both; }
+@keyframes details-stage-in { from { opacity:0; transform:translateY(16px); } to {opacity:1; transform:translateY(0);} }
+@media(min-width:1600px) { .heroSection { margin-inline:-60px; } .heroGrid { padding-inline:64px; } }
+@media(max-width:1024px) { .heroGrid { grid-template-columns:1fr 1fr; gap:26px; padding:76px 30px 36px; min-height:650px; } .heroHeadBlock h1 { font-size:clamp(40px,5vw,60px); } .heroStageCard { padding:14px; } .heroOrientationCard .wayfindingGrid { grid-template-columns:1fr; } }
+@media(max-width:767px) { .heroSection { margin-inline:-18px; margin-top:-4px; margin-bottom:32px; } .heroGrid { grid-template-columns:1fr; padding:64px 24px 32px; gap:24px; min-height:0; } .heroGrid::after { inset:12px; } .heroChapter { inset-inline-start:24px; inset-block-start:26px; font-size:10px; } .heroImage { background-position:65% top; background-image:linear-gradient(180deg,rgba(11,25,44,.65),#0b192cee 62%),url('/artworks/details-district-v1.webp'); } .heroOrientationCard { padding:14px 0 0; } .heroTopMeta { margin-bottom:20px; } .heroHeadBlock h1 { font-size:clamp(40px,11.2vw,58px); max-width:14ch; } .heroOrientationCard .heroDescription { font-size:14px; margin-top:16px; } .heroOrientationCard .wayfindingGrid { grid-template-columns:1fr 1fr; gap:0 14px; } .heroOrientationCard .wayfindingPill { font-size:11px; gap:6px; } .heroOrientationCard .workspaceNote { display:none; } .heroStageCard { transform:none; padding:14px; border-radius:3px 3px 24px 3px; } .heroAtmosphereCard { min-height:340px; } }
+@media(prefers-reduced-motion:reduce) { .heroGrid { animation:none; } }
+
+.heroImage { z-index:-2; background:none; }
+.heroImage::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,#0b192c55,#0b192c99 46%,#0b192ce0); }
+@media(max-width:767px) { .heroImage { background:none; } .heroImage::after { background:linear-gradient(180deg,#0b192c99,#0b192ce8 65%); } }
+
+.atmosphereBlueprint { position:absolute; inset:0; display:grid; place-items:center; background:linear-gradient(145deg,#122a42,#0b192c); overflow:hidden; }
+.atmosphereBlueprint span { position:absolute; width:65%; height:42%; border:1px solid #e6bb7860; transform:rotate(-30deg) skew(16deg); }
+.atmosphereBlueprint span:nth-child(2) { translate:0 -36px; }
+.atmosphereBlueprint span:nth-child(3) { translate:0 -72px; }
+.atmosphereBlueprint svg { width:100px; height:100px; color:#e6bb78; stroke-width:.5; opacity:.5; }
+
+/* Motion follows navigation and reading, without delaying interaction. */
+.readingTrack { position: sticky; top: 0; height: 2px; z-index: 20; pointer-events: none; }
+.readingTrack span { display: block; width: 100%; height: 100%; background: var(--gold-accent); transform: scaleX(0); transform-origin: left; }
+.dashboard[dir='rtl'] .readingTrack span { transform-origin: right; }
+.heroGrid { animation: none; }
+.heroStageCard { transition: transform 220ms ease-out; }
+.sectionHeaderBtn:active { background: var(--gold-tint); }
+@media (hover: hover) and (pointer: fine) {
+  .heroOrientationCard .wayfindingPill .routeArrow { transition: transform 180ms ease-out; }
+  .heroOrientationCard .wayfindingPill:hover .routeArrow { transform: translateX(4px); }
+  .dashboard[dir='rtl'] .wayfindingPill:hover .routeArrow { transform: translateX(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroStageCard { transition: none; transform: none; }
+  .readingTrack { display: none; }
+}
+
+/* A spatial arrival, followed by a deliberately practical workspace. */
+.heroSection { height:calc(100svh + 220px); margin-bottom:64px; }
+.heroGrid { display:flex; align-items:center; position:sticky; top:68px; min-height:calc(100svh - 68px); padding:70px 56px 100px; border-radius:0 0 32px 32px; overflow:hidden; }
+.heroGrid::after { display:none; }
+.heroGrid::before { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,#0c1b2af5 0%,#0c1b2ac4 32%,#0c1b2a08 66%,#0c1b2a20); }
+.dashboard[dir='rtl'] .heroGrid::before { background:linear-gradient(270deg,#0c1b2af5 0%,#0c1b2ac4 32%,#0c1b2a08 66%,#0c1b2a20); }
+.heroOrientationCard { position:relative; z-index:2; width:54%; border:0; border-radius:0; background:transparent; box-shadow:none; padding:0; overflow:visible; transform:translateY(calc(var(--chapter-progress,0) * -42px)); }
+.heroTopMeta { display:none; }
+.heroHeadBlock h1 { font-size:clamp(52px,6.7vw,96px); line-height:1.15; max-width:12ch; letter-spacing:-.03em; }
+.dashboard[dir='rtl'] .heroHeadBlock h1 { line-height:1.35; letter-spacing:0; }
+.heroOrientationCard .heroDescription { max-width:34ch; font-size:16px; line-height:1.9; margin-top:24px; color:#d9e1e5; }
+.enterWorkspace { display:inline-flex; align-items:center; justify-content:space-between; gap:30px; padding:16px 24px; min-height:56px; margin-top:24px; border-radius:8px; background:#e6c38b; color:#142534; font-size:14px; font-weight:750; transition:background-color 180ms ease,transform 180ms ease; text-decoration:none; }
+.enterWorkspace svg { width:19px; height:19px; }
+.dashboard[dir='ltr'] .enterWorkspace svg { transform:rotate(180deg); }
+.enterWorkspace:hover { background:#f1d6ab; }
+.enterWorkspace:active { transform:scale(.98); }
+.enterWorkspace:focus-visible { outline:2px solid white; outline-offset:5px; }
+.heroOrientationCard .wayfindingGrid { display:flex; flex-wrap:wrap; gap:0 22px; margin-top:12px; }
+.heroOrientationCard .wayfindingPill { font-size:12px; padding:12px 0; gap:8px; border-color:#d4c4a74d; }
+.heroOrientationCard .workspaceNote { display:none; }
+.workspaceArrival { scroll-margin-top:90px; margin-bottom:40px; }
+.workspaceArrival:focus { outline:none; }
+.workspaceArrival:focus-visible { outline:2px solid var(--gold-accent); outline-offset:8px; }
+.workspaceArrivalHeading { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:24px; }
+.workspaceArrivalHeading h2 { font-size:clamp(26px,3.4vw,42px); max-width:24ch; line-height:1.4; font-weight:700; }
+.workspaceArrivalHeading p { max-width:30ch; color:var(--muted-foreground); font-size:14px; line-height:1.8; }
+.workspaceArrival .heroStageCard { background:var(--card); transform:none; padding:24px; border-radius:16px; box-shadow:none; border:1px solid var(--border); }
+@media(min-width:1600px) { .heroGrid { padding-inline:80px; } }
+@media(max-width:1024px) { .heroGrid { padding-inline:32px; } .heroOrientationCard { width:64%; } }
+@media(max-width:767px) {
+  .heroSection { height:auto; margin-bottom:40px; }
+  .heroGrid { position:relative; top:auto; min-height:780px; padding:44px 24px 230px; border-radius:0 0 24px 24px; align-items:flex-start; }
+  .heroGrid::before,.dashboard[dir='rtl'] .heroGrid::before { background:linear-gradient(180deg,#0c1b2af5,#0c1b2ad9 32%,#0c1b2a14 72%,#0c1b2a88); }
+  .heroOrientationCard { width:100%; transform:none; }
+  .heroHeadBlock h1 { font-size:clamp(46px,12vw,66px); max-width:13ch; }
+  .heroOrientationCard .heroDescription { font-size:14px; max-width:31ch; margin-top:16px; }
+  .enterWorkspace { margin-top:18px; min-height:52px; padding:13px 20px; }
+  .heroOrientationCard .wayfindingGrid { margin-top:8px; gap:0 16px; }
+  .heroOrientationCard .wayfindingPill { font-size:11px; padding:10px 0; }
+  .workspaceArrivalHeading { display:block; }
+  .workspaceArrivalHeading p { margin-top:12px; max-width:38ch; }
+  .workspaceArrival .heroStageCard { padding:14px; }
+}
+@media(prefers-reduced-motion:reduce) { .heroSection { height:auto; } .heroGrid { position:relative; top:auto; } .heroOrientationCard { transform:none; } .enterWorkspace { transition:none; } }
+
+@font-face { font-family:'Plex Arabic Local'; src:url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'Plex Arabic Local'; src:url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype'); font-weight:600 900; font-style:normal; font-display:swap; }
+.dashboard[dir='rtl'] { font-family:'Plex Arabic Local',Tahoma,sans-serif; }
+.dashboard[dir='rtl'] .heroOrientationCard { text-align:right; width:52%; }
+.dashboard[dir='rtl'] .heroHeadBlock h1 { font-size:clamp(48px,5.8vw,84px); font-weight:600; line-height:1.55; max-width:13ch; margin-inline-start:0; letter-spacing:0; text-wrap:balance; }
+.dashboard[dir='rtl'] .heroOrientationCard .heroDescription { line-height:2; font-size:16px; max-width:34ch; }
+.dashboard[dir='rtl'] .wayfindingPill { font-size:13px; }
+@media(max-width:767px) {
+  .heroGrid { display:flex; flex-direction:column; min-height:0; padding:34px 24px 72px; gap:16px; }
+  .heroOrientationCard,.dashboard[dir='rtl'] .heroOrientationCard { width:100%; order:1; padding:0; }
+  .heroGrid :global([data-skyline-origin]) { position:relative; inset:auto; order:2; width:calc(100% + 48px); height:330px; flex:none; margin-inline:-24px; }
+  .heroGrid::before,.dashboard[dir='rtl'] .heroGrid::before { background:linear-gradient(180deg,#0c1b2a00 0%,#0c1b2a00 72%,#0c1b2a80); }
+  .dashboard[dir='rtl'] .heroHeadBlock h1 { font-size:clamp(38px,10.6vw,48px); line-height:1.65; max-width:15ch; }
+  .dashboard[dir='rtl'] .heroOrientationCard .heroDescription { font-size:14px; line-height:2; max-width:34ch; }
+  .heroOrientationCard .wayfindingGrid { margin-top:18px; gap:4px 20px; }
+  .heroOrientationCard .wayfindingPill { font-size:12px; padding:12px 0; }
+  .workspaceArrivalHeading h2 { font-size:28px; line-height:1.65; }
+}
+
+/* The same model accompanies the operational chapters instead of ending at the hero. */
+.heroSection { position:relative; z-index:25; }
+.workspaceLayout { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:32px; align-items:start; }
+.workspaceMain { min-width:0; }
+.workspaceCompanion { position:sticky; top:104px; min-width:0; }
+.sceneDock { width:100%; height:240px; border-radius:16px; background:#0c1b2a; }
+.journeyNavigation { display:flex; flex-direction:column; margin-top:18px; gap:4px; }
+.journeyNavigation a { min-height:48px; display:flex; align-items:center; gap:12px; justify-content:space-between; padding:10px 12px; border-radius:8px; color:var(--muted-foreground); font-size:13px; line-height:1.7; text-decoration:none; transition:background-color 180ms ease,color 180ms ease; }
+.journeyNavigation a[aria-current='location'] { background:var(--gold-tint); color:var(--foreground); }
+.journeyNavigation a:hover { color:var(--foreground); background:var(--muted); }
+.journeyNavigation a:focus-visible { outline:2px solid var(--gold-accent); outline-offset:2px; }
+.workspaceMain :global([data-home-section]) { scroll-margin-top:112px; }
+@media(max-width:1024px) and (min-width:768px) { .workspaceLayout { grid-template-columns:minmax(0,1fr) 210px; gap:20px; } .sceneDock { height:210px; } }
+@media(max-width:767px) {
+  .workspaceLayout { display:flex; flex-direction:column; gap:22px; }
+  .workspaceCompanion { order:-1; position:sticky; top:82px; z-index:24; width:100%; padding-block:4px; background:var(--background); }
+  .sceneDock { height:88px; }
+  .journeyNavigation { display:none; }
+  .workspaceMain { width:100%; }
+  .workspaceMain :global([data-home-section]),.workspaceArrival { scroll-margin-top:190px; }
+}
+
+.heroGrid { overflow:visible; }
+.heroGrid::before { border-radius:inherit; }
+
+/* One pinned scene: the camera advances through the architecture as the story unfolds. */
+.heroSection { height:340svh; margin-bottom:56px; z-index:1; }
+.heroGrid { position:sticky; top:64px; height:calc(100svh - 64px); min-height:560px; display:flex; flex-direction:row; align-items:center; overflow:hidden; padding:60px 56px 110px; border-radius:0; }
+.heroGrid::before { background:linear-gradient(90deg,#0c1b2aeb,#0c1b2aa6 34%,#0c1b2a00 70%); }
+.dashboard[dir='rtl'] .heroGrid::before { background:linear-gradient(270deg,#0c1b2aeb,#0c1b2aa6 34%,#0c1b2a00 70%); }
+.heroOrientationCard { transform:none; }
+.sceneChapter { position:absolute; z-index:2; inset-inline-start:56px; top:clamp(70px,19vh,210px); max-width:44%; opacity:0; color:#f4f0e6; }
+.sceneChapter h2 { font-size:clamp(36px,5.5vw,78px); font-weight:600; line-height:1.3; letter-spacing:-.025em; text-wrap:balance; }
+.sceneChapter p { margin-top:22px; max-width:35ch; font-size:16px; line-height:1.9; color:#deded6; }
+.dashboard[dir='rtl'] .sceneChapter h2 { line-height:1.6; letter-spacing:0; }
+.sceneScrollCue { position:absolute; inset-inline-start:56px; bottom:36px; z-index:2; display:flex; flex-direction:column; gap:12px; color:#e4d9c5; font-size:12px; pointer-events:none; }
+.sceneProgressTrack { width:150px; height:2px; background:#d4c3a746; overflow:hidden; }
+.sceneProgressTrack>span { display:block; height:100%; width:100%; background:#ebc991; transform-origin:left; transform:scaleX(var(--scene-progress,0)); }
+.dashboard[dir='rtl'] .sceneProgressTrack>span { transform-origin:right; }
+.workspaceLayout { display:block; }
+.workspaceMain :global([data-home-section]),.workspaceArrival { scroll-margin-top:100px; }
+@media(max-width:767px) {
+  .heroSection { height:320svh; margin-bottom:36px; }
+  .heroGrid { position:sticky; top:60px; height:calc(100svh - 60px); min-height:600px; display:block; padding:36px 24px 100px; }
+  .heroGrid::before,.dashboard[dir='rtl'] .heroGrid::before { background:linear-gradient(180deg,#0c1b2ad9,#0c1b2a85 40%,#0c1b2a00 70%,#0c1b2a80); }
+  .heroOrientationCard,.dashboard[dir='rtl'] .heroOrientationCard { width:100%; }
+  .heroGrid :global([data-scene-world]) { position:absolute; inset:0; height:auto; width:auto; margin:0; }
+  .sceneChapter { inset-inline:24px; top:40px; max-width:none; }
+  .sceneChapter h2 { font-size:clamp(36px,10.5vw,48px); line-height:1.3; max-width:14ch; }
+  .dashboard[dir='rtl'] .sceneChapter h2 { line-height:1.6; }
+  .sceneChapter p { margin-top:16px; max-width:32ch; font-size:14px; }
+  .heroOrientationCard .wayfindingGrid { gap:0 16px; margin-top:10px; }
+  .heroOrientationCard .wayfindingPill { padding:9px 0; font-size:11px; }
+  .sceneScrollCue { inset-inline-start:24px; bottom:88px; }
+}
+@media(prefers-reduced-motion:reduce) { .heroSection { height:auto; } .heroGrid { position:relative; top:auto; min-height:720px; height:auto; } .sceneChapter { display:none; } .sceneScrollCue { display:none; } }
+.heroGrid { top:0; height:100svh; }
+@media(max-width:767px) { .heroGrid { top:0; height:100svh; } .sceneScrollCue { bottom:132px; } }
+@media(prefers-reduced-motion:reduce) { .heroGrid { top:auto; height:auto; } }
+.sceneScrollCue { left:56px; right:auto; bottom:92px; }
+@media(max-width:767px) { .sceneScrollCue { left:24px; bottom:132px; } }

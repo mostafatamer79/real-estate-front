@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>الوساطة الرقمية — مشروع بنان المعماري الذكي (B & C Fusion)</title>
+  <style>
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype');
+      font-weight: 600;
+      font-display: swap;
+    }
+
+    :root {
+      /* Dark Theme (Obsidian & Gold) by default */
+      --bg: #07090e;
+      --surface: #0c121c;
+      --card: #101926;
+      --card-hover: #142030;
+      --gold: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-soft: rgba(212, 175, 55, 0.12);
+      --gold-glow: rgba(212, 175, 55, 0.28);
+      --cyan: #2dd4bf;
+      --cyan-soft: rgba(45, 212, 191, 0.12);
+      --border: rgba(212, 175, 55, 0.2);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --radius-outer: 24px;
+      --radius-inner: 18px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Light Theme (Travertine & Warm Bronze) */
+    body.light-theme {
+      --bg: #f8f6f0;
+      --surface: #ffffff;
+      --card: #f2eee4;
+      --card-hover: #eae4d5;
+      --gold: #966f33;
+      --gold-light: #7a5520;
+      --gold-soft: rgba(150, 111, 51, 0.1);
+      --gold-glow: rgba(150, 111, 51, 0.2);
+      --cyan: #0f766e;
+      --cyan-soft: rgba(15, 118, 110, 0.1);
+      --border: rgba(150, 111, 51, 0.25);
+      --border-subtle: rgba(15, 23, 42, 0.1);
+      --text: #111827;
+      --muted: #52616b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plex', -apple-system, sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+      direction: rtl;
+      transition: background-color 400ms var(--ease), color 400ms var(--ease);
+    }
+
+    /* =========================================================================
+       1. FLOATING ISLAND NAVIGATION
+       ========================================================================= */
+    .nav-wrap {
+      position: fixed;
+      top: 20px;
+      inset-inline: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      padding-inline: 20px;
+    }
+    .nav-island {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      background: rgba(12, 18, 28, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      padding: 8px 14px 8px 24px;
+      border-radius: 9999px;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
+      transition: all 300ms var(--ease);
+    }
+    body.light-theme .nav-island {
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 15px 35px -10px rgba(150, 111, 51, 0.15);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--gold);
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+    @media (max-width: 980px) {
+      .nav-menu { display: none; }
+    }
+    .nav-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 200ms ease;
+    }
+    .nav-menu a:hover { color: var(--gold); }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-theme-toggle {
+      background: var(--gold-soft);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms;
+    }
+    .btn-theme-toggle:hover {
+      background: var(--gold);
+      color: #07090e;
+    }
+    .btn-island-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--gold) 0%, #b38234 100%);
+      color: #07090e;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 16px var(--gold-glow);
+      transition: transform 200ms var(--ease), box-shadow 200ms ease;
+    }
+    .btn-island-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--gold-glow);
+    }
+    .btn-island-cta:active { transform: scale(0.97); }
+    .btn-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* =========================================================================
+       2. HERO SECTION WITH MONUMENTAL ARCHITECTURE
+       ========================================================================= */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 130px 24px 60px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-glow-sphere {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 450px;
+      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-pill {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 24px;
+    }
+    body.light-theme .hero-pill { color: var(--gold); }
+    .hero-h1 {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(38px, 6vw, 76px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      max-width: 18ch;
+      background: linear-gradient(135deg, #ffffff 40%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    body.light-theme .hero-h1 {
+      background: linear-gradient(135deg, #111827 40%, #966f33 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(15px, 1.6vw, 19px);
+      line-height: 1.9;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-bottom: 40px;
+    }
+
+    /* DOUBLE-BEZEL SEARCH CONSOLE */
+    .search-bezel-outer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1040px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: var(--radius-outer);
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.8);
+      margin-bottom: 40px;
+    }
+    body.light-theme .search-bezel-outer {
+      background: rgba(150, 111, 51, 0.05);
+      box-shadow: 0 20px 45px -10px rgba(150, 111, 51, 0.15);
+    }
+    .search-bezel-inner {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-inner);
+      padding: 18px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      .search-bezel-inner { grid-template-columns: 1fr; }
+    }
+    .search-col {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      gap: 4px;
+    }
+    .search-col label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .search-col select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    .search-col select option { background: var(--surface); }
+
+    /* 4 Live Platform Metric Cards */
+    .metric-row {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 1040px;
+    }
+    @media (max-width: 768px) {
+      .metric-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric-item {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      padding: 16px;
+      border-radius: 14px;
+      text-align: right;
+    }
+    .metric-val {
+      font-size: 24px;
+      font-weight: 600;
+      font-family: monospace;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .metric-lbl {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* =========================================================================
+       3. SECTION: THE LIVING 3D SPATIAL METROPOLIS (THREE.JS INTEGRATION)
+       ========================================================================= */
+    .section-3d {
+      max-width: 1360px;
+      margin: 40px auto 100px;
+      padding: 0 24px;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 40px;
+    }
+    .section-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .canvas-card-outer {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: var(--radius-outer);
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .canvas-card-inner {
+      background: #06090e;
+      border-radius: var(--radius-inner);
+      height: 580px;
+      position: relative;
+      overflow: hidden;
+    }
+    #three-viewport {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 3D Telemetry HUD Overlay */
+    .hud-overlay {
+      position: absolute;
+      top: 20px;
+      inset-inline: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .hud-chip {
+      background: rgba(8, 14, 24, 0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--gold-light);
+    }
+    .hud-controls {
+      position: absolute;
+      bottom: 20px;
+      inset-inline: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+    .hud-btn {
+      background: rgba(12, 18, 28, 0.9);
+      border: 1px solid var(--border);
+      color: var(--text);
+      backdrop-filter: blur(16px);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms;
+    }
+    .hud-btn:hover {
+      background: var(--gold);
+      color: #07090e;
+    }
+
+    /* Spatial Pin Overlays on the 3D Canvas */
+    .spatial-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 12;
+      cursor: pointer;
+      pointer-events: auto;
+      text-align: center;
+    }
+    .pin-circle {
+      width: 14px; height: 14px;
+      background: var(--gold);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      margin: 0 auto 6px;
+      box-shadow: 0 0 16px var(--gold);
+      animation: pinPulse 2s infinite;
+    }
+    @keyframes pinPulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pin-label {
+      background: rgba(8, 14, 24, 0.94);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      color: #ffffff;
+    }
+
+    /* =========================================================================
+       4. SECTION: CURATED ARCHITECTURAL ESTATES (ASYMMETRICAL BENTO)
+       ========================================================================= */
+    .section-estates {
+      max-width: 1360px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+    }
+    .estates-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 960px) {
+      .estates-grid { grid-template-columns: 1fr; }
+    }
+
+    .estate-card-outer {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      padding: 8px;
+      border-radius: var(--radius-outer);
+      transition: all 300ms var(--ease);
+    }
+    .estate-card-outer:hover {
+      border-color: var(--border);
+      transform: translateY(-4px);
+    }
+    .estate-card-inner {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-inner);
+      padding: 28px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .col-8 { grid-column: span 8; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    @media (max-width: 960px) {
+      .col-8, .col-4, .col-6 { grid-column: span 1; }
+    }
+
+    .estate-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .estate-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 8px 0;
+    }
+    .estate-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .estate-svg-stage {
+      width: 100%;
+      height: 180px;
+      background: #060b13;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .estate-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .estate-specs {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--muted);
+    }
+    .estate-price {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    /* =========================================================================
+       5. SECTION: TACTILE MATERIAL SANCTUARY (FROM DIRECTION B)
+       ========================================================================= */
+    .section-materials {
+      max-width: 1360px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+    }
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .materials-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .materials-grid { grid-template-columns: 1fr; }
+    }
+    .material-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: right;
+      transition: all 250ms var(--ease);
+      cursor: pointer;
+    }
+    .material-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px var(--gold-soft);
+    }
+    .material-sample {
+      height: 100px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* =========================================================================
+       6. SECTION: FINANCIAL ROI & MORTGAGE SIMULATOR
+       ========================================================================= */
+    .section-calc {
+      max-width: 1360px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+    }
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 960px) {
+      .calc-layout { grid-template-columns: 1fr; }
+    }
+    .calc-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-outer);
+      padding: 32px;
+    }
+    .calc-slider-group {
+      margin-bottom: 24px;
+    }
+    .calc-slider-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .calc-slider-group input[type=range] {
+      width: 100%;
+      accent-color: var(--gold);
+    }
+    .calc-results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .calc-result-box {
+      background: var(--card);
+      border: 1px solid var(--border-subtle);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .calc-result-box span { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
+    .calc-result-box strong { font-size: 22px; color: var(--gold); font-family: monospace; }
+
+    /* =========================================================================
+       7. OFFICIAL REGULATORY TRUST BADGES
+       ========================================================================= */
+    .section-trust {
+      max-width: 1360px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 860px) {
+      .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .trust-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .trust-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .trust-info strong {
+      font-size: 14px;
+      display: block;
+      line-height: 1.3;
+    }
+    .trust-info span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* =========================================================================
+       8. VIP TOUR BOOKING MODAL
+       ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-outer);
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px; left: 20px;
+      background: none; border: none;
+      color: var(--text); font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-content h3 { font-size: 20px; margin-bottom: 8px; font-weight: 600; }
+    .modal-content p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .form-group {
+      margin-bottom: 16px;
+      text-align: right;
+    }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text);
+      font-family: inherit;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--gold); }
+    .btn-submit-modal {
+      width: 100%;
+      background: var(--gold);
+      color: #07090e;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 60px 24px 80px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Island Navigation -->
+  <div class="nav-wrap">
+    <nav class="nav-island">
+      <a href="#" class="brand-group">
+        <span class="brand-dot"></span>
+        <span class="brand-title">الوساطة الرقمية • بنان</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#section-3d">مشروع بنان 3D</a></li>
+        <li><a href="#section-estates">الأصول المعمارية</a></li>
+        <li><a href="#section-materials">المواد الطبيعية</a></li>
+        <li><a href="#section-calc">حاسبة التمويل</a></li>
+      </ul>
+      <div class="nav-controls">
+        <button class="btn-theme-toggle" id="themeToggleBtn">الوضع الفاتح / الداكن</button>
+        <button class="btn-island-cta" id="openModalBtn">
+          <span>حجز جولة خاصة</span>
+          <span class="btn-circle">←</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-glow-sphere"></div>
+    <div class="hero-pill">
+      <span>✦ مشروع مدينة بنان • عاصمة المستقبل • شمال الرياض</span>
+    </div>
+    <h1 class="hero-h1">مساحة تشبه طموحك، مصممة لأجيال قادمة.</h1>
+    <p class="hero-sub">
+      بين نقاء العمارة الكلاسيكية والمدن الذكية ثلاثية الأبعاد، نقدم لك أندر الأصول العقارية في بنان والرياض بحوكمة رسمية متكاملة.
+    </p>
+
+    <!-- Double-Bezel Search Console -->
+    <div class="search-bezel-outer">
+      <div class="search-bezel-inner">
+        <div class="search-col">
+          <label>فئة الأصل المعماري</label>
+          <select id="heroPropType">
+            <option>فلل ريزيدنس بنان الفاخرة</option>
+            <option>بنتهاوس الأفق المعلق</option>
+            <option>أبراج الأعمال الذكية</option>
+            <option>أراضٍ استثمارية نوعية</option>
+          </select>
+        </div>
+        <div class="search-col">
+          <label>المنطقة والموقع</label>
+          <select id="heroPropArea">
+            <option>مدينة بنان (شمال الرياض)</option>
+            <option>حي حطين الراقي</option>
+            <option>حي النرجس وسدرة</option>
+            <option>مركز كافد المالي</option>
+          </select>
+        </div>
+        <div class="search-col">
+          <label>النطاق الاستثماري</label>
+          <select id="heroPropBudget">
+            <option>3,000,000 - 6,000,000 ريال</option>
+            <option>6,000,000 - 15,000,000 ريال</option>
+            <option>15,000,000+ ريال (أصول نخبوية)</option>
+          </select>
+        </div>
+        <a href="#section-estates" class="btn-island-cta">
+          <span>استعراض الأصول</span>
+          <span class="btn-circle">←</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 Live Metric Badges -->
+    <div class="metric-row">
+      <div class="metric-item">
+        <span class="metric-val">23,000+</span>
+        <span class="metric-lbl">وحدة ذكية في بنان</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val">4.8B SAR</span>
+        <span class="metric-lbl">إجمالي الصفقات الموثقة</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val">9.4%</span>
+        <span class="metric-lbl">متوسط العائد السنوي</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val">100%</span>
+        <span class="metric-lbl">مرخصة من هيئة العقار</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       3. SECTION: THE LIVING 3D METROPOLIS (LIVE THREE.JS SPATIAL COMMAND)
+       ========================================================================= -->
+  <section class="section-3d" id="section-3d">
+    <div class="section-header">
+      <span class="section-tag">استكشاف ثلاثي الأبعاد حي • بنان 3D</span>
+      <h2 class="section-title">تحليق درون مباشر فوق مدينة بنان</h2>
+      <p class="section-desc">
+        انقر واسحب بالفأرة أو لمس الشاشة للتنقل والتحليق الحر فوق أحياء بنان والبحيرة الكريستالية.
+      </p>
+    </div>
+
+    <div class="canvas-card-outer">
+      <div class="canvas-card-inner">
+        <!-- 3D WebGL Canvas Target -->
+        <div id="three-viewport"></div>
+
+        <!-- Telemetry HUD -->
+        <div class="hud-overlay">
+          <span class="hud-chip">DRONE // ALT: 160M // AZ: 042°</span>
+          <span class="hud-chip" style="color:var(--cyan);">BANAN SMART CITY // RIYADH NORTH</span>
+        </div>
+
+        <!-- Camera Controls -->
+        <div class="hud-controls">
+          <button class="hud-btn" id="btnCamOverview">نظرة عامة شمولية</button>
+          <button class="hud-btn" id="btnCamLagoon">البحيرة الكريستالية</button>
+          <button class="hud-btn" id="btnCamTowers">أبراج الأعمال</button>
+          <button class="hud-btn" id="btnCamVillas">ضاحية الفلل</button>
+          <button class="hud-btn" id="btn3dLightToggle" style="color:var(--gold);">تبديل إضاءة الشفق / النهار</button>
+        </div>
+
+        <!-- Interactive 3D Spatial Pins -->
+        <div class="spatial-pin" style="top:44%; left:50%;" onclick="alert('البحيرة الكريستالية والممشى المائي في بنان بطول 4.2 كم')">
+          <div class="pin-circle"></div>
+          <div class="pin-label">البحيرة الكريستالية</div>
+        </div>
+        <div class="spatial-pin" style="top:32%; left:68%;" onclick="alert('المركز المالي وأبراج الأعمال الذكية LEED Platinum')">
+          <div class="pin-circle" style="background:var(--cyan); box-shadow:0 0 16px var(--cyan);"></div>
+          <div class="pin-label">المركز المالي KAFD-II</div>
+        </div>
+        <div class="spatial-pin" style="top:58%; left:34%;" onclick="alert('ضاحية فلل ريزيدنس بنان الفاخرة ذات الأفنية العاكسة')">
+          <div class="pin-circle"></div>
+          <div class="pin-label">فلل ريزيدنس بنان</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       4. SECTION: CURATED ARCHITECTURAL ESTATES
+       ========================================================================= -->
+  <section class="section-estates" id="section-estates">
+    <div class="section-header">
+      <span class="section-tag" style="color:var(--gold);">أصول استثنائية منتقاة</span>
+      <h2 class="section-title">تحف معمارية نادرة في بنان والرياض</h2>
+      <p class="section-desc">
+        تكوينات هندسية فائقة الدقة تمزج بين الخصوصية النجدية العريقة وعوائد الاستثمار المضمونة.
+      </p>
+    </div>
+
+    <div class="estates-grid">
+      <!-- Card 1: Banan Sovereign Villa (Span 8) -->
+      <div class="estate-card-outer col-8">
+        <div class="estate-card-inner">
+          <div>
+            <span class="estate-tag">01 / أصل سكني استثنائي</span>
+            <h3 class="estate-title">فلل ريزيدنس بنان — الأفنية العاكسة</h3>
+            <p class="estate-desc">
+              فلل مستقلة بارتفاع مزدوج 6.8 م، أسقف زجاجية بانورامية مطلة على أحواض سباحة هادئة، وتشطيبات ترافرتين إيطالي ورخام نخبوي.
+            </p>
+          </div>
+          <div class="estate-svg-stage">
+            <svg width="90%" height="80%" viewBox="0 0 520 150" fill="none">
+              <rect x="20" y="20" width="480" height="110" stroke="#d4af37" stroke-width="1.5" rx="4"/>
+              <rect x="190" y="35" width="140" height="80" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 4"/>
+              <text x="260" y="80" text-anchor="middle" fill="#2dd4bf" font-size="11" font-family="monospace">REFLECTION POOL // COURTYARD</text>
+            </svg>
+          </div>
+          <div class="estate-meta-row">
+            <span class="estate-specs">المساحة: 850 م² • 6 أجنحة نوم • فناء نجدي مسور</span>
+            <span class="estate-price">6,800,000 ريال</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Horizon Sky Penthouse (Span 4) -->
+      <div class="estate-card-outer col-4">
+        <div class="estate-card-inner">
+          <div>
+            <span class="estate-tag" style="color:var(--cyan);">02 / أفق معلق</span>
+            <h3 class="estate-title">بنتهاوس الأفق</h3>
+            <p class="estate-desc">
+              شرفة معلقة بزاوية 270° تضم حوض سباحة دافئ وإطلالة كاملة على بحيرات بنان وأفق الرياض المتلألئ.
+            </p>
+          </div>
+          <div class="estate-svg-stage">
+            <svg width="80%" height="80%" viewBox="0 0 200 130" fill="none">
+              <polygon points="30,35 170,25 190,105 50,115" stroke="#d4af37" stroke-width="1.5"/>
+              <circle cx="110" cy="70" r="18" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="110" y="74" text-anchor="middle" fill="#f3e5ab" font-size="8" font-family="monospace">SPA DECK</text>
+            </svg>
+          </div>
+          <div class="estate-meta-row">
+            <span class="estate-specs">420 م² • تراس معلق</span>
+            <span class="estate-price">4,200,000 ريال</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Commercial Smart Towers (Span 6) -->
+      <div class="estate-card-outer col-6">
+        <div class="estate-card-inner">
+          <div>
+            <span class="estate-tag">03 / المركز المالي</span>
+            <h3 class="estate-title">أبراج الأعمال الذكية (LEED Platinum)</h3>
+            <p class="estate-desc">
+              مساحات مكتبية مرنة تستقطب كبرى الشركات وصناديق الاستثمار، مزودة بأنظمة ذكاء اصطناعي لإدارة الطاقة.
+            </p>
+          </div>
+          <div class="estate-svg-stage">
+            <svg width="80%" height="80%" viewBox="0 0 300 130" fill="none">
+              <polygon points="120,20 180,20 190,120 110,120" stroke="#d4af37" stroke-width="1.5"/>
+              <line x1="150" y1="20" x2="150" y2="120" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4 4"/>
+              <text x="150" y="70" text-anchor="middle" fill="#2dd4bf" font-size="9" font-family="monospace">SMART ELEVATOR</text>
+            </svg>
+          </div>
+          <div class="estate-meta-row">
+            <span class="estate-specs">1,200 - 8,000 م² • مواقف ذكية</span>
+            <span class="estate-price">12,500,000 ريال</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Institutional Plots (Span 6) -->
+      <div class="estate-card-outer col-6">
+        <div class="estate-card-inner">
+          <div>
+            <span class="estate-tag" style="color:var(--cyan);">04 / محافظ مغلقة</span>
+            <h3 class="estate-title">المخططات والأراضي الاستثمارية النوعية</h3>
+            <p class="estate-desc">
+              أراضٍ استراتيجية مرخصة للتطوير بمحاذاة محاور النقل السريع مع دراسات جدوى مالية معتمدة.
+            </p>
+          </div>
+          <div class="estate-svg-stage">
+            <svg width="80%" height="80%" viewBox="0 0 300 130" fill="none">
+              <polygon points="60,30 240,25 220,110 50,115" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="150" y="70" text-anchor="middle" fill="#d4af37" font-size="10" font-family="monospace">GIS CADASTRAL SURVEY</text>
+            </svg>
+          </div>
+          <div class="estate-meta-row">
+            <span class="estate-specs">عائد متوقع: +11.4% Cap Rate</span>
+            <span class="estate-price">إفراغ فوري</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       5. SECTION: TACTILE MATERIAL SANCTUARY (FROM DIRECTION B)
+       ========================================================================= -->
+  <section class="section-materials" id="section-materials">
+    <div class="section-header">
+      <span class="section-tag">فلسفة المواد الطبيعية والسكينة المعمارية</span>
+      <h2 class="section-title">نقاء المواد وعزل المناخ الصحراوي</h2>
+      <p class="section-desc">
+        عناصر تم انتقاؤها بعناية فائقة لتتكامل مع شمس نجد وتبعث على الطمأنينة والهدوء.
+      </p>
+    </div>
+
+    <div class="materials-grid">
+      <div class="material-card">
+        <div class="material-sample" style="background:#ebe5d8; color:#171b21;">ترافرتين روماني منحوت</div>
+        <h3 style="font-size:16px; margin-bottom:4px; font-weight:600;">حجر مسامي عازل</h3>
+        <p style="font-size:13px; color:var(--muted);">يعكس ضوء الشمس ويبرد الواجهات طبيعياً ليدوم عقوداً.</p>
+      </div>
+
+      <div class="material-card">
+        <div class="material-sample" style="background:#3b3226; color:#ffffff;">برونز معماري معتق</div>
+        <h3 style="font-size:16px; margin-bottom:4px; font-weight:600;">معدن معمر أصيل</h3>
+        <p style="font-size:13px; color:var(--muted);">تشطيبات حرفية يدوية مقاومة لعوامل الرياح والرمال.</p>
+      </div>
+
+      <div class="material-card">
+        <div class="material-sample" style="background:#e4eef2; color:#171b21;">زجاج Low-E الكريستالي</div>
+        <h3 style="font-size:16px; margin-bottom:4px; font-weight:600;">إنفاذية ضوئية 88%</h3>
+        <p style="font-size:13px; color:var(--muted);">عزل حراري بنسبة 99% مع حماية صوتية كاملة.</p>
+      </div>
+
+      <div class="material-card">
+        <div class="material-sample" style="background:#0e2838; color:#ffffff;">أحواض مائية عاكسة</div>
+        <h3 style="font-size:16px; margin-bottom:4px; font-weight:600;">تلطيف مناخي -4°C</h3>
+        <p style="font-size:13px; color:var(--muted);">مسطحات مائية تخفض درجة حرارة الفناء السكني طبيعياً.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       6. SECTION: FINANCIAL ROI & MORTGAGE SIMULATOR
+       ========================================================================= */
+  <section class="section-calc" id="section-calc">
+    <div class="section-header">
+      <span class="section-tag" style="color:var(--gold);">محاكاة التمويل الذكي</span>
+      <h2 class="section-title">حاسبة الاستثمار والعائد الإيجاري</h2>
+      <p class="section-desc">
+        احسب خطتك التمويلية والعائد السنوي المتوقع لصفقتك العقارية بلحظية ودقة.
+      </p>
+    </div>
+
+    <div class="calc-layout">
+      <!-- Calculator Controls -->
+      <div class="calc-panel">
+        <div class="calc-slider-group">
+          <label>
+            <span>قيمة الأصل العقاري:</span>
+            <strong id="calcPriceVal" style="color:var(--gold);">5,000,000 ريال</strong>
+          </label>
+          <input type="range" id="calcPriceSlider" min="1500000" max="25000000" step="250000" value="5000000">
+        </div>
+
+        <div class="calc-slider-group">
+          <label>
+            <span>الدفعة الأولى المقدمة:</span>
+            <strong id="calcDownVal" style="color:var(--gold);">20% (1,000,000 ريال)</strong>
+          </label>
+          <input type="range" id="calcDownSlider" min="10" max="50" step="5" value="20">
+        </div>
+
+        <div class="calc-slider-group">
+          <label>
+            <span>مدة التمويل العقاري:</span>
+            <strong id="calcYearsVal" style="color:var(--gold);">25 سنة</strong>
+          </label>
+          <input type="range" id="calcYearsSlider" min="10" max="30" step="5" value="25">
+        </div>
+
+        <button class="btn-island-cta" style="width:100%; justify-content:center; margin-top:12px;" onclick="document.getElementById('modal').classList.add('open')">
+          <span>طلب دراسة جدوى استثمارية مخصصة</span>
+          <span class="btn-circle">←</span>
+        </button>
+      </div>
+
+      <!-- Real-Time Computed Outputs -->
+      <div class="calc-panel" style="display:flex; flex-direction:column; justify-content:center;">
+        <h3 style="font-size:18px; margin-bottom:16px; font-weight:600;">النتائج المالية التقديرية</h3>
+        <div class="calc-results-grid">
+          <div class="calc-result-box">
+            <span>القسط الشهري التقديري</span>
+            <strong id="outMonthly">20,300</strong> <small style="font-size:11px; color:var(--muted);">ريال/شهر</small>
+          </div>
+          <div class="calc-result-box">
+            <span>الدخل الإيجاري السنوي</span>
+            <strong id="outRent" style="color:var(--cyan);">440,000</strong> <small style="font-size:11px; color:var(--muted);">ريال/سنة</small>
+          </div>
+          <div class="calc-result-box">
+            <span>صافي العائد (Cap Rate)</span>
+            <strong style="color:var(--cyan);">8.8%</strong> <small style="font-size:11px; color:var(--muted);">سنوياً</small>
+          </div>
+          <div class="calc-result-box">
+            <span>مبلغ التمويل الإجمالي</span>
+            <strong id="outLoan">4,000,000</strong> <small style="font-size:11px; color:var(--muted);">ريال</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       7. SECTION: REGULATORY TRUST SEALS
+       ========================================================================= -->
+  <section class="section-trust">
+    <div class="trust-grid">
+      <div class="trust-box">
+        <span class="trust-icon">🛡️</span>
+        <div class="trust-info">
+          <strong>الهيئة العامة للعقار (فال)</strong>
+          <span>ترخيص وساطة وتسويق رسمي</span>
+        </div>
+      </div>
+      <div class="trust-box">
+        <span class="trust-icon">🔑</span>
+        <div class="trust-info">
+          <strong>النفاذ الوطني الموحد</strong>
+          <span>تحقق أمني رقمي فوري</span>
+        </div>
+      </div>
+      <div class="trust-box">
+        <span class="trust-icon">📑</span>
+        <div class="trust-info">
+          <strong>منصة إيجار المعتمدة</strong>
+          <span>توثيق العقود السكنية والتجارية</span>
+        </div>
+      </div>
+      <div class="trust-box">
+        <span class="trust-icon">🏛️</span>
+        <div class="trust-info">
+          <strong>برنامج وافي الحكومي</strong>
+          <span>حماية البيع والتطوير على الخارطة</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       8. VIP TOUR BOOKING MODAL
+       ========================================================================= -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModalBtn">&times;</button>
+      <h3>حجز جولة خاصة في مشروع بنان</h3>
+      <p>سيتواصل معك مستشارنا العقاري المعتمد لترتيب زيارة ميدانية خاصة.</p>
+      <form onsubmit="event.preventDefault(); alert('تم استلام طلبك بنجاح! سيتواصل معك مستشارنا قريباً.'); document.getElementById('modal').classList.remove('open');">
+        <div class="form-group">
+          <label>الاسم الكامل الكريم</label>
+          <input type="text" class="form-input" required placeholder="مثال: عبد الرحمن السديري">
+        </div>
+        <div class="form-group">
+          <label>رقم الجوال للتواصل</label>
+          <input type="tel" class="form-input" required placeholder="05xxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>الأصل العقاري المطلوب معاينته</label>
+          <select class="form-input">
+            <option>فلل ريزيدنس بنان الفاخرة</option>
+            <option>بنتهاوس الأفق المعلق</option>
+            <option>أبراج الأعمال الذكية</option>
+            <option>استشارة استثمارية عامة</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-submit-modal">تأكيد طلب الجولة الخاصة ←</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>منصة الوساطة الرقمية • مشروع مدينة بنان الذكية • مرخصة من الهيئة العامة للعقار (فال) • المملكة العربية السعودية 2026</p>
+  </footer>
+
+  <!-- Three.js from local vendor directory -->
+  <script src="/design-options/vendor/three.core.js"></script>
+  <script>
+    // Theme Toggle Handler
+    const themeBtn = document.getElementById('themeToggleBtn');
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      if (scene) {
+        scene.background.setHex(isLight ? 0xf8f6f0 : 0x06090e);
+        scene.fog.color.setHex(isLight ? 0xf8f6f0 : 0x06090e);
+        sun.color.setHex(isLight ? 0x966f33 : 0xd4af37);
+      }
+    });
+
+    // Modal Handlers
+    const modal = document.getElementById('modal');
+    document.getElementById('openModalBtn').onclick = () => modal.classList.add('open');
+    document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('open');
+    modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+
+    // =========================================================================
+    // THREE.JS 3D CITY SPATIAL CANVAS
+    // =========================================================================
+    const container = document.getElementById('three-viewport');
+    let width = container.clientWidth || 1200;
+    let height = container.clientHeight || 580;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x06090e);
+    scene.fog = new THREE.FogExp2(0x06090e, 0.0035);
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+    camera.position.set(0, 160, 320);
+    camera.lookAt(0, 20, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const ambient = new THREE.AmbientLight(0x223344, 1.2);
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(0xd4af37, 2.5);
+    sun.position.set(120, 220, 120);
+    scene.add(sun);
+
+    const grid = new THREE.GridHelper(800, 50, 0xd4af37, 0x152233);
+    grid.position.y = -0.5;
+    scene.add(grid);
+
+    // Procedural Buildings
+    const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x0e1828, roughness: 0.3, metalness: 0.8 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.2, metalness: 0.9 });
+
+    const city = new THREE.Group();
+    scene.add(city);
+
+    for (let x = -180; x <= 180; x += 40) {
+      for (let z = -180; z <= 180; z += 40) {
+        if (Math.abs(x) < 35 && Math.abs(z) < 35) continue; // Lagoon space
+        const h = Math.random() * 90 + 20;
+        const b = new THREE.Mesh(boxGeo, Math.random() > 0.75 ? goldMat : darkMat);
+        b.scale.set(24, h, 24);
+        b.position.set(x, h / 2, z);
+        city.add(b);
+      }
+    }
+
+    // Central Lagoon
+    const lagoonGeo = new THREE.CylinderGeometry(48, 48, 2, 32);
+    const lagoonMat = new THREE.MeshStandardMaterial({ color: 0x0a4060, roughness: 0.1, metalness: 0.9 });
+    const lagoon = new THREE.Mesh(lagoonGeo, lagoonMat);
+    lagoon.position.set(0, 0.5, 0);
+    scene.add(lagoon);
+
+    // Orbit Drag Interaction
+    let dragging = false;
+    let prevX = 0;
+    let camAngle = 0;
+
+    container.addEventListener('mousedown', (e) => { dragging = true; prevX = e.clientX; });
+    window.addEventListener('mouseup', () => { dragging = false; });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - prevX;
+      camAngle += dx * 0.005;
+      camera.position.x = Math.sin(camAngle) * 320;
+      camera.position.z = Math.cos(camAngle) * 320;
+      camera.lookAt(0, 20, 0);
+      prevX = e.clientX;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!dragging) {
+        camAngle += 0.0012;
+        camera.position.x = Math.sin(camAngle) * 320;
+        camera.position.z = Math.cos(camAngle) * 320;
+        camera.lookAt(0, 20, 0);
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+
+    // Camera Preset Buttons
+    document.getElementById('btnCamOverview').onclick = () => {
+      camera.position.set(0, 240, 380); camera.lookAt(0, 20, 0);
+    };
+    document.getElementById('btnCamLagoon').onclick = () => {
+      camera.position.set(0, 45, 95); camera.lookAt(0, 10, 0);
+    };
+    document.getElementById('btnCamTowers').onclick = () => {
+      camera.position.set(140, 120, 140); camera.lookAt(0, 50, 0);
+    };
+    document.getElementById('btnCamVillas').onclick = () => {
+      camera.position.set(-140, 80, 140); camera.lookAt(0, 20, 0);
+    };
+
+    let is3dNight = true;
+    document.getElementById('btn3dLightToggle').onclick = () => {
+      is3dNight = !is3dNight;
+      sun.color.setHex(is3dNight ? 0xd4af37 : 0xffffff);
+      sun.intensity = is3dNight ? 2.5 : 4.0;
+      ambient.intensity = is3dNight ? 1.2 : 2.0;
+    };
+
+    // =========================================================================
+    // FINANCIAL CALCULATOR
+    // =========================================================================
+    const pSlider = document.getElementById('calcPriceSlider');
+    const dSlider = document.getElementById('calcDownSlider');
+    const ySlider = document.getElementById('calcYearsSlider');
+
+    const pVal = document.getElementById('calcPriceVal');
+    const dVal = document.getElementById('calcDownVal');
+    const yVal = document.getElementById('calcYearsVal');
+
+    const outMonthly = document.getElementById('outMonthly');
+    const outRent = document.getElementById('outRent');
+    const outLoan = document.getElementById('outLoan');
+
+    function updateCalc() {
+      const price = Number(pSlider.value);
+      const downPct = Number(dSlider.value);
+      const years = Number(ySlider.value);
+
+      const downAmount = price * (downPct / 100);
+      const loan = price - downAmount;
+
+      pVal.textContent = price.toLocaleString() + ' ريال';
+      dVal.textContent = downPct + '% (' + downAmount.toLocaleString() + ' ريال)';
+      yVal.textContent = years + ' سنة';
+
+      const months = years * 12;
+      const rate = 0.042 / 12;
+      const monthly = Math.round((loan * (rate * Math.pow(1 + rate, months))) / (Math.pow(1 + rate, months) - 1));
+
+      outMonthly.textContent = monthly.toLocaleString();
+      outRent.textContent = Math.round(price * 0.088).toLocaleString();
+      outLoan.textContent = loan.toLocaleString();
+    }
+
+    pSlider.addEventListener('input', updateCalc);
+    dSlider.addEventListener('input', updateCalc);
+    ySlider.addEventListener('input', updateCalc);
+    updateCalc();
+  </script>
+</body>
+</html>

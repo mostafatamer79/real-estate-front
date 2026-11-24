@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import { cn } from "@/lib/utils";
 import { hapticTick } from "@/lib/haptics";
 
@@ -29,6 +30,7 @@ export function SegmentedTabs({
   className,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  const { direction } = useLanguage();
   const layoutId = React.useId();
   const [innerValue, setInnerValue] = React.useState<string | undefined>(props.defaultValue);
   const currentValue = props.value !== undefined ? props.value : innerValue;
@@ -38,6 +40,7 @@ export function SegmentedTabs({
       <TabsPrimitive.Root
         className={className}
         {...props}
+        dir={props.dir ?? direction}
         onValueChange={(v) => {
           setInnerValue(v);
           props.onValueChange?.(v);
@@ -58,6 +61,7 @@ export function SegmentedList({
   return (
     <SegmentedPillContext.Provider value={pillClassName}>
       <TabsPrimitive.List
+        data-workspace-tabs
         className={cn(
           // Mobile: let chips wrap instead of scrolling horizontally
           "max-md:flex-wrap max-md:gap-2 max-md:p-1.5",
@@ -76,18 +80,20 @@ export function SegmentedTrigger({
   disabled,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const reduceMotion = useReducedMotion();
   const state = React.useContext(SegmentedStateContext);
   const pillClassName = React.useContext(SegmentedPillContext);
   const isActive = state ? state.value === props.value : false;
 
   return (
     <TabsPrimitive.Trigger
+      data-workspace-tab
       className={cn(
         "relative",
         // Mobile: premium chip styling
         "max-md:px-4 max-md:py-2.5 max-md:rounded-xl max-md:text-sm max-md:font-semibold",
         "max-md:transition-all max-md:duration-200",
-        isActive && "max-md:text-white",
+        isActive && "max-md:text-foreground max-md:dark:text-white",
         !isActive && "max-md:text-slate-600 max-md:hover:text-slate-900 dark:max-md:text-slate-400 dark:max-md:hover:text-slate-200",
         className
       )}
@@ -100,13 +106,13 @@ export function SegmentedTrigger({
     >
       {state && isActive && (
         <motion.span
-          layoutId={`segmented-pill-${state.layoutId}`}
+          layoutId={reduceMotion ? undefined : `segmented-pill-${state.layoutId}`}
           aria-hidden="true"
           className={cn(
-            "absolute inset-0 rounded-xl md:hidden",
-            pillClassName || "bg-slate-900 text-white shadow-sm"
+            "workspace-tab-indicator absolute inset-0 rounded-xl md:hidden",
+            pillClassName || "bg-card dark:bg-slate-900 text-foreground dark:text-white shadow-sm"
           )}
-          transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.7 }}
+          transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 500, damping: 38, mass: 0.7 }}
         />
       )}
       <span className="relative z-10 inline-flex items-center justify-center gap-1.5">

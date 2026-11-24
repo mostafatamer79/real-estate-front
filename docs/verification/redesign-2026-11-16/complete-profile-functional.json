@@ -1,0 +1,138 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "existing data prefill",
+      "existing location selection survives language",
+      "name and license validation",
+      "profile failure preserves input",
+      "application failure preserves input",
+      "professional application uses correct endpoint",
+      "active role remains unchanged until approval",
+      "success returns details",
+      "no clipped controls or page exceptions"
+    ]
+  }
+]

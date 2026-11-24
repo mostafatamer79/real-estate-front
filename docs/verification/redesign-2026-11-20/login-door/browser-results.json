@@ -1,0 +1,38 @@
+[
+  {
+    "width": 1440,
+    "lang": "ar",
+    "theme": "light",
+    "writes": 2,
+    "pass": true
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "dark",
+    "writes": 2,
+    "pass": true
+  },
+  {
+    "width": 390,
+    "lang": "ar",
+    "theme": "light",
+    "writes": 2,
+    "pass": true
+  },
+  {
+    "width": 390,
+    "lang": "ar",
+    "theme": "dark",
+    "writes": 2,
+    "pass": true
+  },
+  {
+    "width": 320,
+    "lang": "ar",
+    "theme": "light",
+    "reduce": true,
+    "writes": 2,
+    "pass": true
+  }
+]

@@ -1,16 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Pagination } from "@/app/src/components/Pagination";
+import { filterServiceRequests } from "@/lib/workspace-usability";
+import ProviderRequestPanel from "@/components/providers/ProviderRequestPanel";
+import { useState, useEffect, useCallback, useMemo, useRef, useId } from "react";
 import { useRouter } from "next/navigation";
 import { 
   Loader2, User, Calendar, 
-  ExternalLink, Search, Filter,
+  ExternalLink, Search, RotateCw,
   Briefcase, Mail, Phone, MapPin, X, CheckCircle,
   AlertCircle, CheckCircle2, MessageSquare, Trash2, Save
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import { loadServiceRequestPages } from "@/lib/service-request-pages";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { format } from "date-fns";
@@ -34,6 +38,15 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
     const [requests, setRequests] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [sortOrder, setSortOrder] = useState("newest");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loadError, setLoadError] = useState(false);
+    const [serverTotal, setServerTotal] = useState(0);
+    const activeRequest = useRef<AbortController | null>(null);
+    const controlId = useId();
+    const arUI = language === 'ar';
+    const pageSize = 10;
     const [selectedRequest, setSelectedRequest] = useState<any>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     
@@ -48,35 +61,32 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
     const fetchRequests = useCallback(async () => {
         if (!token) return;
+        activeRequest.current?.abort();
+        const controller = new AbortController();
+        activeRequest.current = controller;
         setIsLoading(true);
+        setLoadError(false);
         try {
             const deptParam = department ? `&department=${encodeURIComponent(department)}` : '';
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=1&limit=500${deptParam}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-            });
-            if (response.ok) {
+            const items = await loadServiceRequestPages<any>(async params => {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests?page=${params.page}&limit=${params.limit}${deptParam}`, {
+                    headers: { Authorization: `Bearer ${token}` }, signal: controller.signal,
+                });
+                if (!response.ok) throw new Error('Request list unavailable');
                 const data = await response.json();
-                // Handle both paginated response { items: [], total: 0 } and direct array
-                if (data && typeof data === 'object' && Array.isArray(data.items)) {
-                    setRequests(data.items);
-                } else if (Array.isArray(data)) {
-                    setRequests(data);
-                } else {
-                    setRequests([]);
-                }
-            }
-        } catch (error) {
-            console.error("Failed to fetch requests:", error);
-            setRequests([]);
+                return {data:Array.isArray(data)?{items:data,totalPages:1}:data};
+            }, false);
+            if (!controller.signal.aborted) {setRequests(items);setServerTotal(items.length);}
+        } catch {
+            if (!controller.signal.aborted) setLoadError(true);
         } finally {
-            setIsLoading(false);
+            if (!controller.signal.aborted) setIsLoading(false);
         }
-    }, [token]);
+    }, [token, department]);
 
     useEffect(() => {
         fetchRequests();
+        return () => activeRequest.current?.abort();
     }, [fetchRequests]);
 
     const handleSendInvoice = async () => {
@@ -210,81 +220,91 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
         return { label, variantClass };
     };
 
-    const filteredRequests = (Array.isArray(requests) ? requests : []).filter(req => {
-        const matchesSearch = 
-            req.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            req.serviceType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            req.phone?.includes(searchQuery);
-        
-        const matchesDepartment = !department || req.targetDepartment === department;
-        
-        return matchesSearch && matchesDepartment;
-    });
+    const filteredRequests = useMemo(() => filterServiceRequests(requests, { query: searchQuery, department, status: statusFilter, order: sortOrder }), [requests, searchQuery, department, statusFilter, sortOrder]);
+    const statuses = [...new Set(requests.map(request => String(request.status || 'pending')))];
+    const totalPages = Math.max(1, Math.ceil(filteredRequests.length / pageSize));
+    const page = Math.min(currentPage, totalPages);
+    const visibleRequests = filteredRequests.slice((page - 1) * pageSize, page * pageSize);
+    const resetFilters = () => { setSearchQuery(''); setStatusFilter('all'); setCurrentPage(1); };
+    const displayDate = (value: string, pattern: string) => Number.isNaN(new Date(value).getTime()) ? '—' : format(new Date(value), pattern, { locale: language === 'ar' ? ar : undefined });
 
 
     return (
-        <div className="space-y-6">
+        <div data-service-requests className="space-y-6">
             {(title || subtitle) && (
                 <div className="px-4 space-y-1">
                     {title && <h2 className="text-xl sm:text-2xl font-black text-slate-900">{title}</h2>}
                     {subtitle && (
-                        <p className="text-slate-500 font-medium flex items-center gap-2 text-sm">
-                            <Briefcase className="w-4 h-4 text-slate-400" />
+                        <p className="text-muted-foreground dark:text-slate-500 font-medium flex items-center gap-2 text-sm">
+                            <Briefcase className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                             {subtitle}
                         </p>
                     )}
                 </div>
             )}
 
-            {/* List Actions */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between px-4">
-                <div className="relative w-full md:w-96 group">
-                    <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors`} />
-                    <input 
-                        type="text"
-                        placeholder={t('admin.trans.searchPlaceholder')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className={`bg-card border border py-3.5 ${language === 'ar' ? 'pr-12 pl-6' : 'pl-12 pr-6'} text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1rem]`}
-                    />
+            <div className="workspace-request-controls px-4">
+                <div className="min-w-0 flex-1 basis-64">
+                    <label htmlFor={`requests-search-${controlId}`}>{arUI ? 'البحث في الطلبات' : 'Search requests'}</label>
+                    <div className="relative">
+                        <Search aria-hidden="true" className="absolute start-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <input id={`requests-search-${controlId}`} type="search" placeholder={arUI ? 'اسم العميل، الخدمة، الجوال أو المدينة' : 'Client, service, phone or city'} value={searchQuery}
+                            onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1); }}
+                            className="w-full rounded-xl border border-border bg-card py-3 ps-11 pe-4 text-sm text-foreground" />
+                    </div>
                 </div>
-                <button 
-                    onClick={fetchRequests}
-                    className="p-3.5 rounded-2xl bg-card border border hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
-                >
-                    <Filter className="w-4 h-4" />
+                <div>
+                    <label htmlFor={`requests-status-${controlId}`}>{arUI ? 'الحالة' : 'Status'}</label>
+                    <select id={`requests-status-${controlId}`} value={statusFilter} onChange={event => { setStatusFilter(event.target.value); setCurrentPage(1); }}>
+                        <option value="all">{arUI ? 'كل الحالات' : 'All statuses'}</option>
+                        {statuses.map(status => <option key={status} value={status}>{t(`legal.status.${status}`) === `legal.status.${status}` ? status : t(`legal.status.${status}`)}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor={`requests-sort-${controlId}`}>{arUI ? 'الترتيب' : 'Sort by'}</label>
+                    <select id={`requests-sort-${controlId}`} value={sortOrder} onChange={event => { setSortOrder(event.target.value); setCurrentPage(1); }}>
+                        <option value="newest">{arUI ? 'الأحدث أولًا' : 'Newest first'}</option>
+                        <option value="oldest">{arUI ? 'الأقدم أولًا' : 'Oldest first'}</option>
+                        <option value="name">{arUI ? 'اسم العميل' : 'Client name'}</option>
+                    </select>
+                </div>
+                <button type="button" onClick={fetchRequests} disabled={isLoading} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+                    <RotateCw aria-hidden="true" className={`h-4 w-4 ${isLoading ? 'animate-spin motion-reduce:animate-none' : ''}`} />{arUI ? 'تحديث' : 'Refresh'}
                 </button>
             </div>
+            {loadError && <div role="alert" className="mx-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{arUI ? 'تعذر تحميل الطلبات. أعد المحاولة باستخدام زر التحديث.' : 'Could not load requests. Use Refresh to try again.'}</div>}
+            {serverTotal > requests.length && <p className="px-4 text-sm text-muted-foreground">{arUI ? `يعرض أحدث ${requests.length} من ${serverTotal} طلب. البحث والفلترة ضمن الطلبات المعروضة.` : `Showing the latest ${requests.length} of ${serverTotal} requests. Search and filters apply to these records.`}</p>}
+            {!isLoading && (!loadError || requests.length > 0) && <p role="status" aria-live="polite" className="px-4 text-sm text-muted-foreground">{arUI ? `${filteredRequests.length} طلب مطابق` : `${filteredRequests.length} matching requests`}</p>}
 
             {/* Requests List */}
-            <div className="bg-card rounded-[1rem] border border shadow-xl shadow-stone-400 overflow-hidden min-h-[400px]">
+            <div className="calm-panel bg-card rounded-[1rem] border border shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 overflow-hidden min-h-[400px]">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <div className="w-12 h-12 rounded-full border-4 border border-t-slate-900 animate-spin" />
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
+                        <div className="w-12 h-12 rounded-full border-4 border border-t-border dark:border-t-slate-900 animate-spin" />
+                        <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                     </div>
                 ) : filteredRequests.length > 0 ? (
                     <>
                         {/* Mobile cards */}
-                        <div className="md:hidden divide-y divide-slate-100">
-                            {filteredRequests.map((req) => {
+                        <div data-request-layout="cards" className="md:hidden divide-y divide-slate-100">
+                            {visibleRequests.map((req) => {
                                 const badge = getStatusBadge(req);
                                 return (
                                     <motion.button
                                         key={req.id}
-                                        initial={{ opacity: 0 }}
+                                        initial={false}
                                         animate={{ opacity: 1 }}
                                         onClick={() => openDetails(req)}
                                         className="w-full text-start p-4 active:bg-muted/70 transition-colors"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex items-center gap-3 min-w-0">
-                                                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 shrink-0">
+                                                <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 shrink-0">
                                                     <User className="w-5 h-5" />
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-sm font-black text-slate-900 truncate">{req.clientName}</p>
-                                                    <p dir="ltr" className="text-[11px] font-bold text-slate-400 text-start">{req.phone}</p>
+                                                    <p dir="ltr" className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 text-start">{req.phone}</p>
                                                 </div>
                                             </div>
                                             <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 ${badge.variantClass}`}>
@@ -294,12 +314,12 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         <div className="mt-3 flex items-center justify-between gap-2">
                                             <div className="min-w-0">
                                                 <p className="text-xs font-black text-slate-700 truncate">{req.serviceType}</p>
-                                                <p className="text-[11px] font-bold text-slate-400 truncate">{req.city} - {req.district}</p>
+                                                <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 truncate">{req.city} - {req.district}</p>
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-slate-400 shrink-0">
+                                            <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400 shrink-0">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 <span className="text-[10px] font-bold">
-                                                    {format(new Date(req.createdAt), 'dd MMM yyyy', { locale: language === 'ar' ? ar : undefined })}
+                                                    {displayDate(req.createdAt, 'dd MMM yyyy')}
                                                 </span>
                                             </div>
                                         </div>
@@ -309,40 +329,40 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         </div>
 
                         {/* Desktop table */}
-                        <div className="hidden md:block overflow-x-auto">
+                        <div data-request-layout="table" className="hidden md:block overflow-x-auto">
                             <table className={`w-full ${language === 'ar' ? 'text-right' : 'text-left'} border-collapse`}>
                             <thead>
                                 <tr className="bg-muted/50 border-b border">
-                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
-                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
-                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
-                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</th>
-                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('marketing.table.date')}</th>
+                                    <th className="px-3 py-3 sm:px-6 sm:py-5 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {filteredRequests.map((req) => (
+                                {visibleRequests.map((req) => (
                                     <motion.tr 
                                         key={req.id}
-                                        initial={{ opacity: 0 }}
+                                        initial={false}
                                         animate={{ opacity: 1 }}
                                         className="group hover:bg-muted/50 transition-colors"
                                     >
                                         <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
+                                                <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-background group-hover:dark:bg-slate-950 group-hover:text-foreground group-hover:dark:text-white transition-all">
                                                     <User className="w-5 h-5" />
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-black text-slate-900">{req.clientName}</p>
-                                                    <p className="text-[11px] font-bold text-slate-400">{req.phone}</p>
+                                                    <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.phone}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-3 py-3 sm:px-6 sm:py-5">
                                             <div>
                                                 <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
-                                                <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
+                                                <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.city} - {req.district}</p>
                                             </div>
                                         </td>
                                         <td className="px-3 py-3 sm:px-6 sm:py-5">
@@ -371,17 +391,18 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                             })()}
                                         </td>
                                         <td className="px-3 py-3 sm:px-6 sm:py-5">
-                                            <div className="flex items-center gap-2 text-slate-400">
+                                            <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 <span className="text-[11px] font-bold">
-                                                    {format(new Date(req.createdAt), 'dd MMMM yyyy', { locale: language === 'ar' ? ar : undefined })}
+                                                    {displayDate(req.createdAt, 'dd MMMM yyyy')}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-3 py-3 sm:px-6 sm:py-5 text-center">
                                             <button 
                                                 onClick={() => openDetails(req)}
-                                                className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                aria-label={arUI ? `تفاصيل طلب ${req.clientName}` : `View request for ${req.clientName}`}
+                                                className="p-2 rounded-xl border border hover:border-border hover:dark:border-slate-900 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all text-muted-foreground dark:text-slate-400"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
                                             </button>
@@ -393,22 +414,24 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                         </div>
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
+                    <div className="flex flex-col items-center justify-center py-16 gap-3 md:gap-6">
                         <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
-                            <Briefcase className="w-16 h-16 text-slate-200" />
+                            <Briefcase className="w-16 h-16 text-foreground dark:text-slate-200" />
                         </div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('common.noData')}</p>
+                        <p className="text-sm font-semibold text-muted-foreground">{loadError ? (arUI ? 'الطلبات غير متاحة الآن' : 'Requests are unavailable') : searchQuery || statusFilter !== 'all' ? (arUI ? 'لا توجد طلبات مطابقة' : 'No matching requests') : t('common.noData')}</p>
+                        {(searchQuery || statusFilter !== 'all') && <button type="button" onClick={resetFilters} className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground">{arUI ? 'مسح البحث والفلترة' : 'Clear search and filters'}</button>}
                     </div>
                 )}
              </div>
+             {!isLoading && <Pagination currentPage={page} totalPages={totalPages} onPageChange={setCurrentPage} totalItems={filteredRequests.length} itemsLabel={arUI ? 'طلب' : 'requests'} />}
 
             {/* Details Dialog */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                    <DialogHeader className="p-4 sm:p-8 bg-slate-950 text-white flex flex-row items-center justify-between">
+                <DialogContent className="calm-overlay w-[95vw] sm:max-w-2xl bg-card rounded-[1rem] border-none shadow-sm dark:shadow-2xl p-0 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <DialogHeader className="p-4 sm:p-8 bg-background dark:bg-slate-950 text-foreground dark:text-white flex flex-row items-center justify-between">
                         <div>
                             <DialogTitle className="text-xl sm:text-2xl font-black">{selectedRequest?.serviceType}</DialogTitle>
-                            <p className="text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
+                            <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold mt-1 uppercase tracking-widest">
                                 {t(`admin.service_requests.category.${selectedRequest?.category}`) || selectedRequest?.category}
                             </p>
 
@@ -417,21 +440,22 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                     {selectedRequest && (
                         <div className="p-4 sm:p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                            <ProviderRequestPanel requestId={selectedRequest.id} admin />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-6">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">العميل</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">العميل</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
+                                            <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <User className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.clientName}</span>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الهاتف</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الهاتف</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
+                                            <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <Phone className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.phone}</span>
@@ -440,16 +464,16 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                 </div>
                                 <div className="space-y-6">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الموقع</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الموقع</label>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
+                                            <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-slate-900">
                                                 <MapPin className="w-4 h-4" />
                                             </div>
                                             <span className="font-bold text-slate-900">{selectedRequest.city}, {selectedRequest.district}</span>
                                         </div>
                                     </div>
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">المبلغ والدفع</label>
+                                    <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المبلغ والدفع</label>
                                         
                                         {((department === 'marketing' || department === 'legal') && !selectedRequest.invoiceSent) ? (
                                             <div className="space-y-3 pt-2">
@@ -466,13 +490,13 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                             }}
                                                             className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900"
                                                         />
-                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
+                                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-slate-400"><SaudiRiyalSymbol iconClassName="h-3.5 w-3.5" /></span>
                                                     </div>
                                                     
                                                     <button 
                                                         onClick={handleSendInvoice} 
                                                         disabled={isSendingInvoice || !invoicePrice} 
-                                                        className="w-full bg-slate-900 text-white py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all flex justify-center items-center gap-2 shadow-lg disabled:opacity-50"
+                                                        className="calm-primary w-full bg-card dark:bg-slate-900 text-foreground dark:text-white py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all flex justify-center items-center gap-2 shadow-lg disabled:opacity-50"
                                                     >
                                                         {isSendingInvoice ? (
                                                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -505,7 +529,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                                     <span className="font-bold text-slate-900">
                                                         <SaudiRiyalAmount amount={selectedRequest.price || selectedRequest.invoicePrice || 0} locale="ar-SA" />
                                                     </span>
-                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                                                         {selectedRequest.paymentStatus === 'PAID' ? 'تم الدفع' : selectedRequest.invoiceSent ? 'بانتظار الدفع' : 'قيد المراجعة'}
                                                     </span>
                                                 </div>
@@ -518,11 +542,11 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                             <div className="space-y-3 pt-6 border-t border">
                                 <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{language === 'ar' ? 'تعيين مزود الخدمة' : 'Assign Provider'}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{language === 'ar' ? 'تعيين مزود الخدمة' : 'Assign Provider'}</label>
                                         <select
                                             value={targetDepartmentValue}
                                             onChange={(e) => setTargetDepartmentValue(e.target.value)}
-                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
                                         >
                                             <option value="">{language === 'ar' ? 'غير محدد' : 'Unassigned'}</option>
                                             <option value="legal">{language === 'ar' ? 'الخدمات القانونية' : 'Legal Services'}</option>
@@ -533,11 +557,11 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         </select>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">حالة الطلب</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">حالة الطلب</label>
                                         <select
                                             value={statusValue}
                                             onChange={(e) => setStatusValue(e.target.value)}
-                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+                                            className="w-full bg-muted border border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
                                         >
                                             <option value="pending">قيد الانتظار</option>
                                             <option value="assigned">تم التعيين</option>
@@ -550,7 +574,7 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
                                         type="button"
                                         onClick={handleUpdateStatus}
                                         disabled={isUpdatingStatus}
-                                        className="self-end bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
+                                        className="self-end bg-background dark:bg-slate-950 text-foreground dark:text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
                                     >
                                         {isUpdatingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                                         حفظ الحالة
@@ -580,18 +604,18 @@ export default function ServiceRequestsTable({ title, subtitle, department }: Se
 
                             {selectedRequest.description && (
                                 <div className="space-y-2 pt-6 border-t border">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">التفاصيل</label>
+                                    <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">التفاصيل</label>
                                     <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted p-4 rounded-2xl">{selectedRequest.description}</p>
                                 </div>
                             )}
 
                              <div className="pt-6 border-t border flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                                <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400 text-[10px] font-bold">
                                     <Calendar className="w-3.5 h-3.5" />
-                                    <span>تاريخ الطلب: {format(new Date(selectedRequest.createdAt), 'dd MMMM yyyy', { locale: ar })}</span>
+                                    <span>تاريخ الطلب: {displayDate(selectedRequest.createdAt, 'dd MMMM yyyy')}</span>
                                 </div>
                                 <div className="font-black text-slate-900 text-lg">
-                                    <SaudiRiyalAmount amount={selectedRequest.price} locale="ar-SA" iconClassName="h-3 w-3 text-slate-400" />
+                                    <SaudiRiyalAmount amount={selectedRequest.price} locale="ar-SA" iconClassName="h-3 w-3 text-muted-foreground dark:text-slate-400" />
                                 </div>
                              </div>
                         </div>

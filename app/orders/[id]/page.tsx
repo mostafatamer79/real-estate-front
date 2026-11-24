@@ -1,72 +1,482 @@
+// app/orders/[id]/page.tsx
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import { ordersApi } from "@/lib/api";
 import { Order } from "@/types/api";
 import { useLanguage } from "@/context/LanguageContext";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { chatApi } from "@/lib/chat";
+import { safeHttpUrl } from "@/lib/safe-url";
+import { loginHref } from "@/lib/auth-navigation";
 import {
-  Loader2, ArrowRight, MapPin, Ruler, Calendar, FileText,
-  CheckCircle2, Building2, User as UserIcon, Phone, Mail,
-  Shield, Clock, Home, Layers, Bath, ChefHat, Layers2,
-  Sofa, Tag, Hash, BedDouble, Warehouse, CheckCheck, MessageSquare, Send
+  ArrowRight,
+  MapPin,
+  Calendar,
+  Building2,
+  Tag,
+  Clock,
+  FileText,
+  BedDouble,
+  Bath,
+  Sofa,
+  ChefHat,
+  Layers2,
+  Home,
+  Warehouse,
+  CheckCircle2,
+  Copy,
+  Check,
+  Phone,
+  Mail,
+  User as UserIcon,
+  Send,
+  CheckCheck,
+  MessageSquare,
+  RotateCcw,
+  Compass,
+  Ruler,
+  Maximize2,
+  Pause,
+  Play,
+  BadgeCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import styles from "./order-detail.module.css";
+import { OrderNetworkArtwork, useOrderMotion } from "./order-motion";
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  pending:     { label: "قيد الانتظار", color: "text-amber-700",  bg: "bg-amber-50 border-amber-200" },
-  in_progress: { label: "قيد التنفيذ",  color: "text-blue-700",   bg: "bg-blue-50 border-blue-200"  },
-  completed:   { label: "مكتمل",        color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
-  cancelled:   { label: "ملغي",         color: "text-red-700",    bg: "bg-red-50 border-red-200"    },
-};
-
-const DEED_MAP: Record<string, string> = {
-  electronic: "إلكتروني", paper: "ورقي", digital: "رقمي",
-};
-
-const MeterIcon = ({ className }: { className?: string }) => (
-  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '3em', height: '3em', opacity: 0.7 }} />
-);
-
-function InfoRow({ label, value, icon: Icon }: { label: string; value?: any; icon?: any }) {
-  if (!value && value !== 0) return null;
-  return (
-    <div className="flex items-center justify-between py-3 border-b border last:border-0 hover:bg-muted/50 px-2 rounded-xl transition-colors">
-      <span className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-        {Icon && <Icon className="w-4 h-4 text-slate-400" />}
-        {label}
-      </span>
-      <span className="font-bold text-slate-800 text-sm">{value}</span>
-    </div>
-  );
+interface CurrentUser {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
 }
 
-function FeatureBadge({ active, label }: { active?: boolean; label: string }) {
-  if (!active) return null;
-  return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-      <CheckCircle2 className="w-3.5 h-3.5" /> {label}
-    </span>
-  );
+interface ChatMessage {
+  id?: string;
+  senderId?: string;
+  sender?: {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  content: string;
+  createdAt: string;
 }
 
-function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }) {
+interface ReceiveMessagePayload {
+  message?: ChatMessage;
+  data?: ChatMessage;
+  id?: string;
+  senderId?: string;
+  sender?: {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  content?: string;
+  createdAt?: string;
+}
+
+interface UserStatusPayload {
+  userId?: string;
+  status?: string;
+}
+
+interface ExtendedOrder extends Order {
+  length?: number | string;
+  width?: number | string;
+  streetWidth?: number | string;
+  direction?: string;
+  clientName?: string;
+  clientPhone?: string;
+}
+
+/* ==========================================================================
+   Comprehensive Bilingual Localization Dictionary (Scoped to /orders/[id])
+   ========================================================================== */
+const DICTIONARY = {
+  ar: {
+    // Navigation & Breadcrumbs
+    orders: "الطلبات",
+    orderDetails: "تفاصيل الطلب",
+    backToOrders: "العودة للطلبات",
+    orderReference: "رقم الطلب المرجعي",
+    createdOn: "تاريخ تقديم الطلب",
+    lastUpdated: "آخر تحديث",
+
+    // Statuses
+    status_pending: "قيد الانتظار",
+    status_in_progress: "قيد التنفيذ",
+    status_completed: "مكتمل",
+    status_cancelled: "ملغي",
+
+    // Deal Types
+    deal_buy: "طلب شراء",
+    deal_rent: "طلب إيجار",
+    buy: "شراء",
+    rent: "إيجار",
+
+    // Property Types
+    prop_apartment: "شقة",
+    prop_villa: "فيلا",
+    prop_palace: "قصر",
+    prop_land: "أرض",
+    prop_building: "عمارة",
+    prop_restHouse: "استراحة",
+    prop_shop: "محل تجاري",
+    prop_office: "مكتب",
+    prop_warehouse: "مستودع",
+    prop_duplex: "دوبلكس",
+    prop_floor: "دور",
+
+    // Deed Types
+    deed_electronic: "صك إلكتروني",
+    deed_paper: "صك ورقي",
+    deed_digital: "صك رقمي",
+    deed_other: "صك آخر",
+
+    // Property Age
+    age_new: "جديد",
+    age_less5: "أقل من 5 سنوات",
+    age_5to10: "من 5 إلى 10 سنوات",
+    age_10to20: "من 10 إلى 20 سنة",
+    age_more20: "أكثر من 20 سنة",
+
+    // Furnishing Status
+    furn_furnished: "مفروش",
+    furn_unfurnished: "غير مفروش",
+    furn_semi: "شبه مفروش",
+
+    // Section Titles
+    section_primary: "المواصفات الأساسية للطلب",
+    section_layout: "التفاصيل الهيكلية والتقسيم",
+    section_land: "مواصفات الأرض والمخطط",
+    section_amenities: "الميزات والمرافق المطلوبة",
+    section_notes: "ملاحظات وتفاصيل إضافية",
+    section_registry: "بيانات السجل والطلب",
+    section_client: "صاحب الطلب",
+    section_agent: "الممثل المعيّن",
+    section_anonymous: "بيانات العميل المستعلم",
+    section_chat: "المحادثة التشغيلية المباشرة",
+
+    // Metric Labels
+    budget: "الميزانية / السعر المطلوب",
+    requestedArea: "المساحة المطلوبة",
+    propertyType: "نوع العقار",
+    location: "الموقع الجغرافي",
+    city: "المدينة",
+    neighborhood: "الحي",
+    propertyAge: "عمر العقار",
+    deedType: "نوع الصك",
+    dealType: "نوع الصفقة",
+    orderStatus: "حالة الطلب",
+    orderId: "الرمز المرجعي",
+
+    // Structural Layout
+    rooms: "عدد الغرف",
+    bathrooms: "دورات المياه",
+    livingRooms: "غرف المعيشة",
+    kitchens: "المطابخ",
+    floors: "عدد الأدوار",
+    apartments: "عدد الشقق",
+    buildingArea: "مساحة البناء",
+    furnitureStatus: "حالة التأثيث",
+
+    // Land Dimensions
+    length: "الطول",
+    width: "العرض",
+    streetWidth: "عرض الشارع",
+    direction: "الواجهة",
+
+    // Amenities
+    amenity_garage: "كراج سيارة",
+    amenity_pool: "مسبح",
+    amenity_elevator: "مصعد",
+    amenity_maidRoom: "غرفة خادمة",
+    amenity_roof: "سطح / روف",
+    amenity_annex: "ملحق خارجي",
+
+    // Stakeholders & Contacts
+    role: "الدور الوظيفي",
+    email: "البريد الإلكتروني",
+    phone: "رقم الجوال",
+    copy: "نسخ",
+    copied: "تم النسخ بنجاح",
+    verified: "حساب موثق",
+    clientName: "اسم العميل",
+    clientPhone: "رقم الهاتف",
+    adminOffice: "الإدارة التشغيلية",
+
+    // Chat Panel
+    chatOnline: "متصل الآن",
+    chatOffline: "غير متصل",
+    chatPlaceholder: "اكتب رسالتك بخصوص هذا الطلب...",
+    chatSend: "إرسال",
+    chatEmpty: "لا توجد رسائل سابقة. يمكنك بدء المحادثة المباشرة الآن.",
+    chatSignInPrompt: "يرجى تسجيل الدخول للبدء بالمحادثة المباشرة مع فريق العمليات.",
+    chatSignInAction: "تسجيل الدخول",
+    chatWaitingAgent: "بانتظار تعيين ممثل من قبل الإدارة للبدء في المحادثة المباشرة...",
+    chatJustNow: "الآن",
+
+    // States
+    loadingTitle: "جاري استرداد مواصفات الطلب...",
+    errorTitle: "تعذّر تحميل بيانات الطلب",
+    errorMessage: "حدث خطأ أثناء جلب مواصفات الطلب من الخادم. يرجى التحقق من اتصالك والمحاولة مجدداً.",
+    retryAction: "إعادة المحاولة",
+    notFoundTitle: "الطلب غير موجود",
+    notFoundMessage: "لم نتمكن من العثور على الطلب المطلوب، قد يكون الرابط غير صحيح أو تم حذفه.",
+
+    // Units
+    sqm: "م²",
+    meters: "متر",
+  },
+  en: {
+    // Navigation & Breadcrumbs
+    orders: "Orders",
+    orderDetails: "Order Details",
+    backToOrders: "Back to Orders",
+    orderReference: "Order Reference ID",
+    createdOn: "Submission Date",
+    lastUpdated: "Last Updated",
+
+    // Statuses
+    status_pending: "Pending Review",
+    status_in_progress: "In Progress",
+    status_completed: "Completed",
+    status_cancelled: "Cancelled",
+
+    // Deal Types
+    deal_buy: "Purchase Request",
+    deal_rent: "Rental Request",
+    buy: "Purchase",
+    rent: "Rent",
+
+    // Property Types
+    prop_apartment: "Apartment",
+    prop_villa: "Villa",
+    prop_palace: "Palace",
+    prop_land: "Land Plot",
+    prop_building: "Building",
+    prop_restHouse: "Rest House",
+    prop_shop: "Commercial Shop",
+    prop_office: "Office Space",
+    prop_warehouse: "Warehouse",
+    prop_duplex: "Duplex",
+    prop_floor: "Whole Floor",
+
+    // Deed Types
+    deed_electronic: "Electronic Deed",
+    deed_paper: "Paper Deed",
+    deed_digital: "Digital Deed",
+    deed_other: "Other Deed",
+
+    // Property Age
+    age_new: "New",
+    age_less5: "Under 5 Years",
+    age_5to10: "5 - 10 Years",
+    age_10to20: "10 - 20 Years",
+    age_more20: "Over 20 Years",
+
+    // Furnishing Status
+    furn_furnished: "Furnished",
+    furn_unfurnished: "Unfurnished",
+    furn_semi: "Semi-Furnished",
+
+    // Section Titles
+    section_primary: "Primary Specifications",
+    section_layout: "Architectural & Structural Layout",
+    section_land: "Land & Plot Specifications",
+    section_amenities: "Requested Amenities & Features",
+    section_notes: "Additional Details & Notes",
+    section_registry: "Order Registry Overview",
+    section_client: "Requester Profile",
+    section_agent: "Assigned Specialist",
+    section_anonymous: "Direct Client Information",
+    section_chat: "Direct Operational Chat",
+
+    // Metric Labels
+    budget: "Target Budget / Price",
+    requestedArea: "Requested Area",
+    propertyType: "Property Type",
+    location: "Location",
+    city: "City",
+    neighborhood: "Neighborhood",
+    propertyAge: "Property Age",
+    deedType: "Deed Type",
+    dealType: "Deal Type",
+    orderStatus: "Order Status",
+    orderId: "Reference ID",
+
+    // Structural Layout
+    rooms: "Bedrooms",
+    bathrooms: "Bathrooms",
+    livingRooms: "Living Rooms",
+    kitchens: "Kitchens",
+    floors: "Floors Count",
+    apartments: "Apartments Count",
+    buildingArea: "Built-up Area",
+    furnitureStatus: "Furnishing Status",
+
+    // Land Dimensions
+    length: "Length",
+    width: "Width",
+    streetWidth: "Street Width",
+    direction: "Street Facade",
+
+    // Amenities
+    amenity_garage: "Garage",
+    amenity_pool: "Swimming Pool",
+    amenity_elevator: "Elevator",
+    amenity_maidRoom: "Maid's Room",
+    amenity_roof: "Rooftop",
+    amenity_annex: "External Annex",
+
+    // Stakeholders & Contacts
+    role: "Role",
+    email: "Email Address",
+    phone: "Phone Number",
+    copy: "Copy",
+    copied: "Copied to clipboard",
+    verified: "Verified Account",
+    clientName: "Client Name",
+    clientPhone: "Phone Number",
+    adminOffice: "Operations Management",
+
+    // Chat Panel
+    chatOnline: "Online",
+    chatOffline: "Offline",
+    chatPlaceholder: "Write a message regarding this order...",
+    chatSend: "Send",
+    chatEmpty: "No messages yet. Send a message to start direct communication.",
+    chatSignInPrompt: "Please sign in to participate in the operational chat.",
+    chatSignInAction: "Sign In",
+    chatWaitingAgent: "Waiting for an agent assignment to start live messaging...",
+    chatJustNow: "Just now",
+
+    // States
+    loadingTitle: "Retrieving order specifications...",
+    errorTitle: "Failed to load order details",
+    errorMessage: "A communication error occurred while loading this order. Please verify your connection and retry.",
+    retryAction: "Retry Loading",
+    notFoundTitle: "Order Not Found",
+    notFoundMessage: "The requested order could not be found. It may have been removed or the link is invalid.",
+
+    // Units
+    sqm: "m²",
+    meters: "m",
+  },
+};
+
+/* ==========================================================================
+   Helper Functions for Localization & Value Formatting
+   ========================================================================== */
+function isPresent(value: unknown): boolean {
+  if (value === undefined || value === null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (typeof value === "number") return !Number.isNaN(value);
+  return true;
+}
+
+function localizePropertyType(type: string | undefined, lang: "ar" | "en"): string {
+  if (!type) return "—";
+  const dict = DICTIONARY[lang];
+  const t = type.trim().toLowerCase();
+  if (t === "شقة" || t === "apartment") return dict.prop_apartment;
+  if (t === "فيلا" || t === "villa") return dict.prop_villa;
+  if (t === "قصر" || t === "palace") return dict.prop_palace;
+  if (t === "أرض" || t === "land") return dict.prop_land;
+  if (t === "عمارة" || t === "building") return dict.prop_building;
+  if (t === "استراحة" || t === "resthouse" || t === "rest house") return dict.prop_restHouse;
+  if (t === "محل تجاري" || t === "محل" || t === "shop") return dict.prop_shop;
+  if (t === "مكتب" || t === "office") return dict.prop_office;
+  if (t === "مستودع" || t === "warehouse") return dict.prop_warehouse;
+  if (t === "دوبلكس" || t === "duplex") return dict.prop_duplex;
+  if (t === "دور" || t === "floor") return dict.prop_floor;
+  return type;
+}
+
+function localizeDeedType(deed: string | undefined, lang: "ar" | "en"): string {
+  if (!deed) return "—";
+  const dict = DICTIONARY[lang];
+  const d = deed.toLowerCase().trim();
+  if (d === "electronic" || d === "إلكتروني") return dict.deed_electronic;
+  if (d === "paper" || d === "ورقي") return dict.deed_paper;
+  if (d === "digital" || d === "رقمي") return dict.deed_digital;
+  if (d === "other" || d === "أخرى") return dict.deed_other;
+  return deed;
+}
+
+function localizePropertyAge(age: string | undefined, lang: "ar" | "en"): string {
+  if (!age) return "—";
+  const dict = DICTIONARY[lang];
+  const a = age.trim().toLowerCase();
+  if (a === "جديد" || a === "new") return dict.age_new;
+  if (a.includes("أقل من 5") || a.includes("less5") || a.includes("under 5")) return dict.age_less5;
+  if (a.includes("5-10") || a.includes("5to10") || a.includes("5 إلى 10")) return dict.age_5to10;
+  if (a.includes("10-20") || a.includes("10to20") || a.includes("10 إلى 20")) return dict.age_10to20;
+  if (a.includes("أكثر من 20") || a.includes("more20") || a.includes("over 20")) return dict.age_more20;
+  return age;
+}
+
+function localizeFurnitureStatus(furn: string | undefined, lang: "ar" | "en"): string {
+  if (!furn) return "—";
+  const dict = DICTIONARY[lang];
+  const f = furn.toLowerCase().trim();
+  if (f === "furnished" || f === "مفروش") return dict.furn_furnished;
+  if (f === "unfurnished" || f === "غير مفروش") return dict.furn_unfurnished;
+  if (f === "semi-furnished" || f === "شبه مفروش") return dict.furn_semi;
+  return furn;
+}
+
+function localizeStatus(status: string | undefined, lang: "ar" | "en"): { label: string; className: string } {
+  const dict = DICTIONARY[lang];
+  const s = (status || "").toLowerCase().trim();
+  if (s === "pending" || s === "قيد الانتظار") {
+    return { label: dict.status_pending, className: styles.status_pending };
+  }
+  if (s === "in_progress" || s === "قيد التنفيذ") {
+    return { label: dict.status_in_progress, className: styles.status_in_progress };
+  }
+  if (s === "completed" || s === "مكتمل") {
+    return { label: dict.status_completed, className: styles.status_completed };
+  }
+  if (s === "cancelled" || s === "ملغي") {
+    return { label: dict.status_cancelled, className: styles.status_cancelled };
+  }
+  return { label: status || "—", className: styles.status_pending };
+}
+
+/* ==========================================================================
+   Real Operational Chat Component
+   ========================================================================== */
+function OrderChatBox({ order, currentUser }: { order: Order; currentUser: CurrentUser | null }) {
   const { language } = useLanguage();
-  const isRtl = language === "ar";
+  const lang = language === "en" ? "en" : "ar";
+  const isRtl = lang === "ar";
+  const dict = DICTIONARY[lang];
+
   const [roomId, setRoomId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [isOnline, setIsOnline] = useState(false);
+  const [chatError, setChatError] = useState(false);
+  const [retry, setRetry] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isClient = currentUser?.id === order.userId;
-  const otherId = isClient ? (order.assignedToId || 'admin') : order.userId;
-  const otherUser = isClient ? ((order as any).assignedTo || { firstName: isRtl ? 'الإدارة' : 'Administration', lastName: '', role: 'admin' }) : (order as any).user;
+  const otherId = isClient ? (order.assignedToId || "admin") : order.userId;
+  const otherUser = isClient
+    ? (order.assignedTo || { firstName: isRtl ? "الإدارة التشغيلية" : "Operations Administration", lastName: "", role: "admin" })
+    : order.user;
 
   useEffect(() => {
     if (!currentUser || !otherId) {
@@ -74,162 +484,209 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
       return;
     }
 
+    let isMounted = true;
+    let socketInstance: Socket | null = null;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const scrollToLatest = () => {
+      timers.push(setTimeout(() => {
+        const anchor = messagesEndRef.current;
+        const paused = anchor?.closest("[data-motion-paused]")?.getAttribute("data-motion-paused") === "true";
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        anchor?.scrollIntoView({ behavior: paused || reduced ? "auto" : "smooth" });
+      }, 50));
+    };
+    setLoading(true);
+    setChatError(false);
+    setSocket(null);
+
     const initChat = async () => {
       try {
-        const title = `طلب: ${order.propertyType} - ${order.city}`;
+        const title = isRtl
+          ? `طلب: ${order.propertyType} - ${order.city}`
+          : `Order: ${order.propertyType} - ${order.city}`;
+
         const room = await chatApi.getOrCreateOrderRoom({
           orderId: order.id,
           otherId,
-          title
+          title,
         });
+
+        if (!isMounted) return;
         setRoomId(room.id);
-        
-        // Fetch messages
+
         const msgs = await chatApi.getRoomMessages(room.id);
-        setMessages(msgs);
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+        if (!isMounted) return;
+        setMessages(Array.isArray(msgs) ? msgs : []);
+        scrollToLatest();
 
-        // Setup socket
-        const token = localStorage.getItem('token');
-        const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3030';
-        const socketUrl = wsUrl.replace(/^ws/, 'http');
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3030";
+        const socketUrl = wsUrl.replace(/^ws/, "http");
 
-        const socketIo = io(`${socketUrl}/chat`, {
+        socketInstance = io(`${socketUrl}/chat`, {
           auth: { token, userId: currentUser.id },
-          transports: ['websocket', 'polling']
+          transports: ["websocket", "polling"],
         });
 
-        socketIo.on('connect', () => {
-          socketIo.emit('joinRoom', { roomId: room.id });
-          socketIo.emit('checkUserStatus', { userId: otherId });
+        socketInstance.on("connect", () => {
+          socketInstance?.emit("joinRoom", { roomId: room.id });
+          socketInstance?.emit("checkUserStatus", { userId: otherId });
         });
 
-        socketIo.on('receiveMessage', (data) => {
-          const msg = data.message || data.data || data;
-          if (msg) {
-            setMessages(prev => {
-              if (prev.some(m => m.id === msg.id)) return prev;
+        socketInstance.on("receiveMessage", (data: ReceiveMessagePayload) => {
+          const raw = data.message || data.data || data;
+          if (raw && isMounted && typeof raw.content === "string") {
+            const msg: ChatMessage = {
+              id: raw.id,
+              senderId: raw.senderId,
+              sender: raw.sender,
+              content: raw.content,
+              createdAt: raw.createdAt || new Date().toISOString(),
+            };
+            setMessages((prev) => {
+              if (msg.id && prev.some((m) => m.id === msg.id)) return prev;
               return [...prev, msg];
             });
-            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
-            
-            // Mark read if incoming from other
+            scrollToLatest();
+
             const senderId = msg.sender?.id || msg.senderId;
             if (senderId === otherId) {
-              chatApi.markRoomAsRead(room.id).catch(err => console.error('Failed to mark read:', err));
+              chatApi.markRoomAsRead(room.id).catch((err) => console.error("Failed to mark read:", err));
             }
           }
         });
 
-        socketIo.on('userStatus', (data) => {
-          if (data.userId === otherId) {
-            setIsOnline(data.status === 'online');
+        socketInstance.on("userStatus", (data: UserStatusPayload) => {
+          if (data.userId === otherId && isMounted) {
+            setIsOnline(data.status === "online");
           }
         });
 
-        setSocket(socketIo);
+        if (isMounted) {
+          setSocket(socketInstance);
+        }
       } catch (err) {
-        console.error("Failed to initialize order chat room:", err);
+        if (isMounted) {
+          console.error("Failed to initialize order chat room:", err);
+          setChatError(true);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     initChat();
 
     return () => {
-      if (socket) {
-        socket.disconnect();
+      isMounted = false;
+      timers.forEach(clearTimeout);
+      if (socketInstance) {
+        socketInstance.disconnect();
       }
     };
-  }, [order.id, otherId, currentUser]);
+  }, [order.id, order.propertyType, order.city, otherId, currentUser, isRtl, retry]);
 
-  const sendMessage = async () => {
-    if (!message.trim() || !socket || !roomId) return;
+  const sendMessage = () => {
+    if (!message.trim() || !socket || !roomId || !currentUser) return;
     try {
-      socket.emit('sendMessage', { roomId, senderId: currentUser.id, content: message });
+      socket.emit("sendMessage", { roomId, senderId: currentUser.id, content: message.trim() });
       setMessage("");
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
   };
 
-  const formatTime = (dateString: string) => {
+  const formatMessageTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+      if (Number.isNaN(date.getTime())) return dict.chatJustNow;
+      return date.toLocaleTimeString(isRtl ? "ar-SA" : "en-US", { hour: "2-digit", minute: "2-digit" });
     } catch {
-      return "الآن";
+      return dict.chatJustNow;
     }
   };
 
   if (!currentUser) {
     return (
-      <div className="bg-muted border border rounded-3xl p-3 sm:p-6 text-center space-y-2">
-        <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
-        <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
+      <div className={styles.chatPromptBox}>
+        <MessageSquare className={styles.chatPromptIcon} />
+        <p className={styles.chatPromptText}>{dict.chatSignInPrompt}</p>
+        <Link href={loginHref(`/orders/${order.id}`)} className={styles.chatLoginLink}>
+          {dict.chatSignInAction}
+        </Link>
       </div>
     );
   }
 
   if (!otherId) {
     return (
-      <div className="bg-muted border border rounded-3xl p-3 sm:p-6 text-center space-y-2">
-        <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-pulse" />
-        <p className="text-xs font-black text-slate-500">
-          {isRtl 
-            ? "بانتظار تعيين موظف من قبل الإدارة للبدء في المحادثة المباشرة..." 
-            : "Waiting for an agent to be assigned by admin to start the live chat..."}
-        </p>
+      <div className={styles.chatPromptBox}>
+        <MessageSquare className={styles.chatPromptIcon} />
+        <p className={styles.chatPromptText}>{dict.chatWaitingAgent}</p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-4 sm:p-8 flex items-center justify-center min-h-[300px]">
-        <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className={styles.chatContainer}>
+        <div className={styles.stateContainer}>
+          <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin text-muted-foreground" />
+        </div>
       </div>
     );
   }
 
+  if (chatError) {
+    return <div className={styles.chatPromptBox} role="alert">
+      <p className={styles.chatPromptText}>{isRtl ? 'تعذر تحميل المحادثة.' : 'Could not load this conversation.'}</p>
+      <button type="button" className={styles.retryButton} onClick={() => setRetry(value => value + 1)}>{dict.retryAction}</button>
+    </div>;
+  }
+
   const otherName = otherUser
-    ? `${otherUser.firstName || ''} ${otherUser.lastName || ''}`.trim() || 'المسؤول'
-    : 'الطرف الآخر';
+    ? `${otherUser.firstName || ""} ${otherUser.lastName || ""}`.trim() || dict.adminOffice
+    : dict.adminOffice;
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-md overflow-hidden flex flex-col h-[400px]">
-      {/* Header */}
-      <div className="px-5 py-3 border-b border flex items-center justify-between bg-muted/50">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs uppercase">
+    <div className={styles.chatContainer}>
+      {/* Architectural Chat Header */}
+      <div className={styles.chatHeader}>
+        <div className={styles.chatPartnerInfo}>
+          <div className={styles.chatAvatarWrapper}>
+            <div className={styles.chatAvatar}>
               {otherName.charAt(0)}
             </div>
-            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
+            <div
+              className={`${styles.presenceDot} ${isOnline ? styles.presenceOnline : styles.presenceOffline}`}
+              aria-label={isOnline ? dict.chatOnline : dict.chatOffline}
+            />
           </div>
           <div>
-            <h4 className="font-bold text-xs text-slate-900">{otherName}</h4>
-            <p className="text-[9px] font-black text-slate-400 mt-0.5">
-              {isOnline ? 'متصل الآن' : 'غير متصل'}
+            <h4 className={styles.chatPartnerName}>{otherName}</h4>
+            <p className={styles.chatPresenceText}>
+              {isOnline ? dict.chatOnline : dict.chatOffline}
             </p>
           </div>
         </div>
+        
       </div>
 
-      {/* Messages list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/20">
+      {/* Messages Thread Viewport */}
+      <div className={styles.chatMessagesArea}>
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-40">
-            <MessageSquare className="w-8 h-8 text-slate-400" />
-            <p className="text-[11px] font-bold">ابدأ المحادثة الآن بخصوص هذا الطلب</p>
+          <div className={styles.chatEmptyState}>
+            <MessageSquare className={styles.chatEmptyIcon} />
+            <p className={styles.chatEmptyText}>{dict.chatEmpty}</p>
           </div>
         ) : (
           messages.map((msg, index) => {
@@ -237,23 +694,19 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
             return (
               <div
                 key={msg.id || index}
-                className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                className={`${styles.messageRow} ${isOwn ? styles.messageRowOwn : styles.messageRowOther}`}
               >
-                <div className="flex flex-col gap-0.5 max-w-[85%]">
+                <div className={styles.messageBubble}>
                   <div
-                    className={`px-3 py-2 rounded-2xl shadow-sm text-xs ${
-                      isOwn
-                        ? 'bg-slate-900 text-white rounded-br-none'
-                        : 'bg-card/90 backdrop-blur-sm border border text-slate-900 rounded-bl-none'
-                    }`}
+                    className={`${styles.messageBody} ${isOwn ? styles.messageBodyOwn : styles.messageBodyOther}`}
                   >
-                    <p className="font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                    {msg.content}
                   </div>
-                  <div className={`flex items-center gap-1 px-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[8px] font-bold text-slate-400">
-                      {formatTime(msg.createdAt)}
-                    </span>
-                    {isOwn && <CheckCheck className="w-2.5 h-2.5 text-slate-300" />}
+                  <div
+                    className={`${styles.messageMeta} ${isOwn ? styles.messageMetaOwn : styles.messageMetaOther}`}
+                  >
+                    <span>{formatMessageTime(msg.createdAt)}</span>
+                    {isOwn && <CheckCheck className={styles.readReceiptIcon} />}
                   </div>
                 </div>
               </div>
@@ -263,42 +716,49 @@ function OrderChatBox({ order, currentUser }: { order: Order; currentUser: any }
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input section */}
-      <div className="p-3 border-t border bg-card/80 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="اكتب رسالتك هنا..."
-            className="flex-1 bg-muted border border rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!message.trim()}
-            className="w-10 h-10 sm:w-8 sm:h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
-          >
-            <Send className="w-3.5 h-3.5 -rotate-45 ml-0.5 mb-0.5" />
-          </button>
-        </div>
+      {/* Input Bar */}
+      <div className={styles.chatInputBar}>
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={dict.chatPlaceholder}
+          aria-label={dict.chatPlaceholder}
+          className={styles.chatInput}
+        />
+        <button
+          type="button"
+          onClick={sendMessage}
+          disabled={!message.trim()}
+          aria-label={dict.chatSend}
+          className={styles.chatSendBtn}
+        >
+          <Send className={isRtl ? styles.sendIconRtl : styles.sendIconLtr} />
+        </button>
       </div>
     </div>
   );
 }
 
+/* ==========================================================================
+   Order Details Main Page Component
+   ========================================================================== */
 export default function OrderDetailsPage() {
-  const router = useRouter();
   const params = useParams();
   const { language } = useLanguage();
+  const lang = language === "en" ? "en" : "ar";
+  const isRtl = lang === "ar";
+  const dict = DICTIONARY[lang];
+
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const isRtl = language === "ar";
-
-  const handleBack = () => {
-    router.back();
-  };
+  const [error, setError] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [copiedRef, setCopiedRef] = useState(false);
+  const [copiedContact, setCopiedContact] = useState<string | null>(null);
+  const fetchSerial = useRef(0);
+  const { rootRef, paused, reducedMotion, toggleMotion } = useOrderMotion(order?.id, loading);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -306,222 +766,784 @@ export default function OrderDetailsPage() {
       if (stored) {
         try {
           setCurrentUser(JSON.parse(stored));
-        } catch (e) {}
+        } catch {
+          // ignore corrupted local storage
+        }
       }
     }
   }, []);
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        if (params.id) {
-          const res = await ordersApi.findOne(params.id as string);
-          setOrder(res.data);
-        }
-      } catch {
-        toast.error("تعذّر تحميل بيانات الطلب");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrder();
-  }, [params.id]);
+  const fetchOrder = useCallback(async () => {
+    if (!params?.id) return;
+    const request = ++fetchSerial.current;
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await ordersApi.findOne(params.id as string);
+      if (request !== fetchSerial.current) return;
+      if (res.data && (typeof res.data !== 'object' || typeof res.data.id !== 'string')) throw new Error('Invalid order response');
+      setOrder(res.data);
+    } catch (err) {
+      if (request !== fetchSerial.current) return;
+      console.error("Failed to fetch order:", err);
+      setError(true);
+      toast.error(dict.errorMessage);
+    } finally {
+      if (request === fetchSerial.current) setLoading(false);
+    }
+  }, [params?.id, dict.errorMessage]);
 
+  useEffect(() => {
+    fetchOrder();
+    return () => { fetchSerial.current += 1; };
+  }, [fetchOrder]);
+
+  const copyToClipboard = async (text: string, type: "ref" | "email" | "phone") => {
+    try {
+      await navigator.clipboard.writeText(text);
+      if (type === "ref") {
+        setCopiedRef(true);
+        setTimeout(() => setCopiedRef(false), 2000);
+      } else {
+        setCopiedContact(type);
+        setTimeout(() => setCopiedContact(null), 2000);
+      }
+      toast.success(dict.copied);
+    } catch {
+      toast.error(isRtl ? "تعذّر النسخ" : "Failed to copy");
+    }
+  };
+
+  // Loading State
   if (loading) {
     return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className={styles.orderDetailRoot} dir={isRtl ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <div className={styles.skeletonHeader} />
+          <div className={styles.layoutGrid}>
+            <div className={styles.mainColumn}>
+              <div className={styles.skeletonBlock} />
+              <div className={styles.skeletonBlock} />
+            </div>
+            <div className={styles.sideColumn}>
+              <div className={styles.skeletonBlock} />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // Error State
+  if (error) {
+    return (
+      <div className={styles.orderDetailRoot} dir={isRtl ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <div className={styles.stateContainer}>
+            <RotateCcw className={styles.stateIcon} />
+            <h2 className={styles.stateTitle}>{dict.errorTitle}</h2>
+            <p className={styles.stateMessage}>{dict.errorMessage}</p>
+            <button
+              type="button"
+              onClick={fetchOrder}
+              className={styles.retryButton}
+              aria-label={dict.retryAction}
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>{dict.retryAction}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Not Found State
   if (!order) {
     return (
-      <div className="flex flex-col h-[60vh] items-center justify-center gap-4 text-slate-500">
-        <Building2 className="w-12 h-12 text-slate-200" />
-        <p className="font-bold">الطلب غير موجود</p>
-        <button onClick={() => router.push("/orders")} className="text-sm text-slate-400 hover:text-slate-700 underline">
-          العودة للطلبات
-        </button>
+      <div className={styles.orderDetailRoot} dir={isRtl ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <div className={styles.stateContainer}>
+            <Building2 className={styles.stateIcon} />
+            <h2 className={styles.stateTitle}>{dict.notFoundTitle}</h2>
+            <p className={styles.stateMessage}>{dict.notFoundMessage}</p>
+            <Link href="/orders" className={styles.backButton} aria-label={dict.backToOrders}>
+              <ArrowRight className={isRtl ? styles.iconRtl : styles.iconLtr} />
+              <span>{dict.backToOrders}</span>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
-  const status = (order.status ? STATUS_MAP[order.status] : null) || { label: order.status || "", color: "text-slate-700", bg: "bg-muted border" };
-  const user = (order as any).user;
-  const assignedTo = (order as any).assignedTo;
+  // Order Details Calculations
+  const localizedStatus = localizeStatus(order.status, lang);
+  const localizedPropertyTypeTitle = localizePropertyType(order.propertyType, lang);
+  const localizedDeed = localizeDeedType(order.deedType, lang);
+  const localizedAge = localizePropertyAge(order.propertyAge, lang);
+  const isLand = order.propertyType === "أرض" || order.propertyType?.toLowerCase() === "land";
+
+  const isBuy = order.orderType === "buy";
+  const dealTypeLabel = isBuy ? dict.deal_buy : dict.deal_rent;
+
+  // Extra Order Fields that might be attached dynamically
+  const extOrder = order as ExtendedOrder;
+  const lengthVal = extOrder.length;
+  const widthVal = extOrder.width;
+  const streetWidthVal = extOrder.streetWidth;
+  const directionVal = extOrder.direction;
+  const livingRoomsVal = extOrder.livingRooms;
+  const kitchensVal = extOrder.kitchens;
+  const floorsVal = extOrder.floors;
+  const apartmentsVal = extOrder.apartments;
+  const buildingAreaVal = extOrder.buildingArea;
+  const furnitureStatusVal = extOrder.furnitureStatus;
+  const hasRoofVal = extOrder.hasRoof;
+  const hasExternalAnnexVal = extOrder.hasExternalAnnex;
+  const clientNameVal = extOrder.clientName;
+  const clientPhoneVal = extOrder.clientPhone;
+
+  // Structural details presence check (Preserves 0 values!)
+  const hasStructuralDetails =
+    !isLand &&
+    (isPresent(order.rooms) ||
+      isPresent(order.bathrooms) ||
+      isPresent(livingRoomsVal) ||
+      isPresent(kitchensVal) ||
+      isPresent(floorsVal) ||
+      isPresent(apartmentsVal) ||
+      isPresent(buildingAreaVal) ||
+      isPresent(furnitureStatusVal));
+
+  // Land dimensions presence check
+  const hasLandDimensions =
+    isLand &&
+    (isPresent(lengthVal) ||
+      isPresent(widthVal) ||
+      isPresent(streetWidthVal) ||
+      isPresent(directionVal));
+
+  // Features presence check
+  const hasFeatures = Boolean(
+    order.hasGarage ||
+    order.hasPool ||
+    order.hasElevator ||
+    order.hasMaidRoom ||
+    hasRoofVal ||
+    hasExternalAnnexVal
+  );
+
+  // Client Details
+  const orderUser = order.user;
+  const assignedSpecialist = order.assignedTo;
+  const canSeePrivateContacts = Boolean(currentUser?.role && currentUser.role !== "client");
+
+  // Formatted date string
+  const formattedCreationDate = new Date(order.createdAt).toLocaleDateString(
+    isRtl ? "ar-SA" : "en-US",
+    { year: "numeric", month: "long", day: "numeric" }
+  );
+
+  const safeProfileImg = safeHttpUrl(orderUser?.profileImage);
+  const safeAgentImg = safeHttpUrl(assignedSpecialist?.profileImage);
+  const motionLabel = reducedMotion
+    ? (isRtl ? "الحركة المخففة مفعّلة" : "Reduced motion enabled")
+    : paused ? (isRtl ? "تشغيل الحركة" : "Enable motion") : (isRtl ? "إيقاف الحركة" : "Pause motion");
 
   return (
-    <div className="min-h-dvh-safe bg-muted/50 pb-12" dir={isRtl ? "rtl" : "ltr"}>
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+    <div ref={rootRef} className={styles.orderDetailRoot} dir={isRtl ? "rtl" : "ltr"} data-motion-paused={paused || reducedMotion}>
+      <div className={styles.container}>
+        {/* Top Navigation & Breadcrumbs */}
+        <div className={styles.topNav}>
+          <nav aria-label="Breadcrumb" className={styles.breadcrumbs}>
+            <Link href="/orders" className={styles.breadcrumbLink}>
+              {dict.orders}
+            </Link>
+            <span className={styles.breadcrumbSep}>/</span>
+            <span className={styles.breadcrumbCurrent}>{dict.orderDetails}</span>
+            <span className={styles.breadcrumbSep}>/</span>
+            <span className={styles.refHash}>#{order.id.slice(0, 8)}</span>
+          </nav>
 
-        {/* Back Button */}
-        <button
-          onClick={handleBack}
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-bold"
-        >
-          <ArrowRight className={`w-4 h-4 ${!isRtl ? "rotate-180" : ""}`} />
-          {isRtl ? "العودة للطلبات" : "Back to Orders"}
-        </button>
+          <div className={styles.motionControls}>
+            <button
+              type="button"
+              className={styles.motionButton}
+              onClick={toggleMotion}
+              disabled={reducedMotion}
+              aria-pressed={paused || reducedMotion}
+              aria-label={motionLabel}
+            >
+              {paused || reducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+              <span>{motionLabel}</span>
+            </button>
+            <Link href="/orders" className={styles.backButton} aria-label={dict.backToOrders}>
+              <ArrowRight className={isRtl ? styles.iconRtl : styles.iconLtr} />
+              <span>{dict.backToOrders}</span>
+            </Link>
+          </div>
+        </div>
 
-        {/* Amazon-style Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 items-start">
-          
-          {/* LEFT COLUMN: Clean details (8 grid-cols) */}
-          <div className="lg:col-span-8 space-y-6">
-            
-            {/* Header / Summary Card */}
-            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6 space-y-4">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest">
-                    <Tag className="w-3 h-3" />
-                    {order.orderType === "buy" ? "شراء" : "إيجار"}
-                  </span>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${status.bg} ${status.color}`}>
-                    {status.label}
-                  </span>
-                </div>
-                <div className="text-slate-400 text-xs flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {new Date(order.createdAt).toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
-                    year: "numeric", month: "long", day: "numeric"
-                  })}
-                </div>
-              </div>
-              
-              <div>
-                <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">
-                  {order.propertyType}
-                </h1>
-                <p className="text-slate-500 text-sm flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-slate-400" />
-                  <span className="font-bold text-slate-700">{order.city}</span>
-                  {order.neighborhood && <span className="text-slate-400">— {order.neighborhood}</span>}
-                </p>
+        {/* Command Center request overview */}
+        <div className={styles.heroSection}>
+          <OrderNetworkArtwork />
+          {/* Top Meta Row */}
+          <div className={styles.heroMetaRow}>
+            <div className={styles.badgeGroup}>
+              <span className={styles.dealBadge}>
+                <Tag className="w-3 h-3" />
+                {dealTypeLabel}
+              </span>
+              <span className={`${styles.statusBadge} ${localizedStatus.className}`}>
+                <span className={styles.statusDot} />
+                {localizedStatus.label}
+              </span>
+            </div>
+
+            <div className={styles.heroTimestamp}>
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{dict.createdOn}: {formattedCreationDate}</span>
+            </div>
+          </div>
+
+          {/* Title Area */}
+          <div className={styles.heroTitleArea}>
+            <span className={styles.blueprintMicroLabel}>
+              {dict.orderReference} / {order.id.slice(0, 8)}
+            </span>
+            <h1 className={styles.heroTitle}>{localizedPropertyTypeTitle}</h1>
+            <div className={styles.heroLocation}>
+              <MapPin className={styles.heroLocationIcon} />
+              <span className={styles.heroLocationCity}>{order.city}</span>
+              {order.neighborhood && (
+                <>
+                  <span className={styles.heroLocationSep}>—</span>
+                  <span>{order.neighborhood}</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Ruled Key Specifications Strip (Preserving 0 values!) */}
+          <div className={styles.ruledFiguresBar}>
+            {/* Target Budget / Price */}
+            <div className={styles.ruledFigureCell}>
+              <span className={styles.ruledFigureLabel}>
+                <Tag className="w-3 h-3" />
+                {dict.budget}
+              </span>
+              <div className={styles.ruledFigureValue}>
+                {isPresent(order.price) ? (
+                  <SaudiRiyalAmount
+                    amount={Number(order.price)}
+                    locale={isRtl ? "ar-SA" : "en-US"}
+                  />
+                ) : (
+                  <span>—</span>
+                )}
               </div>
             </div>
 
-            {/* Basic Specifications Card */}
-            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">المواصفات الأساسية</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
-                <InfoRow label="نوع العقار"   value={order.propertyType}  icon={Building2} />
-                <InfoRow label="المدينة"       value={order.city}          icon={MapPin} />
-                <InfoRow label="الحي"          value={order.neighborhood}  icon={MapPin} />
-                <InfoRow label="المساحة المطلوب" value={order.area ? `${Number(order.area).toLocaleString()} م²` : undefined} icon={MeterIcon} />
-                <InfoRow label="السعر المطلوب" value={order.price ? <SaudiRiyalAmount amount={Number(order.price)} locale="ar-SA" /> : undefined} icon={Tag} />
-                <InfoRow label="عمر العقار"   value={order.propertyAge}   icon={Clock} />
-                <InfoRow label="نوع الصك"     value={DEED_MAP[order.deedType] || order.deedType} icon={FileText} />
-                <InfoRow label="نوع الصفقة"   value={order.orderType === "buy" ? "شراء" : "إيجار"} icon={Tag} />
+            {/* Requested Area */}
+            <div className={styles.ruledFigureCell}>
+              <span className={styles.ruledFigureLabel}>
+                <Ruler className="w-3 h-3" />
+                {dict.requestedArea}
+              </span>
+              <div className={styles.ruledFigureValue}>
+                {isPresent(order.area) ? (
+                  <>
+                    <span>{Number(order.area).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    <span className={styles.ruledFigureUnit}>{dict.sqm}</span>
+                  </>
+                ) : (
+                  <span>—</span>
+                )}
               </div>
             </div>
 
-            {/* Layout specifications (conditional) */}
-            {(order.rooms || order.bathrooms || order.livingRooms || order.kitchens || order.floors || order.apartments || order.buildingArea) && (
-              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">التفاصيل الهيكلية</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
-                  <InfoRow label="عدد الغرف"        value={order.rooms}        icon={BedDouble} />
-                  <InfoRow label="دورات المياه"      value={order.bathrooms}    icon={Bath} />
-                  <InfoRow label="غرف المعيشة"       value={(order as any).livingRooms}  icon={Sofa} />
-                  <InfoRow label="المطابخ"           value={(order as any).kitchens}     icon={ChefHat} />
-                  <InfoRow label="عدد الأدوار"       value={(order as any).floors}       icon={Layers2} />
-                  <InfoRow label="عدد الشقق"         value={(order as any).apartments}   icon={Home} />
-                  <InfoRow label="مساحة البناء"      value={(order as any).buildingArea ? `${Number((order as any).buildingArea).toLocaleString()} م²` : undefined} icon={MeterIcon} />
-                  <InfoRow label="حالة الأثاث"       value={(order as any).furnitureStatus === 'furnished' ? 'مفروش' : (order as any).furnitureStatus === 'unfurnished' ? 'غير مفروش' : (order as any).furnitureStatus} icon={Warehouse} />
+            {/* Reference ID with Copy Button */}
+            <div className={styles.ruledFigureCell}>
+              <span className={styles.ruledFigureLabel}>
+                <FileText className="w-3 h-3" />
+                {dict.orderId}
+              </span>
+              <div className={styles.ruledFigureValue}>
+                <span className={styles.refHash}>#{order.id.slice(0, 8)}</span>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(order.id, "ref")}
+                  className={styles.copyRefButton}
+                  aria-label={dict.copy}
+                  title={copiedRef ? dict.copied : dict.copy}
+                >
+                  {copiedRef ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Property Age or Deed */}
+            <div className={styles.ruledFigureCell}>
+              <span className={styles.ruledFigureLabel}>
+                <Clock className="w-3 h-3" />
+                {dict.propertyAge}
+              </span>
+              <div className={styles.ruledFigureValue} style={{ fontSize: "1rem" }}>
+                <span>{localizedAge}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Layout Grid */}
+        <div className={styles.layoutGrid}>
+          {/* Main Column: Specifications, Layout, Amenities, Notes */}
+          <div className={styles.mainColumn}>
+            {/* Primary Specifications Block */}
+            <div className={styles.specBlock}>
+              <div className={styles.specBlockHeader}>
+                <h2 className={styles.specBlockTitle}>
+                  <Building2 className={styles.specBlockTitleIcon} />
+                  <span>{dict.section_primary}</span>
+                </h2>
+                
+              </div>
+
+              <div className={styles.specGrid}>
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <Building2 className={styles.specLabelIcon} />
+                    {dict.propertyType}
+                  </span>
+                  <span className={styles.specValue}>{localizedPropertyTypeTitle}</span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <Tag className={styles.specLabelIcon} />
+                    {dict.dealType}
+                  </span>
+                  <span className={styles.specValue}>{dealTypeLabel}</span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <MapPin className={styles.specLabelIcon} />
+                    {dict.city}
+                  </span>
+                  <span className={styles.specValue}>{order.city || "—"}</span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <MapPin className={styles.specLabelIcon} />
+                    {dict.neighborhood}
+                  </span>
+                  <span className={styles.specValue}>{order.neighborhood || "—"}</span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <Maximize2 className={styles.specLabelIcon} />
+                    {dict.requestedArea}
+                  </span>
+                  <span className={styles.specValue}>
+                    {isPresent(order.area) ? `${Number(order.area).toLocaleString(isRtl ? "ar-SA" : "en-US")} ${dict.sqm}` : "—"}
+                  </span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <Tag className={styles.specLabelIcon} />
+                    {dict.budget}
+                  </span>
+                  <span className={styles.specValue}>
+                    {isPresent(order.price) ? (
+                      <SaudiRiyalAmount amount={Number(order.price)} locale={isRtl ? "ar-SA" : "en-US"} />
+                    ) : (
+                      "—"
+                    )}
+                  </span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <Clock className={styles.specLabelIcon} />
+                    {dict.propertyAge}
+                  </span>
+                  <span className={styles.specValue}>{localizedAge}</span>
+                </div>
+
+                <div className={styles.specRow}>
+                  <span className={styles.specLabel}>
+                    <FileText className={styles.specLabelIcon} />
+                    {dict.deedType}
+                  </span>
+                  <span className={styles.specValue}>{localizedDeed}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Land & Plot Specifications Block (Conditional for Land) */}
+            {hasLandDimensions && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h2 className={styles.specBlockTitle}>
+                    <Compass className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_land}</span>
+                  </h2>
+                  
+                </div>
+
+                <div className={styles.specGrid}>
+                  {isPresent(lengthVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Ruler className={styles.specLabelIcon} />
+                        {dict.length}
+                      </span>
+                      <span className={styles.specValue}>{Number(lengthVal).toLocaleString(isRtl ? "ar-SA" : "en-US")} {dict.meters}</span>
+                    </div>
+                  )}
+
+                  {isPresent(widthVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Ruler className={styles.specLabelIcon} />
+                        {dict.width}
+                      </span>
+                      <span className={styles.specValue}>{Number(widthVal).toLocaleString(isRtl ? "ar-SA" : "en-US")} {dict.meters}</span>
+                    </div>
+                  )}
+
+                  {isPresent(streetWidthVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Ruler className={styles.specLabelIcon} />
+                        {dict.streetWidth}
+                      </span>
+                      <span className={styles.specValue}>{Number(streetWidthVal).toLocaleString(isRtl ? "ar-SA" : "en-US")} {dict.meters}</span>
+                    </div>
+                  )}
+
+                  {isPresent(directionVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Compass className={styles.specLabelIcon} />
+                        {dict.direction}
+                      </span>
+                      <span className={styles.specValue}>{directionVal}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Features list (conditional) */}
-            {(order.hasGarage || order.hasPool || order.hasElevator || order.hasMaidRoom || (order as any).hasRoof || (order as any).hasExternalAnnex) && (
-              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">الميزات المطلوبة</h3>
-                <div className="flex flex-wrap gap-2.5">
-                  <FeatureBadge active={order.hasGarage}               label="كراج سيارة" />
-                  <FeatureBadge active={order.hasPool}                  label="مسبح" />
-                  <FeatureBadge active={order.hasElevator}              label="مصعد" />
-                  <FeatureBadge active={order.hasMaidRoom}              label="غرفة خادمة" />
-                  <FeatureBadge active={(order as any).hasRoof}         label="روف / سطح" />
-                  <FeatureBadge active={(order as any).hasExternalAnnex} label="ملحق خارجي" />
+            {/* Structural Layout Specifications Block (Conditional for Non-Land, Preserving 0 Values!) */}
+            {hasStructuralDetails && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h2 className={styles.specBlockTitle}>
+                    <Layers2 className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_layout}</span>
+                  </h2>
+                  
+                </div>
+
+                <div className={styles.specGrid}>
+                  {isPresent(order.rooms) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <BedDouble className={styles.specLabelIcon} />
+                        {dict.rooms}
+                      </span>
+                      <span className={styles.specValue}>{Number(order.rooms).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(order.bathrooms) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Bath className={styles.specLabelIcon} />
+                        {dict.bathrooms}
+                      </span>
+                      <span className={styles.specValue}>{Number(order.bathrooms).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(livingRoomsVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Sofa className={styles.specLabelIcon} />
+                        {dict.livingRooms}
+                      </span>
+                      <span className={styles.specValue}>{Number(livingRoomsVal).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(kitchensVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <ChefHat className={styles.specLabelIcon} />
+                        {dict.kitchens}
+                      </span>
+                      <span className={styles.specValue}>{Number(kitchensVal).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(floorsVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Layers2 className={styles.specLabelIcon} />
+                        {dict.floors}
+                      </span>
+                      <span className={styles.specValue}>{Number(floorsVal).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(apartmentsVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Home className={styles.specLabelIcon} />
+                        {dict.apartments}
+                      </span>
+                      <span className={styles.specValue}>{Number(apartmentsVal).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                    </div>
+                  )}
+
+                  {isPresent(buildingAreaVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Maximize2 className={styles.specLabelIcon} />
+                        {dict.buildingArea}
+                      </span>
+                      <span className={styles.specValue}>{Number(buildingAreaVal).toLocaleString(isRtl ? "ar-SA" : "en-US")} {dict.sqm}</span>
+                    </div>
+                  )}
+
+                  {isPresent(furnitureStatusVal) && (
+                    <div className={styles.specRow}>
+                      <span className={styles.specLabel}>
+                        <Warehouse className={styles.specLabelIcon} />
+                        {dict.furnitureStatus}
+                      </span>
+                      <span className={styles.specValue}>{localizeFurnitureStatus(furnitureStatusVal, lang)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Additional details (conditional) */}
-            {order.additionalDetails && (
-              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">تفاصيل إضافية من العميل</h3>
-                <p className="text-slate-600 text-sm leading-relaxed bg-muted/50 rounded-2xl p-4 border border font-medium">
-                  {order.additionalDetails}
-                </p>
+            {/* Requested Amenities & Features Block */}
+            {hasFeatures && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h2 className={styles.specBlockTitle}>
+                    <CheckCircle2 className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_amenities}</span>
+                  </h2>
+                  
+                </div>
+
+                <div className={styles.featuresGrid}>
+                  {order.hasGarage && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_garage}</span>
+                    </div>
+                  )}
+
+                  {order.hasPool && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_pool}</span>
+                    </div>
+                  )}
+
+                  {order.hasElevator && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_elevator}</span>
+                    </div>
+                  )}
+
+                  {order.hasMaidRoom && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_maidRoom}</span>
+                    </div>
+                  )}
+
+                  {hasRoofVal && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_roof}</span>
+                    </div>
+                  )}
+
+                  {hasExternalAnnexVal && (
+                    <div className={styles.featureTag}>
+                      <CheckCircle2 className={styles.featureCheckIcon} />
+                      <span>{dict.amenity_annex}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Additional Details & Client Notes Block */}
+            {isPresent(order.additionalDetails) && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h2 className={styles.specBlockTitle}>
+                    <FileText className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_notes}</span>
+                  </h2>
+                  
+                </div>
+
+                <div className={styles.notesCallout}>
+                  <p className={styles.notesText}>{order.additionalDetails}</p>
+                </div>
               </div>
             )}
           </div>
 
-          {/* RIGHT COLUMN: Buy box style status + direct chat room (4 grid-cols) */}
-          <div className="lg:col-span-4 space-y-6">
-            
-            {/* Quick Status Box */}
-            <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6 space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">معلومات الطلب</h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-1.5 border-b border">
-                  <span className="text-slate-400 text-xs font-bold">رقم الطلب</span>
-                  <span className="font-mono text-xs text-slate-500 bg-muted px-2.5 py-1 rounded-lg border border select-all">
-                    #{order.id.slice(0, 8)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-1.5 border-b border">
-                  <span className="text-slate-400 text-xs font-bold">حالة الطلب</span>
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[11px] font-black ${status.bg} ${status.color}`}>
-                    {status.label}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-1.5">
-                  <span className="text-slate-400 text-xs font-bold">تاريخ الإنشاء</span>
-                  <span className="text-xs font-bold text-slate-700">
-                    {new Date(order.createdAt).toLocaleDateString(isRtl ? "ar-SA" : "en-US")}
-                  </span>
-                </div>
+          {/* Side Column: Registry Overview, Client Profile, Direct Chat */}
+          <div className={styles.sideColumn}>
+            {/* Order Registry Summary */}
+            <div className={styles.specBlock}>
+              <div className={styles.specBlockHeader}>
+                <h3 className={styles.specBlockTitle}>
+                  <FileText className={styles.specBlockTitleIcon} />
+                  <span>{dict.section_registry}</span>
+                </h3>
+                
+              </div>
+
+              <div className={styles.contactRow}>
+                <span className={styles.contactLabelGroup}>
+                  <Tag className={styles.contactIcon} />
+                  {dict.orderReference}
+                </span>
+                <span className={styles.refHash}>#{order.id.slice(0, 8)}</span>
+              </div>
+
+              <div className={styles.contactRow}>
+                <span className={styles.contactLabelGroup}>
+                  <Clock className={styles.contactIcon} />
+                  {dict.orderStatus}
+                </span>
+                <span className={`${styles.statusBadge} ${localizedStatus.className}`}>
+                  <span className={styles.statusDot} />
+                  {localizedStatus.label}
+                </span>
+              </div>
+
+              <div className={styles.contactRow}>
+                <span className={styles.contactLabelGroup}>
+                  <Calendar className={styles.contactIcon} />
+                  {dict.createdOn}
+                </span>
+                <span className={styles.specValue}>{formattedCreationDate}</span>
               </div>
             </div>
 
-            {/* Profile Info (Owner or Assigned Agent) */}
-            {user && (
-              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6 space-y-4">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">صاحب الطلب</h3>
-                <div className="flex items-center gap-3">
-                  {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.firstName} className="w-12 h-12 rounded-2xl object-cover border border" />
+            {/* Requester Profile Card */}
+            {orderUser && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h3 className={styles.specBlockTitle}>
+                    <UserIcon className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_client}</span>
+                  </h3>
+                  
+                </div>
+
+                <div className={styles.profileCard}>
+                  {safeProfileImg ? (
+                    <Image
+                      src={safeProfileImg}
+                      alt={orderUser.firstName}
+                      width={44}
+                      height={44}
+                      unoptimized
+                      className={styles.profileAvatar}
+                    />
                   ) : (
-                    <div className="w-12 h-12 rounded-2xl bg-muted border border flex items-center justify-center text-slate-500 font-black text-lg">
-                      {user.firstName?.[0] || <UserIcon className="w-5 h-5" />}
+                    <div className={styles.profileAvatar}>
+                      {orderUser.firstName?.[0]?.toUpperCase() || <UserIcon className="w-5 h-5" />}
                     </div>
                   )}
-                  <div>
-                    <p className="font-black text-slate-900 text-sm">{user.firstName} {user.lastName}</p>
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-muted px-2 py-0.5 rounded-lg border border">
-                      {user.role}
+
+                  <div className={styles.profileInfo}>
+                    <p className={styles.profileName}>
+                      <span>{orderUser.firstName} {orderUser.lastName || ""}</span>
+
+                    </p>
+                    <span className={styles.profileRoleBadge}>
+                      {orderUser.role || "—"}
                     </span>
                   </div>
                 </div>
-                
-                {/* Contact details shown to admin/agents */}
-                {currentUser?.role !== "client" && (
-                  <div className="space-y-2.5 pt-2 border-t border">
-                    {user.email && (
-                      <div className="flex items-center gap-2 text-xs">
-                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-600 font-bold break-all select-all">{user.email}</span>
+
+                {/* Privacy Gated Contact Details (Visible to Admins / Agents) */}
+                {canSeePrivateContacts && (
+                  <div>
+                    {orderUser.email && (
+                      <div className={styles.contactRow}>
+                        <span className={styles.contactLabelGroup}>
+                          <Mail className={styles.contactIcon} />
+                          {dict.email}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <a href={`mailto:${orderUser.email}`} className={styles.contactValueAction}>
+                            {orderUser.email}
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (orderUser.email) copyToClipboard(orderUser.email, "email");
+                            }}
+                            className={styles.copyContactBtn}
+                            aria-label={dict.copy}
+                          >
+                            {copiedContact === "email" ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                     )}
-                    {user.phone && (
-                      <div className="flex items-center gap-2 text-xs">
-                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-600 font-bold select-all">{user.phone}</span>
+
+                    {orderUser.phone && (
+                      <div className={styles.contactRow}>
+                        <span className={styles.contactLabelGroup}>
+                          <Phone className={styles.contactIcon} />
+                          {dict.phone}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <a href={`tel:${orderUser.phone}`} className={styles.contactValueAction}>
+                            {orderUser.phone}
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (orderUser.phone) copyToClipboard(orderUser.phone, "phone");
+                            }}
+                            className={styles.copyContactBtn}
+                            aria-label={dict.copy}
+                          >
+                            {copiedContact === "phone" ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -529,18 +1551,106 @@ export default function OrderDetailsPage() {
               </div>
             )}
 
-            {/* Contact details for anonymous orders */}
-            {((order as any).clientName || (order as any).clientPhone) && !user && (
-              <div className="bg-card/80 backdrop-blur-sm rounded-[1.25rem] border border shadow-sm p-3 sm:p-6 space-y-3">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">بيانات العميل</h3>
-                <InfoRow label="الاسم"  value={(order as any).clientName}  icon={UserIcon} />
-                <InfoRow label="الهاتف" value={(order as any).clientPhone} icon={Phone} />
+            {/* Direct Contact for Anonymous or Lead Orders */}
+            {!orderUser && (clientNameVal || clientPhoneVal) && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h3 className={styles.specBlockTitle}>
+                    <UserIcon className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_anonymous}</span>
+                  </h3>
+                  
+                </div>
+
+                {clientNameVal && (
+                  <div className={styles.contactRow}>
+                    <span className={styles.contactLabelGroup}>
+                      <UserIcon className={styles.contactIcon} />
+                      {dict.clientName}
+                    </span>
+                    <span className={styles.specValue}>{clientNameVal}</span>
+                  </div>
+                )}
+
+                {clientPhoneVal && canSeePrivateContacts && (
+                  <div className={styles.contactRow}>
+                    <span className={styles.contactLabelGroup}>
+                      <Phone className={styles.contactIcon} />
+                      {dict.clientPhone}
+                    </span>
+                    <a href={`tel:${clientPhoneVal}`} className={styles.contactValueAction}>
+                      {clientPhoneVal}
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Direct Chat Module */}
-            <OrderChatBox order={order} currentUser={currentUser} />
+            {/* Assigned Specialist Card (if assigned) */}
+            {assignedSpecialist && (
+              <div className={styles.specBlock}>
+                <div className={styles.specBlockHeader}>
+                  <h3 className={styles.specBlockTitle}>
+                    <BadgeCheck className={styles.specBlockTitleIcon} />
+                    <span>{dict.section_agent}</span>
+                  </h3>
+                  
+                </div>
 
+                <div className={styles.profileCard}>
+                  {safeAgentImg ? (
+                    <Image
+                      src={safeAgentImg}
+                      alt={assignedSpecialist.firstName}
+                      width={44}
+                      height={44}
+                      unoptimized
+                      className={styles.profileAvatar}
+                    />
+                  ) : (
+                    <div className={styles.profileAvatar}>
+                      {assignedSpecialist.firstName?.[0]?.toUpperCase() || <UserIcon className="w-5 h-5" />}
+                    </div>
+                  )}
+
+                  <div className={styles.profileInfo}>
+                    <p className={styles.profileName}>
+                      {assignedSpecialist.firstName} {assignedSpecialist.lastName || ""}
+                    </p>
+                    <span className={styles.profileRoleBadge}>
+                      {dict.section_agent}
+                    </span>
+                  </div>
+                </div>
+
+                {assignedSpecialist.email && canSeePrivateContacts && (
+                  <div className={styles.contactRow}>
+                    <span className={styles.contactLabelGroup}>
+                      <Mail className={styles.contactIcon} />
+                      {dict.email}
+                    </span>
+                    <a href={`mailto:${assignedSpecialist.email}`} className={styles.contactValueAction}>
+                      {assignedSpecialist.email}
+                    </a>
+                  </div>
+                )}
+
+                {assignedSpecialist.phone && canSeePrivateContacts && (
+                  <div className={styles.contactRow}>
+                    <span className={styles.contactLabelGroup}>
+                      <Phone className={styles.contactIcon} />
+                      {dict.phone}
+                    </span>
+                    <a href={`tel:${assignedSpecialist.phone}`} className={styles.contactValueAction}>
+                      {assignedSpecialist.phone}
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Real Operational Chat Module */}
+            <OrderChatBox order={order} currentUser={currentUser} />
           </div>
         </div>
       </div>

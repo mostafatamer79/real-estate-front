@@ -1,0 +1,106 @@
+/* Department Hub Redesign Module CSS */
+/* Marcelo-inspired aesthetic: pearl/navy/brass palette, restrained motion, high accessibility */
+
+.hubRoot {
+  --hub-navy: #0f172a;
+  --hub-pearl: #f8fafc;
+  --hub-brass: #b49157;
+  --hub-brass-light: #d4af37;
+  --hub-border: rgba(15, 23, 42, 0.08);
+  --hub-card-bg: #ffffff;
+  --hub-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  --hub-shadow-hover: 0 12px 28px -4px rgba(15, 23, 42, 0.1);
+  position: relative;
+  min-height: 100vh;
+}
+
+:global(.dark) .hubRoot {
+  --hub-navy: #f8fafc;
+  --hub-pearl: #090d16;
+  --hub-brass: #d4af37;
+  --hub-brass-light: #f3e5ab;
+  --hub-border: rgba(255, 255, 255, 0.08);
+  --hub-card-bg: #0f172a;
+  --hub-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+  --hub-shadow-hover: 0 12px 28px -4px rgba(0, 0, 0, 0.6);
+}
+
+/* Accessible focus rings */
+.interactiveControl:focus-visible,
+.retryButton:focus-visible,
+.deptLink:focus-visible,
+.sidebarLink:focus-visible {
+  outline: 2px solid var(--hub-brass);
+  outline-offset: 2px;
+}
+
+/* Retry button for unavailable state */
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+:global(.dark) .retryButton {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.retryButton:hover {
+  background-color: rgba(217, 119, 6, 0.1);
+}
+
+:global(.dark) .retryButton:hover {
+  background-color: rgba(251, 191, 36, 0.15);
+}
+
+/* Department card subtle brass elevation on hover */
+.deptCard {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.deptCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hub-shadow-hover);
+  border-color: rgba(180, 145, 87, 0.35);
+}
+
+/* Stat card precision */
+.statCard {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.statCard:hover {
+  box-shadow: var(--hub-shadow);
+  border-color: rgba(180, 145, 87, 0.25);
+}
+
+/* Backdrop */
+.mobileBackdrop {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .deptCard,
+  .deptCard:hover,
+  .statCard,
+  .statCard:hover,
+  .retryButton,
+  .interactiveControl {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

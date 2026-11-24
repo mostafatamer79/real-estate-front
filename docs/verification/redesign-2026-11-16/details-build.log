@@ -1,0 +1,105 @@
+
+> real2@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.1.4 (webpack)
+- Environments: .env
+
+  Creating an optimized production build ...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for client (static)...
+ ○ (pwa) Service worker: /home/mostafa/Work/mostakl/realestate/real-estate-front/public/sw.js
+ ○ (pwa)   URL: /sw.js
+ ○ (pwa)   Scope: /
+✓ Compiled successfully in 29.5s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/67) ...
+  Generating static pages using 15 workers (16/67) 
+  Generating static pages using 15 workers (33/67) 
+  Generating static pages using 15 workers (50/67) 
+✓ Generating static pages using 15 workers (67/67) in 2.5s
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /about
+├ ○ /admin
+├ ○ /admin/customer-service
+├ ○ /admin/dashboard
+├ ○ /admin/info-content
+├ ○ /admin/legal
+├ ○ /admin/map-control
+├ ○ /admin/marketing
+├ ○ /admin/offers
+├ ○ /admin/operations
+├ ○ /admin/opinions
+├ ○ /admin/orders
+├ ○ /admin/packages
+├ ○ /admin/properties-management
+├ ○ /admin/purchase-requests
+├ ○ /admin/service-providers
+├ ○ /admin/service-requests
+├ ○ /admin/services
+├ ○ /admin/settings
+├ ○ /admin/subscriptions
+├ ○ /admin/transactions
+├ ○ /admin/trends
+├ ○ /admin/users
+├ ƒ /admin/users/[id]
+├ ○ /admin/visit-requests
+├ ○ /admin/wallet
+├ ○ /buildingmanagement
+├ ○ /chat
+├ ƒ /chat/[roomId]
+├ ○ /checkout
+├ ○ /complete-profile
+├ ƒ /customerservice
+├ ƒ /customerservice/contact
+├ ƒ /customerservice/faq
+├ ƒ /customerservice/support
+├ ○ /department-hub
+├ ○ /details
+├ ○ /disputes
+├ ○ /financial
+├ ○ /home
+├ ƒ /info
+├ ○ /internal
+├ ƒ /internal/[dept]
+├ ƒ /internal/[dept]/requests
+├ ○ /internal/chat
+├ ƒ /internal/chat/[roomId]
+├ ○ /internal/renew-subscription
+├ ○ /login
+├ ○ /manifest.webmanifest
+├ ○ /marketing
+├ ○ /nafath-login
+├ ƒ /offers
+├ ƒ /offers/[id]
+├ ○ /offers/new
+├ ○ /opengraph-image
+├ ○ /orders
+├ ƒ /orders/[id]
+├ ○ /profile
+├ ○ /robots.txt
+├ ○ /scan-map
+├ ○ /service-providers
+├ ƒ /services
+├ ƒ /services/form
+├ ƒ /services/legal
+├ ƒ /services/legal-requests
+├ ƒ /services/my-requests
+├ ƒ /services/provider-requests
+├ ○ /share-opinion
+├ ƒ /sitemap.xml
+├ ○ /subscriptions/new
+├ ○ /verify-otp
+└ ○ /wallet
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

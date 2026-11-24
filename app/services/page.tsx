@@ -1,217 +1,144 @@
 "use client";
-import { useRouter } from "next/navigation";
+
+import { useState } from "react";
+import Link from "next/link";
 import {
-  ShoppingBag, Scale, Hammer, Megaphone, MoreHorizontal, ArrowLeft, ChevronRight, Sparkles
+  ArrowLeft, ArrowRight, Hammer, Loader2, Megaphone, MoreHorizontal, Scale, ShoppingBag, Sparkles,
 } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
-import { motion } from "framer-motion";
-import { useSectionGuard } from "@/hooks/useSectionGuard";
+import { Button } from "@/components/ui/button";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import ServiceNetwork from "@/components/services/ServiceNetwork";
+import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
-import { SERVICE_CATALOG } from "@/lib/service-catalog";
+import { useSectionGuard } from "@/hooks/useSectionGuard";
+import { requestTrackingHref } from "@/lib/auth-navigation";
+import styles from "./services-redesign.module.css";
 
-const baseServiceCards = [
-  { id: "postPurchase", icon: ShoppingBag, index: "01", span: "md:col-span-2 lg:col-span-3", title: SERVICE_CATALOG.postPurchase.title, description: SERVICE_CATALOG.postPurchase.description, custom: false },
-  { id: "legal", icon: Scale, index: "02", span: "md:col-span-2 lg:col-span-3", title: SERVICE_CATALOG.legal.title, description: SERVICE_CATALOG.legal.description, custom: false },
-  { id: "construction", icon: Hammer, index: "03", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.construction.title, description: SERVICE_CATALOG.construction.description, custom: false },
-  { id: "marketing", icon: Megaphone, index: "04", span: "md:col-span-2 lg:col-span-2", title: SERVICE_CATALOG.marketing.title, description: SERVICE_CATALOG.marketing.description, custom: false },
-  { id: "other", icon: MoreHorizontal, index: "05", span: "md:col-span-4 lg:col-span-2", title: SERVICE_CATALOG.other.title, description: SERVICE_CATALOG.other.description, custom: false },
+const baseCategories = [
+  { id: "postPurchase", icon: ShoppingBag },
+  { id: "legal", icon: Scale },
+  { id: "construction", icon: Hammer },
+  { id: "marketing", icon: Megaphone },
+  { id: "other", icon: MoreHorizontal },
 ];
 
 export default function Services() {
-  const router = useRouter();
   const { t, language } = useLanguage();
-  const isRtl = language === "ar";
-  const { isOpen, message, isAdmin } = useSectionGuard('services');
-  const { settings } = useSettings();
-  const { user } = useAuth();
+  const ar = language === "ar";
+  const { isOpen, message, isAdmin } = useSectionGuard("services");
+  const { settings, isLoading } = useSettings();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const [selectedId, setSelectedId] = useState("postPurchase");
+  const Forward = ar ? ArrowLeft : ArrowRight;
+  const Back = ar ? ArrowRight : ArrowLeft;
 
-  const serviceCards = [
-    ...baseServiceCards,
-    ...(settings.customCategories || []).map((category, index) => ({
-      id: category.id,
-      icon: Sparkles,
-      index: category.index || String(baseServiceCards.length + index + 1).padStart(2, "0"),
-      span: "md:col-span-2 lg:col-span-2",
-      title: category.title,
-      description: category.description,
-      custom: true,
+  const categories = [
+    ...baseCategories.map(category => ({
+      ...category,
+      title: t(`services.${category.id}`),
+      description: t(`services.${category.id}.description`),
+      status: settings.moduleFlags[`services_${category.id}`],
     })),
-  ];
+    ...settings.customCategories.map(category => ({
+      ...category,
+      icon: Sparkles,
+      status: category.status === "soon" || category.status === "disabled"
+        ? category.status : settings.moduleFlags[`services_${category.id}`],
+    })),
+  ].filter(category => category.status !== "disabled").map(category => {
+    const href = category.id === "legal" ? "/services/legal" : `/services/form?type=${encodeURIComponent(category.id)}`;
+    return { ...category, href, previewHref: `${href}${href.includes("?") ? "&" : "?"}preview=1` };
+  });
+  const selected = categories.find(category => category.id === selectedId) || categories[0];
 
-  const statusOf = (id: string): 'enabled' | 'soon' | 'disabled' => {
-    const categoryStatus = settings.customCategories.find((category) => category.id === id)?.status;
-    if (categoryStatus === 'soon' || categoryStatus === 'disabled') return categoryStatus;
-    const key = `services_${id}`;
-    const v = (settings.moduleFlags as any)?.[key];
-    if (v === 'soon' || v === 'disabled') return v;
-    return 'enabled';
+  const renderAction = (category: typeof categories[number], prominent = false) => {
+    const soon = category.status === "soon";
+    const soonLabel = <span className={styles.soon}>{ar ? "قريبًا" : "Soon"}</span>;
+    if (soon && !isAdmin) return soonLabel;
+    const action = (
+      <Button asChild variant={prominent ? "default" : "outline"} className={styles.action}>
+        <Link href={soon ? category.previewHref : category.href}>
+          {soon ? t("services.adminPreview") : category.id === "legal"
+            ? (ar ? "اختر التخصص" : "Choose a specialty")
+            : (ar ? "ابدأ الطلب" : "Start request")}
+          <Forward aria-hidden="true" />
+        </Link>
+      </Button>
+    );
+    return soon ? <div className={styles.statusActions}>{soonLabel}{action}</div> : action;
   };
-  const msgOf = (id: string) => (settings.moduleMessages as any)?.[`services_${id}`] || '';
 
-
+  if (isLoading || isAuthLoading) {
+    return <section className={styles.page} dir={ar ? "rtl" : "ltr"}>
+      <div className={styles.shell}>
+        <p className={styles.loading} role="status"><Loader2 aria-hidden="true" className="animate-spin motion-reduce:animate-none" />
+          {ar ? "جارٍ تحميل الخدمات…" : "Loading services…"}</p>
+      </div>
+    </section>;
+  }
 
   if (!isOpen) {
-    return <ComingSoonOverlay sectionName={t('footer.services') || 'الخدمات'} message={message} isAdmin={isAdmin} />;
+    return <ComingSoonOverlay sectionName={t("footer.services")} message={message} isAdmin={isAdmin} />;
   }
 
   return (
-    <section className="w-full min-h-screen bg-slate-950 flex flex-col overflow-x-hidden relative" dir={isRtl ? "rtl" : "ltr"}>
-      {/* Ambient background glows matching details/page.tsx */}
-      <div className="absolute inset-0 overflow-hidden bg-slate-950 pointer-events-none z-0">
-        <div className="absolute top-[5%] left-[10%] w-[50%] h-[40%] rounded-full bg-indigo-500/4 blur-[140px]" />
-        <div className="absolute bottom-[15%] right-[5%] w-[35%] h-[35%] rounded-full bg-slate-600/8 blur-[120px]" />
-        <div className="absolute top-[45%] right-[20%] w-[25%] h-[25%] rounded-full bg-gray-500/4 blur-[100px]" />
-      </div>
+    <section className={styles.page} dir={ar ? "rtl" : "ltr"} aria-labelledby="services-page-title">
+      <div className={styles.shell}>
+        <Button asChild variant="ghost" className={styles.back}>
+          <Link href="/details"><Back aria-hidden="true" />{t("common.back")}</Link>
+        </Button>
 
-      {/* Header row */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-10 pt-6 sm:pt-8 pb-0">
-        <motion.button
-          initial={{ opacity: 0, x: isRtl ? 10 : -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-          onClick={() => router.push("/details")}
-          className="group flex items-center gap-2 text-slate-400 hover:text-slate-300 transition-colors text-sm font-medium mb-4 sm:mb-8"
-        >
-          <div className="w-8 h-8 rounded-full bg-card/[0.05] border border-white/[0.1] group-hover:bg-card/[0.1] flex items-center justify-center transition-all duration-200">
-            <ArrowLeft className={`w-4 h-4 ${isRtl ? "rotate-180" : ""}`} />
+        <div className={styles.hero}>
+          <div className={styles.intro}>
+            <h1 id="services-page-title">{t("services.title")}</h1>
+            <p>{t("services.intro")}</p>
+            <nav className={styles.links} aria-label={t("services.linksLabel")}>
+              <Button asChild variant="outline" className={styles.action}>
+                <Link href={requestTrackingHref(user)} aria-label={t("services.myRequestsAria")}>
+                  {t("services.myRequests")}
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" className={styles.action}>
+                <Link href="/service-providers" aria-label={t("services.providerPortalAria")}>
+                  {t("services.providerPortal")}
+                </Link>
+              </Button>
+            </nav>
           </div>
-          {t("common.back")}
-        </motion.button>
-
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-6 sm:mb-8">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/5 border border-white/10 mb-3 flex-row-reverse">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" />
-            <p className="text-[10px] sm:text-xs font-medium text-white/70 uppercase">
-              {t("services.platformServices") || "خدمات المنصة"}
-            </p>
-          </div>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/40 mb-3">
-            {t("services.title") || "خدماتنا"}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base w-full sm:max-w-lg leading-relaxed">
-            نقدم مجموعة متكاملة من الخدمات العقارية لتسهيل رحلتك في السوق.
-          </p>
-        </motion.div>
-
-        <div className="h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6 sm:mb-8" />
-      </div>
-
-      {/* Grid */}
-      <motion.main
-        initial="hidden"
-        animate="show"
-        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
-        className="relative z-10 max-w-7xl w-full bg-slate-950 mx-auto px-4 sm:px-6 md:px-10 pb-12 flex flex-col md:grid md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4"
-      >
-        {serviceCards.map((card) => {
-          const Icon = card.icon;
-          const status = statusOf(card.id);
-          const isAdminRole = (user as any)?.role === 'admin';
-          const disabled = status !== 'enabled';
-          const isSoon = status === 'soon';
-          if (status === 'disabled') return null;
-          return (
-            <motion.div
-              key={card.id}
-              variants={{
-                hidden: { opacity: 0, y: 16, scale: 0.97 },
-                show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-              }}
-              whileHover="hovered"
-              whileTap={disabled ? undefined : { scale: 0.97 }}
-              role="button"
-              tabIndex={disabled ? -1 : 0}
-              aria-disabled={disabled}
-              onKeyDown={(e) => {
-                if (disabled) return;
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${encodeURIComponent(card.id)}`);
-                }
-              }}
-              onClick={() => {
-                if (disabled) return;
-                router.push(card.id === "legal" ? "/services/legal" : `/services/form?type=${encodeURIComponent(card.id)}`);
-              }}
-              className={`group relative ${isRtl ? "text-right" : "text-left"} ${card.span} bg-card/[0.02] border border-white/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-h-[100px] sm:min-h-[160px] overflow-hidden transition-all duration-300 ${
-                disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-white/20 hover:-translate-y-0.5'
-              }`}
-            >
-              {/* Hover bg */}
-              <motion.div
-                variants={{ hovered: { opacity: 1 }, hidden: { opacity: 0 } }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0 bg-card/[0.03] pointer-events-none"
-              />
-
-              {/* Shimmer line */}
-              <motion.div
-                variants={{ hovered: { opacity: 1, x: "100%" }, hidden: { opacity: 0, x: "-100%" } }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
-              />
-
-              <div className="flex items-start justify-between w-full relative z-10">
-                <div className="w-9 h-9 rounded-xl bg-card/5 border border-white/10 group-hover:scale-105 flex items-center justify-center transition-all duration-300">
-                  <Icon className="w-4 h-4 text-white/50 group-hover:text-white/90 transition-colors duration-200" />
+          {selected && <>
+            <ServiceNetwork categories={categories} selectedId={selected.id}
+              onSelect={setSelectedId} label={ar ? "اختر فئة من شبكة الخدمات" : "Choose a category from the service network"} />
+            <div className={styles.selection} id="selected-service">
+              <div aria-live="polite">
+                <div key={selected.id} className={styles.selectionCopy}>
+                  <h2>{selected.title}</h2>
+                  {selected.description && <p>{selected.description}</p>}
                 </div>
-                <span className="text-[10px] font-black text-white/15 tracking-widest font-mono group-hover:text-white/30 transition-colors">
-                  {card.index}
-                </span>
               </div>
+              {renderAction(selected, true)}
+            </div>
+          </>}
+        </div>
 
-              <div className="mt-2 sm:mt-auto pt-2 sm:pt-4 relative z-10 w-full flex flex-row items-center sm:items-end justify-between">
-                <h3 className="text-base sm:text-lg font-bold text-white/80 leading-tight group-hover:text-white transition-colors duration-200 pointer-events-none">
-                  {card.custom ? card.title : t(`services.${card.id}`)}
-                </h3>
-                {isSoon ? (
-                  <span
-                    className="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest pointer-events-none border"
-                    style={{
-                      backgroundColor: "var(--soon-badge-bg, #ffffff)",
-                      color: "var(--soon-badge-text, #000000)",
-                      borderColor: "var(--soon-badge-bg, #ffffff)",
-                    }}
-                  >
-                    {t("common.soon") || "قريباً"}
-                  </span>
-                ) : (
-                <div className="flex items-center gap-1.5 pointer-events-none">
-                  <div className="w-6 h-6 rounded-full bg-card/10 flex items-center justify-center opacity-0 transform translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-200">
-                    <ChevronRight className={`w-3 h-3 text-white/60 ${isRtl ? "rotate-180" : ""}`} />
+        <section className={styles.directory} aria-labelledby="service-directory">
+          <h2 id="service-directory">{ar ? "دليل الخدمات التخصصية" : "Specialized services"}</h2>
+          {categories.length ? (
+            <ul className={styles.directoryList}>
+              {categories.map(category => (
+                <li key={category.id}>
+                  <span className={styles.icon}><category.icon aria-hidden="true" /></span>
+                  <div className={styles.categoryCopy}>
+                    <h3>{category.title}</h3>
+                    {category.description && <p>{category.description}</p>}
                   </div>
-                </div>
-                )}
-              </div>
-
-              {card.description && (
-                <p className="relative z-10 mt-3 line-clamp-2 text-[11px] font-medium leading-5 text-white/35">
-                  {card.description}
-                </p>
-              )}
-
-              {/* Admin-only explicit preview for "soon" so it doesn't behave like normal click */}
-              {isAdminRole && isSoon && (
-                <div className="relative z-10 pt-3">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/services/form?type=${encodeURIComponent(card.id)}&preview=1`);
-                    }}
-                    className="h-9 px-3 rounded-xl bg-card/5 border border-white/10 hover:border-white/20 text-[10px] font-black text-white/60 hover:text-white/90 transition-all inline-flex items-center gap-2"
-                  >
-                    معاينة كمسؤول
-                  </button>
-                </div>
-              )}
-
-            </motion.div>
-          );
-        })}
-      </motion.main>
+                  {renderAction(category)}
+                </li>
+              ))}
+            </ul>
+          ) : <p role="status">{ar ? "لا توجد خدمات متاحة حاليًا." : "No services are currently available."}</p>}
+        </section>
+      </div>
     </section>
   );
 }

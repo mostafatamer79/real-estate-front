@@ -1,0 +1,170 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "dark": false,
+      "links": [
+        {
+          "href": "/service-providers",
+          "background": "rgb(36, 72, 61)",
+          "color": "rgb(252, 252, 252)",
+          "height": 41.25
+        },
+        {
+          "href": "/services/provider-requests",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(37, 43, 40)",
+          "height": 41.25
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "rgb(36, 72, 61)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 1001
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "links": [
+        {
+          "href": "/service-providers",
+          "background": "oklab(0.30701 -0.0188792 -0.0260567)",
+          "color": "oklab(0.975439 -0.00181734 -0.0045025)",
+          "height": 41.25
+        },
+        {
+          "href": "/services/provider-requests",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "oklab(0.690084 -0.00744752 -0.0137784)",
+          "height": 41.25
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "oklch(0.968 0.007 247.896)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 1001
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "links": [
+        {
+          "href": "/service-providers",
+          "background": "rgb(36, 72, 61)",
+          "color": "rgb(252, 252, 252)",
+          "height": 41.25
+        },
+        {
+          "href": "/services/provider-requests",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(37, 43, 40)",
+          "height": 41.25
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "rgb(36, 72, 61)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 243.5
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "links": [
+        {
+          "href": "/service-providers",
+          "background": "oklch(0.279 0.041 260.031)",
+          "color": "oklch(0.968 0.007 247.896)",
+          "height": 41.25
+        },
+        {
+          "href": "/services/provider-requests",
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "oklch(0.869 0.022 252.894)",
+          "height": 41.25
+        }
+      ],
+      "back": "العودة إلى الخدمات",
+      "before": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "checked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": true
+      },
+      "unchecked": {
+        "width": 18.75,
+        "height": 18.75,
+        "checked": false
+      },
+      "submit": {
+        "disabled": false,
+        "height": 45,
+        "background": "oklch(0.968 0.007 247.896)",
+        "text": "إرسال طلب الخدمة"
+      },
+      "textWidth": 243.5
+    }
+  ],
+  "errors": [],
+  "writes": []
+}

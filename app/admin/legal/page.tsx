@@ -108,14 +108,14 @@ function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-2xl border border shadow-sm p-5 flex items-center gap-4"
+      className="calm-panel bg-card rounded-2xl border border shadow-sm p-5 flex items-center gap-4"
     >
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
         <Icon className="w-6 h-6" />
       </div>
       <div>
         <p className="text-xl sm:text-2xl font-black text-slate-900">{value}</p>
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+        <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{label}</p>
       </div>
     </motion.div>
   );
@@ -165,12 +165,12 @@ function RequestRow({
     >
       <td className="px-3 py-3 sm:px-6 sm:py-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center shrink-0">
-            <User className="w-4 h-4 text-slate-500" />
+          <div className="calm-icon w-8 h-8 rounded-xl bg-muted flex items-center justify-center shrink-0">
+            <User className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
           </div>
           <div>
             <p className="text-sm font-bold text-slate-900">{req.clientName}</p>
-            <p className="text-[11px] text-slate-400 font-medium" dir="ltr">{req.phone}</p>
+            <p className="text-[11px] text-muted-foreground dark:text-slate-400 font-medium" dir="ltr">{req.phone}</p>
           </div>
         </div>
       </td>
@@ -180,12 +180,12 @@ function RequestRow({
         </Badge>
       </td>
       <td className="px-3 py-3 sm:px-6 sm:py-4">
-        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-muted-foreground dark:text-slate-500"}`}>
           {label}
         </span>
       </td>
       <td className="px-3 py-3 sm:px-6 sm:py-4">
-        <div className="flex items-center gap-1.5 text-slate-400">
+        <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400">
           <Calendar className="w-3.5 h-3.5" />
           <span className="text-[11px] font-bold">
             {format(new Date(req.createdAt), "dd MMM yyyy", {
@@ -197,7 +197,7 @@ function RequestRow({
       <td className="px-3 py-3 sm:px-6 sm:py-4 text-center">
         <button
           onClick={() => onOpen(req)}
-          className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+          className="p-2 rounded-xl border border hover:border-border hover:dark:border-slate-900 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all text-muted-foreground dark:text-slate-400"
         >
           <ExternalLink className="w-4 h-4" />
         </button>
@@ -221,20 +221,20 @@ function RequestCard({
 }) {
   const { statusKey, label } = getRequestStatusLabel(req, t);
   return (
-    <div className="rounded-2xl border border bg-card p-4 shadow-sm">
+    <div className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
-            <User className="w-5 h-5 text-slate-500" />
+          <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+            <User className="w-5 h-5 text-muted-foreground dark:text-slate-500" />
           </div>
           <div>
             <p className="text-sm font-bold text-slate-900">{req.clientName}</p>
-            <p className="text-[11px] text-slate-400 font-medium" dir="ltr">{req.phone}</p>
+            <p className="text-[11px] text-muted-foreground dark:text-slate-400 font-medium" dir="ltr">{req.phone}</p>
           </div>
         </div>
         <button
           onClick={() => onOpen(req)}
-          className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+          className="p-2 rounded-xl border border hover:border-border hover:dark:border-slate-900 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all text-muted-foreground dark:text-slate-400"
         >
           <ExternalLink className="w-4 h-4" />
         </button>
@@ -243,11 +243,11 @@ function RequestCard({
         <Badge variant="outline" className="font-bold text-[10px]">
           {req.serviceType}
         </Badge>
-        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-muted-foreground dark:text-slate-500"}`}>
           {label}
         </span>
       </div>
-      <div className="flex items-center gap-1.5 text-slate-400">
+      <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400">
         <Calendar className="w-3.5 h-3.5" />
         <span className="text-[11px] font-bold">
           {format(new Date(req.createdAt), "dd MMM yyyy", {
@@ -286,31 +286,31 @@ function RequestsTable({
     <div className="space-y-4">
       <div className="flex gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("admin.legal.search_placeholder")}
-            className="w-full bg-card border border py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-slate-900 transition-all"
+            className="w-full bg-card border border py-3 pr-11 pl-5 text-sm font-bold rounded-2xl outline-none focus:border-border focus:dark:border-slate-900 transition-all"
           />
         </div>
       </div>
 
-      <div className="bg-card rounded-2xl border border shadow-sm overflow-hidden min-h-[300px]">
+      <div className="calm-panel bg-card rounded-2xl border border shadow-sm overflow-hidden min-h-[300px]">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border border-t-slate-900 animate-spin" />
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+            <div className="w-10 h-10 rounded-full border-4 border border-t-border dark:border-t-slate-900 animate-spin" />
+            <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
               {t("common.loading")}
             </p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-40">
             <div className="p-3 sm:p-6 rounded-2xl bg-muted">
-              <Scale className="w-12 h-12 text-slate-200" />
+              <Scale className="w-12 h-12 text-foreground dark:text-slate-200" />
             </div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+            <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
               {t("admin.service_requests.no_data")}
             </p>
           </div>
@@ -320,16 +320,16 @@ function RequestsTable({
             <table className="w-full text-right">
               <thead>
                 <tr className="bg-muted/60 border-b border">
-                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.parties")}
                   </th>
-                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.type")}
                   </th>
-                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.status")}
                   </th>
-                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                     {t("admin.legal.headers.actions")}
                   </th>
                   <th className="px-3 py-3 sm:px-6 sm:py-4" />
@@ -368,7 +368,8 @@ function RequestsTable({
 
 // ─── main page ──────────────────────────────────────────────────────────────
 
-export default function LegalAdminPage({ embedded = false }: { embedded?: boolean } = {}) {
+export default function LegalAdminPage() {
+  const embedded = false;
   const router = useRouter();
   const { t, language } = useLanguage();
   const { token } = useAuth();
@@ -613,14 +614,14 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0">
-                <Scale className="w-5 h-5 text-white" />
+              <div className="calm-icon w-10 h-10 rounded-2xl bg-card dark:bg-slate-900 flex items-center justify-center shrink-0">
+                <Scale className="w-5 h-5 text-foreground dark:text-white" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   {t('pm.legal')}
                 </h1>
-                <p className="text-slate-400 text-xs font-bold mt-0.5">
+                <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold mt-0.5">
                   {t('admin.legal.desc')}
                 </p>
               </div>
@@ -629,7 +630,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           <button
             onClick={fetchRequests}
             disabled={isLoading}
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 bg-card dark:bg-slate-900 text-foreground dark:text-white px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
             {t('common.refresh')}
@@ -640,7 +641,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
       {embedded && (
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {t('admin.legal.desc')}
             </p>
             <h2 className="text-lg font-black text-slate-950">{t('pm.legal')}</h2>
@@ -648,7 +649,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
           <button
             onClick={fetchRequests}
             disabled={isLoading}
-            className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 bg-card dark:bg-slate-900 text-foreground dark:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
             {t('common.refresh')}
@@ -668,7 +669,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex-1 justify-center ${
                 isActive
                   ? "bg-card text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
+                  : "text-muted-foreground dark:text-slate-500 hover:text-slate-700"
               }`}
             >
               <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -700,19 +701,19 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             </div>
 
             {/* Recent Legal Requests */}
-            <div className="bg-card rounded-2xl border border shadow-sm p-3 sm:p-6">
+            <div className="calm-panel bg-card rounded-2xl border border shadow-sm p-3 sm:p-6">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-5 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 {t('admin.legal.recent_requests')}
               </h2>
               {isLoading ? (
                 <div className="flex justify-center py-6 md:py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-300" />
                 </div>
               ) : allLegal.length === 0 ? (
                 <div className="text-center py-6 md:py-12 opacity-40">
-                  <Scale className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                  <p className="text-xs font-bold text-slate-400">{t('common.noData')}</p>
+                  <Scale className="w-10 h-10 text-foreground dark:text-slate-200 mx-auto mb-3" />
+                  <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{t('common.noData')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -723,19 +724,19 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       className="flex items-center justify-between p-4 bg-muted rounded-xl hover:bg-muted transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-card flex items-center justify-center shadow-sm">
-                          <User className="w-4 h-4 text-slate-500" />
+                        <div className="calm-icon w-8 h-8 rounded-lg bg-card flex items-center justify-center shadow-sm">
+                          <User className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900">{req.clientName}</p>
-                          <p className="text-[10px] font-bold text-slate-400">{req.serviceType}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400">{req.serviceType}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[req.status] || "bg-muted"}`}>
                           {req.status}
                         </span>
-                        <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-slate-700 transition-colors" />
+                        <ExternalLink className="w-4 h-4 text-muted-foreground dark:text-slate-300 group-hover:text-slate-700 transition-colors" />
                       </div>
                     </div>
                   ))}
@@ -751,7 +752,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="rounded-2xl border border bg-card p-5 shadow-sm"
+            className="calm-panel rounded-2xl border border bg-card p-5 shadow-sm"
           >
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
               {legalServiceTabs.map((tab) => {
@@ -760,7 +761,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                   <Link
                     key={tab.id}
                     href={tab.href}
-                    className="flex min-h-24 items-center justify-center gap-2 rounded-xl border border bg-muted px-4 py-3 text-center text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-slate-950 hover:bg-slate-950 hover:text-white"
+                    className="flex min-h-24 items-center justify-center gap-2 rounded-xl border border bg-muted px-4 py-3 text-center text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:border-slate-950 hover:bg-background hover:dark:bg-slate-950 hover:text-foreground hover:dark:text-white"
                   >
                     <Icon className="h-4 w-4 shrink-0" />
                     {tab.label}
@@ -818,12 +819,12 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 <TabsContent value="details" className="space-y-6">
                   {/* Client card */}
                   <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
-                    <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center shadow-sm">
-                      <User className="w-6 h-6 text-slate-500" />
+                    <div className="calm-icon w-12 h-12 rounded-xl bg-card flex items-center justify-center shadow-sm">
+                      <User className="w-6 h-6 text-muted-foreground dark:text-slate-500" />
                     </div>
                     <div>
                       <p className="text-sm font-black text-slate-900">{selectedRequest.clientName}</p>
-                      <p className="text-xs font-bold text-slate-400" dir="ltr">{selectedRequest.phone}</p>
+                      <p className="text-xs font-bold text-muted-foreground dark:text-slate-400" dir="ltr">{selectedRequest.phone}</p>
                     </div>
                   </div>
 
@@ -836,7 +837,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       { label: t("admin.service_requests.quantity"),      value: selectedRequest.quantity },
                     ].map(({ label, value }) => (
                       <div key={label} className="space-y-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</label>
+                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{label}</label>
                         <p className="text-sm font-bold text-slate-900">{value}</p>
                       </div>
                     ))}
@@ -844,13 +845,13 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
 
                   {/* Department selector */}
                   <div className="space-y-2 pt-4 border-t border">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                       {t("admin.service_requests.target_dept")} (Admin)
                     </label>
                     <select
                       value={editingDepartment}
                       onChange={(e) => setEditingDepartment(e.target.value)}
-                      className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all appearance-none"
+                      className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900 transition-all appearance-none"
                     >
                       {departments.map((d) => (
                         <option key={d.id} value={d.id}>{t(d.key)}</option>
@@ -863,34 +864,34 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                     (selectedRequest.firstParty || selectedRequest.secondParty || selectedRequest.metadata) && (
                       <div className="space-y-4 pt-4 border-t border">
                         {selectedRequest.firstParty && (
-                          <div className="p-4 bg-muted rounded-xl border border">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                          <div className="calm-panel p-4 bg-muted rounded-xl border border">
+                            <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-3">
                              {t('legal.party.first')}
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase">الاسم</p>
+                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase">الاسم</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.name}</p>
                               </div>
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase">الهوية</p>
+                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase">الهوية</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.idNumber}</p>
                               </div>
                             </div>
                           </div>
                         )}
                         {selectedRequest.secondParty && (
-                          <div className="p-4 bg-muted rounded-xl border border">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                          <div className="calm-panel p-4 bg-muted rounded-xl border border">
+                            <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-3">
                                {t('legal.party.second')}
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase">الاسم</p>
+                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase">الاسم</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.name}</p>
                               </div>
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase">الهوية</p>
+                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase">الهوية</p>
                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.idNumber}</p>
                               </div>
                             </div>
@@ -898,7 +899,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         )}
                         {selectedRequest.description && (
                           <div className="space-y-1">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</p>
+                            <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t("admin.service_requests.description")}</p>
                             <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted p-3 rounded-xl">{selectedRequest.description}</p>
                           </div>
                         )}
@@ -907,7 +908,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
 
                   {/* Price & Save */}
                   <div className="space-y-3 pt-4 border-t border">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">
                       {t("admin.service_requests.price")}
                     </label>
                     <div className="flex gap-3">
@@ -915,14 +916,14 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                         type="number"
                         value={editingPrice}
                         onChange={(e) => setEditingPrice(e.target.value)}
-                        className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                        className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-border focus:dark:border-slate-900 rounded-xl transition-all"
                         placeholder="0.00"
                       />
                       <div className="flex flex-col gap-2">
                         <button
                           onClick={handleSave}
                           disabled={isUpdatingPrice}
-                          className="bg-slate-900 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                          className="bg-card dark:bg-slate-900 text-foreground dark:text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
                         >
                           <Save className="w-4 h-4" />
                           {t("admin.service_requests.save_changes")}
@@ -932,7 +933,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             <button
                               onClick={handleAccept}
                               disabled={isAccepting}
-                              className="bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                              className="bg-background dark:bg-slate-950 text-foreground dark:text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
                             >
                               {isAccepting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                               {t("admin.service_requests.accept_forward")}
@@ -983,7 +984,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                             {selectedRequest.clientDecision === "accepted" && (
                               <div className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedRequest.paymentStatus === "paid"
-                                  ? "bg-slate-950 text-white border-slate-950"
+                                  ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950"
                                   : "bg-muted text-slate-700 border"
                               }`}>
                                 <Receipt className="w-3 h-3" />
@@ -1008,7 +1009,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                           <button
                             onClick={handleSendInvoice}
                             disabled={isSendingInvoice || !invoicePrice}
-                            className="bg-slate-950 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+                            className="bg-background dark:bg-slate-950 text-foreground dark:text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
                           >
                             {isSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                             {t("legal.invoice.sendBtn")}
@@ -1017,7 +1018,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       )}
 
                       {invoiceMessage && (
-                        <p className={`text-xs font-bold ${invoiceMessage.type === "success" ? "text-slate-700" : "text-slate-500"}`}>
+                        <p className={`text-xs font-bold ${invoiceMessage.type === "success" ? "text-slate-700" : "text-muted-foreground dark:text-slate-500"}`}>
                           {invoiceMessage.text}
                         </p>
                       )}
@@ -1026,7 +1027,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
 
                   {/* Date */}
                   <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400 text-[10px] font-bold">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>
                         {t("admin.service_requests.date")}:{" "}
@@ -1050,20 +1051,20 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 <TabsContent value="visits" className="space-y-4">
                   {isLoadingRelated ? (
                     <div className="py-6 md:py-12 flex justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-300" />
                     </div>
                   ) : userBookings.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                       {userBookings.map((booking: any) => (
-                        <div key={booking.id} className="p-4 bg-muted rounded-xl border border">
+                        <div key={booking.id} className="calm-panel p-4 bg-muted rounded-xl border border">
                           <div className="flex justify-between items-start mb-2">
                             <Badge variant="outline" className="bg-card">{booking.type}</Badge>
-                            <span className="text-xs text-slate-400 font-medium">
+                            <span className="text-xs text-muted-foreground dark:text-slate-400 font-medium">
                               {format(new Date(booking.createdAt), "dd/MM/yyyy")}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
-                            <Clock className="w-4 h-4 text-slate-400" />
+                            <Clock className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                             {booking.visitDate
                               ? format(new Date(booking.visitDate), "dd MMM – hh:mm a", { locale: language === "ar" ? ar : enUS })
                               : "Pending"}
@@ -1072,7 +1073,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 md:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-6 md:py-12 text-center text-muted-foreground dark:text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Calendar className="w-8 h-8" />
                       <p className="text-xs font-bold">{t("admin.service_requests.no_visits")}</p>
                     </div>
@@ -1083,20 +1084,20 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                 <TabsContent value="invoices" className="space-y-4">
                   {isLoadingRelated ? (
                     <div className="py-6 md:py-12 flex justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-300" />
                     </div>
                   ) : userInvoices.length > 0 ? (
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                       {userInvoices.map((inv: any) => (
-                        <div key={inv.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
+                        <div key={inv.id} className="calm-panel p-4 bg-muted rounded-xl border border flex justify-between items-center">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <Receipt className="w-4 h-4 text-slate-400" />
+                              <Receipt className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                               <span className="font-bold text-slate-900 text-sm">
                                 #{inv.invoiceNumber || inv.id.substring(0, 8)}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted-foreground dark:text-slate-500">
                               {format(new Date(inv.createdAt), "dd MMMM yyyy")}
                             </p>
                           </div>
@@ -1112,7 +1113,7 @@ export default function LegalAdminPage({ embedded = false }: { embedded?: boolea
                       ))}
                     </div>
                   ) : (
-                    <div className="py-6 md:py-12 text-center text-slate-400 flex flex-col items-center gap-2 opacity-40">
+                    <div className="py-6 md:py-12 text-center text-muted-foreground dark:text-slate-400 flex flex-col items-center gap-2 opacity-40">
                       <Receipt className="w-8 h-8" />
                       <p className="text-xs font-bold">{t("admin.service_requests.no_invoices")}</p>
                     </div>

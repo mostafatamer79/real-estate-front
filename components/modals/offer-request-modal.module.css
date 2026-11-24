@@ -1,0 +1,35 @@
+.modal {
+  --request-ink: #0b192c;
+  --request-muted: #526274;
+  --request-surface: #ffffff;
+  --request-subtle: #f0efe9;
+  --foreground: #0b192c;
+  --card-foreground: #0b192c;
+  --card: #ffffff;
+  --muted: #f0efe9;
+  --muted-foreground: #526274;
+  background: var(--request-surface) !important;
+  color: var(--request-ink) !important;
+  max-height: calc(100dvh - 2rem);
+}
+:global(.dark) .modal {
+  --request-ink: #f5f4f0;
+  --request-muted: #b8c7d7;
+  --request-surface: #102138;
+  --request-subtle: #172d48;
+  --foreground: #f5f4f0;
+  --card-foreground: #f5f4f0;
+  --card: #102138;
+  --muted: #172d48;
+  --muted-foreground: #b8c7d7;
+}
+.modal :is(h2,h3),
+.modal :global(.text-foreground) { color: var(--request-ink) !important; }
+.modal :global(.text-muted-foreground) { color: var(--request-muted) !important; }
+.modal button { min-height: 44px; color: var(--request-ink); }
+.modal button:focus-visible { outline: 2px solid #b58948; outline-offset: 2px; }
+.modal button[data-state="active"],
+.modal button[aria-pressed="true"] { background: #0b192c !important; color: #ffffff !important; }
+:global(.dark) .modal button[data-state="active"],
+:global(.dark) .modal button[aria-pressed="true"] { background: #f5f4f0 !important; color: #0b192c !important; }
+.modal :global(.bg-muted) { background: var(--request-subtle) !important; }

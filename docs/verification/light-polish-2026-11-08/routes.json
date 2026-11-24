@@ -1,0 +1,882 @@
+[
+  {
+    "route": "/",
+    "width": 1440,
+    "status": 200,
+    "url": "/details",
+    "overflow": false,
+    "content": 558,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/details",
+    "width": 1440,
+    "status": 200,
+    "url": "/details",
+    "overflow": false,
+    "content": 558,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services",
+    "width": 1440,
+    "status": 200,
+    "url": "/services",
+    "overflow": false,
+    "content": 525,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/legal",
+    "width": 1440,
+    "status": 200,
+    "url": "/services/legal",
+    "overflow": false,
+    "content": 298,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/form?type=marketing",
+    "width": 1440,
+    "status": 200,
+    "url": "/services/form",
+    "overflow": false,
+    "content": 142,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/my-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/services/my-requests",
+    "overflow": false,
+    "content": 387,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/provider-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/services/provider-requests",
+    "overflow": false,
+    "content": 82,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/service-providers",
+    "width": 1440,
+    "status": 200,
+    "url": "/service-providers",
+    "overflow": false,
+    "content": 509,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/wallet",
+    "width": 1440,
+    "status": 200,
+    "url": "/wallet",
+    "overflow": false,
+    "content": 361,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/profile",
+    "width": 1440,
+    "status": 200,
+    "url": "/profile",
+    "overflow": false,
+    "content": 262,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/offers",
+    "width": 1440,
+    "status": 200,
+    "url": "/offers",
+    "overflow": false,
+    "content": 280,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/offers/new",
+    "width": 1440,
+    "status": 200,
+    "url": "/offers/new",
+    "overflow": false,
+    "content": 198,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/orders",
+    "width": 1440,
+    "status": 200,
+    "url": "/orders",
+    "overflow": false,
+    "content": 562,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/financial",
+    "width": 1440,
+    "status": 200,
+    "url": "/financial",
+    "overflow": false,
+    "content": 616,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/marketing",
+    "width": 1440,
+    "status": 200,
+    "url": "/marketing",
+    "overflow": false,
+    "content": 619,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/buildingmanagement",
+    "width": 1440,
+    "status": 200,
+    "url": "/buildingmanagement",
+    "overflow": false,
+    "content": 956,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/department-hub",
+    "width": 1440,
+    "status": 200,
+    "url": "/department-hub",
+    "overflow": false,
+    "content": 387,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/disputes",
+    "width": 1440,
+    "status": 200,
+    "url": "/disputes",
+    "overflow": false,
+    "content": 237,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/subscriptions/new",
+    "width": 1440,
+    "status": 200,
+    "url": "/subscriptions/new",
+    "overflow": false,
+    "content": 332,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/about",
+    "width": 1440,
+    "status": 200,
+    "url": "/about",
+    "overflow": false,
+    "content": 2314,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/info",
+    "width": 1440,
+    "status": 200,
+    "url": "/info",
+    "overflow": false,
+    "content": 4,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice",
+    "width": 1440,
+    "status": 200,
+    "url": "/customerservice",
+    "overflow": false,
+    "content": 429,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/faq",
+    "width": 1440,
+    "status": 200,
+    "url": "/customerservice/faq",
+    "overflow": false,
+    "content": 194,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/contact",
+    "width": 1440,
+    "status": 200,
+    "url": "/customerservice/contact",
+    "overflow": false,
+    "content": 429,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/support",
+    "width": 1440,
+    "status": 200,
+    "url": "/customerservice/support",
+    "overflow": false,
+    "content": 429,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/share-opinion",
+    "width": 1440,
+    "status": 200,
+    "url": "/share-opinion",
+    "overflow": false,
+    "content": 160,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/scan-map",
+    "width": 1440,
+    "status": 200,
+    "url": "/scan-map",
+    "overflow": false,
+    "content": 271,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/chat",
+    "width": 1440,
+    "status": 200,
+    "url": "/chat",
+    "overflow": false,
+    "content": 160,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/dashboard",
+    "overflow": false,
+    "content": 1473,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/users",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/users",
+    "overflow": false,
+    "content": 1381,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/offers",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/offers",
+    "overflow": false,
+    "content": 1081,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/orders",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/orders",
+    "overflow": false,
+    "content": 928,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/services",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/services",
+    "overflow": false,
+    "content": 1328,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/service-providers",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/service-providers",
+    "overflow": false,
+    "content": 885,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/operations",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/operations",
+    "overflow": false,
+    "content": 789,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/trends",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/trends",
+    "overflow": false,
+    "content": 819,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/wallet",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/wallet",
+    "overflow": false,
+    "content": 1091,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/legal",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/legal",
+    "overflow": false,
+    "content": 903,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/marketing",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/marketing",
+    "overflow": false,
+    "content": 811,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/properties-management",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/properties-management",
+    "overflow": false,
+    "content": 847,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/packages",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/packages",
+    "overflow": false,
+    "content": 704,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/settings",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/settings",
+    "overflow": false,
+    "content": 1834,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/customer-service",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/customer-service",
+    "overflow": false,
+    "content": 788,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/internal",
+    "width": 1440,
+    "status": 200,
+    "url": "/internal",
+    "overflow": false,
+    "content": 956,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/",
+    "width": 390,
+    "status": 200,
+    "url": "/details",
+    "overflow": false,
+    "content": 558,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/details",
+    "width": 390,
+    "status": 304,
+    "url": "/details",
+    "overflow": false,
+    "content": 558,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services",
+    "width": 390,
+    "status": 200,
+    "url": "/services",
+    "overflow": false,
+    "content": 525,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/legal",
+    "width": 390,
+    "status": 200,
+    "url": "/services/legal",
+    "overflow": false,
+    "content": 304,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/form?type=marketing",
+    "width": 390,
+    "status": 200,
+    "url": "/services/form",
+    "overflow": false,
+    "content": 152,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/my-requests",
+    "width": 390,
+    "status": 200,
+    "url": "/services/my-requests",
+    "overflow": false,
+    "content": 404,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/services/provider-requests",
+    "width": 390,
+    "status": 200,
+    "url": "/services/provider-requests",
+    "overflow": false,
+    "content": 82,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/service-providers",
+    "width": 390,
+    "status": 304,
+    "url": "/service-providers",
+    "overflow": false,
+    "content": 509,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/wallet",
+    "width": 390,
+    "status": 304,
+    "url": "/wallet",
+    "overflow": false,
+    "content": 219,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/profile",
+    "width": 390,
+    "status": 304,
+    "url": "/profile",
+    "overflow": false,
+    "content": 262,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/offers",
+    "width": 390,
+    "status": 200,
+    "url": "/offers",
+    "overflow": false,
+    "content": 299,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/offers/new",
+    "width": 390,
+    "status": 304,
+    "url": "/offers/new",
+    "overflow": false,
+    "content": 198,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/orders",
+    "width": 390,
+    "status": 304,
+    "url": "/orders",
+    "overflow": false,
+    "content": 562,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/financial",
+    "width": 390,
+    "status": 304,
+    "url": "/financial",
+    "overflow": false,
+    "content": 644,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/marketing",
+    "width": 390,
+    "status": 304,
+    "url": "/marketing",
+    "overflow": false,
+    "content": 639,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/buildingmanagement",
+    "width": 390,
+    "status": 304,
+    "url": "/buildingmanagement",
+    "overflow": false,
+    "content": 956,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/department-hub",
+    "width": 390,
+    "status": 304,
+    "url": "/department-hub",
+    "overflow": false,
+    "content": 347,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/disputes",
+    "width": 390,
+    "status": 304,
+    "url": "/disputes",
+    "overflow": false,
+    "content": 255,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/subscriptions/new",
+    "width": 390,
+    "status": 304,
+    "url": "/subscriptions/new",
+    "overflow": false,
+    "content": 355,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/about",
+    "width": 390,
+    "status": 200,
+    "url": "/about",
+    "overflow": false,
+    "content": 2314,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/info",
+    "width": 390,
+    "status": 200,
+    "url": "/info",
+    "overflow": false,
+    "content": 4,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice",
+    "width": 390,
+    "status": 200,
+    "url": "/customerservice",
+    "overflow": false,
+    "content": 445,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/faq",
+    "width": 390,
+    "status": 200,
+    "url": "/customerservice/faq",
+    "overflow": false,
+    "content": 194,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/contact",
+    "width": 390,
+    "status": 200,
+    "url": "/customerservice/contact",
+    "overflow": false,
+    "content": 445,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/customerservice/support",
+    "width": 390,
+    "status": 200,
+    "url": "/customerservice/support",
+    "overflow": false,
+    "content": 445,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/share-opinion",
+    "width": 390,
+    "status": 304,
+    "url": "/share-opinion",
+    "overflow": false,
+    "content": 166,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/scan-map",
+    "width": 390,
+    "status": 304,
+    "url": "/scan-map",
+    "overflow": false,
+    "content": 271,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/chat",
+    "width": 390,
+    "status": 304,
+    "url": "/chat",
+    "overflow": false,
+    "content": 172,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/dashboard",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/dashboard",
+    "overflow": false,
+    "content": 1378,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/users",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/users",
+    "overflow": false,
+    "content": 1220,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/offers",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/offers",
+    "overflow": false,
+    "content": 944,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/orders",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/orders",
+    "overflow": false,
+    "content": 782,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/services",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/services",
+    "overflow": false,
+    "content": 1233,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/service-providers",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/service-providers",
+    "overflow": false,
+    "content": 790,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/operations",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/operations",
+    "overflow": false,
+    "content": 694,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/trends",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/trends",
+    "overflow": false,
+    "content": 724,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/wallet",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/wallet",
+    "overflow": false,
+    "content": 996,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/legal",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/legal",
+    "overflow": false,
+    "content": 808,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/marketing",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/marketing",
+    "overflow": false,
+    "content": 716,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/properties-management",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/properties-management",
+    "overflow": false,
+    "content": 704,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/packages",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/packages",
+    "overflow": false,
+    "content": 609,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/settings",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/settings",
+    "overflow": false,
+    "content": 1739,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/admin/customer-service",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/customer-service",
+    "overflow": false,
+    "content": 693,
+    "dark": false,
+    "errors": []
+  },
+  {
+    "route": "/internal",
+    "width": 390,
+    "status": 304,
+    "url": "/internal",
+    "overflow": false,
+    "content": 956,
+    "dark": false,
+    "errors": []
+  }
+]

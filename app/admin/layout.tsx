@@ -156,6 +156,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     {
       title: isRtl ? 'الخدمات' : 'Services',
       items: [
+        { id: 'service-providers', href: '/admin/service-providers', icon: Wrench, label: isRtl ? 'مزودو الخدمات والموثقون' : 'Providers and notaries' },
         { id: 'post-purchase', href: '/admin/services?type=post_purchase', icon: Wrench, label: isRtl ? 'خدمات ما بعد الشراء' : 'Post-purchase Services' },
         { id: 'legal-services', href: '/admin/services?type=legal', icon: ShieldAlert, label: isRtl ? 'الخدمات القانونية' : 'Legal Services' },
         { id: 'construction', href: '/admin/services?type=construction', icon: Building2, label: isRtl ? 'البناء والمقاولات' : 'Construction' },
@@ -178,11 +179,11 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-muted/50" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="calm-page calm-screen flex h-screen bg-muted/50" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Mobile Menu Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 p-2 bg-slate-900 text-white rounded-lg lg:hidden ${isRtl ? 'left-4' : 'right-4'}`}
+        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 p-2 bg-card dark:bg-slate-900 text-foreground dark:text-white rounded-lg lg:hidden ${isRtl ? 'left-4' : 'right-4'}`}
       >
         {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
@@ -202,15 +203,15 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         className={`${
           // Desktop widths
           isSidebarOpen ? 'lg:w-64' : 'lg:w-20'
-        } w-64 fixed inset-y-0 z-40 bg-slate-950 text-white transition-transform lg:transition-all duration-300 ease-in-out border-slate-900 flex flex-col pt-safe pb-safe
+        } w-64 fixed inset-y-0 z-40 bg-background dark:bg-slate-950 text-foreground dark:text-white transition-transform lg:transition-all duration-300 ease-in-out border-border dark:border-slate-900 flex flex-col pt-safe pb-safe
         ${isRtl ? 'right-0 lg:border-l lg:border-r-0' : 'left-0 border-r'}
         ${isSidebarOpen ? 'translate-x-0' : isRtl ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         {/* Logo Section */}
-        <div className="p-3 sm:p-6 border-b border-white/5 flex items-center gap-3">
+        <div className="p-3 sm:p-6 border-b border-border dark:border-white/5 flex items-center gap-3">
           <Image
-            src={settings.logoWhiteUrl || '/icons/white.png'}
+            src={settings.isDark ? (settings.logoWhiteUrl || "/icons/white.png") : (settings.logoBlackUrl || "/icons/black.png")}
             alt="Logo"
             width={isSidebarOpen ? 150 : 44}
             height={settings.logoHeight || 44}
@@ -224,7 +225,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1 }}
               className="font-black tracking-tighter text-lg whitespace-nowrap uppercase"
             >
-              <span className="text-white/40">{settings.textOverrides?.['admin_badge'] || 'ADMIN'}</span>
+              <span className="text-muted-foreground dark:text-white/40">{settings.textOverrides?.['admin_badge'] || 'ADMIN'}</span>
             </motion.span>
           )}
         </div>
@@ -239,12 +240,12 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             return (
               <div key={sIdx} className="space-y-1.5">
                 {section.title && isSidebarOpen && (
-                  <div className="px-3 pt-2 pb-1 text-[10px] font-black tracking-widest text-white/30 uppercase">
+                  <div className="px-3 pt-2 pb-1 text-[10px] font-black tracking-widest text-muted-foreground dark:text-white/30 uppercase">
                     {section.title}
                   </div>
                 )}
                 {!isSidebarOpen && section.title && sIdx > 0 && (
-                  <div className="h-[1px] bg-card/5 my-3 mx-2" />
+                  <div className="h-[1px] bg-muted dark:bg-card/5 my-3 mx-2" />
                 )}
                 <div className="space-y-1.5">
                   {visibleItems?.map((item) => {
@@ -260,6 +261,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                       '/admin/wallet': 'financial',
                       '/admin/transactions': 'financial',
                       '/admin/marketing': 'marketing',
+                      '/admin/service-providers': 'services',
                       '/admin/services': 'services',
                       '/admin/service-requests': 'services',
                       '/admin/legal': 'disputes',
@@ -311,11 +313,12 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                             closeSidebarIfMobile();
                           }}
                           aria-label={item.label}
+                          aria-current={isActive ? "page" : undefined}
                           title={item.label}
                           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative ${
                             isActive
                               ? 'bg-card text-slate-950 shadow-md shadow-white/5'
-                              : 'text-white/50 hover:text-white hover:bg-card/5'
+                              : 'text-muted-foreground dark:text-white/50 hover:text-foreground hover:dark:text-white hover:bg-muted hover:dark:bg-card/5'
                           }`}
                         >
                           {item.id === 'home' && <Home className="w-5 h-5 shrink-0" aria-hidden="true" />}
@@ -330,7 +333,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                           )}
 
                           {!isSidebarOpen && (
-                            <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 border border-white/10 pointer-events-none">
+                            <div className="calm-panel absolute left-full ml-4 px-3 py-2 bg-card dark:bg-slate-900 text-foreground dark:text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 border border-border dark:border-white/10 pointer-events-none">
                               {item.label} {showAdminStatusBadge ? `(${(moduleStatus as any) === 'disabled' ? (isRtl ? 'معطل' : 'Off') : (t('common.soon') || 'قريباً')})` : ''}
                             </div>
                           )}
@@ -345,22 +348,22 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* User Info & Logout */}
-        <div className="p-4 border-t border-white/5 space-y-3">
+        <div className="p-4 border-t border-border dark:border-white/5 space-y-3">
           {isSidebarOpen && (
-            <div className="px-3 py-3 rounded-2xl bg-card/5 border border-white/5 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black">
+            <div className="calm-panel px-3 py-3 rounded-2xl bg-muted dark:bg-card/5 border border-border dark:border-white/5 flex items-center gap-3">
+              <div className="calm-icon w-8 h-8 rounded-full bg-muted dark:bg-slate-800 flex items-center justify-center text-[10px] font-black">
                 {user.firstName?.[0]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black text-white truncate">{user.firstName} {user.lastName}</p>
-                <p className="text-[8px] font-black text-white/30 truncate uppercase tracking-widest">{settings.textOverrides?.['admin_role_label'] || user.role}</p>
+                <p className="text-[10px] font-black text-foreground dark:text-white truncate">{user.firstName} {user.lastName}</p>
+                <p className="text-[8px] font-black text-muted-foreground dark:text-white/30 truncate uppercase tracking-widest">{settings.textOverrides?.['admin_role_label'] || user.role}</p>
               </div>
             </div>
           )}
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:text-white hover:bg-red-500/10 transition-all group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground dark:text-white/40 hover:text-foreground hover:dark:text-white hover:bg-red-500/10 transition-all group"
           >
             <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               {isSidebarOpen && (

@@ -1,0 +1,62 @@
+[
+  {
+    "width": 320,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "missing-user",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "malformed-date",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "stale-language",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "shrunk-page",
+    "passed": true
+  },
+  {
+    "width": 320,
+    "mode": "decision-unmount",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "guest",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "missing-user",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "malformed-date",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "stale-language",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "shrunk-page",
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "mode": "decision-unmount",
+    "passed": true
+  }
+]

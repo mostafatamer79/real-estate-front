@@ -42,34 +42,56 @@ export function createNeighborhoodScene(host, project, options){
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
   const getDpr=()=>{
     if(typeof window==='undefined')return 1;
-    return Math.min(window.devicePixelRatio||1,2.5);
+    const dpr = window.devicePixelRatio || 1;
+    const width = host?.clientWidth || window.innerWidth || 1024;
+    const maxDpr = width < 768 ? 1.25 : 1.5;
+    return Math.min(dpr, maxDpr);
   };
   renderer.setPixelRatio(getDpr());
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  renderer.shadowMap.autoUpdate=true;
+  renderer.shadowMap.autoUpdate=false;
+  renderer.shadowMap.needsUpdate=true;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.15;
   renderer.domElement.setAttribute('aria-hidden','true');
+  renderer.domElement.style.touchAction='pan-y pinch-zoom';
   host.append(renderer.domElement);
 
   const scene=new THREE.Scene();
   scene.fog=new THREE.FogExp2(options.dark?0x111928:0xe8e6e1,0.016);
   const camera=new THREE.PerspectiveCamera(34,1,.1,100);
   const target=new THREE.Vector3(0,1.15,0);
-  const rest = { azimuth: .72, elevation: .58, distance: 22.5, target: new THREE.Vector3(0, 1.15, 0) };
+  const rest = { azimuth: .72, elevation: .66, distance: 18.5, target: new THREE.Vector3(0, 1.15, 0) };
   const approach = { azimuth: .85, elevation: .24, distance: 6 };
   let azimuth = rest.azimuth + (reducedMotion ? 0 : approach.azimuth);
   let elevation = rest.elevation + (reducedMotion ? 0 : approach.elevation);
   let distance = rest.distance + (reducedMotion ? 0 : approach.distance);
+  if (options.propertyEntry) {
+    target.set(0, 2, -0.5);
+    azimuth = rest.azimuth;
+    elevation = 0.4;
+    distance = 10.5;
+  }
   let currentBank = 0;
   let velAzimuth = 0;
   let isPointerDown = false;
+  let activePointerId = null;
+  let isPointerDragging = false;
+  let isPointerCancelled = false;
+  let pointerStartX = 0;
+  let pointerStartY = 0;
   let lastPointerX = 0;
   let lastPointerTime = 0;
-  let frame=0,last=0,introStart=-10000,visible=false,disposed=false;
-  let flight=null;
+  let oldAngle = azimuth;
+  let frame = 0, dragFrame = 0, visible = false, disposed = false;
+  let simTime = 0;
+  let lastWallTime = 0;
+  let introRunning = false;
+  let introElapsed = 0;
+  let introPlayed = Boolean(reducedMotion || options.propertyEntry);
+  let flight = null;
   const root=new THREE.Group();scene.add(root);
 
   // Sweep outward from the featured property along the neighborhood ground plane.
@@ -84,7 +106,8 @@ export function createNeighborhoodScene(host, project, options){
   root.add(sweep);
 
   function stopIntro() {
-    introStart = -10000;
+    introRunning = false;
+    introPlayed = true;
     sweep.visible = false;
   }
 
@@ -168,8 +191,8 @@ export function createNeighborhoodScene(host, project, options){
   }
 
   function findNearestSafeLocation(targetX, targetZ) {
-    let x = THREE.MathUtils.clamp(targetX, -6.5, 6.5);
-    let z = THREE.MathUtils.clamp(targetZ, -4.6, 4.6);
+    let x = THREE.MathUtils.clamp(targetX, -28, 28);
+    let z = THREE.MathUtils.clamp(targetZ, -24, 24);
     const margin = 0.35;
     const obs = isInsideObstacle(x, z, margin);
     if (!obs) return { x, z };
@@ -185,8 +208,8 @@ export function createNeighborhoodScene(host, project, options){
     else if (minDist === distRight) x = obs.maxX + margin;
     else z = obs.minZ - margin;
 
-    x = THREE.MathUtils.clamp(x, -6.5, 6.5);
-    z = THREE.MathUtils.clamp(z, -4.6, 4.6);
+    x = THREE.MathUtils.clamp(x, -28, 28);
+    z = THREE.MathUtils.clamp(z, -24, 24);
     return { x, z };
   }
 
@@ -204,52 +227,52 @@ export function createNeighborhoodScene(host, project, options){
     return desiredAzimuth;
   }
 
-  const ambient = new THREE.HemisphereLight(0xdbeafe, 0xe2d9cb, 2.8);
+  const ambient = new THREE.HemisphereLight(0xdbe4ee, 0xd0c8b8, 1.1);
   scene.add(ambient);
 
-  const sun = new THREE.DirectionalLight(0xfff8eb, 3.6);
+  const sun = new THREE.DirectionalLight(0xfff5e6, 2.4);
   sun.position.set(8.5, 14, 6.5);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   Object.assign(sun.shadow.camera, { left: -9.5, right: 9.5, top: 10.5, bottom: -9.5, near: 1, far: 42 });
   sun.shadow.normalBias = 0.025;
   sun.shadow.bias = -0.00015;
   sun.shadow.radius = 2.0;
   scene.add(sun);
 
-  const fill = new THREE.DirectionalLight(0xa5c4e8, 1.6);
+  const fill = new THREE.DirectionalLight(0xb4c6d8, 0.65);
   fill.position.set(-8, 6, -4);
   scene.add(fill);
 
   const material = (color, opts = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.65, ...opts });
 
-  // Vibrant, architectural palette with rich colors and living warmth
-  const stone = material('#f5f2eb', { roughness: 0.65 }); // Travertine limestone
-  const darkStone = material('#1e2430', { roughness: 0.7 }); // Anthracite slate
-  const woodMat = material('#a2653e', { roughness: 0.72 }); // Warm cedar/teak wood
-  const glass = material('#3b6a88', { metalness: 0.65, roughness: 0.12, emissive: '#ffd7a8', emissiveIntensity: 0.18 }); // Luminous azure glass with interior warmth
-  const goldFrame = material('#d4af37', { metalness: 0.5, roughness: 0.35 }); // Champagne gold mullions
-  const pavement = material('#ded9d0', { roughness: 0.8 }); // Warm plaza stone
-  const road = material('#353942', { roughness: 0.85 }); // Rich dark asphalt
-  const crosswalkMat = material('#f8fafc', { roughness: 0.4 }); // Bright white crosswalk stripes
-  const leafSpring = material('#2e8540', { roughness: 0.75 }); // Spring green tree foliage
-  const leafEmerald = material('#1b6a38', { roughness: 0.75 }); // Deep emerald tree foliage
-  const leafGolden = material('#529938', { roughness: 0.75 }); // Sunlit golden tree foliage
-  const flowerCoral = material('#e11d48'); // Coral red flowers
-  const flowerPurple = material('#8b5cf6'); // Purple lavender flowers
-  const flowerGold = material('#f59e0b'); // Marigold flowers
-  const parkMat = material('#4d8b47', { roughness: 0.85 }); // Emerald park lawn
-  const parasolYellow = material('#f59e0b', { roughness: 0.6 }); // Cafe parasol yellow
-  const parasolBlue = material('#2563eb', { roughness: 0.6 }); // Cafe parasol blue
-  const carWhite = material('#f8fafc', { metalness: 0.6, roughness: 0.25 }); // White pearl sedan
-  const carBlue = material('#1d4ed8', { metalness: 0.65, roughness: 0.25 }); // Metallic blue coupe
-  const carRed = material('#dc2626', { metalness: 0.6, roughness: 0.25 }); // Crimson red crossover
-  const carDark = material('#27272a', { metalness: 0.5, roughness: 0.3 }); // Charcoal SUV
+  // Natural architectural palette with authentic materials and balanced tone
+  const stone = material('#ece7de', { roughness: 0.78 }); // Travertine limestone
+  const darkStone = material('#2b3038', { roughness: 0.82 }); // Honed graphite slate
+  const woodMat = material('#8a5c3e', { roughness: 0.75 }); // Natural teak/cedar
+  const glass = material('#4a5c68', { metalness: 0.15, roughness: 0.18 }); // Grey-blue solar glazing
+  const goldFrame = material('#7d6a52', { metalness: 0.65, roughness: 0.42 }); // Muted architectural bronze
+  const pavement = material('#d6d1c7', { roughness: 0.85 }); // Limestone plaza stone
+  const road = material('#3c3f46', { roughness: 0.90 }); // Weathered asphalt
+  const crosswalkMat = material('#e5e7eb', { roughness: 0.60 }); // Road markings
+  const leafSpring = material('#556847', { roughness: 0.88 }); // Mediterranean olive green
+  const leafEmerald = material('#3c4e36', { roughness: 0.88 }); // Deep olive cypress
+  const leafGolden = material('#687a55', { roughness: 0.88 }); // Warm olive foliage
+  const flowerCoral = material('#b85d56', { roughness: 0.85 }); // Muted terracotta
+  const flowerPurple = material('#6b7280', { roughness: 0.85 }); // Muted slate flora
+  const flowerGold = material('#bfa268', { roughness: 0.85 }); // Soft ochre
+  const parkMat = material('#5a6e4d', { roughness: 0.90 }); // Natural landscape lawn
+  const parasolYellow = material('#ded7cb', { roughness: 0.92 }); // Understated linen canvas
+  const parasolBlue = material('#4a5768', { roughness: 0.92 }); // Muted slate navy fabric
+  const carWhite = material('#e8ecef', { metalness: 0.75, roughness: 0.28 }); // Pearl metallic
+  const carBlue = material('#223348', { metalness: 0.85, roughness: 0.26 }); // Midnight sapphire metallic
+  const carRed = material('#5e2229', { metalness: 0.80, roughness: 0.28 }); // Deep burgundy metallic
+  const carDark = material('#2c2f35', { metalness: 0.80, roughness: 0.30 }); // Mineral grey metallic
   const carLightMat = new THREE.MeshBasicMaterial({ color: 0xfffbeb }); // Glowing headlights
   const carTailNormal = new THREE.MeshBasicMaterial({ color: 0x7f1d1d }); // Cruising rear taillights
   const carBrakeMat = new THREE.MeshBasicMaterial({ color: 0xff2222 }); // Ruby glowing LED braking taillights
-  const carYellow = material('#f59e0b', { metalness: 0.55, roughness: 0.25 }); // Commercial delivery van
-  const carSilver = material('#cbd5e1', { metalness: 0.75, roughness: 0.20 }); // Silver compact metallic
+  const carYellow = material('#967b54', { metalness: 0.50, roughness: 0.35 }); // Fleet sand metallic
+  const carSilver = material('#adb6c0', { metalness: 0.90, roughness: 0.22 }); // Platinum metallic
   const wheelMat = material('#18181b', { roughness: 0.9 }); // Dark tire rubber
   const rimMat = material('#94a3b8', { metalness: 0.8, roughness: 0.25 }); // Alloy rims
 
@@ -273,7 +296,7 @@ export function createNeighborhoodScene(host, project, options){
   const lampLightMat = new THREE.MeshBasicMaterial({ color: 0xfef08a }); // Warm glowing LED lamp heads
   const tunnelVoidMat = new THREE.MeshBasicMaterial({ color: 0x050508 }); // Deep shadow void inside tunnels
   const tunnelLightGreen = new THREE.MeshBasicMaterial({ color: 0x10b981 }); // Green portal LED lane indicator
-  const groundMat = material('#dfddd6');
+  const groundMat = material('#d8d4c9');
 
   // Batch repeated architectural pieces by material: one draw call per material.
   const boxes = new Map();
@@ -283,9 +306,9 @@ export function createNeighborhoodScene(host, project, options){
   }
 
   // Ground plane & Roadways
-  box(15, 0.22, 11, 0, -0.2, 0, groundMat);
-  box(13.5, 0.015, 1.35, 0, -0.075, 2.8, road);
-  box(1.15, 0.015, 10.0, -3.6, -0.075, 0, road);
+  box(100, 0.22, 100, 0, -0.2, 0, groundMat);
+  box(100, 0.015, 1.35, 0, -0.075, 2.8, road);
+  box(1.15, 0.015, 100, -3.6, -0.075, 0, road);
 
   // Road markings: center stripes
   for (let i = -5; i < 6; i++) box(0.45, 0.018, 0.04, i, -0.06, 2.8, crosswalkMat);
@@ -430,8 +453,8 @@ export function createNeighborhoodScene(host, project, options){
   box(0.45, 0.22, 1.1, 1.25, 0.12, 1.65, darkStone);
   box(0.38, 0.12, 0.98, 1.25, 0.26, 1.65, flowerGold);
 
-  // Multi-tone lush street trees & flowering trees
-  const treeGeo = new THREE.IcosahedronGeometry(0.42, 1);
+  // Multi-tone street trees with natural multi-lobed foliage silhouettes
+  const treeGeo = new THREE.IcosahedronGeometry(0.38, 1);
   const trunkGeo = new THREE.CylinderGeometry(0.035, 0.045, 0.55, 6);
   const treeConfigs = [
     { x: -2, z: 1.8, mat: leafSpring },
@@ -439,19 +462,26 @@ export function createNeighborhoodScene(host, project, options){
     { x: 3.9, z: -2.4, mat: leafGolden },
     { x: 3.9, z: 0.4, mat: leafSpring },
     { x: 2.8, z: 1.8, mat: leafEmerald },
-    { x: -4.8, z: -2, mat: flowerPurple }, // Blooming Jacaranda in park!
+    { x: -4.8, z: -2, mat: leafGolden },
     { x: -4.8, z: 0.1, mat: leafSpring },
+  ];
+  const treeLobes = [
+    { ox: 0, oy: 0.76, oz: 0, sx: 0.95, sy: 0.90, sz: 0.95 },
+    { ox: 0.07, oy: 0.98, oz: -0.05, sx: 0.72, sy: 0.78, sz: 0.72 },
+    { ox: -0.08, oy: 0.74, oz: 0.07, sx: 0.68, sy: 0.70, sz: 0.65 },
   ];
   for (const { x, z, mat } of treeConfigs) {
     box(0.65, 0.15, 0.65, x, 0.04, z, pavement);
     const trunk = new THREE.Mesh(trunkGeo, darkStone);
     trunk.position.set(x, 0.35, z);
     root.add(trunk);
-    const crown = new THREE.Mesh(treeGeo, mat);
-    crown.position.set(x, 0.85, z);
-    crown.scale.set(0.85, 1.25, 0.85);
-    crown.castShadow = true;
-    root.add(crown);
+    treeLobes.forEach(({ ox, oy, oz, sx, sy, sz }) => {
+      const crown = new THREE.Mesh(treeGeo, mat);
+      crown.position.set(x + ox, oy, z + oz);
+      crown.scale.set(sx, sy, sz);
+      crown.castShadow = true;
+      root.add(crown);
+    });
   }
 
   // Modern street lampposts with glowing warm LED heads along sidewalks
@@ -607,6 +637,30 @@ export function createNeighborhoodScene(host, project, options){
     } else if (p.id === 'market') {
       // Striped awnings
       box(1.4, 0.06, 0.45, p.x, height * 0.65, p.z + 0.72, parasolYellow);
+    }
+  }
+
+  // Continue the street grid beyond the featured property so the camera sees
+  // a neighborhood to the frame edges instead of a floating model on a blank stage.
+  for (const z of [-21.2, -9.2, 14.8, 26.8]) {
+    box(100, 0.018, 1.35, 0, -0.07, z, road);
+  }
+  for (const x of [-27.6, -15.6, 8.4, 20.4, 32.4]) {
+    box(1.15, 0.018, 100, x, -0.07, 0, road);
+  }
+  let blockIndex = 0;
+  for (const x of [-22, -10, 2, 14, 26]) {
+    for (const z of [-16, -4, 8, 20]) {
+      if (Math.abs(x) < 8 && Math.abs(z) < 8) continue;
+      const height = 1.3 + (blockIndex++ % 4) * 0.42;
+      box(6, 0.08, 6, x, -0.025, z, pavement);
+      box(3.6, height, 3.8, x, height / 2, z, stone);
+      box(3.8, 0.12, 4, x, height + 0.06, z, darkStone);
+      box(2.6, 0.38, 0.025, x, height * 0.65, z + 1.91, glass);
+      box(0.025, 0.38, 2.8, x + 1.81, height * 0.65, z, glass);
+      box(0.55, 0.25, 0.6, x - 0.8, height + 0.25, z - 0.6, pavement);
+      box(1.4, 0.2, 0.45, x, 0.1, z + 2.5, leafEmerald);
+      OBSTACLES.push({ minX: x - 1.9, maxX: x + 1.9, minZ: z - 2, maxZ: z + 2 });
     }
   }
 
@@ -787,7 +841,6 @@ export function createNeighborhoodScene(host, project, options){
     const bodyGeo = new THREE.BoxGeometry(bodyL, bodyH, bodyW);
     const bodyMesh = new THREE.Mesh(bodyGeo, def.mat);
     bodyMesh.position.y = bodyH * 0.5;
-    bodyMesh.castShadow = true;
     vGroup.add(bodyMesh);
 
     // Upper cabin with windows
@@ -796,7 +849,6 @@ export function createNeighborhoodScene(host, project, options){
     const cabinGeo = new THREE.BoxGeometry(cabL, def.cabinH, cabW);
     const cabinMesh = new THREE.Mesh(cabinGeo, glass);
     cabinMesh.position.y = bodyH + def.cabinH * 0.5;
-    cabinMesh.castShadow = true;
     vGroup.add(cabinMesh);
 
     // 4 Wheels with tire rubber
@@ -811,7 +863,6 @@ export function createNeighborhoodScene(host, project, options){
     wheelOffsets.forEach(([ox, oz]) => {
       const wMesh = new THREE.Mesh(wheelGeo, wheelMat);
       wMesh.position.set(ox, 0.035, oz);
-      wMesh.castShadow = true;
       vGroup.add(wMesh);
       wheels.push(wMesh);
     });
@@ -936,7 +987,6 @@ export function createNeighborhoodScene(host, project, options){
     const torsoGroup = new THREE.Group();
     const torso = new THREE.Mesh(personTorsoGeo, style.jacket);
     torso.position.y = 0.11;
-    torso.castShadow = true;
     torsoGroup.add(torso);
 
     // Neck and Head
@@ -946,7 +996,6 @@ export function createNeighborhoodScene(host, project, options){
 
     const head = new THREE.Mesh(personHeadGeo, style.skin);
     head.position.y = 0.26;
-    head.castShadow = true;
     torsoGroup.add(head);
 
     if (style.hasCap) {
@@ -962,12 +1011,10 @@ export function createNeighborhoodScene(host, project, options){
     if (style.hasBackpack) {
       const backpack = new THREE.Mesh(backpackGeo, darkStone);
       backpack.position.set(0, 0.11, -0.06);
-      backpack.castShadow = true;
       torsoGroup.add(backpack);
     } else if (style.hasBag) {
       const bag = new THREE.Mesh(bagGeo, darkStone);
       bag.position.set(0.075, 0.08, 0.02);
-      bag.castShadow = true;
       torsoGroup.add(bag);
     }
 
@@ -981,7 +1028,6 @@ export function createNeighborhoodScene(host, project, options){
 
       const thigh = new THREE.Mesh(personThighGeo, style.pants);
       thigh.position.y = -0.045;
-      thigh.castShadow = true;
       hip.add(thigh);
 
       const knee = new THREE.Group();
@@ -990,7 +1036,6 @@ export function createNeighborhoodScene(host, project, options){
 
       const calf = new THREE.Mesh(personCalfGeo, style.pants);
       calf.position.y = -0.045;
-      calf.castShadow = true;
       knee.add(calf);
 
       const ankle = new THREE.Group();
@@ -1000,7 +1045,6 @@ export function createNeighborhoodScene(host, project, options){
       // Distinct shoe positioned so sole rests on ground level
       const shoe = new THREE.Mesh(personShoeGeo, shoeMat);
       shoe.position.set(0, 0.012, 0.015);
-      shoe.castShadow = true;
       ankle.add(shoe);
 
       pelvis.add(hip);
@@ -1015,7 +1059,6 @@ export function createNeighborhoodScene(host, project, options){
 
       const upperArm = new THREE.Mesh(personUpperArmGeo, style.jacket);
       upperArm.position.y = -0.04;
-      upperArm.castShadow = true;
       shoulder.add(upperArm);
 
       const elbow = new THREE.Group();
@@ -1024,12 +1067,10 @@ export function createNeighborhoodScene(host, project, options){
 
       const forearm = new THREE.Mesh(personForearmGeo, style.skin);
       forearm.position.y = -0.035;
-      forearm.castShadow = true;
       elbow.add(forearm);
 
       const hand = new THREE.Mesh(personHandGeo, style.skin);
       hand.position.y = -0.075;
-      hand.castShadow = true;
       elbow.add(hand);
 
       pelvis.add(shoulder);
@@ -1040,6 +1081,17 @@ export function createNeighborhoodScene(host, project, options){
     const splinePoints = wpList.map(([x, z]) => new THREE.Vector3(x, 0, z));
     const spline = new THREE.CatmullRomCurve3(splinePoints, true, 'centripetal', 0.25);
     const totalLen = spline.getLength();
+    const speed = walkerSpeeds[index % walkerSpeeds.length];
+    const phase = walkerPhases[index % walkerPhases.length];
+
+    // Initialize pedestrian on their actual path so reduced motion doesn't stack them at origin
+    const initDist = (phase * totalLen) % totalLen;
+    const initU = initDist / totalLen;
+    spline.getPointAt(initU, _v1);
+    spline.getTangentAt(initU, _v2);
+    group.position.set(_v1.x, 0, _v1.z);
+    const initYaw = Math.atan2(_v2.x, _v2.z);
+    group.rotation.y = initYaw;
 
     root.add(group);
     walkers.push({
@@ -1050,20 +1102,46 @@ export function createNeighborhoodScene(host, project, options){
       arms,
       spline,
       totalLen,
-      speed: walkerSpeeds[index % walkerSpeeds.length],
-      phase: walkerPhases[index % walkerPhases.length],
-      currentYaw: 0,
+      speed,
+      phase,
+      currentYaw: initYaw,
     });
   });
 
-  function notifyDroneState() {
+  let lastTelemetryTime = 0;
+  let lastTelemetryPayload = null;
+
+  function notifyDroneState(force = false) {
     if (!options.onDroneStateChange) return;
     const isOverhead = distance > 14 && elevation > 0.45;
     const state = flight ? 'flying' : (isOverhead ? 'overhead' : 'street');
     const altitude = Math.round(THREE.MathUtils.lerp(5, 38, THREE.MathUtils.clamp((distance - 4.8) / (22.5 - 4.8), 0, 1)));
     const heading = (Math.round((azimuth * 180 / Math.PI) % 360) + 360) % 360;
-    const speed = flight ? Math.round(THREE.MathUtils.lerp(0, 42, Math.sin(Math.PI * Math.min(1, (performance.now() - flight.started) / flight.duration)))) : 0;
-    options.onDroneStateChange({ state, altitude, heading, speed });
+    const flightProgress = flight && flight.duration > 0 ? (flight.elapsed / flight.duration) : 0;
+    const speed = flight ? Math.round(THREE.MathUtils.lerp(0, 42, Math.sin(Math.PI * Math.min(1, flightProgress)))) : 0;
+
+    const stateChanged = !lastTelemetryPayload || lastTelemetryPayload.state !== state;
+    const now = performance.now();
+    const timeElapsed = now - lastTelemetryTime >= 200; // ~5Hz throttle
+
+    if (!force && !stateChanged && !timeElapsed) {
+      return;
+    }
+
+    if (
+      lastTelemetryPayload &&
+      lastTelemetryPayload.state === state &&
+      lastTelemetryPayload.altitude === altitude &&
+      lastTelemetryPayload.heading === heading &&
+      lastTelemetryPayload.speed === speed
+    ) {
+      return;
+    }
+
+    const payload = { state, altitude, heading, speed };
+    lastTelemetryPayload = payload;
+    lastTelemetryTime = now;
+    options.onDroneStateChange(payload);
   }
 
   const resize=()=>{
@@ -1124,6 +1202,7 @@ export function createNeighborhoodScene(host, project, options){
       targetAzimuth = getClearAzimuth(destination, targetAzimuth, 0.22, 4.8);
     }
 
+    velAzimuth = 0;
     setPlaying(false);
     stopIntro();
 
@@ -1175,7 +1254,7 @@ export function createNeighborhoodScene(host, project, options){
     altimeterBeam.visible = true;
 
     flight = {
-      started: performance.now(),
+      elapsed: 0,
       duration: reducedMotion ? 0 : 2200,
       cameraSpline,
       targetSpline,
@@ -1196,15 +1275,16 @@ export function createNeighborhoodScene(host, project, options){
       beaconGroup.visible = false;
       altimeterBeam.visible = false;
       flight = null;
-      notifyDroneState();
+      notifyDroneState(true);
       draw();
       return;
     }
-    notifyDroneState();
+    notifyDroneState(true);
     schedule();
   }
 
   function flyToOverview() {
+    velAzimuth = 0;
     setPlaying(false);
     stopIntro();
     beaconGroup.visible = false;
@@ -1241,7 +1321,7 @@ export function createNeighborhoodScene(host, project, options){
     const targetSpline = new THREE.CatmullRomCurve3([fromLook, midLook, destTarget], false, 'centripetal');
 
     flight = {
-      started: performance.now(),
+      elapsed: 0,
       duration: reducedMotion ? 0 : 2000,
       cameraSpline,
       targetSpline,
@@ -1260,16 +1340,18 @@ export function createNeighborhoodScene(host, project, options){
       distance = rest.distance;
       currentBank = 0;
       flight = null;
-      notifyDroneState();
+      notifyDroneState(true);
       draw();
       return;
     }
-    notifyDroneState();
+    notifyDroneState(true);
     schedule();
   }
 
   function flyToPointer(event){
+    velAzimuth = 0;
     const rect=renderer.domElement.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
     const ndc=new THREE.Vector2(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1);
     const raycaster=new THREE.Raycaster();
     raycaster.setFromCamera(ndc,camera);
@@ -1291,344 +1373,362 @@ export function createNeighborhoodScene(host, project, options){
   }
 
   function animate(time) {
-    if (disposed || !visible || host.hidden || document.hidden) { frame = 0; return; }
-    const approaching = introStart >= 0 && !reducedMotion;
-    if (time - last > 28) {
-      if (approaching) {
-        const elapsed = Math.max(0, time - introStart);
-        const progress = Math.min(1, elapsed / 1900);
-        const wave = Math.max(0, (elapsed - 350) / 1250);
-        const phase = wave % 1;
-        sweep.visible = wave > 0 && wave < 2;
-        sweep.scale.setScalar(.8 + phase * 6);
-        sweepMaterial.opacity = .95 * Math.sin(Math.PI * phase) ** .6;
-        const remaining = (1 - progress) ** 3;
-        azimuth = rest.azimuth + approach.azimuth * remaining;
-        elevation = rest.elevation + approach.elevation * remaining;
-        distance = rest.distance + approach.distance * remaining;
-        currentBank = 0;
-        if (wave >= 2) stopIntro();
-      } else if (flight) {
-        const rawProgress = Math.min(1, Math.max(0, (time - flight.started) / flight.duration));
-        // Smooth quintic easeInOut for ultra-cinematic drone trajectory
-        const ease = rawProgress < 0.5 ? 16 * Math.pow(rawProgress, 5) : 1 - Math.pow(-2 * rawProgress + 2, 5) / 2;
-
-        flight.cameraSpline.getPointAt(ease, _vCam);
-        flight.targetSpline.getPointAt(ease, _vLook);
-        camera.position.copy(_vCam);
-        camera.lookAt(_vLook);
-
-        // Aerodynamic banking tilt into turns based on spline turn rate
-        const turnRate = flight.toAzimuth - flight.fromAzimuth;
-        const arc = Math.sin(Math.PI * ease);
-        currentBank = THREE.MathUtils.clamp(turnRate * 0.16, -0.09, 0.09) * arc;
-        if (currentBank !== 0) {
-          camera.rotateZ(currentBank);
-        }
-
-        // Continuously update spherical coordinates for seamless handover on pointer grab
-        target.copy(_vLook);
-        _v1.subVectors(_vCam, _vLook);
-        distance = _v1.length();
-        elevation = Math.asin(THREE.MathUtils.clamp(_v1.y / distance, -1, 1));
-        azimuth = Math.atan2(_v1.x, _v1.z);
-
-        // Animate holographic altimeter laser and ground landing beacon
-        if (beaconGroup.visible) {
-          const pulse = (time * 0.008) % Math.PI;
-          beaconRing.scale.setScalar(0.85 + Math.sin(pulse) * 0.25);
-          beaconGroup.rotation.y = time * 0.0025;
-          beaconMaterial.opacity = (1 - ease * 0.5) * 0.85;
-
-          const wavePhase = (time * 0.0025) % 1;
-          beaconWave.scale.setScalar(1 + wavePhase * 0.9);
-          beaconWaveMaterial.opacity = (1 - wavePhase) * 0.55 * (1 - ease * 0.5);
-
-          // Position altimeter laser beam directly under drone camera
-          altimeterBeam.position.set(_vCam.x, _vCam.y * 0.5, _vCam.z);
-          altimeterBeam.scale.set(1, Math.max(0.1, _vCam.y), 1);
-          beamMaterial.opacity = (1 - ease * 0.3) * 0.42;
-        }
-
-        // Dynamic atmospheric depth fog density adapted to drone altitude
-        scene.fog.density = THREE.MathUtils.lerp(0.010, 0.018, THREE.MathUtils.clamp((distance - 4.8) / 18, 0, 1));
-
-        if (rawProgress >= 1) {
-          target.copy(flight.toTarget);
-          azimuth = flight.toAzimuth;
-          elevation = flight.toElevation;
-          distance = flight.toDistance;
-          flight = null;
-          currentBank = 0;
-          beaconGroup.visible = false;
-          altimeterBeam.visible = false;
-        }
-        notifyDroneState();
-      } else if (playing) {
-        azimuth += .0025;
-        currentBank = 0;
-        notifyDroneState();
-      } else {
-        currentBank = 0;
-
-        // Inertial coasting after releasing pointer drag
-        if (!isPointerDown && Math.abs(velAzimuth) > 0.00015) {
-          azimuth += velAzimuth;
-          velAzimuth *= 0.88; // smooth exponential decay
-          notifyDroneState();
-        }
-
-        // Subtle organic drone hover micro-dynamics & wind turbulence when idle
-        if (!reducedMotion && !isPointerDown) {
-          const t = time * 0.001;
-          const hoverY = Math.sin(t * 1.8) * 0.012 + Math.sin(t * 3.4) * 0.004;
-          const hoverX = Math.cos(t * 1.1) * 0.005;
-          const hoverZ = Math.sin(t * 0.9) * 0.005;
-          const hoverRoll = Math.sin(t * 1.4) * 0.003;
-          const hoverPitch = Math.cos(t * 1.2) * 0.002;
-          camera.position.x += hoverX;
-          camera.position.y += hoverY;
-          camera.position.z += hoverZ;
-          camera.rotateZ(hoverRoll);
-          camera.rotateX(hoverPitch);
-        }
-      }
-
-      // Biomechanically accurate bipedal pedestrian walking animation along smooth spline curves
-      if (!reducedMotion) {
-        for (const walker of walkers) {
-          const { group, pelvis, torso, legs, arms, spline, totalLen, speed, phase } = walker;
-          const dist = (time * 0.001 * speed + phase * totalLen) % totalLen;
-          const u = dist / totalLen;
-
-          // Continuous curve position and tangent vector
-          spline.getPointAt(u, _v1);
-          spline.getTangentAt(u, _v2);
-          group.position.set(_v1.x, 0, _v1.z);
-
-          // Smooth corner turning with continuous angular interpolation and inward body lean
-          const targetYaw = Math.atan2(_v2.x, _v2.z);
-          let dYaw = (targetYaw - walker.currentYaw) % (Math.PI * 2);
-          if (dYaw > Math.PI) dYaw -= Math.PI * 2;
-          if (dYaw < -Math.PI) dYaw += Math.PI * 2;
-          walker.currentYaw += dYaw * 0.14;
-          group.rotation.y = walker.currentYaw;
-          group.rotation.z = -THREE.MathUtils.clamp(dYaw * 0.35, -0.06, 0.06);
-
-          // Stride cadence and gait phase calculation
-          const strideSpeed = speed * 3.4;
-          const cycle = (time * 0.001 * strideSpeed * Math.PI * 2 + phase * 20) % (Math.PI * 2);
-
-          for (let i = 0; i < 2; i++) {
-            // Normalized gait phase p in [0, 1) for each leg
-            let phi = (cycle + (i === 0 ? 0 : Math.PI)) % (Math.PI * 2);
-            if (phi < 0) phi += Math.PI * 2;
-            const p = phi / (Math.PI * 2);
-
-            let hipPitch = 0;
-            let kneeFlex = 0;
-            let anklePitch = 0;
-
-            if (p < 0.60) {
-              // 1. Stance phase: foot on ground supporting weight, hip moving forward to backward
-              const s = p / 0.60;
-              hipPitch = Math.cos(s * Math.PI) * 0.36 + 0.04;
-              // Knee has slight shock-absorption flex at foot-flat, stays mostly straight
-              kneeFlex = 0.06 + Math.sin(s * Math.PI) * 0.12;
-              // Ankle: heel strike (+), flat (0), toe push-off (-)
-              anklePitch = (1 - s * 2) * 0.18;
-            } else {
-              // 2. Forward swing phase: hip swings forward, knee BENDS SHARPLY to lift foot cleanly over ground!
-              const w = (p - 0.60) / 0.40;
-              hipPitch = -Math.cos(w * Math.PI) * 0.36 + 0.04;
-              // Knee flexes upward during mid-swing, then extends straight for heel strike
-              kneeFlex = 0.10 + Math.sin(w * Math.PI) * 0.95;
-              // Ankle flexes toes upward (dorsiflexion) to ensure toe clearance
-              anklePitch = Math.sin(w * Math.PI) * 0.22;
-            }
-
-            legs[i].hip.rotation.x = hipPitch;
-            legs[i].knee.rotation.x = kneeFlex;
-            legs[i].ankle.rotation.x = anklePitch;
-
-            // Contra-lateral arm swing with natural resting elbow bend
-            const armPitch = -hipPitch * 0.82;
-            arms[i].shoulder.rotation.x = armPitch;
-            arms[i].shoulder.rotation.z = (i === 0 ? -1 : 1) * 0.06;
-            // Elbow bends naturally more on forward arm swing
-            arms[i].elbow.rotation.x = 0.22 + Math.max(0, -armPitch) * 0.45;
-          }
-
-          // Pelvis vertical bounce: 2 smooth pulses per full gait stride
-          pelvis.position.y = 0.225 - Math.abs(Math.sin(cycle)) * 0.015;
-
-          // Pelvic yaw rotation (hips swing forward with advancing leg)
-          pelvis.rotation.y = Math.sin(cycle) * 0.07;
-
-          // Pelvic roll list (weight shifts to stance side)
-          pelvis.rotation.z = Math.sin(cycle) * 0.025;
-
-          // Torso / shoulder counter-yaw rotation for balance
-          torso.rotation.y = -Math.sin(cycle) * 0.08;
-        }
-
-        // Dynamic Traffic Signal Light System (14.0s cycle at intersection -3.6, 2.8)
-        const cycleSec = (time * 0.001) % 14.0;
-        const ewGreen = cycleSec < 6.0;
-        const ewAmber = cycleSec >= 6.0 && cycleSec < 7.5;
-        const ewRed = cycleSec >= 7.5;
-        const nsGreen = cycleSec >= 7.5 && cycleSec < 12.5;
-        const nsAmber = cycleSec >= 12.5;
-        const nsRed = cycleSec < 7.5;
-
-        for (let i = 0; i < ewSignalHeads.length; i++) {
-          const h = ewSignalHeads[i];
-          h.red.material = ewRed ? trafficRedOn : trafficRedOff;
-          h.amber.material = ewAmber ? trafficAmberOn : trafficAmberOff;
-          h.green.material = ewGreen ? trafficGreenOn : trafficGreenOff;
-        }
-        for (let i = 0; i < nsSignalHeads.length; i++) {
-          const h = nsSignalHeads[i];
-          h.red.material = nsRed ? trafficRedOn : trafficRedOff;
-          h.amber.material = nsAmber ? trafficAmberOn : trafficAmberOff;
-          h.green.material = nsGreen ? trafficGreenOn : trafficGreenOff;
-        }
-
-        // Central Plaza Fountain animated water ripples & bubbling water jet
-        const fTime = time * 0.001;
-        const rip1 = (fTime * 0.55) % 1;
-        const rip2 = (fTime * 0.55 + 0.5) % 1;
-        fountainRipple1.scale.setScalar(0.4 + rip1 * 1.5);
-        fountainRipple2.scale.setScalar(0.4 + rip2 * 1.5);
-        fountainJet.position.y = 0.74 + Math.sin(fTime * 7.0) * 0.025;
-        fountainJet.scale.set(1 + Math.sin(fTime * 8) * 0.15, 1 + Math.cos(fTime * 6) * 0.2, 1 + Math.sin(fTime * 8) * 0.15);
-
-        // Dynamic Moving Vehicles simulation with traffic lights, safe following distance, and rolling wheels
-        const deltaSec = last > 0 ? Math.min(0.08, (time - last) * 0.001) : 0.033;
-        for (let i = 0; i < vehicles.length; i++) {
-          const v = vehicles[i];
-          const isEW = v.trafficPhaseKey === 'ew';
-          const lightRedOrAmber = isEW ? (ewRed || ewAmber) : (nsRed || nsAmber);
-
-          let targetSpeed = v.cruiseSpeed;
-
-          // 1. Decelerate at intersection stop line if signal is Red or Amber
-          let distToStop = 0;
-          if (v.dir === 1) {
-            distToStop = v.stopPos - v.pos;
-          } else {
-            distToStop = v.pos - v.stopPos;
-          }
-
-          if (lightRedOrAmber && distToStop > 0 && distToStop < 2.5) {
-            targetSpeed = Math.min(v.cruiseSpeed, Math.max(0, (distToStop - 0.28) * 1.6));
-          }
-
-          // 2. Safe following distance behind leading vehicle
-          if (v.trailTarget) {
-            const lead = v.trailTarget;
-            let leadDist = 0;
-            if (v.dir === 1) {
-              leadDist = lead.pos >= v.pos ? (lead.pos - v.pos) : (v.max - v.pos + lead.pos - v.min);
-            } else {
-              leadDist = lead.pos <= v.pos ? (v.pos - lead.pos) : (v.pos - v.min + v.max - lead.pos);
-            }
-
-            if (leadDist > 0 && leadDist < 2.4) {
-              const followCap = Math.max(0, Math.min(lead.currentSpeed, (leadDist - 1.35) * 1.8));
-              targetSpeed = Math.min(targetSpeed, followCap);
-            }
-          }
-
-          // Smooth acceleration and realistic deceleration rate
-          const isBraking = targetSpeed < v.currentSpeed - 0.05;
-          const accelRate = isBraking ? 4.8 : 2.4;
-          v.currentSpeed += (targetSpeed - v.currentSpeed) * Math.min(1, deltaSec * accelRate);
-          if (v.currentSpeed < 0.01 && targetSpeed === 0) v.currentSpeed = 0;
-
-          // Ruby glowing taillights brighten when braking or stopped
-          const activeTailMat = (isBraking || v.currentSpeed < 0.15) ? carBrakeMat : carTailNormal;
-          for (let j = 0; j < v.taillights.length; j++) {
-            v.taillights[j].material = activeTailMat;
-          }
-
-          // Advance vehicle position along lane axis
-          v.pos += v.currentSpeed * v.dir * deltaSec;
-
-          // Seamless boundary wrapping across edge of neighborhood
-          if (v.dir === 1 && v.pos > v.max) {
-            v.pos = v.min;
-          } else if (v.dir === -1 && v.pos < v.min) {
-            v.pos = v.max;
-          }
-
-          // Tunnel disappearance: vehicle enters deep shadow interior chamber and disappears
-          if (v.axis === 'x') {
-            v.group.visible = Math.abs(v.pos) < 6.1;
-          } else {
-            v.group.visible = Math.abs(v.pos) < 4.4;
-          }
-
-          // Synchronize Three.js transforms and physical wheel rotation
-          if (v.axis === 'x') {
-            v.group.position.x = v.pos;
-            const rollDelta = -(v.currentSpeed * v.dir * deltaSec) / 0.068;
-            for (let j = 0; j < v.wheels.length; j++) {
-              v.wheels[j].rotation.z += rollDelta;
-            }
-          } else {
-            v.group.position.z = v.pos;
-            const rollDelta = (v.currentSpeed * v.dir * deltaSec) / 0.068;
-            for (let j = 0; j < v.wheels.length; j++) {
-              v.wheels[j].rotation.x += rollDelta;
-            }
-          }
-        }
-      }
-
-      draw();
-      last = time;
+    if (disposed || !visible || host.hidden || document.hidden) {
+      frame = 0;
+      return;
     }
-    frame = (introStart >= 0 && !reducedMotion) || playing || flight || (!reducedMotion && (walkers.length > 0 || vehicles.length > 0)) || Math.abs(velAzimuth) > 0.00015 ? requestAnimationFrame(animate) : 0;
+
+    if (!lastWallTime) {
+      lastWallTime = time;
+    }
+
+    const deltaWall = time - lastWallTime;
+    if (deltaWall < 32) {
+      frame = requestAnimationFrame(animate);
+      return;
+    }
+
+    lastWallTime = time;
+    const clampedDelta = Math.min(64, Math.max(0, deltaWall));
+    simTime += clampedDelta;
+    const deltaSec = clampedDelta * 0.001;
+
+    if (introRunning && !reducedMotion) {
+      introElapsed += clampedDelta;
+      const progress = Math.min(1, introElapsed / 1900);
+      const wave = Math.max(0, (introElapsed - 350) / 1250);
+      const phase = wave % 1;
+      sweep.visible = wave > 0 && wave < 2;
+      sweep.scale.setScalar(0.8 + phase * 6);
+      sweepMaterial.opacity = 0.95 * Math.sin(Math.PI * phase) ** 0.6;
+      const remaining = (1 - progress) ** 3;
+      azimuth = rest.azimuth + approach.azimuth * remaining;
+      elevation = rest.elevation + approach.elevation * remaining;
+      distance = rest.distance + approach.distance * remaining;
+      currentBank = 0;
+      if (progress >= 1 && wave >= 2) stopIntro();
+    } else if (flight) {
+      flight.elapsed += clampedDelta;
+      const rawProgress = flight.duration > 0 ? Math.min(1, flight.elapsed / flight.duration) : 1;
+      // Smooth cubic easeInOut for readable and gentle trajectory
+      const ease = rawProgress < 0.5 ? 4 * Math.pow(rawProgress, 3) : 1 - Math.pow(-2 * rawProgress + 2, 3) / 2;
+
+      flight.cameraSpline.getPointAt(ease, _vCam);
+      flight.targetSpline.getPointAt(ease, _vLook);
+      camera.position.copy(_vCam);
+      camera.lookAt(_vLook);
+
+      // Subtle aerodynamic banking tilt into turns based on spline turn rate
+      const turnRate = flight.toAzimuth - flight.fromAzimuth;
+      const arc = Math.sin(Math.PI * ease);
+      currentBank = THREE.MathUtils.clamp(turnRate * 0.05, -0.04, 0.04) * arc;
+      if (currentBank !== 0) {
+        camera.rotateZ(currentBank);
+      }
+
+      // Continuously update spherical coordinates for seamless handover on pointer grab
+      target.copy(_vLook);
+      _v1.subVectors(_vCam, _vLook);
+      distance = _v1.length();
+      elevation = Math.asin(THREE.MathUtils.clamp(_v1.y / distance, -1, 1));
+      azimuth = Math.atan2(_v1.x, _v1.z);
+
+      // Animate holographic altimeter laser and ground landing beacon
+      if (beaconGroup.visible) {
+        const pulse = (simTime * 0.008) % Math.PI;
+        beaconRing.scale.setScalar(0.85 + Math.sin(pulse) * 0.25);
+        beaconGroup.rotation.y = simTime * 0.0025;
+        beaconMaterial.opacity = (1 - ease * 0.5) * 0.85;
+
+        const wavePhase = (simTime * 0.0025) % 1;
+        beaconWave.scale.setScalar(1 + wavePhase * 0.9);
+        beaconWaveMaterial.opacity = (1 - wavePhase) * 0.55 * (1 - ease * 0.5);
+
+        // Position altimeter laser beam directly under drone camera
+        altimeterBeam.position.set(_vCam.x, _vCam.y * 0.5, _vCam.z);
+        altimeterBeam.scale.set(1, Math.max(0.1, _vCam.y), 1);
+        beamMaterial.opacity = (1 - ease * 0.3) * 0.42;
+      }
+
+      // Dynamic atmospheric depth fog density adapted to drone altitude
+      scene.fog.density = THREE.MathUtils.lerp(0.010, 0.018, THREE.MathUtils.clamp((distance - 4.8) / 18, 0, 1));
+
+      if (rawProgress >= 1) {
+        target.copy(flight.toTarget);
+        azimuth = flight.toAzimuth;
+        elevation = flight.toElevation;
+        distance = flight.toDistance;
+        flight = null;
+        currentBank = 0;
+        beaconGroup.visible = false;
+        altimeterBeam.visible = false;
+        notifyDroneState(true);
+      } else {
+        notifyDroneState();
+      }
+    } else if (playing) {
+      azimuth += 0.0025;
+      currentBank = 0;
+      notifyDroneState();
+    } else {
+      currentBank = 0;
+
+      // Inertial coasting after releasing pointer drag (disabled if reducedMotion)
+      if (!isPointerDown && !reducedMotion && Math.abs(velAzimuth) > 0.00015) {
+        azimuth += velAzimuth;
+        velAzimuth *= 0.88; // smooth exponential decay
+        notifyDroneState();
+      } else if (reducedMotion) {
+        velAzimuth = 0;
+      }
+    }
+
+    // Biomechanically accurate bipedal pedestrian walking animation along smooth spline curves
+    if (!reducedMotion) {
+      for (const walker of walkers) {
+        const { group, pelvis, torso, legs, arms, spline, totalLen, speed, phase } = walker;
+        const dist = (simTime * 0.001 * speed + phase * totalLen) % totalLen;
+        const u = dist / totalLen;
+
+        // Continuous curve position and tangent vector
+        spline.getPointAt(u, _v1);
+        spline.getTangentAt(u, _v2);
+        group.position.set(_v1.x, 0, _v1.z);
+
+        // Smooth corner turning with continuous angular interpolation and inward body lean
+        const targetYaw = Math.atan2(_v2.x, _v2.z);
+        let dYaw = (targetYaw - walker.currentYaw) % (Math.PI * 2);
+        if (dYaw > Math.PI) dYaw -= Math.PI * 2;
+        if (dYaw < -Math.PI) dYaw += Math.PI * 2;
+        walker.currentYaw += dYaw * 0.14;
+        group.rotation.y = walker.currentYaw;
+        group.rotation.z = -THREE.MathUtils.clamp(dYaw * 0.35, -0.06, 0.06);
+
+        // Stride cadence and gait phase calculation
+        const strideSpeed = speed * 3.4;
+        const cycle = (simTime * 0.001 * strideSpeed * Math.PI * 2 + phase * 20) % (Math.PI * 2);
+
+        for (let i = 0; i < 2; i++) {
+          let phi = (cycle + (i === 0 ? 0 : Math.PI)) % (Math.PI * 2);
+          if (phi < 0) phi += Math.PI * 2;
+          const p = phi / (Math.PI * 2);
+
+          let hipPitch = 0;
+          let kneeFlex = 0;
+          let anklePitch = 0;
+
+          if (p < 0.60) {
+            const s = p / 0.60;
+            hipPitch = Math.cos(s * Math.PI) * 0.36 + 0.04;
+            kneeFlex = 0.06 + Math.sin(s * Math.PI) * 0.12;
+            anklePitch = (1 - s * 2) * 0.18;
+          } else {
+            const w = (p - 0.60) / 0.40;
+            hipPitch = -Math.cos(w * Math.PI) * 0.36 + 0.04;
+            kneeFlex = 0.10 + Math.sin(w * Math.PI) * 0.95;
+            anklePitch = Math.sin(w * Math.PI) * 0.22;
+          }
+
+          legs[i].hip.rotation.x = hipPitch;
+          legs[i].knee.rotation.x = kneeFlex;
+          legs[i].ankle.rotation.x = anklePitch;
+
+          const armPitch = -hipPitch * 0.82;
+          arms[i].shoulder.rotation.x = armPitch;
+          arms[i].shoulder.rotation.z = (i === 0 ? -1 : 1) * 0.06;
+          arms[i].elbow.rotation.x = 0.22 + Math.max(0, -armPitch) * 0.45;
+        }
+
+        pelvis.position.y = 0.225 - Math.abs(Math.sin(cycle)) * 0.015;
+        pelvis.rotation.y = Math.sin(cycle) * 0.07;
+        pelvis.rotation.z = Math.sin(cycle) * 0.025;
+        torso.rotation.y = -Math.sin(cycle) * 0.08;
+      }
+
+      // Dynamic Traffic Signal Light System (14.0s cycle at intersection -3.6, 2.8)
+      const cycleSec = (simTime * 0.001) % 14.0;
+      const ewGreen = cycleSec < 6.0;
+      const ewAmber = cycleSec >= 6.0 && cycleSec < 7.5;
+      const ewRed = cycleSec >= 7.5;
+      const nsGreen = cycleSec >= 7.5 && cycleSec < 12.5;
+      const nsAmber = cycleSec >= 12.5;
+      const nsRed = cycleSec < 7.5;
+
+      for (let i = 0; i < ewSignalHeads.length; i++) {
+        const h = ewSignalHeads[i];
+        h.red.material = ewRed ? trafficRedOn : trafficRedOff;
+        h.amber.material = ewAmber ? trafficAmberOn : trafficAmberOff;
+        h.green.material = ewGreen ? trafficGreenOn : trafficGreenOff;
+      }
+      for (let i = 0; i < nsSignalHeads.length; i++) {
+        const h = nsSignalHeads[i];
+        h.red.material = nsRed ? trafficRedOn : trafficRedOff;
+        h.amber.material = nsAmber ? trafficAmberOn : trafficAmberOff;
+        h.green.material = nsGreen ? trafficGreenOn : trafficGreenOff;
+      }
+
+      // Central Plaza Fountain animated water ripples & bubbling water jet
+      const fTime = simTime * 0.001;
+      const rip1 = (fTime * 0.55) % 1;
+      const rip2 = (fTime * 0.55 + 0.5) % 1;
+      fountainRipple1.scale.setScalar(0.4 + rip1 * 1.5);
+      fountainRipple2.scale.setScalar(0.4 + rip2 * 1.5);
+      fountainJet.position.y = 0.74 + Math.sin(fTime * 7.0) * 0.025;
+      fountainJet.scale.set(1 + Math.sin(fTime * 8) * 0.15, 1 + Math.cos(fTime * 6) * 0.2, 1 + Math.sin(fTime * 8) * 0.15);
+
+      // Dynamic Moving Vehicles simulation with traffic lights, safe following distance, and rolling wheels
+      for (let i = 0; i < vehicles.length; i++) {
+        const v = vehicles[i];
+        const isEW = v.trafficPhaseKey === 'ew';
+        const lightRedOrAmber = isEW ? (ewRed || ewAmber) : (nsRed || nsAmber);
+
+        let targetSpeed = v.cruiseSpeed;
+
+        let distToStop = 0;
+        if (v.dir === 1) {
+          distToStop = v.stopPos - v.pos;
+        } else {
+          distToStop = v.pos - v.stopPos;
+        }
+
+        if (lightRedOrAmber && distToStop > 0 && distToStop < 2.5) {
+          targetSpeed = Math.min(v.cruiseSpeed, Math.max(0, (distToStop - 0.28) * 1.6));
+        }
+
+        if (v.trailTarget) {
+          const lead = v.trailTarget;
+          let leadDist = 0;
+          if (v.dir === 1) {
+            leadDist = lead.pos >= v.pos ? (lead.pos - v.pos) : (v.max - v.pos + lead.pos - v.min);
+          } else {
+            leadDist = lead.pos <= v.pos ? (v.pos - lead.pos) : (v.pos - v.min + v.max - lead.pos);
+          }
+
+          if (leadDist > 0 && leadDist < 2.4) {
+            const followCap = Math.max(0, Math.min(lead.currentSpeed, (leadDist - 1.35) * 1.8));
+            targetSpeed = Math.min(targetSpeed, followCap);
+          }
+        }
+
+        const isBraking = targetSpeed < v.currentSpeed - 0.05;
+        const accelRate = isBraking ? 4.8 : 2.4;
+        v.currentSpeed += (targetSpeed - v.currentSpeed) * Math.min(1, deltaSec * accelRate);
+        if (v.currentSpeed < 0.01 && targetSpeed === 0) v.currentSpeed = 0;
+
+        const activeTailMat = (isBraking || v.currentSpeed < 0.15) ? carBrakeMat : carTailNormal;
+        for (let j = 0; j < v.taillights.length; j++) {
+          v.taillights[j].material = activeTailMat;
+        }
+
+        v.pos += v.currentSpeed * v.dir * deltaSec;
+
+        if (v.dir === 1 && v.pos > v.max) {
+          v.pos = v.min;
+        } else if (v.dir === -1 && v.pos < v.min) {
+          v.pos = v.max;
+        }
+
+        if (v.axis === 'x') {
+          v.group.visible = Math.abs(v.pos) < 6.1;
+        } else {
+          v.group.visible = Math.abs(v.pos) < 4.4;
+        }
+
+        if (v.axis === 'x') {
+          v.group.position.x = v.pos;
+          const rollDelta = -(v.currentSpeed * v.dir * deltaSec) / 0.068;
+          for (let j = 0; j < v.wheels.length; j++) {
+            v.wheels[j].rotation.z += rollDelta;
+          }
+        } else {
+          v.group.position.z = v.pos;
+          const rollDelta = (v.currentSpeed * v.dir * deltaSec) / 0.068;
+          for (let j = 0; j < v.wheels.length; j++) {
+            v.wheels[j].rotation.x += rollDelta;
+          }
+        }
+      }
+    }
+
+    draw();
+
+    const needsLoop = (introRunning && !reducedMotion) ||
+      playing ||
+      Boolean(flight) ||
+      (!reducedMotion && (walkers.length > 0 || vehicles.length > 0)) ||
+      (!reducedMotion && Math.abs(velAzimuth) > 0.00015);
+
+    frame = needsLoop ? requestAnimationFrame(animate) : 0;
   }
 
-  function schedule(){if(!frame&&!disposed)frame=requestAnimationFrame(animate);}
-  const observer=new ResizeObserver(resize);observer.observe(host);
+  function schedule() {
+    if (!frame && !disposed && visible && !document.hidden) {
+      frame = requestAnimationFrame(animate);
+    }
+  }
 
-  let point=null,oldAngle=azimuth,pointerStart=null,pointerId=null;
-  host.onpointerdown=e=>{
-    if(e.target.closest('button'))return;
+  const observer = new ResizeObserver(resize);
+  observer.observe(host);
+
+  host.onpointerdown = e => {
+    if (e.button !== 0 || (e.isPrimary !== undefined && !e.isPrimary)) return;
+    if (e.target.closest('button')) return;
+    if (activePointerId !== null) return;
+
+    activePointerId = e.pointerId;
     isPointerDown = true;
-    point=e.clientX;
-    oldAngle=azimuth;
-    pointerStart={x:e.clientX,y:e.clientY};
-    pointerId=e.pointerId;
-    velAzimuth = 0;
+    isPointerDragging = false;
+    isPointerCancelled = false;
+    pointerStartX = e.clientX;
+    pointerStartY = e.clientY;
     lastPointerX = e.clientX;
     lastPointerTime = performance.now();
-    host.setPointerCapture(e.pointerId);
+    oldAngle = azimuth;
+    velAzimuth = 0;
   };
 
-  let dragFrame = 0;
   host.onpointermove = event => {
-    if (point === null) return;
-    if(pointerStart && Math.hypot(event.clientX-pointerStart.x, event.clientY-pointerStart.y) > 7){
-      pointerStart=null;
-      flight=null;
-      currentBank=0;
-      beaconGroup.visible=false;
-      setPlaying(false);
-      stopIntro();
+    if (event.pointerId !== activePointerId || isPointerCancelled || !isPointerDown) return;
+
+    const dx = Math.abs(event.clientX - pointerStartX);
+    const dy = Math.abs(event.clientY - pointerStartY);
+
+    if (!isPointerDragging) {
+      if (dy > 7 && dy > dx) {
+        // Vertical page scroll detected: release pointer tracking so browser scrolls naturally
+        isPointerCancelled = true;
+        isPointerDown = false;
+        activePointerId = null;
+        velAzimuth = 0;
+        return;
+      }
+      if (dx > 7 && dx >= dy) {
+        isPointerDragging = true;
+        flight = null;
+        currentBank = 0;
+        beaconGroup.visible = false;
+        altimeterBeam.visible = false;
+        setPlaying(false);
+        stopIntro();
+        try {
+          host.setPointerCapture(event.pointerId);
+        } catch {}
+      }
     }
-    if(!pointerStart){
+
+    if (isPointerDragging) {
       const now = performance.now();
       const dt = Math.max(1, now - lastPointerTime);
-      const dx = event.clientX - lastPointerX;
-      velAzimuth = -(dx / dt) * 0.055;
+      const moveDx = event.clientX - lastPointerX;
+      if (!reducedMotion) {
+        velAzimuth = -(moveDx / dt) * 0.055;
+      } else {
+        velAzimuth = 0;
+      }
       lastPointerX = event.clientX;
       lastPointerTime = now;
 
-      azimuth = oldAngle - (event.clientX - point) * .008;
+      azimuth = oldAngle - (event.clientX - pointerStartX) * 0.008;
       notifyDroneState();
       if (!dragFrame) {
         dragFrame = requestAnimationFrame(() => {
@@ -1640,35 +1740,75 @@ export function createNeighborhoodScene(host, project, options){
   };
 
   host.onpointerup = event => {
-    isPointerDown = false;
-    if(pointerStart && event.pointerId===pointerId) flyToPointer(event);
-    point=null;
-    pointerStart=null;
-    pointerId=null;
-    if (Math.abs(velAzimuth) > 0.0002) schedule();
-  };
-  host.onpointercancel = () => { isPointerDown=false;point=null;pointerStart=null;pointerId=null; };
+    if (event.pointerId !== activePointerId) return;
+    const wasDragging = isPointerDragging;
+    const wasCancelled = isPointerCancelled;
 
-  host.onkeydown=e=>{
-    if(e.target.closest('button'))return;
-    if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home','Enter',' '].includes(e.key))return;
+    try {
+      if (host.hasPointerCapture(event.pointerId)) {
+        host.releasePointerCapture(event.pointerId);
+      }
+    } catch {}
+
+    isPointerDown = false;
+    isPointerDragging = false;
+    isPointerCancelled = false;
+    activePointerId = null;
+
+    if (!wasDragging && !wasCancelled && event.button === 0) {
+      flyToPointer(event);
+    } else if (wasDragging && !reducedMotion && Math.abs(velAzimuth) > 0.0002) {
+      schedule();
+    } else {
+      velAzimuth = 0;
+    }
+  };
+
+  host.onpointercancel = event => {
+    if (event.pointerId !== activePointerId) return;
+    try {
+      if (host.hasPointerCapture(event.pointerId)) {
+        host.releasePointerCapture(event.pointerId);
+      }
+    } catch {}
+    isPointerDown = false;
+    isPointerDragging = false;
+    isPointerCancelled = true;
+    activePointerId = null;
+    velAzimuth = 0;
+  };
+
+  host.onlostpointercapture = event => {
+    if (event.pointerId === activePointerId) {
+      isPointerDown = false;
+      isPointerDragging = false;
+      isPointerCancelled = true;
+      activePointerId = null;
+      velAzimuth = 0;
+    }
+  };
+
+  host.onkeydown = e => {
+    if (e.target.closest('button')) return;
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', 'Home', 'Enter', ' '].includes(e.key)) return;
     e.preventDefault();
+    velAzimuth = 0;
     setPlaying(false);
-    flight=null;
-    currentBank=0;
+    flight = null;
+    currentBank = 0;
     stopIntro();
-    if(e.key==='Home'){
+    if (e.key === 'Home') {
       flyToOverview();
-    } else if(['+','=','ArrowUp'].includes(e.key)){
-      distance=Math.max(3.8,Math.min(29,distance - 1.2));
+    } else if (['+', '=', 'ArrowUp'].includes(e.key)) {
+      distance = Math.max(3.8, Math.min(29, distance - 1.2));
       notifyDroneState();
       draw();
-    } else if(['-','ArrowDown'].includes(e.key)){
-      distance=Math.max(3.8,Math.min(29,distance + 1.2));
+    } else if (['-', 'ArrowDown'].includes(e.key)) {
+      distance = Math.max(3.8, Math.min(29, distance + 1.2));
       notifyDroneState();
       draw();
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      azimuth += e.key==='ArrowLeft'?-.18:.18;
+      azimuth += e.key === 'ArrowLeft' ? -0.18 : 0.18;
       notifyDroneState();
       draw();
     } else if (e.key === 'Enter' || e.key === ' ') {
@@ -1679,49 +1819,101 @@ export function createNeighborhoodScene(host, project, options){
   function updateVisibility(inView) {
     if (inView === visible) return;
     visible = inView;
-    if (!visible || document.hidden) return;
-    if (!reducedMotion) introStart = performance.now();
+    if (!visible || document.hidden) {
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      if (dragFrame) {
+        cancelAnimationFrame(dragFrame);
+        dragFrame = 0;
+      }
+      lastWallTime = 0;
+      return;
+    }
+    lastWallTime = 0;
+    if (!introPlayed && !reducedMotion && !introRunning) {
+      introRunning = true;
+      introElapsed = 0;
+    }
     draw();
     schedule();
   }
 
   const intersection = new IntersectionObserver(([entry]) => {
-    updateVisibility(entry.isIntersecting && entry.intersectionRatio >= .2);
-  }, { threshold: [0, .2] });
+    updateVisibility(entry.isIntersecting && entry.intersectionRatio >= 0.2);
+  }, { threshold: [0, 0.2] });
   intersection.observe(host);
 
   const onVisibility = () => {
-    if (document.hidden) setPlaying(false);
-    else if (visible) { draw(); schedule(); }
+    if (document.hidden) {
+      setPlaying(false);
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      if (dragFrame) {
+        cancelAnimationFrame(dragFrame);
+        dragFrame = 0;
+      }
+      lastWallTime = 0;
+    } else if (visible) {
+      lastWallTime = 0;
+      draw();
+      schedule();
+    }
   };
-  document.addEventListener('visibilitychange',onVisibility);
+  document.addEventListener('visibilitychange', onVisibility);
 
-  const dispose=()=>{
-    disposed=true;
-    document.removeEventListener('visibilitychange',onVisibility);
-    host.onpointerdown=host.onpointermove=host.onpointerup=host.onpointercancel=host.onkeydown=null;
-    cancelAnimationFrame(frame);
-    cancelAnimationFrame(dragFrame);
+  const dispose = () => {
+    disposed = true;
+    document.removeEventListener('visibilitychange', onVisibility);
+    host.onpointerdown = host.onpointermove = host.onpointerup = host.onpointercancel = host.onlostpointercapture = host.onkeydown = null;
+    if (frame) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+    if (dragFrame) {
+      cancelAnimationFrame(dragFrame);
+      dragFrame = 0;
+    }
     observer.disconnect();
     intersection.disconnect();
 
-    const geometries=new Set();
-    scene.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);});
-    geometries.forEach(geometry=>geometry.dispose());
+    const geometries = new Set();
+    scene.traverse(obj => {
+      if (obj.geometry) geometries.add(obj.geometry);
+    });
+    geometries.forEach(geometry => geometry.dispose());
 
-    const materials=[
-      stone,darkStone,woodMat,glass,goldFrame,pavement,road,crosswalkMat,
-      leafSpring,leafEmerald,leafGolden,flowerCoral,flowerPurple,flowerGold,
-      parkMat,parasolYellow,parasolBlue,carWhite,carBlue,carRed,carDark,
-      carLightMat,carTailNormal,carBrakeMat,carYellow,carSilver,wheelMat,rimMat,
-      trafficRedOn,trafficRedOff,trafficAmberOn,trafficAmberOff,trafficGreenOn,trafficGreenOff,
-      waterMat,waterRippleMat,hydrantRed,binGreen,signBlue,
-      tunnelVoidMat,tunnelLightGreen,
-      lampPostMat,lampLightMat,groundMat,
-      sweepMaterial,beaconMaterial,beaconWaveMaterial,beamMaterial,shoeMat,
-      ...walkerStyles.flatMap(s=>[s.jacket,s.pants,s.skin])
+    const materials = [
+      stone, darkStone, woodMat, glass, goldFrame, pavement, road, crosswalkMat,
+      leafSpring, leafEmerald, leafGolden, flowerCoral, flowerPurple, flowerGold,
+      parkMat, parasolYellow, parasolBlue, carWhite, carBlue, carRed, carDark,
+      carLightMat, carTailNormal, carBrakeMat, carYellow, carSilver, wheelMat, rimMat,
+      trafficRedOn, trafficRedOff, trafficAmberOn, trafficAmberOff, trafficGreenOn, trafficGreenOff,
+      waterMat, waterRippleMat, hydrantRed, binGreen, signBlue,
+      tunnelVoidMat, tunnelLightGreen,
+      lampPostMat, lampLightMat, groundMat,
+      sweepMaterial, beaconMaterial, beaconWaveMaterial, beamMaterial, shoeMat,
+      ...walkerStyles.flatMap(s => [s.jacket, s.pants, s.skin]),
     ];
-    materials.forEach(mat=>mat?.dispose());
+    const materialSet = new Set(materials);
+    scene.traverse(obj => {
+      if (obj.material) {
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach(m => materialSet.add(m));
+        } else {
+          materialSet.add(obj.material);
+        }
+      }
+    });
+    const textures = new Set();
+    materialSet.forEach(mat => {
+      if (mat?.map) textures.add(mat.map);
+      mat?.dispose?.();
+    });
+    textures.forEach(texture => texture.dispose());
 
     renderer.dispose();
     renderer.domElement.remove();
@@ -1729,62 +1921,111 @@ export function createNeighborhoodScene(host, project, options){
 
   resize();
   schedule();
-  if(options.dark){
-    groundMat.color.set("#555865");
-    ambient.intensity=1.8;
-    sun.intensity=2.2;
+  if (options.dark) {
+    groundMat.color.set('#42454e');
+    ambient.intensity = 0.8;
+    sun.intensity = 1.4;
+    scene.fog.color.set(0x111928);
+    renderer.shadowMap.needsUpdate = true;
     draw();
   }
-  notifyDroneState();
+  notifyDroneState(true);
 
   return {
     draw,
     dispose,
-    setReducedMotion(value){
-      reducedMotion=Boolean(value);
-      if(value){
-        if(introStart>=0){
-          azimuth=rest.azimuth;elevation=rest.elevation;distance=rest.distance;target.set(0,1.15,0);
+    setReducedMotion(value) {
+      reducedMotion = Boolean(value);
+      velAzimuth = 0;
+      if (value) {
+        if (introRunning) {
+          azimuth = rest.azimuth;
+          elevation = rest.elevation;
+          distance = rest.distance;
+          target.set(0, 1.15, 0);
           stopIntro();
         }
-        if(flight){
+        if (flight) {
           target.copy(flight.toTarget);
-          azimuth=flight.toAzimuth;
-          elevation=flight.toElevation;
-          distance=flight.toDistance;
-          flight=null;
-          currentBank=0;
+          azimuth = flight.toAzimuth;
+          elevation = flight.toElevation;
+          distance = flight.toDistance;
+          flight = null;
+          currentBank = 0;
         }
-        beaconGroup.visible=false;
-        altimeterBeam.visible=false;
+        beaconGroup.visible = false;
+        altimeterBeam.visible = false;
         setPlaying(false);
+        for (const walker of walkers) {
+          walker.legs.forEach(l => {
+            l.hip.rotation.x = 0;
+            l.knee.rotation.x = 0;
+            l.ankle.rotation.x = 0;
+          });
+          walker.arms.forEach(a => {
+            a.shoulder.rotation.x = 0;
+            a.shoulder.rotation.z = 0;
+            a.elbow.rotation.x = 0.2;
+          });
+          walker.pelvis.position.y = 0.225;
+          walker.pelvis.rotation.set(0, 0, 0);
+          walker.torso.rotation.set(0, 0, 0);
+        }
+        if (frame) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
       } else {
         schedule();
       }
+      notifyDroneState(true);
+      draw();
+    },
+    rotate(delta) {
+      velAzimuth = 0;
+      stopIntro();
+      flight = null;
+      currentBank = 0;
+      azimuth += delta;
       notifyDroneState();
       draw();
     },
-    rotate(delta){
-      stopIntro();flight=null;currentBank=0;azimuth+=delta;notifyDroneState();draw();
-    },
-    reset(){
+    reset() {
+      velAzimuth = 0;
       flyToOverview();
     },
-    zoom(delta){
-      stopIntro();distance=Math.max(3.8,Math.min(29,distance*(1+delta)));notifyDroneState();draw();
+    zoom(delta) {
+      stopIntro();
+      setPlaying(false);
+      flight = null;
+      currentBank = 0;
+      velAzimuth = 0;
+      beaconGroup.visible = false;
+      altimeterBeam.visible = false;
+      distance = Math.max(3.8, Math.min(29, distance * (1 + delta)));
+      notifyDroneState(true);
+      draw();
     },
-    play(value){
-      playing=value;if(value){stopIntro();schedule();}
+    play(value) {
+      velAzimuth = 0;
+      playing = value;
+      if (value) {
+        stopIntro();
+        schedule();
+      }
     },
-    theme(value){
-      groundMat.color.set(value?'#555865':'#dfddd6');
-      ambient.intensity=value?1.8:2.4;
-      sun.intensity=value?2.2:3.4;
+    theme(value) {
+      groundMat.color.set(value ? '#42454e' : '#d8d4c9');
+      ambient.intensity = value ? 0.8 : 1.1;
+      sun.intensity = value ? 1.4 : 2.4;
+      scene.fog.color.set(value ? 0x111928 : 0xe8e6e1);
+      renderer.shadowMap.needsUpdate = true;
       draw();
     },
     flyToOverview,
     flyToCoordinates,
-    flyToPlace(placeId){
+    flyToPlace(placeId) {
+      velAzimuth = 0;
       if (placeId === 'apartment') {
         flyToCoordinates(0, -0.5);
         return;
@@ -1794,7 +2035,8 @@ export function createNeighborhoodScene(host, project, options){
         flyToCoordinates(marker.x, marker.z);
       }
     },
-    startPatrol(){
+    startPatrol() {
+      velAzimuth = 0;
       const patrolPoints = [
         { x: 0, z: -0.5 },
         { x: -1.7, z: -3.8 },

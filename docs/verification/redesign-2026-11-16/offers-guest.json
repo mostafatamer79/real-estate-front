@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "guest requests active offers only",
+    "no private booking calls",
+    "owner controls hidden for guest",
+    "remote listing media loads using fixture image",
+    "missing image truthful fallback",
+    "unique filter control IDs",
+    "label focuses visible control",
+    "drawer Escape restores body scroll",
+    "no page exceptions"
+  ]
+}

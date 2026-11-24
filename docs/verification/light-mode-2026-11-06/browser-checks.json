@@ -1,0 +1,269 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "route": "/login",
+      "expectedDark": false,
+      "url": "/login",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/login",
+      "expectedDark": true,
+      "url": "/login",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/details",
+      "expectedDark": false,
+      "url": "/details",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/details",
+      "expectedDark": true,
+      "url": "/details",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/profile",
+      "expectedDark": false,
+      "url": "/profile",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/profile",
+      "expectedDark": true,
+      "url": "/profile",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "expectedDark": false,
+      "url": "/wallet",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/icons/الفواتير.png",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/wallet",
+      "expectedDark": true,
+      "url": "/wallet",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/icons/الفواتير.png",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/internal/marketing",
+      "expectedDark": false,
+      "url": "/internal/marketing",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2F3rod.png&w=64&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/internal/marketing",
+      "expectedDark": true,
+      "url": "/internal/marketing",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2F3rod.png&w=64&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/admin/settings",
+      "expectedDark": false,
+      "url": "/admin/settings",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "route": "/admin/settings",
+      "expectedDark": true,
+      "url": "/admin/settings",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/login",
+      "expectedDark": false,
+      "url": "/login",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/login",
+      "expectedDark": true,
+      "url": "/login",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=384&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/details",
+      "expectedDark": false,
+      "url": "/details",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/details",
+      "expectedDark": true,
+      "url": "/details",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/profile",
+      "expectedDark": false,
+      "url": "/profile",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/profile",
+      "expectedDark": true,
+      "url": "/profile",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=3840&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "expectedDark": false,
+      "url": "/wallet",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/icons/الفواتير.png",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/wallet",
+      "expectedDark": true,
+      "url": "/wallet",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/icons/الفواتير.png",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/internal/marketing",
+      "expectedDark": false,
+      "url": "/internal/marketing",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2F3rod.png&w=64&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/internal/marketing",
+      "expectedDark": true,
+      "url": "/internal/marketing",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2F3rod.png&w=64&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/admin/settings",
+      "expectedDark": false,
+      "url": "/admin/settings",
+      "dark": false,
+      "background": "rgb(246, 248, 245)",
+      "foreground": "rgb(32, 59, 50)",
+      "logo": "/_next/image?url=%2Ficons%2Fblack.png&w=96&q=75",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "route": "/admin/settings",
+      "expectedDark": true,
+      "url": "/admin/settings",
+      "dark": true,
+      "background": "rgb(2, 6, 23)",
+      "foreground": "rgb(226, 232, 240)",
+      "logo": "/_next/image?url=%2Ficons%2Fwhite.png&w=96&q=75",
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

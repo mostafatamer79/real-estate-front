@@ -1,0 +1,103 @@
+.network {
+  grid-area: network;
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--network-line);
+  border-radius: 1rem;
+  background: var(--network-surface);
+}
+.graph { position: relative; container-type: size; height: clamp(23rem, 34vw, 28rem); min-height: clamp(23rem, 34vw, 28rem); }
+.ripple {
+  position: absolute;
+  z-index: -1;
+  inset: 52% auto auto 50%;
+  width: 6rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--network-accent);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.center {
+  position: absolute;
+  z-index: 2;
+  inset: 52% auto auto 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  width: clamp(7rem, 11vw, 8.5rem);
+  aspect-ratio: 1;
+  padding: .75rem;
+  border: 1px solid var(--network-accent);
+  border-radius: 50%;
+  background: var(--network-paper);
+  color: var(--network-ink);
+  cursor: pointer;
+  transition: background-color 160ms, border-color 160ms;
+}
+.center svg { width: 2rem; height: 2rem; }
+.center span { font-size: .75rem; line-height: 1.5; text-align: center; }
+.center:hover { background: var(--network-surface); border-color: var(--network-ink); }
+.network :is(.center, .node):focus-visible { outline: 2px solid var(--network-accent); outline-offset: 4px; }
+.branches { visibility: hidden; }
+.network[data-expanded="true"] .branches { visibility: visible; }
+.connections { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.connections path { stroke: var(--network-line); stroke-width: 1.5; }
+.connections path[data-selected="true"] { stroke: var(--network-accent); stroke-width: 2.25; }
+.network:dir(rtl) .connections { transform: scaleX(-1); }
+.network .node {
+  min-height: 2.75rem;
+  height: auto;
+  min-width: 0;
+  gap: .45rem;
+  padding: .55rem .75rem;
+  border: 1px solid var(--network-line);
+  border-radius: .7rem;
+  background: var(--network-paper);
+  color: var(--network-ink);
+  text-align: start;
+  white-space: normal;
+  font-size: clamp(.78rem, 1.15vw, .9rem);
+  line-height: 1.5;
+  transition: background-color 160ms, color 160ms, border-color 160ms;
+}
+.node svg { flex-shrink: 0; }
+.node span { overflow-wrap: anywhere; }
+.branches > .node {
+  position: absolute;
+  inset-inline-start: var(--node-x);
+  inset-block-start: var(--node-y);
+  translate: -50% -50%;
+  width: max-content;
+  max-width: min(37%, 11rem);
+}
+.network:dir(rtl) .branches > .node { translate: 50% -50%; }
+.network .node:hover { border-color: var(--network-accent); }
+.network .node[aria-pressed="true"] { border-color: var(--network-ink); background: var(--network-ink); color: var(--network-surface); }
+.custom { display: flex; flex-wrap: wrap; gap: .5rem; padding: .8rem; border-block-start: 1px solid var(--network-line); }
+.custom[hidden] { display: none; }
+.custom .node { max-width: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .ripple { animation: ripple 650ms ease-out; }
+  .network[data-expanded="true"] .branches > .node { animation: branch 360ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--index) * 25ms); }
+  .network[data-expanded="true"] .connections path { stroke-dasharray: 1; animation: connect 360ms ease-out both; animation-delay: calc(var(--index) * 25ms); }
+  .center svg { animation: icon 180ms ease-out; }
+  @keyframes branch { from { opacity: 0; transform: translate(var(--from-x), var(--from-y)) scale(.65); } }
+  @keyframes connect { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes icon { from { opacity: .5; transform: scale(.85); } }
+  @keyframes ripple { from { opacity: .35; transform: translate(-50%, -50%) scale(.5); } to { opacity: 0; transform: translate(-50%, -50%) scale(9); } }
+}
+@media (prefers-reduced-motion: reduce) { .network :is(.node, .center) { transition: none; } }
+@media (max-width: 480px) {
+  .graph { height: 25rem; min-height: 25rem; }
+  .center { width: 6rem; }
+  .center svg { width: 1.6rem; height: 1.6rem; }
+  .center span { font-size: .7rem; }
+  .network .node { padding: .5rem; font-size: .78rem; gap: .3rem; }
+  .branches > .node { max-width: 38%; }
+}

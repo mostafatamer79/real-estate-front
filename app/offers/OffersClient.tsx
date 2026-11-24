@@ -1,12 +1,28 @@
 "use client";
-import MobileAppHeader from '@/app/src/components/MobileAppHeader';
+
 import PullToRefresh from '@/components/shared/PullToRefresh';
 import { hapticTick } from "@/lib/haptics";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import AnimatedArtwork from "@/components/cinematic/AnimatedArtwork";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
-import { TableOfContents, MessageCircle, Ruler, DollarSign, MapPin, Calendar, Layers, CheckCircle, AlertCircle, ArrowRight, LayoutGrid, User as UserIcon, SaudiRiyalIcon } from "lucide-react";
+import {
+  SlidersHorizontal,
+  X,
+  Ruler,
+  MapPin,
+  Calendar,
+  AlertCircle,
+  ArrowRight,
+  LayoutGrid,
+  User as UserIcon,
+  Clock,
+  Building2,
+  Home as HomeIcon,
+  RotateCcw
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer, Booking } from "@/types/api";
@@ -17,6 +33,7 @@ import OfferAppointmentsModal from "@/components/modals/offer-appointments-modal
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import styles from "./offers-redesign.module.css";
 
 interface Offer {
   id: string;
@@ -26,7 +43,10 @@ interface Offer {
   description: string;
   area: number;
   price: number;
+  mediaFiles?: string[];
   timeAgo: string;
+  createdAt: string;
+  additionalNotes?: string;
   neighborhood?: string;
   propertyAge?: string;
   direction?: string;
@@ -77,31 +97,17 @@ const commercialSubtypes = [
 
 export default function OffersPage({ children }: { children?: React.ReactNode } = {}) {
   const router = useRouter();
-  const { t, language } = useLanguage();
+  const { t, language, toggleLanguage } = useLanguage();
+  const isRtl = language === 'ar';
   const { isOpen, message, isAdmin: isAdminUser } = useSectionGuard('offers');
-
-
 
   // Core State
   const [offers, setOffers] = useState<Offer[]>([]);
   const [filteredOffers, setFilteredOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openChatOfferId, setOpenChatOfferId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<"all" | "my" | "appointments">("all");
-
-  // Dept/Access State
-  const [isDeptUser, setIsDeptUser] = useState(false);
-  const [deptName, setDeptName] = useState('');
-
-  const DEPT_NAMES: Record<string, string> = {
-    marketing: 'إدارة التسويق',
-    properties: 'إدارة الاملاك',
-    finance: 'الإدارة المالية',
-    legal: 'الإدارة القانونية',
-    employees: 'إدارة الموظفين',
-  };
 
   // Filter State
   const [propertyType, setPropertyType] = useState<"residential" | "commercial" | null>(null);
@@ -129,8 +135,13 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
   const [isAppointmentsModalOpen, setIsAppointmentsModalOpen] = useState(false);
   const [incomingBookings, setIncomingBookings] = useState<Booking[]>([]);
   const [myBookings, setMyBookings] = useState<Booking[]>([]);
-  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [, setLoadingBookings] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Accessible element refs
+  const filterToggleBtnRef = useRef<HTMLButtonElement>(null);
+  const filterDrawerRef = useRef<HTMLDivElement>(null);
 
   // Constants
   const propertyAges = [
@@ -153,32 +164,18 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
     { value: "مجدد", label: "property.condition.renovated" }
   ];
 
-  const furnitureOptions = [
-    { value: "مفروش", label: "property.furniture.furnished" },
-    { value: "غير مفروش", label: "property.furniture.unfurnished" }
-  ];
-
-  const yesNoOptions = [
-    { value: "yes", label: "common.yes" },
-    { value: "no", label: "common.no" }
-  ];
-
-  // Logic Helpers
-  const canCreateOffers = ['agent', 'broker', 'real_estate_office', 'owner', 'marketing', 'marketing_admin', 'admin']
-    .includes(String(user?.role || '').toLowerCase());
-
   const generateTimeAgo = (createdAt: string): string => {
     const now = new Date();
     const created = new Date(createdAt);
     const diffInMinutes = Math.floor((now.getTime() - created.getTime()) / (1000 * 60));
 
     if (diffInMinutes < 1) return t('property.age.new');
-    if (diffInMinutes < 60) return `${diffInMinutes} ${language === 'ar' ? 'دقيقة' : 'min'}`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} ${language === 'ar' ? 'ساعة' : 'hr'}`;
-    return `${Math.floor(diffInMinutes / 1440)} ${language === 'ar' ? 'يوم' : 'day'}`;
+    if (diffInMinutes < 60) return `${diffInMinutes} ${isRtl ? 'دقيقة' : 'min'}`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} ${isRtl ? 'ساعة' : 'hr'}`;
+    return `${Math.floor(diffInMinutes / 1440)} ${isRtl ? 'يوم' : 'day'}`;
   };
 
-  const generateDescription = (offer: ApiOffer): string => {
+  const generateDescription = (offer: Pick<Offer, "propertyType" | "propertyCondition" | "rooms" | "bathrooms" | "livingRooms" | "area" | "neighborhood" | "city" | "additionalNotes">): string => {
     const findTypeLabel = (val: string) => {
       const all = [...residentialSubtypes, ...commercialSubtypes];
       const found = all.find(i => i.value === val);
@@ -191,34 +188,30 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
     };
 
     let description = `${findTypeLabel(offer.propertyType)} ${offer.propertyCondition ? findConditionLabel(offer.propertyCondition) + ' ' : ''}`;
-    if (offer.rooms) description += `، ${t('offers.filter.rooms')}: ${offer.rooms}`;
-    if (offer.bathrooms) description += `، ${t('offers.filter.baths')}: ${offer.bathrooms}`;
-    if (offer.livingRooms) description += `، ${t('offer.living')}: ${offer.livingRooms}`;
-    description += `. ${t('offer.area')} ${offer.area} ${t('offers.filter.area').split(' ')[1] || 'm²'}`;
-    if (offer.neighborhood) description += ` ${language === 'ar' ? '، حي' : ', '} ${offer.neighborhood}`;
+    if (offer.rooms) description += `، ${t('orders.rooms')}: ${offer.rooms}`;
+    if (offer.bathrooms) description += `، ${t('orders.baths')}: ${offer.bathrooms}`;
+    if (offer.livingRooms) description += `، ${t('orders.living')}: ${offer.livingRooms}`;
+    description += `. ${isRtl ? 'المساحة' : 'Area'} ${offer.area} ${isRtl ? 'م²' : 'm²'}`;
+    if (offer.neighborhood) description += ` ${isRtl ? '، حي' : ', '} ${offer.neighborhood}`;
     if (offer.city) description += `، ${offer.city}`;
-    if (offer.hasElevator) description += `، ${t('offer.elevator')}`;
-    if (offer.hasGarage) description += `، ${t('offer.garage')}`;
-    if (offer.hasPool) description += `، ${t('offer.pool')}`;
 
     if (offer.additionalNotes) {
-      const shortNotes = offer.additionalNotes.length > 100
-        ? offer.additionalNotes.substring(0, 100) + '...'
+      const shortNotes = offer.additionalNotes.length > 90
+        ? offer.additionalNotes.substring(0, 90) + '...'
         : offer.additionalNotes;
       description += `. ${shortNotes}`;
     }
     return description;
   };
-const MeterIcon = ({ className }: { className?: string }) => (
-  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '5em', height: '5em', opacity: 1 }} />
-);
+
   const fetchIncomingBookings = async () => {
     try {
       setLoadingBookings(true);
       const res = await bookingsApi.findIncoming();
       setIncomingBookings(res.data);
-    } catch (err: any) {
-      if (err?.response?.status === 403) {
+    } catch (err: unknown) {
+      const responseErr = err as { response?: { status?: number } };
+      if (responseErr?.response?.status === 403) {
         setIncomingBookings([]);
         return;
       }
@@ -233,8 +226,9 @@ const MeterIcon = ({ className }: { className?: string }) => (
       setLoadingBookings(true);
       const res = await bookingsApi.findAll();
       setMyBookings(res.data);
-    } catch (err: any) {
-      if (err?.response?.status === 403) {
+    } catch (err: unknown) {
+      const responseErr = err as { response?: { status?: number } };
+      if (responseErr?.response?.status === 403) {
         setMyBookings([]);
         return;
       }
@@ -250,7 +244,7 @@ const MeterIcon = ({ className }: { className?: string }) => (
       setError(null);
       const response = await offersApi.findAll(localStorage.getItem("token") ? undefined : { isActive: true });
       const apiOffers = response.data;
-      if (apiOffers.length === 0) {
+      if (!apiOffers || apiOffers.length === 0) {
         setOffers([]);
         setFilteredOffers([]);
         return;
@@ -265,7 +259,10 @@ const MeterIcon = ({ className }: { className?: string }) => (
           description: generateDescription(offer),
           area: offer.area,
           price: offer.price,
+          mediaFiles: offer.mediaFiles,
           timeAgo: generateTimeAgo(offer.createdAt),
+          createdAt: offer.createdAt,
+          additionalNotes: offer.additionalNotes,
           neighborhood: offer.neighborhood,
           propertyAge: offer.propertyAge,
           direction: offer.direction,
@@ -332,12 +329,12 @@ const MeterIcon = ({ className }: { className?: string }) => (
   };
 
   const handlePropertySelect = (type: "residential" | "commercial") => {
-    setPropertyType(type);
+    setPropertyType(prev => prev === type ? null : type);
     setSubtype(null);
   };
 
   const handleSubtypeSelect = (sub: string) => {
-    setSubtype(sub);
+    setSubtype(prev => prev === sub ? null : sub);
   };
 
   const resetFilters = () => {
@@ -352,6 +349,46 @@ const MeterIcon = ({ className }: { className?: string }) => (
     setHasGarage(""); setHasElevator(""); setHasPool("");
   };
 
+  // Keep keyboard focus within the visible drawer and restore its actual opener.
+  const filterOpenerRef = useRef<HTMLElement | null>(null);
+  const openFilters = () => {
+    filterOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    hapticTick();
+    setIsFilterOpen(true);
+  };
+  const closeFiltersAndRestoreFocus = () => setIsFilterOpen(false);
+  useEffect(() => {
+    if (!isFilterOpen) return;
+    const panel = filterDrawerRef.current;
+    if (!panel) return;
+    const fallbackOpener = filterToggleBtnRef.current;
+    const before = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const controls = () => Array.from(panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex="0"]')).filter(el => el.getClientRects().length > 0);
+    controls()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); setIsFilterOpen(false); }
+      if (event.key === 'Tab') {
+        const items = controls(), first = items[0], last = items.at(-1);
+        if (event.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    const wide = matchMedia('(min-width: 1024px)');
+    const onResize = () => { if (wide.matches) setIsFilterOpen(false); };
+    document.addEventListener('keydown', keydown);
+    wide.addEventListener('change', onResize);
+    onResize();
+    return () => {
+      document.body.style.overflow = before;
+      document.removeEventListener('keydown', keydown);
+      wide.removeEventListener('change', onResize);
+      const opener = filterOpenerRef.current;
+      if (opener?.isConnected && opener.getClientRects().length) opener.focus();
+      else fallbackOpener?.focus();
+    };
+  }, [isFilterOpen]);
+
   // Effects
   useEffect(() => {
     const init = () => {
@@ -360,10 +397,6 @@ const MeterIcon = ({ className }: { className?: string }) => (
         if (stored) {
           const parsed = JSON.parse(stored);
           setUser(parsed);
-          if (parsed?.department) {
-            setIsDeptUser(true);
-            setDeptName(DEPT_NAMES[parsed.department] ?? parsed.department);
-          }
         }
       } catch (err) { console.error(err); }
     };
@@ -383,205 +416,854 @@ const MeterIcon = ({ className }: { className?: string }) => (
     furnitureStatus, rooms, bathrooms, hasGarage, hasElevator, hasPool, activeTab, user?.id, incomingBookings, myBookings
   ]);
 
+  // Compute active filter chips list
+  const activeChips: Array<{ key: string; label: string; onRemove: () => void }> = [];
+  if (propertyType) {
+    activeChips.push({
+      key: 'propertyType',
+      label: propertyType === 'residential' ? t('offers.filter.residential') : t('offers.filter.commercial'),
+      onRemove: () => { setPropertyType(null); setSubtype(null); }
+    });
+  }
+  if (subtype) {
+    const found = [...residentialSubtypes, ...commercialSubtypes].find(s => s.value === subtype);
+    activeChips.push({
+      key: 'subtype',
+      label: found ? t(found.label) : subtype,
+      onRemove: () => setSubtype(null)
+    });
+  }
+  if (city) {
+    activeChips.push({
+      key: 'city',
+      label: `${isRtl ? 'المدينة' : 'City'}: ${city}`,
+      onRemove: () => setCity('')
+    });
+  }
+  if (neighborhood) {
+    activeChips.push({
+      key: 'neighborhood',
+      label: `${isRtl ? 'الحي' : 'District'}: ${neighborhood}`,
+      onRemove: () => setNeighborhood('')
+    });
+  }
+  if (priceFrom || priceTo) {
+    const text = priceFrom && priceTo
+      ? `${priceFrom} - ${priceTo} ر.س`
+      : priceFrom ? `>= ${priceFrom} ر.س` : `<= ${priceTo} ر.س`;
+    activeChips.push({
+      key: 'price',
+      label: `${isRtl ? 'السعر' : 'Price'}: ${text}`,
+      onRemove: () => { setPriceFrom(''); setPriceTo(''); }
+    });
+  }
+  if (areaFrom || areaTo) {
+    const text = areaFrom && areaTo
+      ? `${areaFrom} - ${areaTo} م²`
+      : areaFrom ? `>= ${areaFrom} م²` : `<= ${areaTo} م²`;
+    activeChips.push({
+      key: 'area',
+      label: `${isRtl ? 'المساحة' : 'Area'}: ${text}`,
+      onRemove: () => { setAreaFrom(''); setAreaTo(''); }
+    });
+  }
+  if (propertyAge) {
+    activeChips.push({
+      key: 'age',
+      label: propertyAge,
+      onRemove: () => setPropertyAge('')
+    });
+  }
+  if (propertyCondition) {
+    activeChips.push({
+      key: 'condition',
+      label: propertyCondition,
+      onRemove: () => setPropertyCondition('')
+    });
+  }
+
   // Early Returns
   if (!isOpen) {
     return <ComingSoonOverlay sectionName={t('action.offers') || 'العروض'} message={message} isAdmin={isAdminUser} />;
   }
 
+  // Render Filter Form Content
+  const renderFilterControls = (isMobileView: boolean) => (
+    <div>
+      {/* 1. Property Type & Subtype */}
+      <div className={styles.filterSection}>
+        <label className={styles.filterLabel}>
+          {t('offers.filter.type')}
+        </label>
+        <div className={styles.typeButtonGroup}>
+          <button
+            type="button"
+            onClick={() => handlePropertySelect("residential")}
+            aria-pressed={propertyType === "residential"}
+            className={`${styles.typeButton} ${
+              propertyType === "residential" ? styles.typeButtonActive : ""
+            }`}
+          >
+            {t('offers.filter.residential')}
+          </button>
+          <button
+            type="button"
+            onClick={() => handlePropertySelect("commercial")}
+            aria-pressed={propertyType === "commercial"}
+            className={`${styles.typeButton} ${
+              propertyType === "commercial" ? styles.typeButtonActive : ""
+            }`}
+          >
+            {t('offers.filter.commercial')}
+          </button>
+        </div>
 
-  // Final Render
-  return (
-    <PullToRefresh onRefresh={fetchOffers}>
-    <section className="offers-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-clip pb-12 flex flex-col lg:flex-row" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <MobileAppHeader theme="light" title={t('action.offers') || 'العروض'} />
-      <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
-      <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
-      <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
-      {/* Mobile filter toggle button */}
-      <button
-        onClick={() => { hapticTick(); setIsFilterOpen(!isFilterOpen); }}
-        className="fixed z-50 lg:hidden w-13 h-13 p-3.5 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
-        style={{ bottom: 'calc(16px + env(safe-area-inset-bottom))', insetInlineEnd: '1.5rem' }}
-      >
-        <TableOfContents className="w-5 h-5" />
-      </button>
-
-      {/* Mobile backdrop */}
-      {isFilterOpen && (
-        <button
-          type="button"
-          aria-label="Close filters"
-          className="fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
-          onClick={() => setIsFilterOpen(false)}
-        />
-      )}
-
-      {/* Sidebar - Filters */}
-      <div className={`
-        fixed inset-y-0 w-80 max-w-[85vw] bg-white border-slate-200 border shadow-lg overflow-y-auto z-40 transition-transform duration-300 max-lg:inset-y-auto max-lg:top-[calc(61px+env(safe-area-inset-top))] max-lg:bottom-0 max-lg:w-full max-lg:max-w-none max-lg:rounded-t-3xl max-lg:border-x-0 max-lg:border-b-0 lg:sticky lg:top-0 lg:inset-y-auto lg:self-start lg:shrink-0 lg:max-w-none lg:h-dvh
-        ${language === 'ar' ? 'right-0 border-l' : 'left-0 border-r'}
-        ${isFilterOpen ? 'translate-x-0' : language === 'ar' ? 'translate-x-full lg:translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        lg:translate-x-0
-      `}>
-        <div className="p-3 sm:p-6 max-lg:p-4 max-lg:pb-28">
-          <div className="my-4 space-y-4">
-            <button onClick={() => router.push('/details')} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors bg-muted px-3 py-2 rounded-lg w-full">
-              <ArrowRight className={`w-5 h-5 transform ${language === 'en' ? 'rotate-180' : ''}`} />
-              <span className="font-medium">{t('chat.back')}</span>
-            </button>
-            <div className="flex items-center gap-2">
-              <TableOfContents className="w-5 h-5 text-gray-600" />
-              <span className="font-semibold text-gray-700">{t('offers.title')}</span>
+        {propertyType && (
+          <div className="pt-2">
+            <span className={styles.filterSubLabel}>
+              {t('offers.filter.subtype')}
+            </span>
+            <div className={styles.subtypesWrap}>
+              {(propertyType === "residential" ? residentialSubtypes : commercialSubtypes).map((sub) => {
+                const isSelected = subtype === sub.value;
+                return (
+                  <button
+                    key={sub.value}
+                    type="button"
+                    onClick={() => handleSubtypeSelect(sub.value)}
+                    aria-pressed={isSelected}
+                    className={`${styles.subtypeChip} ${
+                      isSelected ? styles.subtypeChipActive : ""
+                    }`}
+                  >
+                    {t(sub.label)}
+                  </button>
+                );
+              })}
             </div>
           </div>
+        )}
+      </div>
 
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('offers.filter.type')}</h3>
-              <div className="flex gap-3">
-                <button onClick={() => handlePropertySelect("residential")} className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${propertyType === "residential" ? "bg-slate-700 text-white" : "bg-muted text-gray-700 hover:bg-muted"}`}>{t('offers.filter.residential')}</button>
-                <button onClick={() => handlePropertySelect("commercial")} className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${propertyType === "commercial" ? "bg-slate-700 text-white" : "bg-muted text-gray-700 hover:bg-muted"}`}>{t('offers.filter.commercial')}</button>
-              </div>
-            </div>
+      {/* 2. Location */}
+      <div className={`${styles.filterSection} ${styles.locationFields}`}>
+        <label className={styles.filterLabel}>
+          {isRtl ? 'الموقع والمدينة' : 'Location'}
+        </label>
+        <div className={styles.filterInputGroup}>
+          <label htmlFor={isMobileView ? "mobile-filter-city" : "filter-city"} className={styles.filterSubLabel}>
+            {isRtl ? 'المدينة' : 'City'}
+          </label>
+          <Input
+            id={isMobileView ? "mobile-filter-city" : "filter-city"}
+            type="text"
+            className={`${styles.filterInput} oo-input`}
+            placeholder={t('offers.filter.enterCity')}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </div>
+        <div className={styles.filterInputGroup}>
+          <label htmlFor={isMobileView ? "mobile-filter-neighborhood" : "filter-neighborhood"} className={styles.filterSubLabel}>
+            {isRtl ? 'الحي' : 'Neighborhood'}
+          </label>
+          <Input
+            id={isMobileView ? "mobile-filter-neighborhood" : "filter-neighborhood"}
+            type="text"
+            className={`${styles.filterInput} oo-input`}
+            placeholder={t('offers.filter.enterDistrict')}
+            value={neighborhood}
+            onChange={(e) => setNeighborhood(e.target.value)}
+          />
+        </div>
+      </div>
 
-            {propertyType && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('offers.filter.subtype')}</h3>
-                <div className="grid grid-cols-1 gap-2">
-                  {(propertyType === "residential" ? residentialSubtypes : commercialSubtypes).map((sub) => (
-                    <button key={sub.value} onClick={() => handleSubtypeSelect(sub.value)} className={`px-4 py-2 rounded-lg text-right font-medium transition-colors ${subtype === sub.value ? "bg-slate-700 text-white" : "bg-muted text-gray-700 hover:bg-muted"}`}>{t(sub.label)}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><MeterIcon className="w-4 h-4" />{t('offers.filter.area')}</h3>
-              <div className="flex gap-2">
-                <Input type="number" placeholder={language === 'ar' ? 'من' : 'From'} value={areaFrom} onChange={(e) => setAreaFrom(e.target.value)} />
-                <Input type="number" placeholder={language === 'ar' ? 'إلى' : 'To'} value={areaTo} onChange={(e) => setAreaTo(e.target.value)} />
-              </div>
-            </div>
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><SaudiRiyalIcon className="w-4 h-4" />{t('offers.filter.price')}</h3>
-              <div className="flex gap-2">
-                <Input type="number" placeholder={language === 'ar' ? 'من' : 'From'} value={priceFrom} onChange={(e) => setPriceFrom(e.target.value)} />
-                <Input type="number" placeholder={language === 'ar' ? 'إلى' : 'To'} value={priceTo} onChange={(e) => setPriceTo(e.target.value)} />
-              </div>
-            </div>
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><MapPin className="w-4 h-4" />المدينة</h3>
-              <Input type="text" placeholder="اكتب اسم المدينة" value={city} onChange={(e) => setCity(e.target.value)} />
-            </div>
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3">الحي</h3>
-              <Input type="text" placeholder="اكتب اسم الحي" value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} />
-            </div>
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><Calendar className="w-4 h-4" />{t('orders.age')}</h3>
-              <select value={propertyAge} onChange={(e) => setPropertyAge(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg bg-card text-right">
-                <option value="">{t('common.select')}</option>
-                {propertyAges.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
-              </select>
-            </div>
-
-            <div><h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offers.filter.direction')}</h3>
-              <select value={direction} onChange={(e) => setDirection(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg bg-card text-right">
-                <option value="">{t('common.select')}</option>
-                {directions.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
-              </select>
-            </div>
-
-            <div className="pt-4"><button onClick={resetFilters} className="w-full px-4 py-2 bg-muted text-gray-700 rounded-lg hover:bg-slate-300 transition-colors font-medium">إعادة تعيين الفلاتر</button></div>
+      {/* 3. Budget */}
+      <div className={styles.filterSection}>
+        <label className={styles.filterLabel}>
+          {t('offers.filter.budget')}
+        </label>
+        <div className={styles.rangeInputsGrid}>
+          <div>
+            <label htmlFor={isMobileView ? "mobile-priceFrom" : "priceFrom"} className={styles.filterSubLabel}>
+              {t('offers.filter.priceMin')}
+            </label>
+            <Input
+              id={isMobileView ? "mobile-priceFrom" : "priceFrom"}
+              type="number"
+              className={`${styles.filterInput} oo-input`}
+              placeholder={isRtl ? 'من (ريال)' : 'From (SAR)'}
+              value={priceFrom}
+              onChange={(e) => setPriceFrom(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor={isMobileView ? "mobile-priceTo" : "priceTo"} className={styles.filterSubLabel}>
+              {t('offers.filter.priceMax')}
+            </label>
+            <Input
+              id={isMobileView ? "mobile-priceTo" : "priceTo"}
+              type="number"
+              className={`${styles.filterInput} oo-input`}
+              placeholder={isRtl ? 'إلى (ريال)' : 'To (SAR)'}
+              value={priceTo}
+              onChange={(e) => setPriceTo(e.target.value)}
+            />
           </div>
         </div>
       </div>
 
-      <div className="flex-1 min-w-0 w-full relative z-10">
-        {children}
-        {loading && (
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
-            <div className="wow-skeleton h-12 w-full rounded-2xl mb-6 max-md:!grid-cols-2" />
-            <div className="space-y-4">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="bg-card border border rounded-2xl p-4 shadow-sm space-y-3">
-                  <div className="wow-skeleton h-5 w-2/3 rounded-lg" />
-                  <div className="wow-skeleton h-3.5 w-1/3 rounded-lg" />
-                  <div className="wow-skeleton h-3 w-full rounded-lg" />
-                  <div className="wow-skeleton h-3 w-4/5 rounded-lg" />
-                  <div className="flex gap-2 pt-1">
-                    <div className="wow-skeleton h-9 flex-1 rounded-xl" />
-                    <div className="wow-skeleton h-9 flex-1 rounded-xl" />
-                  </div>
+      {/* 4. Area */}
+      <div className={styles.filterSection}>
+        <label className={styles.filterLabel}>
+          {isRtl ? 'المساحة (م²)' : 'Area (m²)'}
+        </label>
+        <div className={styles.rangeInputsGrid}>
+          <div>
+            <label htmlFor={isMobileView ? "mobile-areaFrom" : "areaFrom"} className={styles.filterSubLabel}>
+              {t('offers.filter.areaMin')}
+            </label>
+            <Input
+              id={isMobileView ? "mobile-areaFrom" : "areaFrom"}
+              type="number"
+              className={`${styles.filterInput} oo-input`}
+              placeholder={isRtl ? 'من (م²)' : 'From (m²)'}
+              value={areaFrom}
+              onChange={(e) => setAreaFrom(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor={isMobileView ? "mobile-areaTo" : "areaTo"} className={styles.filterSubLabel}>
+              {t('offers.filter.areaMax')}
+            </label>
+            <Input
+              id={isMobileView ? "mobile-areaTo" : "areaTo"}
+              type="number"
+              className={`${styles.filterInput} oo-input`}
+              placeholder={isRtl ? 'إلى (م²)' : 'To (m²)'}
+              value={areaTo}
+              onChange={(e) => setAreaTo(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Advanced Criteria */}
+      <div className={styles.filterSection}>
+        <button type="button" className={styles.advancedToggle}
+          aria-expanded={advancedOpen}
+          aria-controls={isMobileView ? "mobile-advanced-fields" : "advanced-fields"}
+          onClick={() => setAdvancedOpen(open => !open)}>
+
+          {isRtl ? 'مواصفات إضافية' : 'Advanced Criteria'}
+          <span aria-hidden="true">{advancedOpen ? '−' : '+'}</span>
+        </button>
+        <div id={isMobileView ? "mobile-advanced-fields" : "advanced-fields"} hidden={!advancedOpen} className={styles.advancedFields}>
+
+        <div className={styles.filterInputGroup}>
+          <label htmlFor={isMobileView ? "mobile-filter-age" : "filter-age"} className={styles.filterSubLabel}>
+            {t('orders.age')}
+          </label>
+          <select
+            id={isMobileView ? "mobile-filter-age" : "filter-age"}
+            value={propertyAge}
+            onChange={(e) => setPropertyAge(e.target.value)}
+            className={styles.nativeSelect}
+          >
+            <option value="">{t('common.select')}</option>
+            {propertyAges.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
+          </select>
+        </div>
+
+        <div className={styles.filterInputGroup}>
+          <label htmlFor={isMobileView ? "mobile-filter-direction" : "filter-direction"} className={styles.filterSubLabel}>
+            {t('offers.filter.direction')}
+          </label>
+          <select
+            id={isMobileView ? "mobile-filter-direction" : "filter-direction"}
+            value={direction}
+            onChange={(e) => setDirection(e.target.value)}
+            className={styles.nativeSelect}
+          >
+            <option value="">{t('common.select')}</option>
+            {directions.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
+          </select>
+        </div>
+
+        <div className={styles.filterInputGroup}>
+          <label htmlFor={isMobileView ? "mobile-filter-condition" : "filter-condition"} className={styles.filterSubLabel}>
+            {isRtl ? 'حالة العقار' : 'Property Condition'}
+          </label>
+          <select
+            id={isMobileView ? "mobile-filter-condition" : "filter-condition"}
+            value={propertyCondition}
+            onChange={(e) => setPropertyCondition(e.target.value)}
+            className={styles.nativeSelect}
+          >
+            <option value="">{t('common.select')}</option>
+            {propertyConditions.map(item => <option key={item.value} value={item.value}>{t(item.label)}</option>)}
+          </select>
+        </div>
+      </div>
+      </div>
+
+      {/* Action buttons */}
+      <div className={isMobileView ? styles.drawerActions : "pt-2 space-y-2"}>
+        {isMobileView && (
+          <button
+            type="button"
+            onClick={closeFiltersAndRestoreFocus}
+            className={styles.drawerSubmitBtn}
+          >
+            {t('offers.filter.showResults')} ({filteredOffers.length})
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={resetFilters}
+          className={isMobileView ? styles.drawerResetBtn : styles.stateBtn}
+          style={!isMobileView ? { width: '100%', justifyContent: 'center' } : undefined}
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>{t('offers.filter.clearAll')}</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <PullToRefresh onRefresh={fetchOffers}>
+      <section
+        className={`${styles.offersPage} offers-page-root calm-page calm-screen w-full min-h-dvh-safe relative flex flex-col`}
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        {/* Subtle Ambient Atmosphere */}
+        <div className={styles.ambientBackground} aria-hidden="true">
+          <div className={styles.ambientGlow} />
+          <div className={styles.architecturalGrid} />
+        </div>
+
+        <nav className={styles.mobileNav} aria-label={isRtl ? 'خيارات الصفحة' : 'Page options'}><span>{t('action.offers')}</span><button type="button" onClick={toggleLanguage} aria-label={isRtl ? 'Switch to English' : 'التبديل إلى العربية'}>{isRtl ? 'EN' : 'ع'}</button></nav>
+
+        {/* Mobile Filter Drawer (Accessible Dialog) — Rendered within root so tokens inherit */}
+        {isFilterOpen && (
+          <div
+            className={styles.drawerModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="offers-mobile-filters-heading"
+          >
+            {/* Backdrop */}
+            <div
+              className={styles.drawerBackdrop}
+              onClick={closeFiltersAndRestoreFocus}
+              aria-hidden="true"
+            />
+            {/* Drawer Panel */}
+            <div
+              ref={filterDrawerRef}
+              className={styles.drawerPanel}
+            >
+              <div className={styles.drawerHeader}>
+                <div className={styles.drawerTitle}>
+                  <SlidersHorizontal className="w-5 h-5 text-[var(--oo-gold-deep)]" />
+                  <h2 id="offers-mobile-filters-heading">
+                    {t('offers.filter.title')}
+                  </h2>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  onClick={closeFiltersAndRestoreFocus}
+                  aria-label={t('offers.filter.close')}
+                  className={styles.drawerCloseBtn}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              {renderFilterControls(true)}
             </div>
           </div>
         )}
-        {error && !loading && <div className="flex items-center justify-center h-dvh-safe text-center"><AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" /><h3 className="text-lg font-semibold text-gray-700 mb-2">حدث خطأ</h3><p className="text-gray-500 mb-4">{error}</p><button onClick={fetchOffers} className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">محاولة مرة أخرى</button></div>}
-        
-        {!loading && !error && (
-          <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
-            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              {user?.id && (
-                <SegmentedTabs value={activeTab} onValueChange={(val) => setActiveTab(val as "all" | "my" | "appointments")} className="w-full md:w-auto" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  <SegmentedList className="grid w-full h-auto grid-cols-1 md:grid-cols-2 lg:w-[450px] bg-slate-100 dark:bg-slate-800/60 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/50 max-md:!grid-cols-2 max-md:gap-1.5">
-                    <SegmentedTrigger value="all" className="flex items-center gap-2 max-md:justify-center py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:rounded-full"><LayoutGrid className="w-4 h-4" />{t('offers.allOffers')}</SegmentedTrigger>
-                    <SegmentedTrigger value="appointments" className="flex items-center gap-2 max-md:justify-center py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:rounded-full"><Calendar className="w-4 h-4" />{language === 'ar' ? 'مواعيدي' : 'My Appointments'}</SegmentedTrigger>
-                  </SegmentedList>
-                </SegmentedTabs>
-              )}
-            </div>
 
-            {activeTab === "appointments" && user?.id && (incomingBookings.length > 0 || myBookings.length > 0) && (
-              <div className="mb-10 bg-card border border rounded-2xl p-3 sm:p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-6"><div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><Calendar className="w-5 h-5 text-blue-600" /></div><div><h3 className="font-bold text-slate-900">{language === 'ar' ? 'المواعيد القادمة' : 'Upcoming Appointments'}</h3><p className="text-xs text-slate-500">{language === 'ar' ? `لديك ${incomingBookings.length + myBookings.length} موعد` : `You have ${incomingBookings.length + myBookings.length} appointments`}</p></div></div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[...incomingBookings, ...myBookings].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0,3).map((booking) => {
-                    const isIncoming = incomingBookings.some(ib => ib.id === booking.id);
-                    return (
-                      <div key={booking.id} className="p-4 rounded-xl border border bg-muted/50 hover:bg-card transition-colors group relative">
-                        <div className="flex justify-between items-start mb-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${booking.status === 'pending' ? 'bg-amber-100 text-amber-700' : booking.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-muted text-slate-700'}`}>{booking.status}</span><div className="flex flex-col items-end"><span className="text-[10px] text-slate-400 font-medium">{new Date(booking.createdAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</span><span className={`text-[9px] font-bold ${isIncoming ? 'text-blue-500' : 'text-emerald-500'}`}>{isIncoming ? (language === 'ar' ? 'طلب مستلم' : 'Received') : (language === 'ar' ? 'طلبك' : 'Your Request')}</span></div></div>
-                        <p className="text-sm font-bold text-slate-900 mb-1 truncate">{booking.offer ? (language === 'ar' ? `${booking.offer.propertyType} في ${booking.offer.city}` : `${booking.offer.propertyType} in ${booking.offer.city}`) : (language === 'ar' ? 'عقار' : 'Property')}</p>
-                        <div className="flex items-center gap-2 text-xs text-slate-500"><UserIcon className="w-3 h-3" /><span>{isIncoming ? (booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : 'User') : ((booking.offer as any)?.user ? `${(booking.offer as any).user.firstName} ${(booking.offer as any).user.lastName}` : (language === 'ar' ? 'المالك' : 'Owner'))}</span></div>
-                      </div>
-                    );
-                  })}
+        <div className={styles.offersShell}>
+          {/* Architectural Editorial Hero Section */}
+          <div className={styles.heroSection}>
+            <div className={styles.heroGrid}>
+              {/* Content Narrative Card */}
+              <div className={styles.heroContentCard}>
+                <div>
+                  <div className={styles.heroTopRow}>
+                    <div className={styles.heroOrientationPill}>
+                      <span className={styles.goldPulseDot} />
+                      <span>{isRtl ? 'بوابة العروض العقارية' : 'Property offers'}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => router.push('/details')}
+                      className={styles.backButton}
+                      aria-label={t('common.back')}
+                    >
+                      <ArrowRight className={`w-4 h-4 ${!isRtl ? 'rotate-180' : ''}`} />
+                      <span>{t('common.back')}</span>
+                    </button>
+                  </div>
+
+                  <h1 className={styles.heroHeading}>
+                    {t('offers.hero.title') || (isRtl ? 'المكان المناسب يبدأ من هنا' : 'The right place starts here')}
+                  </h1>
+
+                  <p className={styles.heroSubtitle}>
+                    {isRtl ? 'استكشف العروض العقارية، قارن المواصفات، وتابع مواعيدك من مكان واحد.' : 'Explore property offers, compare the details, and keep track of your appointments.'}
+                  </p>
+                </div>
+
+                <div className={styles.heroBottomBar}>
+                  <div className={styles.heroStatsBadge}>
+                    <span className={styles.heroStatsNumber}>{filteredOffers.length}</span>
+                    <span>{t('offers.resultsCount')}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={openFilters}
+                    ref={filterToggleBtnRef}
+                    aria-label={t('offers.filter.open')}
+                    aria-haspopup="dialog"
+                    aria-expanded={isFilterOpen}
+                    className={styles.heroMobileFilterBtn}
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span>{t('offers.hero.cta')}</span>
+                  </button>
                 </div>
               </div>
-            )}
 
-            <div className="mb-6"><p className="text-gray-600">{t('offers.results').replace('{count}', filteredOffers.length.toString())}</p></div>
-            <div className="space-y-4 wow-stagger max-md:space-y-3">
-              {filteredOffers.length > 0 ? filteredOffers.map((offer) => {
-                const sellerName = offer.user ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() : t('offers.owner');
-                return (
-                  <div key={offer.id} className="bg-card border border rounded-lg p-3 sm:p-6 shadow-sm hover:shadow-md transition-shadow max-md:rounded-2xl max-md:p-4">
-                    <h2 className="text-lg font-bold text-gray-800 mb-3 max-md:text-base max-md:font-black">{offer.address}</h2>
-                    <div className="flex items-center gap-2 mb-3 text-sm"><span className="font-semibold text-gray-700">{sellerName}</span><span className="text-gray-400 mr-auto">•</span><span className="text-gray-500">{offer.timeAgo}</span></div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4 max-md:line-clamp-3">{offer.description}</p>
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 border-t border pt-4">
-                      <div className="flex items-center gap-4 flex-wrap max-md:bg-muted/70 max-md:rounded-xl max-md:px-3 max-md:py-2.5 max-md:w-fit"><div className="flex items-center"><MeterIcon className="w-4 h-4 text-gray-500" /><span>{offer.area} م²</span></div><span>•</span><div className="flex items-center gap-1"><SaudiRiyalIcon className="w-4 h-4 text-gray-500" /><span className="font-semibold text-gray-800 max-md:text-base"><SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></span></div></div>
-                      <div className="flex items-center gap-3 flex-wrap max-md:gap-2">
-                        <button onClick={() => { hapticTick(); window.location.href = `/offers/${offer.id}`; }} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-muted transition-colors text-sm max-md:flex-1 max-md:h-11 max-md:rounded-xl max-md:font-bold active:scale-[0.97] transition-transform">{t('offers.details')}</button>
-                        {(user?.id === offer.userId || user?.id === offer.user?.id) && (<button onClick={() => { setSelectedOfferId(offer.id); setSelectedOfferTitle(offer.address); setIsAppointmentsModalOpen(true); }} className="px-4 py-2 bg-muted text-slate-700 rounded-lg hover:bg-muted transition-colors text-sm font-medium">{language === 'ar' ? 'عرض المواعيد' : 'View Appointments'}</button>)}
-                        {user && offer.userId && offer.user && (<ChatButton offerId={offer.id} offerTitle={`${offer.propertyType} في ${offer.city}`} sellerId={offer.userId} sellerName={offer.user ? `${offer.user.firstName} ${offer.user.lastName}` : 'المعلن'} userId={user.id} userName={user.firstName || ''} />)}
-                      </div>
-                    </div>
+              {/* 3D Pavilion Artwork Stage — Using NEW /artworks/offers-pavilion-v1.webp exclusively */}
+              <div className={styles.heroArtworkStage}>
+                <div className={styles.artworkContainer}>
+                  <AnimatedArtwork
+                    src="/artworks/offers-pavilion-v1.webp"
+                    alt={isRtl ? "تصور بصري لمجسم جناح العروض العقارية" : "Architectural pavilion concept"}
+                    priority
+                    sizes="(max-width: 1023px) 100vw, 600px"
+                  />
+                </div>
+                <span className={styles.heroArtworkBadge}>
+                  {isRtl ? 'تصور معماري استكشافي' : 'Illustrative architectural pavilion concept'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {children}
+
+          {/* Main Discovery Workspace Grid */}
+          <div className={styles.workspaceGrid}>
+            {/* Desktop Sticky Sidebar */}
+            <aside
+              className={styles.filterSidebar}
+              aria-label={t('offers.filter.title')}
+            >
+              <div className={styles.sidebarHeader}>
+                <div className={styles.sidebarTitle}>
+                  <SlidersHorizontal className="w-4 h-4 text-[var(--oo-gold-deep)]" />
+                  <h2>{t('offers.filter.title')}</h2>
+                </div>
+                {activeChips.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className={styles.clearFiltersLink}
+                  >
+                    {t('offers.filter.clearAll')}
+                  </button>
+                )}
+              </div>
+              {renderFilterControls(false)}
+            </aside>
+
+            {/* Results Column */}
+            <main className={styles.resultsColumn}>
+              {/* Results Toolbar & Tabs */}
+              <div className={styles.toolbarRow}>
+                {user?.id ? (
+                  <SegmentedTabs
+                    value={activeTab}
+                    onValueChange={(val) => setActiveTab(val as "all" | "my" | "appointments")}
+                    className="w-full sm:w-auto"
+                    dir={isRtl ? 'rtl' : 'ltr'}
+                  >
+                    <SegmentedList className={`${styles.tabsList} grid grid-cols-2 gap-1 w-full sm:w-80`}>
+                      <SegmentedTrigger
+                        value="all"
+                        className={`${styles.tabTrigger} flex items-center justify-center gap-2`}
+                      >
+                        <LayoutGrid className="w-3.5 h-3.5" />
+                        <span>{t('offers.allOffers')}</span>
+                      </SegmentedTrigger>
+                      <SegmentedTrigger
+                        value="appointments"
+                        className={`${styles.tabTrigger} flex items-center justify-center gap-2`}
+                      >
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{isRtl ? 'مواعيدي' : 'My Appointments'}</span>
+                      </SegmentedTrigger>
+                    </SegmentedList>
+                  </SegmentedTabs>
+                ) : (
+                  <div className={styles.guestBrowseHeading}>
+                    {t('offers.allOffers')}
                   </div>
-                );
-              }) : (
-                <div className="bg-card border border rounded-2xl p-6 sm:p-12 text-center shadow-sm wow-pop">
-                  <TableOfContents className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{activeTab === 'appointments' ? (language === 'ar' ? 'لا توجد مواعيد' : 'No appointments found') : (language === 'ar' ? 'لا توجد عروض' : 'No offers found')}</h3>
-                  <p className="text-gray-500 mb-6">{activeTab === 'appointments' ? (language === 'ar' ? 'لم يتم العثور على أي مواعيد قادمة' : 'No upcoming appointments found') : (offers.length === 0 ? (language === 'ar' ? 'لا يوجد عروض متاحة حالياً' : 'No offers available at the moment') : (language === 'ar' ? 'لم يتم العثور على عروض تطابق معايير البحث' : 'No offers match your search criteria'))}</p>
+                )}
+
+                {/* Real Result count */}
+                <div className={styles.resultsCount}>
+                  <span className={styles.resultsCountNumber}>
+                    {filteredOffers.length}
+                  </span>
+                  <span>{t('offers.resultsCount')}</span>
+                </div>
+              </div>
+
+              {/* Active Filter Chips Bar */}
+              {activeChips.length > 0 && (
+                <div className={styles.activeChipsBar}>
+                  <span className={styles.activeChipsTitle}>
+                    {t('offers.filter.activeFilters')}
+                  </span>
+                  {activeChips.map((chip) => (
+                    <span
+                      key={chip.key}
+                      className={styles.chipTag}
+                    >
+                      <span>{chip.label}</span>
+                      <button
+                        type="button"
+                        onClick={chip.onRemove}
+                        aria-label={`Remove filter ${chip.label}`}
+                        className={styles.chipRemoveBtn}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className={`${styles.clearFiltersLink} ms-auto`}
+                  >
+                    {t('offers.filter.clearAll')}
+                  </button>
                 </div>
               )}
-            </div>
-          </main>
-        )}
-      </div>
-      <OfferAppointmentsModal isOpen={isAppointmentsModalOpen} onClose={() => setIsAppointmentsModalOpen(false)} offerId={selectedOfferId} propertyTitle={selectedOfferTitle} />
-    </section>
+
+              {/* Upcoming Appointments Summary (when appointments tab active) */}
+              {activeTab === "appointments" && user?.id && (incomingBookings.length > 0 || myBookings.length > 0) && (
+                <div className={styles.appointmentsPreviewBox}>
+                  <div className={styles.appointmentsHeader}>
+                    <div className={styles.appointmentsIconWrap}>
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className={styles.appointmentsTitle}>
+                        {isRtl ? 'المواعيد القادمة' : 'Upcoming Appointments'}
+                      </h3>
+                      <p className={styles.appointmentsSubtitle}>
+                        {isRtl
+                          ? `لديك ${incomingBookings.length + myBookings.length} مواعيد مجدولة`
+                          : `You have ${incomingBookings.length + myBookings.length} scheduled appointments`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={styles.appointmentsGrid}>
+                    {[...incomingBookings, ...myBookings]
+                      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                      .slice(0, 3)
+                      .map((booking) => {
+                        const isIncoming = incomingBookings.some(ib => ib.id === booking.id);
+                        const bookingOffer = booking.offer as ApiOfferWithUser | undefined;
+                        return (
+                          <div
+                            key={booking.id}
+                            className={styles.appointmentCard}
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                                  booking.status === 'confirmed'
+                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                    : booking.status === 'pending'
+                                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                    : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                                }`}
+                              >
+                                {booking.status}
+                              </span>
+                              <span className="text-[10px] text-[var(--oo-text-secondary)]">
+                                {new Date(booking.createdAt).toLocaleDateString(isRtl ? 'ar-SA' : 'en-US')}
+                              </span>
+                            </div>
+                            <p className="text-xs font-bold text-[var(--oo-text-main)] mb-1 truncate">
+                              {booking.offer
+                                ? `${booking.offer.propertyType} - ${booking.offer.city}`
+                                : (isRtl ? 'عقار' : 'Property')}
+                            </p>
+                            <div className="flex items-center gap-1.5 text-[11px] text-[var(--oo-text-secondary)]">
+                              <UserIcon className="w-3 h-3" />
+                              <span>
+                                {isIncoming
+                                  ? (booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : 'User')
+                                  : (bookingOffer?.user ? `${bookingOffer.user.firstName} ${bookingOffer.user.lastName}` : (isRtl ? 'المالك' : 'Owner'))}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* Loading Skeletons */}
+              {loading && (
+                <div className={styles.offersList}>
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className={styles.skeletonCard}>
+                      <div className={styles.skeletonThumbnail} />
+                      <div className={styles.skeletonBody}>
+                        <div className="space-y-3">
+                          <div className={`${styles.skeletonLine} h-5 w-2/3`} />
+                          <div className={`${styles.skeletonLine} h-4 w-1/3`} />
+                          <div className={`${styles.skeletonLine} h-3.5 w-full`} />
+                        </div>
+                        <div className="flex gap-2 pt-4">
+                          <div className={`${styles.skeletonLine} h-9 w-28`} />
+                          <div className={`${styles.skeletonLine} h-9 w-28`} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Error State */}
+              {error && !loading && (
+                <div className={styles.stateCard}>
+                  <div className={styles.stateIconWrap}>
+                    <AlertCircle className="w-7 h-7 text-rose-500" />
+                  </div>
+                  <h3 className={styles.stateTitle}>
+                    {isRtl ? 'حدث خطأ أثناء تحميل العروض' : 'Error loading offers'}
+                  </h3>
+                  <p className={styles.stateDesc}>{error}</p>
+                  <button
+                    type="button"
+                    onClick={fetchOffers}
+                    className={styles.stateBtn}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>{t('offers.retry')}</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Loaded Offers List */}
+              {!loading && !error && (
+                <div className={styles.offersList}>
+                  {filteredOffers.length > 0 ? (
+                    filteredOffers.map((offer) => {
+                      const sellerName = offer.user
+                        ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim()
+                        : t('offers.owner');
+                      const hasImage = offer.mediaFiles && offer.mediaFiles.length > 0 && !!offer.mediaFiles[0];
+
+                      return (
+                        <article
+                          key={offer.id}
+                          className={styles.offerCard}
+                        >
+                          {/* Media container 16/10 proportion */}
+                          <div className={`${styles.offerThumbnailStage} ${!hasImage ? styles.thumbnailEmpty : ""}`}>
+                            {hasImage ? (
+                              <Image
+                                src={offer.mediaFiles![0]}
+                                alt={offer.address}
+                                fill
+                                sizes="(max-width: 767px) 100vw, 260px"
+                                unoptimized={/^https?:\/\//i.test(offer.mediaFiles![0])}
+                                className={styles.offerThumbnailImg}
+                              />
+                            ) : (
+                              <div className={styles.noImagePlaceholder}>
+                                <Building2 className={styles.noImageIcon} />
+                                <span className={styles.noImageType}>
+                                  {offer.propertyType}
+                                </span>
+                                <span className={styles.noImageTruthfulText}>
+                                  {isRtl ? 'لا توجد صورة متوفرة' : 'No photo available'}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Content Body */}
+                          <div className={styles.offerCardBody}>
+                            <div>
+                              {/* Title & Badge */}
+                              <div className={styles.cardHeaderRow}>
+                                <h2 className={styles.offerCardTitle}>
+                                  {offer.address}
+                                </h2>
+                                <span className={styles.propertyTypeTag}>
+                                  {offer.propertyType}
+                                </span>
+                              </div>
+
+                              {/* Location & Metadata */}
+                              <div className={styles.metaInfoRow}>
+                                <span className={styles.metaItem}>
+                                  <MapPin className="w-3.5 h-3.5" />
+                                  <span>{offer.city}{offer.neighborhood ? ` - ${offer.neighborhood}` : ''}</span>
+                                </span>
+                                <span className={styles.metaDivider}>•</span>
+                                <span className={styles.metaItem}>
+                                  <UserIcon className="w-3.5 h-3.5" />
+                                  <span>{sellerName}</span>
+                                </span>
+                                <span className={styles.metaDivider}>•</span>
+                                <span className={styles.metaItem}>
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>{generateTimeAgo(offer.createdAt)}</span>
+                                </span>
+                              </div>
+
+                              {/* Description */}
+                              <p className={styles.offerDescription}>
+                                {generateDescription(offer)}
+                              </p>
+
+                              {/* Specifications Chips */}
+                              <div className={styles.specsChipsRow}>
+                                <span className={styles.specChip}>
+                                  <Ruler className="w-3 h-3 text-[var(--oo-gold-deep)]" />
+                                  <span>{offer.area} م²</span>
+                                </span>
+                                {offer.rooms && (
+                                  <span className={styles.specChip}>
+                                    {offer.rooms} {isRtl ? 'غرف' : 'rooms'}
+                                  </span>
+                                )}
+                                {offer.bathrooms && (
+                                  <span className={styles.specChip}>
+                                    {offer.bathrooms} {isRtl ? 'حمامات' : 'baths'}
+                                  </span>
+                                )}
+                                {offer.propertyCondition && (
+                                  <span className={styles.specChip}>
+                                    {offer.propertyCondition}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Bottom Row: Price & Actions */}
+                            <div className={styles.cardFooterRow}>
+                              {/* Price */}
+                              <div className={styles.priceDisplay}>
+                                {offer.price > 0 ? (
+                                  <div className="flex items-baseline gap-1.5">
+                                    <span className={styles.priceNumber}>
+                                      <SaudiRiyalAmount amount={offer.price} locale={isRtl ? 'ar-SA' : 'en-US'} />
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className={styles.priceOnContact}>
+                                    {t('offers.priceOnContact')}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className={styles.cardActionGroup}>
+                                <button
+                                  type="button"
+                                  onClick={() => { hapticTick(); router.push(`/offers/${offer.id}`); }}
+                                  className={styles.detailsBtn}
+                                >
+                                  {t('offers.details')}
+                                </button>
+
+                                {(user?.id === offer.userId || user?.id === offer.user?.id) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedOfferId(offer.id);
+                                      setSelectedOfferTitle(offer.address);
+                                      setIsAppointmentsModalOpen(true);
+                                    }}
+                                    className={styles.appointmentsBtn}
+                                  >
+                                    {isRtl ? 'عرض المواعيد' : 'View Appointments'}
+                                  </button>
+                                )}
+
+                                {user && offer.userId && offer.user && user.id !== offer.userId && (
+                                  <ChatButton
+                                    offerId={offer.id}
+                                    offerTitle={`${offer.propertyType} في ${offer.city}`}
+                                    sellerId={offer.userId}
+                                    sellerName={offer.user ? `${offer.user.firstName} ${offer.user.lastName}` : 'المعلن'}
+                                    userId={user.id}
+                                    userName={user.firstName || ''}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })
+                  ) : (
+                    /* Empty States */
+                    <div className={styles.stateCard}>
+                      <div className={styles.stateIconWrap}>
+                        <HomeIcon className="w-7 h-7 text-[var(--oo-gold-deep)]" />
+                      </div>
+                      <h3 className={styles.stateTitle}>
+                        {activeTab === 'appointments'
+                          ? t('offers.noAppointments')
+                          : (offers.length === 0 ? (isRtl ? 'لا توجد عروض متاحة حالياً' : 'No offers available at the moment') : t('offers.noOffers'))}
+                      </h3>
+                      <p className={styles.stateDesc}>
+                        {activeTab === 'appointments'
+                          ? t('offers.noAppointmentsSubtitle')
+                          : (offers.length === 0 ? (isRtl ? 'يرجى مراجعة الموقع لاحقاً للاطلاع على العروض الجديدة.' : 'Please check back later for newly published offers.') : t('offers.noOffersSubtitle'))}
+                      </p>
+                      {offers.length > 0 && activeTab !== 'appointments' && (
+                        <button
+                          type="button"
+                          onClick={resetFilters}
+                          className={styles.stateBtn}
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                          <span>{t('offers.filter.clearAll')}</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+
+        <OfferAppointmentsModal
+          isOpen={isAppointmentsModalOpen}
+          onClose={() => setIsAppointmentsModalOpen(false)}
+          offerId={selectedOfferId}
+          propertyTitle={selectedOfferTitle}
+        />
+      </section>
     </PullToRefresh>
   );
 }

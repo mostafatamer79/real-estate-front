@@ -1,0 +1,48 @@
+{
+  "light": [
+    {
+      "title": "خدمات ما بعد الشراء",
+      "span": "md:col-span-2 lg:col-span-3"
+    },
+    {
+      "title": "الخدمات القانونية",
+      "span": "md:col-span-2 lg:col-span-3"
+    },
+    {
+      "title": "البناء والمقاولات",
+      "span": "md:col-span-2 lg:col-span-2"
+    },
+    {
+      "title": "خدمات التسويق",
+      "span": "md:col-span-2 lg:col-span-2"
+    },
+    {
+      "title": "اخرى",
+      "span": "md:col-span-4 lg:col-span-2"
+    }
+  ],
+  "dark": [
+    {
+      "title": "خدمات ما بعد الشراء",
+      "span": "md:col-span-2 lg:col-span-3"
+    },
+    {
+      "title": "الخدمات القانونية",
+      "span": "md:col-span-2 lg:col-span-3"
+    },
+    {
+      "title": "البناء والمقاولات",
+      "span": "md:col-span-2 lg:col-span-2"
+    },
+    {
+      "title": "خدمات التسويق",
+      "span": "md:col-span-2 lg:col-span-2"
+    },
+    {
+      "title": "اخرى",
+      "span": "md:col-span-4 lg:col-span-2"
+    }
+  ],
+  "keyboardNavigation": true,
+  "themeSwitch": true
+}

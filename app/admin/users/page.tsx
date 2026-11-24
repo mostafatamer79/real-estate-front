@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { canManageUsers } from "@/lib/user-management-permissions";
 import { User, Role, VerifyStatus } from "@/types/user";
 import { 
   Loader2, 
@@ -187,17 +189,17 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
   const iconFieldCls = (f: string) => `w-full h-11 bg-muted rounded-xl pr-10 pl-4 text-sm font-bold border ${touched[f] && fieldErrors[f] ? 'border-red-500' : 'border-transparent focus:border-slate-950'} outline-none transition-all`;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
-        <button onClick={onClose} className="absolute left-6 top-6 p-2 text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-background/60 dark:bg-slate-950/60 backdrop-blur-sm" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="calm-panel bg-card w-[95vw] sm:max-w-lg rounded-[1rem] p-4 sm:p-8 shadow-sm dark:shadow-2xl relative overflow-hidden">
+        <button onClick={onClose} className="absolute left-6 top-6 p-2 text-muted-foreground dark:text-slate-300 hover:text-slate-950 transition-colors"><X className="w-5 h-5" /></button>
         
         <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-2xl bg-slate-950 flex items-center justify-center">
-              {user?.id ? <Edit className="w-5 h-5 text-white" /> : <Plus className="w-5 h-5 text-white" />}
+            <div className="calm-icon w-10 h-10 rounded-2xl bg-background dark:bg-slate-950 flex items-center justify-center">
+              {user?.id ? <Edit className="w-5 h-5 text-foreground dark:text-white" /> : <Plus className="w-5 h-5 text-foreground dark:text-white" />}
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-950 tracking-tight">{user?.id ? 'تعديل بيانات المستخدم' : 'إضافة مستخدم داخلي'}</h2>
-              <p className="text-xs text-slate-400 font-bold">إدارة الصلاحيات والوصول</p>
+              <p className="text-xs text-muted-foreground dark:text-slate-400 font-bold">إدارة الصلاحيات والوصول</p>
             </div>
         </div>
 
@@ -206,19 +208,19 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الاسم الأول</label>
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الاسم الأول</label>
               <input value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} onBlur={() => touch('firstName')} className={fieldCls('firstName')} placeholder="محمد" />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">اسم العائلة</label>
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">اسم العائلة</label>
               <input value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} className={fieldCls('lastName')} placeholder="العلي" />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right block w-full">البريد الإلكتروني</label>
+            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-right block w-full">البريد الإلكتروني</label>
             <div className="relative">
-              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-300" />
               <input 
                 type="email" 
                 value={form.email} 
@@ -231,16 +233,16 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right block w-full">رقم الهاتف</label>
+            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-right block w-full">رقم الهاتف</label>
             <div className="relative">
-              <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+              <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-300" />
               <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className={iconFieldCls('phone')} placeholder="05xxxxxxxx" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الصلاحية</label>
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الصلاحية</label>
               <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} className="w-full h-11 bg-muted rounded-xl px-4 text-sm font-bold border border-transparent focus:border-slate-950 outline-none transition-all appearance-none">
                 <option value={Role.VIEWER}>{language === 'ar' ? 'مشاهد (Viewer)' : 'Viewer'}</option>
                 <option value={Role.AGENT}>{language === 'ar' ? 'مقدم خدمة (Agent)' : 'Agent'}</option>
@@ -256,7 +258,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
             {form.role === 'employee' && (
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">اختيار المدير</label>
+                <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">اختيار المدير</label>
                 <select value={form.parentId} onChange={e => setForm(f => ({ ...f, parentId: e.target.value }))} className={fieldCls('parentId')}>
                   <option value="">اختر مديراً...</option>
                   {managers.map(m => <option key={m.id} value={m.id}>{m.firstName} {m.lastName}</option>)}
@@ -265,17 +267,18 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
             )}
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-xl border bg-muted/50 mt-4">
+          <div className="calm-panel flex items-center justify-between p-4 rounded-xl border bg-muted/50 mt-4">
             <div className="space-y-0.5">
-              <label className="text-xs font-black text-slate-900">
+              <label id="free-trial-label" className="text-xs font-black text-slate-900">
                 {language === 'ar' ? 'تجربة مجانية' : 'Free Trial'}
               </label>
-              <p className="text-[9px] font-bold text-slate-500">
-                {language === 'ar' ? 'يسمح للمستخدم بالدخول وتجاوز قيود الاشتراك' : 'Allows user to bypass subscription limits'}
+              <p className="text-[9px] font-bold text-muted-foreground dark:text-slate-500">
+                {language === 'ar' ? 'يتجاوز قيود الاشتراك حتى يلغيه الأدمن؛ لا يغني عن تفعيل الحساب والتوثيق والصلاحيات' : 'Bypasses subscription limits until an administrator disables it; account activation, identity verification and permissions still apply'}
               </p>
             </div>
             <button
               type="button"
+              role="switch" aria-labelledby="free-trial-label" aria-checked={form.hasFreeTrial}
               onClick={() => setForm(f => ({ ...f, hasFreeTrial: !f.hasFreeTrial }))}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.hasFreeTrial ? 'bg-blue-600' : 'bg-slate-300'}`}
             >
@@ -285,12 +288,12 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
           {form.role !== Role.USER && (
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة</label>
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الإدارة</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {DEPARTMENTS.map(dept => {
                   const isSelected = form.department.includes(dept.value);
                   return (
-                    <div key={dept.value} className={`flex items-center gap-1 rounded-xl border p-1 transition-all ${isSelected ? 'bg-slate-950 text-white border-slate-950' : 'bg-muted text-slate-500 border-transparent hover:border'}`}>
+                    <div key={dept.value} className={`flex items-center gap-1 rounded-xl border p-1 transition-all ${isSelected ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950' : 'bg-muted text-muted-foreground dark:text-slate-500 border-transparent hover:border'}`}>
                       <button
                         type="button"
                         onClick={() => {
@@ -319,7 +322,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                           setPreviewOpen(true);
                         }}
                         className={`h-8 w-8 shrink-0 rounded-lg flex items-center justify-center transition-colors ${
-                          isSelected ? 'bg-card/10 text-white hover:bg-card/20' : 'bg-card text-slate-400 hover:text-slate-950'
+                          isSelected ? 'bg-muted dark:bg-card/10 text-foreground dark:text-white hover:bg-muted hover:dark:bg-card/20' : 'bg-card text-muted-foreground dark:text-slate-400 hover:text-slate-950'
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -335,12 +338,12 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
           )}
 
           {form.role !== Role.USER && (
-            <div className="space-y-3 rounded-2xl border border-slate-200 bg-muted/50 p-4">
+            <div className="calm-panel space-y-3 rounded-2xl border border-slate-200 bg-muted/50 p-4">
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                   {language === 'ar' ? 'صلاحيات الأقسام' : 'Department permissions'}
                 </label>
-                <p className="mt-1 text-[11px] font-bold text-slate-500">
+                <p className="mt-1 text-[11px] font-bold text-muted-foreground dark:text-slate-500">
                   {language === 'ar' ? 'حدد مستوى الوصول لكل قسم للموظف.' : 'Choose the access level for each employee section.'}
                 </p>
               </div>
@@ -349,7 +352,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                 {ADMIN_PERMISSION_DEFINITIONS.filter(({ id }) => id !== 'employees').map(({ id, labelAr, labelEn }) => {
                   const currentLevel = form.departmentPermissions[id];
                   return (
-                    <div key={id} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div key={id} className="calm-panel flex flex-col gap-3 rounded-xl border border-slate-200 bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-xs font-black text-slate-800">{language === 'ar' ? labelAr : labelEn}</span>
                       <div className="grid grid-cols-3 gap-1 rounded-xl bg-muted p-1" role="group" aria-label={language === 'ar' ? `صلاحيات ${labelAr}` : `${labelEn} permissions`}>
                         {[
@@ -361,7 +364,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                             key={level}
                             type="button"
                             onClick={() => setDepartmentPermission(id, level)}
-                            className={`min-h-9 rounded-lg px-2 text-[10px] font-black transition-colors ${currentLevel === level ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-500 hover:bg-card hover:text-slate-950'}`}
+                            className={`min-h-9 rounded-lg px-2 text-[10px] font-black transition-colors ${currentLevel === level ? 'bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-sm' : 'text-muted-foreground dark:text-slate-500 hover:bg-card hover:text-slate-950'}`}
                           >
                             {label}
                           </button>
@@ -371,7 +374,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                   );
                 })}
 
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-card p-3">
+                <div className="calm-panel flex items-center justify-between rounded-xl border border-slate-200 bg-card p-3">
                   <span className="text-xs font-black text-slate-800">
                     {language === 'ar' ? 'إدارة الموظفين' : 'Employee management'}
                   </span>
@@ -380,7 +383,7 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
                     role="switch"
                     aria-checked={form.departmentPermissions.employees === true}
                     onClick={() => setDepartmentPermission('employees', form.departmentPermissions.employees !== true)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.departmentPermissions.employees === true ? 'bg-slate-950' : 'bg-slate-300'}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.departmentPermissions.employees === true ? 'bg-background dark:bg-slate-950' : 'bg-slate-300'}`}
                   >
                     <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${form.departmentPermissions.employees === true ? (language === 'ar' ? '-translate-x-6' : 'translate-x-6') : 'translate-x-1'}`} />
                   </button>
@@ -392,16 +395,16 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 
 
           {['legal', 'finance', 'marketing'].includes(form.role) && (
-            <div className="p-4 rounded-2xl bg-muted border border flex items-center gap-3">
-              <Building2 className="w-5 h-5 text-slate-400" />
+            <div className="calm-panel p-4 rounded-2xl bg-muted border border flex items-center gap-3">
+              <Building2 className="w-5 h-5 text-muted-foreground dark:text-slate-400" />
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الإدارة التلقائية</p>
+                <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الإدارة التلقائية</p>
                 <p className="text-xs font-bold text-slate-950">{getDeptLabel(form.role)}</p>
               </div>
             </div>
           )}
 
-          <button type="submit" disabled={loading} className="w-full h-12 bg-slate-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2">
+          <button type="submit" disabled={loading} className="w-full h-12 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {loading ? 'جارٍ الحفظ...' : (user?.id ? 'تحديث البيانات' : 'إنشاء المستخدم')}
           </button>
@@ -420,6 +423,8 @@ function UserModal({ onClose, onCreated, user, managers = [] }: { onClose: () =>
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function UsersPage() {
     const { t, language } = useLanguage();
+    const { user: currentUser } = useAuth();
+    const canManage = canManageUsers(currentUser);
     const confirmDialog = useConfirmDialog();
     const router = useRouter();
     const [users, setUsers] = useState<User[]>([]);
@@ -481,20 +486,6 @@ export default function UsersPage() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-
-    const handleVerifyUser = async (userId: string, status: boolean) => {
-        const ok = await confirmDialog({
-            title: status ? t('admin.users.action.confirmVerify') : t('admin.users.action.confirmUnverify'),
-            confirmLabel: language === 'ar' ? 'تأكيد' : 'Confirm',
-            cancelLabel: language === 'ar' ? 'إلغاء' : 'Cancel',
-        });
-        if (!ok) return;
-        try {
-            const verifyStatus = status ? 'verified' : 'rejected';
-            await api.put(`/user/${userId}`, { agentVerificationStatus: verifyStatus });
-            setUsers(users.map(u => u.id === userId ? { ...u, agentVerificationStatus: verifyStatus as VerifyStatus } : u));
-        } catch (error) { console.error(error); }
-    };
 
     const handleToggleUserActive = async (targetUser: User) => {
         const nextActive = !targetUser.isActive;
@@ -580,8 +571,8 @@ export default function UsersPage() {
         const matchesDepartment = departmentFilter === "all" || (u.departments || []).map(String).includes(departmentFilter);
         const matchesVerification =
             verificationFilter === "all" ||
-            (verificationFilter === "verified" && u.isVerified) ||
-            (verificationFilter === "pending" && !u.isVerified);
+            (verificationFilter === "verified" && u.nafathVerifiedAt) ||
+            (verificationFilter === "pending" && !u.nafathVerifiedAt);
         return matchesSearch && matchesRole && matchesDepartment && matchesVerification;
     });
 
@@ -698,9 +689,9 @@ export default function UsersPage() {
     );
 
     return (
-        <div className="min-h-screen">
+        <div className="calm-page calm-screen min-h-screen">
         <AnimatePresence>
-          {isModalOpen && (
+          {canManage && isModalOpen && (
             <UserModal
               user={editingUser}
               onClose={handleCloseModal}
@@ -714,28 +705,32 @@ export default function UsersPage() {
             {/* Header Section */}
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
                 <div className="space-y-1.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-slate-500 text-[9px] font-black uppercase tracking-widest border border">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-muted-foreground dark:text-slate-500 text-[9px] font-black uppercase tracking-widest border border">
                         <Users className="w-4 h-4" />
                         {t('admin.users.directory')}
                     </div>
                     <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">{t('admin.users.title')}</h1>
-                    <p className="text-slate-400 text-xs font-bold">{t('admin.users.desc')}</p>
+                    <p className="text-muted-foreground dark:text-slate-400 text-xs font-bold">{t('admin.users.desc')}</p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="bg-card border border px-4 py-2.5 rounded-2xl shadow-sm">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('admin.users.total')}</p>
+                    <div className="calm-panel bg-card border border px-4 py-2.5 rounded-2xl shadow-sm">
+                        <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-0.5">{t('admin.users.total')}</p>
                         <p className="text-xl font-black text-slate-950 tabular-nums">{users.length}</p>
                     </div>
-                    {/* Create user button */}
+                    {canManage && (
+                      <button onClick={() => { setEditingUser(null); setIsModalOpen(true); }} className="min-h-11 rounded-xl border border-border bg-primary px-4 py-2 font-bold text-primary-foreground">
+                        {language === 'ar' ? 'إضافة مستخدم' : 'Add user'}
+                      </button>
+                    )}
 
                 </div>
             </section>
 
             {/* Table Control Bar */}
-            <div className="grid grid-cols-1 gap-3 bg-card p-4 rounded-3xl border border shadow-sm md:grid-cols-5">
+            <div className="calm-panel grid grid-cols-1 gap-3 bg-card p-4 rounded-3xl border border shadow-sm md:grid-cols-5">
                 <div className={`relative w-full group md:col-span-2`}>
-                    <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-950 transition-colors`} />
+                    <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400 group-focus-within:text-slate-950 transition-colors`} />
                     <input 
                         type="text"
                         placeholder={t('admin.users.searchPlaceholder')}
@@ -766,14 +761,14 @@ export default function UsersPage() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-card border border rounded-[1rem] overflow-hidden shadow-sm">
+            <div className="calm-panel bg-card border border rounded-[1rem] overflow-hidden shadow-sm">
                 <div className="relative group/table">
                     {/* Left scroll button */}
                     {showLeftScroll && (
                         <button
                             type="button"
                             onClick={() => scrollTable('left')}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-background hover:dark:bg-slate-950 hover:text-foreground hover:dark:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
                             title={language === 'ar' ? 'تمرير لليسار' : 'Scroll Left'}
                         >
                             <ChevronLeft className="w-5 h-5" />
@@ -785,7 +780,7 @@ export default function UsersPage() {
                         <button
                             type="button"
                             onClick={() => scrollTable('right')}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-slate-200/80 shadow-md text-slate-700 hover:bg-background hover:dark:bg-slate-950 hover:text-foreground hover:dark:text-white transition-all flex items-center justify-center active:scale-95 opacity-90 md:opacity-0 md:group-hover/table:opacity-100 duration-300"
                             title={language === 'ar' ? 'تمرير لليمين' : 'Scroll Right'}
                         >
                             <ChevronRight className="w-5 h-5" />
@@ -807,12 +802,12 @@ export default function UsersPage() {
                     <table className="w-full text-right" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                         <thead>
                             <tr className="bg-muted/50 border-b border">
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.user')}</th>
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.contact')}</th>
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.users.table.role')}</th>
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">الإدارة</th>
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.users.table.status')}</th>
-                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.users.table.actions')}</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.users.table.user')}</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.users.table.contact')}</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.users.table.role')}</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الإدارة</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-center">{t('admin.users.table.status')}</th>
+                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-center">{t('admin.users.table.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -835,25 +830,25 @@ export default function UsersPage() {
                                 >
                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border flex items-center justify-center text-white font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
+                                            <div className="calm-icon w-10 h-10 rounded-full bg-card dark:bg-slate-900 border-2 border flex items-center justify-center text-foreground dark:text-white font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
                                                 {user.firstName?.[0]}
                                             </div>
                                             <div>
                                                 <Link href={`/admin/users/${user.id}`} className="text-sm font-black text-slate-950 hover:underline">
                                                     {user.firstName} {user.lastName}
                                                 </Link>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {user.id.substring(0, 8)}</p>
+                                                <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">ID: {user.id.substring(0, 8)}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                                                <Mail className="w-3.5 h-3.5 text-slate-300" />
+                                                <Mail className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-300" />
                                                 {user.email}
                                             </div>
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-400">
-                                                <Phone className="w-3.5 h-3.5 text-slate-300" />
+                                            <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground dark:text-slate-400">
+                                                <Phone className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-300" />
                                                 {user.phone}
                                             </div>
                                         </div>
@@ -861,7 +856,7 @@ export default function UsersPage() {
                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                         <div className="flex flex-wrap gap-1">
                                             <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
-                                                user.role === Role.ADMIN ? 'bg-slate-900 text-white' : 
+                                                user.role === Role.ADMIN ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' :
                                                 'bg-muted text-slate-600 border border'
                                             }`}>
                                                 {t(`admin.trans.role.${user.role || 'viewer'}`)}
@@ -878,20 +873,20 @@ export default function UsersPage() {
                                                     </span>
                                                 ))
                                             ) : (
-                                                <span className="text-slate-300 text-[10px] font-bold">—</span>
+                                                <span className="text-muted-foreground dark:text-slate-300 text-[10px] font-bold">—</span>
                                             )}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3 sm:px-6 sm:py-4 text-center">
-                                        {user.isVerified ? (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-muted border border">
-                                                <div className="w-1 h-1 rounded-full bg-slate-950" />
-                                                {t('admin.users.status.verified')}
+                                        {user.nafathVerifiedAt ? (
+                                            <div className="calm-panel inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-muted border border">
+                                                <div className="w-1 h-1 rounded-full bg-background dark:bg-slate-950" />
+                                                {language === 'ar' ? 'الهوية موثقة بنفاذ' : 'Identity verified via Nafath'}
                                             </div>
                                         ) : (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 bg-muted border border">
+                                            <div className="calm-panel inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 bg-muted border border">
                                                 <div className="w-1 h-1 rounded-full bg-slate-300 animate-pulse" />
-                                                {t('admin.users.status.pending')}
+                                                {language === 'ar' ? 'بانتظار توثيق نفاذ' : 'Nafath verification pending'}
                                             </div>
                                         )}
                                         {user.hasFreeTrial && (
@@ -903,24 +898,9 @@ export default function UsersPage() {
                                     </td>
                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                         <div className="flex items-center justify-center gap-2">
-                                            {!user.isVerified ? (
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => handleVerifyUser(user.id, true)}
-                                                    className="h-9 px-4 rounded-xl bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm"
-                                                >
-                                                    {t('admin.users.action.verify')}
-                                                </button>
-                                            ) : (
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => handleVerifyUser(user.id, false)}
-                                                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted text-slate-400 hover:text-slate-950 hover:bg-muted transition-all"
-                                                    title="تعليق"
-                                                >
-                                                    <XCircle className="w-4 h-4" />
-                                                </button>
-                                            )}
+                                            <Link href={`/admin/users/${user.id}`} className="inline-flex min-h-9 items-center rounded-xl border border-border px-3 text-xs font-bold">
+                                              {language === 'ar' ? 'مراجعة الحساب والترخيص' : 'Review account and license'}
+                                            </Link>
 
                                             <button
                                                   type="button"
@@ -931,7 +911,7 @@ export default function UsersPage() {
                                                  <MessageSquare className="w-4 h-4" />
                                              </button>
 
-                                            <button
+                                            <button disabled={!canManage}
                                                 type="button"
                                                 onClick={() => handleToggleUserActive(user)}
                                                 className={`h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border transition-all text-[10px] font-black whitespace-nowrap ${
@@ -947,13 +927,13 @@ export default function UsersPage() {
                                             
                                             <Link
                                                  href={`/admin/users/${user.id}`}
-                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-all"
                                                  title="الدخول للملف"
                                              >
                                                  <Eye className="w-4 h-4" />
                                              </Link>
 
-                                            <button
+                                            <button disabled={!canManage}
                                                  type="button"
                                                  onClick={() => handleImpersonateUser(user)}
                                                  className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all text-[10px] font-black whitespace-nowrap"
@@ -963,16 +943,16 @@ export default function UsersPage() {
                                                  <span>الدخول كالمستخدم</span>
                                              </button>
 
-                                            <button 
+                                            <button disabled={!canManage}
                                                  type="button"
                                                  onClick={() => handleEditUser(user)}
-                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-all"
                                                  title="تعديل"
                                              >
                                                  <Edit className="w-4 h-4" />
                                              </button>
  
-                                            <button 
+                                            <button disabled={!canManage}
                                                 type="button"
                                                 onClick={() => handleDeleteUser(user.id)}
                                                 className="h-9 w-9 flex items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-700 hover:bg-red-100 transition-all"
@@ -1004,31 +984,31 @@ export default function UsersPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="rounded-2xl border border bg-card p-4 shadow-sm"
+                                className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm"
                             >
                                 <div className="flex items-start gap-3 mb-3">
-                                    <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border flex items-center justify-center text-white font-black text-xs shrink-0">
+                                    <div className="calm-icon w-10 h-10 rounded-full bg-card dark:bg-slate-900 border-2 border flex items-center justify-center text-foreground dark:text-white font-black text-xs shrink-0">
                                         {user.firstName?.[0]}
                                     </div>
                                     <div>
                                         <Link href={`/admin/users/${user.id}`} className="text-sm font-black text-slate-950 hover:underline">
                                             {user.firstName} {user.lastName}
                                         </Link>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {user.id.substring(0, 8)}</p>
+                                        <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">ID: {user.id.substring(0, 8)}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-2 text-xs">
                                     <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                                        <Mail className="w-3.5 h-3.5 text-slate-300" />
+                                        <Mail className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-300" />
                                         {user.email}
                                     </div>
-                                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400">
-                                        <Phone className="w-3.5 h-3.5 text-slate-300" />
+                                    <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground dark:text-slate-400">
+                                        <Phone className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-300" />
                                         {user.phone}
                                     </div>
                                     <div className="flex flex-wrap gap-1 pt-1">
                                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
-                                            user.role === Role.ADMIN ? 'bg-slate-900 text-white' : 
+                                            user.role === Role.ADMIN ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' :
                                             'bg-muted text-slate-600 border border'
                                         }`}>
                                             {t(`admin.trans.role.${user.role || 'viewer'}`)}
@@ -1043,19 +1023,19 @@ export default function UsersPage() {
                                                 </span>
                                             ))
                                         ) : (
-                                            <span className="text-slate-300 text-[10px] font-bold">—</span>
+                                            <span className="text-muted-foreground dark:text-slate-300 text-[10px] font-bold">—</span>
                                         )}
                                     </div>
                                     <div className="flex flex-wrap items-center gap-2 pt-1">
-                                        {user.isVerified ? (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-muted border border">
-                                                <div className="w-1 h-1 rounded-full bg-slate-950" />
-                                                {t('admin.users.status.verified')}
+                                        {user.nafathVerifiedAt ? (
+                                            <div className="calm-panel inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-950 bg-muted border border">
+                                                <div className="w-1 h-1 rounded-full bg-background dark:bg-slate-950" />
+                                                {language === 'ar' ? 'الهوية موثقة بنفاذ' : 'Identity verified via Nafath'}
                                             </div>
                                         ) : (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 bg-muted border border">
+                                            <div className="calm-panel inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 bg-muted border border">
                                                 <div className="w-1 h-1 rounded-full bg-slate-300 animate-pulse" />
-                                                {t('admin.users.status.pending')}
+                                                {language === 'ar' ? 'بانتظار توثيق نفاذ' : 'Nafath verification pending'}
                                             </div>
                                         )}
                                         {user.hasFreeTrial && (
@@ -1066,24 +1046,9 @@ export default function UsersPage() {
                                         )}
                                     </div>
                                     <div className="flex flex-wrap items-center gap-2 pt-3">
-                                        {!user.isVerified ? (
-                                            <button 
-                                                type="button"
-                                                onClick={() => handleVerifyUser(user.id, true)}
-                                                className="h-9 px-4 rounded-xl bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm"
-                                            >
-                                                {t('admin.users.action.verify')}
-                                            </button>
-                                        ) : (
-                                            <button 
-                                                type="button"
-                                                onClick={() => handleVerifyUser(user.id, false)}
-                                                className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted text-slate-400 hover:text-slate-950 hover:bg-muted transition-all"
-                                                title="تعليق"
-                                            >
-                                                <XCircle className="w-4 h-4" />
-                                            </button>
-                                        )}
+                                        <Link href={`/admin/users/${user.id}`} className="inline-flex min-h-9 items-center rounded-xl border border-border px-3 text-xs font-bold">
+                                              {language === 'ar' ? 'مراجعة الحساب والترخيص' : 'Review account and license'}
+                                            </Link>
                                         <button
                                             type="button"
                                             onClick={() => handleOpenChat(user.id)}
@@ -1092,7 +1057,7 @@ export default function UsersPage() {
                                         >
                                             <MessageSquare className="w-4 h-4" />
                                         </button>
-                                        <button
+                                        <button disabled={!canManage}
                                             type="button"
                                             onClick={() => handleToggleUserActive(user)}
                                             className={`h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border transition-all text-[10px] font-black whitespace-nowrap ${
@@ -1107,12 +1072,12 @@ export default function UsersPage() {
                                         </button>
                                         <Link
                                             href={`/admin/users/${user.id}`}
-                                            className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                            className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-all"
                                             title="الدخول للملف"
                                         >
                                             <Eye className="w-4 h-4" />
                                         </Link>
-                                        <button
+                                        <button disabled={!canManage}
                                             type="button"
                                             onClick={() => handleImpersonateUser(user)}
                                             className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all text-[10px] font-black whitespace-nowrap"
@@ -1121,15 +1086,15 @@ export default function UsersPage() {
                                             <UserIcon className="w-4 h-4" />
                                             <span>الدخول كالمستخدم</span>
                                         </button>
-                                        <button 
+                                        <button disabled={!canManage}
                                             type="button"
                                             onClick={() => handleEditUser(user)}
-                                            className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                            className="h-9 w-9 flex items-center justify-center rounded-xl border border bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-all"
                                             title="تعديل"
                                         >
                                             <Edit className="w-4 h-4" />
                                         </button>
-                                        <button 
+                                        <button disabled={!canManage}
                                             type="button"
                                             onClick={() => handleDeleteUser(user.id)}
                                             className="h-9 w-9 flex items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-700 hover:bg-red-100 transition-all"

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import SignIn from "../../login/page";
+import SignIn from "@/components/auth/SignIn";
 import { useRouter } from 'next/navigation';
 import { useSettings } from '@/context/SettingsContext';
 
@@ -57,16 +57,16 @@ export default function HomePage() {
       />
 
       {/* background radial glow */}
-      <div className="absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
+      <div className="calm-decoration absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
 
       {/* Splash — shown while not logged in and sign-in not yet shown */}
       {!isLoggedIn && !showSignIn && (
         <div className="flex flex-col items-center gap-3 md:gap-6 animate-in fade-in duration-700 relative z-10">
           {isLoading ? (
-            <span className="inline-block w-48 h-16 bg-card/5 rounded-2xl animate-pulse" />
+            <span className="inline-block w-48 h-16 bg-muted dark:bg-card/5 rounded-2xl animate-pulse" />
           ) : (
             <Image
-              src={settings.logoWhiteUrl || '/icons/white.png'}
+              src={settings.isDark ? (settings.logoWhiteUrl || "/icons/white.png") : (settings.logoBlackUrl || "/icons/black.png")}
               alt={settings.appName}
               width={480}
               height={Number(settings.splashLogoHeight || 120)}
@@ -75,7 +75,7 @@ export default function HomePage() {
               priority
             />
           )}
-          <p className="text-white/30 text-sm font-medium">
+          <p className="text-muted-foreground dark:text-white/30 text-sm font-medium">
             {isLoading ? '' : settings.description}
           </p>
           {/* Loading dots */}
@@ -83,7 +83,7 @@ export default function HomePage() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-1.5 h-1.5 rounded-full bg-card/20 animate-pulse"
+                className="w-1.5 h-1.5 rounded-full bg-muted dark:bg-card/20 animate-pulse"
                 style={{ animationDelay: `${i * 200}ms` }}
               />
             ))}

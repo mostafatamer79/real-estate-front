@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { serviceRequestApi, ServiceRequest, ServiceStatus } from "@/lib/service-request-api";
-import { useLanguage } from "@/context/LanguageContext";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
+  serviceRequestApi,
+  ServiceRequest,
+  ServiceStatus,
+} from "@/lib/service-request-api";
+import { useLanguage } from "@/context/LanguageContext";
+import {
+  AlertCircle,
   ArrowLeft,
-  Building2,
   Check,
+  ChevronRight,
   Clock,
   Loader2,
   MessageSquare,
@@ -22,9 +26,18 @@ import {
 import toast from "react-hot-toast";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
 import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
-import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import PullToRefresh from "@/components/shared/PullToRefresh";
 import { useAuth } from "@/hooks/useAuth";
+import ServiceCategoryBrowser from "@/components/providers/ServiceCategoryBrowser";
+import { loadServiceRequestPages } from "@/lib/service-request-pages";
+import {
+  requestMatchesService,
+  type ServiceSelection,
+} from "@/lib/service-navigation";
+import { canNavigateBack } from "@/lib/workspace-usability";
+import styles from "./my-requests.module.css";
+import { loginHref } from "@/lib/auth-navigation";
+import { canPriceServiceRequest, requestPriceDepartment, serviceRequestInvoiceLocked, serviceRequestPriceLocked, serviceRequestPricePayload } from "@/lib/service-request-pricing";
 
 const STAFF_ROLES = new Set([
   "admin",
@@ -50,31 +63,86 @@ const departmentLabels: Record<string, string> = {
   real_estate: "الأملاك",
 };
 
+const departmentLabelsEn: Record<string, string> = {
+  admin: "Administration",
+  agent: "Broker",
+  marketing: "Marketing",
+  finance: "Finance",
+  legal: "Legal",
+  properties: "Properties",
+  employees: "Staff",
+  real_estate: "Properties",
+};
+
 type RequestFilter = "all" | "accepted" | "rejected";
 
 export default function MyServiceRequestsPage() {
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<ServiceRequest | null>(null);
   const [priceDrafts, setPriceDrafts] = useState<Record<string, { price: string; note: string; deptSlug: string }>>({});
   const [search, setSearch] = useState("");
   const [requestFilter, setRequestFilter] = useState<RequestFilter>("all");
-  const { t, language } = useLanguage();
-  const { user, isLoading: authLoading } = useAuth();
+  const [serviceSelection, setServiceSelection] = useState<ServiceSelection>({});
+  const { language, toggleLanguage } = useLanguage();
+  const isAr = language === "ar";
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const confirmDialog = useConfirmDialog();
 
-  const role = String((user as any)?.role || "");
+  const role = String(user?.role || "");
   const isAdmin = role === "admin";
-  const canManageRequests = STAFF_ROLES.has(role);
+  const canManageRequests = isAuthenticated && STAFF_ROLES.has(role);
+  const mounted = useRef(true);
+  const loadSerial = useRef(0);
+  const busy = useRef(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; loadSerial.current += 1; };
+  }, []);
+  useEffect(() => {
+    if (!authLoading && (!isAuthenticated || !user)) router.replace(loginHref('/services/my-requests'));
+  }, [authLoading, isAuthenticated, user, router]);
+  useEffect(() => { setActionError(null); }, [selectedRequest?.id]);
+  const errorMessage = (error: unknown, fallback: string) => {
+    const failure = error as { response?: { data?: { message?: string | string[] } } };
+    const message = failure?.response?.data?.message;
+    return Array.isArray(message) ? message.join('، ') : typeof message === 'string' ? message : fallback;
+  };
+  const updatedRequest = (value: ServiceRequest, id: string) => {
+    if (!value || value.id !== id || typeof value.status !== 'string') throw new Error('Invalid request response');
+    return value;
+  };
+  const departmentTitle = (request: ServiceRequest) => {
+    const slug = requestPriceDepartment(request);
+    return (isAr ? departmentLabels : departmentLabelsEn)[slug] || slug;
+  };
 
-  const defaultDeptSlug = useMemo(() => {
-    const departments = Array.isArray((user as any)?.departments) ? (user as any).departments : [];
-    if (isAdmin) return "admin";
-    if (role === "agent") return "agent";
-    return departments[0] || role || "agent";
-  }, [isAdmin, role, user]);
+  const fetchRequests = useCallback(async () => {
+    if (!canManageRequests) return;
+    const operation = ++loadSerial.current;
+    try {
+      setLoading(true);
+      setFetchError(null);
+      const items = await loadServiceRequestPages((params) => {
+        if (!mounted.current || operation !== loadSerial.current) throw new Error('Stale request');
+        return serviceRequestApi.findAll(params);
+      });
+      if (!mounted.current || operation !== loadSerial.current) return;
+      setRequests(items);
+    } catch (error) {
+      if (!mounted.current || operation !== loadSerial.current) return;
+      console.error("Error fetching service requests:", error);
+      const msg = isAr ? "تعذر تحميل الطلبات" : "Could not load requests";
+      setFetchError(msg);
+      toast.error(msg);
+    } finally {
+      if (mounted.current && operation === loadSerial.current) setLoading(false);
+    }
+  }, [isAr, canManageRequests]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -82,27 +150,14 @@ export default function MyServiceRequestsPage() {
       setLoading(false);
       return;
     }
-    fetchRequests();
-  }, [authLoading, canManageRequests]);
-
-  const fetchRequests = async () => {
-    try {
-      setLoading(true);
-      const response = await serviceRequestApi.findAll({ page: 1, limit: 200 });
-      setRequests(response.data.items || []);
-    } catch (error) {
-      console.error("Error fetching service requests:", error);
-      toast.error(t("common.error") || "تعذر تحميل الطلبات");
-    } finally {
-      setLoading(false);
-    }
-  };
+    void fetchRequests();
+  }, [authLoading, canManageRequests, fetchRequests]);
 
   const getDraft = (request: ServiceRequest) =>
     priceDrafts[request.id] || {
-      price: request.price ? String(request.price) : "",
+      price: request.price !== undefined && request.price !== null ? String(request.price) : "",
       note: "",
-      deptSlug: defaultDeptSlug,
+      deptSlug: requestPriceDepartment(request),
     };
 
   const updateDraft = (request: ServiceRequest, key: "price" | "note" | "deptSlug", value: string) => {
@@ -113,113 +168,239 @@ export default function MyServiceRequestsPage() {
   };
 
   const submitPrice = async (request: ServiceRequest) => {
-    const draft = getDraft(request);
-    const price = Number(draft.price);
-    if (!price || price < 0) {
-      toast.error("أدخل سعر صحيح");
+    if (busy.current) return;
+    setActionError(null);
+    if (!canPriceServiceRequest(user, request) || serviceRequestPriceLocked(request)) {
+      setActionError(isAr ? 'لا يمكن تسعير هذا الطلب: تحقق من صلاحية القسم وحالة الفاتورة.' : 'This request cannot be priced: check department access and invoice status.');
       return;
     }
-
-    setSavingId(request.id);
+    let payload: ReturnType<typeof serviceRequestPricePayload>;
+    try { payload = serviceRequestPricePayload(request, getDraft(request).price, getDraft(request).note); }
+    catch {
+      setActionError(isAr ? 'أدخل مبلغاً من 0.01 إلى 9,999,999,999.99 ريال وبمنزلتين عشريتين كحد أقصى.' : 'Enter an amount from SAR 0.01 to 9,999,999,999.99 with at most two decimal places.');
+      return;
+    }
+    busy.current = true;
     try {
-      const response = await serviceRequestApi.addDepartmentPrice(request.id, {
-        price,
-        note: draft.note,
-        deptSlug: draft.deptSlug || defaultDeptSlug,
+      const amount = new Intl.NumberFormat(isAr ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'SAR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(payload.price);
+      const confirmed = await confirmDialog({
+        contentClassName: styles.requestConfirm,
+        closeLabel: isAr ? "إغلاق" : "Close",
+        title: request.userId ? (isAr ? 'إنشاء فاتورة للعميل؟' : 'Create client invoice?') : (isAr ? 'تأكيد إرسال السعر؟' : 'Confirm price submission?'),
+        description: `${request.serviceType} · ${departmentTitle(request)} · ${amount}. ` + (request.userId
+          ? (isAr ? 'سيُنشئ الإرسال فاتورة في محفظة العميل ويقفل تعديل السعر.' : 'Submitting creates an invoice in the client wallet and locks price editing.')
+          : (isAr ? 'سيُحفظ السعر ويُقفل تعديله. لا يوجد حساب عميل مرتبط لعرض الفاتورة في محفظته.' : 'The price will be saved and locked. No client account is linked for a wallet invoice.')),
+        confirmLabel: isAr ? 'تأكيد الإرسال' : 'Confirm submission',
+        cancelLabel: isAr ? 'إلغاء' : 'Cancel',
       });
-      toast.success("تم إرسال السعر بانتظار اعتماد الإدارة");
-      setSelectedRequest(response.data);
+      if (!confirmed || !mounted.current) return;
+      setSavingId(request.id);
+      const response = await serviceRequestApi.addDepartmentPrice(request.id, payload);
+      if (!mounted.current) return;
+      setSelectedRequest(updatedRequest(response.data, request.id));
+      toast.success(request.userId ? (isAr ? 'تم إرسال السعر وإنشاء الفاتورة في محفظة العميل.' : 'Price submitted and invoice created in the client wallet.') : (isAr ? 'تم حفظ السعر.' : 'Price saved.'));
       await fetchRequests();
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "تعذر إرسال السعر");
+    } catch (error) {
+      if (mounted.current) setActionError(errorMessage(error, isAr ? 'تعذر إرسال السعر. حاول مرة أخرى.' : 'Could not submit the price. Try again.'));
     } finally {
-      setSavingId(null);
+      busy.current = false;
+      if (mounted.current) setSavingId(null);
     }
   };
 
   const confirmOffer = async (request: ServiceRequest, deptSlug: string) => {
-    if (!isAdmin) return;
-    const ok = await confirmDialog({
-      title: "اعتماد السعر؟",
-      description: "بعد الاعتماد ستظهر الفاتورة للعميل في المحفظة للدفع.",
-      confirmLabel: "اعتماد وإرسال للمحفظة",
-      cancelLabel: "إلغاء",
-    });
-    if (!ok) return;
-
-    setSavingId(request.id);
+    if (!isAdmin || busy.current || serviceRequestInvoiceLocked(request)) return;
+    busy.current = true;
+    setActionError(null);
     try {
+      const ok = await confirmDialog({
+        contentClassName: styles.requestConfirm,
+        closeLabel: isAr ? "إغلاق" : "Close",
+        title: isAr ? 'اعتماد السعر؟' : 'Approve price offer?',
+        description: request.userId
+          ? (isAr ? 'بعد الاعتماد ستظهر الفاتورة للعميل في المحفظة للدفع.' : 'After approval, the invoice will appear in the client wallet for payment.')
+          : (isAr ? 'سيُعتمد السعر. لا يوجد حساب عميل مرتبط لعرض فاتورة في المحفظة.' : 'The price will be approved. No client account is linked for a wallet invoice.'),
+        confirmLabel: isAr ? 'تأكيد الاعتماد' : 'Confirm approval',
+        cancelLabel: isAr ? 'إلغاء' : 'Cancel',
+      });
+      if (!ok || !mounted.current) return;
+      setSavingId(request.id);
       const response = await serviceRequestApi.acceptDepartmentOffer(request.id, deptSlug);
-      toast.success("تم اعتماد السعر وإظهار الفاتورة في محفظة العميل");
-      setSelectedRequest(response.data);
+      if (!mounted.current) return;
+      setSelectedRequest(updatedRequest(response.data, request.id));
+      toast.success(isAr ? 'تم اعتماد السعر.' : 'Price approved.');
       await fetchRequests();
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "تعذر اعتماد السعر");
+    } catch (error) {
+      if (mounted.current) setActionError(errorMessage(error, isAr ? 'تعذر اعتماد السعر.' : 'Could not approve price.'));
     } finally {
-      setSavingId(null);
+      busy.current = false;
+      if (mounted.current) setSavingId(null);
     }
   };
 
   const openChat = async (requestId: string) => {
+    if (busy.current) return;
+    busy.current = true;
+    setActionError(null);
     setSavingId(requestId);
     try {
       const response = await serviceRequestApi.getOrCreateChat(requestId);
-      router.push(`/chat?roomId=${response.data.chatRoomId}`);
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "تعذر فتح المحادثة");
+      if (!mounted.current) return;
+      const roomId = response.data?.chatRoomId;
+      if (typeof roomId !== 'string' || !roomId) throw new Error('Invalid chat response');
+      router.push(`/chat?roomId=${encodeURIComponent(roomId)}`);
+    } catch (error) {
+      if (mounted.current) setActionError(errorMessage(error, isAr ? 'تعذر فتح المحادثة.' : 'Could not open chat.'));
     } finally {
-      setSavingId(null);
+      busy.current = false;
+      if (mounted.current) setSavingId(null);
     }
   };
 
+  const handleBack = () => {
+    if (
+      typeof window !== "undefined" &&
+      canNavigateBack(window.location.href, window.history.length, document.referrer)
+    ) {
+      router.back();
+    } else {
+      router.push("/services");
+    }
+  };
+
+  const formatDate = (isoString?: string) => {
+    if (!isoString) return "-";
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return "-";
+    return d.toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   const getStatusBadge = (request: ServiceRequest) => {
+    if (request.paymentStatus === 'paid') return <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>{isAr ? 'مدفوع' : 'Paid'}</span>;
     if (request.adminAccepted || request.clientDecision === "accepted") {
-      return <Badge variant="outline" className="border-emerald-100 bg-emerald-50 text-emerald-700">معتمد للمحفظة</Badge>;
+      return (
+        <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>
+          <Check className="h-3 w-3" />
+          {request.userId ? (isAr ? 'الفاتورة جاهزة في المحفظة' : 'Invoice ready in wallet') : (isAr ? 'تم حفظ السعر' : 'Price saved')}
+        </span>
+      );
     }
     if (Object.keys(request.departmentPrices || {}).length > 0) {
-      return <Badge variant="outline" className="border-amber-100 bg-amber-50 text-amber-700">بانتظار اعتماد الإدارة</Badge>;
+      return (
+        <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+          <Clock className="h-3 w-3" />
+          {isAr ? "بانتظار اعتماد الإدارة" : "Pending Admin Review"}
+        </span>
+      );
     }
     switch (request.status) {
       case ServiceStatus.PENDING:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">قيد المراجعة</Badge>;
+        return (
+          <span className={`${styles.statusBadge} ${styles.statusNeutral}`}>
+            <Clock className="h-3 w-3" />
+            {isAr ? "قيد المراجعة" : "Under Review"}
+          </span>
+        );
       case ServiceStatus.IN_PROGRESS:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">قيد المعالجة</Badge>;
+        return (
+          <span className={`${styles.statusBadge} ${styles.statusNeutral}`}>
+            <Clock className="h-3 w-3" />
+            {isAr ? "قيد المعالجة" : "In Progress"}
+          </span>
+        );
       case ServiceStatus.COMPLETED:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">مكتمل</Badge>;
+        return (
+          <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>
+            <Check className="h-3 w-3" />
+            {isAr ? "مكتمل" : "Completed"}
+          </span>
+        );
       case ServiceStatus.CANCELLED:
-        return <Badge variant="outline" className="border-red-100 bg-red-50 text-red-600">ملغي</Badge>;
+        return (
+          <span className={`${styles.statusBadge} ${styles.statusDanger}`}>
+            <AlertCircle className="h-3 w-3" />
+            {isAr ? "ملغي" : "Cancelled"}
+          </span>
+        );
       default:
-        return <Badge variant="outline" className="border-slate-300 bg-card text-slate-600">{request.status}</Badge>;
+        return (
+          <span className={`${styles.statusBadge} ${styles.statusNeutral}`}>
+            {request.status}
+          </span>
+        );
     }
   };
 
   const isAcceptedRequest = (request: ServiceRequest) =>
-    Boolean(request.adminAccepted || request.clientDecision === "accepted" || request.status === ServiceStatus.COMPLETED);
+    Boolean(
+      request.adminAccepted ||
+        request.clientDecision === "accepted" ||
+        request.status === ServiceStatus.COMPLETED
+    );
 
   const isRejectedRequest = (request: ServiceRequest) =>
-    Boolean(request.clientDecision === "rejected" || request.status === ServiceStatus.CANCELLED);
+    Boolean(
+      request.clientDecision === "rejected" ||
+        request.status === ServiceStatus.CANCELLED
+    );
 
-  const filterRequests = (request: ServiceRequest) => {
-    if (requestFilter === "accepted") return isAcceptedRequest(request);
-    if (requestFilter === "rejected") return isRejectedRequest(request);
-    return true;
-  };
+  const filteredRequests = useMemo(() => {
+    return requests.filter((request) => {
+      if (requestFilter === "accepted" && !isAcceptedRequest(request)) return false;
+      if (requestFilter === "rejected" && !isRejectedRequest(request)) return false;
+      if (!requestMatchesService(request, serviceSelection))
+        return false;
+      const term = search.trim().toLowerCase();
+      if (!term) return true;
+      return [
+        request.serviceType,
+        request.clientName,
+        request.phone,
+        request.city,
+        request.district,
+        request.category,
+      ]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term));
+    });
+  }, [requests, requestFilter, serviceSelection, search]);
 
-  const filteredRequests = requests.filter((request) => {
-    if (!filterRequests(request)) return false;
-    const term = search.trim().toLowerCase();
-    if (!term) return true;
-    return [request.serviceType, request.clientName, request.phone, request.city, request.district, request.category]
-      .filter(Boolean)
-      .some((value) => String(value).toLowerCase().includes(term));
-  });
-
-  if (authLoading || loading) {
+  if (authLoading || loading || !user || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center" dir="rtl">
-        <div className="flex items-center gap-3 text-slate-500 font-bold">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          جاري تحميل طلبات الخدمات...
+      <div className={styles.page} dir={isAr ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <nav
+            className={styles.staticNav}
+            aria-label={isAr ? "التنقل الداخلي" : "In-page navigation"}
+          >
+            <div className={styles.navBreadcrumb}>
+              <span className={styles.breadcrumbSegment}>
+                {isAr ? "الخدمات" : "Services"}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span className={styles.breadcrumbCurrent}>
+                {isAr ? "سجل طلبات الخدمات" : "Service Requests Register"}
+              </span>
+            </div>
+            <div className={styles.navActions}>
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className={`${styles.navButton} ${styles.languageToggle}`}
+                aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
+              >
+                {isAr ? "EN" : "ع"}
+              </button>
+            </div>
+          </nav>
+          <div className={styles.loadingState}>
+            <Loader2 className={styles.loadingSpinner} />
+            <span>{isAr ? "جاري تحميل طلبات الخدمات..." : "Loading service requests..."}</span>
+          </div>
         </div>
       </div>
     );
@@ -227,138 +408,314 @@ export default function MyServiceRequestsPage() {
 
   if (!canManageRequests) {
     return (
-      <div className="min-h-screen bg-muted" dir={language === "ar" ? "rtl" : "ltr"}>
-        <MobileAppHeader title="طلبات الخدمات" theme="light" />
-        <main className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
-          <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-card border text-slate-500">
-            <ShieldCheck className="h-8 w-8" />
+      <div className={styles.page} dir={isAr ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <nav
+            className={styles.staticNav}
+            aria-label={isAr ? "التنقل الداخلي" : "In-page navigation"}
+          >
+            <div className={styles.navBreadcrumb}>
+              <span className={styles.breadcrumbSegment}>
+                {isAr ? "الخدمات" : "Services"}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span className={styles.breadcrumbCurrent}>
+                {isAr ? "طلبات الخدمات" : "Service Requests"}
+              </span>
+            </div>
+            <div className={styles.navActions}>
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className={`${styles.navButton} ${styles.languageToggle}`}
+                aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
+              >
+                {isAr ? "EN" : "ع"}
+              </button>
+              <button
+                type="button"
+                onClick={handleBack}
+                className={styles.navButton}
+                aria-label={isAr ? "رجوع" : "Back"}
+              >
+                <ArrowLeft className={`h-4 w-4 ${isAr ? "rotate-180" : ""}`} />
+                <span>{isAr ? "رجوع" : "Back"}</span>
+              </button>
+            </div>
+          </nav>
+
+          <div className={styles.nonStaffContainer}>
+            <div className={styles.nonStaffIcon}>
+              <ShieldCheck className="h-8 w-8" />
+            </div>
+            <h1 className={styles.nonStaffTitle}>
+              {isAr
+                ? "هذه الصفحة للإدارة والفريق فقط"
+                : "This page is for administration and staff only"}
+            </h1>
+            <p className={styles.nonStaffText}>
+              {isAr
+                ? "تابع طلباتك وعروض مقدمي الخدمات من صفحة المتابعة، والفواتير المتاحة للدفع من المحفظة."
+                : "Track your requests and provider quotes on the tracking page, and available invoices in your wallet."}
+            </p>
+            <Link href="/services/provider-requests" className={styles.walletActionBtn}>
+              {isAr ? "متابعة طلباتي وعروض الخدمات" : "Track my service requests"}
+            </Link>
+            <Link href="/services/legal-requests" className={styles.clientSecondaryLink}>
+              {isAr ? "طلباتي القانونية" : "My legal requests"}
+            </Link>
+            <Link href="/wallet" className={styles.walletActionBtn}>
+              {isAr ? "الذهاب إلى المحفظة" : "Go to Wallet"}
+            </Link>
           </div>
-          <h1 className="text-2xl font-black text-slate-950">هذه الصفحة للإدارة والفريق فقط</h1>
-          <p className="mt-3 text-sm font-bold leading-6 text-slate-500">
-            طلبك يتم مراجعته من الفريق. عند اعتماد السعر من الإدارة ستظهر الفاتورة مباشرة في المحفظة.
-          </p>
-          <Button onClick={() => router.push("/wallet")} className="mt-6 rounded-2xl bg-slate-950 px-6 text-white hover:bg-black">
-            الذهاب إلى المحفظة
-          </Button>
-        </main>
+        </div>
       </div>
     );
   }
 
-  const requestForDetails = selectedRequest;
-
-  if (requestForDetails) {
-    const draft = getDraft(requestForDetails);
-    const offers = requestForDetails.departmentPrices || {};
-    const acceptedOffer = requestForDetails.metadata?.acceptedOffer;
+  if (selectedRequest) {
+    const draft = getDraft(selectedRequest);
+    const offers = selectedRequest.departmentPrices || {};
+    const targetDept = requestPriceDepartment(selectedRequest);
+    const acceptedOffer = selectedRequest.metadata?.acceptedOffer || (selectedRequest.invoiceSent && offers[targetDept] ? { dept: targetDept, ...offers[targetDept] } : null);
+    const pricingDisabled = serviceRequestPriceLocked(selectedRequest) || !canPriceServiceRequest(user, selectedRequest);
+    const deptName = departmentTitle(selectedRequest);
 
     return (
-      <div className="min-h-screen bg-muted" dir={language === "ar" ? "rtl" : "ltr"}>
-        <MobileAppHeader title="تفاصيل طلب الخدمة" theme="light" />
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 pb-12">
-          <Button variant="ghost" className="mb-6 gap-2 text-slate-500 hover:text-slate-900" onClick={() => setSelectedRequest(null)}>
-            <ArrowLeft className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
-            العودة للطلبات
-          </Button>
+      <div className={styles.page} dir={isAr ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <nav
+            className={styles.staticNav}
+            aria-label={isAr ? "التنقل الداخلي" : "In-page navigation"}
+          >
+            <div className={styles.navBreadcrumb}>
+              <span className={styles.breadcrumbSegment}>
+                {isAr ? "سجل الطلبات" : "Requests Register"}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span className={styles.breadcrumbCurrent}>
+                #{selectedRequest.id.substring(0, 8)}
+              </span>
+            </div>
+            <div className={styles.navActions}>
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className={`${styles.navButton} ${styles.languageToggle}`}
+                aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
+              >
+                {isAr ? "EN" : "ع"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedRequest(null)}
+                className={styles.navButton}
+                aria-label={isAr ? "العودة للطلبات" : "Back to requests"}
+              >
+                <ArrowLeft className={`h-4 w-4 ${isAr ? "rotate-180" : ""}`} />
+                <span>{isAr ? "العودة للطلبات" : "Back to Requests"}</span>
+              </button>
+            </div>
+          </nav>
 
-          <section className="overflow-hidden rounded-2xl border bg-card shadow-sm">
-            <div className="border-b bg-card p-5 sm:p-8">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
+          {actionError && <div role="alert" className={styles.actionError}>{actionError}</div>}
+          <section className={styles.detailCard} aria-labelledby="detail-title">
+            <div className={styles.detailHeader}>
+              <div className={styles.detailHeaderTop}>
+                <div className={styles.detailHeaderMain}>
+                  <div className={styles.detailIconWrap}>
                     <Package className="h-6 w-6" />
                   </div>
                   <div>
-                    <h1 className="text-xl sm:text-2xl font-black text-slate-950">{requestForDetails.serviceType || "طلب خدمة"}</h1>
-                    <p className="mt-1 text-xs font-bold text-slate-400">#{requestForDetails.id.substring(0, 8)} · {new Date(requestForDetails.createdAt).toLocaleDateString("ar-SA")}</p>
+                    <h1 id="detail-title" className={styles.detailTitle}>
+                      {selectedRequest.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                    </h1>
+                    <p className={styles.detailSubtitle}>
+                      #{selectedRequest.id.substring(0, 8)} · {formatDate(selectedRequest.createdAt)}
+                    </p>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {getStatusBadge(requestForDetails)}
-                  <Button variant="outline" className="h-10 rounded-xl gap-2" onClick={() => openChat(requestForDetails.id)} disabled={savingId === requestForDetails.id}>
-                    <MessageSquare className="h-4 w-4" />
-                    محادثة الطلب
-                  </Button>
+                <div className={styles.detailActions}>
+                  {getStatusBadge(selectedRequest)}
+                  <button
+                    type="button"
+                    className={styles.chatButton}
+                    onClick={() => openChat(selectedRequest.id)}
+                    disabled={savingId === selectedRequest.id}
+                    aria-label={isAr ? "محادثة الطلب" : "Request chat"}
+                  >
+                    {savingId === selectedRequest.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <MessageSquare className="h-4 w-4" />
+                    )}
+                    <span>{isAr ? "محادثة الطلب" : "Request Chat"}</span>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-6 p-5 sm:p-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <InfoTile label="العميل" value={requestForDetails.clientName || requestForDetails.user?.firstName || "-"} />
-                  <InfoTile label="الجوال" value={requestForDetails.phone || requestForDetails.user?.phone || "-"} />
-                  <InfoTile label="الموقع" value={`${requestForDetails.city || "-"}، ${requestForDetails.district || "-"}`} />
-                  <InfoTile label="القسم" value={departmentLabels[requestForDetails.targetDepartment || ""] || requestForDetails.targetDepartment || "-"} />
+            <div className={styles.detailGrid}>
+              <div className={styles.dossierSection}>
+                <div className={styles.tilesGrid}>
+                  <div className={styles.infoTile}>
+                    <div className={styles.tileLabel}>{isAr ? "العميل" : "Client"}</div>
+                    <div className={styles.tileValue}>
+                      {selectedRequest.clientName || selectedRequest.user?.firstName || "-"}
+                    </div>
+                  </div>
+                  <div className={styles.infoTile}>
+                    <div className={styles.tileLabel}>{isAr ? "الجوال" : "Phone"}</div>
+                    <div className={styles.tileValue} dir="ltr">
+                      {selectedRequest.phone || selectedRequest.user?.phone || "-"}
+                    </div>
+                  </div>
+                  <div className={styles.infoTile}>
+                    <div className={styles.tileLabel}>{isAr ? "الموقع" : "Location"}</div>
+                    <div className={styles.tileValue}>
+                      {selectedRequest.city || selectedRequest.district
+                        ? `${selectedRequest.city || "-"}، ${selectedRequest.district || "-"}`
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className={styles.infoTile}>
+                    <div className={styles.tileLabel}>{isAr ? "القسم" : "Department"}</div>
+                    <div className={styles.tileValue}>{deptName}</div>
+                  </div>
                 </div>
-                <div className="rounded-2xl border bg-muted p-4">
-                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">وصف الطلب</p>
-                  <p className="text-sm font-bold leading-7 text-slate-700">{requestForDetails.description || "لا يوجد وصف"}</p>
+
+                <div className={styles.descriptionBox}>
+                  <div className={styles.descriptionLabel}>
+                    {isAr ? "وصف الطلب" : "Request Description"}
+                  </div>
+                  <p className={styles.descriptionText}>
+                    {selectedRequest.description || (isAr ? "لا يوجد وصف مدخل" : "No description provided")}
+                  </p>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="rounded-2xl border bg-card p-4 shadow-sm">
-                  <div className="mb-4 flex items-center gap-2">
-                    <SaudiRiyalIcon className="h-4 w-4 text-slate-500" />
-                    <h2 className="text-sm font-black text-slate-950">إرسال سعر للفريق الإداري</h2>
-                  </div>
-                  <div className="space-y-3">
-                    <input
-                      type="number"
-                      min="0"
-                      value={draft.price}
-                      onChange={(event) => updateDraft(requestForDetails, "price", event.target.value)}
-                      className="h-11 w-full rounded-xl border bg-muted px-4 text-sm font-black outline-none focus:border-slate-950"
-                      placeholder="السعر"
-                    />
-                    <input
-                      value={draft.deptSlug}
-                      onChange={(event) => updateDraft(requestForDetails, "deptSlug", event.target.value)}
-                      className="h-11 w-full rounded-xl border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-950"
-                      placeholder="القسم / المزود"
-                      dir="ltr"
-                    />
-                    <textarea
-                      value={draft.note}
-                      onChange={(event) => updateDraft(requestForDetails, "note", event.target.value)}
-                      className="h-24 w-full resize-none rounded-xl border bg-muted p-4 text-sm font-bold outline-none focus:border-slate-950"
-                      placeholder="ملاحظة داخلية عن السعر"
-                    />
-                    <Button className="h-11 w-full rounded-xl bg-slate-950 text-white hover:bg-black" disabled={savingId === requestForDetails.id} onClick={() => submitPrice(requestForDetails)}>
-                      {savingId === requestForDetails.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <SaudiRiyalIcon className="h-4 w-4" />}
-                      إرسال السعر
-                    </Button>
+              <div className={styles.operationsSection}>
+                <div className={styles.opPanel}>
+                  <h2 className={styles.opPanelTitle}>
+                    <SaudiRiyalIcon className="h-4 w-4" />
+                    <span>{isAr ? 'إرسال السعر' : 'Submit price'}</span>
+                  </h2>
+                  {pricingDisabled && <p className={styles.pricingNotice}>{serviceRequestPriceLocked(selectedRequest) ? (isAr ? 'السعر مقفل بعد الإرسال أو الاعتماد.' : 'Pricing is locked after submission or approval.') : (isAr ? 'لا تملك صلاحية تسعير قسم هذا الطلب.' : 'You do not have permission to price this request department.')}</p>}
+                  <div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel} htmlFor="offer-price">
+                        {isAr ? "السعر (ر.س)" : "Price (SAR)"}
+                      </label>
+                      <input
+                        id="offer-price"
+                        type="number"
+                        min="0.01"
+                        max="9999999999.99"
+                        step="0.01"
+                        disabled={pricingDisabled || savingId === selectedRequest.id}
+                        value={draft.price}
+                        onChange={(event) => updateDraft(selectedRequest, "price", event.target.value)}
+                        className={styles.fieldInput}
+                        placeholder={isAr ? "أدخل السعر" : "Enter price"}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel} htmlFor="offer-dept">
+                        {isAr ? 'قسم الطلب' : 'Request department'}
+                      </label>
+                      <input
+                        id="offer-dept"
+                        value={departmentTitle(selectedRequest)}
+                        readOnly
+                        className={styles.fieldInput}
+                        dir="ltr"
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.inputLabel} htmlFor="offer-note">
+                        {isAr ? 'ملاحظة عن السعر' : 'Pricing note'}
+                      </label>
+                      <textarea
+                        id="offer-note"
+                        disabled={pricingDisabled || savingId === selectedRequest.id}
+                        value={draft.note}
+                        onChange={(event) => updateDraft(selectedRequest, "note", event.target.value)}
+                        className={styles.fieldTextarea}
+                        placeholder={isAr ? 'ملاحظة عن السعر...' : 'Pricing note...'}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className={styles.submitBtn}
+                      disabled={pricingDisabled || savingId === selectedRequest.id}
+                      onClick={() => submitPrice(selectedRequest)}
+                    >
+                      {savingId === selectedRequest.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <SaudiRiyalIcon className="h-4 w-4" />
+                      )}
+                      <span>{isAr ? "إرسال السعر" : "Submit Price"}</span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border bg-card p-4 shadow-sm">
-                  <h2 className="mb-4 text-sm font-black text-slate-950">عروض الأسعار</h2>
-                  <div className="space-y-3">
+                <div className={styles.opPanel}>
+                  <h2 className={styles.opPanelTitle}>
+                    <span>{isAr ? "عروض الأسعار المقدمة" : "Submitted Price Offers"}</span>
+                  </h2>
+                  <div>
                     {Object.entries(offers).map(([dept, offer]) => {
                       const isAccepted = acceptedOffer?.dept === dept;
+                      const deptTitle = isAr
+                        ? departmentLabels[dept] || dept
+                        : departmentLabelsEn[dept] || dept;
                       return (
-                        <div key={dept} className={`rounded-xl border p-4 ${isAccepted ? "border-emerald-100 bg-emerald-50" : "bg-muted"}`}>
-                          <div className="flex items-start justify-between gap-3">
+                        <div
+                          key={dept}
+                          className={`${styles.offerItem} ${
+                            isAccepted ? styles.offerItemAccepted : ""
+                          }`}
+                        >
+                          <div className={styles.offerHeader}>
                             <div>
-                              <p className="text-sm font-black text-slate-900">{departmentLabels[dept] || dept}</p>
-                              <p className="mt-1 text-xs font-bold text-slate-500">{offer.note || "بدون ملاحظات"}</p>
+                              <div className={styles.offerDept}>{deptTitle}</div>
+                              <div className={styles.offerNote}>
+                                {offer.note || (isAr ? "بدون ملاحظات" : "No notes")}
+                              </div>
                             </div>
-                            <p className="text-sm font-black text-slate-950"><SaudiRiyalAmount amount={offer.price} locale="ar-SA" /></p>
+                            <div className={styles.offerPrice}>
+                              <SaudiRiyalAmount
+                                amount={offer.price}
+                                locale={isAr ? "ar-SA" : "en-US"}
+                              />
+                            </div>
                           </div>
-                          {isAdmin && !acceptedOffer && (
-                            <Button className="mt-3 h-9 w-full rounded-xl bg-emerald-600 text-white hover:bg-emerald-700" disabled={savingId === requestForDetails.id} onClick={() => confirmOffer(requestForDetails, dept)}>
+                          {isAdmin && !acceptedOffer && !serviceRequestInvoiceLocked(selectedRequest) && (
+                            <button
+                              type="button"
+                              className={styles.approveBtn}
+                              disabled={savingId === selectedRequest.id}
+                              onClick={() => confirmOffer(selectedRequest, dept)}
+                            >
                               <Check className="h-4 w-4" />
-                              اعتماد وإظهارها في المحفظة
-                            </Button>
+                              <span>{selectedRequest.userId ? (isAr ? 'اعتماد وإرسال الفاتورة' : 'Approve & send invoice') : (isAr ? 'اعتماد السعر' : 'Approve price')}</span>
+                            </button>
                           )}
-                          {isAccepted && <p className="mt-3 text-[10px] font-black text-emerald-700">تم اعتماد هذا السعر وإرساله للمحفظة</p>}
+                          {isAccepted && (
+                            <div className={styles.acceptedOfferNote}>
+                              <Check className="h-3.5 w-3.5" />
+                              <span>{selectedRequest.userId ? (isAr ? 'تم اعتماد السعر وإرساله للمحفظة' : 'Price approved and sent to wallet') : (isAr ? 'تم اعتماد السعر' : 'Price approved')}</span>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
                     {Object.keys(offers).length === 0 && (
-                      <div className="rounded-xl border border-dashed bg-muted p-8 text-center text-sm font-bold text-slate-400">
-                        لا توجد أسعار مرسلة بعد
+                      <div className={styles.emptyState}>
+                        <p className={styles.emptyDesc}>
+                          {isAr ? "لا توجد أسعار مرسلة بعد" : "No price offers submitted yet"}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -366,126 +723,334 @@ export default function MyServiceRequestsPage() {
               </div>
             </div>
           </section>
-        </main>
+        </div>
       </div>
     );
   }
 
   return (
     <PullToRefresh onRefresh={fetchRequests}>
-      <div className="min-h-screen bg-card" dir={language === "ar" ? "rtl" : "ltr"}>
-        <MobileAppHeader title="طلبات الخدمات" theme="light" />
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-4 pb-12">
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <Button variant="ghost" className="mb-4 gap-2 text-slate-500 hover:text-slate-900" onClick={() => router.back()}>
-                <ArrowLeft className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
-                رجوع
-              </Button>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black text-slate-600">
-                  {isAdmin ? "لوحة المشرف" : "بوابة الوكيل"}
-                </span>
-                <span className="rounded-full border border-slate-200 bg-card px-3 py-1 text-[10px] font-bold text-slate-400">
-                  {isAdmin ? "اعتماد الأسعار وإدارة جميع الطلبات" : "تقديم عروض الأسعار ومتابعة الطلبات"}
-                </span>
-              </div>
-              <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-slate-950">
-                <Package className="h-6 w-6 text-slate-600" />
-                {isAdmin ? "إدارة طلبات الخدمات" : "طلبات خدمات الوكيل"}
-              </h1>
-              <p className="mt-2 text-sm font-bold text-slate-500">إرسال الأسعار من الفريق ثم اعتمادها من الإدارة قبل ظهورها في محفظة العميل.</p>
+      <div className={styles.page} dir={isAr ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <nav
+            className={styles.staticNav}
+            aria-label={isAr ? "التنقل الداخلي" : "In-page navigation"}
+          >
+            <div className={styles.navBreadcrumb}>
+              <span className={styles.breadcrumbSegment}>
+                {isAr ? "الخدمات" : "Services"}
+              </span>
+              <span aria-hidden="true">/</span>
+              <span className={styles.breadcrumbCurrent}>
+                {isAr ? "سجل طلبات الخدمات" : "Service Requests Register"}
+              </span>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  className="h-11 w-full rounded-xl border bg-muted pr-10 pl-4 text-sm font-bold outline-none focus:border-slate-950 sm:w-80"
-                  placeholder="بحث في الطلبات"
-                />
-              </div>
-              <Button variant="outline" className="h-11 rounded-xl gap-2" onClick={fetchRequests}>
-                <RefreshCw className="h-4 w-4" />
-                تحديث
-              </Button>
+            <div className={styles.navActions}>
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className={`${styles.navButton} ${styles.languageToggle}`}
+                aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
+              >
+                {isAr ? "EN" : "ع"}
+              </button>
+              <button
+                type="button"
+                onClick={handleBack}
+                className={styles.navButton}
+                aria-label={isAr ? "رجوع" : "Back"}
+              >
+                <ArrowLeft className={`h-4 w-4 ${isAr ? "rotate-180" : ""}`} />
+                <span>{isAr ? "رجوع" : "Back"}</span>
+              </button>
             </div>
-          </div>
+          </nav>
 
-          <div className="mb-6 grid grid-cols-3 gap-2 rounded-2xl border bg-muted p-1.5 sm:max-w-2xl sm:gap-3">
-            {([
-              { id: "all", label: "كل الخدمات", count: requests.length },
-              { id: "accepted", label: "الخدمات المقبولة", count: requests.filter(isAcceptedRequest).length },
-              { id: "rejected", label: "الخدمات المرفوضة", count: requests.filter(isRejectedRequest).length },
-            ] as const).map((tab) => {
-              const active = requestFilter === tab.id;
-              return (
+          <header className={styles.headerSection}>
+            <div className={styles.headerRow}>
+              <div className={styles.headerMain}>
+                <span className={styles.kicker}>
+                  {isAr ? "سجل الطلبات التشغيلية" : "Operational Requests Console"}
+                </span>
+                <h1 className={styles.pageTitle}>
+                  {isAdmin
+                    ? (isAr ? "إدارة طلبات الخدمات" : "Manage Service Requests")
+                    : (isAr ? "متابعة طلبات الخدمات" : "Service Requests")}
+                </h1>
+                <p className={styles.pageSubtitle}>
+                  {isAr
+                    ? "متابعة طلبات الخدمات، وإرسال أسعار الأقسام المصرّح بها، وتتبع حالة الفاتورة."
+                    : "Track service requests, submit authorized department prices, and follow invoice status."}
+                </p>
+                <div className={styles.headerMeta}>
+                  <span className={styles.roleChip}>
+                    {isAdmin ? (isAr ? "لوحة المشرف" : "Admin Panel") : (isAr ? "متابعة العمليات" : "Operations")}
+                  </span>
+                  <span className={styles.registerCount}>{requests.length.toLocaleString(isAr ? 'ar-SA' : 'en-US')} {isAr ? 'طلب في السجل' : 'requests in the register'}</span>
+                </div>
+              </div>
+
+              <div className={styles.controlsBar}>
+                <div className={styles.searchWrapper}>
+                  <Search className={styles.searchIcon} />
+                  <input
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    className={styles.searchInput}
+                    placeholder={isAr ? "بحث في الطلبات..." : "Search requests..."}
+                    aria-label={isAr ? "بحث في الطلبات" : "Search requests"}
+                  />
+                </div>
                 <button
-                  key={tab.id}
                   type="button"
-                  onClick={() => setRequestFilter(tab.id)}
-                  className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-center text-[10px] font-black transition-all sm:text-xs ${
-                    active ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:bg-card hover:text-slate-900"
-                  }`}
+                  className={styles.refreshButton}
+                  onClick={fetchRequests}
+                  aria-label={isAr ? "تحديث الطلبات" : "Refresh requests"}
                 >
-                  <span>{tab.label}</span>
-                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${active ? "bg-card/15 text-white" : "bg-card text-slate-400"}`}>{tab.count}</span>
+                  <RefreshCw className="h-4 w-4" />
+                  <span>{isAr ? "تحديث" : "Refresh"}</span>
                 </button>
-              );
-            })}
-          </div>
+              </div>
+            </div>
+          </header>
 
-          {filteredRequests.length === 0 ? (
-            <div className="rounded-2xl border border-dashed bg-card p-12 text-center">
-              <Clock className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-              <p className="text-sm font-black text-slate-400">لا توجد خدمات ضمن هذا التصنيف</p>
+          {fetchError ? (
+            <div className={styles.errorState} role="alert">
+              <AlertCircle className={styles.errorIcon} />
+              <div className={styles.errorTitle}>
+                {isAr ? "خطأ في تحميل البيانات" : "Data Loading Error"}
+              </div>
+              <div className={styles.errorDesc}>{fetchError}</div>
+              <button
+                type="button"
+                className={styles.retryBtn}
+                onClick={fetchRequests}
+              >
+                <RefreshCw className="h-4 w-4" />
+                <span>{isAr ? "إعادة المحاولة" : "Retry"}</span>
+              </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filteredRequests.map((request) => {
-                const offersCount = Object.keys(request.departmentPrices || {}).length;
-                return (
-                  <button
-                    key={request.id}
-                    type="button"
-                    onClick={() => setSelectedRequest(request)}
-                    className="group rounded-2xl border bg-card p-5 text-right shadow-sm transition-all hover:border-slate-300 hover:shadow-lg"
-                  >
-                    <div className="mb-5 flex items-start justify-between gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-600">
-                        <Building2 className="h-5 w-5" />
-                      </div>
-                      {getStatusBadge(request)}
+            <>
+              <nav className={styles.tabsNav} aria-label={isAr ? "تصفية حالة الطلبات" : "Request status filters"}>
+                {([
+                  { id: "all", label: isAr ? "كل الخدمات" : "All Services", count: requests.length },
+                  {
+                    id: "accepted",
+                    label: isAr ? "الخدمات المقبولة" : "Accepted Services",
+                    count: requests.filter(isAcceptedRequest).length,
+                  },
+                  {
+                    id: "rejected",
+                    label: isAr ? "الخدمات المرفوضة" : "Rejected Services",
+                    count: requests.filter(isRejectedRequest).length,
+                  },
+                ] as const).map((tab) => {
+                  const active = requestFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setRequestFilter(tab.id)}
+                      className={`${styles.tabButton} ${active ? styles.tabButtonActive : ""}`}
+                      aria-pressed={active}
+                    >
+                      <span>{tab.label}</span>
+                      <span className={styles.tabCount}>{tab.count}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className={styles.categoryBrowserContainer}>
+                <ServiceCategoryBrowser
+                  value={serviceSelection}
+                  onChange={setServiceSelection}
+                />
+              </div>
+
+              {filteredRequests.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <Clock className={styles.emptyIcon} />
+                  <div className={styles.emptyTitle}>
+                    {isAr ? "لا توجد خدمات مطابقة" : "No matching requests"}
+                  </div>
+                  <p className={styles.emptyDesc}>
+                    {isAr
+                      ? "لم يتم العثور على طلبات ضمن هذا التصنيف أو معايير البحث المحددة."
+                      : "No requests found for this category or the specified search criteria."}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Desktop Table View (>= 900px) */}
+                  <div className={styles.registerCard}>
+                    <div className={styles.tableContainer}>
+                      <table className={styles.registerTable}>
+                        <thead>
+                          <tr>
+                            <th scope="col">{isAr ? "نوع الخدمة" : "Service Type"}</th>
+                            <th scope="col">{isAr ? "العميل والتواصل" : "Client & Contact"}</th>
+                            <th scope="col">{isAr ? "الموقع" : "Location"}</th>
+                            <th scope="col">{isAr ? "التاريخ" : "Date"}</th>
+                            <th scope="col">{isAr ? "الحالة" : "Status"}</th>
+                            <th scope="col">{isAr ? "العروض" : "Offers"}</th>
+                            <th scope="col">{isAr ? "السعر" : "Price"}</th>
+                            <th scope="col"><span className="sr-only">{isAr ? "الإجراءات" : "Actions"}</span></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredRequests.map((request) => {
+                            const offersCount = Object.keys(request.departmentPrices || {}).length;
+                            const displayPrice = request.price !== undefined && request.price !== null ? request.price : 0;
+                            return (
+                              <tr
+                                key={request.id}
+                                className={styles.registerRow}
+                                onClick={() => setSelectedRequest(request)}
+                                tabIndex={0}
+                                role="button"
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    setSelectedRequest(request);
+                                  }
+                                }}
+                                aria-label={`${request.serviceType || "طلب"} - #${request.id.substring(0, 8)}`}
+                              >
+                                <td className={styles.registerCell}>
+                                  <div className={styles.servicePrimary}>
+                                    {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                                  </div>
+                                  <div className={styles.serviceSub}>
+                                    #{request.id.substring(0, 8)}
+                                  </div>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <div className={styles.clientName}>
+                                    {request.clientName || request.user?.firstName || (isAr ? "عميل" : "Client")}
+                                  </div>
+                                  <div className={styles.clientContact} dir="ltr">
+                                    {request.phone || request.user?.phone || "-"}
+                                  </div>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <div>
+                                    {request.city || request.district
+                                      ? `${request.city || "-"}، ${request.district || "-"}`
+                                      : "-"}
+                                  </div>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <div>{formatDate(request.createdAt)}</div>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  {getStatusBadge(request)}
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <span className={styles.tabCount}>{offersCount}</span>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <span className={styles.priceDisplay}>
+                                    <SaudiRiyalAmount
+                                      amount={displayPrice}
+                                      locale={isAr ? "ar-SA" : "en-US"}
+                                    />
+                                  </span>
+                                </td>
+                                <td className={styles.registerCell}>
+                                  <span className={styles.rowActionLink}>
+                                    <span>{isAr ? "عرض" : "View"}</span>
+                                    <ChevronRight
+                                      className={`h-4 w-4 ${isAr ? "rotate-180" : ""}`}
+                                    />
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
-                    <h2 className="line-clamp-1 text-base font-black text-slate-950">{request.serviceType || "طلب خدمة"}</h2>
-                    <p className="mt-1 line-clamp-1 text-xs font-bold text-slate-500">{request.clientName || request.user?.firstName || "عميل"} · {request.phone || request.user?.phone || "-"}</p>
-                    <div className="mt-5 grid grid-cols-2 gap-2 border-t pt-4">
-                      <div>
-                        <p className="text-[10px] font-black text-slate-300">العروض</p>
-                        <p className="text-sm font-black text-slate-900">{offersCount}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-300">السعر الحالي</p>
-                        <p className="text-sm font-black text-slate-900"><SaudiRiyalAmount amount={request.price || 0} locale="ar-SA" /></p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+                  </div>
+
+                  {/* Mobile / Tablet Card View (< 900px) */}
+                  <div className={styles.mobileCardList}>
+                    {filteredRequests.map((request) => {
+                      const offersCount = Object.keys(request.departmentPrices || {}).length;
+                      const displayPrice = request.price !== undefined && request.price !== null ? request.price : 0;
+                      return (
+                        <div
+                          key={request.id}
+                          className={styles.mobileCard}
+                          onClick={() => setSelectedRequest(request)}
+                          tabIndex={0}
+                          role="button"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setSelectedRequest(request);
+                            }
+                          }}
+                          aria-label={`${request.serviceType || "طلب"} - #${request.id.substring(0, 8)}`}
+                        >
+                          <div className={styles.mobileCardTop}>
+                            <div className={styles.mobileCardService}>
+                              {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                            </div>
+                            {getStatusBadge(request)}
+                          </div>
+                          <div className={styles.mobileCardMeta}>
+                            <span>#{request.id.substring(0, 8)}</span>
+                            <span>·</span>
+                            <span>{formatDate(request.createdAt)}</span>
+                            {(request.city || request.district) && (
+                              <>
+                                <span>·</span>
+                                <span>{`${request.city || "-"}، ${request.district || "-"}`}</span>
+                              </>
+                            )}
+                          </div>
+                          <div className={styles.mobileCardClient}>
+                            {request.clientName || request.user?.firstName || (isAr ? "عميل" : "Client")} · {request.phone || request.user?.phone || "-"}
+                          </div>
+                          <div className={styles.mobileCardBottom}>
+                            <div className={styles.mobileCardMetric}>
+                              <span className={styles.mobileCardMetricLabel}>
+                                {isAr ? "العروض" : "Offers"}
+                              </span>
+                              <span className={styles.mobileCardMetricValue}>
+                                {offersCount}
+                              </span>
+                            </div>
+                            <div className={styles.mobileCardMetric}>
+                              <span className={styles.mobileCardMetricLabel}>
+                                {isAr ? "السعر الحالي" : "Current Price"}
+                              </span>
+                              <span className={styles.mobileCardMetricValue}>
+                                <SaudiRiyalAmount
+                                  amount={displayPrice}
+                                  locale={isAr ? "ar-SA" : "en-US"}
+                                />
+                              </span>
+                            </div>
+                            <span className={styles.rowActionLink}>
+                              <span>{isAr ? "التفاصيل" : "Details"}</span>
+                              <ChevronRight
+                                className={`h-4 w-4 ${isAr ? "rotate-180" : ""}`}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </>
           )}
-        </main>
+        </div>
       </div>
     </PullToRefresh>
-  );
-}
-
-function InfoTile({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border bg-muted p-4">
-      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="text-sm font-bold text-slate-800">{value}</p>
-    </div>
   );
 }

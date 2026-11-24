@@ -24,7 +24,7 @@ import { toast } from 'react-hot-toast';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog-provider';
 import MarketingCampaignModal from '@/components/marketing/MarketingCampaignModal';
 import ServiceRequestsTable from '@/components/shared/ServiceRequestsTable';
-import MarketingPageInternal from '@/app/marketing/page';
+import MarketingPageInternal from '@/components/marketing/MarketingWorkspace';
 
 interface EmailMarketing {
   id: string;
@@ -136,7 +136,7 @@ export default function MarketingPage() {
             </div>
             {t('admin.marketing.title')}
           </h1>
-          <p className="mt-1 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.marketing.desc')}</p>
+          <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.marketing.desc')}</p>
         </div>
 
         {activeTab === 'campaigns' && (
@@ -155,7 +155,7 @@ export default function MarketingPage() {
               setEditingCampaign(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-950 text-white rounded-2xl hover:bg-slate-800 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-stone-400/20"
+            className="flex items-center gap-2 px-6 py-3 bg-background dark:bg-slate-950 text-foreground dark:text-white rounded-2xl hover:bg-muted hover:dark:bg-slate-800 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/5 dark:shadow-stone-400/20"
           >
             <Plus className="w-5 h-5" />
             {t('admin.marketing.create')}
@@ -170,7 +170,7 @@ export default function MarketingPage() {
           type="button"
           onClick={() => setActiveTab('campaigns')}
           className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-            activeTab === 'campaigns' ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+            activeTab === 'campaigns' ? 'bg-card text-slate-950 shadow-sm' : 'text-muted-foreground dark:text-slate-500 hover:text-slate-800'
           }`}
         >
           <Mail className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default function MarketingPage() {
           type="button"
           onClick={() => setActiveTab('internal')}
           className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest transition-all ${
-            activeTab === 'internal' ? 'bg-card text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+            activeTab === 'internal' ? 'bg-card text-slate-950 shadow-sm' : 'text-muted-foreground dark:text-slate-500 hover:text-slate-800'
           }`}
         >
           <Megaphone className="w-4 h-4" />
@@ -201,20 +201,20 @@ export default function MarketingPage() {
       )}
 
       {activeTab === 'campaigns' && (
-      <div className="bg-card rounded-[1rem] shadow-sm border border overflow-hidden">
+      <div className="calm-panel bg-card rounded-[1rem] shadow-sm border border overflow-hidden">
         {loading ? (
           <div className="p-20 flex flex-col items-center justify-center space-y-4">
-            <RefreshCcw className="w-10 h-10 text-slate-500 animate-spin" />
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
+            <RefreshCcw className="w-10 h-10 text-muted-foreground dark:text-slate-500 animate-spin" />
+            <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
           </div>
         ) : campaigns.length === 0 ? (
           <div className="p-20 text-center flex flex-col items-center justify-center space-y-4">
             <div className="p-3 sm:p-6 bg-muted rounded-full">
-              <Mail className="w-16 h-16 text-slate-200" />
+              <Mail className="w-16 h-16 text-foreground dark:text-slate-200" />
             </div>
             <div>
               <p className="text-lg font-black text-slate-900 uppercase tracking-tight">{t('admin.service_requests.no_data')}</p>
-              <p className="text-xs font-bold text-slate-400 max-w-xs mx-auto mt-2 uppercase tracking-widest">{t('admin.marketing.noDataDesc')}</p>
+              <p className="text-xs font-bold text-muted-foreground dark:text-slate-400 max-w-xs mx-auto mt-2 uppercase tracking-widest">{t('admin.marketing.noDataDesc')}</p>
             </div>
           </div>
         ) : (
@@ -222,12 +222,12 @@ export default function MarketingPage() {
             <table className="w-full text-left" dir="auto">
               <thead>
                 <tr className="bg-muted/50 border-b border">
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.category')}</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.role')}</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.frequency')}</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.status')}</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.lastSent')}</th>
-                  <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">{t('admin.marketing.table.action')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.category')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.role')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.frequency')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.status')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.lastSent')}</th>
+                  <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.action')}</th>
                 </tr>
               </thead>
               <Reorder.Group as="tbody" axis="y" values={campaigns} onReorder={handleReorder} className="divide-y divide-slate-50">
@@ -255,12 +255,12 @@ export default function MarketingPage() {
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-muted text-slate-700 border border">
+                      <span className="calm-panel inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-muted text-slate-700 border border">
                         {campaign.targetRole ? t(`admin.marketing.targetRole.${campaign.targetRole.toLowerCase()}`) : t('admin.marketing.targetRole.all')}
                       </span>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-500 flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
                         {t(`admin.marketing.frequencies.${campaign.frequency.toLowerCase()}`)}
                       </span>
@@ -280,13 +280,13 @@ export default function MarketingPage() {
                             }`}
                           />
                         </button>
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${campaign.isActive ? 'text-emerald-600' : 'text-slate-500'}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${campaign.isActive ? 'text-emerald-600' : 'text-muted-foreground dark:text-slate-500'}`}>
                           {campaign.isActive ? t('admin.marketing.status.active') : t('admin.marketing.status.paused')}
                         </span>
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
                         {campaign.lastSentAt ? new Date(campaign.lastSentAt).toLocaleDateString() : t('admin.marketing.neverSent')}
                       </p>
                     </td>
@@ -304,7 +304,7 @@ export default function MarketingPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(campaign.id)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                          className="p-2 text-muted-foreground dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

@@ -117,12 +117,12 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
     const SpecItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string | number | undefined | null }) => {
         if (value === undefined || value === null || value === '') return null;
         return (
-            <div className="flex items-center gap-3 p-3.5 bg-muted/50 rounded-2xl border border-slate-200/50 hover:bg-card hover:shadow-sm transition-all duration-300">
-                <div className="w-9 h-9 rounded-xl bg-card shadow-sm flex items-center justify-center text-slate-600 border border">
+            <div className="calm-panel flex items-center gap-3 p-3.5 bg-muted/50 rounded-2xl border border-slate-200/50 hover:bg-card hover:shadow-sm transition-all duration-300">
+                <div className="calm-icon w-9 h-9 rounded-xl bg-card shadow-sm flex items-center justify-center text-slate-600 border border">
                     <Icon className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">{label}</p>
+                    <p className="text-[10px] text-muted-foreground dark:text-slate-400 font-bold uppercase tracking-wider mb-0.5">{label}</p>
                     <p className="text-sm font-bold text-slate-900 leading-tight">{value}</p>
                 </div>
             </div>
@@ -131,9 +131,9 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-xl max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-2xl flex flex-col">
+            <DialogContent className="w-[95vw] sm:max-w-xl max-h-[92vh] rounded-[1rem] overflow-hidden p-0 gap-0 border-none shadow-sm dark:shadow-2xl flex flex-col">
                 {/* Header/Gallery Area */}
-                <div className="h-56 sm:h-72 w-full bg-slate-950 relative shrink-0">
+                <div className="h-56 sm:h-72 w-full bg-background dark:bg-slate-950 relative shrink-0">
                     {activeOffer.mediaFiles && activeOffer.mediaFiles.length > 0 ? (
                         <div className="w-full h-full relative">
                             <img 
@@ -141,10 +141,10 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                 alt={activeOffer.propertyType} 
                                 className="w-full h-full object-cover opacity-70" 
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/90 dark:from-slate-950/90 via-background/20 dark:via-slate-950/20 to-transparent" />
                         </div>
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-800 bg-slate-900">
+                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-800 bg-card dark:bg-slate-900">
                             <Home className="w-20 h-20 opacity-10 mb-2" />
                             <p className="text-slate-700 text-xs font-medium uppercase tracking-widest">{t('marketing.photo.empty')}</p>
                         </div>
@@ -153,7 +153,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Close Button Overlay */}
                     <button 
                         onClick={onClose}
-                        className="absolute top-6 left-6 w-10 h-10 rounded-full bg-card/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-card/20 transition-colors z-20"
+                        className="absolute top-6 left-6 w-10 h-10 rounded-full bg-muted dark:bg-card/10 backdrop-blur-md flex items-center justify-center text-foreground dark:text-white hover:bg-muted hover:dark:bg-card/20 transition-colors z-20"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -161,19 +161,19 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Content Overlay */}
                     <div className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8 z-10">
                         <div className="flex items-center gap-2 mb-3">
-                            <span className="px-3 py-1 bg-slate-800/80 backdrop-blur-md text-white text-[10px] font-black rounded-lg uppercase tracking-widest border border-slate-700/50">
+                            <span className="calm-panel px-3 py-1 bg-muted/80 dark:bg-slate-800/80 backdrop-blur-md text-foreground dark:text-white text-[10px] font-black rounded-lg uppercase tracking-widest border border-border dark:border-slate-700/50">
                                 {activeOffer.dealType === 'sale' ? t('bm.offer.dealSale') : t('bm.offer.dealRent')}
                             </span>
-                            <span className="px-3 py-1 bg-card text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg">
+                            <span className="calm-panel px-3 py-1 bg-card text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg">
                                 {activeOffer.propertyType}
                             </span>
                         </div>
-                        <h2 className="text-xl sm:text-3xl font-black text-white mb-2 tracking-tight">
+                        <h2 className="text-xl sm:text-3xl font-black text-foreground dark:text-white mb-2 tracking-tight">
                             {activeOffer.propertyType} {t('offer.in')} {activeOffer.city}
                         </h2>
-                        <div className="flex items-center gap-4 text-slate-300">
-                            <p className="text-xs font-bold flex items-center gap-1.5 bg-card/5 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        <div className="flex items-center gap-4 text-muted-foreground dark:text-slate-300">
+                            <p className="text-xs font-bold flex items-center gap-1.5 bg-muted dark:bg-card/5 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                <MapPin className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
                                 {activeOffer.city} • {activeOffer.neighborhood}
                             </p>
                             {activeOffer.locationUrl && (
@@ -181,9 +181,9 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                                     href={activeOffer.locationUrl} 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="text-xs font-bold flex items-center gap-1.5 hover:text-white transition-colors"
+                                    className="text-xs font-bold flex items-center gap-1.5 hover:text-foreground hover:dark:text-white transition-colors"
                                 >
-                                    <MapIcon className="w-3.5 h-3.5 text-slate-400" />
+                                    <MapIcon className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
                                     {t('bm.offer.locationUrl')}
                                 </a>
                             )}
@@ -195,35 +195,35 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 space-y-10 custom-scrollbar bg-card">
                     {/* Price & Primary Stats */}
                     <div className="flex flex-col sm:flex-row gap-3 md:gap-6">
-                        <div className="flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
+                        <div className="calm-panel flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Tag className="w-12 h-12 text-slate-900" />
                             </div>
-                            <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.price')}</p>
+                            <p className="text-[11px] text-muted-foreground dark:text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.price')}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tighter">
                                 {activeOffer.price.toLocaleString()}
                                 </span>
-                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
+                                <span className="text-sm font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></span>
                             </div>
                         </div>
-                        <div className="flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
+                        <div className="calm-panel flex-1 p-3 sm:p-6 bg-muted rounded-3xl border border relative group overflow-hidden">
                             <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform">
                                 <Maximize className="w-12 h-12 text-slate-900" />
                             </div>
-                            <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.area')}</p>
+                            <p className="text-[11px] text-muted-foreground dark:text-slate-500 font-black uppercase tracking-widest mb-2">{t('offer.area')}</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tighter">
                                     {activeOffer.area}
                                 </span>
-                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest">m²</span>
+                                <span className="text-sm font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">m²</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Specifications Grid */}
                     <section>
-                        <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+                        <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                              <div className="h-[1px] flex-1 bg-muted" />
                              {t('offer.basic')}
                              <div className="h-[1px] flex-1 bg-muted" />
@@ -241,7 +241,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Rooms & Facilities */}
                     {(activeOffer.rooms || activeOffer.bathrooms || activeOffer.livingRooms || activeOffer.kitchens) && (
                         <section>
-                            <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+                            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                                 <div className="h-[1px] flex-1 bg-muted" />
                                 {t('offer.facilities')}
                                 <div className="h-[1px] flex-1 bg-muted" />
@@ -258,39 +258,39 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     {/* Features/Amenities */}
                     {(activeOffer.hasElevator || activeOffer.hasGarage || activeOffer.hasPool || activeOffer.hasRoof || activeOffer.hasMaidRoom) && (
                          <section>
-                            <h3 className="text-xs font-black text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+                            <h3 className="text-xs font-black text-muted-foreground dark:text-slate-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                                 <div className="h-[1px] flex-1 bg-muted" />
                                 {t('offer.features')}
                                 <div className="h-[1px] flex-1 bg-muted" />
                             </h3>
                             <div className="flex flex-wrap gap-3">
                                 {activeOffer.hasElevator && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
-                                        <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
+                                    <div className="calm-panel group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
+                                        <Layers className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.elevator')}
                                     </div>
                                 )}
                                 {activeOffer.hasGarage && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
-                                        <Car className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
+                                    <div className="calm-panel group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
+                                        <Car className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.garage')}
                                     </div>
                                 )}
                                 {activeOffer.hasPool && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
-                                        <Waves className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
+                                    <div className="calm-panel group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
+                                        <Waves className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.pool')}
                                     </div>
                                 )}
                                 {activeOffer.hasRoof && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
-                                        <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
+                                    <div className="calm-panel group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
+                                        <Home className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.roof')}
                                     </div>
                                 )}
                                 {activeOffer.hasMaidRoom && (
-                                    <div className="group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
-                                        <Home className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-colors" />
+                                    <div className="calm-panel group flex items-center gap-2 px-4 py-2.5 bg-muted text-slate-600 font-bold text-xs rounded-2xl border border hover:bg-card hover:shadow-sm transition-all duration-300">
+                                        <Home className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400 group-hover:text-slate-900 transition-colors" />
                                         {t('offer.maid')}
                                     </div>
                                 )}
@@ -300,7 +300,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
 
                     {/* Description */}
                     {activeOffer.additionalNotes && (
-                        <section className="bg-muted/50 p-3 sm:p-6 rounded-[1.25rem] border border-slate-200/50">
+                        <section className="calm-panel bg-muted/50 p-3 sm:p-6 rounded-[1.25rem] border border-slate-200/50">
                             <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest">{t('marketing.field.description')}</h3>
                             <p className="text-sm text-slate-600 leading-[1.8] font-medium italic">
                                 "{activeOffer.additionalNotes}"
@@ -314,7 +314,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                     <Button 
                         onClick={handleChat}
                         disabled={isChatLoading || isLoadingDetails}
-                        className="flex-[2] h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-sm tracking-widest uppercase flex items-center justify-center gap-3 shadow-xl shadow-stone-400/10 transition-all active:scale-95 disabled:opacity-70"
+                        className="flex-[2] h-14 bg-card dark:bg-slate-900 hover:bg-black text-foreground dark:text-white rounded-2xl font-black text-sm tracking-widest uppercase flex items-center justify-center gap-3 shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400/10 transition-all active:scale-95 disabled:opacity-70"
                     >
                         {isChatLoading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
@@ -326,7 +326,7 @@ export default function OfferDetailsModal({ isOpen, onClose, offer }: OfferDetai
                         )}
                     </Button>
                     <DialogClose asChild>
-                        <Button variant="outline" className="flex-1 h-14 rounded-2xl border text-slate-400 hover:text-slate-900 hover:bg-muted font-black text-sm tracking-widest uppercase transition-all">
+                        <Button variant="outline" className="flex-1 h-14 rounded-2xl border text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:bg-muted font-black text-sm tracking-widest uppercase transition-all">
                              {t('common.close')}
                         </Button>
                     </DialogClose>

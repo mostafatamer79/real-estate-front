@@ -1,0 +1,170 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "own legal category pagination",
+      "details never mutate",
+      "actual parties",
+      "zero and decimal invoices",
+      "cancel no decision",
+      "decision failure keeps details",
+      "malformed success no false acceptance",
+      "actual acceptance and rejection",
+      "paid/accepted/nonowner/noinvoice gated",
+      "wallet link",
+      "pagination",
+      "list error retry and malformed/empty states",
+      "single main and no clipped controls/page errors"
+    ]
+  }
+]

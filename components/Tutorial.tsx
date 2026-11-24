@@ -1,6 +1,8 @@
 "use client";
 
+import { createPortal } from "react-dom";
 import React, {
+  useId,
   useEffect,
   useMemo,
   useRef,
@@ -60,16 +62,17 @@ const SWIPE_THRESHOLD = 60;
 // ─── Confetti particle ────────────────────────────────────────────────────────
 
 function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
-  const x = (Math.random() - 0.5) * 600;
-  const rotate = (Math.random() - 0.5) * 720;
-  const size = 6 + Math.random() * 8;
+  const seed = Math.round(delay * 1000);
+  const x = ((seed * 137 % 601) - 300);
+  const rotate = ((seed * 73 % 721) - 360);
+  const size = 6 + (seed * 17 % 9);
   return (
     <motion.div
       className="absolute rounded-sm pointer-events-none"
       style={{ top: "50%", left: "50%", width: size, height: size * 0.5, background: color, borderRadius: 2 }}
       initial={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-      animate={{ opacity: 0, x, y: -300 - Math.random() * 200, rotate, scale: 0 }}
-      transition={{ duration: 1.2 + Math.random() * 0.6, delay, ease: "easeOut" }}
+      animate={{ opacity: 0, x, y: -300 - (seed * 29 % 201), rotate, scale: 0 }}
+      transition={{ duration: 1.2 + (seed * 13 % 61) / 100, delay, ease: "easeOut" }}
     />
   );
 }
@@ -93,7 +96,7 @@ function Confetti() {
 function AmbientOrb({ style, color, duration }: { style: React.CSSProperties; color: string; duration: number }) {
   return (
     <motion.div
-      className="absolute rounded-full pointer-events-none blur-3xl"
+      className="calm-decoration absolute rounded-full pointer-events-none blur-3xl"
       style={{ background: color, ...style }}
       animate={{ scale: [1, 1.18, 1], opacity: [0.18, 0.28, 0.18] }}
       transition={{ duration, repeat: Infinity, ease: "easeInOut" }}
@@ -144,6 +147,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
   const cardOpacityFromDrag = useTransform(dragX, [-SWIPE_THRESHOLD * 2, 0, SWIPE_THRESHOLD * 2], [0.4, 1, 0.4]);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const maskId = useId().replace(/:/g, "");
   const currentStep = steps[currentIndex];
   const hasTarget = Boolean(currentStep.targetId || currentStep.mobileTargetId);
   const targetFound = Boolean(targetInfo);
@@ -170,23 +174,29 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
   }, [currentStep.targetId, currentStep.mobileTargetId]);
 
   useEffect(() => {
-    setMounted(true);
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    updateGeometry();
+    const frame = requestAnimationFrame(() => {
+      setMounted(true);
+      setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      updateGeometry();
+    });
     window.addEventListener("resize", updateGeometry);
     window.addEventListener("scroll", updateGeometry, true);
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("resize", updateGeometry);
       window.removeEventListener("scroll", updateGeometry, true);
     };
   }, [updateGeometry]);
 
   useEffect(() => {
-    updateGeometry();
-    if (targetInfo && !reducedMotion) {
-      targetInfo.element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-    }
-  }, [currentIndex, updateGeometry, targetInfo, reducedMotion]);
+    const id = (window.innerWidth < 640 && currentStep.mobileTargetId) || currentStep.targetId;
+    const element = id ? document.getElementById(id) : null;
+    element?.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "center", inline: "nearest" });
+    const frame = requestAnimationFrame(updateGeometry);
+    const observer = element ? new ResizeObserver(updateGeometry) : null;
+    if (element) observer?.observe(element);
+    return () => { cancelAnimationFrame(frame); observer?.disconnect(); };
+  }, [currentIndex, currentStep.mobileTargetId, currentStep.targetId, reducedMotion, updateGeometry]);
 
   // ── Spotlight ─────────────────────────────────────────────────────────────
 
@@ -295,7 +305,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
 
   // ─────────────────────────────────────────────────────────────────────────
 
-  return (
+  return createPortal(
     <div ref={containerRef} className="fixed inset-0 z-[10000]" dir={isRtl ? "rtl" : "ltr"} aria-modal="true" role="dialog">
 
       {/* ── Confetti ── */}
@@ -305,24 +315,22 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
       {spotlight ? (
         <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
           <defs>
-            <mask id="tutorial-spotlight-mask">
+            <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width={viewport.width} height={viewport.height} style={{ maskType: "luminance" }}>
               <rect x={0} y={0} width={viewport.width} height={viewport.height} fill="white" />
-              <motion.rect
+              <rect
                 x={spotlight.x} y={spotlight.y}
                 width={spotlight.width} height={spotlight.height}
                 rx={spotlight.radius} ry={spotlight.radius} fill="black"
-                animate={{ x: spotlight.x, y: spotlight.y, width: spotlight.width, height: spotlight.height }}
-                transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 200, damping: 28 }}
               />
             </mask>
           </defs>
-          <rect x={0} y={0} width={viewport.width} height={viewport.height} fill="rgba(2,6,23,0.84)" mask="url(#tutorial-spotlight-mask)" />
+          <rect x={0} y={0} width={viewport.width} height={viewport.height} fill="rgba(2,6,23,0.84)" mask={`url(#${maskId})`} />
         </svg>
       ) : (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0 : 0.3 }}
-          className="absolute inset-0 bg-slate-950/85 backdrop-blur-[2px]"
+          className="absolute inset-0 bg-background/85 dark:bg-slate-950/85 backdrop-blur-[2px]"
         />
       )}
 
@@ -397,9 +405,9 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
           {/* Card shell */}
           <div className={cn(
             "relative overflow-hidden",
-            "bg-gradient-to-b from-[rgba(15,18,40,0.97)] to-[rgba(8,10,28,0.98)]",
-            "border border-white/[0.08]",
-            "shadow-[0_32px_80px_-8px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.06)]",
+            "bg-card dark:bg-gradient-to-b dark:from-[rgba(15,18,40,0.97)] dark:to-[rgba(8,10,28,0.98)]",
+            "border border-border dark:border-white/[0.08]",
+            "shadow-[0_16px_48px_rgba(32,59,50,0.12)] dark:shadow-[0_32px_80px_-8px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.06)]",
             isCenter ? "w-full max-w-md rounded-[2rem] p-6 sm:p-8"
               : isMobileBottomSheet ? "w-full rounded-t-[2rem] p-5 pb-8"
               : "w-full rounded-2xl p-5"
@@ -422,7 +430,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
               <div className="flex items-center gap-3.5">
                 {currentStep.icon && (
                   <div className="relative shrink-0">
-                    <div className={cn("p-3 rounded-2xl bg-gradient-to-br text-white border border-white/10 shadow-lg", accentGradient)}>
+                    <div className={cn("p-3 rounded-2xl bg-gradient-to-br text-white border border-border dark:border-white/10 shadow-lg", accentGradient)}>
                       {currentStep.icon}
                     </div>
                     <div className={cn("absolute inset-0 rounded-2xl bg-gradient-to-br blur-md opacity-50 -z-10", accentGradient)} />
@@ -433,11 +441,11 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
                     key={`title-${currentStep.id}`}
                     initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.08, duration: 0.3 }}
-                    className="text-base sm:text-lg font-bold text-white leading-tight"
+                    className="text-base sm:text-lg font-bold text-foreground dark:text-white leading-tight"
                   >
                     {currentStep.title}
                   </motion.h3>
-                  <p className="text-xs text-white/35 mt-0.5 font-medium tracking-wide">
+                  <p className="text-xs text-muted-foreground dark:text-white/35 mt-0.5 font-medium tracking-wide">
                     {t("tour.step") || "Step"} {currentIndex + 1} {t("tour.of") || "of"} {steps.length}
                   </p>
                 </div>
@@ -446,10 +454,10 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
               {/* Progress ring + X */}
               <div className="relative shrink-0 flex items-center justify-center">
                 <ProgressRing current={currentIndex + 1} total={steps.length} size={44} />
-                <span className="absolute text-[10px] font-bold text-white/60">{currentIndex + 1}</span>
+                <span className="absolute text-[10px] font-bold text-muted-foreground dark:text-white/60">{currentIndex + 1}</span>
                 <button
                   onClick={handleSkip}
-                  className="absolute -top-2 -right-2 p-1 bg-white/5 hover:bg-white/15 text-white/35 hover:text-white/90 rounded-full transition-all duration-200 border border-white/10"
+                  className="absolute -top-2 -right-2 p-1 bg-muted dark:bg-white/5 hover:bg-muted hover:dark:bg-white/15 text-muted-foreground dark:text-white/35 hover:text-foreground hover:dark:text-white/90 rounded-full transition-all duration-200 border border-border dark:border-white/10"
                   aria-label={t("tour.skip") || "Skip tour"}
                 >
                   <X className="w-3 h-3" />
@@ -462,7 +470,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
               key={`desc-${currentStep.id}`}
               initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.14, duration: 0.3 }}
-              className="relative z-10 text-white/60 text-sm leading-relaxed whitespace-pre-line mb-5"
+              className="relative z-10 text-muted-foreground dark:text-white/60 text-sm leading-relaxed whitespace-pre-line mb-5"
             >
               {currentStep.description}
             </motion.p>
@@ -474,7 +482,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
                   <motion.div
                     animate={{
                       width: idx === currentIndex ? 24 : 6,
-                      backgroundColor: idx === currentIndex ? "#818cf8" : idx < currentIndex ? "rgba(99,102,241,0.45)" : "rgba(255,255,255,0.12)",
+                      backgroundColor: idx === currentIndex ? "#818cf8" : idx < currentIndex ? "rgba(99,102,241,0.45)" : "var(--border)",
                     }}
                     transition={{ duration: 0.28, ease: "easeInOut" }}
                     className="h-1.5 rounded-full"
@@ -487,10 +495,10 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
             <div className="relative z-10 flex items-center gap-2.5">
               {currentIndex > 0 && (
                 <motion.button
-                  whileHover={reducedMotion ? {} : { scale: 1.03 }}
-                  whileTap={reducedMotion ? {} : { scale: 0.97 }}
+                  whileHover={reducedMotion ? {} : { scale: 1.015 }}
+                  whileTap={reducedMotion ? {} : { scale: 0.985 }}
                   onClick={handleBack}
-                  className="px-4 py-2.5 rounded-xl bg-white/[0.07] hover:bg-white/[0.13] text-white/75 hover:text-white text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 border border-white/10"
+                  className="px-4 py-2.5 rounded-xl bg-muted dark:bg-white/[0.07] hover:bg-muted hover:dark:bg-white/[0.13] text-foreground dark:text-white/75 hover:text-foreground hover:dark:text-white text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 border border-border dark:border-white/10"
                 >
                   <ChevronRight className={cn("w-4 h-4", !isRtl && "rotate-180")} />
                   {t("tour.back") || "Back"}
@@ -498,8 +506,8 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
               )}
 
               <motion.button
-                whileHover={reducedMotion ? {} : { scale: 1.03, y: -1 }}
-                whileTap={reducedMotion ? {} : { scale: 0.97 }}
+                whileHover={reducedMotion ? {} : { scale: 1.015, y: -1 }}
+                whileTap={reducedMotion ? {} : { scale: 0.985 }}
                 onClick={handleNext}
                 className={cn(
                   "flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-bold",
@@ -518,7 +526,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
             </div>
 
             {/* Skip link */}
-            <button onClick={handleSkip} className="relative z-10 w-full mt-3 text-xs text-white/22 hover:text-white/50 transition-colors font-medium">
+            <button onClick={handleSkip} className="relative z-10 w-full mt-3 text-xs text-muted-foreground dark:text-white/22 hover:text-muted-foreground hover:dark:text-white/50 transition-colors font-medium">
               {t("tour.skip") || "Skip tour"}
             </button>
 
@@ -526,7 +534,7 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
             {isMobile && currentIndex === 0 && !reducedMotion && (
               <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.5 }}
-                className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1 text-white/18 text-[10px] pointer-events-none"
+                className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1 text-muted-foreground dark:text-white/18 text-[10px] pointer-events-none"
               >
                 <ChevronLeft className="w-3 h-3" />
                 {t("tour.swipe") || "Swipe to navigate"}
@@ -536,6 +544,6 @@ export default function Tutorial({ steps, onComplete, onSkip, open = true, initi
           </div>
         </motion.div>
       </AnimatePresence>
-    </div>
+    </div>, document.body
   );
 }

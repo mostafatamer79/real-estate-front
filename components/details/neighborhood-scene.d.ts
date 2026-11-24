@@ -20,6 +20,7 @@ export function createNeighborhoodScene(host: HTMLDivElement, project: (pins: Pi
     places: DetailsPlace[];
     reducedMotion: boolean;
     dark: boolean;
+    propertyEntry?: boolean;
     onPlayingChange?: (playing: boolean) => void;
     onDroneStateChange?: (telemetry: DroneTelemetry) => void;
   }): NeighborhoodScene;

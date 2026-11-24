@@ -1,3 +1,4 @@
+import { loginHref } from "./auth-navigation";
 import axios, { AxiosRequestConfig } from 'axios';
 import type { GeideaSession, GeideaPaymentTarget, GeideaVerification } from '@/lib/geidea';
 import { 
@@ -150,7 +151,10 @@ const api = axios.create({
 // Request interceptor to add token
 api.interceptors.request.use(
   (config) => { 
-    const token = localStorage.getItem('token');
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      config.baseURL = `${window.location.origin}/api`;
+    }
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -176,7 +180,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      if (!['/login','/verify-otp'].includes(window.location.pathname)) window.location.href = loginHref(window.location.pathname + window.location.search);
     }
     return Promise.reject(error);
   }

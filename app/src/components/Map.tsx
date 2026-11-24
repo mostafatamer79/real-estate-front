@@ -487,7 +487,7 @@ const Map = forwardRef<HTMLDivElement, MapProps>(function MapComponent({
 
       {/* ✅ Locating Overlay */}
       {isLoadingLocation && (
-        <div className="absolute top-2 right-2 z-[1000] bg-card/90 px-3 py-2 rounded shadow text-sm font-medium text-blue-600 animate-pulse flex items-center gap-2">
+        <div className="calm-panel absolute top-2 right-2 z-[1000] bg-card/90 px-3 py-2 rounded shadow text-sm font-medium text-blue-600 animate-pulse flex items-center gap-2">
             <span className="animate-spin">⏳</span>
             {t('map.locating')}
         </div>

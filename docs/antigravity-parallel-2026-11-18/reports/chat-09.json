@@ -1,0 +1,42 @@
+{
+  "chat": "09",
+  "task": "financial-marketing",
+  "status": "NOT_READY",
+  "status_note": "Marked NOT_READY strictly due to browser verification being pending per COMMON.md protocol. Unit tests (12/12) and scoped lint pass cleanly (0 errors, 0 warnings). Original admin files byte-preserved.",
+  "review_group": 3,
+  "routes": [
+    "/financial",
+    "/marketing"
+  ],
+  "modified_files": [
+    "app/financial/page.tsx",
+    "app/marketing/page.tsx"
+  ],
+  "created_files": [
+    "components/redesign/chat09/FinancialStandalone.tsx",
+    "components/redesign/chat09/MarketingStandalone.tsx",
+    "components/redesign/chat09/financial-standalone.module.css",
+    "components/redesign/chat09/marketing-standalone.module.css",
+    "lib/redesign-chat09-financial-marketing.ts",
+    "tests/parallel-chat09-financial-marketing.test.cjs",
+    "public/artworks/chat09-financial-atrium.webp",
+    "public/artworks/chat09-marketing-terrace.webp",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-09.md",
+    "docs/antigravity-parallel-2026-11-18/reports/chat-09.json"
+  ],
+  "verified_readonly_files": [
+    "components/financial/FinancialWorkspace.tsx",
+    "components/marketing/MarketingWorkspace.tsx"
+  ],
+  "verification": {
+    "eslint": "PASS (0 errors, 0 warnings)",
+    "unit_tests": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    "original_files_byte_preserved": true,
+    "css_modules_scoped": true,
+    "browser_checks": "PENDING"
+  }
+}

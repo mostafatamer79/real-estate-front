@@ -1,0 +1,74 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "passed": true,
+    "checks": [
+      "empty/unsupported files rejected before upload",
+      "actual multipart file part and browser boundary",
+      "upload failure leaves photo unchanged",
+      "persistence failure leaves photo unchanged",
+      "same file can be retried",
+      "unsafe upload URL rejected before profile update",
+      "successful photo save",
+      "license PDF save shows server review state",
+      "uploads preserve dirty form fields",
+      "single semantic main and local navigation",
+      "no raw translations or page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "passed": true,
+    "checks": [
+      "empty/unsupported files rejected before upload",
+      "actual multipart file part and browser boundary",
+      "upload failure leaves photo unchanged",
+      "persistence failure leaves photo unchanged",
+      "same file can be retried",
+      "unsafe upload URL rejected before profile update",
+      "successful photo save",
+      "license PDF save shows server review state",
+      "uploads preserve dirty form fields",
+      "single semantic main and local navigation",
+      "no raw translations or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "passed": true,
+    "checks": [
+      "empty/unsupported files rejected before upload",
+      "actual multipart file part and browser boundary",
+      "upload failure leaves photo unchanged",
+      "persistence failure leaves photo unchanged",
+      "same file can be retried",
+      "unsafe upload URL rejected before profile update",
+      "successful photo save",
+      "license PDF save shows server review state",
+      "uploads preserve dirty form fields",
+      "single semantic main and local navigation",
+      "no raw translations or page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "passed": true,
+    "checks": [
+      "empty/unsupported files rejected before upload",
+      "actual multipart file part and browser boundary",
+      "upload failure leaves photo unchanged",
+      "persistence failure leaves photo unchanged",
+      "same file can be retried",
+      "unsafe upload URL rejected before profile update",
+      "successful photo save",
+      "license PDF save shows server review state",
+      "uploads preserve dirty form fields",
+      "single semantic main and local navigation",
+      "no raw translations or page exceptions"
+    ]
+  }
+]

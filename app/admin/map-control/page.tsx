@@ -53,7 +53,7 @@ export default function AdminMapControlPage() {
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+          <div className="inline-flex items-center gap-2 rounded-full bg-card dark:bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
             <Map className="h-3.5 w-3.5" />
             {isRtl ? "الخريطة" : "Map"}
           </div>
@@ -63,7 +63,7 @@ export default function AdminMapControlPage() {
         </div>
         <Link
           href="/scan-map"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border bg-card px-4 text-[11px] font-black uppercase tracking-widest text-slate-700 hover:border-slate-900"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border bg-card px-4 text-[11px] font-black uppercase tracking-widest text-slate-700 hover:border-border hover:dark:border-slate-900"
         >
           <ExternalLink className="h-4 w-4" />
           {isRtl ? "فتح الخريطة" : "Open map"}
@@ -72,34 +72,34 @@ export default function AdminMapControlPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2">
         {controls.map((item) => (
-          <div key={item.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
+          <div key={item.label} className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+            <div className="calm-icon mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <item.icon className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{item.label}</p>
             <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{item.value}</p>
           </div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-3 md:gap-6 lg:grid-cols-1 md:grid-cols-2">
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "حالة الخريطة" : "Map status"}
             </label>
             <div className="flex rounded-xl bg-muted p-1">
               <button
                 type="button"
                 onClick={() => patchSettings({ sectionFlags: { ...settings.sectionFlags, map: "open" } })}
-                className={`h-11 flex-1 rounded-lg text-xs font-black ${mapOpen ? "bg-slate-950 text-white" : "text-slate-500"}`}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${mapOpen ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-muted-foreground dark:text-slate-500"}`}
               >
                 {isRtl ? "فتح المناطق" : "Open areas"}
               </button>
               <button
                 type="button"
                 onClick={() => patchSettings({ sectionFlags: { ...settings.sectionFlags, map: "closed" } })}
-                className={`h-11 flex-1 rounded-lg text-xs font-black ${!mapOpen ? "bg-slate-950 text-white" : "text-slate-500"}`}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${!mapOpen ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-muted-foreground dark:text-slate-500"}`}
               >
                 {isRtl ? "إغلاق المناطق" : "Close areas"}
               </button>
@@ -107,21 +107,21 @@ export default function AdminMapControlPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "حالة الدفع للخدمة" : "Service Payment Status"}
             </label>
             <div className="flex rounded-xl bg-muted p-1">
               <button
                 type="button"
                 onClick={() => patchSettings({ uiFlags: { ...settings.uiFlags, is_map_free: true } })}
-                className={`h-11 flex-1 rounded-lg text-xs font-black ${isMapFree ? "bg-slate-950 text-white" : "text-slate-500"}`}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${isMapFree ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-muted-foreground dark:text-slate-500"}`}
               >
                 {isRtl ? "مجاني" : "Free"}
               </button>
               <button
                 type="button"
                 onClick={() => patchSettings({ uiFlags: { ...settings.uiFlags, is_map_free: false } })}
-                className={`h-11 flex-1 rounded-lg text-xs font-black ${!isMapFree ? "bg-slate-950 text-white" : "text-slate-500"}`}
+                className={`h-11 flex-1 rounded-lg text-xs font-black ${!isMapFree ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "text-muted-foreground dark:text-slate-500"}`}
               >
                 {isRtl ? "مدفوع" : "Paid"}
               </button>
@@ -129,7 +129,7 @@ export default function AdminMapControlPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "سعر التقارير" : "Report price"}
             </label>
             <input
@@ -144,12 +144,12 @@ export default function AdminMapControlPage() {
                   },
                 })
               }
-              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "عنوان التقرير" : "Report title"}
             </label>
             <input
@@ -162,12 +162,12 @@ export default function AdminMapControlPage() {
                   },
                 })
               }
-              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="h-12 w-full rounded-xl border border bg-muted px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">
               {isRtl ? "نص يظهر في التقرير" : "Report note"}
             </label>
             <textarea
@@ -180,7 +180,7 @@ export default function AdminMapControlPage() {
                   },
                 })
               }
-              className="min-h-28 w-full rounded-xl border border bg-muted p-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="min-h-28 w-full rounded-xl border border bg-muted p-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function AdminMapControlPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-white disabled:opacity-60"
+          className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-6 text-[11px] font-black uppercase tracking-widest text-foreground dark:text-white disabled:opacity-60"
         >
           <Save className="h-4 w-4" />
           {saving ? (isRtl ? "جار الحفظ..." : "Saving...") : (isRtl ? "حفظ التعديلات" : "Save changes")}

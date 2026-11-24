@@ -6,7 +6,7 @@ import { Bell, X, Check, CheckCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { useSettings } from '@/context/SettingsContext';
+import { useSettings, resolveSurfaceColor } from '@/context/SettingsContext';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { hapticTick } from '@/lib/haptics';
@@ -130,17 +130,17 @@ export default function NotificationBell({
 
   const isLight = variant === 'light';
   const panelBaseClass = isLight
-    ? 'bg-card border shadow-2xl'
-    : 'bg-slate-800 border-gray-700 shadow-xl';
-  const headerBorderClass = isLight ? 'border' : 'border-gray-700';
-  const titleClass = isLight ? 'text-slate-950' : 'text-white';
+    ? 'bg-card border shadow-sm dark:shadow-2xl'
+    : 'bg-muted dark:bg-slate-800 border-border dark:border-gray-700 shadow-sm dark:shadow-xl';
+  const headerBorderClass = isLight ? 'border' : 'border-border dark:border-gray-700';
+  const titleClass = isLight ? 'text-slate-950' : 'text-foreground dark:text-white';
   const actionClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';
-  const emptyTextClass = isLight ? 'text-slate-400' : 'text-gray-400';
+  const emptyTextClass = isLight ? 'text-muted-foreground dark:text-slate-400' : 'text-muted-foreground dark:text-gray-400';
   const listDividerClass = isLight ? 'divide-slate-100' : 'divide-gray-700';
   const unreadClass = isLight ? 'bg-muted' : 'bg-slate-750/50';
   const itemHoverClass = isLight ? 'hover:bg-muted' : 'hover:bg-slate-750';
-  const messageClass = isLight ? 'text-slate-500' : 'text-gray-400';
-  const timeClass = isLight ? 'text-slate-400' : 'text-gray-500';
+  const messageClass = isLight ? 'text-muted-foreground dark:text-slate-500' : 'text-muted-foreground dark:text-gray-400';
+  const timeClass = isLight ? 'text-muted-foreground dark:text-slate-400' : 'text-muted-foreground dark:text-gray-500';
   const markReadClass = isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300';
   const deleteClass = isLight ? 'text-red-500 hover:text-red-600' : 'text-red-400 hover:text-red-300';
 
@@ -148,8 +148,8 @@ export default function NotificationBell({
     <div className="relative" ref={dropdownRef}>
       <motion.button
         onClick={() => { setIsOpen(!isOpen); hapticTick(); }}
-        whileTap={{ scale: 0.9 }}
-        className={`relative p-2 text-gray-300 hover:text-white transition-colors ${buttonClassName || ''}`}
+        whileTap={{ scale: 0.985 }}
+        className={`relative p-2 text-muted-foreground dark:text-gray-300 hover:text-foreground hover:dark:text-white transition-colors ${buttonClassName || ''}`}
         aria-label={t('notification.bell')}
       >
         <motion.div
@@ -159,7 +159,7 @@ export default function NotificationBell({
           <Bell 
             className="h-6 w-6" 
             style={{
-              color: settings?.headerNotificationColor || undefined,
+              color: resolveSurfaceColor(settings?.headerNotificationColor, settings.isDark),
               width: settings?.headerNotificationSize ? `${settings.headerNotificationSize}px` : undefined,
               height: settings?.headerNotificationSize ? `${settings.headerNotificationSize}px` : undefined,
             }}

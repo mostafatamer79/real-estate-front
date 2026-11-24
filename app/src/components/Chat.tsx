@@ -168,9 +168,9 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
             className={`fixed bottom-24 left-6 z-50 transition-all duration-300 ease-out md:bottom-24 max-md:bottom-[calc(88px+env(safe-area-inset-bottom))] max-md:left-4 max-md:right-4`}
             dir={language === 'ar' ? "rtl" : "ltr"}
           >
-            <div className="bg-card rounded-2xl shadow-2xl w-96 h-[500px] flex flex-col border border overflow-hidden max-md:w-auto max-md:h-[70vh]">
+            <div className="calm-panel bg-card rounded-2xl shadow-sm dark:shadow-2xl w-96 h-[500px] flex flex-col border border overflow-hidden max-md:w-auto max-md:h-[70vh]">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-700 text-white">
+              <div className="flex items-center justify-between px-4 py-3 bg-muted dark:bg-slate-700 text-foreground dark:text-white">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center shrink-0">
                     <span className="text-gray-600 font-semibold text-sm">
@@ -180,19 +180,19 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                   <div className="flex-1 min-w-0">
                     <h2 className="text-base font-medium truncate">{personName || t('chat.title')}</h2>
                     {address && (
-                      <p className="text-xs text-gray-200 truncate">{address}</p>
+                      <p className="text-xs text-foreground dark:text-gray-200 truncate">{address}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                    {/* DEBUG TOOLBAR FOR DEMO */}
-                   <button onClick={() => { handleCreateBooking(); hapticTick(); }} title="Simulate Payment Request" className="text-white hover:text-green-300 transition-colors">
+                   <button onClick={() => { handleCreateBooking(); hapticTick(); }} title="Simulate Payment Request" className="text-foreground dark:text-white hover:text-green-700 hover:dark:text-green-300 transition-colors">
                        <SaudiRiyalIcon className="w-4 h-4" />
                    </button>
                   <motion.button
                     onClick={onClose}
-                    whileTap={{ scale: 0.9 }}
-                    className="text-white hover:text-gray-200 transition-colors p-1.5"
+                    whileTap={{ scale: 0.985 }}
+                    className="text-foreground dark:text-white hover:text-foreground hover:dark:text-gray-200 transition-colors p-1.5"
                   >
                     <X className="w-5 h-5" />
                   </motion.button>
@@ -232,7 +232,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                                   <p>{t('chat.date')}: {new Date(message.metadata?.date || '').toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</p>
                                   <p>{t('chat.price')}: <SaudiRiyalAmount amount={message.metadata?.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
                               </div>
-                              <Button size="sm" className="w-full mt-2 bg-slate-600 hover:bg-slate-700">{t('chat.acceptBooking')}</Button>
+                              <Button size="sm" className="w-full mt-2 bg-primary dark:bg-slate-600 hover:bg-primary/90 hover:dark:bg-slate-700">{t('chat.acceptBooking')}</Button>
                           </div>
                       ) : message.type === 'payment_request' ? (
                            <div className="space-y-2">
@@ -242,7 +242,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                               </div>
                               <div className="text-sm">
                                   <p className="font-bold text-lg"><SaudiRiyalAmount amount={message.metadata?.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} /></p>
-                                  <p className="text-gray-500 text-xs">{t('chat.downPayment')}</p>
+                                  <p className="text-muted-foreground dark:text-gray-500 text-xs">{t('chat.downPayment')}</p>
                               </div>
                               <Button 
                                 size="sm" 
@@ -256,7 +256,7 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                           <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
                       )}
                       
-                      <span className="text-[10px] text-gray-400 block text-left mt-1">
+                      <span className="text-[10px] text-muted-foreground dark:text-gray-400 block text-left mt-1">
                         {message.timestamp.toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-US', {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -284,8 +284,8 @@ export default function Chat({ isOpen, onClose, offerId, personName, address }: 
                   <motion.button
                     onClick={() => { handleSend(); hapticTick(); }}
                     disabled={!inputValue.trim()}
-                    whileTap={{ scale: 0.9 }}
-                    className="bg-slate-700 text-white p-2.5 rounded-full hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileTap={{ scale: 0.985 }}
+                    className="bg-muted dark:bg-slate-700 text-foreground dark:text-white p-2.5 rounded-full hover:bg-muted hover:dark:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="w-5 h-5" />
                   </motion.button>

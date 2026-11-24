@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { MotionConfig } from "framer-motion";
 import { fetchPublicSettings, getApiBaseUrl } from "@/lib/runtime-config";
 import { CustomServiceCategory, CustomServiceItem, CUSTOM_SERVICE_CATALOG_KEY, CUSTOM_SERVICE_CATEGORIES_KEY, parseCustomCategories, parseCustomServices } from "@/lib/service-catalog";
 
@@ -143,27 +144,28 @@ export interface GlobalSettings {
 interface SettingsContextType {
     settings: GlobalSettings;
     updateSettings: (updates: Partial<GlobalSettings>) => void;
+    toggleTheme: () => void;
     saveSettings: (overrideSettings?: Partial<GlobalSettings>) => Promise<boolean>;
     refetch: () => Promise<void>;
     isLoading: boolean;
 }
 
 const defaultSettings: GlobalSettings = {
-    primary: "#24483d",
-    background: "#f6f8f5",
-    foreground: "#203b32",
-    accent: "#eaf1eb",
+    primary: "#303030",
+    background: "#e3eaf4",
+    foreground: "#262626",
+    accent: "#eeeeee",
     sidebar: "#ffffff",
     soonBadgeBg: "#ffffff",
     soonBadgeText: "#000000",
-    fontSize: "15px",
+    fontSize: "16px",
     fontFamily: "system-ui",
     cardBg: "#ffffff",
-    cardText: "#203b32",
-    cardBorder: "#d7e2d9",
+    cardText: "#262626",
+    cardBorder: "#d8d8d8",
     cardRadius: "24px",
-    iconBg: "#eaf1eb",
-    iconColor: "#24483d",
+    iconBg: "#eeeeee",
+    iconColor: "#303030",
     buttonRadius: "16px",
     appName: "الوساطة الرقمية",
     description: "الوساطة الرقمية - منصة عقارية شاملة",
@@ -270,6 +272,15 @@ const defaultSettings: GlobalSettings = {
     detailsPartMessages: {},
 };
 
+/** Keep legacy pale text presets readable on the new daylight surfaces. */
+export function resolveSurfaceColor(color: string | undefined, isDark: boolean): string | undefined {
+    if (!color) return undefined;
+    if (!isDark && ["#94a3b8", "#cbd5e1", "#ffffff", "#fff"].includes(color.toLowerCase())) {
+        return "var(--foreground)";
+    }
+    return color;
+}
+
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
@@ -279,27 +290,42 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const applyTheme = useCallback((s: GlobalSettings) => {
         if (typeof document === "undefined") return;
         const root = document.documentElement;
-        root.style.setProperty("--primary", s.primary);
-        root.style.setProperty("--background", s.background);
-        root.style.setProperty("--foreground", s.foreground);
-        root.style.setProperty("--accent", s.accent);
-        root.style.setProperty("--sidebar", s.sidebar);
+        const lightPrimary = ["#303030", "#262626"].includes(s.primary.toLowerCase()) ? "#102b46" : s.primary;
+        root.style.setProperty("--primary", s.isDark ? "#d8b381" : lightPrimary);
+        // Normalize legacy neutral backgrounds to the selected cool blue palette.
+        const legacyBackgrounds = new Set(["#f7f7f7", "#ffffff", "#fff", "#f5f4f0", "#f5f2e9", "#f8f5ee", "#fdf2f8", "#fce7f3", "#fff1f2", "#e3eaf4", "#dbe4f2", "#d5e3f2"]);
+        const lightBackground = legacyBackgrounds.has(s.background.toLowerCase()) ? "#e3eaf4" : s.background;
+        root.style.setProperty("--background", s.isDark ? "#101827" : lightBackground);
+        const lightForeground = ["#262626", "#303030"].includes(s.foreground.toLowerCase()) ? "#182d46" : s.foreground;
+        root.style.setProperty("--foreground", s.isDark ? "#edf1f7" : lightForeground);
+        root.style.setProperty("--accent", s.isDark ? "#22344f" : s.accent);
+        root.style.setProperty("--sidebar", s.isDark ? "#142238" : s.sidebar);
         root.style.setProperty("--soon-badge-bg", s.soonBadgeBg);
         root.style.setProperty("--soon-badge-text", s.soonBadgeText);
         root.style.setProperty("--app-font-family", s.fontFamily);
-        root.style.setProperty("--platform-card-bg", s.cardBg);
-        root.style.setProperty("--platform-card-text", s.cardText);
-        root.style.setProperty("--platform-card-border", s.cardBorder);
+        root.style.setProperty("--platform-card-bg", s.isDark ? "#18273d" : s.cardBg);
+        root.style.setProperty("--platform-card-text", s.isDark ? "#edf1f7" : s.cardText);
+        root.style.setProperty("--platform-card-border", s.isDark ? "#33465f" : s.cardBorder);
         root.style.setProperty("--platform-card-radius", s.cardRadius);
-        root.style.setProperty("--platform-icon-bg", s.iconBg);
-        root.style.setProperty("--platform-icon-color", s.iconColor);
+        root.style.setProperty("--platform-icon-bg", s.isDark ? "#22344f" : s.iconBg);
+        root.style.setProperty("--platform-icon-color", s.isDark ? "#c9d7e9" : s.iconColor);
         root.style.setProperty("--platform-button-radius", s.buttonRadius);
-        root.style.setProperty("font-size", s.fontSize);
+        const configuredFontSize = Number.parseFloat(s.fontSize);
+        root.style.setProperty("font-size", `${Math.max(16, Number.isFinite(configuredFontSize) ? configuredFontSize : 16)}px`);
         if (s.isDark) {
             root.classList.add("dark");
         } else {
             root.classList.remove("dark");
         }
+    }, []);
+
+    const getStoredTheme = useCallback((): boolean | null => {
+        if (typeof window === "undefined") return null;
+        const stored = window.localStorage.getItem("digital-brokerage-theme");
+        if (stored === "dark") return true;
+        if (stored === "light") return false;
+        // First-time visitor: respect OS/browser colour-scheme preference
+        return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? null;
     }, []);
 
     const fetchSettings = useCallback(async () => {
@@ -408,6 +434,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
                 next.uiFlags = uiFlags;
                 next.detailsPartFlags = detailsPartFlags;
                 next.detailsPartMessages = detailsPartMessages;
+                const storedTheme = getStoredTheme();
+                if (storedTheme !== null) next.isDark = storedTheme;
                 setSettings(next);
                 applyTheme(next);
         } catch (error) {
@@ -415,7 +443,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    }, [applyTheme]);
+    }, [applyTheme, getStoredTheme]);
 
     useEffect(() => {
         fetchSettings();
@@ -424,6 +452,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const updateSettings = (updates: Partial<GlobalSettings>) => {
         setSettings((prev) => {
             const next = { ...prev, ...updates };
+            applyTheme(next);
+            return next;
+        });
+    };
+
+    const toggleTheme = () => {
+        setSettings((prev) => {
+            const next = { ...prev, isDark: !prev.isDark };
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("digital-brokerage-theme", next.isDark ? "dark" : "light");
+            }
             applyTheme(next);
             return next;
         });
@@ -618,8 +657,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <SettingsContext.Provider value={{ settings, updateSettings, saveSettings, refetch: fetchSettings, isLoading }}>
-            {children}
+        <SettingsContext.Provider value={{ settings, updateSettings, toggleTheme, saveSettings, refetch: fetchSettings, isLoading }}>
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
         </SettingsContext.Provider>
     );
 }

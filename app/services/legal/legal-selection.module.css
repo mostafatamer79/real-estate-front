@@ -1,0 +1,43 @@
+.page { --legal-bg:var(--site-light-background, #dbe4f2); --legal-ink:#0b192c; --legal-muted:#526071; --legal-gold:#946528; --legal-border:#dcdedc; min-height:100dvh; background:var(--legal-bg); color:var(--legal-ink); padding:24px 24px 96px; }
+:global(.dark) .page { --legal-bg:#0b192c; --legal-ink:#f1f5f9; --legal-muted:#bfccda; --legal-gold:#e6bb78; --legal-border:#2d435c; }
+.shell { max-width:1240px; margin-inline:auto; }
+.back { display:inline-flex; align-items:center; gap:10px; min-height:44px; color:var(--legal-muted); font-size:13px; margin-bottom:28px; }
+.back svg { width:17px; height:17px; }
+.page[dir='rtl'] .back svg { rotate:180deg; }
+.hero { display:grid; grid-template-columns:1.1fr 1fr; align-items:center; gap:64px; margin-bottom:64px; }
+.editorial { min-width:0; padding-block:20px; }
+.kicker { color:var(--legal-gold); font-size:11px; font-weight:650; letter-spacing:.08em; }
+.editorial h1 { font-size:clamp(40px,4.6vw,66px); font-weight:700; line-height:1.3; letter-spacing:-.03em; margin:24px 0; text-wrap:balance; }
+.editorial h1 span { color:var(--legal-muted); }
+.editorial>p { font-size:16px; line-height:1.9; max-width:42ch; color:var(--legal-muted); }
+.artStage { position:relative; min-height:370px; overflow:hidden; border-radius:2px 2px 36px 2px; background:#10243b; }
+.artCaption { position:absolute; inset-inline:20px; bottom:16px; font-size:11px; color:#fff; width:fit-content; background:#0b192cd9; padding:8px 12px; border-radius:4px; }
+.directoryHeading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding-block:18px; border-bottom:1px solid var(--legal-border); }
+.directoryHeading h2 { font-size:22px; font-weight:650; }
+.directoryHeading>span { color:var(--legal-muted); font-size:11px; letter-spacing:.04em; }
+.directory { display:grid; grid-template-columns:1fr 1fr; column-gap:48px; list-style:none; padding:0; margin:0; }
+.directory>li { min-width:0; border-bottom:1px solid var(--legal-border); }
+.row { display:flex; align-items:center; gap:16px; min-height:154px; padding:28px 0; color:var(--legal-ink); }
+.number { font-size:12px; color:var(--legal-gold); font-variant-numeric:tabular-nums; }
+.icon { width:24px; height:24px; stroke-width:1.4; color:var(--legal-gold); flex-shrink:0; }
+.copy { flex:1; min-width:0; }
+.copy h3 { font-size:22px; line-height:1.5; font-weight:650; margin:0 0 6px; }
+.copy p { font-size:13px; line-height:1.8; color:var(--legal-muted); margin:0; }
+.arrow { width:22px; height:22px; color:var(--legal-gold); transition:transform 200ms ease-out; flex-shrink:0; }
+.page[dir='ltr'] .arrow { scale:-1 1; }
+.row:hover .arrow { transform:translate(-3px,-3px); }
+.soon { font-size:12px; white-space:nowrap; color:var(--legal-muted); }
+.locked .icon { opacity:.55; }
+.preview { display:flex; gap:10px; align-items:center; min-height:44px; color:var(--legal-gold); width:fit-content; font-size:13px; margin-bottom:12px; text-decoration:underline; text-underline-offset:4px; }
+.preview svg { width:16px; height:16px; }
+.previewNote { display:block; margin-top:20px; color:var(--legal-gold); font-size:13px; }
+.page a:focus-visible { outline:2px solid var(--legal-gold); outline-offset:5px; border-radius:3px; }
+.unavailable { max-width:720px; padding-block:80px; }
+.unavailable h1 { font-size:clamp(32px,4vw,54px); line-height:1.4; font-weight:650; margin-block:24px; }
+.unavailable p,.empty { color:var(--legal-muted); line-height:1.8; margin-block:24px; }
+.loading { display:flex; gap:12px; align-items:center; min-height:220px; color:var(--legal-muted); }
+.loading svg { animation:spin 1s linear infinite; }
+@keyframes spin { to { rotate:360deg; } }
+@media(max-width:900px) { .hero { gap:32px; } .artStage { min-height:320px; } .directory { column-gap:28px; } .copy h3 { font-size:20px; } }
+@media(max-width:640px) { .page { padding:18px 20px 96px; } .back { margin-bottom:20px; } .hero { grid-template-columns:1fr; gap:24px; margin-bottom:32px; } .editorial { padding:0; } .editorial h1 { font-size:42px; margin-block:16px; } .editorial>p { font-size:14px; } .artStage { min-height:210px; } .directory { grid-template-columns:1fr; } .directoryHeading h2 { font-size:20px; } .directoryHeading>span { font-size:10px; } .row { min-height:136px; gap:12px; } .copy h3 { font-size:21px; } .icon { width:22px; height:22px; } }
+@media(prefers-reduced-motion:reduce) { .page * { animation:none !important; transition:none !important; } }

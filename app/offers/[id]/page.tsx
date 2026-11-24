@@ -3,8 +3,11 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { safeHttpUrl } from "@/lib/safe-url";
+import { loginHref } from "@/lib/auth-navigation";
+import Offer3DMedia from "@/components/cinematic/Offer3DMedia";
 import {
   Home,
   ArrowRight,
@@ -55,7 +58,9 @@ import {
   Star as StarIcon,
   CheckCheck,
   Send,
-  SaudiRiyalIcon
+  SaudiRiyalIcon,
+  Maximize2,
+  ExternalLink,
 } from "lucide-react";
 import { offersApi, bookingsApi } from "@/lib/api";
 import { Offer as ApiOffer } from "@/types/api";
@@ -99,6 +104,227 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useLanguage } from "@/context/LanguageContext";
+import styles from "./offer-detail.module.css";
+import requestDialogStyles from "@/components/modals/offer-request-modal.module.css";
+
+const DETAIL_COPY: Record<string, readonly [string, string]> = {
+  "offer.price": [
+    "السعر",
+    "Price"
+  ],
+  "offer.area": [
+    "المساحة",
+    "Area"
+  ],
+  "offer.type": [
+    "نوع العقار",
+    "Property type"
+  ],
+  "offer.city": [
+    "المدينة",
+    "City"
+  ],
+  "offer.basic": [
+    "معلومات أساسية",
+    "Overview"
+  ],
+  "offer.age": [
+    "عمر العقار",
+    "Property age"
+  ],
+  "offer.deed": [
+    "نوع الصك",
+    "Deed type"
+  ],
+  "offer.direction": [
+    "الاتجاه",
+    "Direction"
+  ],
+  "offer.location": [
+    "الموقع",
+    "Location"
+  ],
+  "offer.neighborhood": [
+    "الحي",
+    "District"
+  ],
+  "offer.facilities": [
+    "المرافق والغرف",
+    "Rooms & spaces"
+  ],
+  "offer.rooms": [
+    "عدد الغرف",
+    "Bedrooms"
+  ],
+  "offer.baths": [
+    "دورات المياه",
+    "Bathrooms"
+  ],
+  "offer.features": [
+    "المميزات",
+    "Features"
+  ],
+  "offer.living": [
+    "غرف المعيشة",
+    "Living rooms"
+  ],
+  "offer.kitchens": [
+    "المطابخ",
+    "Kitchens"
+  ],
+  "offer.floors": [
+    "الأدوار",
+    "Floors"
+  ],
+  "offer.furniture": [
+    "الأثاث",
+    "Furnishing"
+  ],
+  "offer.garage": [
+    "موقف سيارة",
+    "Garage"
+  ],
+  "offer.pool": [
+    "مسبح",
+    "Pool"
+  ],
+  "offer.elevator": [
+    "مصعد",
+    "Elevator"
+  ],
+  "offer.maid": [
+    "غرفة خادمة",
+    "Maid room"
+  ],
+  "offer.roof": [
+    "سطح",
+    "Roof"
+  ],
+  "offer.annex": [
+    "ملحق",
+    "Annex"
+  ],
+  "offer.streetWidth": [
+    "عرض الشارع",
+    "Street width"
+  ],
+  "offer.status": [
+    "حالة التحقق",
+    "Verification"
+  ],
+  "offer.memberSince": [
+    "عضو منذ",
+    "Member since"
+  ],
+  "offer.undefined": [
+    "غير محدد",
+    "Not specified"
+  ],
+  "offer.advertiser": [
+    "المعلن",
+    "Advertiser"
+  ],
+  "offer.verifiedUser": [
+    "موثّق",
+    "Verified"
+  ],
+  "offer.new": [
+    "جديد",
+    "New"
+  ],
+  "offer.used": [
+    "مستعمل",
+    "Used"
+  ],
+  "offer.construction": [
+    "قيد الإنشاء",
+    "Under construction"
+  ],
+  "offer.condition": [
+    "حالة العقار",
+    "Condition"
+  ],
+  "offer.errorLoad": [
+    "تعذر تحميل العرض",
+    "Could not load listing"
+  ],
+  "offer.tryAgain": [
+    "محاولة مرة أخرى",
+    "Try again"
+  ],
+  "offer.backOffers": [
+    "العودة إلى العروض",
+    "Back to listings"
+  ],
+  "offer.deleted": [
+    "تم الحذف",
+    "Listing deleted"
+  ],
+  "offer.deletedDesc": [
+    "تم حذف العرض بنجاح",
+    "The listing was deleted."
+  ],
+  "offer.errorDelete": [
+    "تعذر حذف العرض",
+    "Could not delete listing"
+  ],
+  "offer.error": [
+    "حدث خطأ",
+    "Something went wrong"
+  ],
+  "offer.errorReport": [
+    "تعذر إرسال البلاغ",
+    "Could not submit report"
+  ],
+  "offer.reportReason": [
+    "اختر سبب البلاغ",
+    "Choose a reason"
+  ],
+  "offer.reported": [
+    "تم إرسال البلاغ",
+    "Report submitted"
+  ],
+  "offer.reportedDesc": [
+    "سيتم مراجعة البلاغ",
+    "Your report will be reviewed."
+  ],
+  "offer.copied": [
+    "تم النسخ",
+    "Link copied"
+  ],
+  "offer.copiedDesc": [
+    "تم نسخ رابط العرض",
+    "The listing link was copied."
+  ],
+  "offer.loginRequired": [
+    "يلزم تسجيل الدخول",
+    "Sign in required"
+  ],
+  "offer.loginDesc": [
+    "سجل الدخول لإكمال هذا الإجراء",
+    "Sign in to continue."
+  ],
+  "offer.shareTitle": [
+    "مشاركة العرض",
+    "Share listing"
+  ],
+  "offer.shareDesc": [
+    "تفاصيل العرض العقاري",
+    "Property listing details"
+  ],
+  "offer.imageAlt": [
+    "صورة العقار",
+    "Property image"
+  ],
+  "offer.thumbAlt": [
+    "صورة مصغرة",
+    "Thumbnail"
+  ],
+  "chat.areaUnit": [
+    "م²",
+    "m²"
+  ]
+};
 
 interface ExtendedOffer extends ApiOffer {
   user?: {
@@ -122,7 +348,7 @@ interface ExtendedOffer extends ApiOffer {
 }
 
 function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUser: any }) {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const router = useRouter();
   const isRtl = language === "ar";
   const [roomId, setRoomId] = useState<string | null>(null);
@@ -131,6 +357,8 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<any>(null);
   const [isOnline, setIsOnline] = useState(false);
+  const [chatError, setChatError] = useState(false);
+  const [retry, setRetry] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // If the offer doesn't have a registered user, default sellerId to the System Admin ID
@@ -148,11 +376,22 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
       return;
     }
 
+    let disposed = false;
+    let connection: ReturnType<typeof io> | undefined;
+    const controller = new AbortController();
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const scrollToLatest = () => {
+      timers.push(setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }), 50));
+    };
+    setLoading(true);
+    setChatError(false);
+    setSocket(null);
     const initChat = async () => {
       try {
         const title = `${offer.propertyType} في ${offer.city}`;
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/offer`, {
           method: 'POST',
+          signal: controller.signal,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -169,12 +408,14 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
         }
 
         const room = await response.json();
+        if (disposed) return;
         setRoomId(room.id);
-        
+
         // Fetch messages
         const msgs = await chatApi.getRoomMessages(room.id);
-        setMessages(msgs);
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+        if (disposed) return;
+        setMessages(Array.isArray(msgs) ? msgs : []);
+        scrollToLatest();
 
         // Setup socket
         const token = localStorage.getItem('token');
@@ -186,6 +427,7 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
           transports: ['websocket', 'polling']
         });
 
+        connection = socketIo;
         socketIo.on('connect', () => {
           socketIo.emit('joinRoom', { roomId: room.id });
           socketIo.emit('checkUserStatus', { userId: sellerId });
@@ -198,8 +440,8 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
               if (prev.some(m => m.id === msg.id)) return prev;
               return [...prev, msg];
             });
-            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
-            
+            scrollToLatest();
+
             // Mark read if incoming from other
             const senderId = msg.sender?.id || msg.senderId;
             if (senderId === sellerId) {
@@ -216,20 +458,24 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
         setSocket(socketIo);
       } catch (err) {
-        console.error("Failed to initialize offer chat room:", err);
+        if (!disposed) {
+          console.error("Failed to initialize offer chat room:", err);
+          setChatError(true);
+        }
       } finally {
-        setLoading(false);
+        if (!disposed) setLoading(false);
       }
     };
 
     initChat();
 
     return () => {
-      if (socket) {
-        socket.disconnect();
-      }
+      disposed = true;
+      controller.abort();
+      timers.forEach(clearTimeout);
+      connection?.disconnect();
     };
-  }, [offer.id, sellerId, currentUser]);
+  }, [offer.id, sellerId, currentUser, retry]);
 
   const sendMessage = async () => {
     if (!message.trim() || !socket || !roomId) return;
@@ -251,17 +497,29 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
   const formatTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+      return date.toLocaleTimeString(isRtl ? "ar-SA" : "en-US", { hour: "2-digit", minute: "2-digit" });
     } catch {
-      return "الآن";
+      return isRtl ? "الآن" : "now";
     }
   };
 
   if (!currentUser) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm border border rounded-3xl p-3 sm:p-6 text-center space-y-2 shadow-sm">
-        <MessageSquare className="w-8 h-8 mx-auto text-slate-400" />
-        <p className="text-xs font-black text-slate-500">يرجى تسجيل الدخول للبدء بالمحادثة المباشرة</p>
+      <div className={`${styles.chatCard} calm-panel`}>
+        <div className={styles.chatLoginNotice}>
+          <div className={styles.metricIconWrap}>
+            <MessageSquare className="w-5 h-5 text-current" />
+          </div>
+          <p className="text-xs font-bold">
+            {isRtl ? "يرجى تسجيل الدخول للبدء بالمحادثة المباشرة مع المعلن" : "Please sign in to start a live chat with the advertiser"}
+          </p>
+          <Link
+            href={loginHref(`/offers/${offer.id}`)}
+            className={styles.chatLoginLink}
+          >
+            {isRtl ? "تسجيل الدخول" : "Sign In"}
+          </Link>
+        </div>
       </div>
     );
   }
@@ -269,11 +527,13 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
   // A seller looking at their own offer doesn't chat with themselves
   if (currentUser.id === sellerId) {
     return (
-      <div className="bg-muted border border rounded-3xl p-3 sm:p-6 text-center space-y-2">
-        <MessageSquare className="w-8 h-8 mx-auto text-slate-400 animate-bounce" />
-        <p className="text-xs font-black text-slate-500">
-          {isRtl 
-            ? "هذا هو عرضك الخاص. يمكنك متابعة الرسائل والطلبات الواردة في صفحة المحادثات." 
+      <div className={`${styles.editorialCard} calm-panel text-center`}>
+        <div className={styles.metricIconWrap}>
+          <MessageSquare className="w-5 h-5 text-current" />
+        </div>
+        <p className="text-xs font-bold text-muted-foreground mt-2">
+          {isRtl
+            ? "هذا هو عرضك الخاص. يمكنك متابعة الرسائل والطلبات الواردة في صفحة المحادثات."
             : "This is your own offer. You can follow incoming chats on the chats page."}
         </p>
       </div>
@@ -282,52 +542,65 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
 
   if (loading) {
     return (
-      <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-sm p-4 sm:p-8 flex items-center justify-center min-h-[300px]">
-        <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className={`${styles.chatCard} calm-panel flex items-center justify-center`}>
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
+  if (chatError) {
+    return <div className={styles.chatCard} role="alert">
+      <p className="p-4 text-sm">{isRtl ? 'تعذر تحميل المحادثة.' : 'Could not load this conversation.'}</p>
+      <Button variant="outline" onClick={() => setRetry(value => value + 1)}>{isRtl ? 'محاولة مرة أخرى' : 'Retry chat'}</Button>
+    </div>;
+  }
+
   const otherName = offer.user
-    ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || 'المعلن'
-    : 'الدعم الفني للوساطة';
+    ? `${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || (isRtl ? 'المعلن' : 'Advertiser')
+    : (isRtl ? 'الدعم الفني للوساطة' : 'Support');
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-3xl border border shadow-md overflow-hidden flex flex-col h-[400px]">
+    <div className={`${styles.chatCard} calm-panel`}>
       {/* Header */}
-      <div className="px-5 py-3 border-b border flex items-center justify-between bg-muted/50">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-8 h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs uppercase">
+      <div className={styles.chatHeader}>
+        <div className={styles.chatHeaderUser}>
+          <div className={styles.chatAvatarWrap}>
+            <div className={styles.chatAvatarSmall}>
               {otherName.charAt(0)}
             </div>
-            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white ${isOnline ? 'bg-green-500' : 'bg-slate-300'}`} />
+            <span
+              className={`${styles.onlineStatusDot} ${isOnline ? styles.dotOnline : styles.dotOffline}`}
+              aria-label={isOnline ? (isRtl ? "متصل" : "Online") : (isRtl ? "غير متصل" : "Offline")}
+            />
           </div>
           <div>
-            <h4 className="font-bold text-xs text-slate-900">{otherName}</h4>
-            <p className="text-[9px] font-black text-slate-400 mt-0.5">
-              {isOnline ? 'متصل الآن' : 'غير متصل'}
-            </p>
+            <div className={styles.chatHeaderName}>{otherName}</div>
+            <div className={styles.chatHeaderStatus}>
+              {isOnline ? (isRtl ? 'متصل الآن' : 'Online') : (isRtl ? 'غير متصل' : 'Offline')}
+            </div>
           </div>
         </div>
         {roomId && (
           <button
+            type="button"
             onClick={() => router.push(`/chat/${roomId}`)}
-            className="flex items-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-xl bg-muted hover:bg-muted text-slate-700 hover:text-slate-900 text-[10px] font-black transition-all"
-            title="الانتقال إلى صفحة المحادثة الكاملة"
+            className={styles.chatFullLinkBtn}
+            title={isRtl ? "الانتقال إلى صفحة المحادثة الكاملة" : "Open full chat page"}
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            <span>المحادثة الكاملة</span>
+            <span>{isRtl ? "المحادثة الكاملة" : "Full Chat"}</span>
           </button>
         )}
       </div>
 
       {/* Messages list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/20">
+      <div className={styles.chatMessageList}>
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-40">
-            <MessageSquare className="w-8 h-8 text-slate-400" />
-            <p className="text-[11px] font-bold">ابدأ المحادثة الآن بخصوص هذا العرض</p>
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-1 opacity-50 py-8">
+            <MessageSquare className="w-6 h-6 text-muted-foreground mb-1" />
+            <p className="text-xs font-bold">
+              {isRtl ? "ابدأ المحادثة الآن بخصوص هذا العرض" : "Start the conversation regarding this listing"}
+            </p>
           </div>
         ) : (
           messages.map((msg, index) => {
@@ -335,24 +608,12 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
             return (
               <div
                 key={msg.id || index}
-                className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                className={isOwn ? styles.chatBubbleOwn : styles.chatBubbleOther}
               >
-                <div className="flex flex-col gap-0.5 max-w-[85%]">
-                  <div
-                    className={`px-3 py-2 rounded-2xl shadow-sm text-xs ${
-                      isOwn
-                        ? 'bg-slate-900 text-white rounded-br-none'
-                        : 'bg-card/90 backdrop-blur-sm border border text-slate-900 rounded-bl-none'
-                    }`}
-                  >
-                    <p className="font-bold leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-                  <div className={`flex items-center gap-1 px-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[8px] font-bold text-slate-400">
-                      {formatTime(msg.createdAt)}
-                    </span>
-                    {isOwn && <CheckCheck className="w-2.5 h-2.5 text-slate-300" />}
-                  </div>
+                <p className="whitespace-pre-wrap">{msg.content}</p>
+                <div className={styles.chatBubbleMeta}>
+                  <span>{formatTime(msg.createdAt)}</span>
+                  {isOwn && <CheckCheck className="w-2.5 h-2.5" />}
                 </div>
               </div>
             );
@@ -362,43 +623,52 @@ function OfferChatBox({ offer, currentUser }: { offer: ExtendedOffer; currentUse
       </div>
 
       {/* Input section */}
-      <div className="p-3 border-t border bg-card/80 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="اكتب رسالتك هنا..."
-            className="flex-1 bg-muted border border rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all"
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!message.trim()}
-            className="w-10 h-10 sm:w-8 sm:h-8 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all shrink-0"
-          >
-            <Send className="w-3.5 h-3.5 -rotate-45 ml-0.5 mb-0.5" />
-          </button>
-        </div>
+      <div className={styles.chatInputArea}>
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={isRtl ? "اكتب استفسارك هنا..." : "Type your message..."}
+          className={styles.chatInputField}
+          aria-label={isRtl ? "رسالة المحادثة" : "Chat message"}
+        />
+        <button
+          type="button"
+          onClick={sendMessage}
+          disabled={!message.trim()}
+          className={styles.chatSendBtn}
+          aria-label={isRtl ? "إرسال" : "Send"}
+        >
+          <Send className={`w-4 h-4 ${isRtl ? '-rotate-45 ml-0.5' : 'rotate-45 mr-0.5'}`} />
+        </button>
       </div>
     </div>
   );
 }
+
 const MeterIcon = ({ className }: { className?: string }) => (
-  <img src="/icons/meter.svg" alt="meter" className={className} style={{ width: '10em', height: '10em', opacity: 1 }} />
+  <Image src="/icons/meter.svg" alt="meter" width={20} height={20} className={className} />
 );
+
 export default function OfferDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const offerId = params.id as string;
   const { toast } = useToast();
-  const { t, language } = useLanguage();
+  const { t: translate, language } = useLanguage();
+  const isRtl = language === "ar";
+  const t = (key: string) => {
+    const copy = translate(key);
+    return copy === key ? (DETAIL_COPY[key]?.[isRtl ? 0 : 1] || copy) : copy;
+  };
 
   const [offer, setOffer] = useState<ExtendedOffer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFullscreenGalleryOpen, setIsFullscreenGalleryOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -408,49 +678,27 @@ export default function OfferDetailsPage() {
   const [views, setViews] = useState(0);
 
   const [isOwner, setIsOwner] = useState(false);
-  
-  const handleBack = () => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('user');
-      let isAdmin = false;
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed.role === 'admin' || parsed.role === 'super_admin') {
-            isAdmin = true;
-          }
-        } catch (e) {}
-      }
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
-      if (document.referrer) {
-        if (document.referrer.includes("/admin/offers")) {
-          router.push("/admin/offers");
-          return;
-        }
-        if (document.referrer.includes("/admin/orders")) {
-          router.push("/admin/orders");
-          return;
-        }
-        if (document.referrer.includes("/admin") && isAdmin) {
-          router.push("/admin/offers");
-          return;
-        }
-        router.back();
-      } else {
-        if (isAdmin) {
-          router.push("/admin/offers");
-        } else {
-          router.push("/offers");
-        }
+  const handleBack = () => {
+    const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+    let target = isAdmin ? '/admin/offers' : '/offers';
+    try {
+      const referrer = new URL(document.referrer);
+      if (isAdmin && referrer.origin === window.location.origin && referrer.pathname === '/admin/orders') {
+        target = '/admin/orders';
       }
-    }
+    } catch { /* Direct visits return to the listing index. */ }
+    router.push(target);
   };
 
   // Chat state
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatRoomId, setChatRoomId] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  
+
   // Visit Modal state
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   // Purchase Modal state
@@ -491,14 +739,15 @@ export default function OfferDetailsPage() {
 
       const response = await offersApi.findOne(offerId);
       const offerData = response.data;
+      if (!offerData || typeof offerData !== 'object' || Array.isArray(offerData) || !offerData.id) throw new Error('Invalid listing response');
 
       // Transform the data to match our interface
       const transformedOffer: ExtendedOffer = {
         ...offerData,
         user: (offerData as any).user || undefined,
-        mediaFiles: Array.isArray(offerData.mediaFiles) ? offerData.mediaFiles : [],
-        propertyDocuments: Array.isArray(offerData.propertyDocuments) ? offerData.propertyDocuments : [],
-        threeDVideos: Array.isArray(offerData.threeDVideos) ? offerData.threeDVideos : [],
+        mediaFiles: Array.isArray(offerData.mediaFiles) ? offerData.mediaFiles.filter((url: string) => typeof url === "string" && Boolean(safeHttpUrl(url))) : [],
+        propertyDocuments: Array.isArray(offerData.propertyDocuments) ? offerData.propertyDocuments.filter((url: string) => typeof url === "string" && Boolean(safeHttpUrl(url))) : [],
+        threeDVideos: Array.isArray(offerData.threeDVideos) ? offerData.threeDVideos.filter((url: string) => typeof url === "string" && Boolean(safeHttpUrl(url))) : [],
       };
 
       setOffer(transformedOffer);
@@ -507,17 +756,16 @@ export default function OfferDetailsPage() {
       }
 
       // Check if current user is the owner
-      if (user && (offerData as any).userId === user.id) {
-        setIsOwner(true);
-      }
+      setIsOwner(Boolean(user && ((offerData as any).userId === user.id || (offerData as any).user?.id === user.id)));
+      setCurrentImageIndex(0);
 
     } catch (err: any) {
       console.error("Error fetching offer details:", err);
-      setError(err.response?.data?.message || "فشل في تحميل بيانات العرض");
+      setError(err.response?.data?.message || (isRtl ? "فشل في تحميل بيانات العرض" : "Failed to load listing data"));
     } finally {
       setLoading(false);
     }
-  }, [offerId, user]);
+  }, [offerId, user, isRtl]);
 
   useEffect(() => {
     fetchOfferDetails();
@@ -538,7 +786,7 @@ export default function OfferDetailsPage() {
         description: t('offer.loginDesc'),
         variant: "destructive",
       });
-      router.push("/login");
+      router.push(loginHref(`/offers/${offerId}`));
       return;
     }
 
@@ -565,8 +813,8 @@ export default function OfferDetailsPage() {
       setReportReason("");
       setReportDetails("");
       setIsReportModalOpen(false);
-    } catch (error) {
-      console.error("Error reporting offer:", error);
+    } catch (err) {
+      console.error("Error reporting offer:", err);
       toast({
         title: t('offer.error'),
         description: t('offer.errorReport'),
@@ -578,7 +826,7 @@ export default function OfferDetailsPage() {
   };
 
   const handleShare = async (platform?: string) => {
-    const shareUrl = window.location.href;
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     const shareTitle = offer ? `${offer.propertyType} ${t('cards.ops.sale2024')} ${offer.city}` : t('offer.shareTitle');
 
     const shareData = {
@@ -596,21 +844,21 @@ export default function OfferDetailsPage() {
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`, "_blank");
       } else if (platform === "copy") {
         await navigator.clipboard.writeText(shareUrl);
-          toast({
-            title: t('offer.copied'),
-            description: t('offer.copiedDesc'),
-          });
+        toast({
+          title: t('offer.copied'),
+          description: t('offer.copiedDesc'),
+        });
       } else if (navigator.share) {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
-          toast({
-            title: t('offer.copied'),
-            description: t('offer.copiedDesc'),
-          });
+        toast({
+          title: t('offer.copied'),
+          description: t('offer.copiedDesc'),
+        });
       }
-    } catch (error) {
-      console.error("Error sharing:", error);
+    } catch (shareErr) {
+      console.error("Error sharing:", shareErr);
     }
   };
 
@@ -621,9 +869,11 @@ export default function OfferDetailsPage() {
   };
 
   const handleDeleteOffer = async () => {
-    if (!offer || !user) return;
+    if (!offer || !user || deleteLoading) return;
 
     try {
+      setDeleteLoading(true);
+      setDeleteError("");
       await offersApi.delete(offer.id);
 
       toast({
@@ -632,185 +882,179 @@ export default function OfferDetailsPage() {
       });
 
       router.push("/offers");
-    } catch (error) {
-      console.error("Error deleting offer:", error);
+    } catch (delErr) {
+      console.error("Error deleting offer:", delErr);
+      setDeleteError(isRtl ? 'تعذر حذف العرض. حاول مرة أخرى.' : 'Could not delete the listing. Try again.');
       toast({
         title: t('offer.error'),
         description: t('offer.errorDelete'),
         variant: "destructive",
       });
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
   const handleInterest = async (type: 'visit' | 'buy') => {
     if (!user) {
-        toast({
-            title: t('offer.loginRequired'),
-            description: t('offer.loginDesc'),
-            variant: "destructive",
-        });
-        router.push("/login");
-        return;
+      toast({
+        title: t('offer.loginRequired'),
+        description: t('offer.loginDesc'),
+        variant: "destructive",
+      });
+      router.push(loginHref(`/offers/${offerId}`));
+      return;
     }
 
     if (type === 'visit') {
-        setIsVisitModalOpen(true);
-        return;
+      setIsVisitModalOpen(true);
+      return;
     }
 
     if (type === 'buy') {
-        setIsPurchaseModalOpen(true);
-        return;
+      setIsPurchaseModalOpen(true);
+      return;
     }
   };
 
   const handleVisitSubmit = async (data: any) => {
     try {
-        setActionLoading('visit');
-        if (!offer) return;
-        
-        if (data.visitType === 'agent') {
-            // Build description with recording type and calendar type
-            const recordingLabel = data.recordingType === 'live'
-                ? (language === 'ar' ? 'بث مباشر' : 'Live Streaming')
-                : (language === 'ar' ? 'تسجيل فيديو' : 'Video Recording');
-            const calLabel = data.calendarType === 'hijri'
-                ? (language === 'ar' ? 'هجري' : 'Hijri')
-                : (language === 'ar' ? 'ميلادي' : 'Gregorian');
+      setActionLoading('visit');
+      if (!offer) return;
 
-            let finalDescription = `طلب زيارة بالنيابة للعقار رقم: ${offer.id}`;
-            if (data.visitDate) {
-                finalDescription += `\nالتاريخ والوقت: ${format(new Date(data.visitDate), 'dd/MM/yyyy HH:mm')}`;
-                finalDescription += `\nنوع التقويم: ${calLabel}`;
-            }
-            finalDescription += `\nنوع التسجيل: ${recordingLabel}`;
+      if (data.visitType === 'agent') {
+        const recordingLabel = data.recordingType === 'live'
+          ? (language === 'ar' ? 'بث مباشر' : 'Live Streaming')
+          : (language === 'ar' ? 'تسجيل فيديو' : 'Video Recording');
+        const calLabel = data.calendarType === 'hijri'
+          ? (language === 'ar' ? 'هجري' : 'Hijri')
+          : (language === 'ar' ? 'ميلادي' : 'Gregorian');
 
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    category: 'visit',
-                    serviceType: language === 'ar' ? 'زيارة بالنيابة' : 'Visit by Proxy',
-                    clientName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.email,
-                    phone: user?.phone || '0000000000',
-                    city: offer.city || user?.city || 'الرياض',
-                    district: offer.neighborhood || user?.district || 'الحي',
-                    quantity: 1,
-                    description: finalDescription,
-                    metadata: {
-                        offerId: offer.id,
-                        recordingType: data.recordingType,
-                        calendarType: data.calendarType,
-                        visitDate: data.visitDate,
-                    }
-                }),
-            });
-
-            toast({
-                title: t('common.success'),
-                description: t('bm.offer.visitReqSent'),
-            });
-        } else {
-            // Standard visit booking
-            await offersApi.createVisit(offer.id, data);
-            toast({
-                title: t('common.success'),
-                description: t('bm.offer.visitReqSent'),
-            });
+        let finalDescription = `طلب زيارة بالنيابة للعقار رقم: ${offer.id}`;
+        if (data.visitDate) {
+          finalDescription += `\nالتاريخ والوقت: ${format(new Date(data.visitDate), 'dd/MM/yyyy HH:mm')}`;
+          finalDescription += `\nنوع التقويم: ${calLabel}`;
         }
-        
-        setIsVisitModalOpen(false);
+        finalDescription += `\nنوع التسجيل: ${recordingLabel}`;
 
-        // Optional: Open chat with success message
-
-    } catch (error) {
-        console.error('Error creating visit request:', error);
-        toast({
-            title: t('common.error'),
-            description: t('common.errorDesc'),
-            variant: "destructive",
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/service-requests`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            category: 'visit',
+            serviceType: language === 'ar' ? 'زيارة بالنيابة' : 'Visit by Proxy',
+            clientName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.email,
+            phone: user?.phone || '0000000000',
+            city: offer.city || user?.city || 'الرياض',
+            district: offer.neighborhood || user?.district || 'الحي',
+            quantity: 1,
+            description: finalDescription,
+            metadata: {
+              offerId: offer.id,
+              recordingType: data.recordingType,
+              calendarType: data.calendarType,
+              visitDate: data.visitDate,
+            }
+          }),
         });
+
+        if (!response.ok) throw new Error('Visit request was rejected');
+
+        toast({
+          title: t('common.success'),
+          description: t('bm.offer.visitReqSent'),
+        });
+      } else {
+        await offersApi.createVisit(offer.id, data);
+        toast({
+          title: t('common.success'),
+          description: t('bm.offer.visitReqSent'),
+        });
+      }
+
+      setIsVisitModalOpen(false);
+    } catch (visitErr) {
+      console.error('Error creating visit request:', visitErr);
+      toast({
+        title: t('common.error'),
+        description: t('common.errorDesc'),
+        variant: "destructive",
+      });
     } finally {
-        setActionLoading(null);
+      setActionLoading(null);
     }
   };
 
   const handlePurchaseSubmit = async () => {
-      try {
-          setActionLoading('buy');
-          if (!offer) return;
+    try {
+      setActionLoading('buy');
+      if (!offer) return;
 
-          await offersApi.createPurchase(offer.id);
+      await offersApi.createPurchase(offer.id);
 
-          toast({
-              title: t('common.success'),
-              description: t('bm.offer.purchaseReqSent'),
-          });
+      toast({
+        title: t('common.success'),
+        description: (isRtl ? 'تم إرسال طلب الشراء بنجاح' : 'Purchase request sent successfully'),
+      });
 
-          setIsPurchaseModalOpen(false);
-          // No chat opened intentionally
-
-      } catch (error) {
-          console.error('Error creating purchase request:', error);
-           toast({
-              title: t('common.error'),
-              description: t('common.errorDesc'),
-              variant: "destructive",
-          });
-      } finally {
-          setActionLoading(null);
-      }
+      setIsPurchaseModalOpen(false);
+    } catch (purchaseErr) {
+      console.error('Error creating purchase request:', purchaseErr);
+      toast({
+        title: t('common.error'),
+        description: t('common.errorDesc'),
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const processInterestAction = async (type: 'visit' | 'buy', dateString?: string) => {
     if (!offer) return;
 
     try {
-        setActionLoading(type);
-        
-        // 1. Create/Get Room
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/offer`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({
-                offerId: offer.id,
-                sellerId: offer.user?.id,
-                offerTitle: `${offer.propertyType} في ${offer.city}`,
-            }),
-        });
+      setActionLoading(type);
 
-        if (!response.ok) throw new Error('Failed to create chat room');
-        const room = await response.json();
-        
-        // 2. Send Message
-        let message = "";
-        if (type === 'visit') {
-             message = `${t('bm.offer.visitReq')} \n\n ${t('chat.date')}: ${dateString}`;
-        } else {
-             const key = offer.dealType === 'rent' ? 'offer.rentProp' : 'offer.buyProp';
-             message = `${t('bm.offer.buyProp')} (${t(key)})`;
-        }
-            
-        await chatApi.sendMessage(room.id, message);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/rooms/offer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          offerId: offer.id,
+          sellerId: offer.user?.id,
+          offerTitle: `${offer.propertyType} في ${offer.city}`,
+        }),
+      });
 
-        // 3. Open Chat
-        setChatRoomId(room.id);
-        setIsChatOpen(true);
-        
-    } catch (error) {
-        console.error('Error handling interest:', error);
-        toast({
-            title: t('common.error'),
-            variant: "destructive",
-        });
+      if (!response.ok) throw new Error('Failed to create chat room');
+      const room = await response.json();
+
+      let chatMsg = "";
+      if (type === 'visit') {
+        chatMsg = `${t('bm.offer.visitReq')} \n\n ${t('chat.date')}: ${dateString}`;
+      } else {
+        const key = offer.dealType === 'rent' ? 'offer.rentProp' : 'offer.buyProp';
+        chatMsg = `${t('bm.offer.buyProp')} (${t(key)})`;
+      }
+
+      await chatApi.sendMessage(room.id, chatMsg);
+
+      setChatRoomId(room.id);
+      setIsChatOpen(true);
+    } catch (procErr) {
+      console.error('Error handling interest:', procErr);
+      toast({
+        title: t('common.error'),
+        variant: "destructive",
+      });
     } finally {
-        setActionLoading(null);
+      setActionLoading(null);
     }
   };
 
@@ -825,8 +1069,8 @@ export default function OfferDetailsPage() {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "dd MMMM yyyy", { locale: ar });
-    } catch (error) {
+      return format(new Date(dateString), "dd MMMM yyyy", { locale: isRtl ? ar : undefined });
+    } catch {
       return dateString;
     }
   };
@@ -834,24 +1078,33 @@ export default function OfferDetailsPage() {
   const getConditionColor = (condition: string) => {
     switch (condition) {
       case t('offer.new'):
-        return 'bg-green-100 text-green-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
       case t('offer.used'):
-        return 'bg-muted text-blue-800';
+        return 'bg-muted text-slate-800 dark:bg-slate-800 dark:text-slate-200';
       case t('offer.construction'):
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
       default:
-        return 'bg-muted text-gray-800';
+        return 'bg-muted text-gray-800 dark:bg-slate-800 dark:text-slate-200';
     }
   };
 
+  // Render actual backend property media without decorative artwork
   const renderImages = () => {
     const images = offer?.mediaFiles || [];
 
+    // Truthful empty state with existing camera icon
     if (images.length === 0) {
       return (
-        <div className="relative w-full h-[300px] md:h-[480px] bg-muted rounded-[1rem] border border flex flex-col items-center justify-center overflow-hidden shadow-sm">
-          <Camera className="w-16 h-16 text-slate-300 mb-4 animate-pulse" />
-          <p className="text-slate-400 font-bold">{t('offer.noImages')}</p>
+        <div className={`cinematic-listing-gallery calm-panel ${styles.noMediaBox}`}>
+          <Camera className={styles.noMediaIcon} />
+          <h3 className={styles.noMediaTitle}>
+            {isRtl ? "لا توجد صور مرفقة لهذا العقار" : "No photography attached to this listing"}
+          </h3>
+          <p className={styles.noMediaDesc}>
+            {isRtl
+              ? "يتم عرض الوسائط الحقيقية المرفوعة من صاحب العرض فور توفرها دون استبدالها بصور تخيلية."
+              : "Actual property media uploaded by the owner will appear here once provided."}
+          </p>
         </div>
       );
     }
@@ -859,69 +1112,133 @@ export default function OfferDetailsPage() {
     const currentImage = images[currentImageIndex];
 
     return (
-      <div className="space-y-4">
-        {/* Main Image Slider */}
-        <div className="relative w-full h-[320px] md:h-[500px] bg-slate-900 rounded-[1rem] overflow-hidden shadow-lg group border border">
+      <div className={styles.gallerySection}>
+        {/* Main Image Frame */}
+        <div className={`cinematic-listing-gallery calm-panel ${styles.mainGalleryFrame}`}>
           <Image
+            key={currentImage}
             src={currentImage}
-            alt={`${t('offer.imageAlt')} ${currentImageIndex + 1}`}
+            unoptimized={/^https?:\/\//i.test(currentImage)}
+            alt={`${offer ? `${offer.propertyType} في ${offer.city}` : t('offer.imageAlt')} - ${currentImageIndex + 1}`}
             fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            sizes="(max-width: 1200px) 100vw, 1200px"
+            className={`cinematic-listing-image ${styles.galleryImage}`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 1200px"
             priority
           />
-          
-          {/* Subtle Bottom Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-          {/* Navigation buttons */}
+          {/* Scrim Overlay */}
+          <div className={styles.galleryScrim} />
+
+          {/* Navigation Controls */}
           {images.length > 1 && (
             <>
               <button
-                onClick={() => setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)}
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-card/10 hover:bg-card/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                type="button"
+                aria-label={isRtl ? 'الصورة السابقة' : 'Previous image'}
+                onClick={() => setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))}
+                className={`${styles.galleryNavBtn} ${styles.galleryNavPrev}`}
               >
-                <ChevronLeft className="w-6 h-6" />
+                {isRtl ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
               </button>
               <button
-                onClick={() => setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)}
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-card/10 hover:bg-card/25 text-white w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                type="button"
+                aria-label={isRtl ? 'الصورة التالية' : 'Next image'}
+                onClick={() => setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))}
+                className={`${styles.galleryNavBtn} ${styles.galleryNavNext}`}
               >
-                <ChevronRight className="w-6 h-6" />
+                {isRtl ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
               </button>
             </>
           )}
 
-          {/* Floating Image counter / tag */}
-          <div className="absolute bottom-6 left-6 bg-slate-950/80 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-xs font-black border border-white/10 shadow-lg tracking-wider">
-            {currentImageIndex + 1} / {images.length}
+          {/* Counter Badge */}
+          <div className={styles.galleryCounter}>
+            {isRtl
+              ? `${currentImageIndex + 1} من ${images.length}`
+              : `${currentImageIndex + 1} / ${images.length}`}
           </div>
+
+          {/* Fullscreen Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsFullscreenGalleryOpen(true)}
+            className={styles.galleryFullscreenBtn}
+            aria-label={isRtl ? "تكبير واستعراض الصور" : "Enlarge gallery"}
+          >
+            <Maximize2 className="w-4 h-4" />
+            <span className="hidden sm:inline">{isRtl ? "عرض مكبر" : "Enlarge"}</span>
+          </button>
         </div>
 
-        {/* Thumbnails list */}
+        {/* Thumbnail Strip */}
         {images.length > 1 && (
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+          <div className={styles.thumbnailStrip} role="group" aria-label={isRtl ? "معرض الصور المصغرة" : "Image thumbnails"}>
             {images.map((image, index) => (
               <button
+                type="button"
+                aria-pressed={currentImageIndex === index}
+                aria-label={isRtl ? `عرض الصورة ${index + 1}` : `View image ${index + 1}`}
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 active:scale-95 shadow-sm ${
-                  currentImageIndex === index
-                    ? 'border-slate-950 scale-100 ring-2 ring-slate-900/10'
-                    : 'border-transparent opacity-70 hover:opacity-100'
-                }`}
+                className={`${styles.thumbnailBtn} ${currentImageIndex === index ? styles.thumbnailActive : styles.thumbnailInactive}`}
               >
                 <Image
                   src={image}
+                  unoptimized={/^https?:\/\//i.test(image)}
                   alt={`${t('offer.thumbAlt')} ${index + 1}`}
                   fill
                   className="object-cover"
-                  sizes="80px"
+                  sizes="92px"
                 />
               </button>
             ))}
           </div>
         )}
+
+        {/* Fullscreen Image Lightbox Dialog */}
+        <Dialog open={isFullscreenGalleryOpen} onOpenChange={setIsFullscreenGalleryOpen}>
+          <DialogContent className="max-w-5xl p-2 sm:p-4 bg-slate-950/95 border-slate-800 text-white">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{offer ? `${offer.propertyType} في ${offer.city}` : "Gallery"}</DialogTitle>
+              <DialogDescription>{isRtl ? "استعراض الصور بالحجم الكامل" : "Full size imagery"}</DialogDescription>
+            </DialogHeader>
+            <div className="relative w-full aspect-[16/10] min-h-[300px] max-h-[75vh] flex items-center justify-center overflow-hidden rounded-xl">
+              <Image
+                src={images[currentImageIndex]}
+                unoptimized={/^https?:\/\//i.test(images[currentImageIndex])}
+                alt={`${offer ? `${offer.propertyType} في ${offer.city}` : t('offer.imageAlt')} - ${currentImageIndex + 1}`}
+                fill
+                className="object-contain"
+                sizes="(max-width: 1400px) 100vw, 1400px"
+              />
+              {images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    aria-label={isRtl ? 'الصورة السابقة' : 'Previous image'}
+                    onClick={() => setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))}
+                    className={`${styles.galleryNavBtn} ${styles.galleryNavPrev}`}
+                  >
+                    {isRtl ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={isRtl ? 'الصورة التالية' : 'Next image'}
+                    onClick={() => setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))}
+                    className={`${styles.galleryNavBtn} ${styles.galleryNavNext}`}
+                  >
+                    {isRtl ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
+                  </button>
+                </>
+              )}
+              <div className={styles.galleryCounter}>
+                {isRtl
+                  ? `${currentImageIndex + 1} من ${images.length}`
+                  : `${currentImageIndex + 1} / ${images.length}`}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   };
@@ -929,205 +1246,281 @@ export default function OfferDetailsPage() {
   const renderPropertyDetails = () => {
     if (!offer) return null;
 
-    const highlights = [
+    const keyMetrics = [
       { key: 'price', label: t('offer.price'), value: formatPrice(offer.price), icon: SaudiRiyalIcon },
       { key: 'area', label: t('offer.area'), value: `${offer.area} ${t('chat.areaUnit')}`, icon: Ruler },
       { key: 'type', label: t('offer.type'), value: offer.propertyType, icon: Building },
       { key: 'city', label: t('offer.city'), value: offer.city, icon: MapPin },
     ];
 
+    if (offer.rooms) {
+      keyMetrics.push({ key: 'rooms', label: t('offer.rooms'), value: `${offer.rooms}`, icon: Bed });
+    }
+    if (offer.bathrooms) {
+      keyMetrics.push({ key: 'baths', label: t('offer.baths'), value: `${offer.bathrooms}`, icon: BathIcon });
+    }
+
     return (
-      <div className="space-y-6">
-        <Card className="bg-card/80 backdrop-blur-sm overflow-hidden border shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl sm:text-2xl">
-              {offer.propertyType} في {offer.city}
-              {offer.neighborhood && ` - حي ${offer.neighborhood}`}
-            </CardTitle>
-            <CardDescription>
-              {offer.additionalNotes || "عرض عقاري متميز"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {highlights.map((item) => (
-                <div key={item.key} className="rounded-2xl border border bg-muted px-4 py-5 text-center">
-                  <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-card shadow-sm">
-                    <item.icon className="w-5 h-5 text-slate-600" />
-                  </div>
-                  <div className="text-lg font-black text-slate-900 break-words">{item.value}</div>
-                  <p className="mt-1 text-xs font-bold text-slate-500">{item.label}</p>
+      <div className={styles.mainColumn}>
+        {/* Architectural Overview Card */}
+        <div className={`${styles.editorialCard} calm-panel`}>
+          <div className={styles.keyMetricsGrid}>
+            {keyMetrics.slice(0, 4).map((item) => (
+              <div key={item.key} className={styles.metricCell}>
+                <div className={styles.metricIconWrap}>
+                  <item.icon className="w-5 h-5" />
                 </div>
-              ))}
+                <div className={styles.metricValue}>{item.value}</div>
+                <div className={styles.metricLabel}>{item.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {offer.additionalNotes && (
+            <div className="mt-4 pt-4 border-t border-[var(--od-border-subtle)]">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2">
+                {isRtl ? "الوصف والملاحظات" : "Description & Notes"}
+              </h3>
+              <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                {offer.additionalNotes}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
 
-        {/* Tabbed view for Details and Attachments */}
-        <SegmentedTabs defaultValue="details" className="w-full" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-          <SegmentedList className="grid w-full grid-cols-1 md:grid-cols-2 mb-6 h-12 bg-muted/80 p-1 rounded-2xl max-md:!grid-cols-2 max-md:h-auto">
-            <SegmentedTrigger value="details" className="rounded-xl text-sm font-black transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
-              {language === 'ar' ? 'تفاصيل العقار' : 'Property Details'}
-            </SegmentedTrigger>
-            <SegmentedTrigger value="media" className="rounded-xl text-sm font-black transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-900 max-md:py-2.5 max-md:justify-center max-md:rounded-full max-md:text-[13px]">
-              {language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}
-            </SegmentedTrigger>
-          </SegmentedList>
+        {/* Tabbed Architectural Specs & Attachments */}
+        <div className={`${styles.editorialCard} calm-panel`}>
+          <SegmentedTabs defaultValue="details" className={styles.specsTabsRoot} dir={isRtl ? 'rtl' : 'ltr'}>
+            <SegmentedList className={styles.specsTabsList}>
+              <SegmentedTrigger value="details" className={styles.specsTabTrigger}>
+                <Building className="w-4 h-4" />
+                <span>{isRtl ? 'تفاصيل العقار' : 'Property Details'}</span>
+              </SegmentedTrigger>
+              <SegmentedTrigger value="media" className={styles.specsTabTrigger}>
+                <FileText className="w-4 h-4" />
+                <span>{isRtl ? 'الملفات والمرفقات' : 'Files & Attachments'}</span>
+              </SegmentedTrigger>
+            </SegmentedList>
 
-          <TabsContent value="details" className="space-y-6 outline-none focus:outline-none">
-            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
-              <CardHeader>
-                <CardTitle>{t('offer.details')}</CardTitle>
-                <CardDescription>
-                  {language === 'ar' ? 'عرض منظم وموسع لكل بيانات العقار الأساسية والمكانية.' : 'A richer structured view of the main property and location data.'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-                  <div className="space-y-4">
-                    <div className="rounded-2xl border border bg-muted p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        <Building className="w-5 h-5" />
-                        {t('offer.basic')}
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.condition')}</span>
-                          <Badge className={getConditionColor(offer.propertyCondition || "")}>
-                            {offer.propertyCondition || t('offer.undefined')}
-                          </Badge>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.age')}</span>
-                          <span className="font-semibold">{offer.propertyAge || t('offer.undefined')}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.deed')}</span>
-                          <span className="font-semibold">{offer.deedType || t('offer.undefined')}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.direction')}</span>
-                          <span className="font-semibold">{offer.direction || t('offer.undefined')}</span>
-                        </div>
-                        {(offer.length || offer.width) && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">{language === 'ar' ? 'الأبعاد' : 'Dimensions'}</span>
-                            <span className="font-semibold">{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
-                          </div>
-                        )}
-                        {offer.dealType && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">{language === 'ar' ? 'نوع العملية' : 'Deal type'}</span>
-                            <span className="font-semibold">{offer.dealType}</span>
-                          </div>
-                        )}
-                        {offer.mainCategory && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">{language === 'ar' ? 'التصنيف' : 'Category'}</span>
-                            <span className="font-semibold">{offer.mainCategory}</span>
-                          </div>
-                        )}
-                      </div>
+            {/* Property Details Tab */}
+            <TabsContent value="details" className="outline-none focus:outline-none">
+              <div className={styles.specSectionsGrid}>
+                {/* Basic Specs */}
+                <div className={styles.specSubPanel}>
+                  <h4 className={styles.specSubTitle}>
+                    <Building />
+                    <span>{t('offer.basic')}</span>
+                  </h4>
+                  <div className={styles.specRowList}>
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.condition')}</span>
+                      <Badge className={getConditionColor(offer.propertyCondition || "")}>
+                        {offer.propertyCondition || t('offer.undefined')}
+                      </Badge>
                     </div>
-
-                    <div className="rounded-2xl border border bg-muted p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        <MapPin className="w-5 h-5" />
-                        {t('offer.location')}
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">{t('offer.neighborhood')}</span>
-                          <span className="font-semibold">{offer.neighborhood || t('offer.undefined')}</span>
-                        </div>
-                        {offer.streetWidth && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">{t('offer.streetWidth')}</span>
-                            <span className="font-semibold">{offer.streetWidth} {t('scan.unit.meter')}</span>
-                          </div>
-                        )}
-                        {offer.locationUrl && (
-                          <div className="flex justify-between items-center gap-4">
-                            <span className="text-gray-500">{language === 'ar' ? 'رابط الموقع' : 'Location link'}</span>
-                            <a href={offer.locationUrl} target="_blank" rel="noreferrer" className="font-semibold text-slate-700 hover:text-slate-900 underline">
-                              {language === 'ar' ? 'فتح الخريطة' : 'Open map'}
-                            </a>
-                          </div>
-                        )}
-                      </div>
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.age')}</span>
+                      <span className={styles.specVal}>{offer.propertyAge || t('offer.undefined')}</span>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-2xl border border bg-muted p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        <DoorOpen className="w-5 h-5" />
-                        {t('offer.facilities')}
-                      </h3>
-                      <div className="space-y-2">
-                        {offer.rooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Bed className="w-4 h-4" />{t('offer.rooms')}</span><span className="font-semibold">{offer.rooms}</span></div>}
-                        {offer.bathrooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><BathIcon className="w-4 h-4" />{t('offer.baths')}</span><span className="font-semibold">{offer.bathrooms}</span></div>}
-                        {offer.livingRooms && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Sofa className="w-4 h-4" />{t('offer.living')}</span><span className="font-semibold">{offer.livingRooms}</span></div>}
-                        {offer.kitchens && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span><span className="font-semibold">{offer.kitchens}</span></div>}
-                        {offer.floors && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Layers className="w-4 h-4" />{t('offer.floors')}</span><span className="font-semibold">{offer.floors}</span></div>}
-                        {offer.apartments && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-2"><Building className="w-4 h-4" />{language === 'ar' ? 'عدد الشقق' : 'Apartments'}</span><span className="font-semibold">{offer.apartments}</span></div>}
-                        {offer.buildingArea && <div className="flex justify-between"><span className="text-gray-500 flex items-center gap-1"><MeterIcon className="w-5 h-5" />{language === 'ar' ? 'مساحة البناء' : 'Building area'}</span><span className="font-semibold">{offer.buildingArea} {t('chat.areaUnit')}</span></div>}
-                      </div>
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.deed')}</span>
+                      <span className={styles.specVal}>{offer.deedType || t('offer.undefined')}</span>
                     </div>
-
-                    <div className="rounded-2xl border border bg-muted p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        <Award className="w-5 h-5" />
-                        {t('offer.features')}
-                      </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {offer.hasElevator && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.elevator')}</span></div>}
-                        {offer.hasGarage && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.garage')}</span></div>}
-                        {offer.hasPool && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.pool')}</span></div>}
-                        {offer.hasMaidRoom && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.maid')}</span></div>}
-                        {offer.hasRoof && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.roof')}</span></div>}
-                        {offer.hasExternalAnnex && <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-sm">{t('offer.annex')}</span></div>}
-                      </div>
-                      {offer.furnitureStatus && (
-                        <div className="mt-3 pt-3 border-t">
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">{t('offer.furniture')}</span>
-                            <span className="font-semibold">{offer.furnitureStatus}</span>
-                          </div>
-                        </div>
-                      )}
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.direction')}</span>
+                      <span className={styles.specVal}>{offer.direction || t('offer.undefined')}</span>
                     </div>
+                    {(offer.length || offer.width) && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{isRtl ? 'الأبعاد' : 'Dimensions'}</span>
+                        <span className={styles.specVal}>{offer.length || 0} × {offer.width || 0} {t('scan.unit.meter')}</span>
+                      </div>
+                    )}
+                    {offer.dealType && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{isRtl ? 'نوع العملية' : 'Deal type'}</span>
+                        <span className={styles.specVal}>{offer.dealType}</span>
+                      </div>
+                    )}
+                    {offer.mainCategory && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{isRtl ? 'التصنيف' : 'Category'}</span>
+                        <span className={styles.specVal}>{offer.mainCategory}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          <TabsContent value="media" className="outline-none focus:outline-none">
-            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
-              <CardHeader>
-                <CardTitle>{language === 'ar' ? 'الملفات والمرفقات' : 'Files & Attachments'}</CardTitle>
-                <CardDescription>{language === 'ar' ? 'كل المواد المرفقة المرتبطة بهذا العرض.' : 'All attached media and documents for this listing.'}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-5">
+                {/* Location Specs */}
+                <div className={styles.specSubPanel}>
+                  <h4 className={styles.specSubTitle}>
+                    <MapPin />
+                    <span>{t('offer.location')}</span>
+                  </h4>
+                  <div className={styles.specRowList}>
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.city')}</span>
+                      <span className={styles.specVal}>{offer.city}</span>
+                    </div>
+                    <div className={styles.specRow}>
+                      <span className={styles.specKey}>{t('offer.neighborhood')}</span>
+                      <span className={styles.specVal}>{offer.neighborhood || t('offer.undefined')}</span>
+                    </div>
+                    {offer.streetWidth && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{t('offer.streetWidth')}</span>
+                        <span className={styles.specVal}>{offer.streetWidth} {t('scan.unit.meter')}</span>
+                      </div>
+                    )}
+                    {safeHttpUrl(offer.locationUrl) && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{isRtl ? 'رابط الموقع' : 'Location link'}</span>
+                        <a
+                          href={safeHttpUrl(offer.locationUrl)!}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-bold text-[var(--od-gold)] hover:underline"
+                        >
+                          <span>{isRtl ? 'فتح الخريطة' : 'Open map'}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Facilities & Spaces */}
+                <div className={styles.specSubPanel}>
+                  <h4 className={styles.specSubTitle}>
+                    <DoorOpen />
+                    <span>{t('offer.facilities')}</span>
+                  </h4>
+                  <div className={styles.specRowList}>
+                    {offer.rooms && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><Bed className="w-4 h-4" />{t('offer.rooms')}</span>
+                        <span className={styles.specVal}>{offer.rooms}</span>
+                      </div>
+                    )}
+                    {offer.bathrooms && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><BathIcon className="w-4 h-4" />{t('offer.baths')}</span>
+                        <span className={styles.specVal}>{offer.bathrooms}</span>
+                      </div>
+                    )}
+                    {offer.livingRooms && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><Sofa className="w-4 h-4" />{t('offer.living')}</span>
+                        <span className={styles.specVal}>{offer.livingRooms}</span>
+                      </div>
+                    )}
+                    {offer.kitchens && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><UtensilsCrossed className="w-4 h-4" />{t('offer.kitchens')}</span>
+                        <span className={styles.specVal}>{offer.kitchens}</span>
+                      </div>
+                    )}
+                    {offer.floors && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><Layers className="w-4 h-4" />{t('offer.floors')}</span>
+                        <span className={styles.specVal}>{offer.floors}</span>
+                      </div>
+                    )}
+                    {offer.apartments && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><Building className="w-4 h-4" />{isRtl ? 'عدد الشقق' : 'Apartments'}</span>
+                        <span className={styles.specVal}>{offer.apartments}</span>
+                      </div>
+                    )}
+                    {offer.buildingArea && (
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}><MeterIcon className="w-4 h-4" />{isRtl ? 'مساحة البناء' : 'Building area'}</span>
+                        <span className={styles.specVal}>{offer.buildingArea} {t('chat.areaUnit')}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Features & Amenities */}
+                <div className={styles.specSubPanel}>
+                  <h4 className={styles.specSubTitle}>
+                    <Award />
+                    <span>{t('offer.features')}</span>
+                  </h4>
+                  <div className={styles.amenitiesGrid}>
+                    {offer.hasElevator && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.elevator')}</span>
+                      </div>
+                    )}
+                    {offer.hasGarage && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.garage')}</span>
+                      </div>
+                    )}
+                    {offer.hasPool && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.pool')}</span>
+                      </div>
+                    )}
+                    {offer.hasMaidRoom && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.maid')}</span>
+                      </div>
+                    )}
+                    {offer.hasRoof && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.roof')}</span>
+                      </div>
+                    )}
+                    {offer.hasExternalAnnex && (
+                      <div className={styles.amenityItem}>
+                        <CheckCircle className={styles.amenityIcon} />
+                        <span>{t('offer.annex')}</span>
+                      </div>
+                    )}
+                  </div>
+                  {offer.furnitureStatus && (
+                    <div className="mt-3 pt-3 border-t border-[var(--od-border-subtle)]">
+                      <div className={styles.specRow}>
+                        <span className={styles.specKey}>{t('offer.furniture')}</span>
+                        <span className={styles.specVal}>{offer.furnitureStatus}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Files & Attachments Tab */}
+            <TabsContent value="media" className="outline-none focus:outline-none">
+              <div className={styles.mediaAttachList}>
                 {(offer.threeDVideos?.length || offer.video3d) && (
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                      <Video className="w-5 h-5" />
-                      {language === 'ar' ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}
-                    </h3>
+                    <h4 className={styles.specSubTitle}>
+                      <Video />
+                      <span>{isRtl ? 'فيديوهات ثلاثية الأبعاد' : '3D videos'}</span>
+                    </h4>
                     <div className="space-y-2">
                       {offer.video3d && (
-                        <a href={offer.video3d} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
-                          <span className="text-sm font-medium">3D Video</span>
-                          <Download className="w-4 h-4" />
-                        </a>
+                        <Offer3DMedia
+                          source={offer.video3d}
+                          label={isRtl ? 'جولة العقار ثلاثية الأبعاد' : 'Property 3D tour'}
+                          language={isRtl ? 'ar' : 'en'}
+                        />
                       )}
                       {(offer.threeDVideos || []).map((video, index) => (
-                        <a key={`${video}-${index}`} href={video} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
-                          <span className="text-sm font-medium">{language === 'ar' ? `فيديو ${index + 1}` : `Video ${index + 1}`}</span>
-                          <Download className="w-4 h-4" />
-                        </a>
+                        <Offer3DMedia
+                          key={`${video}-${index}`}
+                          source={video}
+                          label={isRtl ? `فيديو ثلاثي الأبعاد ${index + 1}` : `3D video ${index + 1}`}
+                          language={isRtl ? 'ar' : 'en'}
+                        />
                       ))}
                     </div>
                   </div>
@@ -1135,15 +1528,21 @@ export default function OfferDetailsPage() {
 
                 {offer.propertyDocuments?.length ? (
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
-                      {language === 'ar' ? 'مستندات العقار' : 'Property documents'}
-                    </h3>
+                    <h4 className={styles.specSubTitle}>
+                      <FileText />
+                      <span>{isRtl ? 'مستندات العقار' : 'Property documents'}</span>
+                    </h4>
                     <div className="space-y-2">
                       {offer.propertyDocuments.map((doc, index) => (
-                        <a key={`${doc}-${index}`} href={doc} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted">
-                          <span className="text-sm font-medium">{language === 'ar' ? `مستند ${index + 1}` : `Document ${index + 1}`}</span>
-                          <Download className="w-4 h-4" />
+                        <a
+                          key={`${doc}-${index}`}
+                          href={doc}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={styles.docItemLink}
+                        >
+                          <span>{isRtl ? `مستند العقار ${index + 1}` : `Property Document ${index + 1}`}</span>
+                          <Download className="w-4 h-4 text-muted-foreground" />
                         </a>
                       ))}
                     </div>
@@ -1152,25 +1551,31 @@ export default function OfferDetailsPage() {
 
                 {offer.checkImage && (
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                      <Camera className="w-5 h-5" />
-                      {language === 'ar' ? 'صورة الشيك' : 'Check image'}
-                    </h3>
-                    <a href={safeHttpUrl(offer.checkImage) || '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 hover:bg-muted">
-                      <span className="text-sm font-medium">{language === 'ar' ? 'فتح الصورة' : 'Open image'}</span>
-                      <Download className="w-4 h-4" />
+                    <h4 className={styles.specSubTitle}>
+                      <Camera />
+                      <span>{isRtl ? 'صورة الشيك المرفق' : 'Attached check image'}</span>
+                    </h4>
+                    <a
+                      href={safeHttpUrl(offer.checkImage) || '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.docItemLink}
+                    >
+                      <span>{isRtl ? 'فتح صورة الشيك' : 'Open check image'}</span>
+                      <Download className="w-4 h-4 text-muted-foreground" />
                     </a>
                   </div>
                 )}
+
                 {!offer.threeDVideos?.length && !offer.video3d && !offer.propertyDocuments?.length && !offer.checkImage && (
-                  <div className="rounded-2xl border border-dashed border bg-muted p-4 sm:p-8 text-center text-sm font-bold text-slate-400">
-                    {language === 'ar' ? 'لا توجد وسائط إضافية لهذا العرض حالياً.' : 'No extra media is available for this listing yet.'}
+                  <div className="text-center py-8 text-sm font-bold text-muted-foreground border border-dashed border-[var(--od-border)] rounded-xl">
+                    {isRtl ? 'لا توجد وسائط أو ملفات إضافية لهذا العرض حالياً.' : 'No extra media or documents available for this listing.'}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </SegmentedTabs>
+              </div>
+            </TabsContent>
+          </SegmentedTabs>
+        </div>
       </div>
     );
   };
@@ -1180,171 +1585,155 @@ export default function OfferDetailsPage() {
 
     const seller = offer.user;
     const sellerName = seller
-      ? `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || seller.email?.split('@')[0] || "معلن"
-      : offer.clientName || (language === 'ar' ? 'المعلن' : 'Advertiser');
+      ? `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || seller.email?.split('@')[0] || (isRtl ? "معلن" : "Advertiser")
+      : offer.clientName || (isRtl ? 'المعلن' : 'Advertiser');
     const userIsSeller = isUserSeller();
 
     return (
-      <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="w-5 h-5" />
-            {t('offer.advertiser')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-              {seller?.profileImage ? (
-                <Image
-                  src={seller.profileImage}
-                  alt={sellerName}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              ) : (
-                <User className="w-6 h-6 text-gray-600" />
+      <div className={`${styles.advertiserCard} calm-panel`}>
+        <div className={styles.advertiserHeader}>
+          <div className={styles.advertiserAvatar}>
+            {seller?.profileImage ? (
+              <Image
+                src={seller.profileImage}
+                alt={sellerName}
+                width={52}
+                height={52}
+                className="rounded-full object-cover"
+              />
+            ) : (
+              sellerName.charAt(0) || <User className="w-5 h-5 text-muted-foreground" />
+            )}
+          </div>
+          <div className={styles.advertiserMeta}>
+            <div className={styles.advertiserName}>
+              <span>{sellerName}</span>
+              {seller?.nafathVerifiedAt && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <BadgeCheck className={styles.verifiedCheck} />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isRtl ? "حساب موثق عبر نفاذ الوطني" : "Verified via Nafath"}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">{sellerName}</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600 text-sm">
-                  {seller?.role ? (t(`profile.role.${seller.role?.toLowerCase()}`) || seller.role) : (language === 'ar' ? 'معلن' : 'Advertiser')}
-                </span>
-                {seller?.nafathVerifiedAt && (
-                  <BadgeCheck className="w-4 h-4 text-green-500" />
-                )}
-              </div>
+            <div className={styles.advertiserRole}>
+              {seller?.role ? (t(`profile.role.${seller.role?.toLowerCase()}`) || seller.role) : (isRtl ? 'معلن' : 'Advertiser')}
             </div>
           </div>
+        </div>
+
+        <div className={styles.advertiserDetailsList}>
+          {seller && (
+            <div className={styles.advertiserDetailItem}>
+              <span>{t('offer.status')}</span>
+              <Badge variant={seller.nafathVerifiedAt ? "default" : "secondary"}>
+                {seller.nafathVerifiedAt ? t('offer.verifiedUser') : (isRtl ? 'لم يتم التحقق' : 'Not verified')}
+              </Badge>
+            </div>
+          )}
 
           {seller?.createdAt && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-600">
-                  {t('offer.memberSince')}: {formatDate(seller.createdAt)}
-                </span>
-              </div>
+            <div className={styles.advertiserDetailItem}>
+              <span>{t('offer.memberSince')}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">{formatDate(seller.createdAt)}</span>
             </div>
           )}
 
-          <Separator />
-
-          <div className="space-y-2">
-            {seller && (
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600 text-sm">{t('offer.status')}</span>
-                <Badge variant={seller.nafathVerifiedAt ? "default" : "secondary"}>
-                  {seller.nafathVerifiedAt ? t('offer.verifiedUser') : t('offer.underReview')}
-                </Badge>
-              </div>
-            )}
-
-            {offer.clientPhone && (
-              <div className="flex items-center gap-2 text-sm text-gray-700">
-                <Phone className="w-4 h-4" />
-                <span>{offer.clientPhone}</span>
-              </div>
-            )}
-
-            {seller?.role === 'AGENT' && (
-              <div className="flex items-center gap-2 text-sm text-blue-600">
-                <ShieldCheck className="w-4 h-4" />
-                <span>{t('offer.agent')}</span>
-              </div>
-            )}
-          </div>
-
-          {!isOwner && user && !userIsSeller && seller && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <Button 
-                        variant="secondary" 
-                        className="w-full"
-                        onClick={() => handleInterest('visit')}
-                        disabled={!!actionLoading}
-                    >
-                        {actionLoading === 'visit' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4 ml-2" />}
-                         {t('bm.offer.visitBtn')}
-                    </Button>
-                    <Button 
-                        variant="secondary"
-                        className="w-full" 
-                        onClick={() => handleInterest('buy')}
-                        disabled={!!actionLoading}
-                    >
-                         {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className="w-4 h-4 ml-2" />}
-                         {offer.dealType === 'rent' ? t('offer.rentProp') : t('offer.buyProp')}
-                    </Button>
-                </div>
-
-                <div className="rounded-xl border border bg-muted/80 p-3">
-                  <div className="w-full [&>button]:w-full [&>button]:justify-center [&>button]:bg-slate-700 [&>button]:py-2.5 [&>button]:font-medium [&>button]:hover:bg-slate-800">
-                    {offer.user ? (
-                      <ChatButton
-                        offerId={offer.id}
-                        offerTitle={`${offer.propertyType} في ${offer.city}`}
-                        sellerId={offer.user.id}
-                        sellerName={`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || "المعلن"}
-                        userId={user.id}
-                        userName={user.name || user.username || user.email}
-                      />
-                    ) : (
-                      <div className="rounded-lg bg-card px-4 py-3 text-center text-sm font-medium text-slate-500">
-                        {language === 'ar' ? 'بيانات المعلن غير متوفرة لبدء المحادثة' : 'Advertiser data is not available for chat'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
+          {offer.clientPhone && (
+            <div className={styles.advertiserDetailItem}>
+              <span>{isRtl ? "رقم الاتصال" : "Phone"}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200" dir="ltr">{offer.clientPhone}</span>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Primary Action Buttons (Visit / Buy / Rent) for non-owners */}
+        {!isOwner && user && !userIsSeller && seller && (
+          <div className="space-y-3">
+            <div className={styles.advertiserActionGrid}>
+              <button
+                type="button"
+                className={styles.secondaryCtaBtn}
+                onClick={() => handleInterest('visit')}
+                disabled={!!actionLoading}
+              >
+                {actionLoading === 'visit' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+                <span>{t('bm.offer.visitBtn')}</span>
+              </button>
+              <button
+                type="button"
+                className={styles.primaryCtaBtn}
+                onClick={() => handleInterest('buy')}
+                disabled={!!actionLoading}
+              >
+                {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className="w-4 h-4" />}
+                <span>{offer.dealType === 'rent' ? t('offer.rentProp') : t('offer.buyProp')}</span>
+              </button>
+            </div>
+
+            {/* Embedded ChatButton */}
+            <div className="w-full [&>button]:w-full [&>button]:justify-center [&>button]:min-h-[44px]">
+              {offer.user ? (
+                <ChatButton
+                  offerId={offer.id}
+                  offerTitle={`${offer.propertyType} في ${offer.city}`}
+                  sellerId={offer.user.id}
+                  sellerName={`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || (isRtl ? "المعلن" : "Advertiser")}
+                  userId={user.id}
+                  userName={user.name || user.username || user.email}
+                />
+              ) : (
+                <div className="rounded-lg bg-muted px-4 py-3 text-center text-xs font-semibold text-muted-foreground">
+                  {isRtl ? 'بيانات المعلن غير متوفرة لبدء المحادثة' : 'Advertiser data not available for chat'}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
   const renderLoadingState = () => (
     <div className="space-y-6">
-      {/* Header skeleton */}
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
+      <div className="space-y-3">
+        <Skeleton className="h-9 w-2/3 rounded-xl" />
+        <Skeleton className="h-5 w-1/3 rounded-lg" />
       </div>
 
-      {/* Main content skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Images skeleton */}
-          <Skeleton className="h-[400px] w-full rounded-lg" />
-          {/* Details skeleton */}
-          <Skeleton className="h-64 w-full" />
-        </div>
+      <Skeleton className="h-[380px] w-full rounded-2xl" />
 
-        {/* Sidebar skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-4">
+          <Skeleton className="h-44 w-full rounded-2xl" />
+          <Skeleton className="h-72 w-full rounded-2xl" />
+        </div>
         <div className="space-y-4">
-          <Skeleton className="h-64 w-full rounded-lg" />
+          <Skeleton className="h-56 w-full rounded-2xl" />
+          <Skeleton className="h-80 w-full rounded-2xl" />
         </div>
       </div>
     </div>
   );
 
   const renderErrorState = () => (
-    <div className="text-center py-6 md:py-12">
-      <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">{t('offer.error')}</h2>
-      <p className="text-gray-600 mb-6">{error || t('offer.errorLoad')}</p>
-      <div className="flex gap-3 justify-center">
-        <Button onClick={fetchOfferDetails}>
+    <div className={`cinematic-listing-error ${styles.editorialCard} calm-panel text-center max-w-lg mx-auto py-8 sm:py-12`}>
+      <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-3" />
+      <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">{t('offer.error')}</h2>
+      <p className="text-sm text-muted-foreground mb-6">{error || t('offer.errorLoad')}</p>
+      <div className="flex flex-wrap gap-3 justify-center">
+        <Button onClick={fetchOfferDetails} className="min-h-[44px]">
           <Loader2 className="w-4 h-4 ml-2" />
           {t('offer.tryAgain')}
         </Button>
-        <Button variant="outline" onClick={() => router.push('/offers')}>
+        <Button variant="outline" onClick={() => router.push('/offers')} className="min-h-[44px]">
           <ArrowRight className="w-4 h-4 ml-2" />
           {t('offer.backOffers')}
         </Button>
@@ -1354,8 +1743,8 @@ export default function OfferDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh-safe bg-muted p-4 md:p-6">
-        <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
+      <div className={`${styles.offerDetailRoot} calm-page calm-screen min-h-dvh-safe`}>
+        <div className={styles.container}>
           {renderLoadingState()}
         </div>
       </div>
@@ -1364,8 +1753,8 @@ export default function OfferDetailsPage() {
 
   if (error || !offer) {
     return (
-      <div className="min-h-dvh-safe bg-muted p-4 md:p-6">
-        <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
+      <div className={`${styles.offerDetailRoot} cinematic-listing-error-page calm-page calm-screen min-h-dvh-safe`}>
+        <div className={styles.container}>
           {renderErrorState()}
         </div>
       </div>
@@ -1373,214 +1762,324 @@ export default function OfferDetailsPage() {
   }
 
   return (
-    <div className="min-h-dvh-safe bg-muted p-4 md:p-6" dir="rtl">
-      <div className="max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-            <div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                <button
-                  onClick={() => router.push('/offers')}
-                  className="flex items-center gap-1 hover:text-gray-800 transition-colors"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                  <span>العروض</span>
-                </button>
-                <span>/</span>
-                <span>تفاصيل العرض</span>
-              </div>
+    <div
+      className={`${styles.offerDetailRoot} cinematic-listing calm-page calm-screen min-h-dvh-safe`}
+      dir={isRtl ? "rtl" : "ltr"}
+    >
+      <div className={styles.container}>
+        {/* Editorial Top Navigation */}
+        <div className={styles.topNav}>
+          <div className={styles.breadcrumbs}>
+            <button
+              type="button"
+              onClick={handleBack}
+              className={styles.breadcrumbLink}
+              aria-label={isRtl ? "رجوع إلى العروض" : "Back to listings"}
+            >
+              <ArrowRight className={`w-4 h-4 ${!isRtl ? 'rotate-180' : ''}`} />
+              <span>{isRtl ? "العروض" : "Offers"}</span>
+            </button>
+            <span className={styles.breadcrumbSep}>/</span>
+            <span className="truncate max-w-[200px] sm:max-w-[360px] text-slate-800 dark:text-slate-200">
+              {offer.propertyType} {isRtl ? "في" : "in"} {offer.city}
+            </span>
+          </div>
 
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
-                {offer.propertyType} في {offer.city}
-              </h1>
-
-              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>نشر: {formatDate(offer.createdAt)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Eye className="w-4 h-4" />
-                  <span>{views} مشاهدة</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-10 w-10 sm:h-8 sm:w-auto"
-                        onClick={() => setIsShareModalOpen(true)}
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>مشاركة</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                {isOwner && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="outline" className="h-10 w-10 sm:h-8 sm:w-auto">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>خيارات العرض</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleEditOffer}>
-                        <Edit className="w-4 h-4 ml-2" />
-                        تعديل العرض
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={handleDeleteOffer}
-                        className="text-red-600"
-                      >
-                        <Trash2 className="w-4 h-4 ml-2" />
-                        حذف العرض
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-
-                {!isOwner && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-10 sm:h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    onClick={() => setIsReportModalOpen(true)}
+          <div className={styles.topActions}>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className={styles.actionBtn}
+                    onClick={() => setIsShareModalOpen(true)}
+                    aria-label={isRtl ? "مشاركة العرض" : "Share listing"}
                   >
-                    <Flag className="w-4 h-4" />
-                    <span className="mr-2">إبلاغ</span>
-                  </Button>
-                )}
-              </div>
+                    <Share2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">{isRtl ? "مشاركة" : "Share"}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>{isRtl ? "مشاركة العرض" : "Share"}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-              <Button
-                onClick={handleBack}
-                className="flex items-center gap-2 h-10 sm:h-9"
+            {isOwner && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={styles.actionBtn}
+                    aria-label={isRtl ? "خيارات إدارة العرض" : "Manage offer"}
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{isRtl ? "خيارات العرض" : "Offer Options"}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleEditOffer} className="cursor-pointer">
+                    <Edit className="w-4 h-4 ml-2" />
+                    <span>{isRtl ? "تعديل العرض" : "Edit Offer"}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => { setDeleteError(""); setDeleteConfirmOpen(true); }}
+                    className="text-red-600 focus:text-red-600 cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4 ml-2" />
+                    <span>{isRtl ? "حذف العرض" : "Delete Offer"}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            {!isOwner && (
+              <button
+                type="button"
+                className={styles.actionBtn}
+                onClick={() => setIsReportModalOpen(true)}
+                aria-label={isRtl ? "إبلاغ عن مخالفة" : "Report offer"}
               >
-                <ArrowRight className="w-5 h-5" />
-                <span className="hidden min-[400px]:inline">رجوع</span>
-              </Button>
+                <Flag className="w-4 h-4 text-rose-500" />
+                <span className="hidden sm:inline">{isRtl ? "إبلاغ" : "Report"}</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleBack}
+              className={`${styles.actionBtn} ${styles.backBtn}`}
+              aria-label={isRtl ? "رجوع" : "Back"}
+            >
+              <ArrowRight className={`w-4 h-4 ${!isRtl ? 'rotate-180' : ''}`} />
+              <span className="hidden sm:inline">{isRtl ? "رجوع" : "Back"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Editorial Headline Hierarchy */}
+        <div className={`cinematic-listing-heading ${styles.editorialHeader}`}>
+          <div className={styles.headerTopRow}>
+            {offer.dealType && (
+              <span className={styles.dealBadge}>
+                {offer.dealType}
+              </span>
+            )}
+            <span className={styles.typeBadge}>
+              {offer.propertyType}
+            </span>
+            {offer.propertyCondition && (
+              <span className={styles.typeBadge}>
+                {offer.propertyCondition}
+              </span>
+            )}
+          </div>
+
+          <h1 className={styles.editorialTitle}>
+            {offer.propertyType} {isRtl ? "في" : "in"} {offer.city}
+            {offer.neighborhood && ` - ${isRtl ? 'حي' : 'District'} ${offer.neighborhood}`}
+          </h1>
+
+          <div className={styles.headerMetaRow}>
+            <div className={styles.metaItem}>
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <span>{isRtl ? "تاريخ النشر:" : "Published:"} {formatDate(offer.createdAt)}</span>
+            </div>
+            <div className={styles.metaItem}>
+              <Eye className="w-4 h-4 text-muted-foreground" />
+              <span>{views} {isRtl ? "مشاهدة" : "views"}</span>
+            </div>
+            <div className={styles.metaItem}>
+              <MapPin className="w-4 h-4 text-muted-foreground" />
+              <span>{offer.city}{offer.neighborhood ? `، ${offer.neighborhood}` : ''}</span>
             </div>
           </div>
         </div>
 
-        {/* Property Images at the Top */}
-        <div className="mb-6 md:mb-8">
-          {renderImages()}
+        {/* Price & Primary Call-to-Action Card */}
+        <div className={`${styles.priceHeroCard} mb-6`}>
+          <div className={styles.priceDisplayBlock}>
+            <span className={styles.priceLabel}>
+              {offer.dealType === 'rent'
+                ? (isRtl ? 'القيمة الإيجارية' : 'Rental Price')
+                : (isRtl ? 'السعر المطلوب' : 'Asking Price')}
+            </span>
+            <div className={styles.priceAmount}>
+              <SaudiRiyalAmount amount={offer.price} locale={isRtl ? 'ar-SA' : 'en-US'} />
+            </div>
+          </div>
+
+          {!isOwner && (
+            <div className={styles.priceActionBtns}>
+              <button
+                type="button"
+                className={styles.secondaryCtaBtn}
+                onClick={() => handleInterest('visit')}
+                disabled={!!actionLoading}
+              >
+                {actionLoading === 'visit' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+                <span>{t('bm.offer.visitBtn')}</span>
+              </button>
+              <button
+                type="button"
+                className={styles.primaryCtaBtn}
+                onClick={() => handleInterest('buy')}
+                disabled={!!actionLoading}
+              >
+                {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className="w-4 h-4" />}
+                <span>{offer.dealType === 'rent' ? t('offer.rentProp') : t('offer.buyProp')}</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Seller Info */}
+        {/* Property Real Photography Gallery */}
+        {renderImages()}
+
+        {/* Architectural Two-Column Layout */}
+        <div className={styles.editorialLayout}>
+          {/* Main Column: Specs & Tabs */}
+          {renderPropertyDetails()}
+
+          {/* Task-Focused Sidebar */}
+          <div className={styles.sidebarColumn}>
+            {/* Advertiser Identity Card */}
             {renderSellerInfo()}
 
-            {/* Quick Actions */}
-            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
-              <CardHeader>
-                <CardTitle>خيارات سريعة</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div className="rounded-2xl border border bg-gradient-to-br from-slate-50 to-white p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">طلب خدمة</p>
-                    <span className="text-[11px] text-gray-400">اختر الخدمة المناسبة</span>
-                  </div>
-                </div>
-
-                {/* Service shortcut buttons */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {([
-                    { type: 'postPurchase', icon: <CheckCircle className="w-4 h-4" /> },
-                    { type: 'legal',        icon: <ShieldCheck className="w-4 h-4" /> },
-                    { type: 'construction', icon: <Building className="w-4 h-4" /> },
-                    { type: 'marketing',    icon: <StarIcon className="w-4 h-4" /> },
-                    { type: 'other',        icon: <MoreVertical className="w-4 h-4" />  },
-                  ] as const).map((svc) => (
-                    <Button
-                      key={svc.type}
-                      variant="outline"
-                      className="h-14 w-full justify-start gap-3 rounded-2xl border bg-card text-sm text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-muted hover:shadow-md focus-visible:ring-2 focus-visible:ring-slate-300"
-                      onClick={() => router.push(`/services/form?type=${svc.type}`)}
-                    >
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-600">
-                        {svc.icon}
-                      </span>
-                      <span className="font-semibold">{t(`services.${svc.type}`)}</span>
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Safety Tips */}
-            <Card className="bg-card/80 backdrop-blur-sm border shadow-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  نصائح للتعامل الآمن
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600">
-                  احرصوا دائماً على اتمام جميع تعاملاتكم داخل المنصة حيث أن المنصة لا تضمن أي تعاملات تتم خارجها.
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600">
-تجنب تحويل المبالغ أو الشيكات خارج الإطار المعتمد.                  </p>
-                </div>
-
-              </CardContent>
-            </Card>
-
-            {/* Direct Chat Module */}
+            {/* Direct Socket Chat Module */}
             <OfferChatBox offer={offer} currentUser={user} />
-          </div>
 
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Property Details */}
-            {renderPropertyDetails()}
+            {/* Quick Service Shortcuts */}
+            <div className={`${styles.editorialCard} calm-panel`}>
+              <h3 className={styles.cardHeaderTitle}>
+                <Building className="w-4 h-4 text-[var(--od-gold)]" />
+                <span>{isRtl ? "خيارات وخدمات سريعة" : "Quick Services"}</span>
+              </h3>
+              <p className={styles.cardHeaderDesc}>
+                {isRtl ? "طلب خدمات عقارية وإدارية مباشرة مرتبطة بهذا العرض." : "Request related real estate and legal services."}
+              </p>
+
+              <div className={styles.servicesGrid}>
+                {([
+                  { type: 'postPurchase', icon: <CheckCircle className="w-4 h-4" /> },
+                  { type: 'legal', icon: <ShieldCheck className="w-4 h-4" /> },
+                  { type: 'construction', icon: <Building className="w-4 h-4" /> },
+                  { type: 'marketing', icon: <StarIcon className="w-4 h-4" /> },
+                  { type: 'other', icon: <MoreVertical className="w-4 h-4" /> },
+                ] as const).map((svc) => (
+                  <button
+                    key={svc.type}
+                    type="button"
+                    className={styles.serviceShortcutBtn}
+                    onClick={() => router.push(svc.type === 'legal' ? '/services/legal' : `/services/form?type=${svc.type}`)}
+                  >
+                    <span className={styles.serviceIconWrap}>
+                      {svc.icon}
+                    </span>
+                    <span>{t(`services.${svc.type}`)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Platform Guarantee & Safety Advisory */}
+            <div className={`${styles.safetyAdvisoryCard} calm-panel`}>
+              <h3 className={styles.cardHeaderTitle}>
+                <Shield className="w-4 h-4 text-[var(--od-gold)]" />
+                <span>{isRtl ? "إرشادات التعامل المالي الآمن" : "Safe Dealing Advisory"}</span>
+              </h3>
+              <div className={styles.safetyAdvisoryItem}>
+                <CheckCircle className={styles.safetyIcon} />
+                <p>
+                  {isRtl
+                    ? "احرص دائماً على إتمام كافة المحادثات والتعاملات الرسمية عبر المنصة لحفظ حقوق الأطراف."
+                    : "Always conduct communications and official transactions via the platform to safeguard both parties' rights."}
+                </p>
+              </div>
+              <div className={styles.safetyAdvisoryItem}>
+                <CheckCircle className={styles.safetyIcon} />
+                <p>
+                  {isRtl
+                    ? "تجنب تحويل أي مبالغ مالية أو شيكات خارج القنوات والاتفاقيات المعتمدة داخل المنصة."
+                    : "Avoid transferring funds or checks outside approved platform agreements and verification channels."}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Mobile Sticky Quick Action Dock */}
+      {!isOwner && (
+        <div className={styles.mobileActionDock}>
+          <div className={styles.mobileDockPrice}>
+            <span className={styles.mobileDockPriceLabel}>
+              {offer.dealType === 'rent'
+                ? (isRtl ? 'القيمة الإيجارية' : 'Rent')
+                : (isRtl ? 'السعر' : 'Price')}
+            </span>
+            <span className={styles.mobileDockPriceValue}>
+              <SaudiRiyalAmount amount={offer.price} locale={isRtl ? 'ar-SA' : 'en-US'} />
+            </span>
+          </div>
+
+          <div className={styles.mobileDockBtns}>
+            <button
+              type="button"
+              className={`${styles.secondaryCtaBtn} ${styles.mobileDockBtn}`}
+              onClick={() => handleInterest('visit')}
+              disabled={!!actionLoading}
+            >
+              {actionLoading === 'visit' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+              <span>{t('bm.offer.visitBtn')}</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.primaryCtaBtn} ${styles.mobileDockBtn}`}
+              onClick={() => handleInterest('buy')}
+              disabled={!!actionLoading}
+            >
+              {actionLoading === 'buy' ? <Loader2 className="w-4 h-4 animate-spin" /> : <SaudiRiyalIcon className="w-4 h-4" />}
+              <span>{offer.dealType === 'rent' ? t('offer.rentProp') : t('offer.buyProp')}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={(open) => { if (!deleteLoading) setDeleteConfirmOpen(open); }}>
+        <DialogContent className={requestDialogStyles.modal}>
+          <DialogHeader>
+            <DialogTitle>{isRtl ? 'حذف العرض؟' : 'Delete listing?'}</DialogTitle>
+            <DialogDescription>{isRtl ? 'سيتم حذف هذا العرض. لا يمكن التراجع عن هذه الخطوة.' : 'This listing will be deleted. This action cannot be undone.'}</DialogDescription>
+          </DialogHeader>
+          {deleteError && <p role="alert" className="text-sm text-red-600 dark:text-red-300">{deleteError}</p>}
+          <DialogFooter>
+            <Button variant="outline" disabled={deleteLoading} onClick={() => setDeleteConfirmOpen(false)}>{isRtl ? 'إلغاء' : 'Cancel'}</Button>
+            <Button variant="destructive" disabled={deleteLoading} onClick={handleDeleteOffer}>{deleteLoading && <Loader2 className="w-4 h-4 animate-spin" />}{isRtl ? 'تأكيد الحذف' : 'Confirm deletion'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Contact Modal */}
       <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`${requestDialogStyles.modal} max-h-[90vh] overflow-y-auto`}>
           <DialogHeader>
-            <DialogTitle>معلومات الاتصال</DialogTitle>
+            <DialogTitle>{isRtl ? "معلومات الاتصال" : "Contact Details"}</DialogTitle>
             <DialogDescription>
-              يمكنك استخدام هذه المعلومات للاتصال بالمعلن
+              {isRtl ? "يمكنك استخدام هذه المعلومات للاتصال بالمعلن" : "Contact details provided by the advertiser"}
             </DialogDescription>
           </DialogHeader>
 
           {offer?.user && (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-gray-600" />
+                <div className="calm-icon w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-muted-foreground" />
                 </div>
                 <div>
                   <h4 className="font-semibold">
-                    {`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || "المعلن"}
+                    {`${offer.user.firstName || ''} ${offer.user.lastName || ''}`.trim() || offer.user.email || (isRtl ? "المعلن" : "Advertiser")}
                   </h4>
-                  <p className="text-sm text-gray-500">{t(`profile.role.${offer.user.role}`)}</p>
+                  <p className="text-sm text-muted-foreground">{t(`profile.role.${offer.user.role}`)}</p>
                 </div>
               </div>
 
@@ -1588,15 +2087,16 @@ export default function OfferDetailsPage() {
 
               {offer.user.phone && (
                 <div className="space-y-2">
-                  <Label>رقم الهاتف</Label>
+                  <Label>{isRtl ? "رقم الهاتف" : "Phone"}</Label>
                   <div className="flex items-center gap-2">
                     <Input value={offer.user.phone} readOnly />
                     <Button
                       size="sm"
                       onClick={() => window.open(`tel:${offer.user?.phone}`)}
+                      className="min-h-[44px]"
                     >
                       <Phone className="w-4 h-4 ml-2" />
-                      اتصل الآن
+                      {isRtl ? "اتصل الآن" : "Call now"}
                     </Button>
                   </div>
                 </div>
@@ -1604,15 +2104,16 @@ export default function OfferDetailsPage() {
 
               {offer.user.email && (
                 <div className="space-y-2">
-                  <Label>البريد الإلكتروني</Label>
+                  <Label>{isRtl ? "البريد الإلكتروني" : "Email"}</Label>
                   <div className="flex items-center gap-2">
                     <Input value={offer.user.email} readOnly />
                     <Button
                       size="sm"
                       onClick={() => window.open(`mailto:${offer.user?.email}`)}
+                      className="min-h-[44px]"
                     >
                       <Mail className="w-4 h-4 ml-2" />
-                      إرسال بريد
+                      {isRtl ? "إرسال بريد" : "Send email"}
                     </Button>
                   </div>
                 </div>
@@ -1621,8 +2122,8 @@ export default function OfferDetailsPage() {
           )}
 
           <DialogFooter>
-            <Button onClick={() => setIsContactModalOpen(false)}>
-              تم
+            <Button onClick={() => setIsContactModalOpen(false)} className="min-h-[44px]">
+              {isRtl ? "تم" : "Done"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1630,37 +2131,66 @@ export default function OfferDetailsPage() {
 
       {/* Share Modal */}
       <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`${requestDialogStyles.modal} max-h-[90vh] overflow-y-auto`}>
           <DialogHeader>
-            <DialogTitle>مشاركة العرض</DialogTitle>
+            <DialogTitle>{isRtl ? "مشاركة العرض" : "Share Listing"}</DialogTitle>
             <DialogDescription>
-              شارك هذا العرض مع الآخرين
+              {isRtl ? "شارك هذا العرض مع الآخرين أو انسخ رابط الصفحة" : "Share this listing or copy link to clipboard"}
             </DialogDescription>
           </DialogHeader>
 
- 
-
-          <Separator />
-
-          <div className="space-y-2">
-            <Label>رابط العرض</Label>
-            <div className="flex gap-2">
-              <Input
-                value={typeof window !== 'undefined' ? window.location.href : ''}
-                readOnly
-              />
+          <div className="space-y-4 pt-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               <Button
                 variant="outline"
-                onClick={() => handleShare('copy')}
+                className="min-h-[44px]"
+                onClick={() => handleShare('whatsapp')}
               >
-                <Copy className="w-4 h-4" />
+                <span>WhatsApp</span>
               </Button>
+              <Button
+                variant="outline"
+                className="min-h-[44px]"
+                onClick={() => handleShare('twitter')}
+              >
+                <span>X / Twitter</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="min-h-[44px]"
+                onClick={() => handleShare('facebook')}
+              >
+                <span>Facebook</span>
+              </Button>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-2">
+              <Label>{isRtl ? "رابط العرض" : "Listing URL"}</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  readOnly
+                  className="min-h-[44px]"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => handleShare('copy')}
+                  className="min-h-[44px] min-w-[44px]"
+                  aria-label={isRtl ? "نسخ الرابط" : "Copy link"}
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">إغلاق</Button>
+              <Button variant="outline" className="min-h-[44px]">
+                {isRtl ? "إغلاق" : "Close"}
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
@@ -1668,37 +2198,38 @@ export default function OfferDetailsPage() {
 
       {/* Report Modal */}
       <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`${requestDialogStyles.modal} max-h-[90vh] overflow-y-auto`}>
           <DialogHeader>
-            <DialogTitle>الإبلاغ عن مخالفة</DialogTitle>
+            <DialogTitle>{isRtl ? "الإبلاغ عن مخالفة" : "Report Violation"}</DialogTitle>
             <DialogDescription>
-              الرجاء تحديد سبب الإبلاغ عن هذا العرض
+              {isRtl ? "الرجاء تحديد سبب الإبلاغ عن هذا العرض لمراجعته" : "Please select the reason for reporting this listing"}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>سبب الإبلاغ</Label>
+              <Label htmlFor="offer-report-reason">{isRtl ? "سبب الإبلاغ" : "Reason"}</Label>
               <Select onValueChange={setReportReason} value={reportReason}>
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر سبب الإبلاغ" />
+                <SelectTrigger id="offer-report-reason" className="min-h-[44px]">
+                  <SelectValue placeholder={isRtl ? "اختر سبب الإبلاغ" : "Select reason"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="spam">إعلان مكرر أو بريد عشوائي</SelectItem>
-                  <SelectItem value="fake">معلومات غير صحيحة</SelectItem>
-                  <SelectItem value="fraud">احتيال أو محاولة نصب</SelectItem>
-                  <SelectItem value="offensive">محتوى مسيء أو غير لائق</SelectItem>
-                  <SelectItem value="wrong_category">تصنيف خاطئ</SelectItem>
-                  <SelectItem value="other">سبب آخر</SelectItem>
+                  <SelectItem value="spam">{isRtl ? "إعلان مكرر أو بريد عشوائي" : "Duplicate or spam"}</SelectItem>
+                  <SelectItem value="fake">{isRtl ? "معلومات غير صحيحة" : "Inaccurate information"}</SelectItem>
+                  <SelectItem value="fraud">{isRtl ? "احتيال أو محاولة نصب" : "Fraud attempt"}</SelectItem>
+                  <SelectItem value="offensive">{isRtl ? "محتوى مسيء أو غير لائق" : "Offensive content"}</SelectItem>
+                  <SelectItem value="wrong_category">{isRtl ? "تصنيف خاطئ" : "Wrong category"}</SelectItem>
+                  <SelectItem value="other">{isRtl ? "سبب آخر" : "Other"}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {reportReason === 'other' && (
               <div className="space-y-2">
-                <Label>الرجاء توضيح السبب</Label>
+                <Label htmlFor="offer-report-details">{isRtl ? "الرجاء توضيح السبب" : "Please describe in detail"}</Label>
                 <Textarea
-                  placeholder="اذكر سبب الإبلاغ بالتفصيل..."
+                  id="offer-report-details"
+                  placeholder={isRtl ? "اذكر سبب الإبلاغ بالتفصيل..." : "Describe the issue..."}
                   value={reportDetails}
                   onChange={(e) => setReportDetails(e.target.value)}
                   rows={3}
@@ -1711,25 +2242,29 @@ export default function OfferDetailsPage() {
             <Button
               variant="outline"
               onClick={() => setIsReportModalOpen(false)}
+              className="min-h-[44px]"
             >
-              إلغاء
+              {isRtl ? "إلغاء" : "Cancel"}
             </Button>
             <Button
               onClick={handleReportOffer}
               disabled={!reportReason.trim() || reportLoading}
+              className="min-h-[44px]"
             >
               {reportLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  جاري الإرسال...
+                  <span>{isRtl ? "جاري الإرسال..." : "Sending..."}</span>
                 </>
               ) : (
-                'إرسال البلاغ'
+                isRtl ? 'إرسال البلاغ' : 'Submit Report'
               )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* SimpleChatModal */}
       {isChatOpen && chatRoomId && user && (
         <SimpleChatModal
           isOpen={isChatOpen}
@@ -1741,6 +2276,7 @@ export default function OfferDetailsPage() {
         />
       )}
 
+      {/* VisitRequestModal */}
       <VisitRequestModal
         isOpen={isVisitModalOpen}
         onClose={() => setIsVisitModalOpen(false)}
@@ -1748,14 +2284,15 @@ export default function OfferDetailsPage() {
         loading={actionLoading === 'visit'}
       />
 
+      {/* PurchaseModal */}
       {offer && (
         <PurchaseModal
-            isOpen={isPurchaseModalOpen}
-            onClose={() => setIsPurchaseModalOpen(false)}
-            onConfirm={handlePurchaseSubmit}
-            loading={actionLoading === 'buy'}
-            propertyTitle={`${offer.propertyType} ${t('cards.ops.sale2024')} ${offer.city}`}
-            price={<SaudiRiyalAmount amount={offer.price} locale={language === 'ar' ? 'ar-SA' : 'en-US'} />}
+          isOpen={isPurchaseModalOpen}
+          onClose={() => setIsPurchaseModalOpen(false)}
+          onConfirm={handlePurchaseSubmit}
+          loading={actionLoading === 'buy'}
+          propertyTitle={`${offer.propertyType} ${t('cards.ops.sale2024')} ${offer.city}`}
+          price={<SaudiRiyalAmount amount={offer.price} locale={isRtl ? 'ar-SA' : 'en-US'} />}
         />
       )}
     </div>

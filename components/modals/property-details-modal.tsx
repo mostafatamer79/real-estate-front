@@ -135,16 +135,16 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-2xl flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
+            <DialogContent className="w-[95vw] sm:max-w-[980px] max-h-[90vh] overflow-hidden border-none p-0 shadow-sm dark:shadow-2xl flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader className="border-b border bg-gradient-to-b from-white to-slate-50 px-6 py-5 sm:px-8">
                     <div className="flex items-start gap-4 pe-12">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-slate-700 shadow-sm">
+                        <div className="calm-icon flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-slate-700 shadow-sm">
                             <Building className="h-7 w-7" />
                         </div>
                         <div className="min-w-0 flex-1">
                             <DialogTitle className="flex flex-wrap items-center gap-3 text-xl sm:text-2xl">
                                 <span className="truncate">{property.name}</span>
-                                <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-card px-3 py-1 text-sm font-bold text-slate-500 shadow-sm ring-1 ring-slate-200">
+                                <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-card px-3 py-1 text-sm font-bold text-muted-foreground dark:text-slate-500 shadow-sm ring-1 ring-slate-200">
                                     <FileText className="h-4 w-4 shrink-0 text-blue-600" />
                                     <span className="truncate">{property.deedNumber || "---"}</span>
                                 </span>
@@ -158,16 +158,16 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
                 <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
                     <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
-                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</p>
+                        <div className="calm-panel rounded-[1rem] border border bg-muted px-4 py-4">
+                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('offer.type')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>
                         </div>
-                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
-                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.deed')}</p>
+                        <div className="calm-panel rounded-[1rem] border border bg-muted px-4 py-4">
+                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('offer.deed')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">{property.deedNumber || "---"}</p>
                         </div>
-                        <div className="rounded-[1rem] border border bg-muted px-4 py-4">
-                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('pm.field.purchasePrice')}</p>
+                        <div className="calm-panel rounded-[1rem] border border bg-muted px-4 py-4">
+                            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('pm.field.purchasePrice')}</p>
                             <p className="mt-2 text-lg font-black text-slate-900">
                                 {property.purchasePrice != null ? <SaudiRiyalAmount amount={property.purchasePrice} locale="en-US" /> : "---"}
                             </p>
@@ -181,15 +181,15 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                         </TabsList>
 
                         <TabsContent value="units" className="space-y-5 pt-5">
-                            <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+                            <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                                 <div className="mb-5 flex items-center justify-between gap-3">
                                     <div>
                                         <h4 className="text-lg font-black text-slate-900">{t('pm.tab.units')}</h4>
-                                        <p className="text-sm font-medium text-slate-500">
+                                        <p className="text-sm font-medium text-muted-foreground dark:text-slate-500">
                                             {language === 'ar' ? 'تنسيق موحد لإضافة وحدة داخل الإدارة الداخلية.' : 'Unified add-unit popup pattern for internal property pages.'}
                                         </p>
                                     </div>
-                                    <div className="rounded-2xl bg-slate-900 p-3 text-white">
+                                    <div className="rounded-2xl bg-card dark:bg-slate-900 p-3 text-foreground dark:text-white">
                                         <Plus className="h-5 w-5" />
                                     </div>
                                 </div>
@@ -261,7 +261,7 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                                         <Button
                                             onClick={handleCreateUnit}
                                             disabled={isCreatingUnit}
-                                            className="h-14 w-full rounded-2xl bg-slate-900 text-base font-black text-white hover:bg-slate-800"
+                                            className="h-14 w-full rounded-2xl bg-card dark:bg-slate-900 text-base font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800"
                                         >
                                             {isCreatingUnit ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
                                             <span>{language === 'ar' ? 'إضافة وحدة' : 'Add unit'}</span>
@@ -271,25 +271,25 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
                             </div>
 
                             {loadingUnits ? (
-                                <div className="rounded-[1.25rem] border border bg-card py-8 md:py-16 text-center">
-                                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-500" />
+                                <div className="calm-panel rounded-[1.25rem] border border bg-card py-8 md:py-16 text-center">
+                                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground dark:text-slate-500" />
                                 </div>
                             ) : units.length === 0 ? (
-                                <div className="rounded-[1.25rem] border border-dashed border bg-muted py-8 md:py-16 text-center text-xl font-medium text-slate-500">
+                                <div className="calm-panel rounded-[1.25rem] border border-dashed border bg-muted py-8 md:py-16 text-center text-xl font-medium text-muted-foreground dark:text-slate-500">
                                     {t('bm.list.empty')}
                                 </div>
                             ) : (
                                 <div className="grid gap-4">
                                     {units.map((unit) => (
-                                        <div key={unit.id} className="rounded-[1.25rem] border border bg-card p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
+                                        <div key={unit.id} className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
                                             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                                 <div className="flex items-start gap-4">
-                                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-slate-700">
+                                                    <div className="calm-icon flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-slate-700">
                                                         <Home className="h-5 w-5" />
                                                     </div>
                                                     <div>
                                                         <h4 className="text-lg font-black text-slate-900">{unit.unitNumber}</h4>
-                                                        <p className="mt-1 text-sm font-medium text-slate-500">{unitTypeLabel(unit.type)}</p>
+                                                        <p className="mt-1 text-sm font-medium text-muted-foreground dark:text-slate-500">{unitTypeLabel(unit.type)}</p>
                                                     </div>
                                                 </div>
 
@@ -305,21 +305,21 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
                                             <div className="mt-5 grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                                                 <div className="rounded-2xl bg-muted px-4 py-3">
-                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                         <BedDouble className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('offer.rooms')}</span>
                                                     </div>
                                                     <p className="mt-2 text-base font-black text-slate-900">{unit.roomsCount || 0}</p>
                                                 </div>
                                                 <div className="rounded-2xl bg-muted px-4 py-3">
-                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                         <Ruler className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('offer.area')}</span>
                                                     </div>
                                                     <p className="mt-2 text-base font-black text-slate-900">{unit.area || 0} m²</p>
                                                 </div>
                                                 <div className="rounded-2xl bg-muted px-4 py-3">
-                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                         <CalendarDays className="h-4 w-4" />
                                                         <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('pm.field.expectedVacancyDate')}</span>
                                                     </div>
@@ -334,22 +334,22 @@ export default function PropertyDetailsModal({ isOpen, onClose, property, onUpda
 
                         <TabsContent value="details" className="pt-5">
                             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
-                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.type')}</span>
+                                <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('offer.type')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">{unitTypeLabel(property.type)}</p>
                                 </div>
-                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
-                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('offer.deed')}</span>
+                                <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('offer.deed')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">{property.deedNumber || "---"}</p>
                                 </div>
-                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
-                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('pm.field.purchasePrice')}</span>
+                                <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('pm.field.purchasePrice')}</span>
                                     <p className="mt-3 text-lg font-black text-slate-900">
                                         {property.purchasePrice != null ? <SaudiRiyalAmount amount={property.purchasePrice} locale="en-US" /> : "---"}
                                     </p>
                                 </div>
-                                <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
-                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t('bm.offer.location')}</span>
+                                <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400">{t('bm.offer.location')}</span>
                                     <p className="mt-3 break-all text-base font-bold text-slate-900">{property.locationUrl || "---"}</p>
                                 </div>
                             </div>

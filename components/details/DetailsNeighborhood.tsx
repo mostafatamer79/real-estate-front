@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowUpRight, MapPin, Compass, Navigation } from 'lucide-react';
+import { ArrowUpRight, MapPin, Compass, Navigation, Plus, Minus } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings, resolveSurfaceColor } from '@/context/SettingsContext';
 import { DETAILS_DESIGN_KEY, parseDetailsDesign } from '@/lib/details-design';
@@ -19,7 +19,7 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
   const design = useMemo(() => parseDetailsDesign(settings.textOverrides[DETAILS_DESIGN_KEY]), [settings.textOverrides]);
   const [nearViewport, setNearViewport] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
-  const [selected, setSelected] = useState<string | null>(null);
+  const [revealed, setRevealed] = useState(false);
   const [telemetry, setTelemetry] = useState<DroneTelemetry>({ state: 'overhead', altitude: 38, heading: 41 });
   const root = useRef<HTMLDivElement>(null);
   const host = useRef<HTMLDivElement>(null);
@@ -29,12 +29,7 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
   theme.current = settings.isDark;
 
   const useMapFallback = status === 'failed' || !design.enable3d;
-  const markers = [
-    ...(design.showPropertyPin ? [{ id: 'apartment', ar: t('details.scene.property'), en: t('details.scene.property') }] : []),
-    ...(design.showPins ? design.places.filter(place => place.enabled) : []),
-  ];
-  const active = markers.find(place => place.id === selected);
-  const markerLabel = (place: { ar: string; en: string }) => language === 'ar' ? place.ar : place.en;
+  const propertyLabel = language === 'ar' ? 'عقار' : 'Property';
 
   useEffect(() => {
     const region = root.current;
@@ -63,20 +58,20 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
       if (cancelled) return;
       scene.current = createNeighborhoodScene(target, pins => {
         const width = target.clientWidth;
-        for (const { id, visible, x, y } of pins) {
+        for (const { id, x, y } of pins) {
           const button = pinRefs.current.get(id);
           if (!button) continue;
-          button.hidden = !visible;
-          if (visible) {
-            const left = Math.max(30, Math.min(x, width - 30));
-            button.style.transform = `translate3d(${left}px, ${y}px, 0) translate(-50%, -50%)`;
-          }
+          button.hidden = false;
+          const left = Math.max(60, Math.min(x, width - 60));
+          const top = Math.max(80, Math.min(y, target.clientHeight - 60));
+          button.style.transform = `translate3d(${left}px, ${top}px, 0) translate(-50%, -50%)`;
         }
       }, {
         places: JSON.parse(placesJson),
         dark: theme.current,
         reducedMotion: media.matches,
-        onDroneStateChange: setTelemetry,
+        propertyEntry: true,
+        onDroneStateChange: value => setTelemetry(previous => previous.state === value.state ? previous : value),
       });
       setStatus('ready');
     }).catch(() => {
@@ -94,13 +89,10 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
 
   useEffect(() => { scene.current?.draw(); }, [design.showPins, design.showPropertyPin, language]);
 
-  const handlePinClick = (placeId: string) => {
-    if (selected === placeId) {
-      setSelected(null);
-    } else {
-      setSelected(placeId);
-      scene.current?.flyToPlace(placeId);
-    }
+  const revealMap = () => {
+    setRevealed(true);
+    scene.current?.flyToOverview();
+    host.current?.focus({ preventScroll: true });
   };
 
   return (
@@ -116,14 +108,14 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
       </div>}
       <div className={styles.stage}>
         {design.enable3d && (
-          <div className={styles.canvas} ref={host} hidden={useMapFallback} tabIndex={status === 'ready' ? 0 : undefined}
+          <div className={styles.canvas} data-revealed={revealed} ref={host} hidden={useMapFallback} tabIndex={status === 'ready' ? 0 : undefined}
             role="group" aria-label={t('details.scene.label')} aria-describedby="details-scene-caption">
             <span id="details-scene-caption" className="sr-only">{t('details.scene.illustration')}</span>
             {status === 'loading' && <p role="status" className={styles.loading}>{t('details.scene.loading')}</p>}
             {status === 'ready' && (
               <>
                 <div className={styles.hudOverlay}>
-                  <div className={styles.telemetryBadge} aria-live="polite">
+                  <div className={styles.telemetryBadge} role="status">
                     <span className={styles.telemetryDot} data-state={telemetry.state} aria-hidden="true" />
                     <span className={styles.telemetryMode}>
                       {telemetry.state === 'flying'
@@ -132,27 +124,21 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
                         ? t('details.drone.street')
                         : t('details.drone.overview')}
                     </span>
-                    <span className={styles.telemetryDivider} aria-hidden="true">·</span>
-                    <span className={styles.telemetryValue}>{telemetry.altitude}m</span>
-                    {telemetry.speed ? (
-                      <>
-                        <span className={styles.telemetryDivider} aria-hidden="true">·</span>
-                        <span className={styles.telemetryValue}>{telemetry.speed}km/h</span>
-                      </>
-                    ) : null}
-                    <span className={styles.telemetryDivider} aria-hidden="true">·</span>
-                    <span className={styles.telemetryValue}>{telemetry.heading}°</span>
                   </div>
                   <button
                     type="button"
                     className={styles.overviewButton}
-                    onClick={() => scene.current?.flyToOverview()}
+                    onClick={() => { setRevealed(true); scene.current?.flyToOverview(); }}
                     aria-label={t('details.drone.reset')}
                     title={t('details.drone.reset')}
                   >
                     <Compass className={styles.overviewIcon} aria-hidden="true" />
                     <span>{t('details.drone.reset')}</span>
                   </button>
+                </div>
+                <div className={styles.zoomControls} role="group" aria-label={language === 'ar' ? 'تكبير الخريطة' : 'Map zoom'}>
+                  <button type="button" onClick={() => scene.current?.zoom(-0.15)} aria-label={language === 'ar' ? 'تكبير' : 'Zoom in'}><Plus aria-hidden="true" /></button>
+                  <button type="button" onClick={() => scene.current?.zoom(0.15)} aria-label={language === 'ar' ? 'تصغير' : 'Zoom out'}><Minus aria-hidden="true" /></button>
                 </div>
                 <div className={styles.interactionHint} aria-hidden="true">
                   <Navigation className={styles.hintIcon} />
@@ -161,18 +147,13 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
               </>
             )}
             <div className={styles.pins}>
-              {markers.map(place => (
-                <button key={place.id} type="button" hidden
-                  ref={element => { if (element) pinRefs.current.set(place.id, element); else pinRefs.current.delete(place.id); }}
-                  className={styles.pin} data-property={place.id === 'apartment'}
-                  aria-pressed={selected === place.id} onClick={() => handlePinClick(place.id)}>
-                  {markerLabel(place)}
-                </button>
-              ))}
+              <button type="button" hidden
+                ref={element => { if (element) pinRefs.current.set('apartment', element); else pinRefs.current.delete('apartment'); }}
+                className={`${styles.pin} ${styles.propertyEntry}`} data-property="true" data-dismissed={revealed}
+                disabled={revealed} aria-hidden={revealed} onClick={revealMap}>
+                {propertyLabel}
+              </button>
             </div>
-            <span className="sr-only" role="status">
-              {active ? `${markerLabel(active)} · ${t(active.id === 'apartment' ? 'details.scene.propertyInfo' : 'details.scene.placeInfo')}` : ''}
-            </span>
           </div>
         )}
         {useMapFallback && (

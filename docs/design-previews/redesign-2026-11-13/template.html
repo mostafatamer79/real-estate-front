@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>__NAME__ | الوساطة الرقمية</title>
+  <style>__STYLE__</style>
+</head>
+<body class="__VARIANT__">
+  <header class="studio-bar">
+    <div class="studio-mark"><span class="studio-dot"></span><div><strong>__NAME__</strong><small>__DESCRIPTION__</small></div></div>
+    <div class="studio-actions">
+      <label for="page-picker">الصفحة</label><select id="page-picker" aria-label="اختر صفحة للمعاينة"></select>
+      <button id="theme" type="button" aria-pressed="false">الوضع الداكن ◐</button>
+      <button id="replay" type="button" aria-label="إعادة تشغيل الحركة">إعادة الحركة ↻</button>
+      <button id="pause" type="button" aria-pressed="false">إيقاف الحركة</button>
+    </div>
+    <nav class="studio-variants" aria-label="اتجاهات التصميم">__NAV__</nav>
+  </header>
+  <div class="prototype-frame">
+    <div class="prototype-caption"><span>معاينة تصميمية · وضعان لكل قالب</span><span id="route-path">/</span><span>المحتوى والبيانات توضيحية</span></div>
+    <div class="site">
+      <aside class="site-rail" aria-label="التنقل الجانبي">
+        <div class="rail-brand"><img src="brand.png" alt="شعار الوساطة الرقمية"><span>الوساطة<br>الرقمية</span></div>
+        <p>مساحة العمل</p>
+        <a href="#%2Fdetails">لوحة المعلومات</a><a href="#%2Foffers">العروض العقارية</a><a href="#%2Forders">الطلبات</a><a href="#%2Fservices">الخدمات</a><a href="#%2Fwallet">المحفظة</a><a href="#%2Fprofile">الملف الشخصي</a>
+        <div class="rail-bottom">استكشف الاتجاهات<br><span>2026</span></div>
+      </aside>
+      <div class="site-main">
+        <header class="site-header"><a class="site-brand" href="#%2F"><img src="brand.png" alt="شعار الوساطة الرقمية"><span>الوساطة الرقمية</span></a><nav aria-label="التنقل الرئيسي"><a href="#%2F">الرئيسية</a><a href="#%2Foffers">العروض</a><a href="#%2Fservices">الخدمات</a><a href="#%2Fabout">عن المنصة</a></nav><div class="header-end"><span>العربية</span><button type="button" class="avatar" aria-label="الحساب">م</button></div></header>
+        <main id="screen" class="screen" aria-live="polite"></main>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script id="route-data" type="application/json">__ROUTES__</script>
+  <script>__SCRIPT__</script>
+</body>
+</html>

@@ -6,10 +6,8 @@ const ts = require('typescript');
 const jsx = require('react/jsx-runtime');
 
 test('unconfigured Nafath shows its availability and cannot start identity verification', async () => {
-  let index = 0;
-  const state = [false, false, ''];
   const requests = [];
-  const react = { useState: () => [state[index++], () => {}], useRef: x => ({ current: x }), useEffect: () => {} };
+  const react = { useState: initial => [initial === null ? false : initial, () => {}], useRef: x => ({ current: x }), useEffect: () => {} };
   const imports = {
     react, 'react/jsx-runtime': jsx,
     '@/context/LanguageContext': { useLanguage: () => ({ language: 'en' }) },
@@ -26,7 +24,7 @@ test('unconfigured Nafath shows its availability and cannot start identity verif
     if (node && typeof node === 'object') { elements.push(node); visit(node.props?.children); }
   }
   visit(root);
-  const button = elements.find(x => x.type === 'Button');
+  const button = elements.find(x => x.type === 'Button' && x.props.disabled === true);
   assert.equal(button.props.disabled, true);
   assert.equal(elements.some(x => x.props?.role === 'status' && x.props.children.includes('currently unavailable')), true);
   await button.props.onClick();

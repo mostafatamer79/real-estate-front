@@ -102,7 +102,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
         }
     };
 
-    const SpecItem = ({ icon: Icon, label, value, colorClass = "text-slate-500" }: { 
+    const SpecItem = ({ icon: Icon, label, value, colorClass = "text-muted-foreground dark:text-slate-500" }: {
         icon: any, 
         label: string, 
         value: string | number | undefined,
@@ -110,12 +110,12 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
     }) => {
         if (!value && value !== 0) return null;
         return (
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 border border-slate-200/50">
-                <div className={`w-9 h-9 rounded-xl bg-card flex items-center justify-center shadow-sm ${colorClass}`}>
+            <div className="calm-panel flex items-center gap-3 p-3 rounded-2xl bg-muted/50 border border-slate-200/50">
+                <div className={`calm-icon w-9 h-9 rounded-xl bg-card flex items-center justify-center shadow-sm ${colorClass}`}>
                     <Icon className="w-5 h-5" />
                 </div>
                 <div>
-                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 leading-none mb-1">{label}</p>
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground dark:text-slate-400 leading-none mb-1">{label}</p>
                     <p className="text-sm font-bold text-slate-800 leading-none">{value}</p>
                 </div>
             </div>
@@ -124,7 +124,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-[95vw] sm:max-w-lg p-0 overflow-hidden bg-card rounded-[1rem] border-0 shadow-2xl flex flex-col max-h-[90vh]">
+            <DialogContent className="calm-overlay w-[95vw] sm:max-w-lg p-0 overflow-hidden bg-card rounded-[1rem] border-0 shadow-sm dark:shadow-2xl flex flex-col max-h-[90vh]">
                 {/* Custom Header */}
                 <DialogHeader className="sr-only">
                     <DialogTitle>{order?.propertyType || 'Order Details'}</DialogTitle>
@@ -133,21 +133,21 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="relative h-24 shrink-0 bg-slate-900 flex items-center px-4 sm:px-8">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-card/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-card/5 rounded-full -ml-12 -mb-12 blur-2xl"></div>
+                <div className="relative h-24 shrink-0 bg-card dark:bg-slate-900 flex items-center px-4 sm:px-8">
+                    <div className="calm-decoration absolute top-0 right-0 w-32 h-32 bg-muted dark:bg-card/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+                    <div className="calm-decoration absolute bottom-0 left-0 w-24 h-24 bg-muted dark:bg-card/5 rounded-full -ml-12 -mb-12 blur-2xl"></div>
                     
                     <div className="relative z-10 flex items-center justify-between w-full">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-card/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-                                <FileText className="w-6 h-6 text-white" />
+                            <div className="calm-icon w-12 h-12 bg-muted dark:bg-card/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-border dark:border-white/20">
+                                <FileText className="w-6 h-6 text-foreground dark:text-white" />
                             </div>
                             <div>
-                                <h2 className="text-white font-black text-xl tracking-tight">
+                                <h2 className="text-foreground dark:text-white font-black text-xl tracking-tight">
                                     {t('bm.offer.detailed') || 'Order Details'}
                                 </h2>
                                 {order && (
-                                    <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-0.5">
+                                    <p className="text-muted-foreground dark:text-white/60 text-xs font-bold uppercase tracking-widest mt-0.5">
                                         ID: {order.id.substring(0, 8)}
                                     </p>
                                 )}
@@ -168,7 +168,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                                 <div className="w-16 h-16 rounded-full border-4 border animate-pulse"></div>
                                 <Loader2 className="w-16 h-16 text-slate-900 animate-spin absolute top-0 left-0" />
                             </div>
-                            <p className="mt-6 text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                            <p className="mt-6 text-muted-foreground dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">
                                 {t('common.loading')}
                             </p>
                         </div>
@@ -176,25 +176,25 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                         <>
                             {/* Main Stats */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 sm:p-6 rounded-[1.25rem] bg-muted border border flex flex-col justify-center gap-1 group hover:bg-slate-900 hover:border-slate-800 transition-all duration-500">
+                                <div className="calm-panel p-3 sm:p-6 rounded-[1.25rem] bg-muted border border flex flex-col justify-center gap-1 group hover:bg-card hover:dark:bg-slate-900 hover:border-border hover:dark:border-slate-800 transition-all duration-500">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-8 h-8 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:bg-slate-800 transition-colors">
-                                            <Building className="w-4 h-4 text-slate-600 group-hover:text-slate-300" />
+                                        <div className="calm-icon w-8 h-8 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:bg-muted group-hover:dark:bg-slate-800 transition-colors">
+                                            <Building className="w-4 h-4 text-slate-600 group-hover:text-muted-foreground group-hover:dark:text-slate-300" />
                                         </div>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-500">{t('bm.offer.propertyType')}</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 group-hover:text-muted-foreground group-hover:dark:text-slate-500">{t('bm.offer.propertyType')}</span>
                                     </div>
-                                    <p className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-white transition-colors">{order.propertyType}</p>
+                                    <p className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-foreground group-hover:dark:text-white transition-colors">{order.propertyType}</p>
                                 </div>
                                 
-                                <div className="p-3 sm:p-6 rounded-[1.25rem] bg-slate-900 border border-slate-800 flex flex-col justify-center gap-1">
+                                <div className="calm-panel p-3 sm:p-6 rounded-[1.25rem] bg-card dark:bg-slate-900 border border-border dark:border-slate-800 flex flex-col justify-center gap-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-8 h-8 rounded-xl bg-card/10 flex items-center justify-center shadow-sm">
-                                            <SaudiRiyalIcon className="w-4 h-4 text-white" />
+                                        <div className="calm-icon w-8 h-8 rounded-xl bg-muted dark:bg-card/10 flex items-center justify-center shadow-sm">
+                                            <SaudiRiyalIcon className="w-4 h-4 text-foreground dark:text-white" />
                                         </div>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{t('common.price')}</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-white/40">{t('common.price')}</span>
                                     </div>
-                                    <p className="text-xl sm:text-2xl font-black text-white">
-                                        <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-5 w-5 text-white/40" className="text-xl sm:text-2xl font-black text-white" />
+                                    <p className="text-xl sm:text-2xl font-black text-foreground dark:text-white">
+                                        <SaudiRiyalAmount amount={order.price || 0} locale={language === 'ar' ? 'ar-SA' : 'en-US'} iconClassName="h-5 w-5 text-muted-foreground dark:text-white/40" className="text-xl sm:text-2xl font-black text-foreground dark:text-white" />
                                     </p>
                                 </div>
                             </div>
@@ -203,26 +203,26 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <div className="h-0.5 flex-1 bg-muted"></div>
-                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.location')}</span>
+                                    <span className="text-[10px] font-black text-muted-foreground dark:text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.location')}</span>
                                     <div className="h-0.5 flex-1 bg-muted"></div>
                                 </div>
                                 <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border">
-                                            <MapIcon className="w-4 h-4 text-slate-400" />
+                                        <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border">
+                                            <MapIcon className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{t('bm.order.city')}</p>
+                                            <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase leading-none">{t('bm.order.city')}</p>
                                             <p className="text-sm font-bold text-slate-800 mt-0.5">{order.city}</p>
                                         </div>
                                     </div>
                                     <div className="w-px h-8 bg-muted"></div>
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border">
-                                            <MapPin className="w-4 h-4 text-slate-400" />
+                                        <div className="calm-icon w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border">
+                                            <MapPin className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{t('bm.order.neighborhood')}</p>
+                                            <p className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase leading-none">{t('bm.order.neighborhood')}</p>
                                             <p className="text-sm font-bold text-slate-800 mt-0.5">{order.neighborhood}</p>
                                         </div>
                                     </div>
@@ -233,7 +233,7 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <div className="h-0.5 flex-1 bg-muted"></div>
-                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.specs')}</span>
+                                    <span className="text-[10px] font-black text-muted-foreground dark:text-slate-300 uppercase tracking-[0.2em]">{t('bm.offer.specs')}</span>
                                     <div className="h-0.5 flex-1 bg-muted"></div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -257,12 +257,12 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                             {order.additionalDetails && (
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded bg-muted flex items-center justify-center">
-                                            <MessageSquare className="w-3.5 h-3.5 text-slate-500" />
+                                        <div className="calm-icon w-6 h-6 rounded bg-muted flex items-center justify-center">
+                                            <MessageSquare className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-500" />
                                         </div>
                                         <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">{t('bm.offer.notes')}</h4>
                                     </div>
-                                    <div className="p-3 sm:p-6 rounded-[1.25rem] bg-muted border border text-sm text-slate-600 leading-relaxed italic">
+                                    <div className="calm-panel p-3 sm:p-6 rounded-[1.25rem] bg-muted border border text-sm text-slate-600 leading-relaxed italic">
                                         "{order.additionalDetails}"
                                     </div>
                                 </div>
@@ -271,14 +271,14 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                             {/* Timestamp */}
                             <div className="flex items-center justify-between pt-4">
                                 <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full border border">
-                                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase">
+                                    <Calendar className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-400" />
+                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-500 uppercase">
                                         {format(new Date(order.createdAt), "EEEE d MMMM yyyy", { locale })}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Clock className="w-3.5 h-3.5 text-slate-300" />
-                                    <span className="text-[10px] font-medium text-slate-300">
+                                    <Clock className="w-3.5 h-3.5 text-muted-foreground dark:text-slate-300" />
+                                    <span className="text-[10px] font-medium text-muted-foreground dark:text-slate-300">
                                         {format(new Date(order.createdAt), "HH:mm")}
                                     </span>
                                 </div>
@@ -292,14 +292,14 @@ export default function OrderDetailsModal({ isOpen, onClose, orderId }: OrderDet
                     <Button 
                         variant="ghost" 
                         onClick={onClose} 
-                        className="flex-1 h-14 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 hover:bg-muted transition-all"
+                        className="flex-1 h-14 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] text-muted-foreground dark:text-slate-400 hover:text-slate-900 hover:bg-muted transition-all"
                     >
                         {t('common.close')}
                     </Button>
                     
                     {order && currentUser && (
                         <Button 
-                            className="flex-[2] h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-stone-400 group transition-all" 
+                            className="flex-[2] h-14 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 group transition-all"
                             onClick={handleChat}
                             disabled={isChatLoading}
                         >

@@ -1,0 +1,47 @@
+[
+  {
+    "template": "directory",
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "template": "directory",
+    "width": 390,
+    "passed": true
+  },
+  {
+    "template": "directory",
+    "width": 320,
+    "passed": true
+  },
+  {
+    "template": "network",
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "template": "network",
+    "width": 390,
+    "passed": true
+  },
+  {
+    "template": "network",
+    "width": 320,
+    "passed": true
+  },
+  {
+    "template": "gallery",
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "template": "gallery",
+    "width": 390,
+    "passed": true
+  },
+  {
+    "template": "gallery",
+    "width": 320,
+    "passed": true
+  }
+]

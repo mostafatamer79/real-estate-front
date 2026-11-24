@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowRight,
   Building2,
@@ -10,23 +11,33 @@ import {
   CreditCard,
   Loader2,
   PackageCheck,
+  RotateCcw,
+  ShieldAlert,
   ShieldCheck,
   SlidersHorizontal,
   Wallet,
 } from "lucide-react";
 import api from "@/lib/api";
 import { useLanguage } from "@/context/LanguageContext";
-import { Button } from "@/components/ui/button";
+import { loginHref } from "@/lib/auth-navigation";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+
+import styles from "@/components/redesign/chat05/renew-subscription.module.css";
 
 type SubscriptionStatus = {
   active: boolean;
   daysLeft?: number;
   noExpiry?: boolean;
   subscription?: {
+    id?: string;
     endDate?: string;
+    startDate?: string;
     managementPackage?: { name?: string } | null;
     amount?: number;
     subscriptionType?: string;
+    status?: string;
+    notes?: string;
   } | null;
 };
 
@@ -34,74 +45,145 @@ export default function RenewSubscriptionPage() {
   const router = useRouter();
   const { language } = useLanguage();
   const isRtl = language === "ar";
+  const locale = isRtl ? "ar-SA" : "en-US";
+
   const [status, setStatus] = useState<SubscriptionStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
+  const loadStatus = useCallback(async () => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("user") : null;
     if (!stored) {
-      router.push("/login");
+      router.push(loginHref("/internal/renew-subscription"));
       return;
     }
 
-    api
-      .get("/subscriptions/status")
-      .then((res) => setStatus(res.data || null))
-      .catch(() => setStatus(null))
-      .finally(() => setLoading(false));
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const res = await api.get("/subscriptions/status");
+      setStatus(res.data || null);
+      setFetchError(false);
+    } catch (err: unknown) {
+      const errorResponse = err as { response?: { status?: number } };
+      if (errorResponse?.response?.status === 401) {
+        router.push(loginHref("/internal/renew-subscription"));
+        return;
+      }
+      setFetchError(true);
+      setStatus(null);
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
 
+  useEffect(() => {
+    loadStatus();
+  }, [loadStatus]);
+
+  const currentSub = status?.subscription;
+  const isPendingPayment =
+    !status?.active &&
+    Boolean(
+      currentSub?.id &&
+        (currentSub.status === "معلق" ||
+          currentSub.status === "في انتظار الدفع" ||
+          currentSub.status === "pending")
+    );
+
   const statusCopy = useMemo(() => {
+    if (fetchError) {
+      return {
+        title: isRtl ? "تعذر تحميل حالة الاشتراك" : "Failed to load subscription status",
+        desc: isRtl
+          ? "حدث خطأ أثناء جلب بيانات الاشتراك الحالية من الخادم. يرجى إعادة المحاولة."
+          : "An error occurred while fetching your current subscription details. Please retry.",
+        tone: "error",
+      };
+    }
     if (!status) {
       return {
         title: isRtl ? "حالة الاشتراك غير متاحة" : "Subscription status unavailable",
-        desc: isRtl ? "يمكنك اختيار باقة جديدة أو إنشاء اشتراك مخصص." : "Choose a package or create a custom subscription.",
+        desc: isRtl
+          ? "يمكنك اختيار باقة جديدة أو إنشاء اشتراك مخصص لمنشأتك."
+          : "Choose a ready package or create a custom subscription for your organization.",
         tone: "neutral",
       };
     }
     if (status.active) {
       return {
-        title: isRtl ? "اشتراكك نشط" : "Your subscription is active",
+        title: isRtl ? "اشتراكك نشط حالياً" : "Your subscription is currently active",
         desc: status.noExpiry
-          ? (isRtl ? "هذا الاشتراك غير محدود ولا يحتاج إلى تجديد." : "This subscription has no expiry date.")
-          : (isRtl ? `متبقي ${status.daysLeft ?? 0} يوم على الاشتراك الحالي.` : `${status.daysLeft ?? 0} days remaining on your current subscription.`),
+          ? isRtl
+            ? "هذا الاشتراك غير محدود ولا يتطلب تجديداً دورياً."
+            : "This subscription is unlimited and requires no scheduled renewal."
+          : isRtl
+          ? `متبقي ${status.daysLeft ?? 0} يوم على انتهاء الاشتراك الحالي.`
+          : `${status.daysLeft ?? 0} days remaining on your active subscription period.`,
         tone: "active",
+      };
+    }
+    if (isPendingPayment) {
+      return {
+        title: isRtl ? "طلب اشتراك بانتظار السداد" : "Subscription awaiting payment",
+        desc: isRtl
+          ? "لديك اشتراك تم إنشاؤه مسبقاً وبانتظار تأكيد السداد عبر المحفظة أو الدفع الإلكتروني."
+          : "You have a pending subscription order waiting for payment completion.",
+        tone: "pending",
       };
     }
     return {
       title: isRtl ? "الاشتراك غير نشط" : "Subscription inactive",
-      desc: isRtl ? "فعّل اشتراكك للعودة إلى الإدارات والميزات الداخلية." : "Activate your subscription to regain access to internal departments.",
+      desc: isRtl
+        ? "فعّل أو جدد اشتراكك لاستعادة الوصول المباشر إلى الإدارات والصلاحيات الداخلية."
+        : "Activate or renew your subscription to regain access to internal enterprise departments.",
       tone: "expired",
     };
-  }, [isRtl, status]);
+  }, [fetchError, isPendingPayment, isRtl, status]);
 
-  const currentSub = status?.subscription;
-  const locale = isRtl ? "ar-SA" : "en-US";
   const lastEndDate = currentSub?.endDate
-    ? new Date(currentSub.endDate).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })
+    ? new Date(currentSub.endDate).toLocaleDateString(locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
+
+  const lastStartDate = currentSub?.startDate
+    ? new Date(currentSub.startDate).toLocaleDateString(locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
     : null;
 
   const actionCards = [
     {
       id: "packages",
-      title: isRtl ? "اختيار باقة جاهزة" : "Choose Package",
-      desc: isRtl ? "باقات جاهزة بسعر شهري أو سنوي حسب الإدارات المحددة من الإدارة." : "Ready packages with monthly or yearly pricing.",
+      title: isRtl ? "اختيار باقة جاهزة" : "Choose Ready Package",
+      desc: isRtl
+        ? "باقات إدارية متكاملة تتضمن مجموعة جاهزة من الإدارات بأسعار شهرية وسنوية مخفضة."
+        : "Pre-configured department bundles with discounted monthly and yearly rates.",
       icon: PackageCheck,
       action: () => router.push("/subscriptions/new?mode=packages"),
       cta: isRtl ? "عرض الباقات" : "View packages",
     },
     {
       id: "custom",
-      title: isRtl ? "اشتراك مخصص" : "Custom Subscription",
-      desc: isRtl ? "اختر الإدارات التي تحتاجها وعدد موظفي إدارة الموظفين." : "Choose departments and employee seats.",
+      title: isRtl ? "تخصيص الإدارات" : "Custom Departments",
+      desc: isRtl
+        ? "حدد الإدارات التي تحتاجها فقط لمنشأتك مع ضبط مقاعد موظفي إدارة الموارد البشرية."
+        : "Pick only the specific departments you need with tailored HR employee seats.",
       icon: SlidersHorizontal,
       action: () => router.push("/subscriptions/new?mode=custom"),
-      cta: isRtl ? "إنشاء مخصص" : "Create custom",
+      cta: isRtl ? "إنشاء اشتراك مخصص" : "Create custom",
     },
     {
       id: "wallet",
       title: isRtl ? "المحفظة والفواتير" : "Wallet & Invoices",
-      desc: isRtl ? "راجع الفواتير وادفع الاشتراكات المعلقة من المحفظة." : "Review invoices and pay pending subscriptions.",
+      desc: isRtl
+        ? "راجع سجل الفواتير والمبالغ المستحقة وادفع الاشتراكات المعلقة عبر المحفظة."
+        : "Review billing ledger, invoices, and settle pending subscriptions from wallet.",
       icon: Wallet,
       action: () => router.push("/wallet"),
       cta: isRtl ? "فتح المحفظة" : "Open wallet",
@@ -110,108 +192,218 @@ export default function RenewSubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[55vh] bg-muted flex items-center justify-center" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="flex items-center gap-3 rounded-3xl border border bg-card px-6 py-5 text-sm font-black text-slate-500 shadow-sm">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          {isRtl ? "جاري تحميل بيانات الاشتراك" : "Loading subscription details"}
+      <div className={styles.renewPage} dir={isRtl ? "rtl" : "ltr"}>
+        <MobileAppHeader theme="light" title={isRtl ? "تجديد الاشتراك" : "Renew Subscription"} />
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingPanel} role="status">
+            <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+            <span>{isRtl ? "جاري تحميل بيانات الاشتراك..." : "Loading subscription details..."}</span>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted px-4 py-6 sm:px-6 lg:px-8" dir={isRtl ? "rtl" : "ltr"}>
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button
+    <div className={styles.renewPage} dir={isRtl ? "rtl" : "ltr"}>
+      <MobileAppHeader theme="light" title={isRtl ? "تجديد الاشتراك" : "Renew Subscription"} />
+
+      <div className={styles.ambientBackground} aria-hidden="true">
+        <div className={styles.ambientGlow} />
+      </div>
+
+      <main className={styles.shell}>
+        {/* Top bar with back affordance and category tag */}
+        <div className={styles.topBar}>
+          <button
             type="button"
-            variant="outline"
             onClick={() => router.push("/internal")}
-            className="h-11 rounded-2xl border bg-card px-4 text-xs font-black text-slate-600 hover:bg-muted"
+            className={styles.backButton}
+            aria-label={isRtl ? "العودة للإدارات الداخلية" : "Back to internal departments"}
           >
-            <ArrowRight className="h-4 w-4" />
-            {isRtl ? "العودة للإدارات" : "Back to internal"}
-          </Button>
-          <div className="inline-flex h-10 items-center gap-2 rounded-2xl bg-card px-4 text-[11px] font-black uppercase tracking-widest text-slate-400 shadow-sm ring-1 ring-slate-100">
-            <CreditCard className="h-4 w-4" />
-            {isRtl ? "إدارة الاشتراك" : "Subscription"}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <span>{isRtl ? "العودة للإدارات" : "Back to internal"}</span>
+          </button>
+          <div className={styles.categoryBadge} aria-label={isRtl ? "حالة الاشتراك" : "Subscription status"}>
+            <CreditCard className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{isRtl ? "إدارة الاشتراك" : "Subscription Management"}</span>
           </div>
         </div>
 
-        <section className="relative overflow-hidden rounded-[1.25rem] border border bg-card p-6 shadow-sm sm:p-4 sm:p-8">
-          <div className="absolute -top-28 -left-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
-          <div className="absolute -bottom-28 -right-24 h-64 w-64 rounded-full bg-slate-950/5 blur-3xl" />
-          <div className="relative grid gap-4 md:gap-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
-            <div className="space-y-5">
-              <div className="inline-flex h-9 items-center gap-2 rounded-full bg-slate-950 px-4 text-[11px] font-black text-white">
-                <ShieldCheck className="h-4 w-4" />
-                {isRtl ? "تجديد الاشتراك" : "Renew Subscription"}
-              </div>
-              <div className="space-y-3">
-                <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-2xl sm:text-4xl">
-                  {statusCopy.title}
-                </h1>
-                <p className="w-[95vw] sm:max-w-2xl text-sm font-bold leading-7 text-slate-500">
-                  {statusCopy.desc}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Button
+        {/* Error / Retry Banner */}
+        {fetchError && (
+          <section className={styles.errorBanner} role="alert">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" aria-hidden="true" />
+              <h2 className={styles.errorTitle}>{statusCopy.title}</h2>
+            </div>
+            <p className={styles.errorDesc}>{statusCopy.desc}</p>
+            <button
+              type="button"
+              onClick={loadStatus}
+              className={styles.retryButton}
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              <span>{isRtl ? "إعادة المحاولة" : "Retry"}</span>
+            </button>
+          </section>
+        )}
+
+        {/* Hero Section with Status & Real Data */}
+        <section className={styles.heroSection} aria-label={isRtl ? "تفاصيل حالة الاشتراك الحالي" : "Subscription status overview"}>
+          <div className="flex items-center justify-between gap-4">
+            <div className={styles.heroEyebrow}>
+            <span className={styles.heroEyebrowRule} aria-hidden="true" />
+            <span>{isRtl ? "الاشتراكات والتراخيص" : "Subscriptions & Licensing"}</span>
+            </div>
+            <div className="hidden sm:block w-36 h-20 relative shrink-0 opacity-80" aria-hidden="true">
+              <Image
+                src="/artworks/chat05-subscriptions-arch.svg"
+                alt=""
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          <div className={styles.heroGrid}>
+            <div className={styles.heroContent}>
+              <h1 className={styles.heroTitle}>{statusCopy.title}</h1>
+              <p className={styles.heroDescription}>{statusCopy.desc}</p>
+
+              {/* Action Buttons */}
+              <div className={styles.heroActions}>
+                {isPendingPayment && currentSub?.id ? (
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/wallet?subscription=${currentSub.id}`)}
+                    className={styles.primaryAction}
+                  >
+                    <CreditCard className="h-4 w-4" aria-hidden="true" />
+                    <span>{isRtl ? "سداد الاشتراك الآن" : "Pay Subscription Now"}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => router.push("/subscriptions/new")}
+                    className={styles.primaryAction}
+                  >
+                    <PackageCheck className="h-4 w-4" aria-hidden="true" />
+                    <span>{status?.active ? (isRtl ? "ترقية أو تغيير الاشتراك" : "Upgrade / Change") : (isRtl ? "اختيار اشتراك جديد" : "Select Subscription")}</span>
+                  </button>
+                )}
+
+                <button
                   type="button"
-                  onClick={() => router.push("/subscriptions/new")}
-                  className="h-12 rounded-2xl bg-slate-950 px-6 text-xs font-black text-white hover:bg-slate-800"
-                >
-                  <PackageCheck className="h-4 w-4" />
-                  {isRtl ? "اختر اشتراك" : "Choose subscription"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
                   onClick={() => router.push("/wallet")}
-                  className="h-12 rounded-2xl border bg-card px-6 text-xs font-black text-slate-700 hover:bg-muted"
+                  className={styles.secondaryAction}
                 >
-                  <Wallet className="h-4 w-4" />
-                  {isRtl ? "المحفظة" : "Wallet"}
-                </Button>
+                  <Wallet className="h-4 w-4" aria-hidden="true" />
+                  <span>{isRtl ? "المحفظة والفواتير" : "Wallet & Invoices"}</span>
+                </button>
               </div>
             </div>
 
-            <div className="rounded-[1.25rem] border border bg-muted p-5">
-              <div className="flex items-center justify-between gap-4">
+            {/* Real Data Status Card */}
+            <div className={styles.statusCard}>
+              <div className={styles.statusCardHeader}>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    {isRtl ? "الحالة الحالية" : "Current Status"}
-                  </p>
-                  <p className="mt-2 text-xl font-black text-slate-950">
-                    {status?.active ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}
-                  </p>
+                  <span className={styles.statusCardTitle}>{isRtl ? "الحالة الحالية" : "Current Status"}</span>
+                  <div className={styles.statusCardState}>
+                    {status?.active
+                      ? isRtl
+                        ? "نشط ومفعل"
+                        : "Active"
+                      : isPendingPayment
+                      ? isRtl
+                        ? "في انتظار الدفع"
+                        : "Pending Payment"
+                      : isRtl
+                      ? "غير نشط"
+                      : "Inactive"}
+                  </div>
                 </div>
-                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
-                  status?.active ? "bg-emerald-100 text-emerald-700" : "bg-muted text-slate-700"
-                }`}>
-                  {status?.active ? <CheckCircle2 className="h-7 w-7" /> : <Clock className="h-7 w-7" />}
+
+                <div
+                  className={`${styles.statusIcon} ${
+                    status?.active
+                      ? styles.statusIconActive
+                      : isPendingPayment
+                      ? styles.statusIconPending
+                      : styles.statusIconInactive
+                  }`}
+                  aria-hidden="true"
+                >
+                  {status?.active ? (
+                    <CheckCircle2 className="h-7 w-7" />
+                  ) : isPendingPayment ? (
+                    <Clock className="h-7 w-7" />
+                  ) : (
+                    <ShieldCheck className="h-7 w-7" />
+                  )}
                 </div>
               </div>
 
-              <div className="mt-5 space-y-3 rounded-2xl bg-card p-4 text-sm font-bold text-slate-600 ring-1 ring-slate-100">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-slate-400">{isRtl ? "الباقة" : "Package"}</span>
-                  <span className="text-slate-900">{currentSub?.managementPackage?.name || (isRtl ? "غير محدد" : "Not set")}</span>
+              {/* Status Details List with Real authoritative values */}
+              <div className={styles.statusDetailsList}>
+                <div className={styles.statusDetailRow}>
+                  <span className={styles.statusDetailLabel}>{isRtl ? "الباقة / النمط" : "Package / Plan"}</span>
+                  <span className={styles.statusDetailValue}>
+                    {currentSub?.managementPackage?.name ||
+                      currentSub?.notes ||
+                      (status?.active ? (isRtl ? "اشتراك نشط" : "Active Subscription") : isRtl ? "غير محدد" : "Not set")}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-slate-400">{isRtl ? "النوع" : "Type"}</span>
-                  <span className="text-slate-900">{currentSub?.subscriptionType || "-"}</span>
+
+                <div className={styles.statusDetailRow}>
+                  <span className={styles.statusDetailLabel}>{isRtl ? "نوع الفاتورة" : "Billing Period"}</span>
+                  <span className={styles.statusDetailValue}>{currentSub?.subscriptionType || "-"}</span>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-slate-400">{isRtl ? "تاريخ الانتهاء" : "End Date"}</span>
-                  <span className="text-slate-900">{status?.noExpiry ? (isRtl ? "غير محدود" : "No expiry") : lastEndDate || "-"}</span>
+
+                <div className={styles.statusDetailRow}>
+                  <span className={styles.statusDetailLabel}>{isRtl ? "قيمة الاشتراك" : "Amount"}</span>
+                  <span className={styles.statusDetailValue}>
+                    {currentSub?.amount !== undefined && currentSub?.amount !== null ? (
+                      <SaudiRiyalAmount amount={Number(currentSub.amount)} locale={locale} />
+                    ) : (
+                      "-"
+                    )}
+                  </span>
                 </div>
+
+                {lastStartDate && (
+                  <div className={styles.statusDetailRow}>
+                    <span className={styles.statusDetailLabel}>{isRtl ? "تاريخ البداية" : "Start Date"}</span>
+                    <span className={styles.statusDetailValue}>{lastStartDate}</span>
+                  </div>
+                )}
+
+                <div className={styles.statusDetailRow}>
+                  <span className={styles.statusDetailLabel}>{isRtl ? "تاريخ الانتهاء" : "Expiry Date"}</span>
+                  <span className={styles.statusDetailValue}>
+                    {status?.noExpiry
+                      ? isRtl
+                        ? "غير محدود"
+                        : "No expiry"
+                      : lastEndDate || (isRtl ? "غير محدد" : "Not set")}
+                  </span>
+                </div>
+
+                {status?.active && !status?.noExpiry && status?.daysLeft !== undefined && (
+                  <div className={styles.statusDetailRow}>
+                    <span className={styles.statusDetailLabel}>{isRtl ? "الأيام المتبقية" : "Days Remaining"}</span>
+                    <span className={styles.statusDetailValue}>
+                      {status.daysLeft} {isRtl ? "يوم" : "days"}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {/* Action Navigation Cards */}
+        <section className={styles.cardsGrid} aria-label={isRtl ? "خيارات تجديد وتعديل الاشتراك" : "Renewal and subscription options"}>
           {actionCards.map((card) => {
             const Icon = card.icon;
             return (
@@ -219,47 +411,48 @@ export default function RenewSubscriptionPage() {
                 key={card.id}
                 type="button"
                 onClick={card.action}
-                className="group rounded-[1.25rem] border border bg-card p-5 text-start shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className={styles.actionCard}
               >
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-slate-900 ring-1 ring-slate-100 transition-colors group-hover:bg-slate-950 group-hover:text-white">
+                <div className={styles.actionCardHeader}>
+                  <div className={styles.actionCardIcon} aria-hidden="true">
                     <Icon className="h-6 w-6" />
                   </div>
-                  <span className="text-[11px] font-black text-slate-400">{card.cta}</span>
+                  <span className={styles.actionCardCta}>{card.cta}</span>
                 </div>
-                <h2 className="text-base font-black text-slate-950">{card.title}</h2>
-                <p className="mt-2 text-xs font-bold leading-6 text-slate-500">{card.desc}</p>
+                <h2 className={styles.actionCardTitle}>{card.title}</h2>
+                <p className={styles.actionCardDesc}>{card.desc}</p>
               </button>
             );
           })}
         </section>
 
-        <section className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-muted text-slate-800 ring-1 ring-slate-100">
-                <Building2 className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-slate-950">
-                  {isRtl ? "تحتاج معاينة الإدارات قبل الاشتراك؟" : "Need to preview departments first?"}
-                </h3>
-                <p className="mt-1 text-xs font-bold text-slate-400">
-                  {isRtl ? "يمكنك مشاهدة الأقسام المتاحة والميزات من صفحة الاشتراكات." : "You can view departments and features from the subscription page."}
-                </p>
-              </div>
+        {/* Department Preview Quick Banner */}
+        <section className={styles.previewBanner}>
+          <div className={styles.previewBannerInfo}>
+            <div className={styles.previewBannerIcon} aria-hidden="true">
+              <Building2 className="h-5 w-5" />
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/subscriptions/new")}
-              className="h-11 rounded-2xl border bg-card px-5 text-xs font-black text-slate-700 hover:bg-muted"
-            >
-              {isRtl ? "فتح صفحة الاشتراكات" : "Open subscriptions"}
-            </Button>
+            <div>
+              <h3 className={styles.previewBannerTitle}>
+                {isRtl ? "ترغب في معاينة تفاصيل الإدارات والخصائص قبل التجديد؟" : "Want to preview departments before renewing?"}
+              </h3>
+              <p className={styles.previewBannerSub}>
+                {isRtl
+                  ? "يمكنك استعراض كافة الإدارات (العقارات، العروض، الطلبات، التسويق، الشؤون القانونية، المالية، والموظفين) وخصائصها مباشرة."
+                  : "Explore all departments and features in detail from the subscription selection page."}
+              </p>
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => router.push("/subscriptions/new")}
+            className={styles.secondaryAction}
+          >
+            {isRtl ? "فتح صفحة الاشتراكات" : "Open Subscriptions Page"}
+          </button>
         </section>
-      </div>
+      </main>
     </div>
   );
 }

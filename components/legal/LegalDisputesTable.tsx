@@ -45,7 +45,7 @@ export function LegalDisputesTable({
   return (
     <div className="space-y-6">
       {/* Header & Search */}
-      <div className="bg-card p-3 sm:p-6 rounded-2xl border border shadow-sm">
+      <div className="calm-panel bg-card p-3 sm:p-6 rounded-2xl border border shadow-sm">
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
             <Search className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
@@ -70,7 +70,7 @@ export function LegalDisputesTable({
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-2xl border border overflow-hidden shadow-sm">
+      <div className="calm-panel bg-card rounded-2xl border border overflow-hidden shadow-sm">
         {loading ? (
           <div className="p-4 sm:p-8 space-y-4">
             {Array(5).fill(0).map((_, index) => (
@@ -79,7 +79,7 @@ export function LegalDisputesTable({
           </div>
         ) : filteredDisputes.length === 0 ? (
           <div className="text-center py-20 flex flex-col items-center">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+            <div className="calm-icon w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <AlertCircle className="w-8 h-8 text-gray-300" />
             </div>
             <p className="text-gray-500 text-lg mb-4">{t('bm.list.empty')}</p>

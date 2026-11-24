@@ -1,0 +1,50 @@
+[
+  {
+    "route": "/",
+    "width": 1440,
+    "url": "/",
+    "overflow": false,
+    "content": 808,
+    "errors": []
+  },
+  {
+    "route": "/login",
+    "width": 1440,
+    "url": "/login",
+    "overflow": false,
+    "content": 213,
+    "errors": []
+  },
+  {
+    "route": "/verify-otp",
+    "width": 1440,
+    "url": "/login",
+    "overflow": false,
+    "content": 213,
+    "errors": []
+  },
+  {
+    "route": "/",
+    "width": 390,
+    "url": "/",
+    "overflow": false,
+    "content": 808,
+    "errors": []
+  },
+  {
+    "route": "/login",
+    "width": 390,
+    "url": "/login",
+    "overflow": false,
+    "content": 213,
+    "errors": []
+  },
+  {
+    "route": "/verify-otp",
+    "width": 390,
+    "url": "/login",
+    "overflow": false,
+    "content": 213,
+    "errors": []
+  }
+]

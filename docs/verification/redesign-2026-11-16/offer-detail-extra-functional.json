@@ -1,0 +1,42 @@
+[
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "chat error and retry",
+      "listing load error and retry",
+      "proxy 503 stays open, retry succeeds with original visit data",
+      "guest login return target",
+      "no raw translation keys",
+      "gallery next and thumbnails",
+      "fullscreen navigation and Escape",
+      "share and report dialogs",
+      "purchase failure remains open then retry succeeds",
+      "owner delete cancel causes no DELETE",
+      "owner edit link renders editor",
+      "no overflow or page errors"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "chat error and retry",
+      "listing load error and retry",
+      "proxy 503 stays open, retry succeeds with original visit data",
+      "guest login return target",
+      "no raw translation keys",
+      "gallery next and thumbnails",
+      "fullscreen navigation and Escape",
+      "share and report dialogs",
+      "purchase failure remains open then retry succeeds",
+      "owner delete cancel causes no DELETE",
+      "owner edit link renders editor",
+      "no overflow or page errors"
+    ]
+  }
+]

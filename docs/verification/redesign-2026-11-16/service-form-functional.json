@@ -1,0 +1,154 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "required validation blocks request",
+      "real fields editable",
+      "failure preserves input",
+      "expected payload and numeric quantity",
+      "success wallet navigation",
+      "soon/disabled category blocks direct form",
+      "closed section blocks direct form",
+      "soon legal subcategory blocks direct form",
+      "invalid legal category safe return",
+      "no overflow",
+      "no page exceptions"
+    ]
+  }
+]

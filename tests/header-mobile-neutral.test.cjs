@@ -9,8 +9,8 @@ const header = fs.readFileSync(
 );
 
 test('mobile header uses the computer header neutral color treatment', () => {
-  assert.match(header, /max-md:bg-slate-950/);
-  assert.match(header, /md:hidden absolute top-16 left-0 right-0 bg-slate-950/);
+  assert.match(header, /max-md:bg-background max-md:dark:bg-slate-950/);
+  assert.match(header, /md:hidden absolute top-16 left-0 right-0 bg-background\/95 dark:bg-slate-950\/95/);
   assert.doesNotMatch(header, /text-emerald-400 text-base sm:text-lg/);
   assert.doesNotMatch(header, /text-blue-400 text-base sm:text-lg/);
   assert.doesNotMatch(header, /text-red-400 text-base sm:text-lg/);

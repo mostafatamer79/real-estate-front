@@ -1,5 +1,6 @@
 "use client";
 
+import { getLicenseState, LICENSE_LABELS } from "@/lib/license-state";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -56,10 +57,15 @@ export default function AdminUserDetailsPage() {
   });
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
+  const [licenseReviewNote, setLicenseReviewNote] = useState("");
 
 
   const reviewLicense = async (status: "verified" | "rejected") => {
     if (!user) return;
+    if (status === "rejected" && !licenseReviewNote.trim()) {
+      toast.error(isRtl ? "اكتب سبب رفض الرخصة لإشعار المستخدم به" : "Enter the license rejection reason to notify the user");
+      return;
+    }
     const ok = await confirmDialog({
       title: status === "verified" ? (isRtl ? "اعتماد الرخصة؟" : "Approve this license?") : (isRtl ? "رفض الرخصة؟" : "Reject this license?"),
       description: status === "verified"
@@ -72,7 +78,8 @@ export default function AdminUserDetailsPage() {
     if (!ok) return;
     setSaving(true);
     try {
-      await api.post(`/user/${user.id}/license-review`, { status });
+      await api.post(`/user/${user.id}/license-review`, { status, reviewNote: licenseReviewNote.trim() });
+      setLicenseReviewNote("");
       toast.success(status === "verified" ? (isRtl ? "تم اعتماد الرخصة" : "License approved") : (isRtl ? "تم رفض الرخصة" : "License rejected"));
       await loadUser();
     } catch {
@@ -473,7 +480,7 @@ export default function AdminUserDetailsPage() {
 
   if (!user) {
     return (
-      <div className="rounded-2xl border border bg-card p-10 text-center" dir={isRtl ? "rtl" : "ltr"}>
+      <div className="calm-panel rounded-2xl border border bg-card p-10 text-center" dir={isRtl ? "rtl" : "ltr"}>
         <p className="font-black text-slate-950">{isRtl ? "المستخدم غير موجود" : "User not found"}</p>
         <Link href="/admin/users" className="mt-4 inline-flex text-sm font-black text-slate-950 underline">
           {isRtl ? "العودة للمستخدمين" : "Back to users"}
@@ -486,12 +493,12 @@ export default function AdminUserDetailsPage() {
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
-          <Link href="/admin/users" className="inline-flex items-center gap-2 text-xs font-black text-slate-400 hover:text-slate-950">
+          <Link href="/admin/users" className="inline-flex items-center gap-2 text-xs font-black text-muted-foreground dark:text-slate-400 hover:text-slate-950">
             <ArrowRight className="h-4 w-4" />
             {isRtl ? "العودة للمستخدمين" : "Back to users"}
           </Link>
           <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-950">{user.firstName} {user.lastName}</h1>
-          <p className="text-xs font-bold text-slate-400">{user.email || user.phone || user.id}</p>
+          <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{user.email || user.phone || user.id}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -500,7 +507,7 @@ export default function AdminUserDetailsPage() {
             onClick={() => updateUserActive(user.isActive === false)}
             className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest disabled:opacity-60 ${
               user.isActive === false
-                ? "bg-slate-950 text-white"
+                ? "bg-background dark:bg-slate-950 text-foreground dark:text-white"
                 : "border border bg-card text-slate-700"
             }`}
           >
@@ -516,18 +523,18 @@ export default function AdminUserDetailsPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {userCards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border bg-card p-5 shadow-sm">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-950">
+          <div key={card.label} className="calm-panel rounded-2xl border border bg-card p-5 shadow-sm">
+            <div className="calm-icon mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-slate-950">
               <card.icon className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{card.label}</p>
             <p className="mt-1 text-xl font-black text-slate-950">{card.value}</p>
           </div>
         ))}
       </section>
 
       <section className="grid grid-cols-1 gap-3 md:gap-6 xl:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <UserIcon className="h-5 w-5" />
             {isRtl ? "بيانات الحساب" : "Account details"}
@@ -542,30 +549,30 @@ export default function AdminUserDetailsPage() {
               [isRtl ? "تاريخ الإنشاء" : "Created", formatDate(user.createAt, locale)],
             ].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between gap-4 border-b border pb-3">
-                <span className="font-black text-slate-400">{label}</span>
+                <span className="font-black text-muted-foreground dark:text-slate-400">{label}</span>
                 <span className="font-bold text-slate-950">{value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <CreditCard className="h-5 w-5" />
             {isRtl ? "الاشتراك" : "Subscription"}
           </h2>
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between border-b border pb-3">
-              <span className="font-black text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
+              <span className="font-black text-muted-foreground dark:text-slate-400">{isRtl ? "الحالة" : "Status"}</span>
               <span className="font-bold text-slate-950">{subscriptionStatus?.active ? (isRtl ? "نشط" : "Active") : (isRtl ? "غير نشط" : "Inactive")}</span>
             </div>
             <div className="flex items-center justify-between border-b border pb-3">
-              <span className="font-black text-slate-400">{isRtl ? "ينتهي في" : "Ends at"}</span>
+              <span className="font-black text-muted-foreground dark:text-slate-400">{isRtl ? "ينتهي في" : "Ends at"}</span>
               <span className="font-bold text-slate-950">{currentSubscription?.noExpiry ? (isRtl ? "غير محدود" : "No expiry") : formatDate(currentSubscription?.endDate, locale)}</span>
             </div>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            <button disabled={saving} onClick={extendSubscription} className="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white">
+            <button disabled={saving} onClick={extendSubscription} className="inline-flex h-10 items-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
               <RefreshCw className="h-4 w-4" />
               {isRtl ? "تمديد" : "Extend"}
             </button>
@@ -580,7 +587,7 @@ export default function AdminUserDetailsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-5 flex items-center gap-2 text-lg font-black text-slate-950">
             <Shield className="h-5 w-5" />
             {isRtl ? "نطاق العمل" : "Scope"}
@@ -593,7 +600,7 @@ export default function AdminUserDetailsPage() {
               [isRtl ? "المحادثات" : "Chats", overview?.stats?.chats || 0],
             ].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between border-b border pb-3">
-                <span className="font-black text-slate-400">{label}</span>
+                <span className="font-black text-muted-foreground dark:text-slate-400">{label}</span>
                 <span className="font-black text-slate-950">{Number(value || 0).toLocaleString(locale)}</span>
               </div>
             ))}
@@ -602,32 +609,34 @@ export default function AdminUserDetailsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-3 md:gap-6 xl:grid-cols-1 md:grid-cols-2">
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-card shadow-sm md:col-span-2">
-          <div className="border-b border-slate-100 bg-gradient-to-l from-slate-950 to-slate-800 px-5 py-5 text-white sm:px-6">
+        <div className="calm-panel overflow-hidden rounded-3xl border border-slate-200 bg-card shadow-sm md:col-span-2">
+          <div className="border-b border-slate-100 bg-gradient-to-l from-background dark:from-slate-950 to-muted dark:to-slate-800 px-5 py-5 text-foreground dark:text-white sm:px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div><div className="mb-2 flex items-center gap-2 text-xs font-bold text-slate-300"><Shield className="h-4 w-4" />{isRtl ? "مراجعة وثائق المستخدم" : "User document review"}</div><h2 className="text-xl font-black">{isRtl ? "رخصة المستخدم والتحقق" : "User license & verification"}</h2><p className="mt-1 text-xs font-medium text-slate-300">{isRtl ? "راجع المستند واعتمد الحساب عند استيفاء المتطلبات." : "Review the document and approve the account when requirements are met."}</p></div>
-              <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${user?.agentVerificationStatus === "verified" || user?.isVerified ? "bg-emerald-400/15 text-emerald-300" : user?.agentVerificationStatus === "rejected" ? "bg-red-400/15 text-red-300" : "bg-amber-400/15 text-amber-200"}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{user?.agentVerificationStatus === "verified" || user?.isVerified ? (isRtl ? "موثق" : "Verified") : user?.agentVerificationStatus === "rejected" ? (isRtl ? "مرفوض" : "Rejected") : (isRtl ? "بانتظار المراجعة" : "Pending review")}</span>
+              <div><div className="mb-2 flex items-center gap-2 text-xs font-bold text-muted-foreground dark:text-slate-300"><Shield className="h-4 w-4" />{isRtl ? "مراجعة وثائق المستخدم" : "User document review"}</div><h2 className="text-xl font-black">{isRtl ? "رخصة المستخدم والتحقق" : "User license & verification"}</h2><p className="mt-1 text-xs font-medium text-muted-foreground dark:text-slate-300">{isRtl ? "راجع المستند واعتمد الحساب عند استيفاء المتطلبات." : "Review the document and approve the account when requirements are met."}</p></div>
+              <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${getLicenseState(user || {}) === "verified" ? "bg-emerald-400/15 text-emerald-300" : user?.agentVerificationStatus === "rejected" ? "bg-red-400/15 text-red-300" : "bg-amber-400/15 text-amber-200"}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{LICENSE_LABELS[getLicenseState(user || {})][isRtl ? "ar" : "en"]}</span>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+            <div className="calm-panel rounded-2xl border border-slate-200 bg-slate-50 p-3">
               {user?.licenseDocument ? <a href={user.licenseDocument} target="_blank" rel="noreferrer" className="group relative block overflow-hidden rounded-xl bg-white">
-                {user.licenseDocument.toLowerCase().endsWith('.pdf') ? <div className="flex h-52 flex-col items-center justify-center gap-3 text-slate-500"><FileText className="h-12 w-12" /><span className="text-sm font-bold">PDF</span></div> : <img src={user.licenseDocument} alt="License" className="h-52 w-full object-contain transition duration-300 group-hover:scale-[1.02]" />}
-                <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/85 px-4 py-2 text-xs font-bold text-white">{isRtl ? "فتح بالحجم الكامل" : "Open full size"}</span>
-              </a> : <div className="flex h-52 flex-col items-center justify-center gap-3 text-center text-slate-400"><FileText className="h-10 w-10" /><p className="text-sm font-bold">{isRtl ? "لم يرفق المستخدم صورة الرخصة بعد" : "No license has been uploaded yet"}</p></div>}
+                {user.licenseDocument.toLowerCase().endsWith('.pdf') ? <div className="flex h-52 flex-col items-center justify-center gap-3 text-muted-foreground dark:text-slate-500"><FileText className="h-12 w-12" /><span className="text-sm font-bold">PDF</span></div> : <img src={user.licenseDocument} alt="License" className="h-52 w-full object-contain transition duration-300 group-hover:scale-[1.02]" />}
+                <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-background/85 dark:bg-slate-950/85 px-4 py-2 text-xs font-bold text-foreground dark:text-white">{isRtl ? "فتح بالحجم الكامل" : "Open full size"}</span>
+              </a> : <div className="flex h-52 flex-col items-center justify-center gap-3 text-center text-muted-foreground dark:text-slate-400"><FileText className="h-10 w-10" /><p className="text-sm font-bold">{isRtl ? "لم يرفق المستخدم صورة الرخصة بعد" : "No license has been uploaded yet"}</p></div>}
             </div>
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs">
-                <div><p className="text-slate-400">{isRtl ? "رقم الترخيص" : "License number"}</p><p className="mt-1 font-black text-slate-800">{user?.falLicenseNumber || user?.agentLicenseNumber || user?.lawLicenseNumber || "—"}</p></div>
-                <div><p className="text-slate-400">{isRtl ? "النوع المطلوب" : "Requested type"}</p><p className="mt-1 font-black text-slate-800">{user?.requestedRole || user?.role || "—"}</p></div>
+              <div className="calm-panel grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs">
+                <div><p className="text-muted-foreground dark:text-slate-400">{isRtl ? "رقم الترخيص" : "License number"}</p><p className="mt-1 font-black text-slate-800">{user?.falLicenseNumber || user?.agentLicenseNumber || user?.lawLicenseNumber || "—"}</p></div>
+                <div><p className="text-muted-foreground dark:text-slate-400">{isRtl ? "النوع المطلوب" : "Requested type"}</p><p className="mt-1 font-black text-slate-800">{user?.requestedRole || user?.role || "—"}</p></div>
               </div>
-              <p className="text-xs font-bold leading-5 text-slate-500">{isRtl ? "يمكنك فتح المستند لمراجعته ثم اختيار الإجراء المناسب." : "Open the document to review it, then choose the appropriate action."}</p>
-              <button disabled={saving || !user?.licenseDocument || !user?.requestedRole} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
-              <button disabled={saving || !user?.licenseDocument || !user?.requestedRole} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>
+              <p className="text-xs font-bold leading-5 text-muted-foreground dark:text-slate-500">{isRtl ? "يمكنك فتح المستند لمراجعته ثم اختيار الإجراء المناسب." : "Open the document to review it, then choose the appropriate action."}</p>
+              <label htmlFor="license-review-note" className="block text-sm font-bold text-foreground">{isRtl ? "سبب القرار (مطلوب عند الرفض)" : "Review reason (required for rejection)"}</label>
+              <textarea id="license-review-note" maxLength={2000} value={licenseReviewNote} onChange={event => setLicenseReviewNote(event.target.value)} className="min-h-24 w-full rounded-xl border border-border bg-background p-3 text-sm text-foreground" />
+              <button disabled={saving || !user?.licenseDocument || !["agent", "broker"].includes(user?.requestedRole || user?.role)} onClick={() => reviewLicense("verified")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"><CheckCircle className="h-4 w-4" />{isRtl ? "اعتماد المستخدم" : "Approve user"}</button>
+              <button disabled={saving || !user?.licenseDocument || !["agent", "broker"].includes(user?.requestedRole || user?.role)} onClick={() => reviewLicense("rejected")} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"><Ban className="h-4 w-4" />{isRtl ? "رفض الرخصة" : "Reject license"}</button>
             </div>
           </div>
         </div>
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <Layers3 className="h-5 w-5" />
@@ -636,13 +645,13 @@ export default function AdminUserDetailsPage() {
           </div>
           <div className="space-y-5">
             <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "العروض المنشأة" : "Created offers"}</p>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "العروض المنشأة" : "Created offers"}</p>
               <div className="divide-y divide-slate-100">
                 {offers.slice(0, 6).map((offer) => (
                   <div key={offer.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
                     <div>
                       <p className="font-black text-slate-900">{offer.propertyType || offer.mainCategory || offer.id}</p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">{offer.city || "—"} · {offer.status || "draft"}</p>
+                      <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{offer.city || "—"} · {offer.status || "draft"}</p>
                     </div>
                     <Link href={`/offers/${offer.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
@@ -650,18 +659,18 @@ export default function AdminUserDetailsPage() {
                     </Link>
                   </div>
                 ))}
-                {!offers.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد عروض" : "No offers"}</div>}
+                {!offers.length && <div className="py-8 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد عروض" : "No offers"}</div>}
               </div>
             </div>
 
             <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "طلبات الخدمة" : "Service requests"}</p>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "طلبات الخدمة" : "Service requests"}</p>
               <div className="divide-y divide-slate-100">
                 {serviceRequests.slice(0, 6).map((request) => (
                   <div key={request.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
                     <div>
                       <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">{request.status || "pending"} · {formatDate(request.createdAt, locale)}</p>
+                      <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{request.status || "pending"} · {formatDate(request.createdAt, locale)}</p>
                     </div>
                     <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
@@ -669,13 +678,13 @@ export default function AdminUserDetailsPage() {
                     </Link>
                   </div>
                 ))}
-                {!serviceRequests.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات خدمة" : "No service requests"}</div>}
+                {!serviceRequests.length && <div className="py-8 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد طلبات خدمة" : "No service requests"}</div>}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <BriefcaseBusiness className="h-5 w-5" />
@@ -684,13 +693,13 @@ export default function AdminUserDetailsPage() {
           </div>
           <div className="space-y-5">
             <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "طلبات مرتبطة بإدارته" : "Department requests"}</p>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "طلبات مرتبطة بإدارته" : "Department requests"}</p>
               <div className="divide-y divide-slate-100">
                 {departmentRequests.slice(0, 6).map((request) => (
                   <div key={request.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 text-sm">
                     <div>
                       <p className="font-black text-slate-900">{request.serviceType || request.category || request.id}</p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">{request.targetDepartment || "—"} · {request.status || "pending"}</p>
+                      <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{request.targetDepartment || "—"} · {request.status || "pending"}</p>
                     </div>
                     <Link href={`/admin/service-requests?requestId=${request.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-700">
                       <ExternalLink className="h-4 w-4" />
@@ -698,27 +707,27 @@ export default function AdminUserDetailsPage() {
                     </Link>
                   </div>
                 ))}
-                {!departmentRequests.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا يوجد عمل إداري ظاهر" : "No department items"}</div>}
+                {!departmentRequests.length && <div className="py-8 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا يوجد عمل إداري ظاهر" : "No department items"}</div>}
               </div>
             </div>
 
             <div>
-              <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">{isRtl ? "السجل والنشاط" : "Activity log"}</p>
+              <p className="mb-3 text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? "السجل والنشاط" : "Activity log"}</p>
               <div className="divide-y divide-slate-100">
                 {activities.slice(0, 6).map((activity) => (
                   <div key={activity.id} className="py-3 text-sm">
                     <p className="font-black text-slate-900">{activity.title || activity.type || activity.id}</p>
-                    <p className="mt-1 text-xs font-bold text-slate-400">{activity.description || formatDate(activity.createdAt, locale)}</p>
+                    <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{activity.description || formatDate(activity.createdAt, locale)}</p>
                   </div>
                 ))}
-                {!activities.length && <div className="py-8 text-center text-xs font-black text-slate-300">{isRtl ? "لا يوجد سجل" : "No activity logs"}</div>}
+                {!activities.length && <div className="py-8 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا يوجد سجل" : "No activity logs"}</div>}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <MessageSquare className="h-5 w-5" />
           {isRtl ? "محادثات المستخدم" : "User chats"}
@@ -729,35 +738,35 @@ export default function AdminUserDetailsPage() {
               <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="font-black text-slate-900">{chat.name || chat.id}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-400">
+                  <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">
                     {Array.isArray(chat.participants) ? chat.participants.map((participant: any) => `${participant.firstName || ""} ${participant.lastName || ""}`.trim() || participant.email).join("، ") : "—"}
                   </p>
                 </div>
-                <span className="text-xs font-black text-slate-400">{formatDate(chat.createdAt, locale)}</span>
+                <span className="text-xs font-black text-muted-foreground dark:text-slate-400">{formatDate(chat.createdAt, locale)}</span>
               </div>
               <div className="mt-3 divide-y divide-slate-100">
                 {(chat.recentMessages || []).slice(0, 3).map((message: any) => (
                   <div key={message.id} className="py-2 text-sm">
                     <p className="font-black text-slate-700">{message.sender?.firstName || (isRtl ? "مستخدم" : "User")}</p>
-                    <p className="mt-1 font-bold text-slate-500">{message.content}</p>
+                    <p className="mt-1 font-bold text-muted-foreground dark:text-slate-500">{message.content}</p>
                   </div>
                 ))}
-                {!chat.recentMessages?.length && <div className="py-3 text-xs font-black text-slate-300">{isRtl ? "لا توجد رسائل بعد" : "No messages yet"}</div>}
+                {!chat.recentMessages?.length && <div className="py-3 text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد رسائل بعد" : "No messages yet"}</div>}
               </div>
             </div>
           ))}
-          {!chats.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد محادثات" : "No chats"}</div>}
+          {!chats.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد محادثات" : "No chats"}</div>}
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="flex items-center gap-2 text-lg font-black text-slate-950">
               <Wallet className="h-5 w-5" />
               {isRtl ? "محفظة العميل" : "Client wallet"}
             </h2>
-            <p className="mt-1 text-xs font-bold text-slate-400">
+            <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">
               {isRtl ? "تحكم إداري في فواتيره وعمولاته ومستنداته واستثماراته" : "Admin controls for invoices, commissions, documents, and investments"}
             </p>
           </div>
@@ -771,7 +780,7 @@ export default function AdminUserDetailsPage() {
               <button
                 key={value}
                 onClick={() => setWalletTab(value)}
-                className={`inline-flex h-10 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest ${walletTab === value ? "bg-slate-950 text-white" : "border border bg-card text-slate-600"}`}
+                className={`inline-flex h-10 items-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest ${walletTab === value ? "bg-background dark:bg-slate-950 text-foreground dark:text-white" : "border border bg-card text-slate-600"}`}
               >
                 <Icon className="h-4 w-4" />
                 {label}
@@ -807,7 +816,7 @@ export default function AdminUserDetailsPage() {
                 <option value="paid">{isRtl ? "مدفوعة" : "Paid"}</option>
                 <option value="cancelled">{isRtl ? "ملغاة" : "Cancelled"}</option>
               </select>
-              <button disabled={saving} onClick={saveInvoice} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-white">
+              <button disabled={saving} onClick={saveInvoice} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-4 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
                 {editingInvoiceId ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                 {editingInvoiceId ? (isRtl ? "حفظ" : "Save") : (isRtl ? "إضافة" : "Add")}
               </button>
@@ -845,7 +854,7 @@ export default function AdminUserDetailsPage() {
                 <div key={invoice.id || index} className="grid grid-cols-1 gap-3 py-4 text-sm lg:grid-cols-[1fr_auto_auto_auto] lg:items-center">
                   <div>
                     <p className="font-black text-slate-800">{invoice.description || invoice.id}</p>
-                    <p className="mt-1 text-xs font-bold text-slate-400">{formatDate(invoice.createdAt, locale)} · {invoice.status || "unpaid"}</p>
+                    <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{formatDate(invoice.createdAt, locale)} · {invoice.status || "unpaid"}</p>
                   </div>
                   <span className="font-black text-slate-950">{Number(invoice.total || invoice.amount || 0).toLocaleString(locale)}</span>
                   <button disabled={saving} onClick={() => editInvoice(invoice)} className="h-9 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
@@ -857,7 +866,7 @@ export default function AdminUserDetailsPage() {
                   </button>
                 </div>
               ))}
-              {!invoices.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد فواتير" : "No invoices"}</div>}
+              {!invoices.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد فواتير" : "No invoices"}</div>}
             </div>
           </div>
         )}
@@ -871,7 +880,7 @@ export default function AdminUserDetailsPage() {
                   <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                       <p className="font-black text-slate-800">{commission.commissionNumber || commission.id}</p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">{commission.propertyType || "—"} · {commission.city || "—"}</p>
+                      <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{commission.propertyType || "—"} · {commission.city || "—"}</p>
                     </div>
                     <p className="font-black text-slate-950">{Number(commission.finalCommissionAmount || commission.commissionAmount || 0).toLocaleString(locale)}</p>
                   </div>
@@ -900,7 +909,7 @@ export default function AdminUserDetailsPage() {
                       </label>
                     </div>
                     <div className="flex gap-2">
-                      <button disabled={saving} onClick={() => saveCommission(commission)} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[10px] font-black uppercase tracking-widest text-white">
+                      <button disabled={saving} onClick={() => saveCommission(commission)} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-background dark:bg-slate-950 px-3 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
                         <Save className="h-4 w-4" />
                         {isRtl ? "حفظ" : "Save"}
                       </button>
@@ -912,7 +921,7 @@ export default function AdminUserDetailsPage() {
                 </div>
               );
             })}
-            {!commissions.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد عمولات" : "No commissions"}</div>}
+            {!commissions.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد عمولات" : "No commissions"}</div>}
           </div>
         )}
 
@@ -922,7 +931,7 @@ export default function AdminUserDetailsPage() {
               <div key={file.id} className="grid grid-cols-1 gap-3 py-4 text-sm lg:grid-cols-[1fr_auto_auto] lg:items-center">
                 <div>
                   <p className="font-black text-slate-800">{file.name || file.id}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-400">{file.type} · {formatDate(file.date, locale)}</p>
+                  <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{file.type} · {formatDate(file.date, locale)}</p>
                 </div>
                 {file.url && (
                   <a href={file.url} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
@@ -936,7 +945,7 @@ export default function AdminUserDetailsPage() {
                 </button>
               </div>
             ))}
-            {!files.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد مستندات" : "No documents"}</div>}
+            {!files.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد مستندات" : "No documents"}</div>}
           </div>
         )}
 
@@ -946,7 +955,7 @@ export default function AdminUserDetailsPage() {
               <div key={investment.id} className="grid grid-cols-1 gap-3 py-4 text-sm lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <p className="font-black text-slate-800">{investment.serviceType || investment.category || investment.id}</p>
-                  <p className="mt-1 text-xs font-bold text-slate-400">{investment.status || "—"} · {formatDate(investment.createdAt, locale)}</p>
+                  <p className="mt-1 text-xs font-bold text-muted-foreground dark:text-slate-400">{investment.status || "—"} · {formatDate(investment.createdAt, locale)}</p>
                 </div>
                 <Link href={`/admin/service-requests?requestId=${investment.id}`} className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border px-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
                   <ExternalLink className="h-4 w-4" />
@@ -954,12 +963,12 @@ export default function AdminUserDetailsPage() {
                 </Link>
               </div>
             ))}
-            {!investments.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد استثمارات" : "No investments"}</div>}
+            {!investments.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد استثمارات" : "No investments"}</div>}
           </div>
         )}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-slate-950">
           <Calendar className="h-5 w-5" />
           {isRtl ? "الطلبات والحجوزات" : "Requests & bookings"}
@@ -969,7 +978,7 @@ export default function AdminUserDetailsPage() {
             <div key={order.id} className="flex items-center justify-between gap-4 py-3 text-sm">
               <div>
                 <span className="font-bold text-slate-700">{order.propertyType || order.orderType || order.id}</span>
-                <p className="mt-1 text-xs font-black text-slate-400">{order.status || "pending"} · {order.city || "—"}</p>
+                <p className="mt-1 text-xs font-black text-muted-foreground dark:text-slate-400">{order.status || "pending"} · {order.city || "—"}</p>
               </div>
               <span className="font-black text-slate-950">{formatDate(order.createdAt, locale)}</span>
             </div>
@@ -978,12 +987,12 @@ export default function AdminUserDetailsPage() {
             <div key={booking.id || index} className="flex items-center justify-between gap-4 py-3 text-sm">
               <div>
                 <span className="font-bold text-slate-700">{booking.type || booking.status || booking.id}</span>
-                <p className="mt-1 text-xs font-black text-slate-400">{booking.offer?.propertyType || booking.offerId || "—"}</p>
+                <p className="mt-1 text-xs font-black text-muted-foreground dark:text-slate-400">{booking.offer?.propertyType || booking.offerId || "—"}</p>
               </div>
               <span className="font-black text-slate-950">{formatDate(booking.createdAt || booking.date, locale)}</span>
             </div>
           ))}
-          {!orders.length && !bookings.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات" : "No requests"}</div>}
+          {!orders.length && !bookings.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد طلبات" : "No requests"}</div>}
         </div>
       </section>
 
@@ -994,7 +1003,7 @@ export default function AdminUserDetailsPage() {
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إدارة الاشتراك" : "Manage Subscription"}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 font-bold text-xs mt-1">
+            <DialogDescription className="text-muted-foreground dark:text-slate-400 font-bold text-xs mt-1">
               {isRtl ? "تحديد مدة تفعيل الاشتراك أو تمديده للمستخدم" : "Specify the duration to activate or extend subscription for the user"}
             </DialogDescription>
           </DialogHeader>
@@ -1002,7 +1011,7 @@ export default function AdminUserDetailsPage() {
           <div className="space-y-4 my-4">
             {/* Subscription Type Selector */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block">
                 {isRtl ? "نوع المدة" : "Duration Type"}
               </label>
               <select
@@ -1020,7 +1029,7 @@ export default function AdminUserDetailsPage() {
             {/* Custom Period Input */}
             {subModalConfig.type === "custom" && (
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+                <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block">
                   {isRtl ? "عدد الأشهر" : "Number of Months"}
                 </label>
                 <input
@@ -1039,7 +1048,7 @@ export default function AdminUserDetailsPage() {
 
             {/* Notes */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block">
                 {isRtl ? "ملاحظات" : "Notes"}
               </label>
               <textarea
@@ -1064,7 +1073,7 @@ export default function AdminUserDetailsPage() {
               type="button"
               onClick={handleSaveSubscription}
               disabled={saving}
-              className="h-11 rounded-2xl font-black bg-slate-950 text-white hover:bg-black px-6"
+              className="h-11 rounded-2xl font-black bg-background dark:bg-slate-950 text-foreground dark:text-white hover:bg-black px-6"
             >
               {saving ? (isRtl ? "جاري الحفظ..." : "Saving...") : (isRtl ? "حفظ التغييرات" : "Save Changes")}
             </Button>
@@ -1079,7 +1088,7 @@ export default function AdminUserDetailsPage() {
             <DialogTitle className="text-xl font-black text-slate-950">
               {isRtl ? "إلغاء الاشتراك" : "Cancel Subscription"}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 font-bold text-xs mt-1">
+            <DialogDescription className="text-muted-foreground dark:text-slate-400 font-bold text-xs mt-1">
               {isRtl
                 ? "هل أنت متأكد من إلغاء هذا الاشتراك؟ لن يتمكن المستخدم من استخدام الميزات المدفوعة."
                 : "Are you sure you want to cancel this subscription? The user will lose access to paid features."}
@@ -1088,7 +1097,7 @@ export default function AdminUserDetailsPage() {
 
           <div className="space-y-4 my-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
+              <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest block">
                 {isRtl ? "سبب الإلغاء:" : "Cancellation Reason:"}
               </label>
               <textarea

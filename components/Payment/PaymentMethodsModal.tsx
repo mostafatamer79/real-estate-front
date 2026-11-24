@@ -76,16 +76,16 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
   };
 
   const methods = [
-    ...(!subscriptionId && allowWallet ? [{ id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> }] : []),
+    ...(!subscriptionId && allowWallet ? [{ id: 'balance', title: t('payment.balance'), icon: <Wallet className="w-5 h-5" />, desc: <span className="text-xs text-muted-foreground dark:text-slate-500 font-medium">{balance.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span> }] : []),
     { id: 'credit', title: t('payment.credit'), icon: <CreditCard className="w-5 h-5" />, desc: t('payment.creditDesc') || "مدى، فيزا، ماستركارد" },
   ];
 
   return (
     <Dialog modal={!geidea.processing} open={isOpen} onOpenChange={(open) => { if (!open && !processing) onClose(); }}>
-      <DialogContent className="wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 max-h-[90vh] overflow-y-auto !bg-white/80 backdrop-blur-xl border !border-white/30 shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <DialogContent className="calm-overlay wallet-dialog-content w-[95vw] sm:max-w-md rounded-[1rem] p-5 sm:p-4 sm:p-8 max-h-[90vh] overflow-y-auto !bg-white/80 backdrop-blur-xl border !border-border dark:!border-white/30 shadow-sm dark:shadow-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl sm:text-2xl font-black text-slate-900">{t('payment.select')}</DialogTitle>
-          <DialogDescription className="text-slate-500 font-bold">
+          <DialogDescription className="text-muted-foreground dark:text-slate-500 font-bold">
              {t('payment.amountRequired')}: <span className="text-slate-900 font-black">{price.toLocaleString(language === 'ar' ? 'ar-SA' : 'en-US')} {language === 'ar' ? 'ر.س' : 'SAR'}</span>
           </DialogDescription>
         </DialogHeader>
@@ -101,24 +101,24 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               className={`w-full flex items-center justify-between p-4 sm:p-5 rounded-2xl border-2 transition-all group ${
                 selectedMethod === method.id 
                   ? 'border-indigo-600 bg-indigo-50/50' 
-                  : '!border-white/20 hover:border-indigo-600 !bg-white/40 backdrop-blur-md'
+                  : '!border-border dark:!border-white/20 hover:border-indigo-600 !bg-white/40 backdrop-blur-md'
               }`}
             >
               <div className="flex items-center gap-4">
                 <div className={`p-3 rounded-xl transition-colors ${
-                    selectedMethod === method.id ? 'bg-indigo-600 text-white' : 'bg-muted text-slate-500'
+                    selectedMethod === method.id ? 'bg-indigo-600 text-white' : 'bg-muted text-muted-foreground dark:text-slate-500'
                 }`}>
                   {method.icon}
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-slate-900">{method.title}</p>
-                  <div className="text-xs text-slate-500 font-medium">{method.desc}</div>
+                  <div className="text-xs text-muted-foreground dark:text-slate-500 font-medium">{method.desc}</div>
                 </div>
               </div>
               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                 selectedMethod === method.id ? 'border-indigo-600 bg-indigo-600' : 'border'
               }`}>
-                {selectedMethod === method.id && <CheckCircle2 className="w-4 h-4 text-white" />}
+                {selectedMethod === method.id && <CheckCircle2 className="w-4 h-4 text-foreground dark:text-white" />}
               </div>
             </button>
           ))}
@@ -146,7 +146,7 @@ export default function PaymentMethodsModal({ isOpen, onClose, bookingId, invoic
               (selectedMethod === 'balance' && balance < price) ||
               (selectedMethod === 'credit' && !useGeidea)
             }
-            className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-lg transition-all active:scale-95"
+            className="w-full h-14 bg-card dark:bg-slate-900 hover:bg-muted hover:dark:bg-slate-800 text-foreground dark:text-white rounded-2xl font-bold text-lg transition-all active:scale-95"
           >
             {processing ? <Loader2 className="w-6 h-6 animate-spin" /> : geidea.pending ? (language === 'ar' ? 'التحقق من حالة الدفع' : 'Check payment status') : t('payment.confirm')}
           </Button>

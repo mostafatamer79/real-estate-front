@@ -81,10 +81,10 @@ export default function RecentActivity() {
     return (
         <div className="space-y-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
             <div className="flex items-center gap-3 wow-reveal">
-                <div className="p-2 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-400">
+                <div className="calm-panel p-2 rounded-lg bg-muted dark:bg-slate-800 border border-border dark:border-slate-700/60 text-muted-foreground dark:text-slate-400">
                     <History className="w-4 h-4" />
                 </div>
-                <h2 className="text-base font-bold text-slate-300 tracking-tight">
+                <h2 className="text-base font-bold text-muted-foreground dark:text-slate-300 tracking-tight">
                     {language === 'ar' ? 'العمليات السابقة' : 'Previous Operations'}
                 </h2>
             </div>
@@ -100,17 +100,17 @@ export default function RecentActivity() {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: idx * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
                                 style={{ animationDelay: `${idx * 80}ms` }}
-                                className="group relative bg-slate-900/40 hover:bg-slate-900/60 border border-slate-800/60 hover:border-indigo-500/30 rounded-2xl p-4 transition-all duration-300"
+                                className="calm-panel group relative bg-card/40 dark:bg-slate-900/40 hover:bg-card/60 hover:dark:bg-slate-900/60 border border-border dark:border-slate-800/60 hover:border-indigo-500/30 rounded-2xl p-4 transition-all duration-300"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="calm-icon w-10 h-10 rounded-xl bg-muted dark:bg-slate-800 border border-border dark:border-slate-700/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         {getIcon(activity.type)}
                                     </div>
                                     <div className="flex-1 space-y-1">
-                                        <h4 className="text-sm font-bold text-slate-200">{activityText.title}</h4>
-                                        <p className="text-xs text-slate-400 leading-relaxed">{activityText.description}</p>
+                                        <h4 className="text-sm font-bold text-foreground dark:text-slate-200">{activityText.title}</h4>
+                                        <p className="text-xs text-muted-foreground dark:text-slate-400 leading-relaxed">{activityText.description}</p>
                                     </div>
-                                    <div className="text-[10px] font-medium text-slate-500 bg-slate-800/50 px-2 py-1 rounded-lg">
+                                    <div className="text-[10px] font-medium text-muted-foreground dark:text-slate-500 bg-muted/50 dark:bg-slate-800/50 px-2 py-1 rounded-lg">
                                         {new Date(activity.createdAt || activity.timestamp || activity.updatedAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
                                     </div>
                                 </div>
@@ -118,9 +118,9 @@ export default function RecentActivity() {
                         );
                     })
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-6 md:py-12 px-6 bg-slate-900/20 border border-slate-800/40 rounded-[1rem] border-dashed wow-reveal">
+                    <div className="calm-panel flex flex-col items-center justify-center py-6 md:py-12 px-6 bg-card/20 dark:bg-slate-900/20 border border-border dark:border-slate-800/40 rounded-[1rem] border-dashed wow-reveal">
                         <AlertCircle className="w-8 h-8 text-slate-700 mb-4" />
-                        <p className="text-slate-500 text-sm font-medium">
+                        <p className="text-muted-foreground dark:text-slate-500 text-sm font-medium">
                             {language === 'ar' ? 'لا توجد عمليات حالياً' : 'No previous operations found'}
                         </p>
                     </div>

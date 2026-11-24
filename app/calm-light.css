@@ -1,0 +1,309 @@
+/* Daylight surfaces: depth indicates interaction rather than decoration. */
+:root {
+  --light-canvas: #f3f3f3;
+  --light-surface: #ffffff;
+  --light-surface-soft: #fafafa;
+  --surface-shadow: 0 1px 2px rgb(24 32 28 / 0.04), 0 10px 26px -18px rgb(24 32 28 / 0.22);
+  --surface-shadow-hover: 0 2px 5px rgb(24 32 28 / 0.06), 0 20px 38px -22px rgb(24 32 28 / 0.3);
+  --overlay-shadow: 0 22px 58px -14px rgb(24 32 28 / 0.24);
+  --ease-interface: cubic-bezier(0.16, 1, 0.3, 1);
+  --chart-line: #303030;
+  --chart-category-1: #525252;
+  --chart-category-2: #8c8c8c;
+  --chart-category-3: #bdbdbd;
+  --chart-category-4: #595959;
+}
+
+.theme-toggle {
+  color: #303030;
+  background: rgb(255 255 255 / 0.94);
+  border-color: #d8d8d8;
+  box-shadow: 0 10px 28px -14px rgb(24 32 28 / 0.42), 0 2px 5px rgb(24 32 28 / 0.07);
+  backdrop-filter: blur(14px);
+}
+
+.theme-toggle:hover {
+  background: #ffffff;
+  border-color: #bdbdbd;
+  box-shadow: 0 16px 32px -16px rgb(24 32 28 / 0.5), 0 3px 7px rgb(24 32 28 / 0.08);
+  transform: translateY(-2px);
+}
+
+.theme-toggle-icon {
+  color: #ffffff;
+  background: #303030;
+}
+
+.dark .theme-toggle {
+  color: #e2e8f0;
+  background: rgb(15 23 42 / 0.94);
+  border-color: #334155;
+  box-shadow: 0 16px 40px -18px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.28);
+}
+
+.dark .theme-toggle:hover {
+  background: #172235;
+  border-color: #52647e;
+}
+
+.dark .theme-toggle-icon {
+  color: #182b22;
+  background: #cfe3d5;
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    left: 1rem;
+    min-height: 46px;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .theme-toggle-label {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle:hover {
+    transform: none;
+  }
+}
+
+.dark {
+  --chart-line: #818cf8;
+  --chart-category-1: #818cf8;
+  --chart-category-2: #94a3b8;
+  --chart-category-3: #9ca3af;
+  --chart-category-4: #475569;
+}
+
+html:not(.dark) .calm-page {
+  background:
+    radial-gradient(900px 420px at 100% -10%, rgb(225 225 225 / 0.42), transparent 67%),
+    radial-gradient(720px 360px at -12% 28%, rgb(235 235 235 / 0.36), transparent 72%),
+    var(--light-canvas);
+}
+
+html:not(.dark) .calm-screen {
+  color: var(--foreground);
+  background-color: transparent;
+}
+
+html:not(.dark) .calm-screen :is(h1, h2, h3)[class*="bg-clip-text"] {
+  background: none;
+  color: var(--foreground);
+  -webkit-text-fill-color: var(--foreground);
+}
+
+html:not(.dark) .calm-navigation img {
+  filter: brightness(0) !important;
+  opacity: 0.72;
+}
+
+html:not(.dark) .calm-navigation [aria-pressed="true"] img { opacity: 1; }
+
+html:not(.dark) .calm-navigation[class*="lg:hidden"] {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: 0 -2px 12px rgb(24 32 28 / 0.045);
+  backdrop-filter: none;
+}
+
+html:not(.dark) .calm-wallet-icon {
+  background: var(--muted);
+  box-shadow: none;
+  rotate: none;
+  scale: none;
+}
+
+html:not(.dark) :is(.wow-reveal, .wow-reveal-scale, .wow-reveal-start, .wow-stagger > *) {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+  animation: calm-reveal 180ms ease-out both !important;
+  animation-delay: 0ms !important;
+}
+
+@keyframes calm-reveal {
+  from { opacity: 0.92; }
+  to { opacity: 1; }
+}
+
+html:not(.dark) :is(.calm-panel, [data-slot="card"], .platform-card, .premium-card, .glass, .wow-glass-light, .wow-glass-panel, .wow-glass-dark, .wow-glass-panel-dark) {
+  background: linear-gradient(180deg, var(--light-surface) 0%, var(--light-surface-soft) 100%);
+  border-color: var(--border);
+  box-shadow: var(--surface-shadow) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* A group supplies spacing; the cards inside it supply the surface. */
+html:not(.dark) .calm-group {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none !important;
+  padding: 0;
+}
+
+html:not(.dark) :is(.calm-panel, [data-slot="card"], .platform-card, .premium-card) {
+  background-clip: padding-box;
+}
+
+html:not(.dark) .calm-chart {
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: none;
+}
+
+html:not(.dark) .calm-chart svg [filter] {
+  filter: none;
+}
+
+html:not(.dark) .calm-chart .chart-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: chart-line-draw 420ms var(--ease-interface) both;
+}
+
+@keyframes chart-line-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+html:not(.dark) :is(.calm-decoration, .wow-aurora, .wow-aurora-v2, .wow-image-glow) {
+  display: none;
+}
+
+html:not(.dark) :is(.calm-icon, .platform-icon-box) {
+  background: #eeeeee;
+  color: #454545;
+  border-color: #d8d8d8;
+  box-shadow: none !important;
+}
+
+html:not(.dark) .calm-action {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: none !important;
+}
+
+html:not(.dark) :is(.calm-interactive, .calm-action) {
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+html:not(.dark) .calm-action img {
+  filter: brightness(0);
+  opacity: 0.68;
+}
+
+html:not(.dark) .calm-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: none;
+}
+
+html:not(.dark) .calm-primary:hover {
+  background: color-mix(in srgb, var(--primary) 90%, #000);
+}
+
+html:not(.dark) .calm-primary::after {
+  display: none;
+}
+
+html:not(.dark) .calm-overlay {
+  background: var(--card);
+  box-shadow: var(--overlay-shadow) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html:not(.dark) .mobile-header-shell {
+  background: var(--card);
+  box-shadow: none;
+}
+
+html:not(.dark) .mobile-header-shell a {
+  color: var(--muted-foreground);
+}
+
+html:not(.dark) .mobile-header-shell :is(a, button):hover {
+  color: var(--foreground);
+}
+
+html:not(.dark) .calm-screen :is(h1, h2, h3, [data-slot="card-title"]) {
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+html:not(.dark) .calm-screen h1 {
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+html:not(.dark) .calm-screen :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, select):focus-visible {
+  outline: 2px solid #737373;
+  outline-offset: 3px;
+}
+
+html:not(.dark) .calm-screen ::selection {
+  color: #262626;
+  background: #e5e5e5;
+}
+
+html:not(.dark) .calm-screen [data-slot="card"] [data-slot="card"] {
+  box-shadow: none !important;
+}
+
+html:not(.dark) .calm-panel .calm-panel {
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html:not(.dark) :is(.calm-interactive, .calm-action) {
+    transition: box-shadow 180ms var(--ease-interface), border-color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  html:not(.dark) :is(.calm-interactive, .calm-action):hover {
+    border-color: color-mix(in srgb, var(--foreground) 22%, var(--border));
+    box-shadow: var(--surface-shadow-hover) !important;
+  }
+
+  html:not(.dark) .calm-interactive[class*="hover:-translate-y-"]:hover {
+    translate: 0 -2px;
+  }
+}
+
+/* No perpetual promotion pulses in the quiet appearance. */
+html:not(.dark) :is(.wow-fab-glow, .wow-pulse-glow) {
+  animation: none;
+  box-shadow: var(--surface-shadow);
+}
+
+@media (max-width: 768px) {
+  html:not(.dark) :is(button, a[role="button"], [role="tab"]):active {
+    transform: scale(0.985) !important;
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.dark) :is(.wow-reveal, .wow-reveal-scale, .wow-reveal-start, .wow-stagger > *) {
+    animation: none !important;
+  }
+
+  .calm-chart .chart-line { animation: none; }
+
+  html:not(.dark) :is(.calm-interactive, .calm-action, .premium-card):hover,
+  html:not(.dark) :is(button, a[role="button"], [role="tab"]):active {
+    transform: none !important;
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+  }
+
+  html:not(.dark) :is(.calm-interactive, .calm-action) {
+    transition: border-color 120ms ease, background-color 120ms ease;
+  }
+}

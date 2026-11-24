@@ -1,5 +1,6 @@
 "use client";
 import React from 'react'
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { toPng } from 'html-to-image';
@@ -40,6 +41,7 @@ interface ServiceRequest {
     paymentStatus: 'paid' | 'unpaid';
     createdAt: string;
     updatedAt: string;
+    financialSummary?: { subtotal: number; tax: number; serviceFee: number; total: number };
 }
 
 interface InvoiceModalProps {
@@ -54,6 +56,11 @@ interface InvoiceModalProps {
 const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceRequest, onDecision, onPay, isPendingDecision }) => {
     const { t, language } = useLanguage();
     const [isProcessing, setIsProcessing] = React.useState(false);
+    React.useEffect(() => {
+        if (!isOpen) return;
+        document.body.classList.add('invoice-print-open');
+        return () => document.body.classList.remove('invoice-print-open');
+    }, [isOpen]);
     if (!isOpen) return null
 
     // If no service request provided, use sample data
@@ -76,10 +83,10 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             paymentStatus: serviceRequest.paymentStatus
         },
         fees: {
-            servicePrice: serviceRequest.price * serviceRequest.quantity,
-            vat: (serviceRequest.price * serviceRequest.quantity) * 0.15, // 15% VAT
+            servicePrice: serviceRequest.financialSummary?.subtotal ?? serviceRequest.price * serviceRequest.quantity,
+            vat: serviceRequest.financialSummary?.tax ?? (serviceRequest.price * serviceRequest.quantity) * 0.15,
             commission: 0, // Could be calculated based on service type
-            siteCommission: 0, // New: Site Commission
+            siteCommission: serviceRequest.financialSummary?.serviceFee ?? 0,
             documentationFee: 0, // Could be added if applicable
         }
     } : {
@@ -109,8 +116,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
         }
     }
 
-    const totalAmount = invoiceData.fees.servicePrice + invoiceData.fees.vat +
-                       invoiceData.fees.commission + invoiceData.fees.siteCommission + invoiceData.fees.documentationFee
+    const totalAmount = serviceRequest?.financialSummary?.total ?? (invoiceData.fees.servicePrice + invoiceData.fees.vat +
+                       invoiceData.fees.commission + invoiceData.fees.siteCommission + invoiceData.fees.documentationFee)
 
     const getStatusText = (status: string) => {
         const statusMap: { [key: string]: string } = {
@@ -229,9 +236,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
         }
     };
 
-    return (
+    const modal = (
         <div
-            className='invoice-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-sm overflow-y-auto p-4 print:block print:p-0'
+            className='invoice-modal-backdrop fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/75 backdrop-blur-sm overflow-y-auto p-4 print:block print:p-0'
             onClick={onClose}
             dir="rtl"
         >
@@ -299,7 +306,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                                         <div>
                                             <CardTitle className='text-3xl font-bold text-gray-900'>{t('invoice.title')}</CardTitle>
                                             <Image src="/icons/black.png" alt="Logo" width={100} height={32} className="object-contain h-8 w-auto mb-1" />
-                                            <p className='text-gray-600'>{t('pm.legal.title')}</p>
+                                            <p className='text-gray-600'>{invoiceData.service.type || getCategoryText(invoiceData.service.category)}</p>
                                         </div>
                                     </div>
 
@@ -573,6 +580,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
 
             {/* Print Styles */}
             <style jsx global>{`
+                body.invoice-print-open [data-theme-toggle] {
+                    visibility: hidden;
+                }
                 .invoice-export-mode .invoice-fees-table-wrapper,
                 .invoice-export-mode .invoice-fees-table-wrapper [data-slot="table-container"] {
                     overflow: visible !important;
@@ -592,19 +602,20 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
                 }
 
                 @media print {
-                    body * {
-                        visibility: hidden;
+                    body.invoice-print-open > :not(.invoice-modal-backdrop) {
+                        display: none !important;
                     }
-                    .fixed, .fixed * {
+                    .invoice-modal-backdrop, .invoice-modal-backdrop * {
                         visibility: visible;
                     }
-                    .fixed {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        height: auto;
-                        background: white;
+                    .invoice-modal-backdrop {
+                        position: static !important;
+                        display: block !important;
+                        width: 100% !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                        background: white !important;
+                        backdrop-filter: none !important;
                     }
                     .print\\:hidden {
                         display: none !important;
@@ -622,6 +633,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, serviceReq
             `}</style>
         </div>
     )
+    return typeof document === 'undefined' ? modal : createPortal(modal, document.body);
 }
 
 export default InvoiceModal

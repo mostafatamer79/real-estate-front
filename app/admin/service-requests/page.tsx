@@ -42,11 +42,11 @@ const STATUS_STYLES: Record<string, string> = {
   pending:      "bg-muted text-slate-600",
   assigned:     "bg-muted text-slate-600",
   in_progress:  "bg-muted text-slate-600",
-  completed:    "bg-slate-900 text-white",
-  cancelled:    "bg-muted text-slate-400",
+  completed:    "bg-card dark:bg-slate-900 text-foreground dark:text-white",
+  cancelled:    "bg-muted text-muted-foreground dark:text-slate-400",
   invoice_sent: "bg-muted text-slate-600",
-  accepted:     "bg-slate-900 text-white",
-  rejected:     "bg-muted text-slate-400",
+  accepted:     "bg-card dark:bg-slate-900 text-foreground dark:text-white",
+  rejected:     "bg-muted text-muted-foreground dark:text-slate-400",
 };
 
 function getRequestStatusLabel(req: any, t: (k: string) => string) {
@@ -252,8 +252,8 @@ export default function ServiceRequestsPage() {
                     <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
                         {t('admin.service_requests.title')}
                     </h1>
-                    <p className="text-slate-500 font-medium flex items-center gap-2 text-sm">
-                        <Briefcase className="w-4 h-4 text-slate-400" />
+                    <p className="text-muted-foreground dark:text-slate-500 font-medium flex items-center gap-2 text-sm">
+                        <Briefcase className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                         {t('admin.service_requests.subtitle')}
                     </p>
                 </div>
@@ -268,13 +268,13 @@ export default function ServiceRequestsPage() {
                         {/* List Actions */}
                         <div className="grid grid-cols-1 gap-3 px-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
                             <div className="relative w-full group md:col-span-2">
-                                <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                                <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-slate-400 group-focus-within:text-slate-900 transition-colors" />
                                 <input 
                                     type="text"
                                     placeholder={t('admin.service_requests.search_placeholder')}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="bg-card border border py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-slate-900 shadow-sm transition-all rounded-[1rem]"
+                                    className="bg-card border border py-3.5 pr-12 pl-6 text-sm font-bold w-full outline-none hover:border-slate-300 focus:border-border focus:dark:border-slate-900 shadow-sm transition-all rounded-[1rem]"
                                 />
                             </div>
                             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]">
@@ -302,18 +302,18 @@ export default function ServiceRequestsPage() {
                             <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-card border border py-3.5 px-4 text-sm font-bold rounded-[1rem]" />
                             <button 
                                 onClick={() => { setSearchTerm(""); setStatusFilter("all"); setCategoryFilter("all"); setDepartmentFilter("all"); setDecisionFilter("all"); setDateFrom(""); setDateTo(""); }}
-                                className="p-3.5 rounded-2xl bg-card border border hover:border-slate-900 transition-all text-slate-500 hover:text-slate-950 shadow-sm"
+                                className="p-3.5 rounded-2xl bg-card border border hover:border-border hover:dark:border-slate-900 transition-all text-muted-foreground dark:text-slate-500 hover:text-slate-950 shadow-sm"
                             >
                                 <Filter className="w-4 h-4" />
                             </button>
                         </div>
 
                         {/* Requests Table */}
-                        <div className="bg-card rounded-[1rem] border border shadow-xl shadow-stone-400 overflow-hidden min-h-[400px]">
+                        <div className="calm-panel bg-card rounded-[1rem] border border shadow-sm dark:shadow-xl shadow-primary/5 dark:shadow-stone-400 overflow-hidden min-h-[400px]">
                             {isLoadingRequests ? (
                                 <div className="flex flex-col items-center justify-center py-32 gap-4">
-                                    <div className="w-12 h-12 rounded-full border-4 border border-t-slate-900 animate-spin" />
-                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
+                                    <div className="w-12 h-12 rounded-full border-4 border border-t-border dark:border-t-slate-900 animate-spin" />
+                                    <p className="text-xs font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('common.loading')}</p>
                                 </div>
                             ) : filteredRequests.length > 0 ? (
                                 <>
@@ -321,11 +321,11 @@ export default function ServiceRequestsPage() {
                                     <table className="w-full text-right border-collapse">
                                         <thead>
                                             <tr className="bg-muted/50 border-b border">
-                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
-                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
-                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
-                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
-                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.parties')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.type')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.legal.headers.status')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('common.date')}</th>
+                                                <th className="px-3 py-3 sm:px-6 sm:py-4 text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest text-center">{t('admin.legal.headers.actions')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50">
@@ -340,19 +340,19 @@ export default function ServiceRequestsPage() {
                                                 >
                                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-slate-950 group-hover:text-white transition-all">
+                                                            <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900 group-hover:bg-background group-hover:dark:bg-slate-950 group-hover:text-foreground group-hover:dark:text-white transition-all">
                                                                 <User className="w-5 h-5" />
                                                             </div>
                                                             <div>
                                                                 <p className="text-sm font-black text-slate-900">{req.clientName}</p>
-                                                                <p className="text-[11px] font-bold text-slate-400">{req.phone}</p>
+                                                                <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.phone}</p>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
                                                         <div>
                                                             <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
-                                                            <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
+                                                            <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.city} - {req.district}</p>
                                                         </div>
                                                     </td>
                                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
@@ -361,12 +361,12 @@ export default function ServiceRequestsPage() {
                                                         </Badge>
                                                     </td>
                                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
-                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-muted-foreground dark:text-slate-500"}`}>
                                                             {label}
                                                         </span>
                                                     </td>
                                                     <td className="px-3 py-3 sm:px-6 sm:py-4">
-                                                        <div className="flex items-center gap-2 text-slate-400">
+                                                        <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                             <Calendar className="w-3.5 h-3.5" />
                                                             <span className="text-[11px] font-bold">
                                                                 {format(new Date(req.createdAt), 'dd MMMM yyyy', { locale: language === 'ar' ? ar : enUS })}
@@ -381,7 +381,7 @@ export default function ServiceRequestsPage() {
                                                                 setEditingDepartment(req.targetDepartment || "");
                                                                 setIsDetailsOpen(true);
                                                             }}
-                                                            className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                            className="p-2 rounded-xl border border hover:border-border hover:dark:border-slate-900 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all text-muted-foreground dark:text-slate-400"
                                                         >
                                                             <ExternalLink className="w-4 h-4" />
                                                         </button>
@@ -395,15 +395,15 @@ export default function ServiceRequestsPage() {
                                     {filteredRequests.map((req) => {
                                         const { statusKey, label } = getRequestStatusLabel(req, t);
                                         return (
-                                            <div key={req.id} className="rounded-2xl border border bg-card p-4 shadow-sm">
+                                            <div key={req.id} className="calm-panel rounded-2xl border border bg-card p-4 shadow-sm">
                                                 <div className="flex items-start justify-between gap-3 mb-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900">
+                                                        <div className="calm-icon w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-slate-900">
                                                             <User className="w-5 h-5" />
                                                         </div>
                                                         <div>
                                                             <p className="text-sm font-black text-slate-900">{req.clientName}</p>
-                                                            <p className="text-[11px] font-bold text-slate-400">{req.phone}</p>
+                                                            <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.phone}</p>
                                                         </div>
                                                     </div>
                                                     <button
@@ -413,7 +413,7 @@ export default function ServiceRequestsPage() {
                                                             setEditingDepartment(req.targetDepartment || "");
                                                             setIsDetailsOpen(true);
                                                         }}
-                                                        className="p-2 rounded-xl border border hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all text-slate-400"
+                                                        className="p-2 rounded-xl border border hover:border-border hover:dark:border-slate-900 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white transition-all text-muted-foreground dark:text-slate-400"
                                                     >
                                                         <ExternalLink className="w-4 h-4" />
                                                     </button>
@@ -421,17 +421,17 @@ export default function ServiceRequestsPage() {
                                                 <div className="space-y-2">
                                                     <div>
                                                         <p className="text-sm font-black text-slate-900">{req.serviceType}</p>
-                                                        <p className="text-[11px] font-bold text-slate-400">{req.city} - {req.district}</p>
+                                                        <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{req.city} - {req.district}</p>
                                                     </div>
                                                     <div className="flex flex-wrap items-center gap-2">
                                                         <Badge variant="secondary" className="font-bold">
                                                             {t(`admin.trans.dept.${req.targetDepartment}`)}
                                                         </Badge>
-                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-slate-500"}`}>
+                                                        <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${STATUS_STYLES[statusKey] || "bg-muted text-muted-foreground dark:text-slate-500"}`}>
                                                             {label}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-400">
                                                         <Calendar className="w-3.5 h-3.5" />
                                                         <span className="text-[11px] font-bold">
                                                             {format(new Date(req.createdAt), 'dd MMMM yyyy', { locale: language === 'ar' ? ar : enUS })}
@@ -446,9 +446,9 @@ export default function ServiceRequestsPage() {
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 gap-3 md:gap-6 opacity-40">
                                     <div className="p-4 sm:p-8 rounded-[1rem] bg-muted">
-                                        <Briefcase className="w-16 h-16 text-slate-200" />
+                                        <Briefcase className="w-16 h-16 text-foreground dark:text-slate-200" />
                                     </div>
-                                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
+                                    <p className="text-sm font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.no_data')}</p>
                                 </div>
                             )}
                         </div>
@@ -474,18 +474,18 @@ export default function ServiceRequestsPage() {
                                 <TabsContent value="details" className="space-y-6">
                                     <div className="flex items-center justify-between p-4 bg-muted rounded-2xl">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center text-slate-900 shadow-sm">
+                                            <div className="calm-icon w-12 h-12 rounded-xl bg-card flex items-center justify-center text-slate-900 shadow-sm">
                                                 <User className="w-6 h-6" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-black text-slate-900">{selectedRequest.clientName}</p>
-                                                <p className="text-xs font-bold text-slate-400">{selectedRequest.phone}</p>
+                                                <p className="text-xs font-bold text-muted-foreground dark:text-slate-400">{selectedRequest.phone}</p>
                                             </div>
                                         </div>
                                         {selectedRequest.userId && (
                                             <button
                                                 onClick={() => handleOpenChat(selectedRequest.userId)}
-                                                className="flex h-10 items-center justify-center rounded-xl bg-slate-950 px-4 text-xs font-black text-white hover:bg-slate-800 transition-colors gap-2 shrink-0"
+                                                className="flex h-10 items-center justify-center rounded-xl bg-background dark:bg-slate-950 px-4 text-xs font-black text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800 transition-colors gap-2 shrink-0"
                                             >
                                                 <MessageSquare className="h-4 w-4" />
                                                 {isRtl ? "فتح الشات" : "Open Chat"}
@@ -495,29 +495,29 @@ export default function ServiceRequestsPage() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</label>
+                                            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.service_type')}</label>
                                             <p className="text-sm font-bold text-slate-900">{selectedRequest.serviceType}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')}</label>
+                                            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')}</label>
                                             <p className="text-sm font-bold text-slate-900">{t(`admin.trans.dept.${selectedRequest.targetDepartment}`)}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.location_info')}</label>
+                                            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.location_info')}</label>
                                             <p className="text-sm font-bold text-slate-900">{selectedRequest.city} - {selectedRequest.district}</p>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.quantity')}</label>
+                                            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.quantity')}</label>
                                             <p className="text-sm font-bold text-slate-900">{selectedRequest.quantity}</p>
                                         </div>
                                     </div>
 
                                     <div className="space-y-4 pt-4 border-t border">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')} (Admin)</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.target_dept')} (Admin)</label>
                                         <select 
                                             value={editingDepartment}
                                             onChange={(e) => setEditingDepartment(e.target.value)}
-                                            className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-slate-900 transition-all cursor-pointer appearance-none"
+                                            className="w-full bg-muted border border rounded-xl py-3 px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900 transition-all cursor-pointer appearance-none"
                                             disabled={!['postPurchase', 'other'].includes(selectedRequest.category)}
                                         >
                                             {departments.map(dept => (
@@ -529,20 +529,20 @@ export default function ServiceRequestsPage() {
                                     {selectedRequest.category === 'legal' && (selectedRequest.firstParty || selectedRequest.secondParty || selectedRequest.metadata) ? (
                                         <div className="space-y-6 pt-4 border-t border">
                                             {selectedRequest.firstParty && (
-                                                <div className="p-4 bg-muted rounded-2xl border border">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
+                                                <div className="calm-panel p-4 bg-muted rounded-2xl border border">
+                                                    <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-3">{t('disputes.firstParty')}</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
-                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p>
+                                                            <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الاسم</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.name}</p>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الهوية</p>
+                                                            <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الهوية</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.idNumber}</p>
                                                         </div>
                                                         {selectedRequest.firstParty.phone && (
                                                             <div>
-                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الجوال</p>
+                                                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الجوال</p>
                                                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.firstParty.phone}</p>
                                                             </div>
                                                         )}
@@ -550,7 +550,7 @@ export default function ServiceRequestsPage() {
                                                             <div className="col-span-2 mt-1 p-2 bg-blue-50/50 rounded-xl border border-blue-100/50">
                                                                 <p className="text-[8px] font-bold text-blue-600 mb-1">بيانات الوكيل</p>
                                                                 <p className="text-[11px] font-bold text-slate-900">{selectedRequest.firstParty.agent.name}</p>
-                                                                <p className="text-[9px] text-slate-500">رقم الوكالة: {selectedRequest.firstParty.agent.agencyNumber}</p>
+                                                                <p className="text-[9px] text-muted-foreground dark:text-slate-500">رقم الوكالة: {selectedRequest.firstParty.agent.agencyNumber}</p>
                                                             </div>
                                                         )}
                                                     </div>
@@ -558,22 +558,22 @@ export default function ServiceRequestsPage() {
                                             )}
 
                                             {selectedRequest.secondParty && (
-                                                <div className="p-4 bg-muted rounded-2xl border border">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
+                                                <div className="calm-panel p-4 bg-muted rounded-2xl border border">
+                                                    <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-3">{t('disputes.secondParty')}</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                                                         <div>
-                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الاسم</p>
+                                                            <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الاسم</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.name}</p>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">الهوية</p>
+                                                            <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">الهوية</p>
                                                             <p className="text-xs font-bold text-slate-900">{selectedRequest.secondParty.idNumber}</p>
                                                         </div>
                                                         {selectedRequest.secondParty.agent?.name && (
                                                             <div className="col-span-2 mt-1 p-2 bg-blue-50/50 rounded-xl border border-blue-100/50">
                                                                 <p className="text-[8px] font-bold text-blue-600 mb-1">بيانات الوكيل</p>
                                                                 <p className="text-[11px] font-bold text-slate-900">{selectedRequest.secondParty.agent.name}</p>
-                                                                <p className="text-[9px] text-slate-500">رقم الوكالة: {selectedRequest.secondParty.agent.agencyNumber}</p>
+                                                                <p className="text-[9px] text-muted-foreground dark:text-slate-500">رقم الوكالة: {selectedRequest.secondParty.agent.agencyNumber}</p>
                                                             </div>
                                                         )}
                                                     </div>
@@ -585,7 +585,7 @@ export default function ServiceRequestsPage() {
                                                     <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3">تفاصيل إضافية</p>
                                                     <div className="space-y-3">
                                                         {selectedRequest.metadata.applicantRole && (
-                                                            <div className="inline-block bg-slate-900 text-white text-[9px] font-black px-2 py-1 rounded-lg mb-2">
+                                                            <div className="inline-block bg-card dark:bg-slate-900 text-foreground dark:text-white text-[9px] font-black px-2 py-1 rounded-lg mb-2">
                                                                 مقدم الطلب: {
                                                                     selectedRequest.metadata.applicantRole === 'party1' ? 'الطرف الأول' : 
                                                                     selectedRequest.metadata.applicantRole === 'party2' ? 'الطرف الثاني' : 'الوكيل'
@@ -594,19 +594,19 @@ export default function ServiceRequestsPage() {
                                                         )}
                                                         {selectedRequest.metadata.details?.duration && (
                                                             <div>
-                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">المدة</p>
+                                                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">المدة</p>
                                                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.metadata.details.duration}</p>
                                                             </div>
                                                         )}
                                                         {selectedRequest.metadata.details?.paymentAmount && (
                                                             <div>
-                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">تفاصيل الدفع</p>
+                                                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">تفاصيل الدفع</p>
                                                                 <p className="text-xs font-bold text-slate-900">{selectedRequest.metadata.details.paymentAmount}</p>
                                                             </div>
                                                         )}
                                                         {selectedRequest.description && (
                                                             <div>
-                                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</p>
+                                                                <p className="text-[9px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</p>
                                                                 <p className="text-xs font-medium text-slate-600 leading-relaxed">{selectedRequest.description}</p>
                                                             </div>
                                                         )}
@@ -616,7 +616,7 @@ export default function ServiceRequestsPage() {
                                         </div>
                                     ) : selectedRequest.description && (
                                         <div className="space-y-2 pt-2 border-t border">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</label>
+                                            <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.description')}</label>
                                             <p className="text-sm font-medium text-slate-600 leading-relaxed bg-muted/50 p-4 rounded-2xl">
                                                 {selectedRequest.description}
                                             </p>
@@ -627,20 +627,20 @@ export default function ServiceRequestsPage() {
                                     <DynamicAnswersView request={selectedRequest} />
 
                                      <div className="space-y-4 pt-4 border-t border">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>
+                                        <label className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{t('admin.service_requests.price')}</label>
                                         <div className="flex gap-3">
                                             <input 
                                                 type="number"
                                                 value={editingPrice}
                                                 onChange={(e) => setEditingPrice(e.target.value)}
-                                                className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-slate-900 rounded-xl transition-all"
+                                                className="bg-muted border border py-3 px-4 text-sm font-bold w-full outline-none focus:border-border focus:dark:border-slate-900 rounded-xl transition-all"
                                                 placeholder="0.00"
                                             />
                                             <div className="flex flex-col gap-3">
                                                 <button 
                                                     onClick={handleSave}
                                                     disabled={isUpdatingPrice}
-                                                    className="w-full bg-slate-900 text-white py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-stone-400 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                                                    className="w-full bg-card dark:bg-slate-900 text-foreground dark:text-white py-4 px-6 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-muted hover:dark:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/5 dark:shadow-stone-400 active:scale-95 disabled:opacity-50 whitespace-nowrap"
                                                 >
                                                     <Save className="w-4 h-4" />
                                                     {t('admin.service_requests.save_changes')}
@@ -691,7 +691,7 @@ export default function ServiceRequestsPage() {
                                                         ✓ {t('legal.invoice.sent')}
                                                     </span>
                                                 ) : (
-                                                    <span className="bg-muted text-slate-400 text-[10px] font-black px-3 py-1 rounded-full border border">
+                                                    <span className="bg-muted text-muted-foreground dark:text-slate-400 text-[10px] font-black px-3 py-1 rounded-full border border">
                                                         ⏳ {t('legal.invoice.notSent')}
                                                     </span>
                                                 )}
@@ -751,7 +751,7 @@ export default function ServiceRequestsPage() {
                                                             }
                                                         }}
                                                         disabled={isSendingInvoice || !invoicePrice}
-                                                        className="bg-blue-600 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-200 active:scale-95 disabled:opacity-50 whitespace-nowrap"
+                                                        className="calm-primary bg-blue-600 text-white py-3 px-5 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-200 active:scale-95 disabled:opacity-50 whitespace-nowrap"
                                                     >
                                                         {isSendingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                                                         {t('legal.invoice.sendBtn')}
@@ -770,7 +770,7 @@ export default function ServiceRequestsPage() {
                                      )}
                                      {/* ===== END LEGAL INVOICE SECTION ===== */}
 
-                                     <div className="pt-2 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                                     <div className="pt-2 flex items-center gap-2 text-muted-foreground dark:text-slate-400 text-[10px] font-bold">
 
                                         <Calendar className="w-3.5 h-3.5" />
                                         <span>{t('admin.service_requests.date')}: {format(new Date(selectedRequest.createdAt), 'dd MMMM yyyy - hh:mm a', { locale: language === 'ar' ? ar : enUS })}</span>
@@ -780,26 +780,26 @@ export default function ServiceRequestsPage() {
                                 <TabsContent value="visits" className="space-y-4">
                                     {isLoadingRelated ? (
                                         <div className="py-6 md:py-12 flex justify-center">
-                                            <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                                            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-400" />
                                         </div>
                                     ) : userBookings.length > 0 ? (
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                             {userBookings.map((booking: any) => (
-                                                <div key={booking.id} className="p-4 bg-muted rounded-xl border border">
+                                                <div key={booking.id} className="calm-panel p-4 bg-muted rounded-xl border border">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <Badge variant="outline" className="bg-card">{booking.type}</Badge>
-                                                        <span className="text-xs text-slate-400 font-medium">
+                                                        <span className="text-xs text-muted-foreground dark:text-slate-400 font-medium">
                                                             {format(new Date(booking.createdAt), 'dd/MM/yyyy')}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-1">
-                                                        <Clock className="w-4 h-4 text-slate-400" />
+                                                        <Clock className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                                                         {booking.visitDate ? format(new Date(booking.visitDate), 'dd MMMM - hh:mm a', { locale: language === 'ar' ? ar : enUS }) : 'Pending Schedule'}
                                                     </div>
                                                     <div className="flex justify-between items-center mt-3">
                                                         <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-                                                            booking.status === 'confirmed' ? 'bg-slate-900 text-white' :
-                                                            booking.status === 'cancelled' ? 'bg-muted text-slate-400' :
+                                                            booking.status === 'confirmed' ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' :
+                                                            booking.status === 'cancelled' ? 'bg-muted text-muted-foreground dark:text-slate-400' :
                                                             'bg-muted text-slate-600'
                                                         }`}>
                                                             {booking.status}
@@ -809,7 +809,7 @@ export default function ServiceRequestsPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-6 md:py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+                                        <div className="py-6 md:py-12 text-center text-muted-foreground dark:text-slate-400 flex flex-col items-center gap-2">
                                             <Calendar className="w-8 h-8 opacity-50" />
                                             <p className="text-xs font-bold">{t('admin.service_requests.no_visits')}</p>
                                         </div>
@@ -819,23 +819,23 @@ export default function ServiceRequestsPage() {
                                 <TabsContent value="invoices" className="space-y-4">
                                     {isLoadingRelated ? (
                                         <div className="py-6 md:py-12 flex justify-center">
-                                            <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                                            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground dark:text-slate-400" />
                                         </div>
                                     ) : userInvoices.length > 0 ? (
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                             {userInvoices.map((invoice: any) => (
-                                                <div key={invoice.id} className="p-4 bg-muted rounded-xl border border flex justify-between items-center">
+                                                <div key={invoice.id} className="calm-panel p-4 bg-muted rounded-xl border border flex justify-between items-center">
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <Receipt className="w-4 h-4 text-slate-400" />
+                                                            <Receipt className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
                                                             <span className="font-bold text-slate-900 text-sm">#{invoice.invoiceNumber || invoice.id.substring(0,8)}</span>
                                                         </div>
-                                                        <p className="text-xs text-slate-500">{format(new Date(invoice.createdAt), 'dd MMMM yyyy')}</p>
+                                                        <p className="text-xs text-muted-foreground dark:text-slate-500">{format(new Date(invoice.createdAt), 'dd MMMM yyyy')}</p>
                                                     </div>
                                                     <div className="text-right">
                                                         <p className="font-black text-slate-900"><SaudiRiyalAmount amount={invoice.amount} locale="ar-SA" /></p>
                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                                            invoice.status === 'paid' ? 'bg-slate-900 text-white' : 'bg-muted text-slate-400'
+                                                            invoice.status === 'paid' ? 'bg-card dark:bg-slate-900 text-foreground dark:text-white' : 'bg-muted text-muted-foreground dark:text-slate-400'
                                                         }`}>
                                                             {invoice.status}
                                                         </span>
@@ -844,7 +844,7 @@ export default function ServiceRequestsPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="py-6 md:py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+                                        <div className="py-6 md:py-12 text-center text-muted-foreground dark:text-slate-400 flex flex-col items-center gap-2">
                                             <Receipt className="w-8 h-8 opacity-50" />
                                             <p className="text-xs font-bold">{t('admin.service_requests.no_invoices')}</p>
                                         </div>

@@ -1,4 +1,5 @@
 "use client";
+import { canNavigateBack } from "@/lib/workspace-usability";
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowLeft } from 'lucide-react';
@@ -23,11 +24,11 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
   if (pathname === '/') return null;
 
   const bgClass = theme === 'dark'
-    ? 'bg-slate-950/75 border-white/[0.07] supports-[backdrop-filter]:bg-slate-950/60'
+    ? 'bg-background/75 dark:bg-slate-950/75 border-border dark:border-white/[0.07] supports-[backdrop-filter]:bg-background/90 dark:supports-[backdrop-filter]:bg-slate-950/60'
     : 'bg-white/80 border-slate-200/70 supports-[backdrop-filter]:bg-white/65';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-slate-900';
+  const textClass = theme === 'dark' ? 'text-foreground dark:text-white' : 'text-slate-900';
   const btnClass = theme === 'dark'
-    ? 'bg-white/[0.06] border-white/10 text-slate-200 active:bg-white/[0.12]'
+    ? 'bg-muted dark:bg-white/[0.06] border-border dark:border-white/10 text-foreground dark:text-slate-200 active:bg-muted active:dark:bg-white/[0.12]'
     : 'bg-slate-100/90 border-slate-200 text-slate-600 active:bg-slate-200';
 
   // Guard against missing translation keys (t() returns the raw key)
@@ -46,12 +47,19 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute inset-x-0 bottom-0 h-px ${
-          theme === 'dark' ? 'bg-gradient-to-r from-transparent via-white/15 to-transparent' : 'bg-gradient-to-r from-transparent via-slate-900/10 to-transparent'
+          theme === 'dark' ? 'bg-gradient-to-r from-transparent via-white/15 to-transparent' : 'bg-gradient-to-r from-transparent via-card/10 dark:via-slate-900/10 to-transparent'
         }`}
       />
       <div className="flex items-center gap-2.5">
         <button
-          onClick={() => { if (onBack) onBack(); else if (pathname === '/profile') router.push('/details'); else router.back(); }}
+          type="button"
+          onClick={() => { if (onBack) onBack(); else if (pathname === '/profile') router.push('/details'); else {
+            const navigation = (window as Window & { navigation?: { currentEntry?: { index: number }; entries: () => Array<{ index: number; url?: string }> } }).navigation;
+            const currentEntry = navigation?.currentEntry;
+            const previousUrl = currentEntry ? navigation?.entries().find(entry => entry.index === currentEntry.index - 1)?.url : undefined;
+            if (canNavigateBack(window.location.href, window.history.length, document.referrer, currentEntry ? { index: currentEntry.index, previousUrl } : undefined)) router.back();
+            else router.push('/details');
+          } }}
           className={`flex items-center justify-center w-9 h-9 rounded-full border transition-colors active:scale-90 ${btnClass}`}
           aria-label={backLabel}
         >
@@ -63,6 +71,8 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
       </div>
       <div className="flex items-center gap-1.5">
         <button
+          type="button"
+          aria-label={isRtl ? "Switch to English" : "التبديل إلى العربية"}
           onClick={toggleLanguage}
           className={`flex items-center justify-center h-9 min-w-9 px-2 rounded-full border text-[11px] font-black uppercase transition-colors active:scale-90 ${btnClass}`}
         >
@@ -71,7 +81,7 @@ export default function MobileAppHeader({ title, theme = 'dark', showNotificatio
         {showNotifications && (
           <NotificationBell
             variant={theme === 'dark' ? 'dark' : 'light'}
-            buttonClassName={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}
+            buttonClassName={theme === 'dark' ? 'text-muted-foreground dark:text-slate-300' : 'text-slate-600'}
             align={isRtl ? 'left' : 'right'}
           />
         )}

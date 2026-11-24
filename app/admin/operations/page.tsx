@@ -45,7 +45,7 @@ export default function AdminOperationsPage() {
   return (
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="space-y-2">
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+        <div className="inline-flex items-center gap-2 rounded-full bg-card dark:bg-slate-900 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-foreground dark:text-white">
           <BarChart3 className="h-3.5 w-3.5" />
           {isRtl ? "الإحصائيات والعمليات" : "Stats & Operations"}
         </div>
@@ -56,18 +56,18 @@ export default function AdminOperationsPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
+          <div key={card.label} className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+            <div className="calm-icon mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-slate-950">
               <card.icon className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{card.label}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{card.label}</p>
             <p className="mt-1 text-xl sm:text-2xl font-black text-slate-950">{loading ? "..." : card.value}</p>
           </div>
         ))}
       </section>
 
       <section className="grid grid-cols-1 gap-3 md:gap-6 lg:grid-cols-1 md:grid-cols-2">
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "آخر الطلبات" : "Recent orders"}</h2>
           <div className="divide-y divide-slate-100">
             {orders.slice(0, 8).map((order, index) => (
@@ -75,14 +75,14 @@ export default function AdminOperationsPage() {
                 {order.title || order.type || order.status || (isRtl ? "طلب" : "Order")}
               </div>
             ))}
-            {!orders.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد طلبات" : "No orders"}</div>}
+            {!orders.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد طلبات" : "No orders"}</div>}
           </div>
           <Link href="/admin/orders" className="mt-4 inline-flex text-xs font-black text-slate-950 underline">
             {isRtl ? "إدارة الطلبات" : "Manage orders"}
           </Link>
         </div>
 
-        <div className="rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
+        <div className="calm-panel rounded-2xl border border bg-card p-3 sm:p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-black text-slate-950">{isRtl ? "آخر المعاملات" : "Recent transactions"}</h2>
           <div className="divide-y divide-slate-100">
             {transactions.slice(0, 8).map((transaction, index) => (
@@ -91,7 +91,7 @@ export default function AdminOperationsPage() {
                 <span className="font-black text-slate-950">{Number(transaction.amount || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
               </div>
             ))}
-            {!transactions.length && <div className="py-10 text-center text-xs font-black text-slate-300">{isRtl ? "لا توجد معاملات" : "No transactions"}</div>}
+            {!transactions.length && <div className="py-10 text-center text-xs font-black text-muted-foreground dark:text-slate-300">{isRtl ? "لا توجد معاملات" : "No transactions"}</div>}
           </div>
           <Link href="/admin/transactions" className="mt-4 inline-flex text-xs font-black text-slate-950 underline">
             {isRtl ? "إدارة المعاملات" : "Manage transactions"}

@@ -26,7 +26,7 @@ function SkeletonBase({ className, dark }: SkeletonProps) {
       className={cn(
         "relative overflow-hidden rounded-xl",
         dark
-          ? "bg-slate-800/60"
+          ? "bg-muted/60 dark:bg-slate-800/60"
           : "bg-slate-200/60",
         className
       )}
@@ -56,9 +56,9 @@ function CardSkeleton({ className, dark }: SkeletonProps) {
     <div
       className={cn(
         "rounded-2xl p-4 space-y-3",
-        dark ? "bg-slate-800/40" : "bg-white/60",
+        dark ? "bg-muted/40 dark:bg-slate-800/40" : "bg-white/60",
         "border",
-        dark ? "border-slate-700/30" : "border-slate-200/50",
+        dark ? "border-border dark:border-slate-700/30" : "border-slate-200/50",
         className
       )}
     >
@@ -109,7 +109,7 @@ function ListItemSkeleton({ className, dark }: SkeletonProps) {
     <div
       className={cn(
         "flex items-center gap-3 p-3 rounded-xl",
-        dark ? "bg-slate-800/30" : "bg-white/40",
+        dark ? "bg-muted/30 dark:bg-slate-800/30" : "bg-white/40",
         className
       )}
     >
@@ -164,7 +164,7 @@ function DashboardSkeleton({ className, dark }: SkeletonProps) {
             transition={{ delay: i * 0.08, type: "spring", stiffness: 300, damping: 25 }}
             className={cn(
               "p-4 rounded-xl space-y-2",
-              dark ? "bg-slate-800/40 border border-slate-700/30" : "bg-white/60 border border-slate-200/50"
+              dark ? "bg-muted/40 dark:bg-slate-800/40 border border-border dark:border-slate-700/30" : "bg-white/60 border border-slate-200/50"
             )}
           >
             <SkeletonBase className="h-8 w-8 rounded-lg" dark={dark} />
@@ -193,7 +193,7 @@ function DashboardSkeleton({ className, dark }: SkeletonProps) {
       {/* Chart placeholder */}
       <div className={cn(
         "p-4 rounded-xl space-y-3",
-        dark ? "bg-slate-800/40 border border-slate-700/30" : "bg-white/60 border border-slate-200/50"
+        dark ? "bg-muted/40 dark:bg-slate-800/40 border border-border dark:border-slate-700/30" : "bg-white/60 border border-slate-200/50"
       )}>
         <SkeletonBase className="h-4 w-24 rounded-lg" dark={dark} />
         <SkeletonBase className="h-40 w-full rounded-xl" dark={dark} />

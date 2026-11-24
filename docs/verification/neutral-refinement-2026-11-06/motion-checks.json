@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "reduced": false,
+      "hover": true,
+      "transform": "matrix(1, 0, 0, 1, 0, -2)",
+      "shadow": "rgba(24, 32, 28, 0.075) 0px 5px 16px 0px",
+      "transition": "box-shadow, border-color, background-color"
+    },
+    {
+      "reduced": true,
+      "hover": true,
+      "transform": "none",
+      "shadow": "rgba(24, 32, 28, 0.075) 0px 5px 16px 0px",
+      "transition": "border-color, background-color"
+    }
+  ],
+  "errors": []
+}

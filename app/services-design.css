@@ -1,0 +1,548 @@
+/* Services catalog — single theme-token implementation for light and dark.
+   All selectors are scoped under `.services-page` so the browse shell, the
+   homepage and the legacy cinematic surfaces are unaffected. */
+
+.services-page {
+  /* The admin settings panel writes its light-palette `--foreground` as an
+     inline style on <html>, which outranks the `.dark` theme token. Scoping
+     the page to the theme-owned `--card-foreground` keeps text readable in
+     both modes without fighting the settings layer. */
+  --services-ink: var(--card-foreground, var(--foreground));
+  width: 100%;
+  color: var(--services-ink);
+}
+
+/* Light uses the homepage palette; dark uses the shared footer palette. */
+html:not(.dark) .services-page,
+html:not(.dark) .services-form-root {
+  --background: var(--site-light-background, #dbe4f2);
+  --foreground: #24333d;
+  --card: #edede7;
+  --card-foreground: #24333d;
+  --muted: #e9e6df;
+  --muted-foreground: #667277;
+  --border: #d7dad4;
+  --services-ink: #24333d;
+  background: var(--site-light-background, #dbe4f2) !important;
+  color: #24333d;
+}
+
+html.dark .services-page {
+  --background: #101827;
+  --card: #1b2835;
+  --card-foreground: #edf1f5;
+  --muted: #243344;
+  --muted-foreground: #acbac7;
+  --border: #354554;
+  --services-ink: #edf1f5;
+  background: linear-gradient(140deg, #101827, #0f172a);
+}
+
+html:not(.dark) .services-page .services-card {
+  background: #edede7 !important;
+  border-color: #d7dad4 !important;
+}
+
+html:not(.dark) .services-form-root .services-form-panel {
+  background: #edede7 !important;
+  border-color: #d7dad4 !important;
+}
+
+html:not(.dark) .services-form-root .services-form-hero :is(h1, p) {
+  color: #24333d;
+}
+
+html:not(.dark) .services-form-root .services-form-hero p {
+  color: #667277;
+}
+
+html:not(.dark) .services-form-root .services-form-panel {
+  color: #262626;
+}
+
+html:not(.dark) .services-form-root .services-form-back { color: #667277; }
+html:not(.dark) .services-form-root .services-form-back:hover { color: #24333d; }
+
+html:not(.dark) .services-form-root .dynamic-service-form :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  background: #f5f4f0 !important;
+  border-color: #d7dad4 !important;
+  color: #24333d !important;
+}
+
+.services-page-shell {
+  width: min(100% - 32px, 1200px);
+  margin-inline: auto;
+  padding-block: clamp(18px, 3vw, 34px) clamp(28px, 4.5vw, 56px);
+}
+
+/* ---------------------------------------------------------------- header */
+
+.services-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.8vw, 20px);
+  padding-bottom: clamp(18px, 2.4vw, 26px);
+  border-bottom: 1px solid var(--border);
+}
+
+.services-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  min-height: 40px;
+  padding-inline-end: 6px;
+  border-radius: 10px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.services-back:hover { color: var(--services-ink); }
+
+.services-back-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.services-back-icon svg { width: 15px; height: 15px; }
+
+/* In RTL "back" points to the right, so mirror the arrow. */
+.services-page[dir="rtl"] .services-back-icon svg { transform: rotate(180deg); }
+
+.services-back:hover .services-back-icon {
+  border-color: color-mix(in srgb, var(--services-ink) 26%, var(--border));
+  background: color-mix(in srgb, var(--services-ink) 4%, var(--card));
+}
+
+.services-heading-rule {
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: var(--services-ink);
+  opacity: 0.85;
+}
+
+.services-heading h1 {
+  margin: 0;
+  color: var(--services-ink);
+  font-size: clamp(26px, 4.2vw, 44px);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.services-page[dir="rtl"] .services-heading h1 { letter-spacing: normal; }
+
+.services-intro {
+  max-width: 62ch;
+  margin: 10px 0 0;
+  color: var(--muted-foreground);
+  font-size: clamp(14px, 1.4vw, 16px);
+  line-height: 1.75;
+}
+
+/* --------------------------------------------------------------- actions */
+
+.services-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.services-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease, translate 0.18s ease;
+}
+
+/* `--card` is white in light mode and near-black in dark mode, so it always
+   reads as the contrasting label color on top of the ink token. */
+.services-action--primary {
+  border-color: var(--services-ink);
+  background: var(--services-ink);
+  color: var(--card);
+}
+
+.services-action--primary:hover {
+  background: color-mix(in srgb, var(--services-ink) 86%, var(--card));
+  border-color: color-mix(in srgb, var(--services-ink) 86%, var(--card));
+}
+
+.services-action--secondary {
+  background: var(--card);
+  color: var(--services-ink);
+}
+
+.services-action--secondary:hover {
+  border-color: color-mix(in srgb, var(--services-ink) 24%, var(--border));
+  background: color-mix(in srgb, var(--services-ink) 4%, var(--card));
+}
+
+.services-action-arrow {
+  width: 14px;
+  height: 14px;
+  transition: translate 0.18s ease;
+}
+
+.services-page[dir="ltr"] .services-action-arrow { transform: rotate(180deg); }
+
+/* ------------------------------------------------------------------ grid */
+
+.services-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: clamp(20px, 2.6vw, 28px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.services-cell {
+  display: flex;
+  min-width: 0;
+}
+
+.services-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  min-height: 200px;
+  padding: clamp(16px, 2vw, 22px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--services-ink);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease, translate 0.2s ease;
+}
+
+.services-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.services-card-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.services-card-icon svg { width: 18px; height: 18px; }
+
+.services-card-index {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.services-card-title {
+  margin: 0;
+  color: var(--services-ink);
+  font-size: clamp(16px, 1.5vw, 18px);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.services-card-description {
+  margin: 6px 0 0;
+  color: var(--muted-foreground);
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+
+.services-page[dir="rtl"] .services-card-title { line-height: 1.65; }
+
+.services-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--services-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.services-card-arrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--muted-foreground);
+  transition: translate 0.2s ease, color 0.2s ease;
+}
+
+.services-card-arrow svg { width: 15px; height: 15px; }
+
+.services-page[dir="ltr"] .services-card-arrow svg { transform: rotate(180deg); }
+
+.services-card-soon {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.services-card-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
+}
+
+.services-card-preview:hover {
+  border-color: color-mix(in srgb, var(--services-ink) 26%, var(--border));
+  background: color-mix(in srgb, var(--services-ink) 4%, var(--card));
+  color: var(--services-ink);
+}
+
+/* Locked (coming-soon) cards must not read as available. */
+.services-card--locked {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--services-ink) 3%, var(--card));
+  cursor: default;
+}
+
+/* --------------------------------------------------------------- effects */
+
+.services-page [data-enter] {
+  animation: services-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+@keyframes services-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .services-card:not(.services-card--locked):hover {
+    translate: 0 -3px;
+    border-color: color-mix(in srgb, var(--services-ink) 26%, var(--border));
+    background: color-mix(in srgb, var(--services-ink) 4%, var(--card));
+    box-shadow: 0 10px 22px -16px rgb(0 0 0 / 0.4);
+  }
+
+  .services-card:not(.services-card--locked):hover .services-card-icon {
+    background: color-mix(in srgb, var(--services-ink) 10%, var(--card));
+    color: var(--services-ink);
+    transform: scale(1.04);
+  }
+
+  .services-card:not(.services-card--locked):hover .services-card-arrow {
+    translate: 3px 0;
+    color: var(--services-ink);
+  }
+
+  .services-page[dir="rtl"]
+    .services-card:not(.services-card--locked):hover
+    .services-card-arrow {
+    translate: -3px 0;
+  }
+}
+
+.services-card:not(.services-card--locked):active { translate: 0 -1px; }
+
+/* --------------------------------------------------------------- focus */
+
+.services-page :is(a, button):focus-visible {
+  outline: 2px solid var(--services-ink);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------- breakpoints */
+
+@media (max-width: 767px) {
+  .services-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .services-card {
+    min-height: 168px;
+  }
+
+  .services-card-description {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+}
+
+@media (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .services-cell[data-layout="last"] { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .services-cell[data-layout="wide"] { grid-column: span 3; }
+  .services-cell[data-layout="third"],
+  .services-cell[data-layout="last"],
+  .services-cell[data-layout="custom"] { grid-column: span 2; }
+}
+
+@media (min-width: 1280px) {
+  .services-card { min-height: 210px; }
+}
+
+/* ------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .services-page [data-enter] { animation: none; }
+
+  .services-page .services-card,
+  .services-page .services-card-icon,
+  .services-page .services-card-arrow,
+  .services-page .services-action,
+  .services-page .services-action-arrow,
+  .services-page .services-back,
+  .services-page .services-back-icon,
+  .services-page .services-card-preview {
+    transition: none;
+  }
+
+  .services-page .services-card:hover,
+  .services-page .services-card:active { translate: none; }
+
+  .services-page .services-card:hover .services-card-icon { transform: none; }
+
+  .services-page .services-card:hover .services-card-arrow,
+  .services-page[dir="rtl"] .services-card:hover .services-card-arrow { translate: none; }
+}
+
+/* Request form: restore solid, readable theme surfaces after the older global
+   glass rules, which also match nested inputs and cards. */
+.services-form-root .services-form-panel,
+.services-form-root .dynamic-service-form .bg-card {
+  background: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border-color: var(--border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.services-form-root .dynamic-service-form :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  background: var(--background) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  font-weight: 500 !important;
+}
+
+.services-form-root .dynamic-service-form :is(input, select, textarea):focus-visible,
+.services-form-root :is(a, button):focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.services-form-root .dynamic-service-form :is(input, select, textarea)::placeholder {
+  color: var(--muted-foreground) !important;
+}
+
+html.dark .services-form-root {
+  --foreground: #f8fafc;
+  --card-foreground: #f8fafc;
+  --background: #101827;
+  --card: #1b2835;
+  --muted: #1b273a;
+  --muted-foreground: #b5bfce;
+  --border: #334155;
+  background: linear-gradient(140deg, #101827, #0f172a) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .services-form-root .services-form-panel,
+html.dark .services-form-root .dynamic-service-form .bg-card {
+  background: #1b2835 !important;
+  border-color: #334155 !important;
+  color: #e8edf5 !important;
+}
+
+html.dark .services-form-root .dynamic-service-form :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  background: #1b273a !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+html.dark .services-form-root .dynamic-service-form .text-slate-600 { color: #c5ceda; }
+
+html.dark .services-form-root .dynamic-service-form :is(input, select, textarea):focus-visible,
+html.dark .services-form-root :is(a, button):focus-visible {
+  outline-color: #f8fafc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-form-root *, .services-form-root *::before, .services-form-root *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

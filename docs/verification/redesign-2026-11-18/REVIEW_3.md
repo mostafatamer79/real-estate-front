@@ -1,0 +1,20 @@
+# Review 3 — source findings, not approval
+
+Both lane outcomes are available: **AGY wallet completed; OpenCode subscriptions timed out after 30 minutes.** Source review found blocking wallet issues and an incomplete subscription implementation. No files changed or checks executed by this reviewer.
+
+- **P1 — Wallet CSS contains unscoped selectors incompatible with CSS Modules purity.** [wallet-redesign.module.css:361](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/wallet/wallet-redesign.module.css:361) uses bare `:focus-visible`; line 368 uses bare `*`, `::before`, `::after`. Scope these under `.walletRoot` or other local classes. **Confidence: high; build failure inferred from source, not executed.** Acceptance: main’s production build accepts the module; reduced-motion/focus rules affect wallet only.
+
+- **P1 — Mobile navigation can cover financial dialogs.** [wallet-redesign.module.css:325](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/wallet/wallet-redesign.module.css:325) gives the dock `z-index:60`; shared dialog overlay/content use `z-50` in [dialog.tsx:13](/home/mostafa/Work/mostakl/realestate/real-estate-front/components/ui/dialog.tsx:13). Lower the dock below modal layers. **Confidence: high.** Acceptance: at 320/390px, withdrawal/top-up dialogs cover and disable background navigation, with every control reachable.
+
+- **P2 — Failed refresh leaves stale balance presented as available.** [page.tsx:114](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/wallet/page.tsx:114) preserves `'available'` after wallet failure; withdrawal remains enabled through `confirmed`. Preserve the cached number as explicitly stale, but mark freshness unavailable and block withdrawal until refreshed. Also check that state inside `handleWithdrawal`, which currently validates only the numeric balance. **Confidence: high.** Acceptance: success → failed refresh cannot submit withdrawal; retry success restores availability.
+
+- **P2 — Partial ledger refresh drops cached rows from the failed source.** [page.tsx:178](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/wallet/page.tsx:178) replaces the merged ledger whenever either source succeeds. Invoice failure removes prior invoices; subscription failure removes prior subscriptions. Retain each source independently or update the combined ledger only after both succeed. **Confidence: high.** Acceptance: separately fail each endpoint after successful loading and verify cached rows remain with a stale/retry indication.
+
+- **P2 — Commission/files failures remain silent.** [page.tsx:182](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/wallet/page.tsx:182) handles fulfilled results only; failures never set `hadCriticalFailure`. Initial failures therefore render existing empty-state components as if loading succeeded. Add section-specific error/retry states. **Confidence: high.** Acceptance: rejected commission/files requests cannot display a successful empty list.
+
+- **P1 — Subscription work is not integrated.** The current [subscription page](/home/mostafa/Work/mostakl/realestate/real-estate-front/app/subscriptions/new/page.tsx) has **no diff against its lane baseline**. The new quote helper and 1,229-line stylesheet are unused; the requested regression test is absent. The original pricing-failure-to-zero behavior remains. **Confidence: high.** Acceptance: integrate explicit pricing availability and quote gates, preserve legitimate zero prices, block missing/failed pricing, and provide focused tests plus main-owned browser verification.
+
+**Scope:** inspected wallet changes and new files fit its worker brief, which explicitly permits the helper/test despite their omission from the coordination table. Subscription partial files fit its allowed list. Shared dirty status cannot establish authorship of unrelated changes.
+
+**Verification gap:** wallet test/lint success is worker-reported only. Independent build/typecheck and mocked AR/EN light/dark responsive payment, receipt, retry and dialog checks remain with main. Neither lane is ready for completion approval.
+

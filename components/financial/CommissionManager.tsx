@@ -86,12 +86,12 @@ export default function CommissionManager() {
 
     if (view === 'list') {
         return (
-            <Card className='bg-card rounded-xl shadow-lg border-0'>
+            <Card className='calm-panel bg-card rounded-xl shadow-lg border-0'>
                 <CardHeader className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-6'>
                     <CardTitle className='text-xl sm:text-2xl font-bold text-black text-right'>إدارة العمولات (السعي)</CardTitle>
                     <Button
                         onClick={() => setView('form')}
-                        className='px-6 py-2 text-white bg-slate-800 hover:bg-slate-700 rounded-lg'
+                        className='px-6 py-2 text-foreground dark:text-white bg-muted dark:bg-slate-800 hover:bg-muted hover:dark:bg-slate-700 rounded-lg'
                     >
                         طلب سعي جديد
                     </Button>
@@ -130,7 +130,7 @@ export default function CommissionManager() {
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                                            <TableCell colSpan={5} className="text-center py-8 text-muted-foreground dark:text-gray-500">
                                                 لا توجد عمولات مسجلة
                                             </TableCell>
                                         </TableRow>
@@ -146,7 +146,7 @@ export default function CommissionManager() {
 
     // FORM VIEW
     return (
-        <Card className='bg-card rounded-xl shadow-lg border-0'>
+        <Card className='calm-panel bg-card rounded-xl shadow-lg border-0'>
             <CardHeader className="flex flex-row items-center justify-between pb-6">
                 <CardTitle className="text-xl sm:text-2xl font-bold text-black">نموذج طلب سعي</CardTitle>
                 <button
@@ -244,7 +244,7 @@ export default function CommissionManager() {
                 {/* Submit Buttons */}
                 <div className="flex gap-4 pt-4 border-t mt-4">
                     <Button onClick={() => setView('list')} className="flex-1" variant="outline">إلغاء</Button>
-                    <Button onClick={() => { alert('تم الحفظ'); setView('list'); }} className="flex-1 bg-slate-900 text-white hover:bg-slate-800">حفظ وإرسال الطلب</Button>
+                    <Button onClick={() => { alert('تم الحفظ'); setView('list'); }} className="flex-1 bg-card dark:bg-slate-900 text-foreground dark:text-white hover:bg-muted hover:dark:bg-slate-800">حفظ وإرسال الطلب</Button>
                 </div>
             </CardContent>
 
@@ -252,7 +252,7 @@ export default function CommissionManager() {
             {showBrokerModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
                     onClick={() => setShowBrokerModal(false)} dir="rtl">
-                    <div className="bg-card border border rounded-xl shadow-2xl w-[95vw] sm:max-w-md mx-4 p-3 sm:p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                    <div className="calm-panel calm-interactive bg-card border border rounded-xl shadow-sm dark:shadow-2xl w-[95vw] sm:max-w-md mx-4 p-3 sm:p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-xl font-bold mb-4">إضافة وسيط</h2>
                         <div className="space-y-4">
                             <div><Label>الاسم</Label><Input value={brokerForm.name} onChange={(e) => setBrokerForm({...brokerForm, name: e.target.value})} /></div>

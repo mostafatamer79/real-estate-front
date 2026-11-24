@@ -5,7 +5,7 @@ const path = require('node:path');
 const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf8');
 
 test('Nafath verification is offered on the profile instead of login', () => {
-  assert.doesNotMatch(read('app/login/page.tsx'), /\/nafath-login|تسجيل الدخول عبر نفاذ/);
+  assert.doesNotMatch(read('components/auth/SignIn.tsx'), /\/nafath-login|تسجيل الدخول عبر نفاذ/);
   assert.match(read('app/profile/page.tsx'), /NafathVerification/);
   assert.doesNotMatch(read('app/profile/page.tsx'), /mockNationalId|send-otp|\/user\/nafath\/verify/);
 });

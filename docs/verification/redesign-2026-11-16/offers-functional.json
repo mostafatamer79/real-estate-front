@@ -1,0 +1,154 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "distinct generated hero",
+      "two real fixture listings",
+      "filter drawer and Escape",
+      "city filter/chip removal",
+      "budget empty state/reset",
+      "owner appointment modal",
+      "details navigation",
+      "API retry",
+      "empty inventory",
+      "no overflow",
+      "no page exceptions"
+    ]
+  }
+]

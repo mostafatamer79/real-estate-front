@@ -1,0 +1,23 @@
+.shell {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
+  padding-block: 1.75rem 4rem;
+}
+
+.orientation { margin-block-end: 1.4rem; }
+.orientation h1 { font-size: clamp(1.65rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.35; }
+.orientation p { color: var(--network-muted); max-width: 64ch; margin-block-start: .5rem; line-height: 1.7; }
+.back { margin-block-end: .9rem; }
+.back { min-height: 2.75rem; }
+
+.state {
+  padding: 2rem 1.25rem;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  border: 1px solid var(--network-line);
+  border-radius: 1rem;
+  background: var(--network-surface);
+}
+
+.state svg { width: 1.25rem; height: 1.25rem; }

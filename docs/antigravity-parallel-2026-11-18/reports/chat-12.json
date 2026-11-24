@@ -1,0 +1,61 @@
+{
+  "chat": 12,
+  "slug": "scan-map",
+  "reviewGroup": 4,
+  "routes": [
+    "/scan-map"
+  ],
+  "status": "READY_FOR_REVIEW",
+  "browserChecks": "PENDING",
+  "files": {
+    "modified": [
+      "app/scan-map/page.tsx"
+    ],
+    "created": [
+      "components/redesign/chat12/scan-map.module.css",
+      "components/redesign/chat12/ScanMapHeader.tsx",
+      "components/redesign/chat12/ScanMapControls.tsx",
+      "components/redesign/chat12/ScanResultsTable.tsx",
+      "components/redesign/chat12/ScanDisclaimerModal.tsx",
+      "components/redesign/chat12/ScanGeneratingOverlay.tsx",
+      "lib/redesign-chat12-scan.ts",
+      "public/artworks/chat12-cartography-plinth.webp",
+      "tests/parallel-chat12-scan.test.cjs",
+      "tests/parallel-chat12-before-diff.patch",
+      "scripts/parallel-chat12-verify.cjs",
+      "docs/antigravity-parallel-2026-11-18/reports/chat-12.md",
+      "docs/antigravity-parallel-2026-11-18/reports/chat-12.json"
+    ]
+  },
+  "verification": {
+    "eslint": {
+      "command": "node -e \"const { ESLint } = require('./node_modules/eslint'); ...\"",
+      "filesChecked": 7,
+      "errors": 0,
+      "warnings": 0,
+      "passed": true
+    },
+    "unitTests": {
+      "runner": "node --test",
+      "file": "tests/parallel-chat12-scan.test.cjs",
+      "testsTotal": 10,
+      "testsPassed": 10,
+      "testsFailed": 0,
+      "passed": true
+    },
+    "scriptVerification": {
+      "file": "scripts/parallel-chat12-verify.cjs",
+      "passed": true
+    }
+  },
+  "behavioralNotes": [
+    "Replaced card-stack layout with refined map-first composition and sidebar controls adhering to Marcelo aesthetic.",
+    "Integrated original generated architectural artwork in public/artworks/chat12-cartography-plinth.webp.",
+    "Enforced Nest.js global /api/places prefix and resilient response validation in lib/redesign-chat12-scan.ts.",
+    "Distinguished loading, free, available, and unavailable pricing without false zero defaults.",
+    "Diagnosed W3C geolocation errors (permission denied, position unavailable, timeout) in AR and EN.",
+    "Implemented accessible modal dialogs with focus traps, escape key handling, and aria attributes.",
+    "Enabled client-side RFC 4180 CSV export with UTF-8 BOM encoding for Arabic compatibility.",
+    "Maintained read-only status for shared Map and PaymentMethodsModal components."
+  ]
+}

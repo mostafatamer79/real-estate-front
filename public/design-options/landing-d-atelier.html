@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>الاتجاه D — أتيليه الأصول والحوكمة الذكية (The Sovereign Atelier)</title>
+  <style>
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Plex';
+      src: url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype');
+      font-weight: 600;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #070d18;
+      --surface: #0c1728;
+      --card: #101e33;
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.15);
+      --teal: #2dd4bf;
+      --border: rgba(212, 175, 55, 0.2);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plex', sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+
+    /* Top Command Nav */
+    header {
+      padding: 24px 6vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 13, 24, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-seal {
+      width: 32px; height: 32px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .brand-text strong {
+      font-size: 15px;
+      display: block;
+      line-height: 1.2;
+    }
+    .brand-text span {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: #070d18;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 200ms;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--gold-soft); }
+
+    /* Command Grid Hero */
+    .hero-command {
+      padding: 80px 6vw 40px;
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+    .hero-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .hero-title-box h1 {
+      font-size: clamp(34px, 4.5vw, 62px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .hero-title-box p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 54ch;
+    }
+
+    /* Live FinTech Ticker Metrics */
+    .metrics-ticker-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 900px) {
+      .metrics-ticker-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .ticker-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .ticker-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .ticker-val {
+      font-size: 26px;
+      font-weight: 600;
+      font-family: monospace;
+      color: var(--gold);
+    }
+
+    /* Command Center: 2-Column Dashboard */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 32px;
+      margin-bottom: 80px;
+    }
+    @media (max-width: 960px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+    }
+
+    .dash-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .panel-header h3 { font-size: 20px; font-weight: 600; }
+    .panel-badge {
+      font-size: 11px;
+      background: var(--gold-soft);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    /* Sliders & Outputs */
+    .slider-row {
+      margin-bottom: 24px;
+    }
+    .slider-row label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .slider-row input[type=range] {
+      width: 100%;
+      accent-color: var(--gold);
+    }
+
+    .results-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .result-pill {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .result-pill span { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
+    .result-pill strong { font-size: 20px; color: var(--gold); font-family: monospace; }
+
+    /* Verified Workflow Pipeline */
+    .pipeline-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .step-info h4 { font-size: 16px; margin-bottom: 4px; font-weight: 600; }
+    .step-info p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* Choice Bar */
+    .choice-bar {
+      position: fixed;
+      bottom: 24px;
+      inset-inline: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .choice-bar button {
+      pointer-events: auto;
+      background: var(--gold);
+      color: #070d18;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 12px 30px var(--gold-soft);
+      transition: transform 200ms ease;
+    }
+    .choice-bar button:hover { transform: scale(1.04); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-group">
+      <div class="brand-seal">D</div>
+      <div class="brand-text">
+        <strong>الوساطة الرقمية • D</strong>
+        <span>The Sovereign Atelier</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="#calculator" class="btn-gold">حاسبة الاستثمار ↗</a>
+    </div>
+  </header>
+
+  <main class="hero-command">
+    <div class="hero-top-row">
+      <div class="hero-title-box">
+        <h1>إدارة واستثمار الأصول المعمارية الكبرى.</h1>
+        <p>منصة مؤسسية تجمع بين تدقيق الصكوك العقارية، التقييم الآلي بالذكاء الاصطناعي، والإفراغ الفوري عبر بوابة وزارة العدل.</p>
+      </div>
+    </div>
+
+    <!-- Ticker Metrics -->
+    <div class="metrics-ticker-grid">
+      <div class="ticker-box">
+        <div class="ticker-label">حجم الصفقات الموثقة</div>
+        <div class="ticker-val">4.8B SAR</div>
+      </div>
+      <div class="ticker-box">
+        <div class="ticker-label">متوسط العائد السنوي</div>
+        <div class="ticker-val">9.4%</div>
+      </div>
+      <div class="ticker-box">
+        <div class="ticker-label">سرعة الإفراغ الإلكتروني</div>
+        <div class="ticker-val">&lt; 24H</div>
+      </div>
+      <div class="ticker-box">
+        <div class="ticker-label">الترخيص الرسمي</div>
+        <div class="ticker-val" style="color:var(--teal);">REGA / نفاذ</div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-layout">
+      <!-- Panel 1: Financial Modeling -->
+      <div class="dash-panel" id="calculator">
+        <div class="panel-header">
+          <h3>محاكاة التمويل والعوائد</h3>
+          <span class="panel-badge">حساب فوري مباشر</span>
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <span>قيمة الاستثمار:</span>
+            <strong id="dPriceText" style="color:var(--gold);">5,000,000 ريال</strong>
+          </label>
+          <input type="range" id="dPrice" min="2000000" max="25000000" step="500000" value="5000000">
+        </div>
+
+        <div class="slider-row">
+          <label>
+            <span>الدفعة الأولى المقدمة:</span>
+            <strong id="dDownText" style="color:var(--gold);">20% (1,000,000 ريال)</strong>
+          </label>
+          <input type="range" id="dDown" min="10" max="50" step="5" value="20">
+        </div>
+
+        <div class="results-row">
+          <div class="result-pill">
+            <span>القسط الشهري التقديري</span>
+            <strong id="dMonthlyText">20,300 ريال</strong>
+          </div>
+          <div class="result-pill">
+            <span>الدخل الإيجاري السنوي</span>
+            <strong id="dRentText" style="color:var(--teal);">460,000 ريال</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Verified Escrow Pipeline -->
+      <div class="dash-panel">
+        <div class="panel-header">
+          <h3>حوكمة الصفقات الرقمية</h3>
+          <span class="panel-badge" style="color:var(--teal); background:rgba(45,212,191,0.1);">100% معتمد</span>
+        </div>
+
+        <div class="pipeline-step">
+          <div class="step-num">01</div>
+          <div class="step-info">
+            <h4>فحص الصك والملكية</h4>
+            <p>مطابقة إلكترونية فورية مع السجل العقاري وبوابة وزارة العدل.</p>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">02</div>
+          <div class="step-info">
+            <h4>التقييم الفني والهندسي</h4>
+            <p>تقرير سلامة إنشائية معتمد يوضح حالة العوازل والتشطيبات.</p>
+          </div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-num">03</div>
+          <div class="step-info">
+            <h4>الإفراغ المالي الموحد</h4>
+            <p>حفظ أموال الصفقة في حساب ضمان بنكي معتمد حتى إتمام نقل الملكية.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Choice Bar -->
+  <div class="choice-bar">
+    <button onclick="parent.postMessage('select_D', '*')">✦ اختيار الاتجاه D (The Sovereign Atelier) ↗</button>
+  </div>
+
+  <script>
+    const dPrice = document.getElementById('dPrice');
+    const dDown = document.getElementById('dDown');
+    const dPriceText = document.getElementById('dPriceText');
+    const dDownText = document.getElementById('dDownText');
+    const dMonthlyText = document.getElementById('dMonthlyText');
+    const dRentText = document.getElementById('dRentText');
+
+    function update() {
+      const price = Number(dPrice.value);
+      const downPct = Number(dDown.value);
+      const downAmount = price * (downPct / 100);
+      const loan = price - downAmount;
+
+      dPriceText.textContent = price.toLocaleString() + ' ريال';
+      dDownText.textContent = downPct + '% (' + downAmount.toLocaleString() + ' ريال)';
+
+      const monthly = Math.round((loan * (0.0035 * Math.pow(1.0035, 300))) / (Math.pow(1.0035, 300) - 1));
+      dMonthlyText.textContent = monthly.toLocaleString() + ' ريال';
+
+      const annualRent = Math.round(price * 0.092);
+      dRentText.textContent = annualRent.toLocaleString() + ' ريال/سنة';
+    }
+
+    dPrice.addEventListener('input', update);
+    dDown.addEventListener('input', update);
+  </script>
+</body>
+</html>

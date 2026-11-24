@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: tests/checkout-handoff.test.cjs
+ok 1 - tests/checkout-handoff.test.cjs
+  ---
+  duration_ms: 338.261719
+  type: 'test'
+  ...
+# Subtest: tests/client-profile-behavior.test.cjs
+ok 2 - tests/client-profile-behavior.test.cjs
+  ---
+  duration_ms: 286.383676
+  type: 'test'
+  ...
+# Subtest: tests/department-permissions.test.cjs
+ok 3 - tests/department-permissions.test.cjs
+  ---
+  duration_ms: 32.260922
+  type: 'test'
+  ...
+# Subtest: tests/financial-arabic-rtl.test.cjs
+ok 4 - tests/financial-arabic-rtl.test.cjs
+  ---
+  duration_ms: 29.764531
+  type: 'test'
+  ...
+# Subtest: tests/footer-internal-navigation.test.cjs
+ok 5 - tests/footer-internal-navigation.test.cjs
+  ---
+  duration_ms: 26.036475
+  type: 'test'
+  ...
+# Subtest: tests/footer-mobile-contact.test.cjs
+ok 6 - tests/footer-mobile-contact.test.cjs
+  ---
+  duration_ms: 30.783254
+  type: 'test'
+  ...
+# Subtest: tests/form-control-styling.test.cjs
+ok 7 - tests/form-control-styling.test.cjs
+  ---
+  duration_ms: 59.704556
+  type: 'test'
+  ...
+# Subtest: tests/geidea-checkout.test.cjs
+ok 8 - tests/geidea-checkout.test.cjs
+  ---
+  duration_ms: 430.590014
+  type: 'test'
+  ...
+# Subtest: tests/header-mobile-neutral.test.cjs
+ok 9 - tests/header-mobile-neutral.test.cjs
+  ---
+  duration_ms: 38.394495
+  type: 'test'
+  ...
+# Subtest: tests/mobile-header-footer-polish.test.cjs
+ok 10 - tests/mobile-header-footer-polish.test.cjs
+  ---
+  duration_ms: 29.180542
+  type: 'test'
+  ...
+# Subtest: tests/mobile-performance-baseline.test.cjs
+ok 11 - tests/mobile-performance-baseline.test.cjs
+  ---
+  duration_ms: 33.880165
+  type: 'test'
+  ...
+# Subtest: tests/mobile-property-management.test.cjs
+ok 12 - tests/mobile-property-management.test.cjs
+  ---
+  duration_ms: 36.414927
+  type: 'test'
+  ...
+# Subtest: tests/nafath-availability.test.cjs
+ok 13 - tests/nafath-availability.test.cjs
+  ---
+  duration_ms: 280.057298
+  type: 'test'
+  ...
+# Subtest: tests/nafath-flow.test.cjs
+ok 14 - tests/nafath-flow.test.cjs
+  ---
+  duration_ms: 586.925256
+  type: 'test'
+  ...
+# Subtest: tests/nafath-public-route.test.cjs
+ok 15 - tests/nafath-public-route.test.cjs
+  ---
+  duration_ms: 32.737453
+  type: 'test'
+  ...
+# Subtest: tests/payment-routing.test.cjs
+ok 16 - tests/payment-routing.test.cjs
+  ---
+  duration_ms: 348.921935
+  type: 'test'
+  ...
+# Subtest: tests/profile-mobile-header.test.cjs
+ok 17 - tests/profile-mobile-header.test.cjs
+  ---
+  duration_ms: 26.109857
+  type: 'test'
+  ...
+# Subtest: tests/seo-guest-offers.test.cjs
+ok 18 - tests/seo-guest-offers.test.cjs
+  ---
+  duration_ms: 387.193481
+  type: 'test'
+  ...
+# Subtest: tests/seo-routes.test.cjs
+ok 19 - tests/seo-routes.test.cjs
+  ---
+  duration_ms: 437.497846
+  type: 'test'
+  ...
+# Subtest: tests/seo.test.cjs
+ok 20 - tests/seo.test.cjs
+  ---
+  duration_ms: 430.365651
+  type: 'test'
+  ...
+# Subtest: tests/service-category-removal.test.cjs
+ok 21 - tests/service-category-removal.test.cjs
+  ---
+  duration_ms: 47.218841
+  type: 'test'
+  ...
+# Subtest: tests/service-navigation.test.cjs
+ok 22 - tests/service-navigation.test.cjs
+  ---
+  duration_ms: 268.135579
+  type: 'test'
+  ...
+# Subtest: tests/subscription-custom-option.test.cjs
+ok 23 - tests/subscription-custom-option.test.cjs
+  ---
+  duration_ms: 37.306643
+  type: 'test'
+  ...
+# Subtest: tests/subscription-preview-scope.test.cjs
+ok 24 - tests/subscription-preview-scope.test.cjs
+  ---
+  duration_ms: 80.287405
+  type: 'test'
+  ...
+# Subtest: tests/verify-otp-header-back.test.cjs
+ok 25 - tests/verify-otp-header-back.test.cjs
+  ---
+  duration_ms: 29.962718
+  type: 'test'
+  ...
+# Subtest: tests/wallet-invoice-cover.test.cjs
+ok 26 - tests/wallet-invoice-cover.test.cjs
+  ---
+  duration_ms: 29.253852
+  type: 'test'
+  ...
+# Subtest: tests/workspace-usability.test.cjs
+ok 27 - tests/workspace-usability.test.cjs
+  ---
+  duration_ms: 266.103259
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 610.376969

@@ -1,7 +1,24 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source ".";
+@source "../components";
+@source "../context";
+@source "../hooks";
+@source "../lib";
 @import "tw-animate-css";
+@import "./calm-light.css";
+@import "./services-design.css";
+@import "./home-light.css";
+@import "./light-refinements.css";
+@import "./cinematic.css";
+@import "./cinematic-site.css";
+@import "./offers-orders-design.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Auth is a full-screen surface; keep the global site chrome out of its way. */
+body[data-hide-header="true"] footer {
+  display: none !important;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -42,73 +59,84 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --color-primary-500: #427565;
+  --color-primary-500: #525252;
 }
 
 :root {
+  color-scheme: light;
   --radius: 0.75rem;
-  --background: #f6f8f5;
-  --foreground: #203b32;
-  --card: #ffffff;
-  --card-foreground: #203b32;
+  --site-light-background: #e3eaf4;
+  --site-light-surface: #f6f8fc;
+  --site-light-text: #182d46;
+  --site-light-muted: #4d627b;
+  --site-light-border: #becbdc;
+  --site-dark-background: #101827;
+  --site-dark-surface: #18273d;
+  --site-dark-muted: #20334e;
+  --background: var(--site-light-background);
+  --foreground: #182d46;
+  --card: #f6f8fc;
+  --card-foreground: #182d46;
   --popover: #ffffff;
-  --popover-foreground: #203b32;
-  --primary: #24483d;
+  --popover-foreground: #262626;
+  --primary: #102b46;
   --primary-foreground: hsl(0, 0%, 99%);
-  --secondary: #eaf1eb;
-  --secondary-foreground: #24483d;
-  --muted: #eaf1eb;
-  --muted-foreground: #52675b;
-  --accent: #eaf1eb;
-  --accent-foreground: #24483d;
+  --secondary: #dce5f1;
+  --secondary-foreground: #303030;
+  --muted: #dce5f1;
+  --muted-foreground: #4d627b;
+  --accent: #dce5f1;
+  --accent-foreground: #303030;
   --destructive: #b42318;
-  --border: #d7e2d9;
-  --input: #eaf1eb;
-  --ring: rgb(36 72 61 / 0.35);
+  --border: #becbdc;
+  --input: #e8eef7;
+  --ring: rgb(48 48 48 / 0.35);
   --sidebar: #ffffff;
-  --sidebar-foreground: #203b32;
-  --sidebar-primary: #24483d;
+  --sidebar-foreground: #262626;
+  --sidebar-primary: #303030;
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
   --sidebar-accent: hsl(0, 0%, 0%, 0.05);
-  --sidebar-accent-foreground: #203b32;
+  --sidebar-accent-foreground: #262626;
   --sidebar-border: hsl(264, 2%, 90%);
-  --sidebar-ring: rgb(36 72 61 / 0.35);
+  --sidebar-ring: rgb(48 48 48 / 0.35);
   --app-font-family: system-ui;
   --platform-card-bg: #ffffff;
-  --platform-card-text: #24483d;
-  --platform-card-border: #d7e2d9;
+  --platform-card-text: #303030;
+  --platform-card-border: #dddddd;
   --platform-card-radius: 24px;
-  --platform-icon-bg: #eaf1eb;
-  --platform-icon-color: #24483d;
+  --platform-icon-bg: #f1f1f1;
+  --platform-icon-color: #303030;
   --platform-button-radius: 16px;
 }
 
 .dark {
-  --background: #ffffff;
-  --foreground: hsl(264, 2%, 87%); /* slate-200 */
-  --card: hsl(264, 4%, 10%); /* slate-900 */
-  --card-foreground: hsl(264, 2%, 87%);
-  --popover: hsl(264, 4%, 10%);
-  --popover-foreground: hsl(264, 2%, 87%);
-  --primary: hsl(264, 2%, 85%);
-  --secondary: hsl(264, 4%, 14%);
-  --secondary-foreground: hsl(264, 2%, 87%);
-  --muted: hsl(264, 4%, 16%);
-  --muted-foreground: hsl(264, 4%, 55%);
-  --accent: hsl(264, 4%, 15%);
-  --accent-foreground: hsl(264, 2%, 87%);
-  --border: hsl(264, 4%, 20%, 0.6);
-  --input: hsl(264, 4%, 20%);
-  --ring: hsl(264, 4%, 55%, 0.3);
-  --sidebar: hsl(264, 4%, 10%, 0.95);
-  --sidebar-foreground: hsl(264, 2%, 75%);
-  --sidebar-border: hsl(264, 4%, 20%);
+  color-scheme: dark;
+  --background: var(--site-dark-background);
+  --foreground: #edf1f7;
+  --card: var(--site-dark-surface);
+  --card-foreground: #edf1f7;
+  --popover: #18273d;
+  --popover-foreground: #edf4fc;
+  --primary: #dceafb;
+  --primary-foreground: #10243a;
+  --secondary: #203c58;
+  --secondary-foreground: #edf4fc;
+  --muted: var(--site-dark-muted);
+  --muted-foreground: #a6b8d0;
+  --accent: #244461;
+  --accent-foreground: #edf4fc;
+  --border: #33465f;
+  --input: #1b3652;
+  --ring: #91b6dd;
+  --sidebar: #132a42;
+  --sidebar-foreground: #dceafb;
+  --sidebar-border: #36516f;
 }
 
 @layer base {
   html {
     /* Global typography scale (affects Tailwind rem-based text sizes too) */
-    font-size: 15px;
+    font-size: 16px;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
@@ -124,7 +152,7 @@
     @apply bg-background text-foreground selection:bg-primary/10;
     font-family: var(--app-font-family), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-feature-settings: "cv11", "ss01";
-    font-size: 0.92rem;
+    font-size: 1rem;
     line-height: 1.55;
     letter-spacing: -0.005em;
     overflow-x: hidden;
@@ -155,7 +183,7 @@
 
   @media (max-width: 768px) {
     html {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     input,
@@ -215,19 +243,18 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
     @apply -translate-y-0.5;
   }
-
   /* ---------- Dark page helpers ---------- */
   /* Apply these classes to <body> or a wrapper on slate-950 pages          */
   /* so shadcn Card, Popover, etc. adopt correct dark-surface tokens       */
 
   .details-page-dark {
-    --background: #ffffff;
+    --background: #101827;
     --foreground: hsl(264, 2%, 87%);
-    --card: hsl(264, 4%, 11%);
+    --card: var(--site-dark-surface, #18273d);
     --card-foreground: hsl(264, 2%, 87%);
-    --border: hsl(264, 4%, 20%, 0.55);
-    --input: hsl(264, 4%, 16%);
-    --muted-foreground: hsl(264, 4%, 50%);
+    --border: #33465f;
+    --input: #20334e;
+    --muted-foreground: #a6b8d0;
   }
 
   .text-gradient {
@@ -235,11 +262,11 @@
   }
 
   .premium-gradient {
-    @apply bg-slate-950;
+    @apply bg-background dark:bg-slate-950;
   }
 
   .premium-text {
-    @apply text-slate-100 font-black;
+    @apply text-foreground dark:text-slate-100 font-black;
   }
 
   .platform-card {
@@ -323,13 +350,13 @@
 }
 
 /* Glassmorphic Input & Select Trigger Overrides in Wallet Dashboard */
-.wallet-page-root input:not([type="submit"]):not([type="button"]),
+.wallet-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 .wallet-page-root textarea,
 .wallet-page-root button[role="combobox"],
-.wallet-form-container input,
+.wallet-form-container input:not([type="checkbox"]):not([type="radio"]),
 .wallet-form-container textarea,
 .wallet-form-container button[role="combobox"],
-.wallet-dialog-content input,
+.wallet-dialog-content input:not([type="checkbox"]):not([type="radio"]),
 .wallet-dialog-content textarea,
 .wallet-dialog-content button[role="combobox"] {
   background-color: rgba(255, 255, 255, 0.45) !important;
@@ -339,13 +366,13 @@
   transition: all 0.2s ease-in-out !important;
 }
 
-.wallet-page-root input:focus,
+.wallet-page-root input:not([type="checkbox"]):not([type="radio"]):focus,
 .wallet-page-root textarea:focus,
 .wallet-page-root button[role="combobox"]:focus,
-.wallet-form-container input:focus,
+.wallet-form-container input:not([type="checkbox"]):not([type="radio"]):focus,
 .wallet-form-container textarea:focus,
 .wallet-form-container button[role="combobox"]:focus,
-.wallet-dialog-content input:focus,
+.wallet-dialog-content input:not([type="checkbox"]):not([type="radio"]):focus,
 .wallet-dialog-content textarea:focus,
 .wallet-dialog-content button[role="combobox"]:focus {
   background-color: rgba(255, 255, 255, 0.65) !important;
@@ -401,25 +428,20 @@
 .services-form-root textarea,
 .services-form-root select,
 .services-form-root button[role="combobox"],
-.services-form-root [class*="bg-background"],
-.orders-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
-.orders-page-root textarea,
-.orders-page-root button[role="combobox"],
-.orders-page-root [class*="bg-background"],
+:where(html:not(.dark)) .orders-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+:where(html:not(.dark)) .orders-page-root textarea,
+:where(html:not(.dark)) .orders-page-root button[role="combobox"],
 .subscriptions-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 .subscriptions-page-root textarea,
 .subscriptions-page-root button[role="combobox"],
-.subscriptions-page-root [class*="bg-background"],
 .offers-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 .offers-page-root textarea,
 .offers-page-root select,
 .offers-page-root button[role="combobox"],
-.offers-page-root [class*="bg-background"],
 .internal-page-root input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 .internal-page-root textarea,
 .internal-page-root select,
-.internal-page-root button[role="combobox"],
-.internal-page-root [class*="bg-background"] {
+.internal-page-root button[role="combobox"] {
   width: 100% !important;
   min-height: 3.5rem !important;
   background-color: rgba(255, 255, 255, 0.45) !important;
@@ -439,7 +461,7 @@
 }
 
 .services-form-root textarea,
-.orders-page-root textarea,
+:where(html:not(.dark)) .orders-page-root textarea,
 .subscriptions-page-root textarea,
 .offers-page-root textarea,
 .internal-page-root textarea {
@@ -449,29 +471,24 @@
   padding-bottom: 0.875rem !important;
 }
 
-.services-form-root input:focus,
+.services-form-root input:not([type="checkbox"]):not([type="radio"]):focus,
 .services-form-root textarea:focus,
 .services-form-root select:focus,
 .services-form-root button[role="combobox"]:focus,
-.services-form-root [class*="bg-background"]:focus,
-.orders-page-root input:focus,
-.orders-page-root textarea:focus,
-.orders-page-root button[role="combobox"]:focus,
-.orders-page-root [class*="bg-background"]:focus,
-.subscriptions-page-root input:focus,
+:where(html:not(.dark)) .orders-page-root input:not([type="checkbox"]):not([type="radio"]):focus,
+:where(html:not(.dark)) .orders-page-root textarea:focus,
+:where(html:not(.dark)) .orders-page-root button[role="combobox"]:focus,
+.subscriptions-page-root input:not([type="checkbox"]):not([type="radio"]):focus,
 .subscriptions-page-root textarea:focus,
 .subscriptions-page-root button[role="combobox"]:focus,
-.subscriptions-page-root [class*="bg-background"]:focus,
-.offers-page-root input:focus,
+.offers-page-root input:not([type="checkbox"]):not([type="radio"]):focus,
 .offers-page-root textarea:focus,
 .offers-page-root select:focus,
 .offers-page-root button[role="combobox"]:focus,
-.offers-page-root [class*="bg-background"]:focus,
-.internal-page-root input:focus,
+.internal-page-root input:not([type="checkbox"]):not([type="radio"]):focus,
 .internal-page-root textarea:focus,
 .internal-page-root select:focus,
-.internal-page-root button[role="combobox"]:focus,
-.internal-page-root [class*="bg-background"]:focus {
+.internal-page-root button[role="combobox"]:focus {
   background-color: rgba(255, 255, 255, 0.65) !important;
   border-color: rgba(15, 23, 42, 0.25) !important;
   box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05) !important;
@@ -538,7 +555,7 @@
    FIX: Radix SelectTrigger (button[role="combobox"]) — hover/focus/span
    ============================================================ */
 .services-form-root button[role="combobox"],
-.orders-page-root button[role="combobox"],
+:where(html:not(.dark)) .orders-page-root button[role="combobox"],
 .subscriptions-page-root button[role="combobox"],
 .offers-page-root button[role="combobox"],
 .internal-page-root button[role="combobox"],
@@ -553,7 +570,7 @@
 }
 
 .services-form-root button[role="combobox"]:hover,
-.orders-page-root button[role="combobox"]:hover,
+:where(html:not(.dark)) .orders-page-root button[role="combobox"]:hover,
 .subscriptions-page-root button[role="combobox"]:hover,
 .offers-page-root button[role="combobox"]:hover,
 .internal-page-root button[role="combobox"]:hover,
@@ -566,7 +583,7 @@
 
 /* SelectTrigger placeholder & value text color */
 .services-form-root button[role="combobox"] span,
-.orders-page-root button[role="combobox"] span,
+:where(html:not(.dark)) .orders-page-root button[role="combobox"] span,
 .subscriptions-page-root button[role="combobox"] span,
 .offers-page-root button[role="combobox"] span,
 .internal-page-root button[role="combobox"] span,
@@ -849,13 +866,6 @@ nav.fixed[class*="bottom"] {
     box-shadow:
       0 1px 2px rgba(15, 23, 42, 0.04),
       0 8px 24px -8px rgba(15, 23, 42, 0.10) !important;
-  }
-
-  /* Dark pages: soft luminous depth instead of gray shadows */
-  .bg-slate-950 .bg-card\/\[0\.02\],
-  .bg-slate-950 .bg-card\/5,
-  .details-page-dark [class*="rounded"] {
-    will-change: transform;
   }
 
   /* --- Focus glow (keyboard-less devices rarely see it, but cheap) --- */
@@ -1535,3 +1545,17 @@ nav.fixed[class*="bottom"] {
     100% { transform: scale(1); opacity: 1; }
   }
 }
+
+/* Shared dark-only effects also follow the selected platform appearance. */
+html:not(.dark) :is(.wow-glass-dark, .wow-glass-panel-dark) {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: 0 8px 28px rgb(32 59 50 / 0.06);
+}
+html:not(.dark) .wow-skeleton-dark { background-color: var(--muted); }
+html:not(.dark) :is(input, textarea, select) { caret-color: var(--primary); }
+html:not(.dark) :focus-visible { outline-color: var(--ring); }
+html:not(.dark) { scrollbar-color: #a3a3a3 #f7f7f7; }
+
+/* Shared navy surfaces for the selected platform appearance. */
+.dark { --card:#16243a; --popover:#16243a; --secondary:#1c2d45; --muted:#1c2d45; --accent:#23364f; --input:#1c2d45; --border:#33445c; --sidebar:#142238; --sidebar-border:#33445c; }

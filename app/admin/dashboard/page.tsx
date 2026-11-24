@@ -209,7 +209,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
       <header className="space-y-1">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-card dark:bg-slate-900 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-foreground dark:text-white">
           <Activity className="h-3 w-3" />
           {isRtl ? "الرئيسية" : "Home"}
         </div>
@@ -227,25 +227,25 @@ export default function AdminDashboard() {
             transition={{ delay: index * 0.05 }}
           >
             <Link href={stat.href} className="block rounded-2xl border border bg-card p-4.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-950 hover:shadow-md">
-              <div className="mb-3.5 flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-950">
+              <div className="calm-icon mb-3.5 flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-950">
                 <stat.icon className="h-4.5 w-4.5" />
               </div>
-              <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+              <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{stat.label}</p>
               <p className="text-xl sm:text-2xl font-black tabular-nums text-slate-950">{stat.value}</p>
             </Link>
           </motion.div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border bg-card p-5 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-5 shadow-sm">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-base font-black text-slate-950">{isRtl ? "طلبات المنصة" : "Platform requests"}</h2>
-            <p className="text-[11px] font-bold text-slate-400">
+            <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">
               {isRtl ? "كل طلبات الخدمات والإدارات في مكان واحد. اضغط على الرقم أو الكرت للانتقال للصفحة." : "All service and department requests in one place. Click any card to open its page."}
             </p>
           </div>
-          <div className="rounded-full bg-slate-950 px-3.5 py-1.5 text-[11px] font-black text-white">
+          <div className="rounded-full bg-background dark:bg-slate-950 px-3.5 py-1.5 text-[11px] font-black text-foreground dark:text-white">
             {isRtl ? "الإجمالي" : "Total"}: {serviceRequests.length.toLocaleString("en-US")}
           </div>
         </div>
@@ -262,22 +262,22 @@ export default function AdminDashboard() {
                 href={bucket.href}
                 className={`group block h-full rounded-xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md ${
                   bucket.value > 0
-                    ? "border bg-slate-950 text-white shadow-sm"
-                    : "border bg-muted/60 text-slate-500"
+                    ? "border bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-sm"
+                    : "border bg-muted/60 text-muted-foreground dark:text-slate-500"
                 }`}
               >
                 <div className="mb-4 flex items-center justify-between gap-4">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bucket.value > 0 ? "bg-card/10 text-white" : "bg-card text-slate-400"}`}>
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bucket.value > 0 ? "bg-muted dark:bg-card/10 text-foreground dark:text-white" : "bg-card text-muted-foreground dark:text-slate-400"}`}>
                     <bucket.icon className="h-4.5 w-4.5" />
                   </div>
-                  <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${bucket.value > 0 ? "bg-card text-slate-950" : "bg-card text-slate-400"}`}>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${bucket.value > 0 ? "bg-card text-slate-950" : "bg-card text-muted-foreground dark:text-slate-400"}`}>
                     {bucket.value > 0 ? (isRtl ? "يحتاج متابعة" : "Needs review") : (isRtl ? "لا يوجد" : "Clear")}
                   </span>
                 </div>
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <p className={`text-xs font-black ${bucket.value > 0 ? "text-white" : "text-slate-700"}`}>{bucket.label}</p>
-                    <p className={`mt-1 line-clamp-2 text-[10px] font-bold leading-4 ${bucket.value > 0 ? "text-white/60" : "text-slate-400"}`}>{bucket.description}</p>
+                    <p className={`text-xs font-black ${bucket.value > 0 ? "text-foreground dark:text-white" : "text-slate-700"}`}>{bucket.label}</p>
+                    <p className={`mt-1 line-clamp-2 text-[10px] font-bold leading-4 ${bucket.value > 0 ? "text-muted-foreground dark:text-white/60" : "text-muted-foreground dark:text-slate-400"}`}>{bucket.description}</p>
                   </div>
                   <p className="shrink-0 text-xl sm:text-2xl font-black tabular-nums">{bucket.value.toLocaleString("en-US")}</p>
                 </div>
@@ -287,35 +287,35 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border bg-card p-5 shadow-sm">
+      <section className="calm-panel rounded-2xl border border bg-card p-5 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-black text-slate-950">{isRtl ? "النشاطات الأخيرة" : "Recent activities"}</h2>
-            <p className="text-[11px] font-bold text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
+            <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">{isRtl ? "عرض فقط بدون تعديل" : "Read-only activity log"}</p>
           </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-slate-400">
+          <div className="calm-icon flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-muted-foreground dark:text-slate-400">
             <Activity className="h-4.5 w-4.5" />
           </div>
         </div>
 
         {activities.length === 0 ? (
-          <div className="py-6 md:py-12 text-center text-[10px] font-black uppercase tracking-widest text-slate-300">
+          <div className="py-6 md:py-12 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
             {isRtl ? "لا توجد نشاطات" : "No activities"}
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
             {activities.map((activity, index) => (
               <div key={activity.id || index} className="flex items-start gap-3.5 py-3.5">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-slate-500">
+                <div className="calm-icon mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground dark:text-slate-500">
                   <Activity className="h-3.5 w-3.5" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-black text-slate-950">{getActivityTitle(activity)}</p>
                   {activity.description && (
-                    <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-5 text-slate-500">{activity.description}</p>
+                    <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-5 text-muted-foreground dark:text-slate-500">{activity.description}</p>
                   )}
                   {activity.createdAt && (
-                    <p className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-slate-300">
+                    <p className="mt-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
                       {formatDistanceToNow(new Date(activity.createdAt), {
                         addSuffix: true,
                         locale: isRtl ? arSA : undefined,
@@ -342,10 +342,10 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-red-200 bg-white p-4">
+        <div className="calm-panel flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-red-200 bg-white p-4">
           <div>
             <p className="text-sm font-black text-slate-950">{isRtl ? "حذف جميع بيانات المنصة" : "Wipe all platform data"}</p>
-            <p className="text-[11px] font-bold text-slate-400">
+            <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400">
               {isRtl ? "يحذف كل شيء ويبقي حساب الأدمن فقط. مثالي قبل نشر نسخة تجريبية." : "Deletes everything and keeps only admin accounts. Ideal before publishing a demo."}
             </p>
           </div>
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
           >
             {isWiping ? (
               <>
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-border dark:border-white/30 border-t-border dark:border-t-white" />
                 {isRtl ? "جارٍ الحذف..." : "Wiping..."}
               </>
             ) : (

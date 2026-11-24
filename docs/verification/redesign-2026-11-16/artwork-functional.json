@@ -1,0 +1,94 @@
+[
+  {
+    "route": "/login",
+    "width": 390,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/login",
+    "width": 1440,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "pointer response on desktop",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/verify-otp",
+    "width": 390,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/verify-otp",
+    "width": 1440,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "pointer response on desktop",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/details",
+    "width": 390,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/details",
+    "width": 1440,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "pointer response on desktop",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/services",
+    "width": 390,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  },
+  {
+    "route": "/services",
+    "width": 1440,
+    "passed": true,
+    "checks": [
+      "distinct correct generated image loaded",
+      "camera drift enabled",
+      "pointer response on desktop",
+      "runtime reduced-motion stops movement",
+      "no page exceptions"
+    ]
+  }
+]

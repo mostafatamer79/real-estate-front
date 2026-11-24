@@ -76,7 +76,7 @@ function SideNavItem({
   return (
     <motion.div
       whileHover={!disabled ? { x: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.98 } : {}}
+      whileTap={!disabled ? { scale: 0.985 } : {}}
       className="w-full"
     >
       <Link
@@ -85,23 +85,24 @@ function SideNavItem({
           if (disabled) { e.preventDefault(); return; }
           onClick?.();
         }}
+        aria-current={isActive ? "page" : undefined}
         className={`group flex items-center gap-3 w-full rounded-lg px-2 py-2 transition-colors duration-150 border-r-2 ${
           isActive
-            ? "bg-card/10 text-white border-white/70"
+            ? "bg-muted dark:bg-card/10 text-foreground dark:text-white border-border dark:border-white/70"
             : disabled
-              ? "opacity-40 cursor-not-allowed text-white/40 border-transparent"
-              : "text-white/70 hover:text-white hover:bg-card/5 border-transparent hover:border-white/30"
+              ? "opacity-40 cursor-not-allowed text-muted-foreground dark:text-white/40 border-transparent"
+              : "text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white hover:bg-muted hover:dark:bg-card/5 border-transparent hover:border-border hover:dark:border-white/30"
         }`}
       >
         <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
-          isActive ? "bg-card text-slate-950 border-white/20" : "bg-card/5 border-white/10 group-hover:bg-card/10"
+          isActive ? "bg-card text-slate-950 border-border dark:border-white/20" : "bg-muted dark:bg-card/5 border-border dark:border-white/10 group-hover:bg-muted group-hover:dark:bg-card/10"
         }`}>
-          <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-white/80"}`} />
+          <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-slate-950" : "text-foreground dark:text-white/80"}`} />
         </div>
         <div className="min-w-0 flex-1 text-right">
           <p className="text-[12px] font-black truncate tracking-tight">{label}</p>
           {sublabel && (
-            <p className={`text-[10px] font-bold mt-0.5 ${isActive ? "text-white/50" : "text-white/30"}`}>{sublabel}</p>
+            <p className={`text-[10px] font-bold mt-0.5 ${isActive ? "text-muted-foreground dark:text-white/50" : "text-muted-foreground dark:text-white/30"}`}>{sublabel}</p>
           )}
         </div>
       </Link>
@@ -425,8 +426,8 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   /* ─── loading ─── */
   if (!user) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center">
-        <div className="text-slate-400 text-sm font-bold">{loadingText}</div>
+      <div className="calm-page calm-screen min-h-screen bg-muted flex items-center justify-center">
+        <div className="text-muted-foreground dark:text-slate-400 text-sm font-bold">{loadingText}</div>
       </div>
     );
   }
@@ -449,7 +450,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               </DialogDescription>
             </DialogHeader>
             {subStatus.subscription && (
-              <div className="mt-5 rounded-3xl border border bg-muted p-4 text-sm font-medium text-slate-600">
+              <div className="calm-panel mt-5 rounded-3xl border border bg-muted p-4 text-sm font-medium text-slate-600">
                 {language === "ar"
                   ? `آخر اشتراك انتهى في: ${new Date(subStatus.subscription.endDate).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}`
                   : `Last subscription ended on: ${new Date(subStatus.subscription.endDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`}
@@ -476,7 +477,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             <Button
               type="button"
               variant="ghost"
-              className="h-11 rounded-2xl px-5 font-bold text-slate-500"
+              className="h-11 rounded-2xl px-5 font-bold text-muted-foreground dark:text-slate-500"
               onClick={() => router.push("/profile")}
             >
               {language === "ar" ? "تعديل الملف الشخصي" : "Edit Profile"}
@@ -484,7 +485,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             <Button
               type="button"
               variant="ghost"
-              className="h-11 rounded-2xl px-5 font-bold text-slate-500"
+              className="h-11 rounded-2xl px-5 font-bold text-muted-foreground dark:text-slate-500"
               onClick={() => router.push("/details")}
             >
               {language === "ar" ? "العودة للرئيسية" : "Back to home"}
@@ -498,7 +499,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
   /* ─── coming soon ─── */
   if (!isHub && !isOpen) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-3 sm:p-6">
+      <div className="calm-page calm-screen min-h-screen bg-background dark:bg-slate-950 flex items-center justify-center p-3 sm:p-6">
         <ComingSoonOverlay sectionName={dept?.nameAr || "لوحة الإدارة"} message={message} isAdmin={isAdmin} />
       </div>
     );
@@ -515,20 +516,20 @@ export default function InternalShell({ children }: { children: React.ReactNode 
     return (
       <div className={`mb-2 rounded-lg border px-3 py-2 transition-all ${
         isFreeTrial ? 'bg-blue-500/10 border-blue-300/20' :
-        subStatus.noExpiry ? 'bg-card/5 border-white/10' :
-        isLow ? 'bg-red-500/10 border-red-300/20 animate-pulse' : 'bg-card/5 border-white/10'
+        subStatus.noExpiry ? 'bg-muted dark:bg-card/5 border-border dark:border-white/10' :
+        isLow ? 'bg-red-500/10 border-red-300/20 animate-pulse' : 'bg-muted dark:bg-card/5 border-border dark:border-white/10'
       }`}>
         <div className="flex items-center justify-between gap-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
             isFreeTrial ? 'bg-blue-500/15 text-blue-200' :
-            subStatus.noExpiry ? 'bg-card/10 text-white/70' :
-            isLow ? 'bg-red-500/15 text-red-200' : 'bg-card/10 text-white/70'
+            subStatus.noExpiry ? 'bg-muted dark:bg-card/10 text-muted-foreground dark:text-white/70' :
+            isLow ? 'bg-red-500/15 text-red-200' : 'bg-muted dark:bg-card/10 text-muted-foreground dark:text-white/70'
           }`}>
             <Clock className="w-4 h-4" />
           </div>
           <div className="flex-1 text-right">
-            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">{subscriptionStatusLabel}</p>
-            <p className={`text-[11px] font-black ${isFreeTrial ? 'text-blue-200' : isLow ? 'text-red-200' : 'text-white/80'}`}>
+            <p className="text-[9px] font-black text-muted-foreground dark:text-white/30 uppercase tracking-widest leading-none mb-1">{subscriptionStatusLabel}</p>
+            <p className={`text-[11px] font-black ${isFreeTrial ? 'text-blue-200' : isLow ? 'text-red-200' : 'text-foreground dark:text-white/80'}`}>
               {isFreeTrial ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') :
                subStatus.noExpiry ? openEndedLabel : 
                (subStatus?.daysLeft ?? 0) <= 0 ? expiredLabel : 
@@ -550,14 +551,14 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setProfileOpen(false)}
-            className="fixed inset-0 z-[70] bg-slate-950/50 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[70] bg-background/50 dark:bg-slate-950/50 backdrop-blur-[2px]"
           />
           <motion.aside
             initial={{ x: isRtl ? "100%" : "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: isRtl ? "100%" : "-100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 34 }}
-            className={`fixed top-0 z-[80] h-full w-full max-w-md bg-card shadow-2xl ${
+            className={`fixed top-0 z-[80] h-full w-full max-w-md bg-card shadow-sm dark:shadow-2xl ${
               isRtl ? "right-0" : "left-0"
             }`}
             dir={isRtl ? "rtl" : "ltr"}
@@ -565,44 +566,44 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             <div className="flex items-center justify-between px-5 h-16 border-b border">
               <div>
                 <h2 className="text-lg font-black text-slate-950">{profileLabel}</h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{subscriptionStatusLabel}</p>
+                <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest">{subscriptionStatusLabel}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setProfileOpen(false)}
-                className="w-10 h-10 rounded-2xl bg-muted flex items-center justify-center text-slate-500"
+                className="w-10 h-10 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground dark:text-slate-500"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="h-[calc(100%-4rem)] overflow-y-auto p-5 space-y-5">
-              <div className="rounded-[1.25rem] border border bg-card p-5 shadow-sm">
+              <div className="calm-panel rounded-[1.25rem] border border bg-card p-5 shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     {avatarNode("w-20 h-20 rounded-[1rem] bg-muted shadow-sm", "text-xl font-black text-slate-700")}
-                    <label className="absolute -bottom-1 -right-1 w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center cursor-pointer shadow-lg">
+                    <label className="absolute -bottom-1 -right-1 w-9 h-9 rounded-xl bg-background dark:bg-slate-950 text-foreground dark:text-white flex items-center justify-center cursor-pointer shadow-lg">
                       {isUploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                       <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
                     </label>
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-lg font-black text-slate-950 truncate">{getDisplayName()}</p>
-                    <p className="text-sm text-slate-500 truncate">{user?.email || user?.phone || user?.role}</p>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mt-2">
+                    <p className="text-sm text-muted-foreground dark:text-slate-500 truncate">{user?.email || user?.phone || user?.role}</p>
+                    <p className="text-[11px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mt-2">
                       {isUploadingImage ? uploadingLabel : uploadImageLabel}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[1.25rem] border border bg-muted p-5">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{subscriptionStatusLabel}</p>
+              <div className="calm-panel rounded-[1.25rem] border border bg-muted p-5">
+                <p className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest mb-2">{subscriptionStatusLabel}</p>
                 <p className={`text-xl font-black ${(settings.uiFlags?.enable_global_free_trial || subStatus?.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) && (subStatus?.daysLeft ?? 999) <= 0 ? 'text-blue-600' : 'text-slate-950'}`}>
                   {!subStatus ? loadingText : (subStatus?.daysLeft ?? 999) <= 0 && (settings.uiFlags?.enable_global_free_trial || subStatus.hasFreeTrial || (user?.role === Role.AGENT && settings.uiFlags?.show_agents_all_departments_access)) ? (language === 'ar' ? 'تجربة مجانية' : 'Free Trial') : subStatus.noExpiry ? openEndedLabel : (subStatus?.daysLeft ?? 0) <= 0 ? expiredLabel : daysLeftLabel(subStatus?.daysLeft ?? 0)}
                 </p>
                 {subStatus?.subscription?.endDate && (
-                  <p className="text-sm text-slate-500 mt-2">
+                  <p className="text-sm text-muted-foreground dark:text-slate-500 mt-2">
                     {new Date(subStatus.subscription.endDate).toLocaleDateString(isRtl ? "ar-SA" : "en-US", {
                       year: "numeric",
                       month: "long",
@@ -617,7 +618,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
                       setProfileOpen(false);
                       router.push("/internal/renew-subscription");
                     }}
-                    className="flex-1 h-11 rounded-2xl bg-slate-950 text-white text-sm font-black"
+                    className="flex-1 h-11 rounded-2xl bg-background dark:bg-slate-950 text-foreground dark:text-white text-sm font-black"
                   >
                     {subscriptionsLabel}
                   </button>
@@ -650,7 +651,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         <div className="px-5 pt-5 pb-2">
           <Link
             href="/internal"
-            className="inline-flex items-center gap-1.5 text-white/35 hover:text-white text-[11px] font-black uppercase tracking-widest transition-colors"
+            className="inline-flex items-center gap-1.5 text-muted-foreground dark:text-white/35 hover:text-foreground hover:dark:text-white text-[11px] font-black uppercase tracking-widest transition-colors"
           >
             <ArrowLeft className={`w-3 h-3 ${isRtl ? "rotate-180" : ""}`} />
             {backToHomeLabel}
@@ -659,12 +660,12 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       )}
 
       {/* ── Title ── */}
-      <div className="px-5 pt-4 pb-5 border-b border-white/5">
-        <h2 className="text-[18px] font-black text-white tracking-tight">
+      <div className="px-5 pt-4 pb-5 border-b border-border dark:border-white/5">
+        <h2 className="text-[18px] font-black text-foreground dark:text-white tracking-tight">
           {isChat ? chatCenterLabel : isHub ? dashboardTitle : isRtl ? dept?.nameAr : dept?.nameEn}
         </h2>
         {!isHub && !isChat && (
-          <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mt-0.5">
+          <p className="text-[10px] font-black text-muted-foreground dark:text-white/30 uppercase tracking-widest mt-0.5">
             {dept?.nameEn} DEPT
           </p>
         )}
@@ -710,7 +711,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Dept: feature items */}
         {!isHub && featureItems.length > 0 && (
           <>
-            <div className="my-4 h-px bg-card/5" />
+            <div className="my-4 h-px bg-muted dark:bg-card/5" />
             {featureItems.map((item) => {
               const st = modStatus(item.moduleKey);
               if (st === "disabled") return null;
@@ -733,7 +734,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         {/* Hub: common bottom items */}
         {isHub && (
           <>
-            <div className="my-4 h-px bg-card/5" />
+            <div className="my-4 h-px bg-muted dark:bg-card/5" />
             {commonItems.slice(1).map((item) => {
               const st = modStatus(item.moduleKey);
               if (st === "disabled") return null;
@@ -752,7 +753,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         )}
       </nav>
 
-      <div className="p-4 border-t border-white/5 space-y-2">
+      <div className="p-4 border-t border-border dark:border-white/5 space-y-2">
         <SubscriptionBadge />
         <SideNavItem
           href="/details"
@@ -762,10 +763,10 @@ export default function InternalShell({ children }: { children: React.ReactNode 
         />
         <button
           onClick={handleLogout}
-          className="group flex items-center gap-3 w-full rounded-lg px-2 py-2 text-white/70 hover:text-white hover:bg-red-500/10 transition-colors border-r-2 border-transparent hover:border-red-300/60"
+          className="group flex items-center gap-3 w-full rounded-lg px-2 py-2 text-muted-foreground dark:text-white/70 hover:text-foreground hover:dark:text-white hover:bg-red-500/10 transition-colors border-r-2 border-transparent hover:border-red-300/60"
         >
-          <div className="w-9 h-9 rounded-lg bg-card/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
-            <LogOut className="w-4 h-4 text-white/80 group-hover:rotate-12 transition-transform" />
+          <div className="w-9 h-9 rounded-lg bg-muted dark:bg-card/5 border border-border dark:border-white/10 flex items-center justify-center shrink-0 group-hover:bg-red-500/10 transition-colors">
+            <LogOut className="w-4 h-4 text-foreground dark:text-white/80 group-hover:rotate-12 transition-transform" />
           </div>
           <span className="flex-1 text-right text-[12px] font-black tracking-tight">
             {logoutLabel}
@@ -777,29 +778,29 @@ export default function InternalShell({ children }: { children: React.ReactNode 
 
   /* ─── Layout ─── */
   return (
-    <div className="flex h-screen bg-muted overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="calm-page calm-screen flex h-screen bg-muted overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
 
       {/* ══ Desktop Sidebar ══ */}
       <aside
-        className="hidden lg:flex flex-col w-64 shrink-0 bg-slate-950 text-white overflow-hidden shadow-xl shadow-black/20 lg:shadow-none"
+        className="hidden lg:flex flex-col w-64 shrink-0 bg-background dark:bg-slate-950 text-foreground dark:text-white overflow-hidden shadow-sm dark:shadow-xl shadow-black/20 lg:shadow-none"
       >
         {/* Topbar in sidebar */}
-        <div className="flex items-center justify-between p-5 border-b border-white/5 shrink-0">
+        <div className="flex items-center justify-between p-5 border-b border-border dark:border-white/5 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center flex-shrink-0 shadow-lg">
-              <Building2 className="w-5 h-5 text-white" />
+            <div className="calm-icon w-10 h-10 rounded-xl bg-gradient-to-br from-card dark:from-slate-900 to-muted dark:to-slate-700 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <Building2 className="w-5 h-5 text-foreground dark:text-white" />
             </div>
             <div className="min-w-0">
               <p className="font-black text-sm tracking-tight leading-tight truncate">
                 {isChat ? chatCenterLabel : isHub ? dashboardTitle : isRtl ? dept?.nameAr : dept?.nameEn}
               </p>
-              <p className="text-white/30 text-[9px] font-black uppercase tracking-widest truncate">
+              <p className="text-muted-foreground dark:text-white/30 text-[9px] font-black uppercase tracking-widest truncate">
                 {isHub ? "INTERNAL DEPT." : dept?.nameEn ? `${dept.nameEn} DEPT.` : "INTERNAL"}
               </p>
             </div>
           </div>
           <button type="button" onClick={() => setProfileOpen(true)}>
-            {avatarNode("w-9 h-9 rounded-full bg-card/10", "text-[11px] font-black text-white")}
+            {avatarNode("w-9 h-9 rounded-full bg-muted dark:bg-card/10", "text-[11px] font-black text-foreground dark:text-white")}
           </button>
         </div>
 
@@ -809,7 +810,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
       {/* ══ Mobile: hamburger + drawer ══ */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 lg:hidden w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-sm shadow-black/20 ${
+        className={`fixed top-[calc(0.5rem+env(safe-area-inset-top))] z-50 lg:hidden w-10 h-10 bg-card dark:bg-slate-900 text-foreground dark:text-white rounded-lg flex items-center justify-center shadow-sm shadow-black/20 ${
           isRtl ? "right-4" : "left-4"
         }`}
       >
@@ -833,17 +834,17 @@ export default function InternalShell({ children }: { children: React.ReactNode 
               animate={{ x: 0 }}
               exit={{ x: isRtl ? "100%" : "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className={`fixed inset-y-0 z-50 w-64 bg-slate-950 text-white shadow-2xl lg:hidden overflow-hidden pt-safe pb-safe ${
+              className={`fixed inset-y-0 z-50 w-64 bg-background dark:bg-slate-950 text-foreground dark:text-white shadow-sm dark:shadow-2xl lg:hidden overflow-hidden pt-safe pb-safe ${
                 isRtl ? "right-0" : "left-0"
               }`}
             >
               <button
                 onClick={() => setSidebarOpen(false)}
-                className={`absolute top-4 w-8 h-8 rounded-xl bg-card/10 flex items-center justify-center ${
+                className={`absolute top-4 w-8 h-8 rounded-xl bg-muted dark:bg-card/10 flex items-center justify-center ${
                   isRtl ? "left-4" : "right-4"
                 }`}
               >
-                <X className="w-4 h-4 text-white/70" />
+                <X className="w-4 h-4 text-muted-foreground dark:text-white/70" />
               </button>
               <SidebarContent />
             </motion.aside>
@@ -858,29 +859,29 @@ export default function InternalShell({ children }: { children: React.ReactNode 
           <div className="lg:hidden w-8" /> {/* spacer for hamburger */}
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-muted transition-colors">
-              <Menu className="w-4 h-4 text-slate-400" />
+              <Menu className="w-4 h-4 text-muted-foreground dark:text-slate-400" />
             </button>
             <div className="hidden lg:block h-4 w-px bg-muted" />
             {isChat ? (
-            <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-muted border border min-w-0">
+            <div className="calm-panel flex items-center gap-2 px-3 h-9 rounded-xl bg-muted border border min-w-0">
               <MessageSquare className="w-4 h-4 text-slate-700" />
               <span className="text-[12px] font-black text-slate-900 truncate">{chatCenterLabel}</span>
             </div>
           ) : DeptIcon && !isHub ? (
             <div className="flex items-center gap-2 min-w-0">
-              <div className="flex items-center gap-2 px-3 h-9 rounded-xl bg-muted border border min-w-0">
+              <div className="calm-panel flex items-center gap-2 px-3 h-9 rounded-xl bg-muted border border min-w-0">
                 <DeptIcon className="w-4 h-4 text-slate-700 shrink-0" />
                 <span className="text-[12px] font-black text-slate-900 truncate">
                 {isRtl ? dept?.nameAr : dept?.nameEn}
                 </span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">DEPT</span>
+                <span className="text-[10px] font-black text-muted-foreground dark:text-slate-400 uppercase tracking-widest hidden sm:inline">DEPT</span>
               </div>
-              <div className="hidden sm:flex items-center h-9 px-3 rounded-xl bg-card border border text-slate-700 text-[11px] font-black">
+              <div className="calm-panel hidden sm:flex items-center h-9 px-3 rounded-xl bg-card border border text-slate-700 text-[11px] font-black">
                 {currentView}
               </div>
             </div>
           ) : (
-            <span className="flex items-center h-9 px-3 rounded-xl bg-muted border border text-[12px] font-black text-slate-900">
+            <span className="calm-panel flex items-center h-9 px-3 rounded-xl bg-muted border border text-[12px] font-black text-slate-900">
               {dashboardTitle}
             </span>
           )}
@@ -889,7 +890,7 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             <Link
               href="/internal/chat"
               className={`h-10 px-3 rounded-2xl border border bg-card hover:bg-muted text-slate-600 hover:text-slate-950 text-[11px] font-black transition-colors flex items-center gap-2 ${
-                isChat ? "bg-slate-950 text-white border-slate-950 hover:bg-slate-900 hover:text-white" : ""
+                isChat ? "bg-background dark:bg-slate-950 text-foreground dark:text-white border-slate-950 hover:bg-card hover:dark:bg-slate-900 hover:text-foreground hover:dark:text-white" : ""
               }`}
             >
               <MessageSquare className="w-4 h-4" />
@@ -905,10 +906,10 @@ export default function InternalShell({ children }: { children: React.ReactNode 
             </button>
             <NotificationBell
               align="left"
-              buttonClassName="rounded-xl bg-muted text-slate-500 hover:text-slate-950 hover:bg-muted"
+              buttonClassName="rounded-xl bg-muted text-muted-foreground dark:text-slate-500 hover:text-slate-950 hover:bg-muted"
             />
             <button type="button" onClick={() => setProfileOpen(true)} className="shrink-0">
-              {avatarNode("w-8 h-8 rounded-full bg-slate-950", "text-[10px] font-black text-white")}
+              {avatarNode("w-8 h-8 rounded-full bg-background dark:bg-slate-950", "text-[10px] font-black text-foreground dark:text-white")}
             </button>
           </div>
         </div>

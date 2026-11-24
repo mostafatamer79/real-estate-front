@@ -104,7 +104,7 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                         </div>
                     ) : bookings.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                            <div className="calm-icon w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                                 <Calendar className="w-8 h-8 text-slate-300" />
                             </div>
                             <p className="text-slate-500 font-medium">
@@ -117,11 +117,11 @@ export default function OfferAppointmentsModal({ isOpen, onClose, offerId, prope
                                 {bookings.map((booking) => (
                                     <div 
                                         key={booking.id} 
-                                        className="bg-card border rounded-xl p-5 hover:shadow-md transition-shadow"
+                                        className="calm-panel bg-card border rounded-xl p-5 hover:shadow-md transition-shadow"
                                     >
                                         <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center shrink-0">
+                                                <div className="calm-icon w-10 h-10 bg-muted rounded-full flex items-center justify-center shrink-0">
                                                     <User className="w-5 h-5 text-slate-600" />
                                                 </div>
                                                 <div>

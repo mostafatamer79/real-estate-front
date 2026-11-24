@@ -1,16 +1,29 @@
 "use client";
-import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Building2, CheckCircle2, CreditCard, Eye, Loader2, Shield, SlidersHorizontal } from "lucide-react";
+import Image from "next/image";
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  CreditCard,
+  Eye,
+  Loader2,
+  RotateCcw,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import api, { subscriptionsApi } from "@/lib/api";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import { useLanguage } from "@/context/LanguageContext";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import DepartmentFeaturePreviewDialog, { PreviewDepartmentKey } from "@/components/subscriptions/DepartmentFeaturePreviewDialog";
-import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
+import MobileAppHeader from "@/app/src/components/MobileAppHeader";
+
+import { getPackageDiscount, getPackagePrice, type PackageDiscountPeriod } from "@/lib/package-pricing";
+
+import styles from "./subscription-redesign.module.css";
 
 interface ManagementPackage {
   id: string;
@@ -18,6 +31,7 @@ interface ManagementPackage {
   yearlyPrice: number;
   monthlyPrice: number;
   discount: number;
+  discountPeriod?: PackageDiscountPeriod;
   description?: string;
   features?: string[];
   administrations?: string[];
@@ -47,30 +61,28 @@ const departmentPreviewMap: Record<string, PreviewDepartmentKey> = {
   "admin.dept.finance": "finance",
   "admin.dept.hr": "employees",
 };
-const emptyGlobalPricing = () => ({
-  departmentPrices: ALL_ADMINISTRATIONS.reduce((acc, department) => {
-    acc[department] = { monthly: 0, yearly: 0 };
-    return acc;
-  }, {} as Record<string, { monthly: number; yearly: number }>),
-  employeeSeatMonthlyPrice: 0,
-  employeeSeatYearlyPrice: 0,
-});
 
 export default function NewSubscriptionPage() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const isRtl = language === "ar";
   const { isOpen, message, isAdmin } = useSectionGuard("subscriptions");
 
-  const [impersonatedByAdmin, setImpersonatedByAdmin] = useState<any>(null);
+  const [impersonatedByAdmin, setImpersonatedByAdmin] = useState<{ id?: string; name?: string; email?: string } | null>(null);
   const [packages, setPackages] = useState<ManagementPackage[]>([]);
-  const [globalPricing, setGlobalPricing] = useState(emptyGlobalPricing());
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [packagesError, setPackagesError] = useState<boolean>(false);
+  const [subscriptions, setSubscriptions] = useState<Array<{
+    id: string;
+    subscriptionType: string;
+    startDate: string;
+    amount?: number;
+    status: string;
+    managementPackage?: { name?: string } | null;
+    notes?: string;
+  }>>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const [planMode, setPlanMode] = useState<"packages" | "custom">("packages");
   const [selectedPackageId, setSelectedPackageId] = useState("");
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-  const [employeeSeats, setEmployeeSeats] = useState(0);
   const [subscriptionType, setSubscriptionType] = useState<"شهري" | "سنوي">("شهري");
   const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
@@ -125,128 +137,90 @@ export default function NewSubscriptionPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [packagesRes, mySubsRes, pricingRes] = await Promise.allSettled([
-          api.get("/management-packages"),
-          subscriptionsApi.findMySubscriptions(),
-          api.get("/subscriptions/department-pricing"),
-        ]);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setPackagesError(false);
 
-        if (packagesRes.status === "fulfilled") {
-          setPackages((Array.isArray(packagesRes.value.data) ? packagesRes.value.data : []).filter((pkg: ManagementPackage) => pkg.isActive));
-        } else {
-          setPackages([]);
-        }
+    try {
+      const [packagesRes, mySubsRes] = await Promise.allSettled([
+        api.get("/management-packages"),
+        subscriptionsApi.findMySubscriptions(),
+      ]);
 
-        if (mySubsRes.status === "fulfilled") {
-          setSubscriptions(Array.isArray(mySubsRes.value.data) ? mySubsRes.value.data : []);
-        } else {
-          setSubscriptions([]);
-        }
-
-        if (pricingRes.status === "fulfilled") {
-          const pricingData = pricingRes.value.data || {};
-          setGlobalPricing({
-            ...emptyGlobalPricing(),
-            ...pricingData,
-            departmentPrices: {
-              ...emptyGlobalPricing().departmentPrices,
-              ...(pricingData.departmentPrices || {}),
-            },
-          });
-        } else {
-          setGlobalPricing(emptyGlobalPricing());
-        }
-      } catch (error) {
-        console.error("Failed to load public subscriptions:", error);
-        toast.error(t("sub.public.loadError"));
-      } finally {
-        setLoading(false);
+      if (packagesRes.status === "fulfilled") {
+        const activePkgs = (Array.isArray(packagesRes.value?.data) ? packagesRes.value.data : []).filter(
+          (pkg: ManagementPackage) => pkg.isActive
+        );
+        setPackages(activePkgs);
+        setPackagesError(false);
+      } else {
+        setPackages([]);
+        setPackagesError(true);
       }
-    };
 
+      if (mySubsRes.status === "fulfilled") {
+        setSubscriptions(Array.isArray(mySubsRes.value?.data) ? mySubsRes.value.data : []);
+      } else {
+        setSubscriptions([]);
+      }
+    } catch (error) {
+      console.error("Failed to load public subscriptions:", error);
+      toast.error(t("sub.public.loadError") || "تعذر تحميل بيانات الاشتراكات");
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const selectedPackage = packages.find((pkg) => pkg.id === selectedPackageId);
-  const isEmployeeDepartmentSelected = selectedDepartments.includes("admin.dept.hr");
-  const priceKey = subscriptionType === "سنوي" ? "yearly" : "monthly";
-  const getCurrentDepartmentPrice = (department: string) => {
-    return Number(globalPricing.departmentPrices?.[department]?.[priceKey] || 0);
-  };
-  const getCurrentEmployeeSeatPrice = () => {
-    return subscriptionType === "سنوي"
-      ? Number(globalPricing.employeeSeatYearlyPrice || 0)
-      : Number(globalPricing.employeeSeatMonthlyPrice || 0);
-  };
-  const periodLabel = subscriptionType === "سنوي" ? "سنوي" : "شهري";
-  const selectedDepartmentPricing = selectedDepartments.map((department) => ({
-    department,
-    label: t(administrationLabels[department] || department),
-    price: getCurrentDepartmentPrice(department),
-  }));
-  const employeeSeatTotal = isEmployeeDepartmentSelected
-    ? employeeSeats * getCurrentEmployeeSeatPrice()
-    : 0;
+  const periodLabel = subscriptionType === "سنوي" ? (isRtl ? "سنوي" : "Yearly") : (isRtl ? "شهري" : "Monthly");
 
-  const computedAmount = useMemo(() => {
-    if (planMode === "packages" && !selectedPackage) return 0;
-    if (planMode === "packages") {
-      const packagePrice = subscriptionType === "سنوي"
-        ? Number(selectedPackage?.yearlyPrice || 0)
-        : Number(selectedPackage?.monthlyPrice || 0);
-      return packagePrice * (1 - Number(selectedPackage?.discount || 0) / 100);
-    }
+  const computedAmount = useMemo((): number | null => {
+    if (!selectedPackage) return null;
+    return getPackagePrice(selectedPackage, subscriptionType);
+  }, [selectedPackage, subscriptionType]);
 
-    const hasDepartmentPricing = selectedDepartments.some((department) => getCurrentDepartmentPrice(department) > 0);
-    let basePrice = 0;
-    if (hasDepartmentPricing) {
-      basePrice = selectedDepartments.reduce((total, department) => total + getCurrentDepartmentPrice(department), 0);
-      if (isEmployeeDepartmentSelected) {
-        basePrice += employeeSeats * getCurrentEmployeeSeatPrice();
-      }
-    }
-    return basePrice;
-  }, [planMode, selectedPackage, subscriptionType, selectedDepartments, employeeSeats, globalPricing]);
+  const isSubmitDisabled = useMemo(() => {
+    if (creating) return true;
+    if (loading) return true;
+    return !selectedPackageId || !selectedPackage || computedAmount === null;
+  }, [creating, loading, selectedPackageId, selectedPackage, computedAmount]);
 
   const handleCreate = async () => {
-    if (planMode === "packages" && !selectedPackageId) {
-      toast.error(t("sub.public.selectPackageFirst"));
+    if (creating) return; // Mutex!
+
+    if (!selectedPackageId || !selectedPackage) {
+      toast.error(t("sub.public.selectPackageFirst") || "اختر باقة أولاً");
       return;
     }
-    if (planMode === "custom" && selectedDepartments.length === 0) {
-      toast.error("اختر إدارة واحدة على الأقل");
-      return;
-    }
-    if (planMode === "custom" && isEmployeeDepartmentSelected && employeeSeats < 1) {
-      toast.error("حدد عدد الموظفين");
+    if (computedAmount === null) {
+      toast.error(isRtl ? "تعذر تحديد سعر الباقة" : "Unable to determine package price");
       return;
     }
 
     setCreating(true);
     try {
       const response = await subscriptionsApi.create({
-        packageId: planMode === "packages" ? selectedPackageId : undefined,
+        packageId: selectedPackageId,
         subscriptionType,
         amount: computedAmount,
-        selectedDepartments: planMode === "custom" ? selectedDepartments : undefined,
-        employeeSeats: planMode === "custom" && isEmployeeDepartmentSelected ? employeeSeats : 0,
         startDate,
         paymentMethod: "مدى",
-        notes: notes || (planMode === "custom" ? "اشتراك مخصص" : undefined),
+        notes: notes || undefined,
       });
-      toast.success(t("sub.public.createdRedirect"));
-      if (Number(response.data.amount || 0) <= 0 && response.data.status === "نشط") {
+      toast.success(t("sub.public.createdRedirect") || (isRtl ? "تم إنشاء الاشتراك بنجاح" : "Subscription created successfully"));
+      if (Number(response.data?.amount || 0) <= 0 && response.data?.status === "نشط") {
         router.push("/department-hub");
       } else {
-        router.push(`/wallet?subscription=${response.data.id}`);
+        router.push(`/wallet?subscription=${response.data?.id}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating department subscription:", error);
-      toast.error(error?.response?.data?.message || t("sub.toast.error"));
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || t("sub.toast.error") || (isRtl ? "حدث خطأ أثناء إنشاء الاشتراك" : "Error creating subscription"));
     } finally {
       setCreating(false);
     }
@@ -263,204 +237,209 @@ export default function NewSubscriptionPage() {
   }
 
   return (
-    <div className="subscriptions-page-root w-full min-h-dvh-safe bg-gradient-to-br from-slate-50 to-slate-100/90 text-slate-950 relative overflow-hidden pb-6 sm:pb-12" dir="rtl">
+    <div className={styles.subscriptionPage} dir={isRtl ? "rtl" : "ltr"}>
       <MobileAppHeader theme="light" title={t("subscriptions.management") || "الاشتراكات"} />
-      <div className='absolute top-0 left-0 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
-      <div className='absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-400/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none' />
-      <div className='absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-purple-400/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none' />
 
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 md:px-6 lg:px-8 space-y-6 relative z-10">
-        <div className="hidden md:flex justify-start">
+      {/* Admin Impersonation Bar */}
+      {impersonatedByAdmin && (
+        <aside
+          role="status"
+          aria-label={isRtl ? "جلسة تسجيل دخول تجريبي" : "Admin impersonation session"}
+          className="relative z-20 flex items-center justify-between border-b border-amber-300 bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200"
+        >
+          <span>
+            {isRtl ? "جلسة استعراض تجريبي للمستخدم: " : "Admin view session for user: "}
+            <strong>{impersonatedByAdmin.name || impersonatedByAdmin.email || impersonatedByAdmin.id}</strong>
+          </span>
+          <button
+            type="button"
+            onClick={handleReturnToAdmin}
+            className="rounded-lg border border-amber-400 bg-card px-3 py-1 font-black text-amber-900 shadow-sm transition-colors hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900 dark:text-amber-100"
+          >
+            {isRtl ? "العودة للوحة الإدارة" : "Return to Admin"}
+          </button>
+        </aside>
+      )}
+
+      {/* Ambient background with architectural tone */}
+      <div className={styles.ambientBackground} aria-hidden="true">
+        <div className={styles.ambientGlow} />
+      </div>
+
+      <main className={styles.shell}>
+        {/* Desktop Top Nav with Back affordance */}
+        <nav className={styles.topNav} aria-label={isRtl ? "التنقل العلوي" : "Top navigation"}>
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 bg-card hover:bg-muted border border-slate-200/80 hover:border-slate-300 text-slate-800 px-5 py-2.5 rounded-2xl font-black text-xs transition-all duration-200 shadow-sm active:scale-95"
+            className={styles.backButton}
+            aria-label={t("common.back") || (isRtl ? "رجوع" : "Back")}
           >
-            <ArrowRight className="w-4 h-4" />
-            {t("common.back") || "رجوع"}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <span>{t("common.back") || (isRtl ? "رجوع" : "Back")}</span>
           </button>
-        </div>
+        </nav>
 
-        {(!loading && packages.length === 0 && planMode === "packages") ? null : (
-          <div className="rounded-[1rem] border border bg-card p-2 shadow-sm">
-            <button
-              type="button"
-              onClick={() => {
-                setPlanMode("packages");
-                setSelectedDepartments([]);
-                setEmployeeSeats(0);
-              }}
-              className="h-12 w-full rounded-2xl bg-slate-950 text-sm font-black text-white transition-colors"
-            >
-              الباقات الجاهزة
-            </button>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-3 md:gap-6">
-          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
-            <div className="flex items-center gap-2 mb-5">
-              {planMode === "custom" ? <SlidersHorizontal className="w-5 h-5 text-slate-700" /> : <Building2 className="w-5 h-5 text-slate-700" />}
-              <h2 className="text-xl font-black text-slate-950">
-                {planMode === "custom" ? "تخصيص الاشتراك" : t("sub.public.packagesTitle")}
-              </h2>
+        {/* Editorial Hero */}
+        <header className={styles.heroSection}>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex-1">
+              <div className={styles.heroEyebrow}>
+                <span className={styles.heroEyebrowRule} aria-hidden="true" />
+                <span>{t("subscriptions.management") || (isRtl ? "إدارة الاشتراكات" : "Subscriptions Management")}</span>
+              </div>
+              <h1 className={styles.heroTitle}>
+                {t("sub.public.packagesTitle") || (isRtl ? "باقات الاشتراكات المؤسسية" : "Enterprise Subscription Packages")}
+              </h1>
+              <p className={styles.heroDescription}>
+                {isRtl
+                  ? "اختر إحدى الباقات الإدارية المتكاملة لأعمالك العقارية مع تفعيل فوري للإدارات المختارة."
+                  : "Choose one of the integrated packages tailored to your real estate business with instant access."}
+              </p>
             </div>
 
+            {/* Architectural Artwork */}
+            <div className="hidden lg:block w-52 h-32 relative shrink-0 opacity-80" aria-hidden="true">
+              <Image
+                src="/artworks/chat05-subscriptions-arch.svg"
+                alt=""
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+        </header>
+
+        {/* Workspace 2-Column Grid */}
+        <div className={styles.workspaceGrid}>
+          {/* Main selection panel */}
+          <section className={styles.panel} aria-label={isRtl ? "الباقات المتاحة" : "Available Packages"}>
+            <div className={styles.panelHeading}>
+              <Building2 className={`${styles.panelHeadingIcon} h-5 w-5`} aria-hidden="true" />
+              <h2 className={styles.panelTitle}>
+                {t("sub.public.packagesTitle") || (isRtl ? "الباقات الإدارية" : "Management Packages")}
+              </h2>
+            </div>
+            <p className={styles.panelHint}>
+              {isRtl ? "تتضمن كل باقة مجموعة محددة من الإدارات والصلاحيات المدمجة." : "Each package bundles specific departments and pre-configured access."}
+            </p>
+
             {loading ? (
-              <div className="py-8 md:py-16 flex justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-slate-700" />
+              <div className={styles.statusBlock}>
+                <div className={styles.statusLoadingLabel}>{isRtl ? "جاري تحميل الباقات..." : "Loading packages..."}</div>
+                <div className={styles.statusLoadingBar} />
               </div>
-            ) : packages.length === 0 && planMode === "packages" ? (
-              <div className="py-8 md:py-16 flex flex-col items-center gap-4 text-center">
-                <p className="text-slate-400 font-bold">{t("sub.public.emptyPackages")}</p>
+            ) : packagesError ? (
+              <div className={styles.statusBlock}>
+                <div className={styles.statusErrorBlock}>
+                  <span className={styles.statusErrorLabel}>{isRtl ? "تعذر تحميل الباقات الجاهزة" : "Failed to load packages"}</span>
+                  <button type="button" onClick={fetchData} className={styles.retryButton}>
+                    <RotateCcw className="h-4 w-4" />
+                    <span>{isRtl ? "إعادة المحاولة" : "Retry"}</span>
+                  </button>
+                </div>
               </div>
-            ) : planMode === "custom" ? (
-              <div className="space-y-4">
-                <div className="rounded-3xl border border bg-muted p-5">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <div className="text-sm font-black text-slate-950">أسعار الإدارات</div>
-                      <div className="mt-2 text-xs font-bold text-slate-500">اختر الإدارات المطلوبة، وسيتم احتساب السعر حسب مدة الاشتراك.</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => openDepartmentPreview("properties")}
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border bg-card px-4 text-sm font-black text-slate-700 transition-colors hover:bg-muted"
-                    >
-                      <Eye className="h-4 w-4" />
-                      استعراض الأقسام
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {ALL_ADMINISTRATIONS.map((department) => {
-                    const checked = selectedDepartments.includes(department);
-                    const monthly = Number(globalPricing.departmentPrices?.[department]?.monthly || 0);
-                    const yearly = Number(globalPricing.departmentPrices?.[department]?.yearly || 0);
-                    return (
-                      <div
-                        key={department}
-                        onClick={() => {
-                          setSelectedDepartments((current) => {
-                            const next = checked ? current.filter((item) => item !== department) : [...current, department];
-                            if (department === "admin.dept.hr" && checked) setEmployeeSeats(0);
-                            return next;
-                          });
-                        }}
-                        className={`cursor-pointer rounded-3xl border p-4 text-right transition-all ${
-                          checked ? "border-slate-950 bg-muted shadow-sm" : "border hover:border-slate-300"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-black text-slate-950">{t(administrationLabels[department] || department)}</div>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="rounded-full bg-card px-3 py-1 text-[11px] font-black text-slate-600">شهري <SaudiRiyalAmount amount={monthly} locale="ar-SA" iconClassName="h-3 w-3" /></span>
-                              <span className="rounded-full bg-card px-3 py-1 text-[11px] font-black text-slate-600">سنوي <SaudiRiyalAmount amount={yearly} locale="ar-SA" iconClassName="h-3 w-3" /></span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                openDepartmentPreview(departmentPreviewMap[department]);
-                              }}
-                              className="mt-3 inline-flex h-9 items-center gap-2 rounded-xl border border bg-card px-3 text-xs font-black text-slate-700 transition-colors hover:bg-muted"
-                            >
-                              <Eye className="h-3.5 w-3.5" />
-                              عرض القسم والخصائص
-                            </button>
-                          </div>
-                          {checked && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="rounded-3xl border border p-5">
-                  <div className="text-sm font-black text-slate-950">سعر كل موظف في إدارة الموظفين</div>
-                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-black text-slate-600">
-                    <div className="rounded-2xl bg-muted p-3">شهري <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatMonthlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
-                    <div className="rounded-2xl bg-muted p-3">سنوي <SaudiRiyalAmount amount={Number(globalPricing.employeeSeatYearlyPrice || 0)} locale="ar-SA" iconClassName="h-3 w-3" /></div>
-                  </div>
-                </div>
+            ) : packages.length === 0 ? (
+              <div className={styles.statusBlock}>
+                <p className={styles.statusEmptyLabel}>{t("sub.public.emptyPackages") || (isRtl ? "لا توجد باقات متاحة حالياً" : "No packages available")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={styles.packageGrid}>
                 {packages.map((pkg) => {
                   const isSelected = pkg.id === selectedPackageId;
-                  const currentPrice = subscriptionType === "سنوي" ? Number(pkg.yearlyPrice) : Number(pkg.monthlyPrice);
-                  const finalPrice = currentPrice * (1 - Number(pkg.discount || 0) / 100);
+                  const finalPrice = getPackagePrice(pkg, subscriptionType);
+                  const discount = getPackageDiscount(pkg, subscriptionType);
 
                   return (
                     <div
                       key={pkg.id}
-                      onClick={() => {
-                        setSelectedPackageId(pkg.id);
-                        setSelectedDepartments([]);
-                        setEmployeeSeats(0);
-                      }}
-                      className={`cursor-pointer text-right rounded-[1.25rem] border p-5 transition-all ${
-                        isSelected ? "border-slate-900 bg-muted shadow-sm" : "border hover:border-slate-300 bg-card"
-                      }`}
+                      className={`${styles.packageCard} ${isSelected ? styles.isSelected : ""}`}
                     >
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                          <h3 className="text-lg font-black text-slate-950">{pkg.name}</h3>
-                          <p className="text-sm text-slate-500 font-bold mt-1">{pkg.description || t("sub.public.packageFallbackDesc")}</p>
+                      {isSelected && (
+                        <div className={styles.packageSelectedBadge}>
+                          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          <span>{isRtl ? "محدد" : "Selected"}</span>
                         </div>
-                        {isSelected && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
+                      )}
+
+                      <button
+                        type="button"
+                        className={styles.packageSelectButton}
+                        onClick={() => {
+                          setSelectedPackageId(pkg.id);
+                        }}
+                        aria-pressed={isSelected}
+                        aria-label={`${pkg.name} - ${finalPrice} ريال`}
+                      />
+
+                      <h3 className={styles.packageName}>{pkg.name}</h3>
+                      <p className={styles.packageDescription}>
+                        {pkg.description || t("sub.public.packageFallbackDesc") || (isRtl ? "باقة إدارية متكاملة" : "Integrated management package")}
+                      </p>
+
+                      <div className={styles.packageChipRow}>
+                        {(pkg.administrations || []).map((adminKey) => {
+                          const previewKey = departmentPreviewMap[adminKey];
+                          return previewKey ? (
+                            <button
+                              key={adminKey}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDepartmentPreview(previewKey, pkg);
+                              }}
+                              className={styles.departmentChip}
+                            >
+                              <Eye className="h-3 w-3" />
+                              <span>{t(administrationLabels[adminKey] || adminKey)}</span>
+                            </button>
+                          ) : (
+                            <span key={adminKey} className={`${styles.departmentChip} ${styles.departmentChipStatic}`}>
+                              {t(administrationLabels[adminKey] || adminKey)}
+                            </span>
+                          );
+                        })}
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {(pkg.administrations || []).map((administration) => (
-                          <button
-                            key={administration}
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              const previewKey = departmentPreviewMap[administration];
-                              if (previewKey) openDepartmentPreview(previewKey, pkg);
-                            }}
-                            className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-[11px] font-black text-slate-700 transition-colors hover:bg-muted"
-                          >
-                            <Eye className="h-3 w-3" />
-                            <span>{t(administrationLabels[administration] || administration)}</span>
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="flex items-end gap-2 mb-3">
-                        <div className="text-xl sm:text-3xl font-black text-slate-950">{finalPrice.toFixed(2)}</div>
-                        <div className="text-sm font-bold text-slate-500 pb-1"><SaudiRiyalSymbol iconClassName="h-4 w-4" /></div>
-                        {Number(pkg.discount || 0) > 0 && (
-                          <div className="text-xs font-black text-emerald-600 pb-1">{t("sub.public.discount")} {Number(pkg.discount)}%</div>
+                      <div className={styles.packagePriceRow}>
+                        <div className={styles.packagePrice}>
+                          <SaudiRiyalAmount amount={finalPrice} locale="ar-SA" />
+                        </div>
+                        <span className={styles.packagePricePeriod}>
+                          / {subscriptionType === "سنوي" ? (isRtl ? "سنوياً" : "year") : (isRtl ? "شهرياً" : "month")}
+                        </span>
+                        {discount > 0 && (
+                          <span className={styles.packageDiscountBadge}>
+                            {t("sub.public.discount") || (isRtl ? "خصم" : "Discount")} {discount}%
+                          </span>
                         )}
-                      </div>
-
-                      <div className="text-sm text-slate-500 font-bold">
-                        {subscriptionType === "سنوي" ? "سعر الباقة السنوي" : "سعر الباقة الشهري"}
                       </div>
                     </div>
                   );
                 })}
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6 space-y-5">
-            <h2 className="text-lg font-black text-slate-950">{t("sub.public.detailsTitle")}</h2>
+          {/* Details & Quote Summary Panel */}
+          <aside className={styles.panel} aria-label={t("sub.public.detailsTitle") || (isRtl ? "تفاصيل الاشتراك والقيمة" : "Subscription Details & Quote")}>
+            <div className={styles.panelHeading}>
+              <CreditCard className={`${styles.panelHeadingIcon} h-5 w-5`} aria-hidden="true" />
+              <h2 className={styles.panelTitle}>{t("sub.public.detailsTitle") || (isRtl ? "تفاصيل الاشتراك" : "Subscription Details")}</h2>
+            </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500">{t("sub.public.duration")}</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Duration switch */}
+            <div className={styles.detailsField}>
+              <label className={styles.fieldLabel}>{t("sub.public.duration") || (isRtl ? "مدة الفاتورة" : "Billing Period")}</label>
+              <div className={styles.durationGroup} role="group" aria-label={isRtl ? "مدة الفاتورة" : "Billing period"}>
                 {(["شهري", "سنوي"] as const).map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setSubscriptionType(type)}
-                    className={`h-12 rounded-xl border text-sm font-black transition-colors ${
-                      subscriptionType === type ? "border-slate-900 bg-slate-900 text-white" : "border text-slate-700 hover:bg-muted"
-                    }`}
+                    className={styles.durationButton}
+                    aria-pressed={subscriptionType === type}
                   >
                     {type}
                   </button>
@@ -468,180 +447,133 @@ export default function NewSubscriptionPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500">{t("sub.field.startDate")}</label>
+            {/* Start Date */}
+            <div className={styles.detailsField}>
+              <label htmlFor="sub-start-date" className={styles.fieldLabel}>
+                {t("sub.field.startDate") || (isRtl ? "تاريخ بداية الاشتراك" : "Start Date")}
+              </label>
               <input
+                id="sub-start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full h-12 rounded-xl border border px-4 text-sm font-bold outline-none focus:border-slate-900"
+                className={styles.fieldInput}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500">{t("sub.field.notes")}</label>
+            {/* Notes */}
+            <div className={styles.detailsField}>
+              <label htmlFor="sub-notes" className={styles.fieldLabel}>
+                {t("sub.field.notes") || (isRtl ? "ملاحظات إضافية" : "Additional Notes")}
+              </label>
               <textarea
+                id="sub-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full min-h-[110px] rounded-xl border border px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
-                placeholder={t("sub.public.notesPlaceholder")}
+                className={styles.fieldTextarea}
+                placeholder={t("sub.public.notesPlaceholder") || (isRtl ? "أية تعليمات أو متطلبات خاصة..." : "Special instructions or notes...")}
               />
             </div>
 
-            {planMode === "custom" && (
-              <div className="space-y-3">
-                <label className="text-xs font-black text-slate-500">الإدارات المطلوبة</label>
-                <div className="space-y-2">
-                  {ALL_ADMINISTRATIONS.map((department) => {
-                    const checked = selectedDepartments.includes(department);
-                    return (
-                      <button
-                        key={department}
-                        type="button"
-                        onClick={() => {
-                          setSelectedDepartments((current) => {
-                            const next = checked ? current.filter((item) => item !== department) : [...current, department];
-                            if (department === "admin.dept.hr" && checked) setEmployeeSeats(0);
-                            return next;
-                          });
-                        }}
-                        className={`w-full rounded-2xl border px-4 py-3 text-right transition-colors ${
-                          checked ? "border-slate-900 bg-muted" : "border hover:bg-muted"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-sm font-black text-slate-800">{t(administrationLabels[department] || department)}</span>
-                          <span className="text-xs font-black text-slate-500">
-                            <SaudiRiyalAmount amount={getCurrentDepartmentPrice(department)} locale="ar-SA" iconClassName="h-3 w-3" />
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+            {/* Quote summary section */}
+            <div className={styles.quoteSection}>
+              <div className={styles.quoteSelectionLine}>
+                <span className={styles.quoteSelectionTitle}>
+                  {selectedPackage?.name || t("sub.public.selectFromList") || (isRtl ? "اختر باقة" : "Select a package")}
+                </span>
+                <span className={styles.quotePeriodTag}>{periodLabel}</span>
               </div>
-            )}
 
-            {planMode === "custom" && isEmployeeDepartmentSelected && (
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500">عدد الموظفين</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={employeeSeats || ""}
-                  onChange={(e) => setEmployeeSeats(Math.max(0, Number(e.target.value || 0)))}
-                  className="w-full h-12 rounded-xl border border px-4 text-sm font-bold outline-none focus:border-slate-900"
-                  placeholder="0"
-                />
-                <div className="text-xs font-bold text-slate-400">
-                  سعر كل موظف: <SaudiRiyalAmount amount={getCurrentEmployeeSeatPrice()} locale="ar-SA" iconClassName="h-3 w-3" />
-                </div>
+              {/* Selection chips */}
+              <div className={styles.quoteSelectionChips}>
+                {(selectedPackage?.administrations || []).map((adminKey) => (
+                  <span key={adminKey} className={styles.quoteSelectionChip}>
+                    {t(administrationLabels[adminKey] || adminKey)}
+                  </span>
+                ))}
               </div>
-            )}
 
-            <div className="rounded-2xl bg-muted border border p-4 space-y-3">
-              <div className="text-xs font-black text-slate-500">{t("sub.public.selectedPackage")}</div>
-              <div className="text-base font-black text-slate-950">
-                {planMode === "custom" ? "اشتراك مخصص" : selectedPackage?.name || t("sub.public.selectFromList")}
+              {/* Total Row */}
+              <div className={styles.quoteTotalRow}>
+                <span className={styles.quoteTotalLabel}>{t("sub.public.total") || (isRtl ? "الإجمالي المتوقع" : "Estimated Total")}</span>
+                {computedAmount === null ? (
+                  <span className={styles.quoteTotalValueUnknown}>{isRtl ? "غير متاح" : "Unavailable"}</span>
+                ) : (
+                  <span className={styles.quoteTotalValue}>
+                    <SaudiRiyalAmount amount={computedAmount} locale="ar-SA" />
+                  </span>
+                )}
               </div>
-              <div className="flex flex-wrap gap-2">
-                {planMode === "custom"
-                  ? selectedDepartments.map((administration) => (
-                      <span key={administration} className="px-2.5 py-1 rounded-full bg-card border border text-slate-700 text-[11px] font-black">
-                        {t(administrationLabels[administration] || administration)}
-                      </span>
-                    ))
-                  : (selectedPackage?.administrations || []).map((administration) => (
-                      <span key={administration} className="px-2.5 py-1 rounded-full bg-card border border text-slate-700 text-[11px] font-black">
-                        {t(administrationLabels[administration] || administration)}
-                      </span>
-                    ))}
-              </div>
-              {planMode === "custom" && isEmployeeDepartmentSelected && (
-                <div className="text-xs font-black text-slate-500">الموظفون: {employeeSeats}</div>
-              )}
-              {planMode === "custom" && (
-                <div className="space-y-2 rounded-2xl border border bg-card p-3">
-                  <div className="flex items-center justify-between text-[11px] font-black text-slate-400">
-                    <span>تفصيل الأسعار</span>
-                    <span>{periodLabel}</span>
-                  </div>
-                  {selectedDepartmentPricing.length === 0 ? (
-                    <div className="rounded-xl bg-muted px-3 py-2 text-xs font-bold text-slate-400">
-                      اختر إدارة لعرض السعر
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      {selectedDepartmentPricing.map((item) => (
-                        <div key={item.department} className="flex items-center justify-between rounded-xl bg-muted px-3 py-2">
-                          <span className="text-xs font-black text-slate-700">{item.label}</span>
-                          <span className="text-xs font-black text-slate-950"><SaudiRiyalAmount amount={item.price} locale="ar-SA" iconClassName="h-3 w-3" /></span>
-                        </div>
-                      ))}
-                      {isEmployeeDepartmentSelected && (
-                        <div className="rounded-xl bg-slate-950 px-3 py-2 text-white">
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="text-xs font-black">الموظفون</span>
-                            <span className="text-xs font-black"><SaudiRiyalAmount amount={employeeSeatTotal} locale="ar-SA" iconClassName="h-3 w-3 text-white" /></span>
-                          </div>
-                          <div className="mt-1 text-[11px] font-bold text-white/60">
-                            {employeeSeats || 0} × <SaudiRiyalAmount amount={getCurrentEmployeeSeatPrice()} locale="ar-SA" iconClassName="h-3 w-3 text-white/60" /> لكل موظف
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+
+              <p className={styles.quoteFootnote}>
+                {t("sub.public.afterPayment") || (isRtl ? "يتم تفعيل الصلاحيات فور تأكيد الدفع عبر بوابة الدفع الإلكتروني أو المحفظة." : "Access is activated upon payment confirmation through the portal or wallet.")}
+              </p>
+
+              {/* Submit Button */}
+              <button
+                type="button"
+                onClick={handleCreate}
+                disabled={isSubmitDisabled}
+                className={styles.submitButton}
+              >
+                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                <span>{t("sub.public.submit") || (isRtl ? "متابعة للدفع والتأكيد" : "Proceed to Payment")}</span>
+              </button>
+
+              {/* Explicit feedback why disabled */}
+              {isSubmitDisabled && !creating && !loading && (
+                <div className={styles.submitHint} role="status">
+                  {!selectedPackageId && (isRtl ? "• يرجى اختيار إحدى الباقات للمتابعة" : "• Please select a package to continue")}
                 </div>
               )}
-              <div className="pt-2 border-t border">
-                <div className="text-xs font-black text-slate-500">{t("sub.public.total")}</div>
-                <div className="text-xl sm:text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
-                <div className="text-xs font-bold text-slate-400 mt-2">{t("sub.public.afterPayment")}</div>
-              </div>
             </div>
-
-            <button
-              type="button"
-              onClick={handleCreate}
-              disabled={creating || (planMode === "packages" && !selectedPackageId)}
-              className="w-full h-12 rounded-xl bg-slate-900 text-white font-black text-sm hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-              {t("sub.public.submit")}
-            </button>
-          </div>
+          </aside>
         </div>
 
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
-          <h2 className="text-lg font-black text-slate-950 mb-4">{t("sub.public.previousSubscriptions")}</h2>
+        {/* Previous Subscriptions Section */}
+        <section className={`${styles.panel} ${styles.previousSection}`} aria-label={t("sub.public.previousSubscriptions") || (isRtl ? "الاشتراكات السابقة" : "Previous Subscriptions")}>
+          <div className={styles.panelHeading}>
+            <CreditCard className={`${styles.panelHeadingIcon} h-5 w-5`} aria-hidden="true" />
+            <h2 className={styles.panelTitle}>{t("sub.public.previousSubscriptions") || (isRtl ? "الاشتراكات السابقة" : "Previous Subscriptions")}</h2>
+          </div>
+
           {subscriptions.length === 0 ? (
-            <div className="py-10 text-center text-slate-400 font-bold">{t("sub.public.noPreviousSubscriptions")}</div>
+            <div className={styles.statusBlock}>
+              <p className={styles.statusEmptyLabel}>{t("sub.public.noPreviousSubscriptions") || (isRtl ? "لا توجد اشتراكات سابقة مسجلة" : "No previous subscriptions recorded")}</p>
+            </div>
           ) : (
-            <div className="space-y-3">
+            <div className={styles.previousList}>
               {subscriptions.map((sub) => (
-                <div key={sub.id} className="rounded-2xl border border px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div key={sub.id} className={styles.previousRow}>
                   <div>
-                    <div className="text-sm font-black text-slate-950">{sub.managementPackage?.name || "باقة اشتراك"}</div>
-                    <div className="text-xs text-slate-500 font-bold mt-1">
-                      {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • <SaudiRiyalAmount amount={Number(sub.amount || 0)} locale="ar-SA" iconClassName="h-3 w-3" />
+                    <div className={styles.previousName}>
+                      {sub.managementPackage?.name || sub.notes || (isRtl ? "اشتراك إدارة" : "Department subscription")}
+                    </div>
+                    <div className={styles.previousMeta}>
+                      <span>{sub.subscriptionType}</span>
+                      <span>•</span>
+                      <span>{new Date(sub.startDate).toLocaleDateString(isRtl ? "ar-SA" : "en-US")}</span>
+                      <span>•</span>
+                      <SaudiRiyalAmount amount={Number(sub.amount || 0)} locale="ar-SA" iconClassName="h-3 w-3" />
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 rounded-full bg-muted text-slate-700 text-[11px] font-black">{sub.status}</span>
-                      <button
-                        type="button"
-                        onClick={() => router.push(`/wallet?subscription=${sub.id}`)}
-                        className="h-10 px-4 rounded-xl border border text-slate-700 hover:bg-muted text-sm font-black"
-                      >
-                      {t("sub.public.viewInWallet")}
+                    <span className={styles.previousStatus}>{sub.status}</span>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/wallet?subscription=${sub.id}`)}
+                      className={styles.previousWalletButton}
+                    >
+                      {t("sub.public.viewInWallet") || (isRtl ? "عرض في المحفظة" : "View in Wallet")}
                     </button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
+
       <DepartmentFeaturePreviewDialog
         key={`${previewOpen ? "open" : "closed"}-${previewPackage?.id || "all"}-${previewDepartment}`}
         open={previewOpen}

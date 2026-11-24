@@ -1,0 +1,444 @@
+/* components/redesign/chat09/financial-standalone.module.css
+   Pearl / Navy / Brass Architectural Theme for Standalone Financial Workspace
+   Strictly scoped to .financialRoot; zero global leakage
+*/
+
+.financialRoot {
+  --fin-pearl: #f8f7f4;
+  --fin-pearl-subtle: #faf9f6;
+  --fin-surface: #ffffff;
+  --fin-surface-elevated: #ffffff;
+  --fin-surface-muted: #f3f2ee;
+  --fin-navy: #0b192c;
+  --fin-navy-deep: #071220;
+  --fin-navy-surface: #13243a;
+  --fin-text-primary: #0b192c;
+  --fin-text-secondary: #475569;
+  --fin-text-muted: #64748b;
+  --fin-border: #e2ded6;
+  --fin-border-subtle: #edebe4;
+
+  /* Brass / Bronze Architectural Accents */
+  --fin-brass: #946528;
+  --fin-brass-hover: #7d5420;
+  --fin-brass-tint: rgba(148, 101, 40, 0.08);
+  --fin-brass-border: rgba(148, 101, 40, 0.28);
+
+  /* Status Colors */
+  --fin-status-success-bg: #ecfdf5;
+  --fin-status-success-text: #065f46;
+  --fin-status-success-border: #a7f3d0;
+  --fin-status-warning-bg: #fffbeb;
+  --fin-status-warning-text: #92400e;
+  --fin-status-warning-border: #fde68a;
+  --fin-status-danger-bg: #fff1f2;
+  --fin-status-danger-text: #9f1239;
+  --fin-status-danger-border: #fecdd3;
+
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--fin-pearl);
+  color: var(--fin-text-primary);
+  font-family: inherit;
+  overflow-x: clip;
+}
+
+:global(.dark) .financialRoot {
+  --fin-pearl: #0b192c;
+  --fin-pearl-subtle: #071220;
+  --fin-surface: #102138;
+  --fin-surface-elevated: #152740;
+  --fin-surface-muted: #162b47;
+  --fin-navy: #f8f7f4;
+  --fin-navy-deep: #060b13;
+  --fin-navy-surface: #1a2f4c;
+  --fin-text-primary: #f8f7f4;
+  --fin-text-secondary: #9bb0c6;
+  --fin-text-muted: #7d93aa;
+  --fin-border: #1e3655;
+  --fin-border-subtle: #172b43;
+
+  /* Brass / Gold in Dark Mode */
+  --fin-brass: #e6bb78;
+  --fin-brass-hover: #ffd38c;
+  --fin-brass-tint: rgba(230, 187, 120, 0.12);
+  --fin-brass-border: rgba(230, 187, 120, 0.35);
+
+  --fin-status-success-bg: rgba(6, 95, 70, 0.25);
+  --fin-status-success-text: #34d399;
+  --fin-status-success-border: rgba(52, 211, 153, 0.3);
+  --fin-status-warning-bg: rgba(146, 64, 14, 0.25);
+  --fin-status-warning-text: #fcd34d;
+  --fin-status-warning-border: rgba(252, 211, 77, 0.3);
+  --fin-status-danger-bg: rgba(159, 18, 57, 0.25);
+  --fin-status-danger-text: #fb7185;
+  --fin-status-danger-border: rgba(251, 113, 133, 0.3);
+}
+
+/* Header & Architectural Hero */
+.heroBanner {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--fin-border);
+  background: linear-gradient(135deg, var(--fin-surface) 0%, var(--fin-surface-muted) 100%);
+  padding: 2rem 1rem 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .heroBanner {
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroBanner {
+    padding: 3rem 2rem 3rem 2rem;
+  }
+}
+
+.heroArtworkWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.14;
+  mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+:global([dir="rtl"]) .heroArtworkWrapper {
+  right: auto;
+  left: 0;
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background-color: var(--fin-navy);
+  color: var(--fin-pearl);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--fin-text-primary);
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+}
+
+.heroSubtitle {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--fin-text-secondary);
+  max-width: 38rem;
+  margin-top: 0.5rem;
+}
+
+/* Tabs Navigation Styling */
+.tabsContainer {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.tabsScroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabsList {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 1rem;
+  background-color: var(--fin-surface);
+  border: 1px solid var(--fin-border);
+  padding: 0.375rem;
+  box-shadow: 0 2px 10px rgba(11, 25, 44, 0.03);
+}
+
+@media (max-width: 767px) {
+  .tabsList {
+    flex-wrap: wrap;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    gap: 0.5rem;
+  }
+}
+
+.tabTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--fin-text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.tabTrigger:hover {
+  background-color: var(--fin-surface-muted);
+  color: var(--fin-text-primary);
+}
+
+.tabTrigger[data-state="active"] {
+  background-color: var(--fin-navy);
+  color: var(--fin-pearl);
+  box-shadow: 0 4px 12px rgba(11, 25, 44, 0.15);
+}
+
+@media (max-width: 767px) {
+  .tabTrigger {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 8.5rem;
+    justify-content: center;
+    border: 1px solid var(--fin-border);
+    background-color: var(--fin-surface);
+  }
+  .tabTrigger[data-state="active"] {
+    border-color: var(--fin-navy);
+  }
+}
+
+/* KPI Cards Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.kpiCard {
+  background-color: var(--fin-surface);
+  border: 1px solid var(--fin-border);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 12px rgba(11, 25, 44, 0.03);
+}
+
+.kpiCard:hover {
+  border-color: var(--fin-brass-border);
+  box-shadow: 0 6px 20px rgba(11, 25, 44, 0.06);
+}
+
+.kpiIconWrapper {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background-color: var(--fin-surface-muted);
+  color: var(--fin-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--fin-border-subtle);
+}
+
+.kpiLabel {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fin-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.kpiValue {
+  font-size: 1.375rem;
+  font-weight: 900;
+  color: var(--fin-text-primary);
+  line-height: 1.2;
+}
+
+.kpiUnavailable {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--fin-text-muted);
+  font-style: italic;
+}
+
+/* Error and Stale Banners */
+.staleBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--fin-status-warning-bg);
+  border: 1px solid var(--fin-status-warning-border);
+  color: var(--fin-status-warning-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.errorCard {
+  background-color: var(--fin-surface);
+  border: 1px solid var(--fin-status-danger-border);
+  border-radius: 1.25rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(159, 18, 57, 0.05);
+}
+
+.errorIcon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background-color: var(--fin-status-danger-bg);
+  color: var(--fin-status-danger-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background-color: var(--fin-navy);
+  color: var(--fin-pearl);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+/* Operational Panels */
+.panelCard {
+  background-color: var(--fin-surface);
+  border: 1px solid var(--fin-border);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 12px rgba(11, 25, 44, 0.03);
+}
+
+@media (min-width: 640px) {
+  .panelCard {
+    padding: 1.75rem;
+  }
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.panelTitle {
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: var(--fin-text-primary);
+}
+
+.panelSubtitle {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fin-text-muted);
+  margin-top: 0.25rem;
+}
+
+/* Floating Navigation Action */
+.floatingBackBtn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: var(--fin-navy);
+  color: var(--fin-pearl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(11, 25, 44, 0.2);
+  z-index: 40;
+  border: 1px solid var(--fin-border);
+  transition: all 0.2s ease;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+:global([dir="rtl"]) .floatingBackBtn {
+  left: auto;
+  right: 1.5rem;
+}
+
+.floatingBackBtn:hover {
+  transform: scale(1.05);
+}
+
+/* Strict Focus and Reduced-Motion Scoping */
+.financialRoot :focus-visible {
+  outline: 2px solid var(--fin-brass);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .financialRoot *,
+  .financialRoot *::before,
+  .financialRoot *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

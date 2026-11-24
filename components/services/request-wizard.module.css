@@ -1,0 +1,116 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, .42fr);
+  grid-template-areas: "steps summary" "form summary";
+  grid-template-rows: auto 1fr;
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+.steps {
+  grid-area: steps;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 3.2rem;
+  border-block-end: 2px solid var(--network-line);
+  padding: .35rem .2rem .65rem;
+  color: var(--network-muted);
+  font-size: .875rem;
+  line-height: 1.45;
+}
+
+.steps li[aria-current], .steps li[data-complete="true"] {
+  border-color: var(--network-accent);
+  color: var(--network-ink);
+}
+
+.steps li[aria-current] { font-weight: 700; }
+.steps li > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.55rem;
+  height: 1.55rem;
+  border: 1px solid var(--network-line);
+  border-radius: 50%;
+}
+
+.steps li[aria-current] > span {
+  background: var(--network-ink);
+  color: var(--network-surface);
+  border-color: var(--network-ink);
+}
+
+.form, .summary {
+  min-width: 0;
+  border: 1px solid var(--network-line);
+  border-radius: 1rem;
+  background: var(--network-surface);
+  padding: clamp(1rem, 3.2vw, 2rem);
+}
+
+.form { grid-area: form; display: grid; gap: 1.15rem; }
+.form fieldset { min-inline-size: 0; }
+.form :is(input, select, textarea) { font-size: 1rem; }
+.form :is(input, select, textarea, button, a):focus-visible {
+  outline: 2px solid var(--network-accent);
+  outline-offset: 3px;
+}
+
+.stepHeading { font-size: 1.25rem; font-weight: 700; scroll-margin-block-start: 6rem; }
+.stepHeading:focus { outline: none; }
+.stepBody { display: grid; gap: 1.15rem; }
+.stepBody :is(input, select, textarea) { scroll-margin-block-start: 6rem; }
+
+
+.summary {
+  grid-area: summary;
+  position: sticky;
+  inset-block-start: 6rem;
+}
+
+.summary h2 { font-size: 1rem; font-weight: 700; }
+.summaryTitle { margin-block: .45rem 1rem; font-size: 1.15rem; font-weight: 600; overflow-wrap: anywhere; }
+.summary dl, .review { display: grid; gap: .75rem; margin: 0; }
+.summary dl > div, .review > div {
+  display: grid;
+  gap: .25rem .8rem;
+  padding-block-start: .65rem;
+  border-block-start: 1px solid var(--network-line);
+  overflow-wrap: anywhere;
+  font-size: .9rem;
+}
+
+.summary dt, .review dt, .priceNote { color: var(--network-muted); }
+.summary dd, .review dd { margin: 0; text-align: start; }
+.review { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.review dd { white-space: pre-wrap; }
+.priceNote { margin-block-start: .75rem; font-size: .82rem; }
+.actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+.actions button { min-height: 2.75rem; }
+.actions button[type="submit"] { margin-inline-start: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .stepBody { animation: step-in 220ms cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes step-in { from { opacity: .55; transform: translateY(5px); } }
+}
+
+@media (max-width: 740px) {
+  .layout { grid-template: "steps" "form" "summary" / minmax(0, 1fr); }
+  .summary { position: static; }
+}
+
+@media (max-width: 400px) {
+  .steps li { align-items: flex-start; flex-direction: column; gap: .35rem; }
+  .steps li > span { flex: none; width: 1.55rem; }
+  .review { grid-template-columns: minmax(0, 1fr); }
+}

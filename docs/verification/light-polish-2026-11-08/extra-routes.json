@@ -1,0 +1,236 @@
+[
+  {
+    "route": "/admin/info-content",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/info-content",
+    "overflow": false,
+    "content": 722,
+    "errors": []
+  },
+  {
+    "route": "/admin/map-control",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/map-control",
+    "overflow": false,
+    "content": 790,
+    "errors": []
+  },
+  {
+    "route": "/admin/opinions",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/opinions",
+    "overflow": false,
+    "content": 691,
+    "errors": []
+  },
+  {
+    "route": "/admin/purchase-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/purchase-requests",
+    "overflow": false,
+    "content": 750,
+    "errors": []
+  },
+  {
+    "route": "/admin/service-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/service-requests",
+    "overflow": false,
+    "content": 770,
+    "errors": []
+  },
+  {
+    "route": "/admin/subscriptions",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/subscriptions",
+    "overflow": false,
+    "content": 962,
+    "errors": []
+  },
+  {
+    "route": "/admin/transactions",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/transactions",
+    "overflow": false,
+    "content": 877,
+    "errors": []
+  },
+  {
+    "route": "/admin/visit-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/admin/visit-requests",
+    "overflow": false,
+    "content": 801,
+    "errors": []
+  },
+  {
+    "route": "/complete-profile",
+    "width": 1440,
+    "status": 200,
+    "url": "/complete-profile",
+    "overflow": false,
+    "content": 535,
+    "errors": []
+  },
+  {
+    "route": "/home",
+    "width": 1440,
+    "status": 200,
+    "url": "/home",
+    "overflow": false,
+    "content": 67,
+    "errors": []
+  },
+  {
+    "route": "/internal/chat",
+    "width": 1440,
+    "status": 200,
+    "url": "/internal/chat",
+    "overflow": false,
+    "content": 132,
+    "errors": []
+  },
+  {
+    "route": "/internal/renew-subscription",
+    "width": 1440,
+    "status": 200,
+    "url": "/internal/renew-subscription",
+    "overflow": false,
+    "content": 576,
+    "errors": []
+  },
+  {
+    "route": "/services/legal-requests",
+    "width": 1440,
+    "status": 200,
+    "url": "/services/legal-requests",
+    "overflow": false,
+    "content": 98,
+    "errors": []
+  },
+  {
+    "route": "/admin/info-content",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/info-content",
+    "overflow": false,
+    "content": 627,
+    "errors": []
+  },
+  {
+    "route": "/admin/map-control",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/map-control",
+    "overflow": false,
+    "content": 695,
+    "errors": []
+  },
+  {
+    "route": "/admin/opinions",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/opinions",
+    "overflow": false,
+    "content": 596,
+    "errors": []
+  },
+  {
+    "route": "/admin/purchase-requests",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/purchase-requests",
+    "overflow": false,
+    "content": 655,
+    "errors": []
+  },
+  {
+    "route": "/admin/service-requests",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/service-requests",
+    "overflow": false,
+    "content": 675,
+    "errors": []
+  },
+  {
+    "route": "/admin/subscriptions",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/subscriptions",
+    "overflow": false,
+    "content": 867,
+    "errors": []
+  },
+  {
+    "route": "/admin/transactions",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/transactions",
+    "overflow": false,
+    "content": 782,
+    "errors": []
+  },
+  {
+    "route": "/admin/visit-requests",
+    "width": 390,
+    "status": 304,
+    "url": "/admin/visit-requests",
+    "overflow": false,
+    "content": 706,
+    "errors": []
+  },
+  {
+    "route": "/complete-profile",
+    "width": 390,
+    "status": 304,
+    "url": "/complete-profile",
+    "overflow": false,
+    "content": 535,
+    "errors": []
+  },
+  {
+    "route": "/home",
+    "width": 390,
+    "status": 304,
+    "url": "/home",
+    "overflow": false,
+    "content": 67,
+    "errors": []
+  },
+  {
+    "route": "/internal/chat",
+    "width": 390,
+    "status": 304,
+    "url": "/internal/chat",
+    "overflow": false,
+    "content": 132,
+    "errors": []
+  },
+  {
+    "route": "/internal/renew-subscription",
+    "width": 390,
+    "status": 304,
+    "url": "/internal/renew-subscription",
+    "overflow": false,
+    "content": 576,
+    "errors": []
+  },
+  {
+    "route": "/services/legal-requests",
+    "width": 390,
+    "status": 200,
+    "url": "/services/legal-requests",
+    "overflow": false,
+    "content": 101,
+    "errors": []
+  }
+]

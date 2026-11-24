@@ -1,0 +1,5 @@
+.artwork { position:absolute; inset:0; overflow:hidden; pointer-events:none; --art-play:paused; }
+.camera { position:absolute; inset:-14px; transform:translate3d(var(--art-x,0px),calc(var(--art-y,0px) + var(--art-scroll,0px)),0); transition:transform 650ms cubic-bezier(.16,1,.3,1); }
+.image { object-fit:cover; animation:architectural-camera 16s ease-in-out infinite alternate; animation-play-state:var(--art-play); }
+@keyframes architectural-camera { from { transform:scale(1.025) translate3d(-.6%,0,0); } to { transform:scale(1.105) translate3d(.6%,-1.1%,0); } }
+@media(prefers-reduced-motion:reduce) { .camera { transform:none; transition:none; } .image { animation:none; } }

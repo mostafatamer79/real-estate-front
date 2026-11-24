@@ -1,0 +1,178 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "ar",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "lang": "en",
+    "passed": true,
+    "checks": [
+      "all paginated records",
+      "accepted/rejected/category filters",
+      "empty search",
+      "search",
+      "correct price department",
+      "zero rejected",
+      "cancel makes no mutation",
+      "failure preserves quote",
+      "numeric payload",
+      "successful price locked",
+      "paid invoice locked",
+      "legacy approval",
+      "controls in viewport",
+      "no page exceptions"
+    ]
+  }
+]

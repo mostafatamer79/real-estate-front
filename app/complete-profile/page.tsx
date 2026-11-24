@@ -1,22 +1,89 @@
 // app/complete-profile/page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Save, User, Shield, MapPin, ArrowRight, CheckCircle2, Building2, Globe } from 'lucide-react';
 import { Role } from '@/types/user';
-
 import { useLanguage } from '@/context/LanguageContext';
+import {
+  ArrowRight,
+  ArrowLeft,
+  ShieldCheck,
+  Briefcase,
+  UserCheck,
+  AlertCircle,
+  Save,
+} from 'lucide-react';
+import styles from './complete-profile.module.css';
+import { ProfileCompletionError, profileCompletionPlan, profileRoleAction } from '@/lib/profile-onboarding';
+import { useToast } from '@/hooks/use-toast';
+
+interface ProfileFormData {
+  firstName: string;
+  lastName: string;
+  role: Role;
+  licenseNumber: string;
+  roleOtherDescription: string;
+  address: string;
+  city: string;
+  country: string;
+}
+
+const SERVICE_PROVIDER_ROLES: Role[] = [
+  Role.LAWYER,
+  Role.NOTARY,
+  Role.LEGAL_CONSULTANT,
+  Role.ENGINEERING_OFFICE,
+  Role.OTHER,
+];
+
+const ROLES_WITH_LICENSE: Role[] = [
+  Role.AGENT,
+  Role.BROKER,
+  Role.REAL_ESTATE_OFFICE,
+  Role.LAWYER,
+  Role.NOTARY,
+  Role.LEGAL_CONSULTANT,
+];
+
+const CITIES: Array<{ key: string; ar: string; en: string }> = [
+  { key: 'riyadh', ar: 'الرياض', en: 'Riyadh' },
+  { key: 'jeddah', ar: 'جدة', en: 'Jeddah' },
+  { key: 'dammam', ar: 'الدمام', en: 'Dammam' },
+  { key: 'mecca', ar: 'مكة المكرمة', en: 'Mecca' },
+  { key: 'medina', ar: 'المدينة المنورة', en: 'Medina' },
+  { key: 'taif', ar: 'الطائف', en: 'Taif' },
+  { key: 'abha', ar: 'أبها', en: 'Abha' },
+  { key: 'hail', ar: 'حائل', en: 'Hail' },
+  { key: 'other', ar: 'أخرى', en: 'Other' },
+];
+
+const COUNTRIES: Array<{ key: string; ar: string; en: string }> = [
+  { key: 'sa', ar: 'السعودية', en: 'Saudi Arabia' },
+  { key: 'uae', ar: 'الإمارات', en: 'UAE' },
+  { key: 'kw', ar: 'الكويت', en: 'Kuwait' },
+  { key: 'qa', ar: 'قطر', en: 'Qatar' },
+  { key: 'om', ar: 'عمان', en: 'Oman' },
+  { key: 'bh', ar: 'البحرين', en: 'Bahrain' },
+];
 
 export default function CompleteProfilePage() {
   const router = useRouter();
   const { user, token, isLoading: authLoading, isAuthenticated, updateUser } = useAuth();
   const { t, language } = useLanguage();
-  
+  const { toast } = useToast();
+  const saveRequest = useRef<AbortController | null>(null);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; saveRequest.current?.abort(); };
+  }, []);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     firstName: '',
     lastName: '',
     role: Role.USER,
@@ -29,12 +96,14 @@ export default function CompleteProfilePage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const serviceProviderRoles = [Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT, Role.ENGINEERING_OFFICE, Role.OTHER];
-  const isServiceProvider = serviceProviderRoles.includes(formData.role);
+  const isRtl = language === 'ar';
+  const isServiceProvider = SERVICE_PROVIDER_ROLES.includes(formData.role);
+  const requiresLicense = ROLES_WITH_LICENSE.includes(formData.role);
+  const roleAction = profileRoleAction(user?.role || Role.USER, formData.role);
 
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/signin');
+    if (!authLoading && (!isAuthenticated || !user)) {
+      router.replace('/login?next=%2Fcomplete-profile');
       return;
     }
 
@@ -56,66 +125,93 @@ export default function CompleteProfilePage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    if (errors.general) {
+      setErrors(prev => ({ ...prev, general: '' }));
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSelectRole = (newRole: Role) => {
+    setFormData(prev => ({ ...prev, role: newRole }));
+    if (errors.licenseNumber && !ROLES_WITH_LICENSE.includes(newRole)) {
+      setErrors(prev => ({ ...prev, licenseNumber: '' }));
+    }
+  };
+
+  const handleSelectServiceProviderGroup = () => {
+    if (!isServiceProvider) {
+      setFormData(prev => ({ ...prev, role: Role.LAWYER }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSaving(true);
+    if (saveRequest.current || !user || !token) return;
     setErrors({});
-
-    if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      setErrors({ general: t('profile.error.names') });
-      setIsSaving(false);
-      return;
-    }
-
-    const rolesWithLicense = [Role.AGENT, Role.BROKER, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT];
-    if (rolesWithLicense.includes(formData.role) && !formData.licenseNumber.trim()) {
-      setErrors({ licenseNumber: t('profile.error.license') });
-      setIsSaving(false);
-      return;
-    }
-
+    let basicSaved = false;
+    const controller = new AbortController();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          roleOtherDescription: formData.role === Role.OTHER ? formData.roleOtherDescription : undefined,
-          agentLicenseNumber: formData.role === Role.AGENT || formData.role === Role.BROKER ? formData.licenseNumber : undefined,
-          lawLicenseNumber: [Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role) ? formData.licenseNumber : undefined,
-          falLicenseNumber: formData.role === Role.BROKER ? formData.licenseNumber : undefined,
-        }),
+      const plan = profileCompletionPlan(user.role || Role.USER, formData);
+      saveRequest.current = controller;
+      setIsSaving(true);
+      const request = async (path: string, method: string, body: unknown) => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+          method,
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(body),
+        });
+        const json = await response.json().catch(() => null);
+        if (!response.ok) {
+          const message = Array.isArray(json?.message) ? json.message.join('، ') : json?.message;
+          throw new Error(typeof message === 'string' ? message : (isRtl ? 'تعذر حفظ البيانات. حاول مرة أخرى.' : 'Could not save your details. Try again.'));
+        }
+        const updated = json?.data || json;
+        if (!updated || updated.id !== user.id || typeof updated.role !== 'string') {
+          throw new Error(isRtl ? 'لم تصل بيانات حساب صالحة من الخادم. حاول مرة أخرى.' : 'The server did not return valid account details. Try again.');
+        }
+        return updated;
+      };
+      let updated = await request('/user/profile', 'PUT', plan.profile);
+      basicSaved = true;
+      if (plan.application) updated = await request('/user/profile/license-application', 'POST', plan.application);
+      if (!mounted.current || controller.signal.aborted) return;
+      updateUser(updated);
+      if (plan.application) toast({
+        title: isRtl ? 'تم إرسال طلب الاعتماد' : 'Application submitted',
+        description: isRtl ? 'سيبقى نوع حسابك الحالي حتى مراجعة الطلب واعتماده.' : 'Your current account type stays active until the application is reviewed and approved.',
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'فشل تحديث الملف الشخصي');
-      }
-
-      updateUser(data);
       router.replace('/details');
-
-    } catch (err: any) {
-      console.error('Update error:', err);
-      setErrors({ general: err.message || 'فشل تحديث الملف الشخصي' });
+    } catch (err: unknown) {
+      if (!mounted.current || controller.signal.aborted) return;
+      if (err instanceof ProfileCompletionError) {
+        if (err.code === 'license_required') setErrors({ licenseNumber: isRtl ? 'أدخل رقم الرخصة المهنية.' : 'Enter your professional license number.' });
+        else if (err.code === 'names_required') setErrors({ general: t('profile.error.names'), firstName: !formData.firstName.trim() ? t('profile.error.names') : '', lastName: !formData.lastName.trim() ? t('profile.error.names') : '' });
+        else setErrors({ general: isRtl ? 'يتطلب تغيير نوع الحساب هذا التواصل مع الإدارة. بياناتك المدخلة ما زالت محفوظة في النموذج.' : 'This account type requires contacting the administration. Your entered details are still in the form.' });
+        const name = err.code === 'license_required' ? 'licenseNumber' : err.code === 'names_required' ? (!formData.firstName.trim() ? 'firstName' : 'lastName') : 'role';
+        document.querySelector<HTMLInputElement>(`[name="${name}"]`)?.focus();
+      } else {
+        const message = err instanceof Error ? err.message : (isRtl ? 'تعذر حفظ البيانات.' : 'Could not save your details.');
+        setErrors({ general: basicSaved && roleAction === 'apply'
+          ? (isRtl ? 'تم حفظ البيانات الأساسية، لكن تعذر إرسال طلب الاعتماد. أعد المحاولة: ' : 'Basic details were saved, but the application could not be submitted. Try again: ') + message
+          : message });
+      }
     } finally {
-      setIsSaving(false);
+      saveRequest.current = null;
+      if (mounted.current) setIsSaving(false);
     }
   };
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="relative">
-            <div className="absolute inset-0 bg-slate-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
-            <Loader2 className="w-12 h-12 text-blue-500 animate-spin relative z-10" />
+      <div className={styles.page} dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className={styles.loadingContainer} role="status" aria-live="polite">
+          <div className={styles.pageSpinner} aria-hidden="true" />
+          <p className={styles.loadingText}>
+            {isRtl ? 'جارٍ تحميل بيانات الحساب…' : 'Loading account credentials…'}
+          </p>
         </div>
       </div>
     );
@@ -124,322 +220,487 @@ export default function CompleteProfilePage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-200 relative overflow-hidden font-sans" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] right-[-5%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-slate-600/10 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
-      </div>
+    <div className={styles.page} dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className={styles.architecturalGrid} aria-hidden="true" />
 
-      <div className="relative max-w-4xl mx-auto px-4 py-6 md:py-12">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-            <button
-            onClick={() => router.push("/")}
-            className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-            >
-            <ArrowRight className={`w-5 h-5 transition-transform ${language === 'en' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
-            <span className="font-medium">{t('profile.backHome')}</span>
-            </button>
-        </div>
+      <div className={styles.container}>
+        <div className={styles.editorialLayout}>
+          {/* Column 1: Editorial Guidance & Orientation */}
+          <aside className={styles.guidanceColumn} aria-label={isRtl ? 'معلومات التوجيه والاعتماد' : 'Guidance & Orientation'}>
+            <Link href="/" className={styles.backLink}>
+              {isRtl ? (
+                <ArrowRight className={styles.backIcon} aria-hidden="true" />
+              ) : (
+                <ArrowLeft className={styles.backIcon} aria-hidden="true" />
+              )}
+              <span>{t('profile.backHome') || (isRtl ? 'العودة للرئيسية' : 'Back to Home')}</span>
+            </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 items-start">
-            {/* Left Column: Title & Info */}
-            <div className="lg:col-span-4 space-y-6">
-                <div>
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        {t('profile.complete.title')}
-                    </h1>
-                    <p className="text-slate-400 leading-relaxed">
-                        {t('profile.complete.desc')}
+            <div>
+              <div className={styles.chapterKicker}>
+                <span className={styles.kickerLine} aria-hidden="true" />
+                <span>{isRtl ? 'بيانات الحساب' : 'Your account'}</span>
+              </div>
+              <h1 className={styles.heading}>
+                {t('profile.complete.title') || (isRtl ? 'إكمال الملف الشخصي' : 'Complete Profile')}
+              </h1>
+            </div>
+
+            <p className={styles.lead}>
+              {isRtl ? 'أكمل بياناتك، وحدّد نوع الحساب المناسب لنشاطك.' : 'Complete your details and choose the account type that fits your activity.'}
+            </p>
+
+            <div className={styles.guidanceList}>
+              <div className={styles.guidanceItem}>
+                <div className={styles.guidanceIconBox} aria-hidden="true">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <div className={styles.guidanceContent}>
+                  <h2 className={styles.guidanceTitle}>
+                    {(isRtl ? 'بياناتك الشخصية' : 'Personal details')}
+                  </h2>
+                  <p className={styles.guidanceText}>
+                    {(isRtl ? 'أدخل اسمك كما تريد أن يظهر في حسابك.' : 'Enter your name as you want it to appear on your account.')}
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.guidanceItem}>
+                <div className={styles.guidanceIconBox} aria-hidden="true">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <div className={styles.guidanceContent}>
+                  <h2 className={styles.guidanceTitle}>
+                    {isRtl ? 'نوع الحساب' : 'Account type'}
+                  </h2>
+                  <p className={styles.guidanceText}>
+                    {isRtl
+                      ? 'اختر نوع الحساب، وستظهر حقول الترخيص إذا كانت مطلوبة.'
+                      : 'Choose an account type to see its required license fields.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.guidanceItem}>
+                <div className={styles.guidanceIconBox} aria-hidden="true">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className={styles.guidanceContent}>
+                  <h2 className={styles.guidanceTitle}>
+                    {(isRtl ? 'الترخيص المهني' : 'Professional license')}
+                  </h2>
+                  <p className={styles.guidanceText}>
+                    {(isRtl ? 'طلبات الوكلاء والوسطاء تُرسل للمراجعة قبل تغيير نوع الحساب.' : 'Agent and broker applications are reviewed before your account type changes.')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Column 2: The Open Architectural Form */}
+          <div className={styles.formColumn}>
+            {errors.general && (
+              <div id="cp-general-error" className={styles.errorAlert} role="alert" aria-live="assertive">
+                <AlertCircle className={styles.errorIcon} aria-hidden="true" />
+                <div>{errors.general}</div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className={styles.formRoot} noValidate>
+              {/* Section 01: Personal Identity */}
+              <fieldset className={styles.section} aria-labelledby="cp-personal-heading">
+                <div className={styles.sectionHeader}>
+                  <span className={styles.sectionIndex} aria-hidden="true">01</span>
+                  <h2 id="cp-personal-heading" className={styles.sectionTitle}>
+                    {t('profile.personalInfo') || (isRtl ? 'المعلومات الشخصية' : 'Personal Information')}
+                  </h2>
+                </div>
+
+                <div className={styles.inputGrid}>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="cp-firstName" className={styles.label}>
+                      <span>
+                        {isRtl ? 'الاسم الأول' : 'First Name'}
+                        <span className={styles.requiredMark}>*</span>
+                      </span>
+                    </label>
+                    <input
+                      id="cp-firstName"
+                      type="text"
+                      name="firstName"
+                      aria-invalid={Boolean(errors.firstName)}
+                      aria-describedby={errors.firstName ? 'cp-general-error' : undefined}
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className={styles.input}
+                      placeholder={isRtl ? 'الاسم الأول' : 'First Name'}
+                      required
+                      autoComplete="given-name"
+                    />
+                  </div>
+
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="cp-lastName" className={styles.label}>
+                      <span>
+                        {isRtl ? 'الاسم الأخير' : 'Last Name'}
+                        <span className={styles.requiredMark}>*</span>
+                      </span>
+                    </label>
+                    <input
+                      id="cp-lastName"
+                      type="text"
+                      name="lastName"
+                      aria-invalid={Boolean(errors.lastName)}
+                      aria-describedby={errors.lastName ? 'cp-general-error' : undefined}
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className={styles.input}
+                      placeholder={isRtl ? 'الاسم الأخير' : 'Last Name'}
+                      required
+                      autoComplete="family-name"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Section 02: Account Classification & Role */}
+              <fieldset className={styles.section} aria-labelledby="cp-account-heading">
+                <div className={styles.sectionHeader}>
+                  <span className={styles.sectionIndex} aria-hidden="true">02</span>
+                  <h2 id="cp-account-heading" className={styles.sectionTitle}>
+                    {t('profile.accountType') || (isRtl ? 'نوع الحساب والصفة المهنية' : 'Account Type & Role')}
+                  </h2>
+                </div>
+
+                {roleAction === 'apply' && <p className={styles.licenseHelper} role="note">{isRtl ? 'سيُرسل طلب اعتماد للوكيل أو الوسيط. سيبقى نوع حسابك الحالي حتى الموافقة.' : 'An agent or broker application will be submitted. Your current account type stays active until approval.'}</p>}
+                {roleAction === 'contact' && <p className={styles.licenseHelper} role="note">{isRtl ? 'يتطلب هذا النوع من الحسابات التواصل مع الإدارة.' : 'This account type requires contacting the administration.'} <Link href="/customerservice/support" className="underline">{isRtl ? 'التواصل مع الدعم' : 'Contact support'}</Link></p>}
+                {user?.role === Role.REAL_ESTATE_OFFICE && <p className={styles.licenseHelper}>{isRtl ? 'نوع الحساب الحالي: مكتب عقاري' : 'Current account type: real estate office'}</p>}
+
+                <div className={styles.roleGrid}>
+                  {/* Beneficiary / User */}
+                  <label
+                    htmlFor="role-user"
+                    className={`${styles.roleCard} ${formData.role === Role.USER ? styles.roleCardSelected : ''}`}
+                  >
+                    <div className={styles.roleCardHeader}>
+                      <div className={styles.roleCardTitleGroup}>
+                        <input
+                          id="role-user"
+                          type="radio"
+                          name="role"
+                          value={Role.USER}
+                          checked={formData.role === Role.USER}
+                          onChange={() => handleSelectRole(Role.USER)}
+                          className={styles.roleRadio}
+                          aria-describedby="role-user-desc"
+                        />
+                        <span className={styles.roleLabel}>
+                          {t('profile.role.user') || (isRtl ? 'مستفيد / عميل' : 'User / Beneficiary')}
+                        </span>
+                      </div>
+                    </div>
+                    <p id="role-user-desc" className={styles.roleCardDesc}>
+                      {isRtl
+                        ? 'تصفح العروض، تقديم طلبات الشراء، وحجز الخدمات العقارية والاستشارية.'
+                        : 'Browse offers, place purchase requests, and order real estate services.'}
                     </p>
-                </div>
-                
-                <div className="slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-3 sm:p-6 space-y-4">
-                    <div className="flex items-start gap-4">
-                        <div className="p-3 bg-slate-500/10 rounded-xl text-blue-400">
-                            <User className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-white">{t('profile.digitalId')}</h3>
-                            <p className="text-sm text-slate-400 mt-1">{t('profile.digitalIdDesc')}</p>
-                        </div>
-                    </div>
-                    <div className="w-full h-px bg-slate-800"></div>
-                    <div className="flex items-start gap-4">
-                        <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
-                            <Shield className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-white">{t('profile.trusted')}</h3>
-                            <p className="text-sm text-slate-400 mt-1">{t('profile.trustedDesc')}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                  </label>
 
-            {/* Right Column: Form */}
-            <div className="lg:col-span-8">
-                <div className="slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl relative overflow-hidden">
-                     {/* Glass effect highlight */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
+                  {/* Broker / Agent */}
+                  <label
+                    htmlFor="role-broker"
+                    className={`${styles.roleCard} ${
+                      formData.role === Role.BROKER || formData.role === Role.AGENT ? styles.roleCardSelected : ''
+                    }`}
+                  >
+                    <div className={styles.roleCardHeader}>
+                      <div className={styles.roleCardTitleGroup}>
+                        <input
+                          id="role-broker"
+                          type="radio"
+                          name="role"
+                          value={Role.BROKER}
+                          checked={formData.role === Role.BROKER || formData.role === Role.AGENT}
+                          onChange={() => handleSelectRole(Role.BROKER)}
+                          className={styles.roleRadio}
+                          aria-describedby="role-broker-desc"
+                        />
+                        <span className={styles.roleLabel}>
+                          {t('profile.role.broker') || (isRtl ? 'وسيط عقاري' : 'Real Estate Broker')}
+                        </span>
+                      </div>
+                    </div>
+                    <p id="role-broker-desc" className={styles.roleCardDesc}>
+                      {isRtl
+                        ? 'نشر العروض العقارية، تمثيل الملاك، والتسويق برخصة الهيئة العامة للعقار.'
+                        : 'Publish listings, represent property owners, and operate under REGA license.'}
+                    </p>
+                  </label>
 
-                    {errors.general && (
-                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400">
-                           <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                           {errors.general}
-                        </div>
+                  {/* Property Owner */}
+                  <label
+                    htmlFor="role-owner"
+                    className={`${styles.roleCard} ${formData.role === Role.OWNER ? styles.roleCardSelected : ''}`}
+                  >
+                    <div className={styles.roleCardHeader}>
+                      <div className={styles.roleCardTitleGroup}>
+                        <input
+                          id="role-owner"
+                          type="radio"
+                          name="role"
+                          value={Role.OWNER}
+                          checked={formData.role === Role.OWNER}
+                          onChange={() => handleSelectRole(Role.OWNER)}
+                          className={styles.roleRadio}
+                          aria-describedby="role-owner-desc"
+                        />
+                        <span className={styles.roleLabel}>
+                          {t('profile.role.owner') || (isRtl ? 'مالك عقار' : 'Property Owner')}
+                        </span>
+                      </div>
+                    </div>
+                    <p id="role-owner-desc" className={styles.roleCardDesc}>
+                      {isRtl
+                        ? 'إدارة محفظة العقارات، متابعة العروض، وتفويض الوسطاء المعتمدين.'
+                        : 'Manage property assets, review active offers, and appoint accredited brokers.'}
+                    </p>
+                  </label>
+
+                  {/* Service Provider */}
+                  <label
+                    htmlFor="role-service-provider"
+                    className={`${styles.roleCard} ${isServiceProvider ? styles.roleCardSelected : ''}`}
+                  >
+                    <div className={styles.roleCardHeader}>
+                      <div className={styles.roleCardTitleGroup}>
+                        <input
+                          id="role-service-provider"
+                          type="radio"
+                          name="role"
+                          value="service_provider"
+                          checked={isServiceProvider}
+                          onChange={handleSelectServiceProviderGroup}
+                          className={styles.roleRadio}
+                          aria-describedby="role-provider-desc"
+                        />
+                        <span className={styles.roleLabel}>
+                          {t('profile.role.serviceProvider') || (isRtl ? 'مزود خدمة مهني' : 'Service Provider')}
+                        </span>
+                      </div>
+                    </div>
+                    <p id="role-provider-desc" className={styles.roleCardDesc}>
+                      {isRtl
+                        ? 'تقديم الخدمات القانونية، الاستشارات الهندسية، والتوثيق المعتمد.'
+                        : 'Provide accredited legal services, notary acts, and engineering consultancy.'}
+                    </p>
+                  </label>
+                </div>
+
+                {/* Sub-Specialty Selection when Service Provider is active */}
+                {isServiceProvider && (
+                  <div className={styles.conditionalBlock}>
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="cp-activityType" className={styles.label}>
+                        <span>
+                          {t('profile.activityType') || (isRtl ? 'تحديد نوع النشاط المهني' : 'Professional Activity Type')}
+                          <span className={styles.requiredMark}>*</span>
+                        </span>
+                      </label>
+                      <div className={styles.selectWrapper}>
+                        <select
+                          id="cp-activityType"
+                          name="role"
+                          value={formData.role}
+                          onChange={handleChange}
+                          className={styles.select}
+                        >
+                          <option value={Role.LAWYER}>{t('profile.role.lawyer') || (isRtl ? 'محامي' : 'Lawyer')}</option>
+                          <option value={Role.NOTARY}>{t('profile.role.notary') || (isRtl ? 'موثق' : 'Notary')}</option>
+                          <option value={Role.LEGAL_CONSULTANT}>
+                            {t('profile.role.legal_consultant') || (isRtl ? 'مستشار قانوني' : 'Legal Consultant')}
+                          </option>
+                          <option value={Role.ENGINEERING_OFFICE}>
+                            {t('profile.role.eng') || (isRtl ? 'مكتب هندسي' : 'Engineering Office')}
+                          </option>
+                          <option value={Role.OTHER}>{t('profile.role.other') || (isRtl ? 'أخرى' : 'Other')}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {formData.role === Role.OTHER && (
+                      <div className={styles.fieldGroup}>
+                        <label htmlFor="cp-roleOtherDescription" className={styles.label}>
+                          <span>
+                            {t('profile.activityType') || (isRtl ? 'وصف النشاط المقدم' : 'Activity Description')}
+                            <span className={styles.requiredMark}>*</span>
+                          </span>
+                        </label>
+                        <input
+                          id="cp-roleOtherDescription"
+                          type="text"
+                          name="roleOtherDescription"
+                          value={formData.roleOtherDescription}
+                          onChange={handleChange}
+                          className={styles.input}
+                          placeholder={
+                            t('profile.activityPlaceholder') || (isRtl ? 'اكتب نوع الخدمة المقدمة' : 'Describe the service provided')
+                          }
+                          required
+                        />
+                      </div>
                     )}
+                  </div>
+                )}
 
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        {/* Personal Info Section */}
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                                <User className="w-5 h-5 text-blue-400" />
-                                {t('profile.personalInfo')}
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">{t('login.placeholder.firstName') || "First Name"}</label>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        value={formData.firstName}
-                                        onChange={handleChange}
-                                        className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-600"
-                                        placeholder={t('login.placeholder.firstName')}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">{t('login.placeholder.lastName') || "Last Name"}</label>
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        value={formData.lastName}
-                                        onChange={handleChange}
-                                        className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-slate-600"
-                                        placeholder={t('login.placeholder.lastName')}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                {/* License Input when role requires license */}
+                {requiresLicense && (
+                  <div className={styles.conditionalBlock}>
+                    <div className={styles.fieldGroup}>
+                      <label htmlFor="cp-licenseNumber" className={styles.label}>
+                        <span>
+                          {formData.role === Role.BROKER || formData.role === Role.AGENT
+                            ? t('profile.license.falNum') || (isRtl ? 'رقم ترخيص فال / رخصة الوساطة' : 'Fal / Broker License Number')
+                            : t('profile.license.num') || (isRtl ? 'رقم الرخصة المهنية' : 'Professional License Number')}
+                          <span className={styles.requiredMark}>*</span>
+                        </span>
+                      </label>
+                      <input
+                        id="cp-licenseNumber"
+                        type="text"
+                        name="licenseNumber"
+                        value={formData.licenseNumber}
+                        onChange={handleChange}
+                        className={`${styles.input} ${errors.licenseNumber ? styles.inputError : ''}`}
+                        placeholder={
+                          formData.role === Role.BROKER || formData.role === Role.AGENT
+                            ? isRtl ? 'أدخل رقم ترخيص فال' : 'Enter Fal License Number'
+                            : t('profile.license.num') || (isRtl ? 'رقم الرخصة' : 'License Number')
+                        }
+                        aria-invalid={!!errors.licenseNumber}
+                        aria-describedby={errors.licenseNumber ? 'cp-licenseNumber-err cp-licenseNumber-notice' : 'cp-licenseNumber-notice'}
+                        required
+                      />
+                      {errors.licenseNumber && (
+                        <p id="cp-licenseNumber-err" className={styles.errorText} role="alert">
+                          {errors.licenseNumber}
+                        </p>
+                      )}
+                      <p id="cp-licenseNumber-notice" className={styles.licenseHelper}>
+                        <ShieldCheck className={styles.helperIcon} aria-hidden="true" />
+                        <span>
+                          {isRtl ? 'إدخال رقم الرخصة لا يعني اعتماد الحساب المهني؛ يخضع الطلب لمراجعة الإدارة.' : 'Entering a license number does not approve a professional account; applications are reviewed by the administration.'}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </fieldset>
 
-                        {/* Role Section */}
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                                <Shield className="w-5 h-5 text-purple-400" />
-                                {t('profile.accountType')}
-                            </h2>
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.USER ? 'bg-slate-600/10 border-blue-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input 
-                                            type="radio" 
-                                            name="role" 
-                                            value={Role.USER}
-                                            checked={formData.role === Role.USER}
-                                            onChange={handleChange}
-                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.USER ? 'border-blue-500' : 'border-slate-500'}`}>
-                                                {formData.role === Role.USER && <div className="w-2.5 h-2.5 rounded-full bg-slate-500"></div>}
-                                            </div>
-                                            <span className={`font-medium ${formData.role === Role.USER ? 'text-blue-400' : 'text-slate-400'}`}>{t('profile.role.user')}</span>
-                                        </div>
-                                    </label>
-
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'bg-purple-600/10 border-purple-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input 
-                                            type="radio" 
-                                            name="role" 
-                                            value={Role.BROKER}
-                                            checked={formData.role === Role.BROKER || formData.role === Role.AGENT}
-                                            onChange={handleChange}
-                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'border-purple-500' : 'border-slate-500'}`}>
-                                                 {[Role.AGENT, Role.BROKER].includes(formData.role) && <div className="w-2.5 h-2.5 rounded-full bg-purple-500"></div>}
-                                            </div>
-                                            <span className={`font-medium ${[Role.AGENT, Role.BROKER].includes(formData.role) ? 'text-purple-400' : 'text-slate-400'}`}>{t('profile.role.broker')}</span>
-                                        </div>
-                                    </label>
-
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${formData.role === Role.OWNER ? 'bg-amber-600/10 border-amber-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value={Role.OWNER}
-                                            checked={formData.role === Role.OWNER}
-                                            onChange={handleChange}
-                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.role === Role.OWNER ? 'border-amber-500' : 'border-slate-500'}`}>
-                                                 {formData.role === Role.OWNER && <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>}
-                                            </div>
-                                            <span className={`font-medium ${formData.role === Role.OWNER ? 'text-amber-400' : 'text-slate-400'}`}>{t('profile.role.owner')}</span>
-                                        </div>
-                                    </label>
-
-                                    <label className={`relative cursor-pointer rounded-xl p-4 border transition-all ${isServiceProvider ? 'bg-emerald-600/10 border-emerald-500' : 'bg-slate-950/50 border-slate-700 hover:border-slate-600'}`}>
-                                        <input
-                                            type="radio"
-                                            name="roleGroup"
-                                            value="service_provider"
-                                            checked={isServiceProvider}
-                                            onChange={() => {
-                                                if (!isServiceProvider) {
-                                                    setFormData(prev => ({ ...prev, role: Role.LAWYER }));
-                                                }
-                                            }}
-                                            className="absolute opacity-0 w-full h-full inset-0 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isServiceProvider ? 'border-emerald-500' : 'border-slate-500'}`}>
-                                                 {isServiceProvider && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>}
-                                            </div>
-                                            <span className={`font-medium ${isServiceProvider ? 'text-emerald-400' : 'text-slate-400'}`}>{t('profile.role.serviceProvider')}</span>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                {isServiceProvider && (
-                                    <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.activityType')}</label>
-                                        <select
-                                            name="role"
-                                            value={formData.role}
-                                            onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
-                                        >
-                                            <option value={Role.LAWYER} className="slate-900">{t('profile.role.lawyer')}</option>
-                                            <option value={Role.NOTARY} className="slate-900">{t('profile.role.notary')}</option>
-                                            <option value={Role.LEGAL_CONSULTANT} className="slate-900">{t('profile.role.legal_consultant')}</option>
-                                            <option value={Role.ENGINEERING_OFFICE} className="slate-900">{t('profile.role.eng')}</option>
-                                            <option value={Role.OTHER} className="slate-900">{t('profile.role.other')}</option>
-                                        </select>
-                                    </div>
-                                )}
-
-                                {isServiceProvider && formData.role === Role.OTHER && (
-                                    <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.activityType')}</label>
-                                        <input
-                                            type="text"
-                                            name="roleOtherDescription"
-                                            value={formData.roleOtherDescription}
-                                            onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none placeholder:text-slate-600"
-                                            placeholder={t('profile.activityPlaceholder')}
-                                        />
-                                    </div>
-                                )}
-
-                                {([Role.AGENT, Role.BROKER, Role.LAWYER, Role.NOTARY, Role.LEGAL_CONSULTANT].includes(formData.role)) && (
-                                    <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className="text-sm font-medium text-slate-300 mb-2 block">{t('profile.license.num')}</label>
-                                        <input
-                                            type="text"
-                                            name="licenseNumber"
-                                            value={formData.licenseNumber}
-                                            onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all outline-none placeholder:text-slate-600"
-                                            placeholder={t('profile.license.num')}
-                                        />
-                                         {errors.licenseNumber && <p className="text-red-500 text-xs mt-1">{errors.licenseNumber}</p>}
-                                         <p className="text-xs text-purple-400/80 mt-2 flex items-center gap-1">
-                                            <Shield className="w-3 h-3" />
-                                            {t('profile.verifyDocs')}
-                                         </p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Location Section */}
-                        <div className="space-y-4">
-                             <h2 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                                <MapPin className="w-5 h-5 text-emerald-400" />
-                                {t('profile.location')} <span className="text-xs text-slate-400 font-normal mx-2">({language === 'ar' ? 'اختياري' : 'Optional'})</span>
-                            </h2>
-                            <div className="space-y-4">
-                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-300">{t('profile.address')}</label>
-                                    <div className="relative">
-                                        <Building2 className="absolute right-4 top-3.5 w-5 h-5 text-slate-500" />
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            value={formData.address}
-                                            onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl pr-12 pl-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none placeholder:text-slate-600"
-                                            placeholder={t('profile.addressPlaceholder')}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-300">{t('city.name')}</label>
-                                        <select
-                                            name="city"
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
-                                        >
-                                            {['riyadh', 'jeddah', 'dammam', 'mecca', 'medina', 'taif', 'abha', 'hail', 'other'].map(c => (
-                                                <option key={c} value={t(`city.${c}`)} className="slate-900">{t(`city.${c}`)}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-300">{t('country.name')}</label>
-                                        <div className="relative">
-                                             <Globe className="absolute right-4 top-3.5 w-5 h-5 text-slate-500" />
-                                            <select
-                                                name="country"
-                                                value={formData.country}
-                                                onChange={handleChange}
-                                                className="w-full bg-slate-950/50 border border-slate-700 rounded-xl pr-12 pl-4 py-3 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none appearance-none"
-                                            >
-                                                {['sa', 'uae', 'kw', 'qa', 'om', 'bh'].map(c => (
-                                                    <option key={c} value={t(`country.${c}`)} className="slate-900">{t(`country.${c}`)}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Submit */}
-                        <div className="pt-6">
-                            <button
-                                type="submit"
-                                disabled={isSaving}
-                                className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 p-px focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)] opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <span className="relative flex h-full w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-4 text-sm font-bold text-white transition-all group-hover:bg-transparent group-hover:from-blue-600/90 group-hover:to-blue-500/90">
-                                    {isSaving ? (
-                                        <>
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                            {t('profile.processing')}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save className="w-5 h-5" />
-                                            {t('profile.saveChanges')}
-                                        </>
-                                    )}
-                                </span>
-                            </button>
-                        </div>
-
-                    </form>
+              {/* Section 03: Geographic Registry */}
+              <fieldset className={styles.section} aria-labelledby="cp-location-heading">
+                <div className={styles.sectionHeader}>
+                  <span className={styles.sectionIndex} aria-hidden="true">03</span>
+                  <h2 id="cp-location-heading" className={styles.sectionTitle}>
+                    {t('profile.location') || (isRtl ? 'النطاق الجغرافي والإقامة' : 'Geographic Location')}
+                  </h2>
+                  <span className={styles.sectionOptional}>
+                    {isRtl ? 'اختياري' : 'Optional'}
+                  </span>
                 </div>
-            </div>
+
+                <div className={styles.fieldGroup}>
+                  <label htmlFor="cp-address" className={styles.label}>
+                    <span>{t('profile.address') || (isRtl ? 'العنوان' : 'Address')}</span>
+                  </label>
+                  <input
+                    id="cp-address"
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className={styles.input}
+                    placeholder={
+                      t('profile.addressPlaceholder') || (isRtl ? 'العنوان ومكان الإقامة أو مقر العمل' : 'Address and location')
+                    }
+                    autoComplete="street-address"
+                  />
+                </div>
+
+                <div className={styles.inputGrid}>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="cp-city" className={styles.label}>
+                      <span>{t('city.name') || (isRtl ? 'المدينة' : 'City')}</span>
+                    </label>
+                    <div className={styles.selectWrapper}>
+                      <select
+                        id="cp-city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        className={styles.select}
+                        autoComplete="address-level2"
+                      >
+                        {CITIES.map(c => (
+                          <option key={c.key} value={c.ar}>
+                            {isRtl ? c.ar : c.en}
+                          </option>
+                        ))}
+                        {!CITIES.some(c => c.ar === formData.city) && formData.city && (
+                          <option value={formData.city}>{formData.city}</option>
+                        )}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="cp-country" className={styles.label}>
+                      <span>{t('profile.country') || (isRtl ? 'الدولة' : 'Country')}</span>
+                    </label>
+                    <div className={styles.selectWrapper}>
+                      <select
+                        id="cp-country"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        className={styles.select}
+                        autoComplete="country-name"
+                      >
+                        {COUNTRIES.map(c => (
+                          <option key={c.key} value={c.ar}>
+                            {isRtl ? c.ar : c.en}
+                          </option>
+                        ))}
+                        {!COUNTRIES.some(c => c.ar === formData.country) && formData.country && (
+                          <option value={formData.country}>{formData.country}</option>
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Action Area: Submit button */}
+              <div className={styles.actionArea}>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className={styles.submitButton}
+                >
+                  {isSaving ? (
+                    <>
+                      <div className={styles.buttonSpinner} aria-hidden="true" />
+                      <span>{t('profile.processing') || (isRtl ? 'جارٍ المعالجة…' : 'Processing…')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5" aria-hidden="true" />
+                      <span>{t('profile.saveChanges') || (isRtl ? 'حفظ البيانات والمتابعة' : 'Save Changes & Proceed')}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

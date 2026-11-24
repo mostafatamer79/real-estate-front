@@ -10,12 +10,15 @@ import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 
 type DeptSlug = "properties" | "offers" | "orders" | "finance" | "employees";
 
+import { getPackagePrice, type PackageDiscountPeriod } from "@/lib/package-pricing";
+
 interface ManagementPackage {
   id: string;
   name: string;
   yearlyPrice: number;
   monthlyPrice: number;
   discount: number;
+  discountPeriod?: PackageDiscountPeriod;
   description?: string;
   features?: string[];
   administrations?: string[];
@@ -69,7 +72,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
   const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState({
     packageId: "",
-    subscriptionType: "شهري",
+    subscriptionType: "شهري" as "شهري" | "سنوي",
     startDate: new Date().toISOString().split("T")[0],
     notes: "",
   });
@@ -107,8 +110,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
   const selectedPackage = availablePackages.find((pkg) => pkg.id === formData.packageId);
   const computedAmount = selectedPackage
-    ? Number(formData.subscriptionType === "سنوي" ? selectedPackage.yearlyPrice : selectedPackage.monthlyPrice) *
-        (1 - Number(selectedPackage.discount || 0) / 100)
+    ? getPackagePrice(selectedPackage, formData.subscriptionType)
     : 0;
 
   const handleCreate = async () => {
@@ -142,7 +144,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
+      <div className="calm-panel rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 rounded-full bg-muted text-slate-700 px-3 py-1 text-[11px] font-black">
@@ -150,7 +152,7 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
               {DEPT_LABELS[deptSlug]}
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-950">الباقات المتاحة</h1>
-            <p className="text-sm font-bold text-slate-500">اختر باقة الإدارة ثم أكمل الدفع من المحفظة، ويمكنك استعراض خصائص القسم بدون إنشاء أي بيانات.</p>
+            <p className="text-sm font-bold text-muted-foreground dark:text-slate-500">اختر باقة الإدارة ثم أكمل الدفع من المحفظة، ويمكنك استعراض خصائص القسم بدون إنشاء أي بيانات.</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -173,31 +175,30 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-3 md:gap-6">
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
+        <div className="calm-panel rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
           <h2 className="text-lg font-black text-slate-950 mb-5">اختر الباقة</h2>
           {loading ? (
             <div className="py-14 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-slate-700" /></div>
           ) : availablePackages.length === 0 ? (
-            <div className="py-14 text-center text-slate-400 font-bold">لا توجد باقات مفعلة لهذه الإدارة</div>
+            <div className="py-14 text-center text-muted-foreground dark:text-slate-400 font-bold">لا توجد باقات مفعلة لهذه الإدارة</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {availablePackages.map((pkg) => {
                 const isSelected = pkg.id === formData.packageId;
-                const amount = Number(formData.subscriptionType === "سنوي" ? pkg.yearlyPrice : pkg.monthlyPrice) *
-                  (1 - Number(pkg.discount || 0) / 100);
+                const amount = getPackagePrice(pkg, formData.subscriptionType);
                 return (
                   <button
                     key={pkg.id}
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, packageId: pkg.id }))}
                     className={`text-right rounded-3xl border p-5 transition-all ${
-                      isSelected ? "border-slate-900 bg-muted shadow-sm" : "border hover:border-slate-300 bg-card"
+                      isSelected ? "border-border dark:border-slate-900 bg-muted shadow-sm" : "border hover:border-slate-300 bg-card"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
                         <h3 className="text-base font-black text-slate-950">{pkg.name}</h3>
-                        <p className="text-sm text-slate-500 font-bold mt-1">{pkg.description || "باقة اشتراك داخلية"}</p>
+                        <p className="text-sm text-muted-foreground dark:text-slate-500 font-bold mt-1">{pkg.description || "باقة اشتراك داخلية"}</p>
                       </div>
                       {isSelected && <CheckCircle2 className="w-5 h-5 text-slate-900 shrink-0" />}
                     </div>
@@ -217,20 +218,20 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
           )}
         </div>
 
-        <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6 space-y-5">
+        <div className="calm-panel rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6 space-y-5">
           <h2 className="text-lg font-black text-slate-950">تفاصيل الاشتراك</h2>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-500">نوع الاشتراك</label>
+            <label className="text-xs font-black text-muted-foreground dark:text-slate-500">نوع الاشتراك</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {["شهري", "سنوي"].map((type) => (
+              {(["شهري", "سنوي"] as const).map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => setFormData((prev) => ({ ...prev, subscriptionType: type }))}
                   className={`h-12 rounded-xl border text-sm font-black transition-colors ${
                     formData.subscriptionType === type
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-border dark:border-slate-900 bg-card dark:bg-slate-900 text-foreground dark:text-white"
                       : "border text-slate-700 hover:bg-muted"
                   }`}
                 >
@@ -241,36 +242,36 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-500">تاريخ البداية</label>
+            <label className="text-xs font-black text-muted-foreground dark:text-slate-500">تاريخ البداية</label>
             <input
               type="date"
               value={formData.startDate}
               onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
-              className="w-full h-12 rounded-xl border border px-4 text-sm font-bold outline-none focus:border-slate-900"
+              className="w-full h-12 rounded-xl border border px-4 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-black text-slate-500">ملاحظات</label>
+            <label className="text-xs font-black text-muted-foreground dark:text-slate-500">ملاحظات</label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
-              className="w-full min-h-[110px] rounded-xl border border px-4 py-3 text-sm font-bold outline-none focus:border-slate-900"
+              className="w-full min-h-[110px] rounded-xl border border px-4 py-3 text-sm font-bold outline-none focus:border-border focus:dark:border-slate-900"
               placeholder="أي تفاصيل إضافية للاشتراك"
             />
           </div>
 
-          <div className="rounded-2xl bg-muted border border p-4 space-y-2">
-            <div className="text-xs font-black text-slate-500">الإجمالي الحالي</div>
+          <div className="calm-panel rounded-2xl bg-muted border border p-4 space-y-2">
+            <div className="text-xs font-black text-muted-foreground dark:text-slate-500">الإجمالي الحالي</div>
             <div className="text-xl sm:text-3xl font-black text-slate-950"><SaudiRiyalAmount amount={computedAmount} locale="ar-SA" /></div>
-            <div className="text-xs font-bold text-slate-400">سيتم إنشاء الاشتراك بحالة معلّق ثم تحويلك إلى المحفظة لإتمام الدفع.</div>
+            <div className="text-xs font-bold text-muted-foreground dark:text-slate-400">سيتم إنشاء الاشتراك بحالة معلّق ثم تحويلك إلى المحفظة لإتمام الدفع.</div>
           </div>
 
           <button
             type="button"
             onClick={handleCreate}
             disabled={creating || !formData.packageId}
-            className="w-full h-12 rounded-xl bg-slate-900 text-white font-black text-sm hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full h-12 rounded-xl bg-card dark:bg-slate-900 text-foreground dark:text-white font-black text-sm hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
             اشترك وانتقل للدفع
@@ -278,17 +279,17 @@ export default function DepartmentSubscriptionsPage({ deptSlug }: { deptSlug: De
         </div>
       </div>
 
-      <div className="rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
+      <div className="calm-panel rounded-[1.25rem] bg-card border border shadow-sm p-3 sm:p-6">
         <h2 className="text-lg font-black text-slate-950 mb-4">اشتراكاتي في هذه الإدارة</h2>
         {subscriptions.length === 0 ? (
-          <div className="py-10 text-center text-slate-400 font-bold">لا توجد اشتراكات سابقة لهذه الإدارة</div>
+          <div className="py-10 text-center text-muted-foreground dark:text-slate-400 font-bold">لا توجد اشتراكات سابقة لهذه الإدارة</div>
         ) : (
           <div className="space-y-3">
             {subscriptions.map((sub) => (
-              <div key={sub.id} className="rounded-2xl border border bg-muted px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+              <div key={sub.id} className="calm-panel rounded-2xl border border bg-muted px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="min-w-0">
                   <div className="text-sm font-black text-slate-950">{sub.managementPackage?.name || "باقة اشتراك"}</div>
-                  <div className="text-xs font-bold text-slate-500 mt-1">
+                  <div className="text-xs font-bold text-muted-foreground dark:text-slate-500 mt-1">
                     {sub.subscriptionType} • {new Date(sub.startDate).toLocaleDateString("ar-SA")} • <SaudiRiyalAmount amount={Number(sub.amount || 0)} locale="ar-SA" iconClassName="h-3 w-3" />
                   </div>
                 </div>

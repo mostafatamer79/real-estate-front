@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { AlertTriangle, CircleHelp, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle, CircleHelp } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type ConfirmOptions = {
@@ -11,6 +10,8 @@ type ConfirmOptions = {
   confirmLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;
+  contentClassName?: string;
+  closeLabel?: string;
 };
 
 type ConfirmContextValue = {
@@ -53,6 +54,8 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
         confirmLabel={options?.confirmLabel || "تأكيد"}
         cancelLabel={options?.cancelLabel || "إلغاء"}
         destructive={options?.destructive}
+        contentClassName={options?.contentClassName}
+        closeLabel={options?.closeLabel}
         loading={loading}
         icon={options?.destructive ? <AlertTriangle className="h-5 w-5" /> : <CircleHelp className="h-5 w-5" />}
         onConfirm={async () => {
