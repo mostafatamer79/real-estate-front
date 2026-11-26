@@ -21,7 +21,6 @@ import { safeReturnTo } from "@/lib/auth-navigation";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { otpDeadline } from "@/lib/otp-expiry";
 import { getApiUrl } from "@/lib/api";
-import LoginServiceDoor from "./LoginServiceDoor";
 import styles from "./sign-in.module.css";
 
 interface SignInProps {
@@ -291,9 +290,38 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
 
       <div className={styles.container}>
         <div className={styles.portalGrid}>
-          {/* Selected SVG doorway; service previews stay on the sign-in page. */}
+          {/* Architectural split-screen image matching home visual identity */}
           <div className={styles.architecturalShowcase}>
-            <LoginServiceDoor />
+            <img
+              src="/artworks/banan/villa-reference.png"
+              width={1376}
+              height={768}
+              alt={language === 'ar' ? 'تصوّر لفيلا بفناء ومسبح' : 'Architectural villa with courtyard and pool'}
+              className={styles.showcaseImage}
+            />
+            <div className={styles.showcaseContent}>
+              <span className={styles.showcaseEyebrow}>
+                {language === 'ar' ? 'كل التفاصيل، في مكانك.' : 'Every detail, in your space.'}
+              </span>
+              <h2 className={styles.showcaseHeading}>
+                {language === 'ar' ? (
+                  <>
+                    مرحبًا بك
+                    <br />
+                    في خطوتك <em>القادمة.</em>
+                  </>
+                ) : (
+                  <>
+                    Welcome to your
+                    <br />
+                    <em>next</em> chapter.
+                  </>
+                )}
+              </h2>
+              <span className={styles.showcaseLatin} lang="en">
+                Your next chapter.
+              </span>
+            </div>
           </div>
 
           {/* Open Ivory/Navy Form Plane Aligned with the Gateway Opening */}

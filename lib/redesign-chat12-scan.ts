@@ -458,3 +458,159 @@ export function classifyGeolocationError(
         : "An unexpected error occurred while locating.",
   };
 }
+
+export type AtlasCategoryKey =
+  | "all"
+  | "education"
+  | "health"
+  | "shopping"
+  | "parks"
+  | "dining"
+  | "worship"
+  | "other";
+
+export interface AtlasCategoryMeta {
+  key: AtlasCategoryKey;
+  labelAr: string;
+  labelEn: string;
+  color: string;
+}
+
+export const ATLAS_CATEGORIES: AtlasCategoryMeta[] = [
+  { key: "all", labelAr: "جميع الخدمات", labelEn: "All Services", color: "#f59e0b" },
+  { key: "education", labelAr: "تعليم", labelEn: "Education", color: "#10b981" },
+  { key: "health", labelAr: "صحة", labelEn: "Health", color: "#ef4444" },
+  { key: "shopping", labelAr: "تسوق وخدمات", labelEn: "Shopping & Services", color: "#f97316" },
+  { key: "dining", labelAr: "مطاعم ومقاهي", labelEn: "Dining & Cafes", color: "#f59e0b" },
+  { key: "parks", labelAr: "حدائق وترفيه", labelEn: "Parks & Leisure", color: "#22c55e" },
+  { key: "worship", labelAr: "مساجد ومجتمع", labelEn: "Mosques & Community", color: "#8b5cf6" },
+  { key: "other", labelAr: "مرافق أخرى", labelEn: "Other", color: "#38bdf8" },
+];
+
+/**
+ * Maps raw place `type` strings from the backend into normalized Atlas categories.
+ */
+export function categorizePlaceType(type?: string): Exclude<AtlasCategoryKey, "all"> {
+  const t = (type || "").toLowerCase().trim();
+  if (!t) return "other";
+
+  if (
+    t.includes("school") ||
+    t.includes("university") ||
+    t.includes("college") ||
+    t.includes("kindergarten") ||
+    t.includes("library") ||
+    t.includes("nursery") ||
+    t.includes("education")
+  ) {
+    return "education";
+  }
+
+  if (
+    t.includes("hospital") ||
+    t.includes("clinic") ||
+    t.includes("doctor") ||
+    t.includes("dentist") ||
+    t.includes("pharmacy") ||
+    t.includes("health") ||
+    t.includes("medical") ||
+    t.includes("veterinary")
+  ) {
+    return "health";
+  }
+
+  if (
+    t.includes("cafe") ||
+    t.includes("restaurant") ||
+    t.includes("fast_food") ||
+    t.includes("bakery") ||
+    t.includes("food") ||
+    t.includes("ice_cream") ||
+    t.includes("juice") ||
+    t.includes("grill")
+  ) {
+    return "dining";
+  }
+
+  if (
+    t.includes("park") ||
+    t.includes("garden") ||
+    t.includes("playground") ||
+    t.includes("sports") ||
+    t.includes("gym") ||
+    t.includes("swimming") ||
+    t.includes("cinema") ||
+    t.includes("theatre") ||
+    t.includes("arts") ||
+    t.includes("leisure")
+  ) {
+    return "parks";
+  }
+
+  if (
+    t.includes("mosque") ||
+    t.includes("place_of_worship") ||
+    t.includes("church") ||
+    t.includes("community") ||
+    t.includes("social")
+  ) {
+    return "worship";
+  }
+
+  if (
+    t.includes("shop") ||
+    t.includes("shope") ||
+    t.includes("market") ||
+    t.includes("supermarket") ||
+    t.includes("mall") ||
+    t.includes("commercial") ||
+    t.includes("bank") ||
+    t.includes("atm") ||
+    t.includes("fuel") ||
+    t.includes("post_office") ||
+    t.includes("florist") ||
+    t.includes("dry_cleaner") ||
+    t.includes("dealer")
+  ) {
+    return "shopping";
+  }
+
+  return "other";
+}
+
+/**
+ * Formats decimal degrees into compact DMS notation matching Atlas heading (e.g. "24°42′ N  46°40′ E").
+ */
+export function formatCoordinatesDms(lat: number, lng: number): string {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return "—";
+  }
+  const formatAxis = (val: number, pos: string, neg: string) => {
+    const dir = val >= 0 ? pos : neg;
+    const abs = Math.abs(val);
+    const deg = Math.floor(abs);
+    const min = Math.floor((abs - deg) * 60);
+    return `${deg}°${String(min).padStart(2, "0")}′ ${dir}`;
+  };
+  return `${formatAxis(lat, "N", "S")}  ${formatAxis(lng, "E", "W")}`;
+}
+
+/**
+ * Finds the nearest Saudi district preset if within maxDistanceMeters (default 15km).
+ */
+export function findNearestDistrictPreset(
+  lat: number,
+  lng: number,
+  maxDistanceMeters: number = 15000
+): SaudiDistrictPreset | null {
+  let best: SaudiDistrictPreset | null = null;
+  let bestDist = Infinity;
+  for (const preset of SAUDI_DISTRICT_PRESETS) {
+    const d = calculateDistance(lat, lng, preset.location[0], preset.location[1]);
+    if (d <= maxDistanceMeters && d < bestDist) {
+      bestDist = d;
+      best = preset;
+    }
+  }
+  return best;
+}

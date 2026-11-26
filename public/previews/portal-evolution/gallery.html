@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>معرض atelier — الوساطة الرقمية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --ivory: #f3f0e8;
+      --charcoal-olive: #28372e;
+      --stone: #c6bbaa;
+      --stone-light: #e2ded5;
+      --accent-olive: #3a5a4a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: Amiri, Traditional Arabic, 'Noto Naskh Arabic', 'Jameel Noori Naskh', 'Scheherazade', 'Traditional Arabic', Tahoma, sans-serif;
+      direction: rtl;
+      scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--ivory);
+      color: var(--charcoal-olive);
+      line-height: 1.6;
+    }
+
+    /* Header (fixed, same as index) */
+    header {
+      position: fixed;
+      top: 0;
+      inset-inline: 1rem;
+      z-index: 100;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--charcoal-olive);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand small {
+      display: block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--stone);
+    }
+
+    nav {
+      margin-top: 1.5rem;
+    }
+
+    nav a {
+      display: inline-block;
+      margin-left: 1rem;
+      text-decoration: none;
+      color: var(--charcoal-olive);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      opacity: 1;
+    }
+
+    .pill {
+      display: inline-block;
+      margin-left: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--stone);
+      color: var(--ivory);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Hero / Editorial header */
+    .editorial-hero {
+      padding-top: 8rem;
+      padding-bottom: 4rem;
+      text-align: center;
+    }
+
+    .editorial-hero .eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--stone);
+      margin-bottom: 0.5rem;
+    }
+
+    .editorial-hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.15;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .editorial-hero p {
+      max-width: 50ch;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      color: var(--stone);
+    }
+
+    /* Asymmetrical gallery grid */
+    .gallery {
+      padding: 6rem 1rem 4rem;
+    }
+
+    .gallery-intro {
+      max-width: 60ch;
+      margin: 0 auto 3rem;
+      text-align: right;
+      font-size: 1.1rem;
+    }
+
+    .image-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+      aspect-ratio: 16/10;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .image-wrapper:hover .image-overlay,
+    .image-wrapper:focus-visible .image-overlay {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .image-wrapper:hover .image-overlay,
+      .image-wrapper:focus-visible .image-overlay {
+        opacity: 0.3;
+      }
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .image-wrapper:hover img,
+    .image-wrapper:focus-visible img {
+      transform: scale(1.08);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .image-wrapper img {
+        transition: none;
+      }
+      .image-wrapper:hover img,
+      .image-wrapper:focus-visible img {
+        transform: none;
+      }
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(40, 55, 46, 0.7);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .image-overlay {
+        transition: opacity 0.1s;
+      }
+    }
+
+    .overlay-text {
+      color: var(--ivory);
+    }
+
+    .overlay-text .category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+
+    .overlay-text .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Property selector */
+    .property-selector {
+      padding: 0 1rem 3rem;
+      text-align: center;
+    }
+
+    .selector-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--stone);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .selector-options {
+      display: inline-flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .selector-option {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 2px solid var(--stone);
+      color: var(--charcoal-olive);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .selector-option:hover,
+    .selector-option:focus-visible {
+      border-color: var(--charcoal-olive);
+      color: var(--ivory);
+      background: var(--charcoal-olive);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .selector-option:hover,
+      .selector-option:focus-visible {
+        transition: none;
+      }
+    }
+
+    .selector-option.active {
+      border-color: var(--charcoal-olive);
+      color: var(--ivory);
+      background: var(--charcoal-olive);
+    }
+
+    /* Details dialog */
+    .dialog-content {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .dialog-content[open] {
+      display: flex;
+    }
+
+    .dialog {
+      background: var(--ivory);
+      color: var(--charcoal-olive);
+      max-width: 90%;
+      max-height: 90%;
+      margin: 2rem;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .dialog-image {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+    }
+
+    .dialog-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .dialog-body .category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--stone);
+      margin-bottom: 0.25rem;
+    }
+
+    .dialog-body .title {
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .dialog-body .price {
+      font-size: 1.1rem;
+      color: var(--stone);
+      margin-bottom: 1rem;
+    }
+
+    .dialog-body .features {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .dialog-close {
+      background: var(--stone);
+      color: var(--ivory);
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .dialog-close:hover,
+    .dialog-close:focus-visible {
+      background: var(--charcoal-olive);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dialog-close:hover,
+      .dialog-close:focus-visible {
+        background: var(--stone);
+      }
+    }
+
+    /* Services accordion */
+    .accordion {
+      padding: 0 1rem 3rem;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--stone-light);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      padding: 1rem 1.25rem;
+      background: var(--ivory);
+      border: none;
+      width: 100%;
+      text-align: right;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--charcoal-olive);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .accordion-header:hover,
+    .accordion-header:focus-visible {
+      background: var(--stone-light);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .accordion-header:hover,
+      .accordion-header:focus-visible {
+        background: var(--ivory);
+      }
+    }
+
+    .accordion-icon {
+      width: 0;
+      height: 0;
+      border-left: 4px solid var(--charcoal-olive);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      transition: transform 0.3s;
+    }
+
+    .accordion-header.collapsed .accordion-icon {
+      transform: rotate(-90deg);
+    }
+
+    .accordion-body {
+      padding: 0 1.25rem 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .accordion-body p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--stone);
+    }
+
+    .accordion-item.open .accordion-body {
+      max-height: 200px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .accordion-body {
+        transition: none;
+      }
+      .accordion-item.open .accordion-body {
+        max-height: 0;
+      }
+    }
+
+    /* Contact demo section */
+    .contact {
+      padding: 6rem 1rem;
+      background: var(--charcoal-olive);
+      color: var(--ivory);
+    }
+
+    .contact .section-title {
+      color: var(--ivory);
+      border-color: var(--stone);
+    }
+
+    .contact-form {
+      max-width: 60ch;
+      margin: 0 auto;
+    }
+
+    .contact-form .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--ivory);
+      color: var(--charcoal-olive);
+      border: 1px solid var(--stone);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .contact-form button {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--stone);
+      color: var(--ivory);
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .contact-form button:hover,
+    .contact-form button:focus-visible {
+      background: var(--charcoal-olive);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .contact-form button:hover,
+      .contact-form button:focus-visible {
+        background: var(--stone);
+      }
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 1rem;
+      color: var(--stone);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--stone-light);
+      margin-top: auto;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .image-wrapper img {
+        transition: none;
+      }
+      .image-overlay {
+        transition: opacity 0.1s;
+      }
+      .accordion-icon {
+        transition: transform 0.1s;
+      }
+      .accordion-body {
+        transition: none;
+      }
+    }
+  </style>
+<style>@font-face{font-family:PreviewArabic;src:url(/fonts/ibm-plex-arabic/regular.ttf)}body{font-family:PreviewArabic,Arial,sans-serif!important}</style><style>.editorial-hero{padding:60px 5% 35px!important}.editorial-hero p,.eyebrow,.selector-label{color:#64725f!important}.editorial-hero-photo{margin:0 5%;height:58vw;max-height:650px;overflow:hidden;border-radius:45% 45% 0 0 / 18% 18% 0 0}.editorial-hero-photo img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}.gallery{padding-top:40px!important}.gallery-intro{margin-bottom:25px!important}@media(max-width:700px){.editorial-hero-photo{height:430px}.editorial-hero{padding-top:40px!important}}</style></head>
+<body><div style="background:#28372e;color:#f3f0e8;padding:8px 20px;text-align:center;font-size:12px;position:relative;z-index:100">معاينة تصميمية · العقارات والأسعار والخدمات المعروضة أمثلة توضيحية</div>
+
+<header>
+  <a class="brand" href="index.html">
+    الوساطة الرقمية
+    <small>DIGITAL BROKERAGE</small>
+  </a>
+  <nav>
+    <a href="#atelier">العقارات</a>
+    <a href="#services-accordion">التجربة</a>
+    <a href="#atelier">المعرض</a>
+    <a class="pill" href="#contact">ابدأ رحلتك</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Editorial Hero -->
+  <section class="editorial-hero">
+    <div class="container">
+      <div class="eyebrow">معرض اتيليه</div>
+      <h1>لكل مكان حكاية.</h1>
+      <p>عقارات مختارة بعين معمارية. اكتشف الضوء، والمساحة، والتفاصيل التي تجعل المكان لك.</p>
+    </div>
+  </section>
+
+  <div class="editorial-hero-photo"><img id="selected-hero" src="/artworks/banan/01-portal.jpg" alt="فيلا حجرية خلف بوابة دائرية"></div>
+  <!-- Asymmetrical Gallery -->
+  <section class="gallery" id="atelier">
+    <div class="container">
+      <p class="gallery-intro">
+        اختر منظورك، واستكشف أماكن تجمع بين جمال العمارة وهدوء الحياة.
+      </p>
+
+      <!-- Property Selector -->
+      <div class="property-selector">
+        <span class="selector-label">اختر المشروع</span>
+        <div class="selector-options">
+          <button class="selector-option active" data-art="01-portal">البوابة</button>
+          <button class="selector-option" data-art="02-noir">المساء</button>
+          <button class="selector-option" data-art="03-kinetic">المنظور</button>
+        </div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Images will be populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Property Details Dialog (shared) -->
+  <dialog id="property-dialog" aria-label="تفاصيل العقار">
+    <div class="dialog-content" id="property-dialog-content">
+      <img class="dialog-image" src="/artworks/banan/01-portal.jpg" alt="تفاصيل العقار" loading="lazy">
+      <div class="dialog-body">
+        <p class="dialog-category"></p>
+        <h2 class="dialog-title"></h2>
+        <p class="dialog-price"></h2>
+        <p class="dialog-features"></p>
+        <div class="dialog-actions">
+          <button class="dialog-close" onclick="closePropertyDialog()">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Services Accordion -->
+  <section class="accordion" id="services-accordion">
+    <div class="accordion-item">
+      <button class="accordion-header" aria-controls="item-1" onclick="toggleAccordion(this)" aria-expanded="true">
+        الخدمات القانونية
+        <span class="accordion-icon"></span>
+      </button>
+      <div class="accordion-body" id="item-1">
+        <p>تتضمن خدماتنا القانونية معالجة منازعات العقارات، صياغة العقود، والتوثيق الرسمي. يقوم فريقنا المتخصص بضمان سلامة المعاملات وحماية حقوقك في كل خطوة.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" aria-controls="item-2" onclick="toggleAccordion(this)" aria-expanded="false">
+        البناء والمقاولات
+        <span class="accordion-icon"></span>
+      </button>
+      <div class="accordion-body" id="item-2">
+        <p>نقدم خدمات التصميم الهندسي، الإشراف على الأعمال، والتشطيبات النهائية. نضمن جودة التنفيذ وفقاً لأعلى المعايير الفنية والتصميمة.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" aria-controls="item-3" onclick="toggleAccordion(this)" aria-expanded="false">
+        خدمات ما بعد الشراء
+        <span class="accordion-icon"></span>
+      </button>
+      <div class="accordion-body" id="item-3">
+        <p>نحن نقدم حلولاً شاملة للصيانة، التنظيف، النقل، وتركيب الأثاث. نعتني بمنزلك الجديد so that you can settle in without worry.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" aria-controls="item-4" onclick="toggleAccordion(this)" aria-expanded="false">
+        التسويق العقاري
+        <span class="accordion-icon"></span>
+      </button>
+      <div class="accordion-body" id="item-4">
+        <p>خدمات التصوير الاحترافي، الحملات الإعلانية، والعرض الرقمي لعقاراتك. نضمن عرض عقارك بأبهى صورة لجذب المستثمرين المحتملين.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" aria-controls="item-5" onclick="toggleAccordion(this)" aria-expanded="false">
+        خدمات عقارية أخرى
+        <span class="accordion-icon"></span>
+      </button>
+      <div class="accordion-body" id="item-5">
+        <p>نقدم خدمات التقييم العقاري، المسح الهندسي، واستفسارات التمويل. فريقنا جاهز لمساعدتك في كل احتياجاتك العقارية الإضافية.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Demo -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <h2 class="section-title">تواصل معنا</h2>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="name">اسمك</label>
+          <input type="text" id="name" placeholder="اسمك الكامل" required>
+        </div>
+        <div class="form-group">
+          <label for="email">البريد الإلكتروني</label>
+          <input type="email" id="email" placeholderالبريد@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="service">الخدمة المهتم بها</label>
+          <select id="service">
+            <option value="">اختر خدمة</option>
+            <option value="legal">الخدمات القانونية</option>
+            <option value="construction">البناء والمقاولات</option>
+            <option value="post-purchase">خدمات ما بعد الشراء</option>
+            <option value="marketing">التسويق العقاري</option>
+            <option value="other">خدمات أخرى</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">رسالتك</label>
+          <textarea id="message" rows="3" placeholder="ماذا تود أن تخبرنا؟"></textarea>
+        </div>
+        <button type="submit">إرسال الرسالة</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>الوساطة الرقمية</span>
+  <a href="/services">اكتشف الخدمات</a>
+  <span dir="ltr">A NEW PERSPECTIVE.</span>
+</footer>
+
+<script>
+/**
+ * Gallery data - all images reference /artworks/banan/
+ */
+const galleryImages = [
+  {
+    art: '01-portal',
+    title: 'البوابة',
+    subtitle: 'بوابة معمارية',
+    description: 'تصوير فوتوغرافي معماري للبوابة الرئيسية، يلعب الضوء والظلال دوراًHaupt in defining the entrance.',
+    image: '/artworks/banan/01-portal.jpg'
+  },
+  {
+    art: '02-noir',
+    title: 'المساء',
+    subtitle: 'ظلام artistically',
+    description: 'تركيب-chiaroscuro architectural study، emphasizing form through dramatic lighting.',
+    image: '/artworks/banan/02-noir.jpg'
+  },
+  {
+    art: '03-kinetic',
+    title: 'المنظور',
+    subtitle: 'حركة معمارية',
+    description: ' مشهد ديناميكي يلتقط تفاعل الضوء مع الحركة الهيكلية في الفضاء.',
+    image: '/artworks/banan/03-kinetic.jpg'
+  },
+  {
+    art: '04-atelier',
+    title: 'أتلييه',
+    subtitle: 'استوديو artist',
+    description: 'مساحة إبداعية حيث تلتقي الهندسة بالوظيفة في توازن بصري.',
+    image: '/artworks/banan/04-atelier.jpg'
+  },
+  {
+    art: '05-orbit',
+    title: 'مدار',
+    subtitle: 'مدار ',
+    description: 'تنظيم فضائي/orgel-like composition circular motion around a central point.',
+    image: '/artworks/banan/05-orbit.jpg'
+  }
+];
+
+/**
+ * State: currently selected art piece
+ */
+let selectedArt = '01-portal';
+
+/**
+ * Render the gallery grid based on selected art
+ */
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+
+  // Find the selected item
+  const selected = galleryImages.find(i => i.art === selectedArt) || galleryImages[0];
+
+  grid.innerHTML = [selected, ...galleryImages.filter(i => i.art !== selectedArt)].map(img => `
+    <div class="image-wrapper" data-art="${img.art}" tabindex="0" role="button" 
+         aria-label="عرض تفاصيل ${img.title}" 
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPropertyDetail(this.dataset.art)}"
+         onclick="openPropertyDetail('${img.art}')">
+
+      <img src="${img.image}" alt="${img.subtitle} — ${img.description}" loading="lazy">
+
+      <div class="image-overlay">
+        <div class="overlay-text">
+          <span class="category">${img.subtitle}</span>
+          <span class="title">${img.title}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Update selector button states
+  updateSelectorStates();
+}
+
+/**
+ * Update selector button active states
+ */
+function updateSelectorStates() {
+  const buttons = document.querySelectorAll('.selector-option');
+  buttons.forEach(btn => {
+    const art = btn.dataset.art;
+    if (art === selectedArt) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Handle selector button click
+ */
+function selectArt(art) {
+  selectedArt = art;
+  renderGallery();
+
+  // Fade-in the new hero image
+  const heroImg = document.querySelector('#selected-hero');
+  if (heroImg) {
+    heroImg.alt = (galleryImages.find(i=>i.art===art)||galleryImages[0]).description;
+    heroImg.style.opacity = '0';
+    setTimeout(() => {
+      heroImg.src = `/artworks/banan/${art}.jpg`;
+      heroImg.style.opacity = '1';
+    }, 300);
+  }
+}
+
+/**
+ * Update hero photography when selector changes
+ */
+document.querySelectorAll('.selector-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectArt(btn.dataset.art);
+  });
+});
+
+/**
+ * Open property details dialog for a given art piece
+ */
+function openPropertyDetail(art) {
+  const imgData = galleryImages.find(i => i.art === art);
+  if (!imgData) return;
+
+  const dialog = document.getElementById('property-dialog');
+  const dialogContent = document.getElementById('property-dialog-content');
+
+  dialogContent.innerHTML = `
+    <img class="dialog-image" src="${imgData.image}" alt="${imgData.title}" loading="lazy">
+    <div class="dialog-body">
+      <p class="dialog-category">${imgData.subtitle}</p>
+      <h2 class="dialog-title">${imgData.title}</h2>
+      <p class="dialog-price">—</p>
+      <p class="dialog-features">${imgData.description}</p>
+      <div class="dialog-actions">
+        <button class="dialog-close" onclick="closePropertyDialog()">إغلاق</button>
+      </div>
+    </div>
+  `;
+
+  dialog.showModal();
+
+
+}
+
+/**
+ * Toggle accordordion item
+ */
+function closePropertyDialog(){document.getElementById('property-dialog').close()}
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  const isOpen = item.classList.toggle('open');
+  const body = item.querySelector('.accordion-body');
+  const icon = header.querySelector('.accordion-icon');
+
+  // Accessibility
+  header.setAttribute('aria-expanded', isOpen);
+  if (isOpen) {
+    body.style.maxHeight = body.scrollHeight + 'px';
+  } else {
+    body.style.maxHeight = 0;
+  }
+
+  // Rotate icon
+  if (icon) {
+    icon.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+  }
+}
+
+/**
+ * Handle contact form submission (demo only)
+ */
+function handleSubmit(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const service = document.getElementById('service').value;
+  const message = document.getElementById('message').value;
+
+  // Demo feedback: just log and show an alert
+  void name; void email; void service; void message;
+
+  if (window.confirm('هذه معاينة فقط؛ لم يتم إرسال رسالتك أو حفظ بياناتك.')) {
+    // Reset form
+    event.target.reset();
+  }
+}
+
+/**
+ * Initialization on window load
+ */
+window.addEventListener('load', () => {
+  renderGallery();
+
+  // Initial nav highlight based on scroll
+  const sections = document.querySelectorAll('section[id]');
+  function highlightNav() {
+    let closest = null;
+    let closestOffset = Infinity;
+
+    sections.forEach(section => {
+      const top = section.getBoundingClientRect().top;
+      if (top >= -100 && top < closestOffset) {
+        closestOffset = top;
+        closest = section;
+      }
+    });
+
+    document.querySelectorAll('nav a').forEach(a => a.style.opacity = '0.7');
+    if (closest) {
+      const id = closest.getAttribute('id');
+      const link = document.querySelector(`nav a[href="#${id}"]`);
+      if (link) {
+        link.style.opacity = '1';
+      }
+    }
+  }
+
+  window.addEventListener('scroll', highlightNav, { passive: true });
+  highlightNav();
+});
+</script>
+
+</body>
+</html>

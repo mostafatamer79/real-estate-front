@@ -281,6 +281,114 @@ export function resolveSurfaceColor(color: string | undefined, isDark: boolean):
     return color;
 }
 
+const PUBLIC_SETTINGS_CACHE_KEY = "db_public_settings_cache_v1";
+
+function buildSettingsFromRaw(
+    allSettings: Array<{ key: string; value: string }>,
+    storedTheme: boolean | null
+): GlobalSettings {
+    const next = { ...defaultSettings };
+    const services: Record<string, number> = {};
+    const serviceForms: Record<string, string> = {};
+    let customCategories: CustomServiceCategory[] = [];
+    let customServices: CustomServiceItem[] = [];
+    const texts: Record<string, string> = {};
+    const sectionFlags: Record<string, 'open' | 'closed' | 'hidden'> = {};
+    const sectionMessages: Record<string, string> = {};
+    const moduleFlags: Record<string, 'enabled' | 'soon' | 'disabled'> = {};
+    const moduleMessages: Record<string, string> = {};
+    const uiFlags: Record<string, boolean> = { ...defaultSettings.uiFlags };
+    const detailsPartFlags: Record<string, 'enabled' | 'soon' | 'hidden'> = {};
+    const detailsPartMessages: Record<string, string> = {};
+    const loginConfig = { ...defaultSettings.loginConfig };
+    let emailStatusSeen = false;
+    let phoneStatusSeen = false;
+
+    allSettings.forEach((s) => {
+        if (s.key.startsWith("theme_")) {
+            const key = s.key.replace("theme_", "");
+            if (key === "isDark") {
+                next.isDark = s.value === "true";
+            } else if (key === "contactEmail") {
+                next.contactEmail = s.value;
+            } else if (key === "contactPhone") {
+                next.contactPhone = s.value;
+            } else if (key in next) {
+                (next as any)[key] = s.value;
+            }
+        } else if (s.key === "appointment_price") {
+            next.appointmentPrice = parseFloat(s.value) || 0;
+        } else if (s.key === "purchase_service_fee_percentage") {
+            next.purchaseFeePercentage = parseFloat(s.value) || 2.5;
+        } else if (s.key === "tax_percentage") {
+            next.taxPercentage = parseFloat(s.value) || 15;
+        } else if (s.key.startsWith("service_price_")) {
+            services[s.key] = parseFloat(s.value) || 0;
+        } else if (s.key.startsWith("service_form_")) {
+            serviceForms[s.key] = s.value;
+        } else if (s.key === CUSTOM_SERVICE_CATEGORIES_KEY) {
+            customCategories = parseCustomCategories(s.value);
+        } else if (s.key === CUSTOM_SERVICE_CATALOG_KEY) {
+            customServices = parseCustomServices(s.value);
+        } else if (s.key.startsWith("txt_")) {
+            texts[s.key.replace("txt_", "")] = s.value;
+        } else if (s.key.startsWith("section_") && !s.key.includes("_message")) {
+            const sectionKey = s.key.replace("section_", "");
+            sectionFlags[sectionKey] = s.value === 'closed' || s.value === 'hidden' ? s.value : 'open';
+        } else if (s.key.startsWith("section_") && s.key.endsWith("_message")) {
+            const sectionKey = s.key.replace("section_", "").replace("_message", "");
+            sectionMessages[sectionKey] = s.value;
+        } else if (s.key.startsWith("module_") && !s.key.endsWith("_message")) {
+            const moduleKey = s.key.replace("module_", "");
+            moduleFlags[moduleKey] = (s.value === 'soon' || s.value === 'disabled') ? (s.value as any) : 'enabled';
+        } else if (s.key.startsWith("module_") && s.key.endsWith("_message")) {
+            const moduleKey = s.key.replace("module_", "").replace("_message", "");
+            moduleMessages[moduleKey] = s.value;
+        } else if (s.key === "login_email_enabled") {
+            loginConfig.emailEnabled = s.value === 'true';
+        } else if (s.key === "login_phone_enabled") {
+            loginConfig.phoneEnabled = s.value === 'true';
+        } else if (s.key === "login_phone_label") {
+            loginConfig.phoneLabel = s.value;
+        } else if (s.key === "login_email_status") {
+            loginConfig.emailStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
+            emailStatusSeen = true;
+        } else if (s.key === "login_phone_status") {
+            loginConfig.phoneStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
+            phoneStatusSeen = true;
+        } else if (s.key.startsWith("ui_")) {
+            const uiKey = s.key.replace("ui_", "");
+            uiFlags[uiKey] = s.value === 'true';
+        } else if (s.key.startsWith("details_part_") && !s.key.endsWith("_message")) {
+            const partKey = s.key.replace("details_part_", "");
+            detailsPartFlags[partKey] = s.value === 'soon' || s.value === 'hidden' ? (s.value as any) : 'enabled';
+        } else if (s.key.startsWith("details_part_") && s.key.endsWith("_message")) {
+            const partKey = s.key.replace("details_part_", "").replace("_message", "");
+            detailsPartMessages[partKey] = s.value;
+        }
+    });
+
+    next.servicePrices = services;
+    next.serviceForms = serviceForms;
+    next.customCategories = customCategories;
+    next.customServices = customServices;
+    next.textOverrides = texts;
+    next.sectionFlags = sectionFlags;
+    next.sectionMessages = sectionMessages;
+    next.moduleFlags = moduleFlags;
+    next.moduleMessages = moduleMessages;
+    next.loginConfig = loginConfig;
+    if (!emailStatusSeen) loginConfig.emailStatus = loginConfig.emailEnabled ? 'enabled' : 'hidden';
+    if (!phoneStatusSeen) loginConfig.phoneStatus = loginConfig.phoneEnabled ? 'enabled' : 'soon';
+    loginConfig.emailEnabled = loginConfig.emailStatus === 'enabled';
+    loginConfig.phoneEnabled = loginConfig.phoneStatus === 'enabled';
+    next.uiFlags = uiFlags;
+    next.detailsPartFlags = detailsPartFlags;
+    next.detailsPartMessages = detailsPartMessages;
+    if (storedTheme !== null) next.isDark = storedTheme;
+    return next;
+}
+
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
@@ -329,117 +437,42 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const fetchSettings = useCallback(async () => {
+        const storedTheme = getStoredTheme();
+        let hydratedFromCache = false;
+        if (typeof window !== "undefined") {
+            try {
+                const rawCache = window.sessionStorage.getItem(PUBLIC_SETTINGS_CACHE_KEY);
+                if (rawCache) {
+                    const parsed = JSON.parse(rawCache);
+                    if (Array.isArray(parsed)) {
+                        const cachedSettings = buildSettingsFromRaw(parsed, storedTheme);
+                        setSettings(cachedSettings);
+                        applyTheme(cachedSettings);
+                        setIsLoading(false);
+                        hydratedFromCache = true;
+                    }
+                }
+            } catch {
+                // Ignore corrupt session cache and fetch fresh settings
+            }
+        }
+
         try {
             const allSettings = await fetchPublicSettings();
-                const next = { ...defaultSettings };
-                const services: Record<string, number> = {};
-                const serviceForms: Record<string, string> = {};
-                let customCategories: CustomServiceCategory[] = [];
-                let customServices: CustomServiceItem[] = [];
-                const texts: Record<string, string> = {};
-                const sectionFlags: Record<string, 'open' | 'closed' | 'hidden'> = {};
-                const sectionMessages: Record<string, string> = {};
-                const moduleFlags: Record<string, 'enabled' | 'soon' | 'disabled'> = {};
-                const moduleMessages: Record<string, string> = {};
-                const uiFlags: Record<string, boolean> = { ...defaultSettings.uiFlags };
-                const detailsPartFlags: Record<string, 'enabled' | 'soon' | 'hidden'> = {};
-                const detailsPartMessages: Record<string, string> = {};
-                const loginConfig = { ...defaultSettings.loginConfig };
-                let emailStatusSeen = false;
-                let phoneStatusSeen = false;
-
-                allSettings.forEach((s) => {
-                    if (s.key.startsWith("theme_")) {
-                        const key = s.key.replace("theme_", "");
-                        if (key === "isDark") {
-                            next.isDark = s.value === "true";
-                        } else if (key === "contactEmail") {
-                            next.contactEmail = s.value;
-                        } else if (key === "contactPhone") {
-                            next.contactPhone = s.value;
-                        } else if (key in next) {
-                            (next as any)[key] = s.value;
-                        }
-                    } else if (s.key === "appointment_price") {
-                        next.appointmentPrice = parseFloat(s.value) || 0;
-                    } else if (s.key === "purchase_service_fee_percentage") {
-                        next.purchaseFeePercentage = parseFloat(s.value) || 2.5;
-                    } else if (s.key === "tax_percentage") {
-                        next.taxPercentage = parseFloat(s.value) || 15;
-                    } else if (s.key.startsWith("service_price_")) {
-                        services[s.key] = parseFloat(s.value) || 0;
-                    } else if (s.key.startsWith("service_form_")) {
-                        serviceForms[s.key] = s.value;
-                    } else if (s.key === CUSTOM_SERVICE_CATEGORIES_KEY) {
-                        customCategories = parseCustomCategories(s.value);
-                    } else if (s.key === CUSTOM_SERVICE_CATALOG_KEY) {
-                        customServices = parseCustomServices(s.value);
-                    } else if (s.key.startsWith("txt_")) {
-                        texts[s.key.replace("txt_", "")] = s.value;
-                    } else if (s.key.startsWith("section_") && !s.key.includes("_message")) {
-                        // e.g. section_wallet => 'open' | 'closed'
-                        const sectionKey = s.key.replace("section_", "");
-                        sectionFlags[sectionKey] = s.value === 'closed' || s.value === 'hidden' ? s.value : 'open';
-                    } else if (s.key.startsWith("section_") && s.key.endsWith("_message")) {
-                        // e.g. section_wallet_message
-                        const sectionKey = s.key.replace("section_", "").replace("_message", "");
-                        sectionMessages[sectionKey] = s.value;
-                    } else if (s.key.startsWith("module_") && !s.key.endsWith("_message")) {
-                        const moduleKey = s.key.replace("module_", "");
-                        moduleFlags[moduleKey] = (s.value === 'soon' || s.value === 'disabled') ? (s.value as any) : 'enabled';
-                    } else if (s.key.startsWith("module_") && s.key.endsWith("_message")) {
-                        const moduleKey = s.key.replace("module_", "").replace("_message", "");
-                        moduleMessages[moduleKey] = s.value;
-                    } else if (s.key === "login_email_enabled") {
-                        loginConfig.emailEnabled = s.value === 'true';
-                    } else if (s.key === "login_phone_enabled") {
-                        loginConfig.phoneEnabled = s.value === 'true';
-                    } else if (s.key === "login_phone_label") {
-                        loginConfig.phoneLabel = s.value;
-                    } else if (s.key === "login_email_status") {
-                        loginConfig.emailStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
-                        emailStatusSeen = true;
-                    } else if (s.key === "login_phone_status") {
-                        loginConfig.phoneStatus = (s.value === 'soon' || s.value === 'hidden') ? (s.value as any) : 'enabled';
-                        phoneStatusSeen = true;
-                    } else if (s.key.startsWith("ui_")) {
-                        const uiKey = s.key.replace("ui_", "");
-                        uiFlags[uiKey] = s.value === 'true';
-                    } else if (s.key.startsWith("details_part_") && !s.key.endsWith("_message")) {
-                        const partKey = s.key.replace("details_part_", "");
-                        detailsPartFlags[partKey] = s.value === 'soon' || s.value === 'hidden' ? (s.value as any) : 'enabled';
-                    } else if (s.key.startsWith("details_part_") && s.key.endsWith("_message")) {
-                        const partKey = s.key.replace("details_part_", "").replace("_message", "");
-                        detailsPartMessages[partKey] = s.value;
-                    }
-                });
-
-                next.servicePrices = services;
-                next.serviceForms = serviceForms;
-                next.customCategories = customCategories;
-                next.customServices = customServices;
-                console.log("FETCHED SETTINGS textOverrides:", texts);
-                next.textOverrides = texts;
-                next.sectionFlags = sectionFlags;
-                next.sectionMessages = sectionMessages;
-                next.moduleFlags = moduleFlags;
-                next.moduleMessages = moduleMessages;
-                next.loginConfig = loginConfig;
-                // Fall back to the legacy boolean flags when no status key is stored,
-                // then keep the booleans derived from the status for existing consumers.
-                if (!emailStatusSeen) loginConfig.emailStatus = loginConfig.emailEnabled ? 'enabled' : 'hidden';
-                if (!phoneStatusSeen) loginConfig.phoneStatus = loginConfig.phoneEnabled ? 'enabled' : 'soon';
-                loginConfig.emailEnabled = loginConfig.emailStatus === 'enabled';
-                loginConfig.phoneEnabled = loginConfig.phoneStatus === 'enabled';
-                next.uiFlags = uiFlags;
-                next.detailsPartFlags = detailsPartFlags;
-                next.detailsPartMessages = detailsPartMessages;
-                const storedTheme = getStoredTheme();
-                if (storedTheme !== null) next.isDark = storedTheme;
-                setSettings(next);
-                applyTheme(next);
+            if (typeof window !== "undefined") {
+                try {
+                    window.sessionStorage.setItem(PUBLIC_SETTINGS_CACHE_KEY, JSON.stringify(allSettings));
+                } catch {
+                    // Ignore storage quota errors
+                }
+            }
+            const next = buildSettingsFromRaw(allSettings, getStoredTheme());
+            setSettings(next);
+            applyTheme(next);
         } catch (error) {
-            console.error("Failed to fetch settings", error);
+            if (!hydratedFromCache) {
+                console.error("Failed to fetch settings", error);
+            }
         } finally {
             setIsLoading(false);
         }

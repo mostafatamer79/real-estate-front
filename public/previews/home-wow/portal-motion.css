@@ -1,0 +1,268 @@
+/* The original portal, developed as one continuous camera journey. */
+body.portal{--bg:#e8e1d5;--ink:#272e27;--accent:#718063}
+body.portal header{position:absolute;padding:26px 4vw;transition:color .4s}
+body.portal .portal-journey{height:300svh;--camera:0;--heading:1;--inside:0;--iris-x:30%;--iris-rx:25%;--iris-ry:44%;--photo-scale:1;--exit:0;--darken:0}
+body.portal .portal-stage{height:100svh;isolation:isolate;background:var(--bg)}
+body.portal .portal-title{right:6%;top:26%;width:40%;opacity:var(--heading);transform:translateY(calc(var(--camera) * -120px));z-index:7;visibility:var(--title-visibility,visible)}
+body.portal .portal-title h1{font-size:clamp(56px,6.3vw,108px);line-height:1.22;max-width:none}
+body.portal .portal-title .eyebrow{font-size:11px;letter-spacing:0;margin-bottom:24px}
+body.portal .portal-title .system-hero-intro{font-size:14px!important;max-width:350px;margin-top:24px;line-height:2}
+body.portal .portal-title .latin{font-size:25px;margin-top:22px}
+body.portal .portal-deck{margin-top:32px}
+body.portal .portal-image{inset:0;clip-path:ellipse(var(--iris-rx) var(--iris-ry) at var(--iris-x) 58%);transform:none;z-index:1;transform-origin:center}
+body.portal .portal-image img{transform:scale(var(--photo-scale));object-position:50% 58%;filter:none;will-change:transform}
+body.portal .portal-ring{left:auto;bottom:auto;top:58%;right:auto;width:54vw;height:91svh;border:1px solid #8a8d6a55;border-radius:50%;transform:translate(-50%,-50%) scale(calc(1 + var(--camera) * 2));left:30%;opacity:var(--heading);z-index:2}
+.portal-orbit{position:absolute;top:58%;left:30%;width:57vw;height:96svh;border-radius:50%;border:1px solid #8a8d6a28;transform:translate(-50%,-50%) scale(calc(1 + var(--camera) * 2));opacity:var(--heading);pointer-events:none;z-index:2}
+body.portal .portal-side{opacity:var(--heading);left:2.5%;z-index:3;color:var(--ink)}
+body.portal .portal-bottom{inset-inline:5vw;bottom:6vh;z-index:8;opacity:var(--heading);transform:translateY(calc(var(--camera) * 60px));visibility:var(--title-visibility,visible)}
+body.portal .portal-bottom .pill{margin-left:0;background:var(--bg)}
+body.portal .portal-bottom .scroll-note{margin-right:14vw}
+body.portal .portal-inside{background:transparent;z-index:5;opacity:var(--inside);visibility:var(--inside-visibility,hidden);transform:translateY(calc((1 - var(--inside)) * 45px));pointer-events:none}
+body.portal .portal-inside .pill{pointer-events:auto;min-height:44px}
+body.portal .portal-inside h2{font-size:clamp(50px,7vw,108px);line-height:1.25}
+body.portal .portal-inside .eyebrow{letter-spacing:0}
+.film-shadow{position:absolute;inset:0;background:linear-gradient(180deg,#12241c14,#12241c99);opacity:var(--darken);z-index:4;pointer-events:none}
+.film-chapters{position:absolute;bottom:5vh;left:5vw;right:5vw;display:flex;gap:20px;align-items:center;z-index:6;color:#fff;font-size:11px;opacity:var(--inside)}
+.film-chapters i{height:1px;flex:1;background:#ffffff55;position:relative;overflow:hidden}
+.film-chapters i:after{content:'';position:absolute;inset:0;background:white;transform:scaleX(var(--camera));transform-origin:right}
+body.portal .system-overview{position:relative;z-index:2;border-top:0;padding-top:100px}
+.light-journey{height:245svh;position:relative;background:#15251c;--light:0;--first:1;--second:0;--light-scale:1.1}
+.light-stage{height:100svh;position:sticky;top:0;overflow:hidden;background:#15251c;isolation:isolate}
+.light-frame{position:absolute;inset:0;overflow:hidden}.light-frame img{transform:scale(var(--light-scale));will-change:transform}
+.light-interior{clip-path:inset(0 calc((1 - var(--light)) * 100%) 0 0)}
+.light-shade{position:absolute;inset:0;background:linear-gradient(90deg,#15251c00,#15251c99)}
+.light-copy{position:absolute;right:8%;top:42%;color:#fff;max-width:85%;transform:translateY(-50%)}
+.light-copy h2{font-size:clamp(45px,7vw,108px);line-height:1.4;letter-spacing:-.035em}.light-copy p{font-size:14px;max-width:330px;margin-top:25px}
+.light-copy-first{opacity:var(--first);transform:translateY(calc(-50% - var(--light) * 60px))}
+.light-copy-second{opacity:var(--second);transform:translateY(calc(-50% + (1 - var(--second)) * 50px))}
+.light-copy .eyebrow{letter-spacing:0}.light-edge{position:absolute;left:5%;bottom:6%;font:italic 22px Georgia;color:#fff}
+.light-meter{position:absolute;bottom:0;height:3px;background:#ffffff44;width:100%}.light-meter i{display:block;background:#e8e1d5;height:100%;transform-origin:right;transform:scaleX(var(--light))}
+body.portal .section.split{padding-block:120px;gap:9vw}body.portal .section .photo{border-radius:46% 46% 0 0;overflow:hidden}
+body.portal .chapter-ribbon{color:var(--ink);border-color:#8883;padding-block:28px}
+body.portal .vision-image{height:460px;border-radius:2px}.vision-card:nth-child(2) .vision-image{height:410px}
+body.portal .vision-card:nth-child(3){margin-top:125px}
+body.portal .service-visual{height:600px;border-radius:46% 46% 0 0;isolation:isolate}
+body.portal .service-visual .service-previous{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;pointer-events:none}
+body.portal .service-visual-label{z-index:3}
+body.portal .service-row{transition:opacity .5s,padding .6s cubic-bezier(.22,1,.36,1)}
+body.portal .scene-reveal{height:115svh;padding:60px 4vw}.scene-crop{border-radius:var(--scene-radius,100px)!important}
+body.portal .portal-end{position:relative;overflow:hidden;isolation:isolate;padding:150px 6vw;color:#fff;background:#17291f;min-height:75svh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+body.portal .portal-end:before{content:'';position:absolute;inset:0;background:linear-gradient(#15251c99,#15251cbb),url('../../artworks/banan/banan-penthouse-terrace.jpg') center 60%/cover;z-index:-1}
+body.portal .portal-end h2{font-size:clamp(48px,7vw,105px);line-height:1.3;margin:20px 0 35px}
+body.portal .back{font-size:10px;bottom:16px;left:16px}.demo-label{bottom:16px}
+@media(max-width:700px){
+ body.portal header{padding:20px 6vw;gap:10px}body.portal header nav{width:auto;order:0;margin-right:auto}body.portal header nav a{display:none!important}body.portal .theme-toggle{min-width:45px;font-size:0;gap:0;padding:8px}body.portal .theme-toggle span{font-size:18px}
+ body.portal .portal-journey{height:265svh;--iris-x:50%;--iris-rx:43%;--iris-ry:28%}
+ body.portal .portal-title{top:17%;right:7%;width:86%;text-align:center}
+ body.portal .portal-title h1{font-size:clamp(42px,10.8vw,64px);line-height:1.22}
+ body.portal .portal-title .eyebrow{margin-bottom:15px;font-size:10px}
+ body.portal .portal-title .system-hero-intro{font-size:11px!important;line-height:1.8;margin:16px auto 0;max-width:260px}
+ body.portal .portal-title .latin,body.portal .portal-deck{display:none}
+ body.portal .portal-image{inset:0;clip-path:ellipse(var(--iris-rx) var(--iris-ry) at var(--iris-x) var(--iris-y,74%))}
+ body.portal .portal-image img{object-position:51% 60%}
+ body.portal .portal-ring{top:74%;left:50%;width:91vw;height:60svh}
+ .portal-orbit{top:74%;left:50%;width:96vw;height:63svh}
+ body.portal .portal-side{display:none}body.portal .portal-bottom{bottom:5vh;display:block;text-align:center}
+ body.portal .portal-bottom .pill,body.portal .portal-bottom p{display:none}body.portal .portal-bottom .scroll-note{margin:0;justify-content:center;width:auto;color:white;text-shadow:0 1px 5px #000}
+ body.portal .portal-inside h2{font-size:42px}body.portal .portal-inside .eyebrow{font-size:11px}
+ .film-chapters{bottom:10vh;font-size:10px}
+ .light-journey{height:210svh}.light-copy{right:7%;top:47%}.light-copy h2{font-size:42px}.light-copy p{font-size:12px;max-width:260px}.light-shade{background:#15251c55}.light-edge{font-size:18px;bottom:11%}
+ body.portal .system-overview{padding-top:65px}body.portal .section.split{padding-block:65px}
+ body.portal .vision-card:nth-child(n){margin-top:0}body.portal .vision-image,body.portal .vision-card:nth-child(2) .vision-image{height:390px}
+ body.portal .service-visual{height:410px}body.portal .scene-reveal{height:90svh;padding:25px 0}.scene-crop{border-radius:0!important}
+ body.portal .portal-end{min-height:65svh;padding:90px 7%}body.portal .portal-end h2{font-size:43px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.portal .portal-journey{height:100svh}body.portal .portal-ring,.portal-orbit{display:none}
+ body.portal .portal-title{opacity:1;transform:none}body.portal .portal-bottom{opacity:1;transform:none}body.portal .portal-inside,.film-shadow,.film-chapters{display:none}
+ body.portal .portal-image img{transform:none}.light-journey{height:auto}.light-stage{position:relative;height:85svh}.light-frame img{transform:none}.light-copy-first{opacity:1;transform:translateY(-50%)}.light-interior,.light-copy-second{display:none}
+}
+/* Frame the actual stone arch on phones before the camera moves inward. */
+@media(max-width:700px){
+ body.portal .portal-image img{position:absolute;left:50%;top:74%;width:155vw;height:56svh;max-width:none;object-position:50% 58%;transform:translate(-50%,-50%) translateY(calc(var(--camera) * -24svh)) scale(calc(1 + var(--camera) * 1.1));transform-origin:center}
+}
+@media(max-width:700px) and (prefers-reduced-motion:reduce){body.portal .portal-image img{transform:translate(-50%,-50%)}}
+/* Continuous choreography: masks, image wipes, and restrained depth. */
+body.portal{--motion-ease:cubic-bezier(.22,1,.36,1)}
+body.portal .reveal{opacity:1;transform:none;transition:none}
+.motion-line{display:block;overflow:hidden;padding-bottom:.13em;margin-bottom:-.13em}
+.motion-line>span{display:block;transform-origin:right bottom}
+body.portal .system-shell{border-radius:8px;overflow:hidden}
+body.portal .system-tabs{position:relative;isolation:isolate}
+.tab-glider{position:absolute;left:0;top:0;z-index:-1;background:var(--ink);border-radius:3px;pointer-events:none;transition:transform .5s var(--motion-ease),width .5s var(--motion-ease),height .5s var(--motion-ease),background .4s}
+body.portal .system-tab{position:relative;background:transparent!important;opacity:1;transition:color .35s,opacity .35s}
+body.portal .system-tab:not([aria-selected=true]){color:var(--ink);opacity:.7}
+body.portal .system-tab b{transition:transform .5s var(--motion-ease)}
+body.portal .system-tab[aria-selected=true] b{transform:rotate(-45deg)}
+body.portal .diagram-flow{overflow:hidden}.diagram-flow:before{transform-origin:top;transition:transform .8s}
+body.portal .system-diagram{border-radius:4px}
+body.portal .pill,body.portal .theme-toggle,body.portal .filters button{position:relative;isolation:isolate;overflow:hidden;transition:transform .3s var(--motion-ease),background .4s,color .4s,border-color .4s,box-shadow .4s}
+body.portal .pill:before{content:'';position:absolute;inset:-1px;background:currentColor;opacity:.09;clip-path:ellipse(0% 0% at 50% 100%);transition:clip-path .55s var(--motion-ease);pointer-events:none;z-index:-1}
+body.portal .pill:active,body.portal .theme-toggle:active,body.portal .filters button:active{transform:scale(.96)}
+body.portal .service-row{position:relative;isolation:isolate}
+body.portal .service-row:before{content:'';position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 5%,transparent);transform:scaleX(0);transform-origin:right;transition:transform .6s var(--motion-ease);z-index:-1}
+body.portal .service-row.active:before{transform:scaleX(1)}
+body.portal .service-row small{transition:opacity .4s,transform .6s var(--motion-ease)}
+body.portal .service-row:not(.active) small{opacity:.5;transform:translateX(-4px)}
+body.portal .vision-card{transform-origin:top right;transition:none!important}
+body.portal .vision-image img{transition:transform 1.1s var(--motion-ease),filter .6s}
+body.portal .vision-image:after{transition:opacity .6s}
+body.portal .vision-caption h3{transition:transform .5s var(--motion-ease)}
+body.portal .chapter-ribbon{overflow:hidden}
+body.portal .chapter-ribbon>span{transform:translateX(var(--ribbon-shift,0px));flex-shrink:0}
+body.portal .chapter-ribbon>span:nth-child(even){transform:translateX(calc(var(--ribbon-shift,0px) * -1)) rotate(var(--ribbon-turn,0deg))}
+body.portal .chapter-ribbon .ribbon-note{transform:none}
+body.portal .steps-grid{position:relative;isolation:isolate}
+body.portal .steps-grid:before{content:'';position:absolute;right:0;left:0;top:0;height:1px;background:var(--ink);transform-origin:right;transform:scaleX(var(--step-progress,0));z-index:2}
+body.portal .step-number{color:var(--accent);font-family:Georgia,serif;transition:color .5s}
+body.portal .portal-end:before{transform:scale(calc(1.18 - var(--end-open,0) * .18));clip-path:ellipse(calc(35% + var(--end-open,0) * 50%) calc(50% + var(--end-open,0) * 50%) at 50% 70%)}
+body.portal .portal-end>.eyebrow{letter-spacing:2px}
+.chapter-nav{position:fixed;right:16px;top:50%;transform:translate(20px,-50%);z-index:45;display:flex;flex-direction:column;gap:15px;opacity:0;visibility:hidden;transition:opacity .5s,transform .7s var(--motion-ease),visibility .5s}
+.chapter-nav.visible{opacity:1;visibility:visible;transform:translate(0,-50%)}
+.chapter-nav a{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px}
+.chapter-nav i{width:5px;height:5px;border-radius:50%;background:#728465;box-shadow:0 0 0 2px #e8e1d599;transition:transform .4s,box-shadow .4s}
+.chapter-nav a[aria-current] i{transform:scale(1.3);box-shadow:0 0 0 5px #72846533,0 0 0 6px #72846566}
+.chapter-nav span{position:absolute;right:35px;white-space:nowrap;padding:5px 10px;border-radius:25px;background:var(--bg);color:var(--ink);font-size:10px;opacity:0;transform:translateX(6px);transition:transform .3s,opacity .3s;pointer-events:none}
+.chapter-nav a:focus-visible span{opacity:1;transform:none}
+.image-flight{position:fixed!important;z-index:99999!important;margin:0!important;max-width:none!important;max-height:none!important;object-fit:cover!important;transform-origin:top left!important;pointer-events:none!important;background:transparent!important}
+body.portal .art-dialog{overflow:visible;max-height:90svh}
+body.portal .art-dialog>img{height:65svh;object-fit:cover}
+body.portal .art-dialog::backdrop,body.portal .preview-dialog::backdrop{background:#102219cc;backdrop-filter:blur(12px)}
+body.portal .art-dialog button{transition:transform .25s,background .25s}
+body.portal .art-dialog button:active{transform:scale(.93)}
+body.portal .preview-dialog{border-radius:18px;padding:45px}
+body.portal .preview-dialog h2{font-size:42px;line-height:1.4}
+body.portal .preview-dialog p{line-height:2;margin-top:18px}
+body.portal header .brand{transition:opacity .3s}body.portal header nav>a:not(.pill){position:relative;padding-block:10px}
+body.portal header nav>a:not(.pill):after{content:'';position:absolute;height:1px;background:currentColor;bottom:5px;inset-inline:0;transform:scaleX(0);transform-origin:right;transition:transform .4s var(--motion-ease)}
+::view-transition-old(root){animation:palette-out .45s ease both}::view-transition-new(root){animation:palette-in .65s ease both}
+@keyframes palette-out{to{opacity:0}}@keyframes palette-in{from{opacity:0}to{opacity:1}}
+@media(hover:hover) and (pointer:fine){
+ body.portal .pill:hover:before{clip-path:ellipse(100% 130% at 50% 100%)}
+ body.portal .pill:hover{box-shadow:0 8px 25px #1a2b1710;transform:translateY(-3px)}
+ body.portal .vision-image:hover img{transform:scale(1.09)}
+ body.portal .vision-card:hover h3{transform:translateX(-5px)}
+ body.portal .art-dialog button:hover{transform:rotate(90deg);background:#8882}
+ body.portal header nav>a:hover:after{transform:scaleX(1)}
+ .chapter-nav a:hover span{opacity:1;transform:none}
+}
+@media(max-width:700px){
+ .chapter-nav{right:5px;gap:9px}.chapter-nav a{width:18px;height:22px}.chapter-nav span{right:26px}
+ body.portal .art-dialog>img{height:55svh}.image-flight{border-radius:0}
+ body.portal .steps-grid:before{top:0;right:0;left:auto;bottom:0;width:1px;height:auto;transform-origin:top;transform:scaleY(var(--step-progress,0))}
+ body.portal .portal-end>.eyebrow{font-size:9px;letter-spacing:1px}
+ body.portal .preview-dialog{padding:28px}
+}
+@media(prefers-reduced-motion:reduce){
+ .tab-glider,.chapter-nav,.chapter-nav *,.motion-line>span{transition:none!important}
+ .image-flight{display:none!important}.chapter-ribbon>span{transform:none!important}
+ body.portal .portal-end:before{clip-path:none;transform:none}
+ ::view-transition-old(root),::view-transition-new(root){animation:none!important}
+}
+/* A scroll-controlled architectural travelling shot. */
+.perspective-journey{height:330svh;position:relative;background:#17291f;--perspective-progress:0}
+.perspective-stage{position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate}
+.perspective-track{display:flex;height:100%;width:100%;will-change:transform;direction:rtl}
+.perspective-slide{position:relative;flex:0 0 100%;min-width:0;height:100%;overflow:hidden;color:white}
+.perspective-slide>img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.perspective-shade{position:absolute;inset:0;background:linear-gradient(0deg,#10251c99,transparent 70%)}
+.perspective-copy{position:absolute;right:8%;bottom:22%;max-width:83%}
+.perspective-copy h2{font-size:clamp(48px,7.5vw,120px);line-height:1.4;letter-spacing:-.035em}
+.perspective-copy p{margin-top:20px;font-size:15px}
+.perspective-chrome{position:absolute;bottom:8%;inset-inline:6%;color:white;display:flex;align-items:center;justify-content:space-between;gap:25px;font-size:11px}
+.perspective-counter{font:italic 28px Georgia;direction:ltr}
+.perspective-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:#ffffff33}
+.perspective-progress i{display:block;height:100%;background:#e8e1d5;transform-origin:right;transform:scaleX(var(--perspective-progress))}
+@media(hover:hover) and (pointer:fine){
+ body.portal .vision-image{transform:perspective(1100px) rotateX(var(--card-pitch,0deg)) rotateY(var(--card-yaw,0deg));transition:transform .6s var(--motion-ease);will-change:auto}
+ body.portal .vision-image:hover{will-change:transform}
+ body.portal .vision-image .image-open{transform:translate(var(--hover-x,0px),var(--hover-y,0px));transition:transform .35s var(--motion-ease),background .35s}
+ body.portal .vision-image:hover .image-open{background:#e8e1d5}
+}
+@media(max-width:700px){.perspective-journey{height:260svh}.perspective-copy{bottom:25%;right:7%}.perspective-copy h2{font-size:44px}.perspective-copy p{font-size:12px}.perspective-chrome{bottom:12%;font-size:10px;gap:12px}.perspective-counter{font-size:23px}.perspective-slide>img{object-position:52% center}}
+@media(prefers-reduced-motion:reduce){.perspective-journey{height:auto}.perspective-stage{position:relative;height:auto;overflow:visible}.perspective-track{display:block;transform:none!important;will-change:auto}.perspective-slide{height:75svh}.perspective-chrome,.perspective-progress{display:none}.perspective-copy{opacity:1!important;transform:none!important}.perspective-slide>img{transform:none!important}.vision-image{transform:none!important}}
+
+/* Preserve native detail: the desktop reveal expands its mask, not a magnified raster layer. */
+@media(min-width:701px){body.portal .portal-image img{transform:none;will-change:auto}}
+.villa-world{background:#142e23;color:#f2e8d6;padding:70px 0 25px;overflow:hidden}.villa-heading{text-align:center;padding:0 7%}.villa-heading>span{font-size:11px;color:#c0c9ac}.villa-heading h2{font-size:clamp(35px,4.5vw,70px);line-height:1.4;margin:15px 0}.villa-heading p{font-size:12px;color:#bcc7b3}.villa-canvas{height: min(75vw,760px);min-height:420px;position:relative;cursor:grab;touch-action:pan-y;outline-offset:-8px}.villa-canvas:active{cursor:grabbing}.villa-canvas canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .8s}.villa-fallback{position:absolute;inset:0;object-fit:contain;width:100%;height:100%;transition:opacity .8s;pointer-events:none}.villa-ready canvas{opacity:1}.villa-ready .villa-fallback{opacity:0}.villa-caption{text-align:center;font-size:10px!important;color:#a7b49c;padding:20px}.villa-unavailable{cursor:default}@media(max-width:700px){.villa-world{padding-top:50px}.villa-canvas{height:500px;min-height:0}.villa-heading h2{font-size:34px}}@media(prefers-reduced-motion:reduce){.villa-canvas canvas,.villa-fallback{transition:none}}
+/* The original photograph remains the visual source at every angle. */
+.villa-canvas{width:min(100%,1376px);height:auto;min-height:0;aspect-ratio:1376/768;margin:0 auto;overflow:hidden;background:#142e23}.villa-canvas canvas{position:absolute;inset:0}.villa-world{padding-bottom:60px}.villa-heading{margin-bottom:30px}.villa-caption:empty{display:none}.villa-fallback{object-fit:contain}@media(max-width:700px){.villa-canvas{height:auto;min-height:0;aspect-ratio:1376/768}.villa-world{padding-bottom:45px}.villa-heading{margin-bottom:25px}.villa-heading h2{font-size:31px}}
+/* Product-led landing sequence with three distinct architectural settings. */
+.platform-manifesto{padding:130px 10%;text-align:center;background:var(--bg);color:var(--ink)}.platform-manifesto>span{font-size:12px}.platform-manifesto h2{font-size:clamp(48px,7.5vw,110px);line-height:1.45;margin:25px auto;letter-spacing:-.035em}.platform-manifesto em{font-style:normal;color:#748264}.platform-manifesto p{max-width:470px;margin:0 auto 30px;opacity:.75;font-size:14px;line-height:2}
+.intent-journey{padding:100px 7%;background:#20372c;color:#eee8d8;display:grid;grid-template-columns:.8fr 1.2fr;gap:9%;align-items:center}.intent-intro>span{font-size:12px;color:#b7c2a7}.intent-intro h2{font-size:clamp(42px,5vw,78px);line-height:1.3;margin:25px 0}.intent-intro p{font-size:13px;color:#c0c8b5}.intent-choices{display:flex;border-bottom:1px solid #eee8d844;gap:22px}.intent-choices button{border:0;border-bottom:2px solid transparent;background:transparent;color:#b9c4af;padding:18px 0;font-size:13px;transition:color .3s,border-color .3s}.intent-choices button[aria-pressed=true]{color:#fff;border-color:#eee8d8}.intent-content{padding-top:40px;min-height:345px}.intent-content h3{font-size:clamp(28px,3vw,42px);font-weight:400;margin:0 0 20px}.intent-content p{font-size:13px;line-height:2;max-width:470px;color:#c8d0c0}.intent-route{display:flex;align-items:center;gap:15px;margin:30px 0 35px;font-size:11px}.intent-route i{height:1px;flex:1;background:#b9c4af66}.intent-content .pill{border-color:#eee8d888}body.portal .light-journey{height:210svh}body.portal .villa-world{padding-top:70px}
+@media(max-width:700px){.platform-manifesto{padding:75px 7%}.platform-manifesto h2{font-size:44px}.platform-manifesto p{font-size:12px}.intent-journey{grid-template-columns:1fr;gap:30px;padding:65px 7%}.intent-intro h2{font-size:42px}.intent-choices{gap:18px}.intent-choices button{font-size:12px}.intent-content{min-height:360px}.intent-route{gap:8px;font-size:10px}.intent-content h3{font-size:29px}body.portal .light-journey{height:185svh}}
+/* The selected journey unfolds as a connected route. */
+.intent-journey{gap:7%;padding-block:85px;background:radial-gradient(ellipse at 10% 95%,#49624b33,transparent 65%),#20372c}
+.intent-choices{position:relative;gap:28px}.intent-choices button{border-bottom-color:transparent!important;min-height:56px;white-space:nowrap}.intent-underline{position:absolute;left:0;bottom:-1px;height:2px;background:#e5e8c7;transition:transform .55s var(--motion-ease),width .55s var(--motion-ease);pointer-events:none;box-shadow:0 0 14px #e5e8c733}
+.intent-content{min-height:320px;padding-top:34px}.intent-content h3{line-height:1.5;letter-spacing:-.025em}.intent-content p{min-height:78px}.intent-route{margin:28px 0 32px;gap:12px;align-items:center}.intent-route span{position:relative;padding-top:22px;white-space:nowrap}.intent-route span:before{content:'';position:absolute;right:calc(50% - 3px);top:1px;width:6px;height:6px;border-radius:50%;background:#d6dfb4;box-shadow:0 0 0 5px #d6dfb414,0 0 0 6px #d6dfb430}.intent-route i{transform-origin:right;align-self:flex-start;margin-top:4px;background:linear-gradient(90deg,#8b9e7880,#d8dfb699)}.intent-route span:last-child:before{background:#fff4d3;box-shadow:0 0 0 6px #e3deb71a,0 0 20px #e3deb733}.intent-content .pill{min-height:45px}
+@media(min-width:701px){.intent-intro{position:sticky;top:100px;align-self:start;padding-top:16px}}
+@media(max-width:700px){.intent-journey{padding:50px 7%;gap:24px}.intent-intro h2{font-size:39px;line-height:1.25;margin:17px 0}.intent-intro h2 br{display:none}.intent-intro p{font-size:12px}.intent-choices{gap:22px;justify-content:space-between}.intent-choices button{font-size:12px;min-height:50px;padding-block:12px}.intent-content{min-height:290px;padding-top:26px}.intent-content h3{font-size:28px;margin-bottom:16px}.intent-content p{min-height:72px;font-size:12px}.intent-route{font-size:10px;gap:10px;margin:22px 0 26px}.intent-content .pill{font-size:11px}}
+@media(max-width:380px){.intent-choices{gap:9px}.intent-choices button{font-size:11px}.intent-route{font-size:9px;gap:6px}}
+@media(prefers-reduced-motion:reduce){.intent-underline{transition:none!important}}
+/* Warm stone gives the journey its own clear chapter before the green villa. */
+body.portal .intent-journey {
+  background: #e9dfcf;
+  color: #283b2f;
+  border-top: 1px solid #b8b49d;
+  border-bottom: 1px solid #b8b49d;
+}
+body.portal .intent-intro > span { color: #53664d; }
+body.portal .intent-intro p,
+body.portal .intent-content p { color: #4e6051; }
+body.portal .intent-choices { border-color: #65735955; }
+body.portal .intent-choices button { color: #5c6d55; }
+body.portal .intent-choices button[aria-pressed=true] { color: #20372c; }
+body.portal .intent-underline { background: #3d573a; box-shadow: none; }
+body.portal .intent-route i {
+  position: relative;
+  overflow: hidden;
+  background: #687c5c66;
+  height: 2px;
+  margin-top: 3px;
+}
+body.portal .intent-route i::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(90deg, transparent, #2e4c32);
+  transform: translateX(20px);
+  animation: intent-signal 2.8s ease-in-out infinite;
+  animation-play-state: paused;
+}
+body.portal .intent-route i:nth-of-type(2)::after { animation-delay: 1.1s; }
+body.portal .intent-route span::before {
+  background: #496740;
+  box-shadow: 0 0 0 5px #49674016, 0 0 0 6px #49674033;
+  animation: intent-node 2.8s ease-in-out infinite;
+  animation-play-state: paused;
+}
+body.portal .intent-route span:nth-of-type(2)::before { animation-delay: .7s; }
+body.portal .intent-route span:nth-of-type(3)::before { animation-delay: 1.4s; }
+body.portal .intent-journey.journey-active .intent-route i::after,
+body.portal .intent-journey.journey-active .intent-route span::before {
+  animation-play-state: running;
+}
+body.portal .intent-content .pill {
+  border-color: #53664d;
+  color: #283b2f;
+  background: #f4eee4;
+}
+body.portal .intent-content .pill:focus-visible,
+body.portal .intent-choices button:focus-visible { outline-color: #365436; }
+@keyframes intent-signal {
+  0% { transform: translateX(20px); opacity: 0; }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(calc(-1 * var(--signal-distance, 100px))); opacity: 0; }
+}
+@keyframes intent-node {
+  0%, 100% { box-shadow: 0 0 0 5px #49674016, 0 0 0 6px #49674033; }
+  45% { box-shadow: 0 0 0 8px #49674020, 0 0 0 12px #49674008; }
+}
+@media(prefers-reduced-motion: reduce) {
+  body.portal .intent-route span::before { animation: none; }
+  body.portal .intent-route i::after { animation: none; display: none; }
+}

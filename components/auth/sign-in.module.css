@@ -1,4 +1,4 @@
-/* components/auth/sign-in.module.css — Architectural Editorial Login Portal */
+/* components/auth/sign-in.module.css — Stone & Green Architectural Split Login */
 
 .loginOverlay {
   position: fixed;
@@ -10,572 +10,272 @@
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   min-height: 100dvh;
-  padding: max(1.5rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left));
-  background: var(--login-bg, #f5f4f0);
-  color: var(--login-text, #0b192c);
-  transition: background-color 200ms ease, color 200ms ease;
+  background: var(--stone, #e8e1d5);
+  color: var(--ink, #272e27);
+  font-family: "Plex", var(--font-geist-sans), sans-serif;
 
-  /* Scoped pearl, navy, and gold design tokens coherent with /details & /verify-otp */
-  --login-bg: #f5f4f0;
-  --login-surface: #faf9f6;
-  --login-text: #0b192c;
-  --login-text-muted: #526071;
-  --login-navy: #0b192c;
-  --login-navy-hover: #162a45;
-  --login-gold: #c5a880;
-  --login-gold-tint: rgba(197, 168, 128, 0.12);
-  --login-gold-border: rgba(197, 168, 128, 0.35);
-  --login-border: #e2ded6;
-  --login-border-subtle: #eceae3;
-  --login-field-bg: #fcfbf8;
-  --login-field-focus: #ffffff;
-  --login-shadow: 0 24px 64px -12px rgba(11, 25, 44, 0.08), 0 4px 16px rgba(11, 25, 44, 0.03);
-  --login-btn-bg: #0b192c;
-  --login-btn-text: #ffffff;
+  --stone: #e8e1d5;
+  --paper: #f4f1eb;
+  --ink: #272e27;
+  --sage: #718063;
+  --green: #354d3b;
+  --green-hover: #203c2b;
+  --muted: #5d665b;
+  --line: #b9b9a8;
 }
 
-:global(.dark) .loginOverlay {
-  --login-bg: #0b192c;
-  --login-surface: #101e30;
-  --login-text: #f1f5f9;
-  --login-text-muted: #94a3b8;
-  --login-navy: #f1f5f9;
-  --login-navy-hover: #ffffff;
-  --login-gold: #d4af37;
-  --login-gold-tint: rgba(212, 175, 55, 0.14);
-  --login-gold-border: rgba(212, 175, 55, 0.4);
-  --login-border: #23354f;
-  --login-border-subtle: #1c2b40;
-  --login-field-bg: #0c1624;
-  --login-field-focus: #101d2f;
-  --login-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 175, 55, 0.18);
-  --login-btn-bg: #f1f5f9;
-  --login-btn-text: #0b192c;
-  background: radial-gradient(circle at 75% 20%, #152c48 0%, #0b192c 60%, #071220 100%);
-}
-
-/* Background Atmosphere: Subtle Dusk Radiance */
 .ambientGlow {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(197, 168, 128, 0.1), transparent 42rem);
+  display: none;
 }
 
-:global(.dark) .ambientGlow {
-  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12), transparent 46rem);
-}
-
-/* Responsive Centered Shell */
 .container {
-  position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 1240px;
-  margin-inline: auto;
-  margin-block: auto;
-  flex-shrink: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Monumental Threshold Grid (Asymmetric Architectural Threshold) */
 .portalGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: center;
-  min-height: 640px;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100dvh;
+  width: 100%;
 }
 
-@keyframes gatewayEntrance {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes editorialRise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 1023px) {
-  .portalGrid {
-    display: flex;
-    flex-direction: column;
-    max-width: 480px;
-    width: 100%;
-    margin-inline: auto;
-    gap: 20px;
-    min-height: 0;
-  }
-}
-
-/* ==========================================================================
-   1. Architectural Gateway Showcase (Single responsive AnimatedArtwork instance)
-   Desktop: Dominant Architectural Gateway Column (~56% width)
-   Mobile: Edge-to-edge Cinematic Art Crop
-   ========================================================================== */
 .architecturalShowcase {
   position: relative;
+  isolation: isolate;
+  min-height: 620px;
+  color: #ffffff;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  border-radius: 32px;
+  align-items: flex-end;
+  padding: 56px 48px;
   overflow: hidden;
-  border: 1px solid var(--login-border-subtle);
-  background: var(--login-surface);
-  box-shadow: var(--login-shadow);
-  min-height: 640px;
-  animation: gatewayEntrance 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.showcaseScrim {
+.architecturalShowcase::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(11, 25, 44, 0.1) 0%,
-    rgba(11, 25, 44, 0.35) 45%,
-    rgba(7, 18, 32, 0.88) 85%,
-    rgba(7, 18, 32, 0.96) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
+  background: linear-gradient(0deg, #12291ee8, #12291e08 90%);
+  z-index: -1;
 }
 
-:global(.dark) .showcaseScrim {
-  background: linear-gradient(
-    180deg,
-    rgba(7, 18, 32, 0.16) 0%,
-    rgba(7, 18, 32, 0.45) 45%,
-    rgba(4, 10, 18, 0.92) 85%,
-    rgba(4, 10, 18, 0.98) 100%
-  );
-}
-
-/* Architectural Frame Lines & Coordinates Stamp */
-.architecturalFrameLines {
+.showcaseImage {
   position: absolute;
-  inset: 18px;
-  pointer-events: none;
-  z-index: 2;
-  border: 1px solid rgba(197, 168, 128, 0.22);
-  border-radius: 20px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
 }
 
-:global(.dark) .architecturalFrameLines {
-  border-color: rgba(212, 175, 55, 0.2);
+.showcaseContent {
+  max-width: 520px;
 }
 
-.cornerCrosshairTopLeft {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 12px;
-  height: 12px;
-  border-top: 2px solid var(--login-gold);
-  border-left: 2px solid var(--login-gold);
+.showcaseEyebrow {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.88);
 }
 
-.cornerCrosshairBottomRight {
-  position: absolute;
-  bottom: -6px;
-  right: -6px;
-  width: 12px;
-  height: 12px;
-  border-bottom: 2px solid var(--login-gold);
-  border-right: 2px solid var(--login-gold);
-}
-
-.coordinateStamp {
-  position: absolute;
-  top: 14px;
-  inset-inline-start: 16px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-}
-
-/* Restrained Editorial Overlay (Desktop) */
-.showcaseEditorial {
-  position: relative;
-  z-index: 2;
-  padding: 40px;
+.showcaseHeading {
+  font-size: clamp(36px, 4.2vw, 68px);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 20px;
   color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 }
 
-.thresholdInscription {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.showcaseHeading em {
+  font-style: normal;
+  color: #c7d2b6;
 }
 
-.inscriptionKicker {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--login-gold);
+.showcaseLatin {
+  display: block;
+  direction: ltr;
+  text-align: start;
+  font: italic 24px/1.5 Georgia, serif;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.inscriptionTitle {
-  font-size: clamp(1.35rem, 2vw, 1.75rem);
-  font-weight: 700;
-  line-height: 1.35;
-  color: #ffffff;
-  margin: 0;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-}
-
-.showcaseArchitecturalNote {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.72);
-  margin: 0;
-  max-width: 44ch;
-}
-
-/* Mobile Art Crop */
-@media (max-width: 1023px) {
-  .architecturalShowcase {
-    width: 100%;
-    min-height: 0;
-    height: 180px;
-    border-radius: 22px;
-    flex-shrink: 0;
-  }
-
-  .architecturalFrameLines {
-    inset: 10px;
-    border-radius: 14px;
-  }
-
-  .coordinateStamp {
-    top: 8px;
-    inset-inline-start: 10px;
-    font-size: 0.625rem;
-  }
-
-  .showcaseEditorial {
-    display: none;
-  }
-
-  .showcaseScrim {
-    background: linear-gradient(
-      180deg,
-      rgba(11, 25, 44, 0.1) 0%,
-      rgba(7, 18, 32, 0.65) 100%
-    );
-  }
-}
-
-@media (max-width: 480px) {
-  .architecturalShowcase {
-    height: 148px;
-    border-radius: 18px;
-  }
-}
-
-@media (max-width: 360px) {
-  .architecturalShowcase {
-    height: 120px;
-    border-radius: 14px;
-  }
-}
-
-/* ==========================================================================
-   2. Open Ivory / Navy Form Plane (NO floating card wrapper)
-   ========================================================================== */
 .formPlane {
-  position: relative;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 8px 12px;
+  background: var(--stone);
+  padding: 40px clamp(24px, 5vw, 84px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  box-sizing: border-box;
-  animation: editorialRise 450ms cubic-bezier(0.16, 1, 0.3, 1) 150ms both;
 }
 
-.confirmed .container {
-  opacity: 0;
-  transform: translateY(-10px) scale(0.99);
-  transition: opacity 220ms ease, transform 220ms ease;
-}
-
-@media (max-width: 640px) {
-  .formPlane {
-    padding: 4px 2px;
-  }
-}
-
-/* Architectural Linework Accent */
-.sculpturalHeaderLine {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.hairlineSegment {
-  height: 1px;
-  flex: 1;
-  background: linear-gradient(
-    90deg,
-    var(--login-gold-border) 0%,
-    transparent 100%
-  );
-}
-
-[dir="ltr"] .hairlineSegment {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--login-gold-border) 100%
-  );
-}
-
-.hairlineCode {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.1em;
-  color: var(--login-gold);
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-/* Top Navigation Bar: Back, Language, Support, Close */
 .navBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
+  min-height: 44px;
+  padding: 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.navButton:hover {
+  color: var(--green);
 }
 
 .navTrailing {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  gap: 10px;
 }
 
-.navButton,
 .languageToggle,
-.customerServiceLink,
-.closeButton {
-  min-height: 44px;
-  min-width: 44px;
+.customerServiceLink {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 14px;
-  border-radius: 9999px;
-  border: 1px solid var(--login-border);
-  background: var(--login-field-bg);
-  color: var(--login-text-muted);
-  font-size: 0.8125rem;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid #8b947e;
+  border-radius: 2px;
+  font-size: 13px;
   font-weight: 600;
-  cursor: pointer;
+  color: var(--ink);
+  background: transparent;
   text-decoration: none;
-  transition: all 180ms ease;
-  user-select: none;
-  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.languageToggle:hover,
+.customerServiceLink:hover {
+  background: #d4d7c8;
 }
 
 .closeButton {
-  padding: 0;
-  width: 44px;
-  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #9ba18d;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
 }
 
-.navButton:active,
-.languageToggle:active,
-.customerServiceLink:active,
-.closeButton:active {
-  transform: scale(0.96);
+.closeButton:hover {
+  background: #cfd3c2;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .navButton:hover,
-  .languageToggle:hover,
-  .customerServiceLink:hover,
-  .closeButton:hover {
-    color: var(--login-text);
-    border-color: var(--login-gold-border);
-    background: var(--login-field-focus);
-  }
-}
-
-@media (max-width: 360px) {
-  .navBar {
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-  .navTrailing {
-    gap: 6px;
-  }
-  .navButton,
-  .languageToggle,
-  .customerServiceLink {
-    padding: 0 10px;
-    font-size: 0.75rem;
-    gap: 4px;
-  }
-}
-
-/* Singular Brand Anchor */
 .formBrand {
-  display: flex;
-  align-items: center;
   margin-bottom: 20px;
 }
 
-/* Heading Block: Fluid, Balanced, Editorial */
 .headingBlock {
   margin-bottom: 24px;
 }
 
 .headingTitle {
-  font-size: clamp(1.85rem, 2.6vw, 2.4rem);
-  font-weight: 800;
-  line-height: 1.25;
-  color: var(--login-text);
-  margin: 0 0 10px 0;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
-}
-
-@media (max-width: 640px) {
-  .headingTitle {
-    font-size: clamp(1.5rem, 5.5vw, 1.85rem);
-  }
+  font-size: clamp(32px, 3.2vw, 46px);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 10px;
+  color: var(--ink);
 }
 
 .headingSubtitle {
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--login-text-muted);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--muted);
   margin: 0;
 }
 
-/* ==========================================================================
-   3. Segmented Method Switcher Tabs
-   ========================================================================== */
 .tabList {
-  display: flex;
-  background: var(--login-field-bg);
-  border: 1px solid var(--login-border);
-  border-radius: 16px;
-  padding: 4px;
-  margin-bottom: 24px;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .tabButton {
-  flex: 1;
-  min-height: 44px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 14px;
-  border-radius: 12px;
-  border: none;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
   background: transparent;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--login-text-muted);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.tabButton:hover:not(:disabled) {
+  background: #d4d7c8;
 }
 
 .tabButtonActive {
-  background: var(--login-navy);
+  background: var(--green);
+  border-color: var(--green);
   color: #ffffff;
-  box-shadow: 0 2px 10px rgba(11, 25, 44, 0.12);
 }
 
-:global(.dark) .tabButtonActive {
-  background: #1c2b40;
-  color: #f1f5f9;
-  border: 1px solid var(--login-gold-border);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-}
-
-.tabButton:disabled {
-  opacity: 1;
-  cursor: not-allowed;
+.tabButtonActive:hover:not(:disabled) {
+  background: var(--green-hover);
 }
 
 .tabSoonContainer {
-  position: relative;
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 2px;
+  color: var(--muted);
 }
 
 .tabButtonDisabled {
-  width: 100%;
-  min-height: 44px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  border-radius: 12px;
-  color: var(--login-text-muted);
-  opacity: 0.45;
-  cursor: not-allowed;
-  user-select: none;
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: 13px;
 }
 
 .soonPill {
-  position: absolute;
-  top: -6px;
-  inset-inline-end: 8px;
+  font-size: 11px;
   padding: 2px 8px;
-  border-radius: 9999px;
-  font-size: 0.625rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: rgba(197, 168, 128, 0.22);
-  color: var(--login-gold);
-  border: 1px solid var(--login-gold-border);
-  backdrop-filter: blur(4px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
 }
 
-/* ==========================================================================
-   4. Form Controls & Inputs
-   ========================================================================== */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .fieldGroup {
@@ -585,341 +285,201 @@
 }
 
 .label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--login-text);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .inputWrapper {
+  position: relative;
   display: flex;
-  align-items: center;
-  min-height: 52px;
-  background: var(--login-field-bg);
-  border: 1px solid var(--login-border);
-  border-radius: 16px;
-  padding: 0 16px;
-  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
-  box-sizing: border-box;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color 180ms ease;
 }
 
 .inputWrapper:focus-within {
-  border-color: var(--login-gold);
-  box-shadow: 0 0 0 3px var(--login-gold-tint);
-  background: var(--login-field-focus);
+  border-color: var(--green);
 }
 
 .phonePrefix {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding-inline-end: 12px;
-  margin-inline-end: 12px;
-  border-inline-end: 1px solid var(--login-border);
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--login-text-muted);
-  flex-shrink: 0;
-  user-select: none;
+  gap: 6px;
+  padding: 0 12px;
+  border-inline-end: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  background: rgba(185, 185, 168, 0.2);
 }
 
 .flagIcon {
-  font-size: 1.125rem;
-  line-height: 1;
-}
-
-.textInput {
-  min-height: 44px;
-  flex: 1;
-  width: 100%;
-  min-width: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 0.9375rem;
-  color: var(--login-text);
-  font-family: inherit;
-}
-
-.textInput:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.textInput::placeholder {
-  color: var(--login-text-muted);
-  opacity: 0.85;
+  font-size: 16px;
 }
 
 .fieldIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--login-text-muted);
-  margin-inline-end: 12px;
+  position: relative;
+  align-self: center;
+  margin-inline-start: 14px;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
   flex-shrink: 0;
 }
 
-/* Recoverable Error Message */
+.textInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+  outline: none;
+}
+
 .errorAlert {
-  padding: 12px 16px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  border-radius: 14px;
+  padding: 10px 14px;
+  border: 1px solid #9b2d22;
+  background: rgba(155, 45, 34, 0.08);
+  border-radius: 4px;
 }
 
 .errorMessage {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #dc2626;
-  text-align: center;
-  line-height: 1.45;
   margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9b2d22;
 }
 
-:global(.dark) .errorMessage {
-  color: #f87171;
-}
-
-/* Informational Method Note */
 .noteBox {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 0 4px;
-  color: var(--login-text-muted);
-  font-size: 0.75rem;
-  line-height: 1.55;
+  padding: 14px 0;
+  border-block: 1px solid var(--line);
+  color: var(--muted);
 }
 
 .noteIcon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   margin-top: 2px;
   flex-shrink: 0;
-  color: var(--login-gold);
+  color: var(--sage);
 }
 
 .noteText {
   margin: 0;
+  font-size: 13px;
+  line-height: 1.75;
 }
 
-/* ==========================================================================
-   5. Submit Action & Shine Accent
-   ========================================================================== */
 .submitBtn {
   position: relative;
-  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   width: 100%;
   min-height: 52px;
-  border-radius: 16px;
-  border: 1px solid var(--login-gold-border);
-  background: var(--login-btn-bg);
-  color: var(--login-btn-text);
-  font-size: 0.9375rem;
-  font-weight: 700;
+  padding: 12px 24px;
+  border: 1px solid var(--green);
+  border-radius: 2px;
+  background: var(--green);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 4px 18px rgba(11, 25, 44, 0.12);
-  transition: transform 150ms ease, opacity 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
-  box-sizing: border-box;
+  transition: background 180ms ease;
 }
 
-.submitBtn:active:not(:disabled) {
-  transform: scale(0.98);
+.submitBtn:hover:not(:disabled) {
+  background: var(--green-hover);
 }
 
 .submitBtn:disabled {
   opacity: 0.65;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .submitBtn:hover:not(:disabled) {
-    box-shadow: 0 8px 28px rgba(11, 25, 44, 0.22);
-  }
+  cursor: wait;
 }
 
 .submitBtnShine {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    transparent 100%
-  );
-  transform: translateX(-100%);
-  transition: transform 800ms ease;
-  pointer-events: none;
+  display: none;
 }
 
-.submitBtn:hover .submitBtnShine {
-  transform: translateX(100%);
-}
-
-/* Free Trial Secondary Option */
 .freeTrialWrapper {
   margin-top: 16px;
-  text-align: center;
 }
 
 .freeTrialBtn {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 20px;
+  border: 1px solid #8b947e;
+  border-radius: 2px;
   background: transparent;
-  border: none;
-  color: var(--login-text-muted);
-  font-size: 0.875rem;
+  color: var(--ink);
+  font-size: 14px;
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 4px;
   cursor: pointer;
-  transition: color 180ms ease, transform 150ms ease;
 }
 
-.freeTrialBtn:active {
-  transform: scale(0.96);
+.freeTrialBtn:hover {
+  background: #d4d7c8;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .freeTrialBtn:hover {
-    color: var(--login-text);
+.confirmed {
+  opacity: 0.96;
+}
+
+@media (max-width: 1100px) {
+  .architecturalShowcase {
+    padding: 40px 32px;
+  }
+
+  .formPlane {
+    padding: 32px 28px;
   }
 }
 
-/* ==========================================================================
-   6. Reduced Motion Accessible Override
-   ========================================================================== */
+@media (max-width: 767px) {
+  .portalGrid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .architecturalShowcase {
+    min-height: 290px;
+    padding: 28px 6%;
+  }
+
+  .showcaseHeading {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+
+  .showcaseLatin {
+    font-size: 19px;
+  }
+
+  .formPlane {
+    padding: 28px 6% 48px;
+  }
+
+  .headingTitle {
+    font-size: 34px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .architecturalShowcase,
-  .formPlane,
-  .loginOverlay,
-  .navButton,
-  .languageToggle,
-  .customerServiceLink,
-  .closeButton,
   .tabButton,
   .inputWrapper,
-  .submitBtn,
-  .freeTrialBtn,
-  .submitBtnShine {
-    animation: none !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    transform: none !important;
+  .submitBtn {
+    transition: none;
   }
 }
-
-/* The form unfolds like a threshold, rather than presenting a static poster. */
-@keyframes login-content-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes login-frame-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-@media (prefers-reduced-motion: no-preference) {
-  .formBrand { animation: login-content-in 600ms cubic-bezier(.16,1,.3,1) 120ms backwards; }
-  .headingBlock { animation: login-content-in 600ms cubic-bezier(.16,1,.3,1) 190ms backwards; }
-  .tabList { animation: login-content-in 600ms cubic-bezier(.16,1,.3,1) 250ms backwards; }
-  .form { animation: login-content-in 600ms cubic-bezier(.16,1,.3,1) 310ms backwards; }
-  .architecturalFrameLines { animation: login-frame-draw 900ms cubic-bezier(.16,1,.3,1) 150ms backwards; }
-  .inscriptionTitle { animation: login-content-in 750ms cubic-bezier(.16,1,.3,1) 250ms backwards; }
-}
-.inputWrapper { transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
-.inputWrapper:focus-within { box-shadow: 0 0 0 4px var(--login-gold-tint); }
-@media (hover: hover) and (pointer: fine) {
-  .submitBtn svg:last-of-type { transition: transform 180ms ease-out; }
-  .submitBtn:hover:not(:disabled) svg:last-of-type { transform: translateX(-4px); }
-  .loginOverlay[dir='ltr'] .submitBtn:hover:not(:disabled) svg:last-of-type { transform: translateX(4px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .confirmed .container { opacity: 1; transform: none; transition: none; }
-  .inputWrapper, .submitBtn svg { transition: none; }
-  .submitBtn:hover:not(:disabled) svg:last-of-type { transform: none; }
-}
-
-/* The portal is rendered geometry, with the form available from the first frame. */
-.architecturalShowcase { border-radius:24px 6px 24px 6px; min-height:680px; background:#102332; }
-.headingTitle { font-size:clamp(34px,3.5vw,52px); line-height:1.25; letter-spacing:-.025em; }
-.loginOverlay[dir='rtl'] .headingTitle { letter-spacing:0; line-height:1.5; }
-.sculpturalHeaderLine { display:none; }
-@media(max-width:1023px) { .architecturalShowcase { min-height:0; height:260px; width:100%; border-radius:20px; } .portalGrid { gap:24px; } }
-@media(max-width:480px) { .architecturalShowcase { height:230px; } .headingTitle { font-size:32px; } .loginOverlay { padding-top:16px; } }
-
-@font-face { font-family:'Plex Arabic Local'; src:url('/fonts/ibm-plex-arabic/regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
-@font-face { font-family:'Plex Arabic Local'; src:url('/fonts/ibm-plex-arabic/semibold.ttf') format('truetype'); font-weight:600 900; font-style:normal; font-display:swap; }
-.loginOverlay[dir='rtl'] { font-family:'Plex Arabic Local',Tahoma,sans-serif; }
-.loginOverlay[dir='rtl'] .headingTitle { font-size:clamp(32px,3.1vw,46px); font-weight:600; line-height:1.75; text-wrap:balance; letter-spacing:0; }
-.loginOverlay[dir='rtl'] .headingSubtitle,.loginOverlay[dir='rtl'] .noteText { line-height:2; }
-.loginOverlay[dir='rtl'] .fieldGroup { text-align:right; }
-@media(max-width:480px) { .loginOverlay[dir='rtl'] .headingTitle { font-size:30px; line-height:1.8; } .loginOverlay[dir='rtl'] .headingBlock { margin-bottom:22px; } }
-
-/* Selected centered doorway: full scene beside the existing authentication form. */
-.loginOverlay {
-  --login-bg: #f5f2e9;
-  --login-surface: #fffdf6;
-  --login-text: #163c38;
-  --login-text-muted: #63716b;
-  --login-navy: #173c35;
-  --login-navy-hover: #28594b;
-  --login-gold: #a77842;
-  --login-gold-tint: #b9925a16;
-  --login-gold-border: #b9925a70;
-  --login-border: #cbd3c9;
-  --login-border-subtle: #d8dacf;
-  --login-field-bg: #fffdf6;
-  --login-field-focus: #ffffff;
-  --login-btn-bg: #173c35;
-  --login-btn-text: #f9f4e6;
-  padding: 0;
-  background: var(--login-bg);
-}
-:global(.dark) .loginOverlay {
-  --login-bg: #102a25;
-  --login-surface: #17382f;
-  --login-text: #f0eadc;
-  --login-text-muted: #b3c6ba;
-  --login-navy: #f0eadc;
-  --login-gold: #d8ad76;
-  --login-gold-tint: #d8ad761a;
-  --login-gold-border: #d8ad7660;
-  --login-border: #456356;
-  --login-border-subtle: #355345;
-  --login-field-bg: #17382f;
-  --login-field-focus: #1d4236;
-  --login-btn-bg: #e4c28e;
-  --login-btn-text: #102a25;
-  background: var(--login-bg);
-}
-.ambientGlow { display: none; }
-.container { max-width: 1600px; margin-block: auto; }
-.portalGrid { direction: ltr; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; align-items: stretch; min-height: 100dvh; }
-.architecturalShowcase { min-width: 0; min-height: 100dvh; height: auto; border: 0; border-radius: 0; box-shadow: none; background: #173936; animation: none; justify-content: center; }
-.formPlane { min-width: 0; padding: 32px clamp(28px, 6vw, 100px) 48px; direction: rtl; background: var(--login-bg); }
-.loginOverlay[dir='ltr'] .formPlane { direction: ltr; }
-.loginOverlay[dir='rtl'] .headingTitle { font-size: clamp(34px, 3.6vw, 54px); line-height: 1.6; text-wrap: pretty; }
-.headingTitle { color: var(--login-text); font-size: clamp(34px, 3.6vw, 54px); line-height: 1.4; }
-.formBrand { margin-top: 12px; }
-.navBar { margin-bottom: 32px; }
-.navButton, .languageToggle, .customerServiceLink, .closeButton { transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
-@media(max-width:1023px) {
-  .portalGrid { display: flex; max-width: none; flex-direction: column; min-height: 100dvh; gap: 0; }
-  .architecturalShowcase { min-height: 0; height: auto; width: 100%; border-radius: 0; }
-  .formPlane { padding: 28px max(6vw, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(6vw, env(safe-area-inset-left)); width: 100%; max-width: 620px; margin-inline: auto; }
-  .loginOverlay[dir='rtl'] .headingTitle { font-size: 36px; line-height: 1.6; }
-}
-@media(max-width:480px) {
-  .navBar { align-items: flex-start; margin-bottom: 24px; }
-  .navTrailing { gap: 5px; }
-  .navButton, .languageToggle, .customerServiceLink, .closeButton { font-size: 11px; padding-inline: 10px; }
-  .loginOverlay[dir='rtl'] .headingTitle, .headingTitle { font-size: 32px; }
-}
-
-/* Selected blue-grey platform palette, shared by the doorway and form. */
-.loginOverlay { --login-bg:var(--site-light-background, #e3eaf4); --login-surface:var(--site-light-surface, #f6f8fc); --login-text:#182d46; --login-text-muted:#4d627b; --login-navy:#102b46; --login-gold:#b28a54; --login-border:#becbdc; --login-border-subtle:#cad5e4; --login-field-bg:#f6f8fc; --login-btn-bg:#102b46; --login-btn-text:#f6f8fc; }
-:global(.dark) .loginOverlay { --login-bg:var(--site-dark-background, #101827); --login-surface:var(--site-dark-surface, #18273d); --login-text:#edf1f7; --login-text-muted:#a6b8d0; --login-navy:#edf1f7; --login-gold:#d8b381; --login-border:#33465f; --login-border-subtle:#2c3b53; --login-field-bg:#18273d; --login-field-focus:#20334e; --login-btn-bg:#d8b381; --login-btn-text:#101827; }
-.architecturalShowcase { background:#102b46; }

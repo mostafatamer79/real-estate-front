@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { translations } from "./translations";
 import { useSettings } from "./SettingsContext";
 
@@ -20,43 +20,46 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
   const [language, setLanguage] = useState<Language>("ar");
-  const [direction, setDirection] = useState<Direction>("rtl");
+  const direction: Direction = language === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
-    const storedLang = localStorage.getItem("language") as Language;
-    if (storedLang) {
-      setLanguage(storedLang);
-      setDirection(storedLang === "ar" ? "rtl" : "ltr");
+    const storedLang = localStorage.getItem("language") as Language | null;
+    if (storedLang === "ar" || storedLang === "en") {
+      queueMicrotask(() => setLanguage(storedLang));
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem("language", language);
-    setDirection(language === "ar" ? "rtl" : "ltr");
-    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = direction;
     document.documentElement.lang = language;
-  }, [language]);
+  }, [language, direction]);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = useCallback(() => {
     setLanguage((prev) => (prev === "ar" ? "en" : "ar"));
-  };
+  }, []);
 
-  const t = (key: string, params?: Record<string, string | number>) => {
+  const t = useCallback((key: string, params?: Record<string, string | number>) => {
     // Check for dynamic override first from SettingsContext
     const overrides = settings.textOverrides || {};
     const overrideKey = `${language}_${key}`;
     const text = overrides[overrideKey] || overrides[key] || translations[language][key] || key;
-    
+
     if (params) {
-        return Object.keys(params).reduce((acc, current) => {
-            return acc.replace(new RegExp(`{${current}}`, 'g'), String(params[current]));
-        }, text);
+      return Object.keys(params).reduce((acc, current) => {
+        return acc.replace(new RegExp(`{${current}}`, 'g'), String(params[current]));
+      }, text);
     }
     return text;
-  };
+  }, [language, settings.textOverrides]);
+
+  const contextValue = useMemo(
+    () => ({ language, direction, setLanguage, toggleLanguage, t }),
+    [language, direction, toggleLanguage, t]
+  );
 
   return (
-    <LanguageContext.Provider value={{ language, direction, setLanguage, toggleLanguage, t }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );

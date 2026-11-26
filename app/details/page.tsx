@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 
-const DetailsNeighborhood = dynamic(() => import('@/components/details/DetailsNeighborhood'), { ssr: false });
+import DetailsNeighborhood from '@/components/details/DetailsNeighborhood';
 import studio from './details-studio.module.css';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -83,8 +83,7 @@ export default function DetailsPage() {
   const toggleSection = (id: string) => setExpandedSections(prev => ({ ...prev, [id]: !prev[id] }));
 
   const [priceData, setPriceData] = useState<number[]>([]);
-  const [chartLabels, setChartLabels] = useState<string[]>([]);
-  const [propertyTypes, setPropertyTypes] = useState<Array<{ name: string; value: number; color: string }>>([]);
+  const [rawPropertyTypes, setRawPropertyTypes] = useState<Array<{ name: string; value: number }>>([]);
   const [operations, setOperations] = useState<Record<string, unknown>[]>([]);
   const [marketingRequests, setMarketingRequests] = useState<Record<string, unknown>[]>([]);
   const [selectedStatus] = useState<string>('ALL');
@@ -94,6 +93,27 @@ export default function DetailsPage() {
   const [hasDataError, setHasDataError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
+  const chartLabels = useMemo(() => {
+    if (priceData.length === 0) return [];
+    const today = new Date();
+    return Array.from({ length: 12 }, (_, index) =>
+      t(`chart.months.short.${new Date(today.getFullYear(), today.getMonth() - 11 + index, 1).getMonth() + 1}`)
+    );
+  }, [priceData.length, t]);
+
+  const propertyTypes = useMemo(
+    () =>
+      rawPropertyTypes.map((item, index) => {
+        const key = `property.type.${item.name.toLowerCase()}`;
+        const translated = t(key);
+        return {
+          ...item,
+          name: translated === key ? item.name : translated,
+          color: ['bg-indigo-400', 'bg-slate-400', 'bg-gray-400', 'bg-primary dark:bg-slate-600'][index % 4],
+        };
+      }),
+    [rawPropertyTypes, t]
+  );
 
   const tourSteps = useMemo(() => buildTourSteps(t), [t]);
 
@@ -139,19 +159,13 @@ export default function DetailsPage() {
         if (priceRes.data !== undefined) {
           try {
             setPriceData(dashboardSeries(priceRes.data));
-            const today = new Date();
-            setChartLabels(Array.from({ length: 12 }, (_, index) => t(`chart.months.short.${new Date(today.getFullYear(), today.getMonth() - 11 + index, 1).getMonth() + 1}`)));
-          } catch { setPriceData([]); setChartLabels([]); setHasDataError(true); }
-        } else { setPriceData([]); setChartLabels([]); }
+          } catch { setPriceData([]); setHasDataError(true); }
+        } else { setPriceData([]); }
         if (statsRes.data !== undefined) {
           try {
-            setPropertyTypes(dashboardPropertyTypes(statsRes.data).map((item, index) => {
-              const key = `property.type.${item.name.toLowerCase()}`;
-              const translated = t(key);
-              return { ...item, name: translated === key ? item.name : translated, color: ['bg-indigo-400', 'bg-slate-400', 'bg-gray-400', 'bg-primary dark:bg-slate-600'][index % 4] };
-            }));
-          } catch { setPropertyTypes([]); setHasDataError(true); }
-        } else { setPropertyTypes([]); }
+            setRawPropertyTypes(dashboardPropertyTypes(statsRes.data));
+          } catch { setRawPropertyTypes([]); setHasDataError(true); }
+        } else { setRawPropertyTypes([]); }
 
         const normalizeList = (payload: unknown): Record<string, unknown>[] => {
           if (Array.isArray(payload)) return payload.filter(item => item && typeof item === 'object') as Record<string, unknown>[];
@@ -171,7 +185,7 @@ export default function DetailsPage() {
         if (!signal.aborted) setIsDataLoading(false);
       }
     },
-    [token, selectedStatus, selectedRange, t]
+    [token, selectedStatus, selectedRange]
   );
 
   useEffect(() => {

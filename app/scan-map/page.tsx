@@ -2,57 +2,71 @@
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Compass,
+  Crosshair,
+  Download,
+  FileText,
+  Loader2,
+  Lock,
+  MapPin,
+  Minus,
+  Plus,
+  Table as TableIcon,
+  X,
+} from "lucide-react";
 import { Place } from "@/types/map";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSettings } from "@/context/SettingsContext";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import PaymentMethodsModal from "@/components/Payment/PaymentMethodsModal";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { SaudiRiyalAmount } from "@/components/ui/saudi-riyal";
 import { financialApi } from "@/lib/api";
 import {
-  computeZoomForRadius,
-  sortPlacesByDistance,
-  computePlaceStatistics,
-  resolvePlacesApiUrl,
-  validatePlacesResponse,
-  generateScanCsv,
-  derivePricingStatus,
+  ATLAS_CATEGORIES,
+  AtlasCategoryKey,
+  categorizePlaceType,
   classifyGeolocationError,
+  computePlaceStatistics,
+  computeZoomForRadius,
+  derivePricingStatus,
+  findNearestDistrictPreset,
+  formatCoordinatesDms,
+  formatDistance,
+  generateScanCsv,
+  resolvePlacesApiUrl,
+  sortPlacesByDistance,
+  validatePlacesResponse,
   ScanPlaceWithDistance,
 } from "@/lib/redesign-chat12-scan";
-import ScanMapHeader from "@/components/redesign/chat12/ScanMapHeader";
-import ScanMapControls from "@/components/redesign/chat12/ScanMapControls";
+import AtlasScanSidebar from "@/components/redesign/chat12/AtlasScanSidebar";
 import ScanResultsTable from "@/components/redesign/chat12/ScanResultsTable";
 import ScanDisclaimerModal from "@/components/redesign/chat12/ScanDisclaimerModal";
 import ScanGeneratingOverlay from "@/components/redesign/chat12/ScanGeneratingOverlay";
-import styles from "@/components/redesign/chat12/scan-map.module.css";
+import styles from "@/components/redesign/chat12/atlas-scan.module.css";
 
-// Dynamic Import for Map with Accessible Skeleton
-const MapLoading = () => {
-  const { t, language } = useLanguage();
-  return (
+const AtlasMap = dynamic(() => import("@/components/redesign/chat12/AtlasMap"), {
+  ssr: false,
+  loading: () => (
     <div
       role="status"
       aria-live="polite"
-      className="h-[65vh] min-h-[420px] bg-slate-100 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-slate-800"
+      className={styles.atlasMapContainer}
+      style={{ display: "grid", placeItems: "center", color: "#94a3b8" }}
     >
-      <div className="h-8 w-8 rounded-full border-3 border-amber-500 border-t-transparent animate-spin mb-3" />
-      <span className="text-sm font-bold text-slate-600 dark:text-slate-400">
-        {t("scan.loadingMap") || (language === "ar" ? "جاري تحميل الخريطة الجغرافية..." : "Loading Map...")}
-      </span>
+      <span>جاري تحميل الخريطة الجغرافية...</span>
     </div>
-  );
-};
-
-const Map = dynamic(() => import("../src/components/Map"), {
-  ssr: false,
-  loading: () => <MapLoading />,
+  ),
 });
 
 const DEFAULT_LOCATION: [number, number] = [24.7136, 46.6753]; // Riyadh, Al Olaya
-const DEFAULT_RADIUS = 2000; // 2km
+const DEFAULT_RADIUS = 2000; // 2 km
 
 export default function ScanMapPage() {
   const router = useRouter();
@@ -63,13 +77,22 @@ export default function ScanMapPage() {
 
   // Core Survey State
   const [propertyLocation, setPropertyLocation] = useState<[number, number]>(DEFAULT_LOCATION);
+  const [customLocationLabel, setCustomLocationLabel] = useState<string | null>(null);
   const [searchRadius, setSearchRadius] = useState<number>(DEFAULT_RADIUS);
+  const [panTrigger, setPanTrigger] = useState<number>(0);
   const [rawPlaces, setRawPlaces] = useState<Place[]>([]);
-  const [isSelectingLocation, setIsSelectingLocation] = useState<boolean>(false);
+  const [hasScanned, setHasScanned] = useState<boolean>(false);
+  const [isOutdated, setIsOutdated] = useState<boolean>(false);
   const [loadingScan, setLoadingScan] = useState<boolean>(false);
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Atlas UI State
+  const [mobileControlsOpen, setMobileControlsOpen] = useState<boolean>(false);
+  const [activeCategory, setActiveCategory] = useState<AtlasCategoryKey>("all");
+  const [selectedPlace, setSelectedPlace] = useState<ScanPlaceWithDistance | null>(null);
+  const [mapScaleLabel, setMapScaleLabel] = useState<string>(isAr ? "500 م" : "500 m");
 
   // Financial & Report State
   const [isPaid, setIsPaid] = useState<boolean>(false);
@@ -84,10 +107,15 @@ export default function ScanMapPage() {
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState<boolean>(false);
   const [disclaimerChecked, setDisclaimerChecked] = useState<boolean>(false);
 
-  // Refs for race protection and unmount safety
+  // Refs
   const abortControllerRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef<boolean>(true);
   const mapCaptureRef = useRef<HTMLDivElement | null>(null);
+  const mapActionsRef = useRef<{
+    zoomIn: () => void;
+    zoomOut: () => void;
+    centerOnMarker: (target?: [number, number], targetZoom?: number) => void;
+  } | null>(null);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -99,13 +127,54 @@ export default function ScanMapPage() {
     };
   }, []);
 
-  // Back Navigation with fallback
+  // Escape closes place detail card
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedPlace) {
+        setSelectedPlace(null);
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [selectedPlace]);
+
   const handleBack = useCallback(() => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-      return;
+    if (typeof window !== "undefined") {
+      // Prefer Navigation API when available to avoid going back to about:blank or external sites
+      const nav = (
+        window as unknown as {
+          navigation?: {
+            currentEntry?: { index?: number };
+            entries?: () => Array<{ url?: string | null }>;
+          };
+        }
+      ).navigation;
+
+      if (nav?.entries && nav.currentEntry && typeof nav.currentEntry.index === "number") {
+        const idx = nav.currentEntry.index;
+        const prevUrl = idx > 0 ? nav.entries()[idx - 1]?.url : null;
+        if (prevUrl && prevUrl.startsWith(window.location.origin)) {
+          router.back();
+          return;
+        }
+        router.push("/");
+        return;
+      }
+
+      let isSameOriginReferrer = false;
+      if (document.referrer) {
+        try {
+          isSameOriginReferrer = new URL(document.referrer).origin === window.location.origin;
+        } catch {
+          isSameOriginReferrer = false;
+        }
+      }
+      if (window.history.length > 1 && isSameOriginReferrer) {
+        router.back();
+        return;
+      }
     }
-    router.replace("/details");
+    router.push("/");
   }, [router]);
 
   // Pricing Status Derivation
@@ -113,6 +182,8 @@ export default function ScanMapPage() {
   const pricingInfo = useMemo(() => {
     return derivePricingStatus(settings?.servicePrices, isMapFree, settingsLoading);
   }, [settings?.servicePrices, isMapFree, settingsLoading]);
+
+  const isFreeOrPaid = pricingInfo.status === "free" || isPaid;
 
   // Distance Sorting & Place Statistics
   const sortedPlaces: ScanPlaceWithDistance[] = useMemo(() => {
@@ -123,44 +194,73 @@ export default function ScanMapPage() {
     return computePlaceStatistics(sortedPlaces);
   }, [sortedPlaces]);
 
-  // Automatic Leaflet Zoom calculation based on radius
-  const dynamicZoom = useMemo(() => {
-    return computeZoomForRadius(searchRadius);
-  }, [searchRadius]);
-
-  // Capture map image for report generation fallback
-  const captureMapImage = useCallback(async () => {
-    if (!mapCaptureRef.current) return undefined;
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(mapCaptureRef.current, {
-        backgroundColor: "#0f172a",
-        useCORS: true,
-        allowTaint: true,
-        scale: 1,
-        logging: false,
-      });
-      return canvas.toDataURL("image/jpeg", 0.82);
-    } catch (captureError) {
-      console.warn("Map raster capture skipped; backend diagram will be used:", captureError);
-      return undefined;
+  // Category Counts
+  const categoryCounts = useMemo(() => {
+    const counts: Record<AtlasCategoryKey, number> = {
+      all: sortedPlaces.length,
+      education: 0,
+      health: 0,
+      shopping: 0,
+      parks: 0,
+      dining: 0,
+      worship: 0,
+      other: 0,
+    };
+    for (const p of sortedPlaces) {
+      const cat = categorizePlaceType(p.type);
+      counts[cat] += 1;
     }
-  }, []);
+    return counts;
+  }, [sortedPlaces]);
 
-  // Map Click Handler
-  const handleLocationSelect = useCallback(
-    (lat: number, lng: number) => {
-      if (isSelectingLocation) {
-        setPropertyLocation([lat, lng]);
-        setIsSelectingLocation(false);
-        setRawPlaces([]);
-        setError(null);
-      }
-    },
-    [isSelectingLocation]
+  const dynamicZoom = useMemo(() => computeZoomForRadius(searchRadius), [searchRadius]);
+
+  // Human-readable location label (preset if nearby, custom search label, or coordinates)
+  const resolvedLocationLabel = useMemo(() => {
+    if (customLocationLabel) return customLocationLabel;
+    const nearest = findNearestDistrictPreset(propertyLocation[0], propertyLocation[1]);
+    if (nearest) {
+      return isAr ? `${nearest.cityNameAr}، ${nearest.nameAr}` : `${nearest.cityNameEn}, ${nearest.nameEn}`;
+    }
+    return isAr
+      ? `نقطة مخصصة (${propertyLocation[0].toFixed(4)}, ${propertyLocation[1].toFixed(4)})`
+      : `Custom Point (${propertyLocation[0].toFixed(4)}, ${propertyLocation[1].toFixed(4)})`;
+  }, [customLocationLabel, propertyLocation, isAr]);
+
+  const dmsCoords = useMemo(
+    () => formatCoordinatesDms(propertyLocation[0], propertyLocation[1]),
+    [propertyLocation]
   );
 
-  // Geolocation Handler
+  // Location change handler (from map click, marker drag, search, or manual coords)
+  const handleSelectLocation = useCallback(
+    (lat: number, lng: number, label?: string, panTo: boolean = false) => {
+      setPropertyLocation([lat, lng]);
+      setCustomLocationLabel(label ?? null);
+      setSelectedPlace(null);
+      setError(null);
+      if (hasScanned) {
+        setIsOutdated(true);
+      }
+      if (panTo) {
+        setPanTrigger((n) => n + 1);
+      }
+    },
+    [hasScanned]
+  );
+
+  // Radius change handler
+  const handleRadiusChange = useCallback(
+    (radiusMeters: number) => {
+      setSearchRadius(radiusMeters);
+      if (hasScanned) {
+        setIsOutdated(true);
+      }
+    },
+    [hasScanned]
+  );
+
+  // Geolocation Handler (only triggered on explicit user action)
   const handleLocateMe = useCallback(() => {
     if (typeof window === "undefined" || !navigator.geolocation) {
       setError(
@@ -179,8 +279,7 @@ export default function ScanMapPage() {
         if (!isMountedRef.current) return;
         setIsLocating(false);
         const { latitude, longitude } = pos.coords;
-        setPropertyLocation([latitude, longitude]);
-        setRawPlaces([]);
+        handleSelectLocation(latitude, longitude, isAr ? "موقعي الحالي" : "My Current Location", true);
         toast.success(isAr ? "تم تحديد موقعك الحالي بنجاح" : "Current location found");
       },
       (err) => {
@@ -191,9 +290,27 @@ export default function ScanMapPage() {
       },
       { timeout: 12000, enableHighAccuracy: true }
     );
-  }, [isAr]);
+  }, [isAr, handleSelectLocation]);
 
-  // Report Generator Function (Safe, preserves places even if report fails)
+  // Capture map image for report generation fallback
+  const captureMapImage = useCallback(async () => {
+    if (!mapCaptureRef.current) return undefined;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(mapCaptureRef.current, {
+        backgroundColor: "#0a0e17",
+        useCORS: true,
+        allowTaint: true,
+        scale: 1,
+        logging: false,
+      });
+      return canvas.toDataURL("image/jpeg", 0.82);
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  // Report Generator Function
   const triggerReportGeneration = useCallback(
     async (placesList: Place[], originLoc: [number, number], radius: number) => {
       if (placesList.length === 0) return;
@@ -226,11 +343,9 @@ export default function ScanMapPage() {
           );
         }
       } catch (reportErr: unknown) {
-        console.warn("Report dossier generation encountered an error:", reportErr);
         if (isMountedRef.current) {
           const errRecord = reportErr as { response?: { status?: number } };
-          const status = errRecord?.response?.status;
-          if (status === 401) {
+          if (errRecord?.response?.status === 401) {
             toast.error(
               isAr
                 ? "تم المسح بنجاح! يُرجى تسجيل الدخول لحفظ التقرير الرسمي تلقائياً في حسابك."
@@ -239,8 +354,8 @@ export default function ScanMapPage() {
           } else {
             toast.error(
               isAr
-                ? "تم المسح بنجاح. تعذر إصدار ملف التقرير حالياً؛ يمكنك إعادة المحاولة عبر زر التوليد."
-                : "Survey finished. Report generation can be retried via the controls."
+                ? "تم المسح بنجاح. تعذر إصدار ملف التقرير حالياً؛ يمكنك إعادة المحاولة."
+                : "Survey finished. Report generation can be retried."
             );
           }
         }
@@ -252,6 +367,15 @@ export default function ScanMapPage() {
     },
     [captureMapImage, isAr]
   );
+
+  // Cancel Scan
+  const handleCancelScan = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setLoadingScan(false);
+  }, []);
 
   // Core Scan Execution
   const executeScan = useCallback(async () => {
@@ -275,6 +399,8 @@ export default function ScanMapPage() {
 
     setLoadingScan(true);
     setError(null);
+    setSelectedPlace(null);
+    setMobileControlsOpen(false);
 
     try {
       const origin = typeof window !== "undefined" ? window.location.origin : undefined;
@@ -288,9 +414,7 @@ export default function ScanMapPage() {
 
       const response = await fetch(`${endpoint}?${params.toString()}`, {
         signal: controller.signal,
-        headers: {
-          Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
       });
 
       if (!response.ok) {
@@ -308,12 +432,15 @@ export default function ScanMapPage() {
 
       if (isMountedRef.current) {
         setRawPlaces(validation.places);
+        setHasScanned(true);
+        setIsOutdated(false);
+        setActiveCategory("all");
 
         if (validation.places.length === 0) {
           toast(
             isAr
-              ? `لم يتم العثور على مرافق مسجلة ضمن دائرة قطرها ${searchRadius}م. يمكنك توسيع نطاق البحث.`
-              : `No registered facilities found within ${searchRadius}m. Try expanding the search radius.`,
+              ? `لم يتم العثور على مرافق مسجلة ضمن دائرة قطرها ${searchRadius}م.`
+              : `No registered facilities found within ${searchRadius}m.`,
             { icon: "📍" }
           );
         } else {
@@ -323,7 +450,6 @@ export default function ScanMapPage() {
               : `Found ${validation.places.length} places`
           );
 
-          // If unlocked/free, attempt generating official report
           if (pricingInfo.status === "free" || isPaid) {
             triggerReportGeneration(validation.places, propertyLocation, searchRadius);
           }
@@ -358,7 +484,6 @@ export default function ScanMapPage() {
     triggerReportGeneration,
   ]);
 
-  // Start scan handler (triggers disclaimer first if unaccepted)
   const handleStartScan = useCallback(() => {
     if (!acceptedDisclaimer) {
       setDisclaimerChecked(false);
@@ -368,7 +493,6 @@ export default function ScanMapPage() {
     executeScan();
   }, [acceptedDisclaimer, executeScan]);
 
-  // CSV Export Handler
   const handleExportCsv = useCallback(() => {
     if (sortedPlaces.length === 0) return;
     try {
@@ -378,7 +502,6 @@ export default function ScanMapPage() {
         propertyLocation[1],
         isAr ? "ar" : "en"
       );
-
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -389,27 +512,27 @@ export default function ScanMapPage() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       toast.success(isAr ? "تم تصدير ملف CSV بنجاح" : "CSV file downloaded");
-    } catch (csvError) {
-      console.error("CSV generation failed:", csvError);
+    } catch {
       toast.error(isAr ? "تعذر تصدير ملف CSV" : "Failed to export CSV");
     }
   }, [sortedPlaces, propertyLocation, isAr]);
 
-  // Reset to default location
-  const handleResetToDefault = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+  const handleReset = useCallback(() => {
+    handleCancelScan();
     setPropertyLocation(DEFAULT_LOCATION);
+    setCustomLocationLabel(null);
     setSearchRadius(DEFAULT_RADIUS);
     setRawPlaces([]);
-    setIsSelectingLocation(false);
+    setHasScanned(false);
+    setIsOutdated(false);
+    setSelectedPlace(null);
+    setActiveCategory("all");
     setError(null);
     setShowTable(false);
     setGeneratedFiles([]);
-  }, []);
+    setPanTrigger((n) => n + 1);
+  }, [handleCancelScan]);
 
-  // Request Report Invoice
   const handleRequestReportInvoice = useCallback(async () => {
     setCreatingInvoice(true);
     try {
@@ -423,10 +546,9 @@ export default function ScanMapPage() {
         setInvoiceId(resp.data.id);
         setIsPaymentModalOpen(true);
       } else {
-        throw new Error("Missing invoice identifier in server response");
+        throw new Error("Missing invoice identifier");
       }
-    } catch (invErr: unknown) {
-      console.error("Invoice creation failed:", invErr);
+    } catch {
       toast.error(
         isAr
           ? "تعذر إعداد فاتورة الخدمة. يُرجى التحقق من اتصال الحساب والمحاولة ثانية."
@@ -449,95 +571,374 @@ export default function ScanMapPage() {
     );
   }
 
+  const mapStatusText = loadingScan
+    ? isAr
+      ? "جارٍ مسح الحي"
+      : "Scanning area"
+    : isOutdated && hasScanned
+    ? isAr
+      ? "نتائج سابقة — أعد المسح"
+      : "Outdated — Re-scan"
+    : hasScanned
+    ? isAr
+      ? `تم المسح (${sortedPlaces.length})`
+      : `Scanned (${sortedPlaces.length})`
+    : isAr
+    ? "نطاق المسح جاهز"
+    : "Survey range ready";
+
   return (
-    <main className={styles.root} dir={isAr ? "rtl" : "ltr"}>
-      <div className={styles.container}>
-        {/* Header */}
-        <ScanMapHeader
-          onBack={handleBack}
-          title={t("scan.title") || (isAr ? "نظام مسح المناطق والأحياء" : "District Survey & Geospatial Scan")}
-          description={
-            t("scan.desc") ||
-            (isAr
-              ? "استكشف الخدمات الحيوية، المرافق التعليمية، الصحية، والترفيهية المحيطة بأي عقار أو حي بدقة متقدمة."
-              : "Analyze surrounding amenities, commercial facilities, and spatial indicators for any property with precision.")
-          }
-          locale={isAr ? "ar" : "en"}
-        />
+    <div className={styles.atlasRoot} dir={isAr ? "rtl" : "ltr"}>
+      <a className={styles.skipLink} href="#atlas-workspace">
+        {isAr ? "انتقل إلى أدوات المسح" : "Skip to survey controls"}
+      </a>
 
-        {/* Main Grid: Controls Sidebar + Map First Workspace */}
-        <div className={styles.mainGrid}>
-          {/* Controls & Summary */}
-          <ScanMapControls
-            propertyLocation={propertyLocation}
-            onLocationChange={(loc) => {
-              setPropertyLocation(loc);
-              setRawPlaces([]);
-              setError(null);
-            }}
-            isSelectingLocation={isSelectingLocation}
-            onToggleSelectingLocation={() => setIsSelectingLocation((prev) => !prev)}
-            searchRadius={searchRadius}
-            onRadiusChange={(radius) => setSearchRadius(radius)}
-            onStartScan={handleStartScan}
-            onReset={handleResetToDefault}
-            onLocateMe={handleLocateMe}
-            isLocating={isLocating}
-            isLoadingScan={loadingScan}
-            places={sortedPlaces}
-            stats={placeStats}
-            showTable={showTable}
-            onToggleTable={() => setShowTable((prev) => !prev)}
-            onExportCsv={handleExportCsv}
-            error={error}
-            onDismissError={() => setError(null)}
-            pricingStatus={pricingInfo.status}
-            reportPrice={pricingInfo.price}
-            isPaid={isPaid}
-            onRequestReportInvoice={handleRequestReportInvoice}
-            isCreatingInvoice={creatingInvoice}
-            isGeneratingReport={generatingReport}
-            onRetryReportGeneration={() =>
-              triggerReportGeneration(rawPlaces, propertyLocation, searchRadius)
-            }
-            generatedFilesCount={generatedFiles.length}
-            locale={isAr ? "ar" : "en"}
-          />
+      <div className={styles.atlasShell}>
+        <div className={styles.atlasWorkspace} id="atlas-workspace" tabIndex={-1}>
+          {/* Floating Atlas Heading */}
+          <section className={styles.atlasHeading} aria-labelledby="atlas-page-title">
+            <div>
+              <h1 id="atlas-page-title" className={styles.atlasHeadingTitle}>
+                {isAr ? "أطلس الحي." : "Neighborhood Atlas."}
+              </h1>
+              <p className={styles.atlasHeadingSub}>
+                {isAr ? "المكان كما لم تقرأه من قبل." : "The neighborhood, read with clarity."}
+              </p>
+            </div>
+            <div className={styles.atlasIndex}>
+              <span>{resolvedLocationLabel}</span>
+              <strong dir="ltr">{dmsCoords}</strong>
+              <span className={styles.atlasIndexBadge}>
+                {isAr ? "مسح جغرافي فعلي" : "Live Geospatial Survey"}
+              </span>
+            </div>
+          </section>
 
-          {/* Map Surface & Results Table */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div ref={mapCaptureRef} className={styles.mapFrame}>
-              <Map
+          {/* Floating Controls Dock: Back Button + Survey Sidebar */}
+          <div className={styles.controlsDock}>
+            <button
+              type="button"
+              onClick={handleBack}
+              className={styles.backButton}
+              aria-label={isAr ? "رجوع إلى الصفحة السابقة" : "Back to previous page"}
+            >
+              {isAr ? <ArrowRight size={15} aria-hidden="true" /> : <ArrowLeft size={15} aria-hidden="true" />}
+              <span>{isAr ? "رجوع" : "Back"}</span>
+            </button>
+
+            <AtlasScanSidebar
+              propertyLocation={propertyLocation}
+              searchRadius={searchRadius}
+              isLoadingScan={loadingScan}
+              isLocating={isLocating}
+              isOutdated={isOutdated}
+              hasResults={hasScanned}
+              placesCount={sortedPlaces.length}
+              error={error}
+              locale={isAr ? "ar" : "en"}
+              mobileOpen={mobileControlsOpen}
+              onToggleMobileOpen={() => setMobileControlsOpen((prev) => !prev)}
+              onSelectLocation={handleSelectLocation}
+              onRadiusChange={handleRadiusChange}
+              onStartScan={handleStartScan}
+              onCancelScan={handleCancelScan}
+              onReset={handleReset}
+              onLocateMe={handleLocateMe}
+              onDismissError={() => setError(null)}
+            />
+          </div>
+
+          {/* Edge-to-Edge Interactive Map */}
+          <section className={styles.mapColumn} aria-label={isAr ? "خريطة المسح الجغرافي" : "Geospatial survey map"}>
+            <div ref={mapCaptureRef} className={styles.mapFrame} aria-busy={loadingScan}>
+              <AtlasMap
                 center={propertyLocation}
+                radiusMeters={searchRadius}
                 zoom={dynamicZoom}
-                height="65vh"
+                panTrigger={panTrigger}
                 places={sortedPlaces}
-                onLocationSelect={handleLocationSelect}
-                useCurrentLocation={false}
-                markerTitle={isAr ? "موقع العقار المستهدف" : "Target Property"}
-                markerDescription={
-                  isAr
-                    ? "مركز دائرة مسح الخدمات والمرافق"
-                    : "Center of the amenity search radius"
-                }
-                showControls={isSelectingLocation}
+                activeCategory={activeCategory}
+                selectedPlaceId={selectedPlace?.id ?? null}
+                isOutdated={isOutdated}
+                locale={isAr ? "ar" : "en"}
+                onCenterChange={(lat, lng) => handleSelectLocation(lat, lng, undefined, false)}
+                onSelectPlace={(place) => setSelectedPlace(place)}
+                onScaleLabelChange={setMapScaleLabel}
+                onMapReady={(actions) => {
+                  mapActionsRef.current = actions;
+                }}
               />
+
+              {/* Map Top Line */}
+              <div className={styles.mapTopline}>
+                <div className={styles.mapToplineLoc}>
+                  <MapPin size={15} className="text-amber-500 shrink-0" aria-hidden="true" />
+                  <h2>{resolvedLocationLabel}</h2>
+                </div>
+                <span
+                  className={`${styles.mapState} ${isOutdated && hasScanned ? styles.mapStateOutdated : ""}`}
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className={styles.mapStateDot} aria-hidden="true" />
+                  {mapStatusText}
+                </span>
+              </div>
+
+              {/* Map Tools */}
+              <div className={styles.mapTools} role="group" aria-label={isAr ? "أدوات الخريطة" : "Map tools"}>
+                <button
+                  type="button"
+                  onClick={() => mapActionsRef.current?.zoomIn()}
+                  aria-label={isAr ? "تقريب الخريطة" : "Zoom in"}
+                >
+                  <Plus size={16} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => mapActionsRef.current?.zoomOut()}
+                  aria-label={isAr ? "إبعاد الخريطة" : "Zoom out"}
+                >
+                  <Minus size={16} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => mapActionsRef.current?.centerOnMarker(propertyLocation, dynamicZoom)}
+                  aria-label={isAr ? "تمركز على نقطة المسح" : "Center on scan point"}
+                >
+                  <Crosshair size={16} aria-hidden="true" />
+                </button>
+              </div>
+
+              {/* North Indicator */}
+              <div className={styles.mapNorth} aria-hidden="true">
+                <span>N</span>
+                <Compass size={20} />
+              </div>
+
+              {/* Radius Pill */}
+              <span className={styles.mapRadiusLabel}>
+                {isAr
+                  ? `نطاق ${(searchRadius / 1000).toFixed(1)} كم`
+                  : `${(searchRadius / 1000).toFixed(1)} km radius`}
+              </span>
+
+              {/* Scan Sweep Overlay */}
+              {loadingScan && <div className={styles.scanSweep} aria-hidden="true" />}
+
+              {/* Selected Place Detail Card */}
+              {selectedPlace && (
+                <div className={styles.placeDetail} role="dialog" aria-label={selectedPlace.name}>
+                  <div>
+                    <strong>{selectedPlace.name}</strong>
+                    <p>
+                      {selectedPlace.type} · {formatDistance(selectedPlace.distance, isAr ? "ar" : "en")}
+                      {selectedPlace.city ? ` · ${selectedPlace.city}` : ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.placeDetailClose}
+                    onClick={() => setSelectedPlace(null)}
+                    aria-label={isAr ? "إغلاق تفاصيل الخدمة" : "Close place details"}
+                  >
+                    <X size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+
+              {/* Real Category Filters */}
+              {hasScanned && sortedPlaces.length > 0 && (
+                <div className={styles.mapFilters} role="group" aria-label={isAr ? "تصنيف الخدمات" : "Filter services"}>
+                  {ATLAS_CATEGORIES.filter((cat) => cat.key === "all" || categoryCounts[cat.key] > 0).map((cat) => (
+                    <button
+                      key={cat.key}
+                      type="button"
+                      className={styles.filterBtn}
+                      aria-pressed={activeCategory === cat.key}
+                      onClick={() => {
+                        setActiveCategory(cat.key);
+                        setSelectedPlace(null);
+                      }}
+                    >
+                      <span>{isAr ? cat.labelAr : cat.labelEn}</span>
+                      <span className={styles.filterCount}>{categoryCounts[cat.key]}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Real Summary Strip (no illustrative/placeholder metrics) */}
+              <div className={styles.summaryStrip} aria-label={isAr ? "ملخص نطاق المسح" : "Survey summary"}>
+                <div className={styles.summaryCell}>
+                  <span>{isAr ? "داخل نطاق المسح" : "Within Scan Range"}</span>
+                  <strong>
+                    {hasScanned ? sortedPlaces.length : "—"}{" "}
+                    <small>{isAr ? "منشأة وخدمة" : "places"}</small>
+                  </strong>
+                </div>
+                <div className={styles.summaryCell}>
+                  <span>{isAr ? "التصنيفات المكتشفة" : "Categories Found"}</span>
+                  <strong>
+                    {hasScanned ? placeStats.uniqueTypesCount : "—"}{" "}
+                    <small>
+                      {hasScanned && placeStats.closestPlace
+                        ? isAr
+                          ? `· الأقرب ${formatDistance(placeStats.closestPlace.distance, "ar")}`
+                          : `· Closest ${formatDistance(placeStats.closestPlace.distance, "en")}`
+                        : isAr
+                        ? "تصنيف"
+                        : "types"}
+                    </small>
+                  </strong>
+                </div>
+                <div className={styles.summaryCell}>
+                  <span>{isAr ? "مساحة الاستكشاف" : "Exploration Area"}</span>
+                  <strong>
+                    {(Math.PI * Math.pow(searchRadius / 1000, 2)).toFixed(1)}
+                    <small> {isAr ? "كم²" : "km²"}</small>
+                  </strong>
+                </div>
+              </div>
+
+              {/* Map Bottom Scale Bar */}
+              <div className={styles.mapBottomline}>
+                <span>OpenStreetMap · {isAr ? "إحداثيات حقيقية" : "Live Coordinates"}</span>
+                <span className={styles.mapScale} aria-hidden="true">
+                  {mapScaleLabel}
+                </span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Report & Export Callout below map */}
+        <section className={styles.reportSectionWrap} aria-labelledby="atlas-report-title">
+          <div className={styles.reportCallout}>
+            <div className={styles.reportHeading}>
+              <FileText size={26} className="text-amber-500 shrink-0" aria-hidden="true" />
+              <div>
+                <h2 id="atlas-report-title">
+                  {isAr ? "من الخريطة إلى القرار." : "From Map to Decision."}
+                </h2>
+                <p>
+                  {isAr
+                    ? "تقرير شامل للحي، جاهز للمشاركة بصيغتي PDF و Excel."
+                    : "Authenticated neighborhood report in PDF & Excel."}
+                </p>
+              </div>
             </div>
 
-            {/* Results Table Section */}
-            {showTable && sortedPlaces.length > 0 && (
-              <ScanResultsTable
-                places={sortedPlaces}
-                onClose={() => setShowTable(false)}
-                locale={isAr ? "ar" : "en"}
-                searchRadius={searchRadius}
-              />
-            )}
+            <div className={styles.reportActions}>
+              <div className={styles.reportPricePill}>
+                <span>{isAr ? "رسوم التقرير:" : "Fee:"}</span>
+                <strong>
+                  {pricingInfo.status === "loading" ? (
+                    isAr ? "جاري التحقق..." : "Checking..."
+                  ) : pricingInfo.status === "free" ? (
+                    isAr ? "مشمول مجاناً" : "Free"
+                  ) : pricingInfo.status === "available" ? (
+                    <SaudiRiyalAmount amount={pricingInfo.price} locale={isAr ? "ar-SA" : "en-US"} />
+                  ) : (
+                    isAr ? "غير متوفر" : "Unavailable"
+                  )}
+                </strong>
+              </div>
+
+              {isFreeOrPaid ? (
+                <>
+                  {sortedPlaces.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => triggerReportGeneration(rawPlaces, propertyLocation, searchRadius)}
+                      disabled={generatingReport}
+                      className={`${styles.reportButton} ${styles.reportButtonPrimary}`}
+                    >
+                      {generatingReport ? (
+                        <Loader2 size={15} className="animate-spin" />
+                      ) : (
+                        <FileText size={15} />
+                      )}
+                      <span>
+                        {generatingReport
+                          ? isAr
+                            ? "جارٍ توليد التقرير..."
+                            : "Generating..."
+                          : isAr
+                          ? "توليد تقرير PDF و Excel"
+                          : "Generate PDF & Excel"}
+                      </span>
+                    </button>
+                  )}
+                  <Link href="/wallet?tab=files" className={styles.reportButton}>
+                    <FileText size={15} />
+                    <span>
+                      {generatedFiles.length > 0
+                        ? isAr
+                          ? `خزينة الملفات (${generatedFiles.length})`
+                          : `My Files (${generatedFiles.length})`
+                        : isAr
+                        ? "خزينة الملفات"
+                        : "My Files"}
+                    </span>
+                  </Link>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleRequestReportInvoice}
+                  disabled={
+                    creatingInvoice ||
+                    pricingInfo.status === "unavailable" ||
+                    pricingInfo.status === "loading"
+                  }
+                  className={`${styles.reportButton} ${styles.reportButtonPrimary}`}
+                >
+                  {creatingInvoice ? <Loader2 size={15} className="animate-spin" /> : <Lock size={15} />}
+                  <span>{isAr ? "طلب التقرير والدفع الآن" : "Order Report & Pay"}</span>
+                </button>
+              )}
+
+              {sortedPlaces.length > 0 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowTable((prev) => !prev)}
+                    className={styles.reportButton}
+                    aria-pressed={showTable}
+                  >
+                    <TableIcon size={15} />
+                    <span>
+                      {showTable
+                        ? isAr
+                          ? "إخفاء الجدول"
+                          : "Hide Table"
+                        : isAr
+                        ? "عرض الجدول"
+                        : "Show Table"}
+                    </span>
+                  </button>
+                  <button type="button" onClick={handleExportCsv} className={styles.reportButton}>
+                    <Download size={15} />
+                    <span>{isAr ? "تصدير CSV" : "Export CSV"}</span>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+
+          {showTable && sortedPlaces.length > 0 && (
+            <ScanResultsTable
+              places={sortedPlaces}
+              onClose={() => setShowTable(false)}
+              locale={isAr ? "ar" : "en"}
+              searchRadius={searchRadius}
+            />
+          )}
+        </section>
       </div>
 
-      {/* Layered Payment Modal */}
+      {/* Payment Modal */}
       <PaymentMethodsModal
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
@@ -552,7 +953,7 @@ export default function ScanMapPage() {
         }}
       />
 
-      {/* Accessible Terms Disclaimer Dialog */}
+      {/* Disclaimer Modal */}
       <ScanDisclaimerModal
         isOpen={isDisclaimerOpen}
         onClose={() => setIsDisclaimerOpen(false)}
@@ -568,6 +969,6 @@ export default function ScanMapPage() {
 
       {/* Report Compilation Progress Overlay */}
       <ScanGeneratingOverlay isGenerating={generatingReport} locale={isAr ? "ar" : "en"} />
-    </main>
+    </div>
   );
 }

@@ -1,0 +1,53 @@
+.shell {
+  --map-ink: #101d24;
+  --map-gold: #e3c69a;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--map-ink);
+  color: #fff;
+  isolation: isolate;
+}
+.shell:fullscreen { width: 100vw; height: 100vh !important; }
+.map { position: absolute; inset: 0; }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(#07131dcc, transparent 30%, transparent 70%, #07131db3); }
+.header { position: absolute; inset: 20px 24px auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; pointer-events: none; text-shadow: 0 2px 12px #000; }
+.eyebrow { display: block; color: var(--map-gold); font-size: 10px; letter-spacing: .12em; margin-bottom: 4px; }
+.title { font-size: clamp(19px, 2vw, 26px); font-weight: 600; line-height: 1.3; margin: 0; }
+.badge { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid #ffffff38; border-radius: 24px; background: #101d24c9; font-size: 11px; backdrop-filter: blur(12px); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--map-gold); box-shadow: 0 0 12px #e3c69a80; }
+.toolbar { position: absolute; inset-block-end: 62px; inset-inline-start: 24px; display: flex; padding: 4px; gap: 3px; border: 1px solid #ffffff38; border-radius: 14px; background: #101d24e6; backdrop-filter: blur(16px); }
+.segment, .control, .retry { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 0; color: #fff; cursor: pointer; font: inherit; transition: background .18s ease, color .18s ease; }
+.segment { padding: 0 16px; background: transparent; border-radius: 10px; font-size: 12px; }
+.segment:hover, .control:hover { background: #ffffff26; }
+.segment.active { color: #17242b; background: var(--map-gold); font-weight: 650; }
+.controls { position: absolute; inset-inline-end: 24px; top: 50%; transform: translateY(-50%); padding: 4px; display: grid; gap: 2px; background: #101d24e6; backdrop-filter: blur(16px); border: 1px solid #ffffff38; border-radius: 14px; }
+.control { width: 44px; height: 44px; border-radius: 9px; background: transparent; }
+.control svg, .retry svg { width: 18px; height: 18px; }
+.segment:focus-visible, .control:focus-visible, .retry:focus-visible { outline: 2px solid var(--map-gold); outline-offset: 2px; }
+.footer { position: absolute; inset: auto 24px 30px; display: flex; justify-content: space-between; gap: 16px; pointer-events: none; text-shadow: 0 1px 6px #000; font-size: 10px; }
+.location, .coordinates { direction: ltr; font-variant-numeric: tabular-nums; }
+.coordinates { letter-spacing: .05em; color: #fff; }
+.hint { color: #e2e8ec; }
+.marker { pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.markerDot { width: 18px; height: 18px; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 12px #ffffff20, 0 0 0 24px #ffffff0d, 0 6px 24px #0008; }
+.markerLabel { background: #101d24ed; color: #fff; padding: 8px 14px; border: 1px solid #e3c69a80; border-radius: 8px; font-size: 12px; white-space: nowrap; box-shadow: 0 6px 20px #0005; }
+.loading, .error { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #101d24e6; font-size: 14px; z-index: 4; text-align: center; padding: 20px; }
+.loading { pointer-events: none; }
+.loading::before { content: ''; height: 28px; width: 28px; border: 1px solid #e3c69a33; border-top-color: var(--map-gold); border-radius: 50%; animation: orbit 1s linear infinite; }
+.retry { gap: 8px; padding: 0 18px; background: var(--map-gold); color: var(--map-ink); border-radius: 10px; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+@media (max-width: 600px) {
+  .header { inset: 14px 14px auto; }
+  .eyebrow { font-size: 9px; letter-spacing: .03em; }
+  .badge { padding: 6px 9px; font-size: 10px; }
+  .controls { inset-inline-end: 12px; top: auto; bottom: 57px; transform: none; grid-template-columns: repeat(2, 44px); }
+  .toolbar { inset-inline-start: 12px; bottom: 57px; }
+  .segment { padding-inline: 9px; font-size: 11px; }
+  .footer { inset-inline: 14px; bottom: 29px; }
+  .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell *, .shell *::before { animation: none !important; transition: none !important; }
+}
