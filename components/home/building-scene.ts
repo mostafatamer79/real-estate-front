@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
@@ -55,9 +56,10 @@ export function createBuildingScene({
   scene.background = new THREE.Color("#e8e1d5");
   scene.fog = new THREE.Fog("#e8e1d5", 65, 120);
 
-  const envScene = new THREE.Scene();
+  const envScene = new RoomEnvironment();
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envTarget = pmrem.fromScene(envScene, 0.04);
+  envScene.dispose();
   scene.environment = envTarget.texture;
   scene.environmentIntensity = 0.32;
   pmrem.dispose();

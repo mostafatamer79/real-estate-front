@@ -50,7 +50,7 @@ const FEATURE_NODES: FeatureNode[] = [
     actionAr: "استكشف العروض",
     actionEn: "Explore Offers",
     href: "/offers",
-    requiresAuth: false,
+    requiresAuth: true,
   },
   {
     id: "services",
@@ -68,7 +68,7 @@ const FEATURE_NODES: FeatureNode[] = [
     actionAr: "استعرض الخدمات",
     actionEn: "Browse Services",
     href: "/services",
-    requiresAuth: false,
+    requiresAuth: true,
   },
   {
     id: "internal",
@@ -186,6 +186,9 @@ export default function PortalHome() {
   const [view, setView] = useState<ViewMode | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeNodeId, setActiveNodeId] = useState<FeatureNodeId>("offers");
+  const [platformEntered, setPlatformEntered] = useState(false);
+  const [platformInView, setPlatformInView] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
   const [doorOpen, setDoorOpen] = useState(false);
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
 
@@ -198,7 +201,10 @@ export default function PortalHome() {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
 
   const mainRef = useRef<HTMLElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   const portalRef = useRef<HTMLElement | null>(null);
+  const platformRef = useRef<HTMLElement | null>(null);
+  const nodeButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const portalCopyRef = useRef<HTMLDivElement | null>(null);
   const portalBottomRef = useRef<HTMLDivElement | null>(null);
   const portalInsideRef = useRef<HTMLDivElement | null>(null);
@@ -217,7 +223,7 @@ export default function PortalHome() {
     }
 
     if (params.get("view") === "home" || SECTION_HASHES.has(hashId)) {
-      sessionStorage.setItem(INTRO_SEEN_KEY, "1");
+      try { sessionStorage.setItem(INTRO_SEEN_KEY, "1"); } catch {}
       setView("home");
       if (SECTION_HASHES.has(hashId)) {
         requestAnimationFrame(() => {
@@ -227,8 +233,19 @@ export default function PortalHome() {
       return;
     }
 
-    const seen = sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
+    let seen = false;
+    try { seen = sessionStorage.getItem(INTRO_SEEN_KEY) === "1"; } catch {}
     setView(seen ? "home" : "intro");
+  }, []);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const measure = () => header.parentElement?.style.setProperty("--db-header-height", `${header.getBoundingClientRect().height}px`);
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    measure();
+    return () => observer.disconnect();
   }, []);
 
   const enterHome = useCallback(() => {
@@ -374,7 +391,8 @@ export default function PortalHome() {
   const handleAuthAwareNav = useCallback(
     (target: string, requiresAuth: boolean, event: React.MouseEvent<HTMLAnchorElement>) => {
       if (!requiresAuth || !authLoading) return;
-      const hasToken = typeof window !== "undefined" && Boolean(localStorage.getItem("token"));
+      let hasToken = false;
+      try { hasToken = Boolean(localStorage.getItem("token")); } catch {}
       if (hasToken !== isAuthenticated) {
         event.preventDefault();
         const safeTarget = safeReturnTo(target) || "/details";
@@ -417,13 +435,83 @@ export default function PortalHome() {
 
   const activeService = realServices[selectedServiceIndex] || realServices[0];
 
-  const openDoorAndFocus = () => {
-    setDoorOpen(true);
-    requestAnimationFrame(() => {
-      const firstBtn = serviceCatsRef.current?.querySelector("button");
-      firstBtn?.focus({ preventScroll: true });
-    });
+  // Observe #platform visibility for entrance sequence & pausing offscreen SVG animations
+  useEffect(() => {
+    if (view !== "home") return;
+    const section = platformRef.current;
+    if (!section) return;
+
+    const reduceMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduceMedia.matches) {
+      setPlatformEntered(true);
+    }
+
+    const handleVisibility = () => {
+      setPageVisible(!document.hidden);
+    };
+    handleVisibility();
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    if (typeof IntersectionObserver === "undefined") {
+      setPlatformEntered(true);
+      setPlatformInView(true);
+      return () => document.removeEventListener("visibilitychange", handleVisibility);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setPlatformInView(entry.isIntersecting);
+          if (entry.isIntersecting) {
+            setPlatformEntered(true);
+          }
+        }
+      },
+      { threshold: 0.14, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [view]);
+
+  const handleNodeKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    const total = FEATURE_NODES.length;
+    let nextIndex: number | null = null;
+    if (event.key === "ArrowRight") {
+      nextIndex = isAr ? (index - 1 + total) % total : (index + 1) % total;
+    } else if (event.key === "ArrowLeft") {
+      nextIndex = isAr ? (index + 1) % total : (index - 1 + total) % total;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = total - 1;
+    }
+    if (nextIndex !== null) {
+      event.preventDefault();
+      const targetNode = FEATURE_NODES[nextIndex];
+      setActiveNodeId(targetNode.id);
+      nodeButtonRefs.current[nextIndex]?.focus();
+    }
   };
+
+  const toggleServicesDoor = useCallback((focusOnOpen = false) => {
+    setDoorOpen((prev) => {
+      const next = !prev;
+      if (next && focusOnOpen) {
+        requestAnimationFrame(() => {
+          const firstBtn = serviceCatsRef.current?.querySelector("button");
+          firstBtn?.focus({ preventScroll: true });
+        });
+      }
+      return next;
+    });
+  }, []);
 
   // Support dialog controls
   const openSupportDialog = () => {
@@ -502,8 +590,11 @@ export default function PortalHome() {
     }
   };
 
-  const activeNode =
-    FEATURE_NODES.find((node) => node.id === activeNodeId) || FEATURE_NODES[0];
+  const activeNodeIndex = Math.max(
+    0,
+    FEATURE_NODES.findIndex((node) => node.id === activeNodeId),
+  );
+  const activeNode = FEATURE_NODES[activeNodeIndex] || FEATURE_NODES[0];
   const nodeResolvedHref =
     activeNode.id === "requests" ? requestTrackingHref(user) : activeNode.href;
 
@@ -517,7 +608,7 @@ export default function PortalHome() {
         {isAr ? "انتقل إلى المحتوى" : "Skip to content"}
       </a>
 
-      <header className="db-masthead">
+      <header ref={headerRef} className="db-masthead">
         <a
           className="db-brand"
           href="#portal"
@@ -749,8 +840,13 @@ export default function PortalHome() {
             </section>
 
             {/* Platform Feature Circles */}
-            <section className="db-section db-platform" id="platform">
-              <div className="db-section-heading">
+            <section
+              ref={platformRef}
+              className={`db-section db-platform${platformEntered ? " is-entered" : ""}`}
+              data-paused={!platformInView || !pageVisible ? "true" : "false"}
+              id="platform"
+            >
+              <div className="db-section-heading db-platform-heading">
                 <div>
                   <span className="db-eyebrow">
                     {isAr ? "01 / كل التفاصيل، متصلة" : "01 / EVERY DETAIL, CONNECTED"}
@@ -788,36 +884,110 @@ export default function PortalHome() {
                 </p>
               </div>
 
-              <div className="db-feature-nodes">
-                {FEATURE_NODES.map((node) => {
-                  const pressed = activeNodeId === node.id;
-                  return (
-                    <button
-                      key={node.id}
-                      type="button"
-                      aria-pressed={pressed}
-                      onClick={() => setActiveNodeId(node.id)}
-                    >
-                      <span className="db-node-circle">
-                        {node.num} <span aria-hidden="true">↖</span>
-                      </span>
-                      <strong>{isAr ? node.labelAr : node.labelEn}</strong>
-                      <small>{isAr ? node.shortAr : node.shortEn}</small>
-                    </button>
-                  );
-                })}
+              <div
+                className="db-platform-stage"
+                data-active-index={activeNodeIndex}
+                style={{ "--active-progress": activeNodeIndex / (FEATURE_NODES.length - 1) } as React.CSSProperties}
+              >
+                {/* Animated SVG Connections (Desktop 4-column arc) */}
+                <svg
+                  className="db-platform-svg db-platform-svg-desktop"
+                  viewBox="0 0 1000 140"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    className="db-svg-track"
+                    d="M 125 76 C 205 28, 295 28, 375 76 C 455 124, 545 124, 625 76 C 705 28, 795 28, 875 76"
+                  />
+                  <path
+                    className="db-svg-draw"
+                    pathLength={100}
+                    d="M 125 76 C 205 28, 295 28, 375 76 C 455 124, 545 124, 625 76 C 705 28, 795 28, 875 76"
+                  />
+                  <path
+                    className="db-svg-progress"
+                    pathLength={100}
+                    d="M 125 76 C 205 28, 295 28, 375 76 C 455 124, 545 124, 625 76 C 705 28, 795 28, 875 76"
+                  />
+                  <path
+                    className="db-svg-flow"
+                    d="M 125 76 C 205 28, 295 28, 375 76 C 455 124, 545 124, 625 76 C 705 28, 795 28, 875 76"
+                  />
+                  {[125, 375, 625, 875].map((cx, idx) => (
+                    <circle
+                      key={cx}
+                      cx={cx}
+                      cy={76}
+                      r={idx === activeNodeIndex ? 5.5 : 3.5}
+                      className={`db-svg-anchor${idx === activeNodeIndex ? " is-active" : ""}`}
+                    />
+                  ))}
+                </svg>
+
+                {/* Animated SVG Connections (Mobile 2x2 grid) */}
+                <svg
+                  className="db-platform-svg db-platform-svg-mobile"
+                  viewBox="0 0 400 320"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    className="db-svg-track"
+                    d="M 100 66 Q 200 36 300 66 Q 334 146 100 226 Q 200 258 300 226"
+                  />
+                  <path
+                    className="db-svg-draw"
+                    pathLength={100}
+                    d="M 100 66 Q 200 36 300 66 Q 334 146 100 226 Q 200 258 300 226"
+                  />
+                  <path
+                    className="db-svg-flow"
+                    d="M 100 66 Q 200 36 300 66 Q 334 146 100 226 Q 200 258 300 226"
+                  />
+                </svg>
+
+                <div className="db-feature-nodes" role="group" aria-label={isAr ? "مسارات المنصة" : "Platform pillars"}>
+                  {FEATURE_NODES.map((node, index) => {
+                    const pressed = activeNodeId === node.id;
+                    return (
+                      <button
+                        key={node.id}
+                        ref={(el) => {
+                          nodeButtonRefs.current[index] = el;
+                        }}
+                        type="button"
+                        aria-pressed={pressed}
+                        style={{ "--node-index": index } as React.CSSProperties}
+                        onClick={() => setActiveNodeId(node.id)}
+                        onKeyDown={(e) => handleNodeKeyDown(index, e)}
+                      >
+                        <span className="db-node-circle">
+                          <span className="db-node-num">{node.num}</span>
+                          <span className="db-node-arrow" aria-hidden="true">↖</span>
+                        </span>
+                        <strong>{isAr ? node.labelAr : node.labelEn}</strong>
+                        <small>{isAr ? node.shortAr : node.shortEn}</small>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="db-node-detail" aria-live="polite">
-                <div>
+                <div key={activeNode.id} className="db-node-detail-copy">
+                  <span className="db-node-detail-badge">
+                    {activeNode.num} / {isAr ? activeNode.labelAr : activeNode.labelEn}
+                  </span>
                   <h3 id="node-title">{isAr ? activeNode.titleAr : activeNode.titleEn}</h3>
                   <p id="node-description">
                     {isAr ? activeNode.descriptionAr : activeNode.descriptionEn}
                   </p>
                 </div>
                 <Link
+                  key={`${activeNode.id}-action`}
                   id="node-action"
-                  className="db-outline"
+                  className="db-outline db-node-action-link"
                   href={resolvePlatformHref(nodeResolvedHref, activeNode.requiresAuth)}
                   onClick={(e) =>
                     handleAuthAwareNav(nodeResolvedHref, activeNode.requiresAuth, e)
@@ -837,7 +1007,7 @@ export default function PortalHome() {
                     {isAr ? "02 / افتح باب الاحتمالات" : "02 / OPEN THE DOOR OF POSSIBILITIES"}
                   </span>
                   <h2>
-                    <Link href="/services">
+                    <Link href={resolvePlatformHref("/services")} onClick={(e) => handleAuthAwareNav("/services", true, e)}>
                       {isAr ? "خدمات المنصة ↖" : "Platform Services ↖"}
                     </Link>
                   </h2>
@@ -860,9 +1030,9 @@ export default function PortalHome() {
               </div>
 
               <div className="db-door-layout">
-                <div className="db-door-surround">
-                  <div className="db-door-inner">
-                    <span>
+                <div className={`db-door-surround${doorOpen ? " is-open" : ""}`}>
+                  <div className="db-door-inner" aria-hidden={!doorOpen}>
+                    <span className="db-door-inner-title">
                       {isAr ? (
                         <>
                           لكل احتياج
@@ -877,6 +1047,16 @@ export default function PortalHome() {
                         </>
                       )}
                     </span>
+                    <ul className="db-door-inner-list">
+                      {realServices.slice(0, 5).map((service, idx) => (
+                        <li
+                          key={service.id}
+                          className={idx === selectedServiceIndex ? "is-active" : undefined}
+                        >
+                          {service.title}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
                   <button
@@ -885,27 +1065,46 @@ export default function PortalHome() {
                     className={`db-wood-door${doorOpen ? " open" : ""}`}
                     aria-expanded={doorOpen}
                     aria-controls="door-categories"
-                    onClick={() => setDoorOpen((prev) => !prev)}
+                    aria-label={
+                      doorOpen
+                        ? isAr
+                          ? "إغلاق باب الخدمات"
+                          : "Close services door"
+                        : isAr
+                          ? "افتح باب الخدمات"
+                          : "Open services door"
+                    }
+                    onClick={() => toggleServicesDoor(false)}
                   >
-                    <span className="db-door-engraving">
-                      {isAr ? (
-                        <>
-                          الوساطة
-                          <br />
-                          الرقمية
-                        </>
-                      ) : (
-                        <>
-                          Digital
-                          <br />
-                          Brokerage
-                        </>
-                      )}
+                    <span className="db-door-face db-door-front">
+                      <span className="db-door-engraving">
+                        {isAr ? (
+                          <>
+                            الوساطة
+                            <br />
+                            الرقمية
+                          </>
+                        ) : (
+                          <>
+                            Digital
+                            <br />
+                            Brokerage
+                          </>
+                        )}
+                      </span>
+                      <span className="db-door-handle" aria-hidden="true" />
+                      <span className="db-door-prompt">
+                        {doorOpen
+                          ? isAr
+                            ? "اضغط لإغلاق الباب"
+                            : "Click to close"
+                          : isAr
+                            ? "افتح لتكتشف ↖"
+                            : "Open to explore ↖"}
+                      </span>
                     </span>
-                    <span className="db-door-handle" aria-hidden="true" />
-                    <span className="db-door-prompt">
-                      {isAr ? "افتح لتكتشف ↖" : "Open to explore ↖"}
-                    </span>
+                    <span className="db-door-face db-door-back" aria-hidden="true" />
+                    <span className="db-door-edge" aria-hidden="true" />
                   </button>
 
                   <span className="db-door-number" aria-hidden="true">
@@ -914,7 +1113,7 @@ export default function PortalHome() {
                 </div>
 
                 <div className="db-door-content">
-                  <div id="door-welcome" hidden={doorOpen}>
+                  <div id="door-welcome" className="db-door-panel" hidden={doorOpen}>
                     <h3>
                       {isAr ? (
                         <>
@@ -939,13 +1138,15 @@ export default function PortalHome() {
                       type="button"
                       className="db-text-button"
                       id="open-door"
-                      onClick={openDoorAndFocus}
+                      aria-expanded={doorOpen}
+                      aria-controls="door-categories"
+                      onClick={() => toggleServicesDoor(true)}
                     >
                       {isAr ? "افتح باب الخدمات ←" : "Open services door →"}
                     </button>
                   </div>
 
-                  <div id="door-categories" hidden={!doorOpen}>
+                  <div id="door-categories" className="db-door-panel" hidden={!doorOpen}>
                     <div ref={serviceCatsRef} className="db-service-categories">
                       {realServices.map((service, idx) => (
                         <button
@@ -978,10 +1179,11 @@ export default function PortalHome() {
                           <Link
                             className="db-primary"
                             href={
-                              activeService.status === "soon"
+                              resolvePlatformHref(activeService.status === "soon"
                                 ? activeService.previewHref
-                                : activeService.href
+                                : activeService.href)
                             }
+                            onClick={(e) => handleAuthAwareNav(activeService.status === "soon" ? activeService.previewHref : activeService.href, true, e)}
                           >
                             <span>
                               {activeService.status === "soon"

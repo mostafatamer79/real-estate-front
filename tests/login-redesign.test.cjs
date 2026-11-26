@@ -42,21 +42,19 @@ test('SignIn Close action avoids protected login loops when redirecting', () => 
   assert.match(signInSource, /publicLoginExit\(returnTo\)/);
 });
 
-test('SignIn mounts the selected SVG service doorway without a borrowed backdrop', () => {
-  assert.match(signInSource, /<LoginServiceDoor\s*\/>/);
+test('SignIn mounts the interactive architectural courtyard SVG inside the frame layout', () => {
+  assert.match(signInSource, /<LoginCinematicArt\s+language=\{language\}\s*\/>/);
   assert.doesNotMatch(signInSource, /login-gateway-v1/);
-  assert.match(signInSource, /styles\.architecturalShowcase/);
-  // The mobile showcase must stretch inside the centered flex column.
-  assert.match(cssSource, /@media \(max-width: 1023px\)\s*\{\s*\.architecturalShowcase\s*\{\s*width: 100%/);
+  assert.match(signInSource, /styles\.frameBackdrop/);
+  assert.match(signInSource, /styles\.frameCard/);
   assert.doesNotMatch(signInSource, /trusted by \d+|100% guarantee|\d+ sold|\d+ reviews/i);
 });
 
-test('sign-in.module.css defines scoped pearl, navy, and gold palette coherent with /details', () => {
-  assert.match(cssSource, /--login-bg:\s*#f5f4f0/);
-  assert.match(cssSource, /--login-navy:\s*#0b192c/);
-  assert.match(cssSource, /--login-gold:\s*#c5a880/);
-  assert.match(cssSource, /:global\(\.dark\)/);
+test('sign-in.module.css defines homepage stone and green palette with mobile and reduced-motion support', () => {
+  assert.match(cssSource, /--stone:\s*#e8e1d5/);
+  assert.match(cssSource, /--paper:\s*#f4f1eb/);
+  assert.match(cssSource, /--green:\s*#354d3b/);
   assert.match(cssSource, /min-height:\s*44px/);
-  assert.match(cssSource, /min-height:\s*52px/);
+  assert.match(cssSource, /@media \(max-width: 767px\)/);
   assert.match(cssSource, /prefers-reduced-motion/);
 });

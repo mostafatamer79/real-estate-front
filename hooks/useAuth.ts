@@ -20,22 +20,36 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    const parsedUser = user ? JSON.parse(user) : null;
+    let cancelled = false;
+    let token: string | null = null;
+    let refreshToken: string | null = null;
+    let parsedUser: User | null = null;
+    try {
+      const user = localStorage.getItem('user');
+      token = localStorage.getItem('token');
+      refreshToken = localStorage.getItem('refreshToken');
+      parsedUser = user ? JSON.parse(user) : null;
+    } catch {
+      // Treat unavailable or malformed stored auth as a visitor session.
+      token = null;
+      refreshToken = null;
+      parsedUser = null;
+    }
 
     // Check if user needs to complete profile
     const needsCompletion = needsProfileCompletion(parsedUser);
 
-    setAuthData({
-      user: parsedUser,
-      token,
-      refreshToken,
-      isLoading: false,
-      needsProfileCompletion: needsCompletion,
+    queueMicrotask(() => {
+      if (cancelled) return;
+      setAuthData({
+        user: parsedUser,
+        token,
+        refreshToken,
+        isLoading: false,
+        needsProfileCompletion: needsCompletion,
+      });
     });
+    return () => { cancelled = true; };
   }, []);
 
   const updateUser = (updatedUser: Partial<User>) => {

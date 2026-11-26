@@ -10,7 +10,8 @@ export default function AdminImpersonationReturn() {
 
   useEffect(() => {
     const sync = () => {
-      setVisible(Boolean(localStorage.getItem("adminImpersonationSession")));
+      try { setVisible(Boolean(localStorage.getItem("adminImpersonationSession"))); }
+      catch { setVisible(false); }
     };
 
     sync();

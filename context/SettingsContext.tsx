@@ -429,15 +429,25 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     const getStoredTheme = useCallback((): boolean | null => {
         if (typeof window === "undefined") return null;
-        const stored = window.localStorage.getItem("digital-brokerage-theme");
-        if (stored === "dark") return true;
-        if (stored === "light") return false;
+        try {
+            const stored = window.localStorage.getItem("digital-brokerage-theme");
+            if (stored === "dark") return true;
+            if (stored === "light") return false;
+        } catch { /* System appearance remains available without storage. */ }
         // First-time visitor: respect OS/browser colour-scheme preference
         return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? null;
     }, []);
 
     const fetchSettings = useCallback(async () => {
         const storedTheme = getStoredTheme();
+        if (storedTheme !== null) {
+            setSettings((prev) => {
+                if (prev.isDark === storedTheme) return prev;
+                const next = { ...prev, isDark: storedTheme };
+                applyTheme(next);
+                return next;
+            });
+        }
         let hydratedFromCache = false;
         if (typeof window !== "undefined") {
             try {
@@ -472,6 +482,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             if (!hydratedFromCache) {
                 console.error("Failed to fetch settings", error);
+                if (storedTheme !== null) {
+                    setSettings((prev) => {
+                        const next = { ...prev, isDark: storedTheme };
+                        applyTheme(next);
+                        return next;
+                    });
+                }
             }
         } finally {
             setIsLoading(false);
@@ -494,7 +511,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setSettings((prev) => {
             const next = { ...prev, isDark: !prev.isDark };
             if (typeof window !== "undefined") {
-                window.localStorage.setItem("digital-brokerage-theme", next.isDark ? "dark" : "light");
+                try { window.localStorage.setItem("digital-brokerage-theme", next.isDark ? "dark" : "light"); } catch {}
             }
             applyTheme(next);
             return next;

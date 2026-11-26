@@ -1,4 +1,20 @@
-/* components/auth/sign-in.module.css — Stone & Green Architectural Split Login */
+/* components/auth/sign-in.module.css — Option 02: Inside the Frame */
+
+@font-face {
+  font-family: "Plex";
+  src: url("/fonts/ibm-plex-arabic/regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Plex";
+  src: url("/fonts/ibm-plex-arabic/semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 .loginOverlay {
   position: fixed;
@@ -11,8 +27,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--stone, #e8e1d5);
-  color: var(--ink, #272e27);
+  background: #142219;
+  color: #ffffff;
   font-family: "Plex", var(--font-geist-sans), sans-serif;
 
   --stone: #e8e1d5;
@@ -20,153 +36,183 @@
   --ink: #272e27;
   --sage: #718063;
   --green: #354d3b;
-  --green-hover: #203c2b;
+  --green-hover: #25382a;
   --muted: #5d665b;
   --line: #b9b9a8;
+  --error: #9b2d22;
 }
 
-.ambientGlow {
-  display: none;
-}
-
-.container {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.portalGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100dvh;
-  width: 100%;
-}
-
-.architecturalShowcase {
-  position: relative;
-  isolation: isolate;
-  min-height: 620px;
-  color: #ffffff;
-  display: flex;
-  align-items: flex-end;
-  padding: 56px 48px;
+.frameBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
   overflow: hidden;
+  pointer-events: none;
 }
 
-.architecturalShowcase::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #12291ee8, #12291e08 90%);
-  z-index: -1;
-}
-
-.showcaseImage {
-  position: absolute;
-  inset: 0;
+.backdropImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -2;
+  object-position: center;
+  transform-origin: 38% 55%;
+  animation: architectural-camera 30s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  animation-play-state: paused;
 }
 
-.showcaseContent {
-  max-width: 520px;
+.frameBackdrop::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 230, 185, 0.12) 47%, transparent 72%);
+  animation: architectural-light 20s ease-in-out infinite alternate;
+  animation-play-state: paused;
 }
 
-.showcaseEyebrow {
-  display: block;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  margin-bottom: 14px;
-  color: rgba(255, 255, 255, 0.88);
+.cinemaActive .backdropImage,
+.cinemaActive .frameBackdrop::after {
+  animation-play-state: running;
 }
 
-.showcaseHeading {
-  font-size: clamp(36px, 4.2vw, 68px);
-  font-weight: 600;
-  line-height: 1.25;
-  margin: 0 0 20px;
-  color: #ffffff;
+@keyframes architectural-camera {
+  from {
+    transform: scale(1.025) translate3d(-0.5%, 0.3%, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(1.5%, -0.8%, 0);
+  }
 }
 
-.showcaseHeading em {
-  font-style: normal;
-  color: #c7d2b6;
+@keyframes architectural-light {
+  from {
+    transform: translate3d(-9%, 0, 0);
+    opacity: 0.25;
+  }
+  to {
+    transform: translate3d(9%, 0, 0);
+    opacity: 0.7;
+  }
 }
 
-.showcaseLatin {
-  display: block;
-  direction: ltr;
-  text-align: start;
-  font: italic 24px/1.5 Georgia, serif;
-  color: rgba(255, 255, 255, 0.85);
+.frameScrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    rgba(20, 34, 25, 0.86) 0%,
+    rgba(20, 34, 25, 0.64) 52%,
+    rgba(20, 34, 25, 0.78) 100%
+  );
 }
 
-.formPlane {
-  background: var(--stone);
-  padding: 40px clamp(24px, 5vw, 84px);
+.framePage {
+  position: relative;
+  min-height: 100dvh;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  isolation: isolate;
+  padding: clamp(16px, 2.5vw, 32px) clamp(16px, 4vw, 52px);
+  gap: clamp(16px, 2.5vw, 24px);
 }
 
-.navBar {
+/* Header & Brand */
+.frameHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-.navButton {
+.brandAnchor {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.brandLogo {
+  width: auto;
+  height: 36px;
+  max-width: 132px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.brandName {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.brandSub {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.78);
+  text-transform: uppercase;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.backLinkBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  padding: 6px 0;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgba(244, 241, 235, 0.94);
   color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 6px;
-  background: none;
-  border: 0;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 180ms ease;
 }
 
-.navButton:hover {
-  color: var(--green);
+.backLinkBtn:hover {
+  background: #ffffff;
 }
 
-.navTrailing {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.languageToggle,
+.headerActionBtn,
 .customerServiceLink {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   min-height: 44px;
-  padding: 6px 12px;
-  border: 1px solid #8b947e;
-  border-radius: 2px;
+  padding: 8px 14px;
+  border: 1px solid rgba(244, 241, 235, 0.34);
+  border-radius: 999px;
+  background: rgba(20, 34, 25, 0.56);
+  color: #ffffff;
   font-size: 13px;
   font-weight: 600;
-  color: var(--ink);
-  background: transparent;
   text-decoration: none;
   cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
 }
 
-.languageToggle:hover,
+.headerActionBtn:hover,
 .customerServiceLink:hover {
-  background: #d4d7c8;
+  background: rgba(244, 241, 235, 0.18);
+  border-color: rgba(244, 241, 235, 0.7);
 }
 
 .closeButton {
@@ -174,45 +220,115 @@
   place-items: center;
   min-width: 44px;
   min-height: 44px;
-  border: 1px solid #9ba18d;
+  border: 1px solid rgba(244, 241, 235, 0.36);
   border-radius: 50%;
-  background: transparent;
-  color: var(--ink);
+  background: rgba(20, 34, 25, 0.56);
+  color: #ffffff;
   cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
 }
 
 .closeButton:hover {
-  background: #cfd3c2;
+  background: rgba(244, 241, 235, 0.2);
+  border-color: rgba(244, 241, 235, 0.78);
 }
 
-.formBrand {
-  margin-bottom: 20px;
+.backLinkBtn:focus-visible,
+.headerActionBtn:focus-visible,
+.customerServiceLink:focus-visible,
+.closeButton:focus-visible {
+  outline: 3px solid #c7d2b6;
+  outline-offset: 2px;
+}
+
+/* Main Stage */
+.frameStage {
+  width: 100%;
+  max-width: 1180px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  align-items: center;
+  gap: clamp(20px, 4.5vw, 64px);
+}
+
+.frameStory {
+  max-width: 520px;
+  min-width: 0;
+}
+
+.storyEyebrow {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  font-size: 12px;
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.storyHeading {
+  margin: 0 0 12px;
+  font-size: clamp(30px, 4vw, 56px);
+  font-weight: 600;
+  line-height: 1.24;
+  color: #ffffff;
+}
+
+.storyHeading em {
+  font-style: normal;
+  color: #c7d2b6;
+}
+
+.storyCopy {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 44ch;
+}
+
+/* Floating Paper Form Card */
+.frameCard {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: clamp(20px, 2.4vw, 30px);
+  box-shadow: 0 24px 64px rgba(10, 20, 14, 0.36);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
 }
 
 .headingBlock {
-  margin-bottom: 24px;
+  margin: 0;
 }
 
 .headingTitle {
-  font-size: clamp(32px, 3.2vw, 46px);
+  margin: 0 0 6px;
+  font-size: clamp(24px, 2.5vw, 32px);
   font-weight: 600;
   line-height: 1.3;
-  margin: 0 0 10px;
+  letter-spacing: -0.02em;
   color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 .headingSubtitle {
-  font-size: 15px;
-  line-height: 1.75;
-  color: var(--muted);
   margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  overflow-wrap: anywhere;
 }
 
 .tabList {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  min-width: 0;
 }
 
 .tabButton {
@@ -220,8 +336,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 10px 14px;
+  min-height: 44px;
+  padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 2px;
   background: transparent;
@@ -233,7 +349,15 @@
 }
 
 .tabButton:hover:not(:disabled) {
-  background: #d4d7c8;
+  background: rgba(113, 128, 99, 0.14);
+}
+
+.tabButton:focus-visible,
+.textInput:focus-visible,
+.submitBtn:focus-visible,
+.freeTrialBtn:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
 }
 
 .tabButtonActive {
@@ -250,9 +374,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  min-height: 48px;
-  padding: 10px 12px;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 10px;
   border: 1px dashed var(--line);
   border-radius: 2px;
   color: var(--muted);
@@ -261,13 +385,13 @@
 .tabButtonDisabled {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 13px;
 }
 
 .soonPill {
   font-size: 11px;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border: 1px solid var(--line);
   border-radius: 999px;
 }
@@ -275,17 +399,19 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  min-width: 0;
 }
 
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  min-width: 0;
 }
 
 .label {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--ink);
 }
@@ -296,13 +422,18 @@
   align-items: stretch;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: var(--paper);
+  background: #ffffff;
   overflow: hidden;
   transition: border-color 180ms ease;
+  min-width: 0;
 }
 
 .inputWrapper:focus-within {
   border-color: var(--green);
+}
+
+.inputWrapper[data-invalid="true"] {
+  border-color: var(--error);
 }
 
 .phonePrefix {
@@ -314,7 +445,8 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--ink);
-  background: rgba(185, 185, 168, 0.2);
+  background: rgba(185, 185, 168, 0.24);
+  white-space: nowrap;
 }
 
 .flagIcon {
@@ -334,8 +466,8 @@
 .textInput {
   flex: 1;
   min-width: 0;
-  min-height: 50px;
-  padding: 12px 14px;
+  min-height: 46px;
+  padding: 10px 14px;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -343,9 +475,13 @@
   outline: none;
 }
 
+.textInput::placeholder {
+  color: #778075;
+}
+
 .errorAlert {
-  padding: 10px 14px;
-  border: 1px solid #9b2d22;
+  padding: 10px 12px;
+  border: 1px solid var(--error);
   background: rgba(155, 45, 34, 0.08);
   border-radius: 4px;
 }
@@ -354,21 +490,22 @@
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #9b2d22;
+  color: var(--error);
+  line-height: 1.6;
 }
 
 .noteBox {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 14px 0;
+  padding: 10px 0;
   border-block: 1px solid var(--line);
   color: var(--muted);
 }
 
 .noteIcon {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   margin-top: 2px;
   flex-shrink: 0;
   color: var(--sage);
@@ -376,8 +513,8 @@
 
 .noteText {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.75;
+  font-size: 12.5px;
+  line-height: 1.65;
 }
 
 .submitBtn {
@@ -385,10 +522,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
-  min-height: 52px;
-  padding: 12px 24px;
+  min-height: 48px;
+  padding: 11px 20px;
   border: 1px solid var(--green);
   border-radius: 2px;
   background: var(--green);
@@ -408,78 +545,160 @@
   cursor: wait;
 }
 
-.submitBtnShine {
-  display: none;
-}
-
 .freeTrialWrapper {
-  margin-top: 16px;
+  margin-top: 2px;
 }
 
 .freeTrialBtn {
   width: 100%;
-  min-height: 48px;
-  padding: 10px 20px;
-  border: 1px solid #8b947e;
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
   border-radius: 2px;
   background: transparent;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
 }
 
 .freeTrialBtn:hover {
-  background: #d4d7c8;
+  background: rgba(113, 128, 99, 0.14);
+  border-color: var(--sage);
 }
 
 .confirmed {
   opacity: 0.96;
 }
 
-@media (max-width: 1100px) {
-  .architecturalShowcase {
-    padding: 40px 32px;
+@media (max-width: 960px) {
+  .frameStage {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    gap: 20px;
   }
 
-  .formPlane {
-    padding: 32px 28px;
+  .storyHeading {
+    font-size: 32px;
   }
 }
 
 @media (max-width: 767px) {
-  .portalGrid {
-    grid-template-columns: 1fr;
-    min-height: auto;
+  .framePage {
+    padding: 12px 10px 72px;
+    gap: 12px;
+    justify-content: flex-start;
   }
 
-  .architecturalShowcase {
-    min-height: 290px;
-    padding: 28px 6%;
+  .frameStage {
+    grid-template-columns: minmax(112px, 0.36fr) minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    margin: 0;
+    max-width: 100%;
   }
 
-  .showcaseHeading {
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
-
-  .showcaseLatin {
-    font-size: 19px;
-  }
-
-  .formPlane {
-    padding: 28px 6% 48px;
+  .frameCard {
+    padding: 14px 12px;
+    gap: 10px;
   }
 
   .headingTitle {
-    font-size: 34px;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .headingSubtitle {
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  .tabList {
+    gap: 6px;
+  }
+
+  .tabButton,
+  .tabSoonContainer {
+    min-height: 36px;
+    padding: 6px;
+    font-size: 11.5px;
+    gap: 4px;
+  }
+
+  .tabButtonDisabled {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .soonPill {
+    font-size: 9.5px;
+    padding: 1px 5px;
+  }
+
+  .form {
+    gap: 10px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+
+  .fieldIcon {
+    margin-inline-start: 10px;
+    width: 15px;
+    height: 15px;
+  }
+
+  .textInput {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .noteBox {
+    padding: 7px 0;
+    gap: 6px;
+  }
+
+  .noteText {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .submitBtn {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .storyCopy,
+  .storyEyebrow {
+    display: none;
+  }
+
+  .storyHeading {
+    font-size: 17px;
+    line-height: 1.3;
+    margin-bottom: 4px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .backdropImage,
+  .frameBackdrop::after {
+    animation: none !important;
+    transform: none;
+  }
+
+  .backLinkBtn,
+  .headerActionBtn,
+  .customerServiceLink,
+  .closeButton,
   .tabButton,
   .inputWrapper,
-  .submitBtn {
+  .submitBtn,
+  .freeTrialBtn {
     transition: none;
   }
 }

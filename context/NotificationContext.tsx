@@ -82,7 +82,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    let token: string | null = null;
+    try { token = localStorage.getItem('token'); } catch {}
     if (!token) {
       setLoading(false);
       return;

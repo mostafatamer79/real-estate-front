@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>02 · داخل الإطار — تسجيل الدخول | الوساطة الرقمية</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .frame-page {
+      position: relative;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      isolation: isolate;
+      color: var(--white);
+      padding: clamp(18px, 3vw, 36px) clamp(16px, 4vw, 56px);
+      gap: 28px;
+    }
+
+    .frame-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .frame-backdrop img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .frame-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(125deg, rgba(20, 34, 25, 0.86) 0%, rgba(20, 34, 25, 0.64) 52%, rgba(20, 34, 25, 0.78) 100%);
+    }
+
+    .frame-header .lc-brand-sub {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .frame-header .lc-back-link {
+      background: rgba(244, 241, 235, 0.94);
+      color: var(--ink);
+      border-color: transparent;
+    }
+
+    .frame-header .lc-back-link:hover {
+      background: var(--white);
+    }
+
+    .frame-stage {
+      width: 100%;
+      max-width: 1180px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+      align-items: center;
+      gap: clamp(24px, 5vw, 72px);
+    }
+
+    .frame-story {
+      max-width: 520px;
+    }
+
+    .frame-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .frame-story h2 {
+      margin: 0 0 14px;
+      font-size: clamp(32px, 4.2vw, 60px);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--white);
+    }
+
+    .frame-story h2 em {
+      font-style: normal;
+      color: #c7d2b6;
+    }
+
+    .frame-story p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.86);
+      max-width: 44ch;
+    }
+
+    .frame-card {
+      background: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: clamp(22px, 3vw, 36px);
+      box-shadow: 0 24px 64px rgba(10, 20, 14, 0.36);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .frame-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    @media (max-width: 960px) {
+      .frame-stage {
+        grid-template-columns: 1fr;
+        max-width: 540px;
+        gap: 22px;
+      }
+
+      .frame-story h2 {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .frame-page {
+        padding: 16px;
+        gap: 20px;
+      }
+
+      .frame-story p {
+        display: none;
+      }
+
+      .frame-card {
+        padding: 20px 16px;
+      }
+
+      .frame-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame-page" data-login-preview>
+    <div class="frame-backdrop" aria-hidden="true">
+      <img
+        src="/artworks/banan/unique-courtyard.png"
+        width="1672"
+        height="941"
+        alt="فيلا بحدائق متدرجة وفناء ومسبح في الجبال"
+        fetchpriority="high"
+      >
+    </div>
+    <div class="frame-scrim" aria-hidden="true"></div>
+
+    <header class="lc-header frame-header">
+      <a class="lc-brand" href="index.html" aria-label="الوساطة الرقمية — العودة إلى الخيارات">
+        <img class="lc-brand-logo" src="/artworks/banan/brand.png" width="38" height="38" alt="شعار الوساطة الرقمية">
+        <span class="lc-brand-text">
+          <span class="lc-brand-name">الوساطة الرقمية</span>
+          <span class="lc-brand-sub" lang="en">DIGITAL BROKERAGE</span>
+        </span>
+      </a>
+      <a class="lc-back-link" href="index.html">
+        <span aria-hidden="true">↗</span>
+        <span>كل الخيارات</span>
+      </a>
+    </header>
+
+    <main class="frame-stage">
+      <section class="frame-story" aria-label="سياق المشهد">
+        <span class="frame-tag">02 / داخل الإطار</span>
+        <h2>حين يصبح المكان <em>نقطة البداية.</em></h2>
+        <p>
+          تجربة دخول تضع المشهد المعماري في كامل الخلفية، مع بطاقة متباينة بوضوح للتحقق السريع عبر البريد الإلكتروني أو الجوال.
+        </p>
+      </section>
+
+      <section class="frame-card" aria-labelledby="choice-02-title">
+        <div class="lc-disclosure" role="note">
+          <span class="lc-disclosure-dot" aria-hidden="true"></span>
+          <span>معاينة تصميم فقط — لا تُرسل رموز دخول</span>
+        </div>
+
+        <div>
+          <h1 class="lc-heading" id="choice-02-title">تسجيل الدخول</h1>
+          <p class="lc-subheading" data-role="method-subtitle">
+            أدخل البريد الإلكتروني للمتابعة إلى خطوة رمز التحقق (معاينة).
+          </p>
+        </div>
+
+        <div data-role="step-one" class="lc-step-one">
+          <div class="lc-tablist" role="tablist" aria-label="طريقة تسجيل الدخول">
+            <button
+              id="tab-email-02"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-login-02"
+              tabindex="0"
+              class="lc-tab"
+              data-role="tab-email"
+            >
+              <span>البريد الإلكتروني</span>
+            </button>
+            <button
+              id="tab-phone-02"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-login-02"
+              tabindex="-1"
+              class="lc-tab"
+              data-role="tab-phone"
+            >
+              <span>رقم الجوال</span>
+            </button>
+          </div>
+
+          <form
+            id="panel-login-02"
+            role="tabpanel"
+            aria-labelledby="tab-email-02"
+            class="lc-form"
+            data-role="form-one"
+            novalidate
+          >
+            <div class="lc-field" data-role="email-field">
+              <label for="email-02" class="lc-label">البريد الإلكتروني</label>
+              <div class="lc-input-wrap" data-role="email-wrap">
+                <span class="lc-field-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="M3 7l9 6 9-6"></path>
+                  </svg>
+                </span>
+                <input
+                  id="email-02"
+                  type="email"
+                  dir="ltr"
+                  class="lc-input"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  aria-invalid="false"
+                  data-role="email-input"
+                >
+              </div>
+            </div>
+
+            <div class="lc-field" data-role="phone-field" hidden>
+              <label for="phone-02" class="lc-label">رقم الجوال</label>
+              <div class="lc-input-wrap" data-role="phone-wrap">
+                <span class="lc-prefix" aria-label="رمز الدولة السعودية">
+                  <span aria-hidden="true">🇸🇦</span>
+                  <span dir="ltr">+966</span>
+                </span>
+                <input
+                  id="phone-02"
+                  type="tel"
+                  dir="ltr"
+                  class="lc-input"
+                  placeholder="5X XXX XXXX"
+                  autocomplete="tel"
+                  aria-invalid="false"
+                  data-role="phone-input"
+                >
+              </div>
+            </div>
+
+            <div class="lc-error" role="alert" data-role="error-one" hidden></div>
+
+            <div class="lc-note">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 10v6"></path>
+                <circle cx="12" cy="7" r="0.8" fill="currentColor"></circle>
+              </svg>
+              <span data-role="method-note">
+                في النسخة الفعلية يُرسل رمز تحقق مؤقت إلى بريدك الإلكتروني.
+              </span>
+            </div>
+
+            <button type="submit" class="lc-submit">
+              <span>متابعة إلى رمز التحقق</span>
+              <span aria-hidden="true">←</span>
+            </button>
+          </form>
+        </div>
+
+        <div data-role="step-two" class="lc-otp-panel" hidden>
+          <form class="lc-form" data-role="form-two" novalidate>
+            <div class="lc-contact-pill">
+              <div>
+                <span>وسيلة الدخول المختارة: </span>
+                <span class="lc-contact-value" dir="ltr" data-role="contact-display"></span>
+              </div>
+              <button type="button" class="lc-link-btn" data-role="back-to-contact">
+                تغيير وسيلة الدخول
+              </button>
+            </div>
+
+            <div class="lc-field">
+              <label for="otp-02" class="lc-label">رمز التحقق (6 أرقام — محاكاة)</label>
+              <div class="lc-input-wrap" data-role="otp-wrap">
+                <input
+                  id="otp-02"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="6"
+                  dir="ltr"
+                  class="lc-input lc-otp-input"
+                  placeholder="123456"
+                  autocomplete="one-time-code"
+                  aria-invalid="false"
+                  data-role="otp-input"
+                >
+              </div>
+            </div>
+
+            <div class="lc-error" role="alert" data-role="error-two" hidden></div>
+            <div class="lc-preview-status" aria-live="polite" data-role="preview-status" hidden></div>
+
+            <button type="submit" class="lc-submit">
+              <span>تحقق من الرمز (معاينة)</span>
+              <span aria-hidden="true">←</span>
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="frame-footer">
+      <span>تصميم 02 · داخل الإطار</span>
+      <span dir="ltr">Immersive Floating Form</span>
+    </footer>
+  </div>
+  <script src="shared.js" defer></script>
+</body>
+</html>

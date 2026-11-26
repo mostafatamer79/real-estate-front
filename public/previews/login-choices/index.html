@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>خيارات تصميم تسجيل الدخول — الوساطة الرقمية</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .gallery-page {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(20px, 3vw, 40px) clamp(16px, 5vw, 72px);
+      gap: clamp(28px, 4vw, 48px);
+    }
+
+    .gallery-intro {
+      max-width: 1200px;
+      width: 100%;
+      margin-inline: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .gallery-intro h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 4.5vw, 60px);
+      font-weight: 600;
+      line-height: 1.24;
+      letter-spacing: -0.025em;
+    }
+
+    .gallery-intro p {
+      margin: 0;
+      max-width: 48ch;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .gallery-grid {
+      max-width: 1200px;
+      width: 100%;
+      margin-inline: auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .choice-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color var(--fast) var(--ease);
+    }
+
+    .choice-card:hover {
+      border-color: var(--green);
+    }
+
+    .choice-thumb {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: var(--stone-deep);
+    }
+
+    .choice-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .choice-num {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(39, 46, 39, 0.86);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .choice-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .choice-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sage);
+    }
+
+    .choice-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .choice-desc {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    .choice-actions {
+      padding: 0 20px 20px;
+    }
+
+    .gallery-footer {
+      max-width: 1200px;
+      width: 100%;
+      margin: auto auto 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .gallery-page {
+        padding: 16px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-page">
+    <header class="lc-header">
+      <a class="lc-brand" href="/" aria-label="الوساطة الرقمية — الرئيسية">
+        <img class="lc-brand-logo" src="/artworks/banan/brand.png" width="38" height="38" alt="شعار الوساطة الرقمية">
+        <span class="lc-brand-text">
+          <span class="lc-brand-name">الوساطة الرقمية</span>
+          <span class="lc-brand-sub" lang="en">DIGITAL BROKERAGE</span>
+        </span>
+      </a>
+      <a class="lc-back-link" href="/">
+        <span aria-hidden="true">↗</span>
+        <span>العودة إلى الرئيسية</span>
+      </a>
+    </header>
+
+    <section class="gallery-intro">
+      <div>
+        <h1>ثلاثة خيارات لتجربة تسجيل الدخول</h1>
+        <p>
+          معرض مقارنة تفاعلي بثلاثة تكوينات معمارية مختلفة بهوية الحجر الدافئ والأخضر العميق. افتح أي خيار لتجربة التبديل بين البريد والجوال وخطوة رمز التحقق.
+        </p>
+      </div>
+      <div class="lc-disclosure" role="note">
+        <span class="lc-disclosure-dot" aria-hidden="true"></span>
+        <span>معاينة تصميم فقط — لا تُرسل رموز دخول</span>
+      </div>
+    </section>
+
+    <main class="gallery-grid">
+      <article class="choice-card">
+        <a class="choice-thumb" href="01-stone-threshold.html">
+          <img
+            src="preview-01.png"
+            width="1672"
+            height="941"
+            alt="معاينة تصميم المدخل الحجري: بوابة حجرية دائرية تطل على فيلا ومسبح"
+          >
+          <span class="choice-num">01</span>
+        </a>
+        <div class="choice-body">
+          <span class="choice-meta">تكوين ثنائي متوازن · Split</span>
+          <h2 class="choice-title">المدخل الحجري</h2>
+          <p class="choice-desc">
+            نصفان متكافئان: صورة بوابة حجرية واسعة مقابل سطح الحجر الدافئ بنموذج واضح ومباشر.
+          </p>
+        </div>
+        <div class="choice-actions">
+          <a class="lc-submit" href="01-stone-threshold.html">
+            <span>افتح معاينة 01</span>
+            <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="choice-card">
+        <a class="choice-thumb" href="02-inside-the-frame.html">
+          <img
+            src="preview-02.png"
+            width="1672"
+            height="941"
+            alt="معاينة تصميم داخل الإطار: فيلا بحدائق متدرجة وفناء ومسبح"
+          >
+          <span class="choice-num">02</span>
+        </a>
+        <div class="choice-body">
+          <span class="choice-meta">صورة غامرة + بطاقة عائمة · Framed</span>
+          <h2 class="choice-title">داخل الإطار</h2>
+          <p class="choice-desc">
+            مشهد معماري يملأ الخلفية مع حجاب متدرج وبطاقة دخول عائمة عالية التباين.
+          </p>
+        </div>
+        <div class="choice-actions">
+          <a class="lc-submit" href="02-inside-the-frame.html">
+            <span>افتح معاينة 02</span>
+            <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="choice-card">
+        <a class="choice-thumb" href="03-quiet-space.html">
+          <img
+            src="preview-03.png"
+            width="1672"
+            height="941"
+            alt="معاينة تصميم مساحة هادئة: ضوء الشمس يدخل مساحة معمارية داخلية"
+          >
+          <span class="choice-num">03</span>
+        </a>
+        <div class="choice-body">
+          <span class="choice-meta">أسلوب تحريري هادئ · Editorial</span>
+          <h2 class="choice-title">مساحة هادئة</h2>
+          <p class="choice-desc">
+            تخطيط تحريري على الحجر الدافئ، تايبوجرافي هادئ، ونموذج مركزي مع إطار قوسي للمشهد.
+          </p>
+        </div>
+        <div class="choice-actions">
+          <a class="lc-submit" href="03-quiet-space.html">
+            <span>افتح معاينة 03</span>
+            <span aria-hidden="true">←</span>
+          </a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="gallery-footer">
+      <span>الوساطة الرقمية · معاينات HTML مستقلة قبل الدمج</span>
+      <span>الصفحة الرئيسية ومسار الدخول الحالي لم يتغيرا</span>
+    </footer>
+  </div>
+</body>
+</html>

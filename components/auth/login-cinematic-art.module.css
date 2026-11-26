@@ -1,0 +1,257 @@
+/* components/auth/login-cinematic-art.module.css */
+
+.artRoot {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid rgba(244, 241, 235, 0.18);
+  border-radius: 6px;
+  background: rgba(18, 32, 23, 0.46);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 460px;
+}
+
+.svgFrame {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.wireframeSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gridLine {
+  stroke: rgba(244, 241, 235, 0.12);
+  stroke-width: 0.75;
+}
+
+.zoneGroup {
+  cursor: pointer;
+  color: rgba(244, 241, 235, 0.42);
+  transition: color 220ms ease;
+}
+
+.zoneGroup:hover {
+  color: rgba(244, 241, 235, 0.8);
+}
+
+.zoneGroupActive {
+  color: #c7d2b6;
+}
+
+/* Blueprint line-draw reveal */
+.zoneStroke {
+  stroke: currentColor;
+  stroke-width: 1.25;
+  fill: transparent;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: blueprint-draw 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition: fill 220ms ease, stroke-width 220ms ease;
+}
+
+.drawDelay1 {
+  animation-delay: 80ms;
+}
+
+.drawDelay2 {
+  animation-delay: 200ms;
+}
+
+.drawDelay3 {
+  animation-delay: 320ms;
+}
+
+.drawDelay4 {
+  animation-delay: 440ms;
+}
+
+.zoneGroupActive .zoneStroke {
+  stroke-width: 1.65;
+  fill: rgba(199, 210, 182, 0.08);
+}
+
+.zoneGroup:hover .zoneStroke {
+  fill: rgba(244, 241, 235, 0.04);
+}
+
+.zoneAccent {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  fill: none;
+  opacity: 0.7;
+}
+
+.zonePulseRing {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.zoneGroupActive .zonePulseRing {
+  animation: node-pulse 2.6s ease-out infinite;
+}
+
+.zoneGroup:hover .zonePulseRing {
+  opacity: 0.45;
+}
+
+.zoneNode {
+  fill: currentColor;
+  opacity: 0.6;
+  transition: opacity 220ms ease, r 220ms ease;
+}
+
+.zoneGroupActive .zoneNode {
+  opacity: 1;
+}
+
+@keyframes blueprint-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes node-pulse {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
+.hotspotRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.hotspotBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid rgba(244, 241, 235, 0.22);
+  border-radius: 4px;
+  background: rgba(244, 241, 235, 0.04);
+  color: rgba(244, 241, 235, 0.82);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+  touch-action: manipulation;
+}
+
+.hotspotBtn:hover {
+  background: rgba(244, 241, 235, 0.12);
+  border-color: rgba(199, 210, 182, 0.55);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.hotspotBtn:focus-visible {
+  outline: 2px solid #c7d2b6;
+  outline-offset: 2px;
+}
+
+.hotspotBtnActive {
+  background: rgba(199, 210, 182, 0.18);
+  border-color: #c7d2b6;
+  color: #ffffff;
+}
+
+.hotspotIndex {
+  font-size: 10px;
+  opacity: 0.72;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: rgba(244, 241, 235, 0.88);
+  min-height: 21px;
+}
+
+@media (max-width: 767px) {
+  .artRoot {
+    margin-top: 6px;
+    padding: 8px;
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .wireframeSvg {
+    max-height: 46px;
+    width: 100%;
+  }
+
+  .hotspotRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .hotspotBtn {
+    min-height: 28px;
+    font-size: 10.5px;
+    padding: 3px 6px;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+
+  .caption {
+    font-size: 10.5px;
+    line-height: 1.4;
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoneStroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .zoneGroupActive .zonePulseRing {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  .zoneGroup,
+  .zoneStroke,
+  .zoneNode,
+  .hotspotBtn {
+    transition: none;
+  }
+
+  .hotspotBtn:hover {
+    transform: none;
+  }
+}

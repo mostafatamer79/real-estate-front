@@ -21,6 +21,7 @@ import { safeReturnTo } from "@/lib/auth-navigation";
 import { fetchWithTimeout } from "@/lib/fetch-with-timeout";
 import { otpDeadline } from "@/lib/otp-expiry";
 import { getApiUrl } from "@/lib/api";
+import LoginCinematicArt from "./LoginCinematicArt";
 import styles from "./sign-in.module.css";
 
 interface SignInProps {
@@ -41,6 +42,7 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCinemaActive, setIsCinemaActive] = useState(false);
 
   const router = useRouter();
   const { t, language, toggleLanguage } = useLanguage();
@@ -75,6 +77,22 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
     return () => {
       document.body.removeAttribute('data-hide-header');
       document.body.style.overflow = '';
+    };
+  }, []);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateCinemaState = () => {
+      setIsCinemaActive(!document.hidden && !motionQuery.matches);
+    };
+
+    updateCinemaState();
+    document.addEventListener("visibilitychange", updateCinemaState);
+    motionQuery.addEventListener("change", updateCinemaState);
+
+    return () => {
+      document.removeEventListener("visibilitychange", updateCinemaState);
+      motionQuery.removeEventListener("change", updateCinemaState);
     };
   }, []);
 
@@ -277,133 +295,140 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
   const activeMethodEnabled = isPhoneMode ? effectivePhoneEnabled : effectiveEmailEnabled;
   const isFormValid = activeMethodEnabled;
 
-  const logoSrc = settings.isDark
-    ? (settings.logoWhiteUrl || "/icons/white.png")
-    : (settings.logoBlackUrl || "/icons/black.png");
+  // Always use the light brand mark on the dark architectural scrim
+  const logoSrc = settings.logoWhiteUrl || "/icons/white.png";
 
   return (
     <div
-      dir={language === 'ar' ? 'rtl' : 'ltr'}
-      className={`${styles.loginOverlay} ${isConfirmed ? styles.confirmed : ''}`}
+      dir={language === "ar" ? "rtl" : "ltr"}
+      className={`${styles.loginOverlay} ${isCinemaActive ? styles.cinemaActive : ""} ${isConfirmed ? styles.confirmed : ""}`}
     >
-      <div className={styles.ambientGlow} aria-hidden="true" />
+      <div className={styles.frameBackdrop} aria-hidden="true">
+        <Image
+          unoptimized
+          priority
+          src="/artworks/banan/unique-courtyard.png"
+          width={1672}
+          height={941}
+          alt={
+            language === "ar"
+              ? "فيلا بحدائق متدرجة وفناء ومسبح في الجبال"
+              : "Architectural villa with terraced gardens, courtyard, and pool"
+          }
+          className={styles.backdropImage}
+        />
+      </div>
+      <div className={styles.frameScrim} aria-hidden="true" />
 
-      <div className={styles.container}>
-        <div className={styles.portalGrid}>
-          {/* Architectural split-screen image matching home visual identity */}
-          <div className={styles.architecturalShowcase}>
-            <img
-              src="/artworks/banan/villa-reference.png"
-              width={1376}
-              height={768}
-              alt={language === 'ar' ? 'تصوّر لفيلا بفناء ومسبح' : 'Architectural villa with courtyard and pool'}
-              className={styles.showcaseImage}
+      <div className={styles.framePage}>
+        <header className={styles.frameHeader}>
+          <div className={styles.brandAnchor}>
+            <Image
+              unoptimized
+              src={logoSrc}
+              alt={t("project.name")}
+              width={132}
+              height={36}
+              priority
+              className={styles.brandLogo}
             />
-            <div className={styles.showcaseContent}>
-              <span className={styles.showcaseEyebrow}>
-                {language === 'ar' ? 'كل التفاصيل، في مكانك.' : 'Every detail, in your space.'}
+            <span className={styles.brandText}>
+              <span className={styles.brandName}>{t("project.name")}</span>
+              <span className={styles.brandSub} lang="en">
+                DIGITAL BROKERAGE
               </span>
-              <h2 className={styles.showcaseHeading}>
-                {language === 'ar' ? (
-                  <>
-                    مرحبًا بك
-                    <br />
-                    في خطوتك <em>القادمة.</em>
-                  </>
-                ) : (
-                  <>
-                    Welcome to your
-                    <br />
-                    <em>next</em> chapter.
-                  </>
-                )}
-              </h2>
-              <span className={styles.showcaseLatin} lang="en">
-                Your next chapter.
-              </span>
-            </div>
+            </span>
           </div>
 
-          {/* Open Ivory/Navy Form Plane Aligned with the Gateway Opening */}
-          <div className={styles.formPlane}>
-            {/* Top Navigation Row: Back, Local Language Toggle, Customer Service, Close */}
-            <div className={styles.navBar}>
-              <button
-                type="button"
-                onClick={handleBack}
-                className={styles.navButton}
-                aria-label={t('common.back')}
-              >
-                <ArrowLeft className={`w-4 h-4 shrink-0 ${language === 'en' ? '' : 'rotate-180'}`} />
-                <span>{t('common.back')}</span>
-              </button>
+          <nav className={styles.navActions} aria-label={language === "ar" ? "أدوات التنقل" : "Sign-in navigation"}>
+            <button
+              type="button"
+              onClick={handleBack}
+              className={styles.backLinkBtn}
+              aria-label={t("common.back")}
+            >
+              <ArrowLeft className={`w-4 h-4 shrink-0 ${language === "en" ? "" : "rotate-180"}`} aria-hidden="true" />
+              <span>{t("common.back")}</span>
+            </button>
 
-              <div className={styles.navTrailing}>
-                <button
-                  type="button"
-                  onClick={toggleLanguage}
-                  className={styles.languageToggle}
-                  aria-label={language === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
-                >
-                  <Globe className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>{language === 'ar' ? 'EN' : 'عربي'}</span>
-                </button>
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className={styles.headerActionBtn}
+              aria-label={language === "ar" ? "Switch to English" : "التبديل إلى العربية"}
+            >
+              <Globe className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>{language === "ar" ? "EN" : "عربي"}</span>
+            </button>
 
-                <Link
-                  href="/customerservice"
-                  onClick={event => {
-                    if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-                      pendingRequest.current?.abort();
-                      setIsConfirmed(false);
-                    }
-                  }}
-                  className={styles.customerServiceLink}
-                >
-                  {t('header.customerService')}
-                </Link>
+            <Link
+              href="/customerservice"
+              onClick={(event) => {
+                if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                  pendingRequest.current?.abort();
+                  setIsConfirmed(false);
+                }
+              }}
+              className={styles.customerServiceLink}
+            >
+              {t("header.customerService")}
+            </Link>
 
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  aria-label={language === 'ar' ? 'إغلاق تسجيل الدخول' : 'Close sign in'}
-                  className={styles.closeButton}
-                >
-                  <X className="w-5 h-5 shrink-0" />
-                </button>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={handleClose}
+              aria-label={language === "ar" ? "إغلاق تسجيل الدخول" : "Close sign in"}
+              className={styles.closeButton}
+            >
+              <X className="w-5 h-5 shrink-0" aria-hidden="true" />
+            </button>
+          </nav>
+        </header>
 
-            {/* Single Elegant Brand Anchor */}
-            <div className={styles.formBrand}>
-              <Image
-                unoptimized
-                src={logoSrc}
-                alt={t('project.name')}
-                width={140}
-                height={40}
-                priority
-                className="w-auto h-8 object-contain"
-              />
-            </div>
+        <div className={styles.frameStage}>
+          <section
+            className={styles.frameStory}
+            aria-label={language === "ar" ? "سياق المشهد" : "Architectural context"}
+          >
+            <span className={styles.storyEyebrow}>
+              {language === "ar" ? "كل التفاصيل، في مكانك." : "Every detail, in your space."}
+            </span>
+            <h2 className={styles.storyHeading}>
+              {language === "ar" ? (
+                <>
+                  حين يصبح المكان <em>نقطة البداية.</em>
+                </>
+              ) : (
+                <>
+                  Where every space <em>begins.</em>
+                </>
+              )}
+            </h2>
+            <p className={styles.storyCopy}>
+              {language === "ar"
+                ? "بوابة دخول هادئة تربطك بالوحدات السكنية، الخدمات الاستشارية، ومتابعة طلباتك بخطوة تحقق سريعة."
+                : "A calm entry point connecting you with curated residences, advisory services, and request tracking."}
+            </p>
 
-            {/* Oversized Expressive Heading Block */}
+            <LoginCinematicArt language={language} />
+          </section>
+
+          <section className={styles.frameCard} aria-labelledby="signin-heading">
             <div className={styles.headingBlock}>
-              <h1 className={styles.headingTitle}>
-                {language === 'ar' ? 'خطوتك التالية، تبدأ هنا.' : 'Your next chapter starts here.'}
+              <h1 id="signin-heading" className={styles.headingTitle}>
+                {language === "ar" ? "خطوتك التالية، تبدأ هنا." : "Your next chapter starts here."}
               </h1>
               <p className={styles.headingSubtitle}>
-                {isPhoneMode ? t('login.info.phone') : t('login.info.email')}
+                {isPhoneMode ? t("login.info.phone") : t("login.info.email")}
               </p>
             </div>
 
-            {/* Segmented Mode Switcher Tabs */}
-            {(emailStatus !== 'hidden' || phoneStatus !== 'hidden') && (
+            {(emailStatus !== "hidden" || phoneStatus !== "hidden") && (
               <div
                 role="tablist"
-                aria-label={language === 'ar' ? 'طريقة تسجيل الدخول' : 'Sign-in method'}
+                aria-label={language === "ar" ? "طريقة تسجيل الدخول" : "Sign-in method"}
                 className={styles.tabList}
               >
-                {/* Email Tab */}
                 {effectiveEmailEnabled ? (
                   <button
                     ref={emailTabRef}
@@ -417,26 +442,23 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                       setIsPhoneMode(false);
                       setError(null);
                     }}
-                    onKeyDown={(e) => handleTabKeyDown(e, 'email')}
+                    onKeyDown={(e) => handleTabKeyDown(e, "email")}
                     disabled={isLoading}
-                    className={`${styles.tabButton} ${!isPhoneMode ? styles.tabButtonActive : ''}`}
+                    className={`${styles.tabButton} ${!isPhoneMode ? styles.tabButtonActive : ""}`}
                   >
                     <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
-                    <span>{t('login.tab.email')}</span>
+                    <span>{t("login.tab.email")}</span>
                   </button>
-                ) : emailStatus === 'soon' ? (
+                ) : emailStatus === "soon" ? (
                   <div className={styles.tabSoonContainer}>
                     <div className={styles.tabButtonDisabled}>
                       <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
-                      <span>{t('login.tab.email')}</span>
+                      <span>{t("login.tab.email")}</span>
                     </div>
-                    <span className={styles.soonPill}>
-                      {t('common.soon')}
-                    </span>
+                    <span className={styles.soonPill}>{t("common.soon")}</span>
                   </div>
                 ) : null}
 
-                {/* Phone Tab */}
                 {effectivePhoneEnabled ? (
                   <button
                     ref={phoneTabRef}
@@ -450,22 +472,22 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                       setIsPhoneMode(true);
                       setError(null);
                     }}
-                    onKeyDown={(e) => handleTabKeyDown(e, 'phone')}
+                    onKeyDown={(e) => handleTabKeyDown(e, "phone")}
                     disabled={isLoading}
-                    className={`${styles.tabButton} ${isPhoneMode ? styles.tabButtonActive : ''}`}
+                    className={`${styles.tabButton} ${isPhoneMode ? styles.tabButtonActive : ""}`}
                   >
                     <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
-                    <span>{t('login.tab.phone')}</span>
+                    <span>{t("login.tab.phone")}</span>
                   </button>
-                ) : phoneStatus === 'soon' ? (
+                ) : phoneStatus === "soon" ? (
                   <div className={styles.tabSoonContainer}>
                     <div className={styles.tabButtonDisabled}>
                       <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
-                      <span>{t('login.tab.phone')}</span>
+                      <span>{t("login.tab.phone")}</span>
                     </div>
                     {loginConfig.phoneLabel && (
                       <span className={styles.soonPill}>
-                        {phoneLoginEnabled ? loginConfig.phoneLabel : t('common.soon')}
+                        {phoneLoginEnabled ? loginConfig.phoneLabel : t("common.soon")}
                       </span>
                     )}
                   </div>
@@ -475,13 +497,12 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
 
             {!effectiveEmailEnabled && !effectivePhoneEnabled && (
               <p role="status" className={styles.noteBox}>
-                {language === 'ar'
-                  ? 'تسجيل الدخول غير متاح حاليًا. تواصل مع خدمة العملاء للمساعدة.'
-                  : 'Sign in is currently unavailable. Contact customer service for help.'}
+                {language === "ar"
+                  ? "تسجيل الدخول غير متاح حاليًا. تواصل مع خدمة العملاء للمساعدة."
+                  : "Sign in is currently unavailable. Contact customer service for help."}
               </p>
             )}
 
-            {/* Form */}
             <form
               role={activeMethodEnabled ? "tabpanel" : undefined}
               aria-labelledby={activeMethodEnabled ? (isPhoneMode ? "tab-phone" : "tab-email") : undefined}
@@ -491,17 +512,19 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
             >
               <div className={styles.fieldGroup}>
                 <label htmlFor={isPhoneMode ? 'login-phone' : 'login-email'} className={styles.label}>
-                  {isPhoneMode ? t('login.tab.phone') : t('login.tab.email')}
+                  {isPhoneMode ? t("login.tab.phone") : t("login.tab.email")}
                 </label>
 
-                <div className={styles.inputWrapper}>
+                <div className={styles.inputWrapper} data-invalid={Boolean(error) || undefined}>
                   {isPhoneMode ? (
                     <>
                       <div
                         className={styles.phonePrefix}
-                        aria-label={language === 'ar' ? 'رمز الدولة السعودية' : 'Saudi Arabia country code'}
+                        aria-label={language === "ar" ? "رمز الدولة السعودية" : "Saudi Arabia country code"}
                       >
-                        <span className={styles.flagIcon}>🇸🇦</span>
+                        <span className={styles.flagIcon} aria-hidden="true">
+                          🇸🇦
+                        </span>
                         <span dir="ltr">+966</span>
                       </div>
                       <input
@@ -513,7 +536,7 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                         onChange={(e) => setPhone(e.target.value)}
                         disabled={isLoading || !activeMethodEnabled}
                         className={styles.textInput}
-                        placeholder={t('login.placeholder.phone')}
+                        placeholder={t("login.placeholder.phone")}
                         autoComplete="tel"
                         aria-describedby="login-method-note"
                         aria-invalid={Boolean(error)}
@@ -532,7 +555,7 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                         onChange={(e) => setEmail(e.target.value)}
                         disabled={isLoading || !activeMethodEnabled}
                         className={styles.textInput}
-                        placeholder={t('login.placeholder.email')}
+                        placeholder={t("login.placeholder.email")}
                         autoComplete="email"
                         aria-describedby="login-method-note"
                         aria-invalid={Boolean(error)}
@@ -543,22 +566,19 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                 </div>
               </div>
 
-              {/* Inline recoverable error */}
               {error && (
                 <div role="alert" className={styles.errorAlert}>
                   <p className={styles.errorMessage}>{error}</p>
                 </div>
               )}
 
-              {/* Informational Method Note */}
               <div id="login-method-note" className={styles.noteBox}>
                 <Info className={styles.noteIcon} aria-hidden="true" />
                 <p className={styles.noteText}>
-                  {isPhoneMode ? t('login.note.phone') : t('login.note.email')}
+                  {isPhoneMode ? t("login.note.phone") : t("login.note.email")}
                 </p>
               </div>
 
-              {/* Submit CTA button */}
               <button
                 type="submit"
                 disabled={!isFormValid || isLoading}
@@ -567,19 +587,20 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin shrink-0" aria-hidden="true" />
-                    <span>{t('login.sending')}</span>
+                    <span>{t("login.sending")}</span>
                   </>
                 ) : (
                   <>
-                    <span>{t('login.submit')}</span>
-                    <ArrowLeft className={`w-4 h-4 shrink-0 ${language === 'en' ? 'rotate-180' : ''}`} aria-hidden="true" />
+                    <span>{t("login.submit")}</span>
+                    <ArrowLeft
+                      className={`w-4 h-4 shrink-0 ${language === "en" ? "rotate-180" : ""}`}
+                      aria-hidden="true"
+                    />
                   </>
                 )}
-                <div className={styles.submitBtnShine} aria-hidden="true" />
               </button>
             </form>
 
-            {/* Optional Free Trial / Guest Browse Action */}
             {isGlobalFreeTrial && (
               <div className={styles.freeTrialWrapper}>
                 <button
@@ -587,11 +608,11 @@ export default function SignIn({ onClose, next: nextProp }: SignInProps) {
                   onClick={handleFreeTrialContinue}
                   className={styles.freeTrialBtn}
                 >
-                  {t('login.continueWithoutLogin') || 'تصفح بدون تسجيل دخول'}
+                  {t("login.continueWithoutLogin") || "تصفح بدون تسجيل دخول"}
                 </button>
               </div>
             )}
-          </div>
+          </section>
         </div>
       </div>
     </div>

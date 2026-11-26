@@ -23,14 +23,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const direction: Direction = language === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
-    const storedLang = localStorage.getItem("language") as Language | null;
-    if (storedLang === "ar" || storedLang === "en") {
-      queueMicrotask(() => setLanguage(storedLang));
-    }
+    try {
+      const storedLang = localStorage.getItem("language");
+      if (storedLang === "ar" || storedLang === "en") {
+        queueMicrotask(() => setLanguage(storedLang));
+      }
+    } catch { /* Retain the default language when storage is unavailable. */ }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("language", language);
+    try { localStorage.setItem("language", language); } catch {}
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
   }, [language, direction]);

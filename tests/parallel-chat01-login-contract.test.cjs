@@ -69,26 +69,25 @@ test('SignIn.tsx uses identical canonicalIdentifier for both payload and pending
     'SignIn.tsx must not contain unsupported accreditation claim "منظومة معتمدة"',
   );
 
-  // Must use formPlane instead of formCard
-  assert.ok(signInSource.includes('styles.formPlane'), 'SignIn.tsx must use styles.formPlane');
-  assert.equal(signInSource.includes('styles.formCard'), false, 'SignIn.tsx must not use styles.formCard');
+  // Must use frameCard for the floating login form
+  assert.ok(signInSource.includes('styles.frameCard'), 'SignIn.tsx must use styles.frameCard');
 });
 
 // Test 4: Verify sign-in.module.css contract
-test('sign-in.module.css defines open formPlane without floating card background/shadow', () => {
+test('sign-in.module.css defines floating frameCard with paper surface and stone/green tokens', () => {
   const cssSource = fs.readFileSync(path.join(ROOT, 'components', 'auth', 'sign-in.module.css'), 'utf8');
 
-  assert.ok(cssSource.includes('.formPlane {'), 'sign-in.module.css must define .formPlane');
-  assert.equal(cssSource.includes('.formCard {'), false, 'sign-in.module.css must not define .formCard');
+  assert.ok(cssSource.includes('.frameCard {'), 'sign-in.module.css must define .frameCard');
+  assert.ok(cssSource.includes('--stone: #e8e1d5;'), 'sign-in.module.css must define --stone token');
+  assert.ok(cssSource.includes('--paper: #f4f1eb;'), 'sign-in.module.css must define --paper token');
+  assert.ok(cssSource.includes('--green: #354d3b;'), 'sign-in.module.css must define --green token');
 
-  // Verify formPlane has transparent background and no card box-shadow
-  const formPlaneBlock = cssSource.slice(cssSource.indexOf('.formPlane {'));
-  const formPlaneEnd = formPlaneBlock.indexOf('}');
-  const formPlaneStyles = formPlaneBlock.slice(0, formPlaneEnd);
+  const frameCardBlock = cssSource.slice(cssSource.indexOf('.frameCard {'));
+  const frameCardEnd = frameCardBlock.indexOf('}');
+  const frameCardStyles = frameCardBlock.slice(0, frameCardEnd);
 
-  assert.ok(formPlaneStyles.includes('background: transparent;'), 'formPlane must have transparent background');
-  assert.ok(formPlaneStyles.includes('box-shadow: none;'), 'formPlane must not have box-shadow');
-  assert.ok(formPlaneStyles.includes('border: none;'), 'formPlane must not have card border');
+  assert.ok(frameCardStyles.includes('background: var(--paper);'), 'frameCard must use --paper background');
+  assert.ok(frameCardStyles.includes('border: 1px solid var(--line);'), 'frameCard must use --line border');
 });
 
 // Test 5: Verify Nafath route contract

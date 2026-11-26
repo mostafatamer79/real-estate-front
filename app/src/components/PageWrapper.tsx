@@ -30,7 +30,8 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
       pathname === route || (route === '/customerservice' && ['/customerservice/contact', '/customerservice/faq', '/customerservice/support'].includes(pathname))
     );
 
-    const token = localStorage.getItem('token');
+    let token: string | null = null;
+    try { token = localStorage.getItem('token'); } catch {}
 
     // Wait until settings have loaded to avoid a premature redirect on first render.
 
