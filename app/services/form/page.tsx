@@ -37,6 +37,7 @@ function ServiceFormContent() {
   const { settings, isLoading: settingsLoading } = useSettings();
 
   const serviceType = searchParams.get("type") || "postPurchase";
+  const requestedService = searchParams.get('service');
   const legalCategory = searchParams.get("category");
   const customCategory = settings.customCategories.find((category) => category.id === serviceType);
   const config = SERVICE_CATALOG[serviceType as ServiceCategoryId] || (customCategory
@@ -145,10 +146,11 @@ function ServiceFormContent() {
             };
           })
           .filter((option) => option.status !== "disabled");
-        return { ...field, options };
+        const requestedOption = options.find(option => option.value === requestedService && !option.disabled);
+        return { ...field, options, defaultValue: requestedOption?.value ?? field.defaultValue };
       }),
     };
-  }, [def, serviceType, settings.customServices, settings.moduleFlags]);
+  }, [def, serviceType, requestedService, settings.customServices, settings.moduleFlags]);
 
   const legalSubcategory = LEGAL_SUBCATEGORIES.find(category => category.id === legalCategory);
   const access = servicePageAccess({ section: settings.sectionFlags.services, category: status,
@@ -215,7 +217,7 @@ function ServiceFormContent() {
                 </Button>
               </div>
             ) : effectiveDef && (
-              <DynamicServiceForm key={serviceType} def={effectiveDef} category={serviceType} requestTitle={formTitle} />
+              <DynamicServiceForm key={`${serviceType}:${requestedService || ''}`} def={effectiveDef} category={serviceType} requestTitle={formTitle} />
             )}
           </>
         )}

@@ -13,6 +13,14 @@ import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useSectionGuard } from "@/hooks/useSectionGuard";
 import { requestTrackingHref } from "@/lib/auth-navigation";
+import {
+  getCustomServicesForCategory,
+  getServiceDisplayName,
+  getServiceNamesForCategory,
+  LEGAL_SUBCATEGORIES,
+  makeServiceItemFlagKey,
+} from "@/lib/service-catalog";
+import { legalServiceCopy } from "@/components/services/legal-service-copy";
 import styles from "./services-redesign.module.css";
 
 const baseCategories = [
@@ -22,6 +30,33 @@ const baseCategories = [
   { id: "marketing", icon: Megaphone },
   { id: "other", icon: MoreHorizontal },
 ];
+
+const englishServiceLabels: Record<string, string> = {
+  "الغاز": "Gas",
+  "نقل وتركيب الأثاث": "Furniture moving & installation",
+  "التأمين على المنزل": "Home insurance",
+  "الصيانة (سباكة / كهرباء)": "Maintenance (plumbing / electrical)",
+  "خدمة التنظيف": "Cleaning service",
+  "تنسيق حدائق": "Landscaping",
+  "أنظمة أمنية": "Security systems",
+  "مقاول عظم": "Structural contractor",
+  "تصميم هندسي": "Engineering design",
+  "تشطيبات": "Finishing",
+  "كهرباء": "Electrical",
+  "سباكة": "Plumbing",
+  "نجارة": "Carpentry",
+  "دهانات": "Painting",
+  "ألمنيوم": "Aluminium",
+  "إشراف هندسي": "Engineering supervision",
+  "تصميم داخلي": "Interior design",
+  "تصوير فوتوغرافي للعقار": "Property photography",
+  "حملة إعلانية (وسائل التواصل الاجتماعي)": "Social media campaign",
+  "حملة إعلانية (إعلانات طرق/تقليدية)": "Outdoor / traditional campaign",
+  "التقييم العقاري": "Property valuation",
+  "المسح الهندسي": "Engineering survey",
+  "تمويل عقاري": "Property financing",
+  "أخرى": "Other",
+};
 
 export default function Services() {
   const { t, language } = useLanguage();
@@ -51,6 +86,53 @@ export default function Services() {
     return { ...category, href, previewHref: `${href}${href.includes("?") ? "&" : "?"}preview=1` };
   });
   const selected = categories.find(category => category.id === selectedId) || categories[0];
+
+  const selectedBranches = (() => {
+    if (!selected) return [];
+    const categorySoon = selected.status === "soon";
+    const categoryCustom = getCustomServicesForCategory(settings.customServices, selected.id);
+
+    if (selected.id === "legal") {
+      const availableNames = getServiceNamesForCategory("legal", settings.customServices);
+      const legalItems = LEGAL_SUBCATEGORIES
+        .filter((sub) => availableNames.includes(sub.title) && settings.moduleFlags[sub.formKey] !== "disabled")
+        .map((sub) => {
+          const configuredName = getServiceDisplayName("legal", sub.title, settings.customServices);
+          const copy = legalServiceCopy[sub.id];
+          const label = configuredName !== sub.title || ar ? configuredName : copy.title;
+          const soon = categorySoon || settings.moduleFlags[sub.formKey] === "soon";
+          const href = `/services/form?type=legal&category=${encodeURIComponent(sub.id)}${soon && isAdmin ? "&preview=1" : ""}`;
+          return { key: sub.id, label, soon, href };
+        });
+
+      const knownTitles = new Set(LEGAL_SUBCATEGORIES.map((sub) => sub.title));
+      const extraLegal = categoryCustom
+        .filter((item) => !item.deleted && !knownTitles.has(item.name))
+        .flatMap((item) => {
+          const itemStatus = item.status || settings.moduleFlags[makeServiceItemFlagKey("legal", item.name)] || "enabled";
+          if (itemStatus === "disabled") return [];
+          const soon = categorySoon || itemStatus === "soon";
+          const label = item.displayName || (ar ? item.name : englishServiceLabels[item.name] || item.name);
+          const href = `/services/form?type=legal&category=other&service=${encodeURIComponent(item.name)}${soon && isAdmin ? "&preview=1" : ""}`;
+          return [{ key: item.id, label, soon, href }];
+        });
+
+      return [...legalItems, ...extraLegal];
+    }
+
+    const names = getServiceNamesForCategory(selected.id, settings.customServices);
+    return names.flatMap((name) => {
+      const customItem = categoryCustom.find((item) => item.name === name);
+      const flagStatus = settings.moduleFlags[makeServiceItemFlagKey(selected.id, name)];
+      const itemStatus = customItem?.status || flagStatus || "enabled";
+      if (itemStatus === "disabled") return [];
+      const soon = categorySoon || itemStatus === "soon";
+      const displayName = getServiceDisplayName(selected.id, name, settings.customServices);
+      const label = !ar && displayName === name ? (englishServiceLabels[name] || displayName) : displayName;
+      const href = `/services/form?type=${encodeURIComponent(selected.id)}&service=${encodeURIComponent(name)}${soon && isAdmin ? "&preview=1" : ""}`;
+      return [{ key: `${selected.id}-${name}`, label, soon, href }];
+    });
+  })();
 
   const renderAction = (category: typeof categories[number], prominent = false) => {
     const soon = category.status === "soon";
@@ -84,6 +166,11 @@ export default function Services() {
 
   return (
     <section className={styles.page} dir={ar ? "rtl" : "ltr"} aria-labelledby="services-page-title">
+      {selected && (
+        <div key={selected.id} className={styles.pageWatermark} aria-hidden="true">
+          <selected.icon strokeWidth={1.1} />
+        </div>
+      )}
       <div className={styles.shell}>
         <Button asChild variant="ghost" className={styles.back}>
           <Link href="/details"><Back aria-hidden="true" />{t("common.back")}</Link>
@@ -99,11 +186,6 @@ export default function Services() {
                   {t("services.myRequests")}
                 </Link>
               </Button>
-              <Button asChild variant="ghost" className={styles.action}>
-                <Link href="/service-providers" aria-label={t("services.providerPortalAria")}>
-                  {t("services.providerPortal")}
-                </Link>
-              </Button>
             </nav>
           </div>
           {selected && <>
@@ -117,27 +199,40 @@ export default function Services() {
                 </div>
               </div>
               {renderAction(selected, true)}
+              {selectedBranches.length > 0 ? (
+                <div key={`branches-${selected.id}`} className={styles.branchesPanel}>
+                  <h3 className={styles.branchesHeading}>
+                    {ar ? "الخدمات المتوفرة ضمن هذا القسم" : "Available services in this category"}
+                  </h3>
+                  <ul className={styles.branchesGrid}>
+                    {selectedBranches.map((branch) => (
+                      <li key={branch.key} className={styles.branchItem}>
+                        {branch.soon && !isAdmin ? (
+                          <span className={styles.branchDisabled}>
+                            <span>{branch.label}</span>
+                            <span className={styles.branchSoonBadge}>{ar ? "قريبًا" : "Soon"}</span>
+                          </span>
+                        ) : (
+                          <Link href={branch.href} className={styles.branchLink}>
+                            <span>{branch.label}</span>
+                            <span className={styles.branchMeta}>
+                              {branch.soon && <span className={styles.branchSoonBadge}>{ar ? "قريبًا" : "Soon"}</span>}
+                              <Forward aria-hidden="true" className={styles.branchArrow} />
+                            </span>
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className={styles.branchesEmpty} role="status">
+                  {ar ? "لا توجد خدمات فرعية متاحة في هذا القسم حاليًا." : "No branch services are currently available in this category."}
+                </p>
+              )}
             </div>
           </>}
         </div>
-
-        <section className={styles.directory} aria-labelledby="service-directory">
-          <h2 id="service-directory">{ar ? "دليل الخدمات التخصصية" : "Specialized services"}</h2>
-          {categories.length ? (
-            <ul className={styles.directoryList}>
-              {categories.map(category => (
-                <li key={category.id}>
-                  <span className={styles.icon}><category.icon aria-hidden="true" /></span>
-                  <div className={styles.categoryCopy}>
-                    <h3>{category.title}</h3>
-                    {category.description && <p>{category.description}</p>}
-                  </div>
-                  {renderAction(category)}
-                </li>
-              ))}
-            </ul>
-          ) : <p role="status">{ar ? "لا توجد خدمات متاحة حاليًا." : "No services are currently available."}</p>}
-        </section>
       </div>
     </section>
   );

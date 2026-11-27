@@ -34,7 +34,9 @@ export default function AdminProvidersPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [registrationUrl, setRegistrationUrl] = useState("");
-  useEffect(() => setRegistrationUrl(`${window.location.origin}/service-providers`), []);
+  const [invitationExpiresAt, setInvitationExpiresAt] = useState<string | null>(null);
+  const [generatingInvite, setGeneratingInvite] = useState(false);
+  const [inviteError, setInviteError] = useState("");
   const [noticeTarget,setNoticeTarget] = useState<string | null>(null);
   const [noticeText,setNoticeText] = useState("");
   const [fee, setFee] = useState("");
@@ -155,6 +157,31 @@ export default function AdminProvidersPage() {
       setBusy(false);
     }
   };
+  const generateInvitation = async () => {
+    setGeneratingInvite(true);
+    setInviteError("");
+    setNotice("");
+    try {
+      const res = await providerApi.createInvitation();
+      const url = `${window.location.origin}/service-providers?invite=${encodeURIComponent(res.data.token)}`;
+      setRegistrationUrl(url);
+      setInvitationExpiresAt(res.data.expiresAt);
+      setNotice(
+        ar
+          ? "تم إنشاء رابط دعوة جديد بنجاح."
+          : "New provider invitation link generated.",
+      );
+    } catch (err) {
+      setInviteError(
+        providerError(
+          err,
+          ar ? "تعذر إنشاء رابط الدعوة" : "Could not generate invitation link",
+        ),
+      );
+    } finally {
+      setGeneratingInvite(false);
+    }
+  };
   return (
     <div
       className="mx-auto max-w-6xl space-y-6 p-4 text-foreground sm:p-6"
@@ -164,19 +191,39 @@ export default function AdminProvidersPage() {
         {ar ? "إدارة مزودي الخدمات والموثقين" : "Providers and notaries"}
       </h1>
       <section className="space-y-3 rounded-xl border border-border bg-card p-4">
-        <h2 className="font-bold">{ar ? "رابط تسجيل مزود خدمة" : "Provider registration link"}</h2>
-        <p className="text-sm text-muted-foreground">{ar ? "شارك الرابط مع المزود لتسجيل الدخول وإكمال التوثيق وطلب الانضمام. اعتماد التخصصات والاتفاق المالي يتم من هذه الصفحة." : "Share this link so providers can sign in, verify their identity and apply. Review their service grants and agreement here."}</p>
-        <label className="block text-sm">
-          {ar ? "رابط التسجيل" : "Registration URL"}
-          <input readOnly value={registrationUrl} dir="ltr" onFocus={event => event.target.select()} className="mt-2 w-full rounded-lg border bg-background p-3" />
-        </label>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={async () => {
-            try { await navigator.clipboard.writeText(registrationUrl); setNotice(ar ? "تم نسخ رابط التسجيل" : "Registration link copied"); }
-            catch { setError(ar ? "حدد الرابط وانسخه يدويًا" : "Select and copy the link manually"); }
-          }}>{ar ? "نسخ الرابط" : "Copy link"}</Button>
-          <Link href="/service-providers" className="inline-flex min-h-11 items-center underline">{ar ? "فتح بوابة التسجيل" : "Open registration portal"}</Link>
+        <h2 className="font-bold">{ar ? "رابط دعوة تسجيل مزود خدمة" : "Provider invitation link"}</h2>
+        <p className="text-sm text-muted-foreground">{ar ? "أنشئ رابط دعوة خاص للمزود لتسجيل الدخول وحفظ بياناته ثم إكمال توثيق نفاذ لتفعيل الحساب. ضبط التخصصات والاتفاق المالي يتم من هذه الصفحة." : "Generate an invitation link so a provider can sign in, save their application, and complete Nafath verification to activate. Configure specializations and commercial terms here."}</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="button" disabled={generatingInvite} onClick={() => void generateInvitation()}>
+            {generatingInvite
+              ? ar ? "جارٍ إنشاء الرابط…" : "Generating…"
+              : ar ? "إنشاء رابط دعوة" : "Generate invitation link"}
+          </Button>
+          <Link href="/service-providers" className="inline-flex min-h-11 items-center underline">{ar ? "فتح بوابة المزودين" : "Open provider portal"}</Link>
         </div>
+        {inviteError && (
+          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+            {inviteError}
+          </p>
+        )}
+        {registrationUrl && (
+          <div className="space-y-2 pt-2">
+            <label className="block text-sm">
+              {ar ? "رابط الدعوة" : "Invitation URL"}
+              <input readOnly value={registrationUrl} dir="ltr" onFocus={event => event.target.select()} className="mt-2 w-full rounded-lg border bg-background p-3" />
+            </label>
+            {invitationExpiresAt && (
+              <p className="text-xs text-muted-foreground">
+                {ar ? "تنتهي الصلاحية:" : "Expires:"}{" "}
+                <span dir="ltr">{new Date(invitationExpiresAt).toLocaleString(ar ? "ar-SA" : "en-US")}</span>
+              </p>
+            )}
+            <Button type="button" variant="outline" onClick={async () => {
+              try { await navigator.clipboard.writeText(registrationUrl); setNotice(ar ? "تم نسخ رابط الدعوة" : "Invitation link copied"); }
+              catch { setInviteError(ar ? "حدد الرابط وانسخه يدويًا" : "Select and copy the link manually"); }
+            }}>{ar ? "نسخ الرابط" : "Copy link"}</Button>
+          </div>
+        )}
       </section>
       {error && (
         <p role="alert" className="rounded-lg bg-red-50 p-3 text-red-800">

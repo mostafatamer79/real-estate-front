@@ -7,28 +7,28 @@
   /* Editorial Palette Tokens — Pearl & Royal Navy with Restrained Brass */
   --sq-page-bg: var(--site-light-background, #dbe4f2);
   --sq-surface: #ffffff;
-  --sq-surface-subtle: #faf9f6;
-  --sq-surface-secondary: #f0efe9;
+  --sq-surface-subtle: #edf4fb;
+  --sq-surface-secondary: #dcebf7;
   --sq-input-bg: #ffffff;
   --sq-ink: #0b192c;
   --sq-ink-soft: #526071;
   --sq-muted: #526071;
-  --sq-border: #e2ded6;
-  --sq-border-subtle: #eceae3;
+  --sq-border: #b4cce0;
+  --sq-border-subtle: #d3e2ef;
 
   /* Brass Accents */
-  --sq-brass: #c5a880;
-  --sq-brass-deep: #8d6c38;
-  --sq-brass-tint: rgba(197, 168, 128, 0.12);
-  --sq-brass-border: rgba(197, 168, 128, 0.38);
+  --sq-brass: var(--brand-accent);
+  --sq-brass-deep: var(--brand-accent);
+  --sq-brass-tint: color-mix(in srgb, var(--brand-accent) 12%, transparent);
+  --sq-brass-border: var(--brand-line);
 
   /* Button Tokens */
   --sq-primary-btn-bg: #0b192c;
   --sq-primary-btn-text: #ffffff;
   --sq-primary-btn-hover: #16273f;
-  --sq-secondary-btn-bg: #f0efe9;
+  --sq-secondary-btn-bg: #dcebf7;
   --sq-secondary-btn-text: #0b192c;
-  --sq-focus-outline: #8d6c38;
+  --sq-focus-outline: var(--brand-accent);
 
   /* Elevation */
   --sq-card-shadow: 0 4px 20px rgba(11, 25, 44, 0.04);
@@ -66,10 +66,10 @@
   --sq-border-subtle: #1c2b40;
 
   /* Brass Accents (Dark) */
-  --sq-brass: #d4af37;
-  --sq-brass-deep: #e5be48;
-  --sq-brass-tint: rgba(212, 175, 55, 0.14);
-  --sq-brass-border: rgba(212, 175, 55, 0.42);
+  --sq-brass: var(--brand-accent);
+  --sq-brass-deep: var(--brand-sky);
+  --sq-brass-tint: color-mix(in srgb, var(--brand-accent) 14%, transparent);
+  --sq-brass-border: var(--brand-line);
 
   /* Button Tokens (Dark) */
   --sq-primary-btn-bg: #f1f5f9;
@@ -77,7 +77,7 @@
   --sq-primary-btn-hover: #ffffff;
   --sq-secondary-btn-bg: #182940;
   --sq-secondary-btn-text: #f1f5f9;
-  --sq-focus-outline: #d4af37;
+  --sq-focus-outline: var(--brand-accent);
 
   /* Elevation (Dark) */
   --sq-card-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
@@ -111,12 +111,12 @@
   inset-inline-end: 8%;
   width: 46vw;
   height: 420px;
-  background: radial-gradient(circle at 60% 15%, rgba(197, 168, 128, 0.09), transparent 70%);
+  background: radial-gradient(circle at 60% 15%, rgb(36 107 163 / .09), transparent 70%);
   filter: blur(55px);
 }
 
 :global(.dark) .ambientGlow {
-  background: radial-gradient(circle at 60% 15%, rgba(212, 175, 55, 0.09), transparent 72%);
+  background: radial-gradient(circle at 60% 15%, rgb(143 197 232 / .09), transparent 72%);
 }
 
 /* Page Shell */
@@ -438,6 +438,7 @@
 }
 
 .packageCard {
+  isolation: isolate;
   position: relative;
   display: flex;
   flex-direction: column;

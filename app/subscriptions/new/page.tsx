@@ -233,12 +233,12 @@ export default function NewSubscriptionPage() {
   };
 
   if (!isOpen) {
-    return <ComingSoonOverlay sectionName={t("subscriptions.management") || "الاشتراكات"} message={message} isAdmin={isAdmin} />;
+    return <ComingSoonOverlay sectionName={isRtl ? "إدارة الاشتراكات" : "Subscriptions Management"} message={message} isAdmin={isAdmin} />;
   }
 
   return (
     <div className={styles.subscriptionPage} dir={isRtl ? "rtl" : "ltr"}>
-      <MobileAppHeader theme="light" title={t("subscriptions.management") || "الاشتراكات"} />
+      <MobileAppHeader theme="light" title={isRtl ? "إدارة الاشتراكات" : "Subscriptions Management"} />
 
       {/* Admin Impersonation Bar */}
       {impersonatedByAdmin && (
@@ -286,7 +286,7 @@ export default function NewSubscriptionPage() {
             <div className="flex-1">
               <div className={styles.heroEyebrow}>
                 <span className={styles.heroEyebrowRule} aria-hidden="true" />
-                <span>{t("subscriptions.management") || (isRtl ? "إدارة الاشتراكات" : "Subscriptions Management")}</span>
+                <span>{isRtl ? "إدارة الاشتراكات" : "Subscriptions Management"}</span>
               </div>
               <h1 className={styles.heroTitle}>
                 {t("sub.public.packagesTitle") || (isRtl ? "باقات الاشتراكات المؤسسية" : "Enterprise Subscription Packages")}
@@ -356,6 +356,7 @@ export default function NewSubscriptionPage() {
                       key={pkg.id}
                       className={`${styles.packageCard} ${isSelected ? styles.isSelected : ""}`}
                     >
+                      <Building2 className="brand-watermark" aria-hidden="true" />
                       {isSelected && (
                         <div className={styles.packageSelectedBadge}>
                           <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />

@@ -1223,8 +1223,8 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
                         </article>
                       );
                     })
-                  ) : (
-                    /* Empty States */
+                  ) : (activeTab === 'appointments' || offers.length > 0) ? (
+                    /* Empty States (filtered-empty & appointment-empty; unfiltered no-offers omitted) */
                     <div className={styles.stateCard}>
                       <div className={styles.stateIconWrap}>
                         <HomeIcon className="w-7 h-7 text-[var(--oo-gold-deep)]" />
@@ -1232,12 +1232,12 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
                       <h3 className={styles.stateTitle}>
                         {activeTab === 'appointments'
                           ? t('offers.noAppointments')
-                          : (offers.length === 0 ? (isRtl ? 'لا توجد عروض متاحة حالياً' : 'No offers available at the moment') : t('offers.noOffers'))}
+                          : t('offers.noOffers')}
                       </h3>
                       <p className={styles.stateDesc}>
                         {activeTab === 'appointments'
                           ? t('offers.noAppointmentsSubtitle')
-                          : (offers.length === 0 ? (isRtl ? 'يرجى مراجعة الموقع لاحقاً للاطلاع على العروض الجديدة.' : 'Please check back later for newly published offers.') : t('offers.noOffersSubtitle'))}
+                          : t('offers.noOffersSubtitle')}
                       </p>
                       {offers.length > 0 && activeTab !== 'appointments' && (
                         <button
@@ -1250,7 +1250,7 @@ export default function OffersPage({ children }: { children?: React.ReactNode } 
                         </button>
                       )}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               )}
             </main>

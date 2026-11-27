@@ -13,15 +13,18 @@ import {
   AlertCircle,
   ArrowLeft,
   Check,
+  CheckCircle2,
   ChevronRight,
   Clock,
   Loader2,
+  MapPin,
   MessageSquare,
   Package,
   RefreshCw,
   Search,
   ShieldCheck,
   SaudiRiyalIcon,
+  XCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog-provider";
@@ -279,12 +282,33 @@ export default function MyServiceRequestsPage() {
     });
   };
 
+  const getStatusTone = (request: ServiceRequest): "success" | "pending" | "danger" | "neutral" => {
+    if (request.paymentStatus === "paid" || request.adminAccepted || request.clientDecision === "accepted") {
+      return "success";
+    }
+    if (request.clientDecision === "rejected" || request.status === ServiceStatus.CANCELLED) {
+      return "danger";
+    }
+    if (Object.keys(request.departmentPrices || {}).length > 0) {
+      return "pending";
+    }
+    if (request.status === ServiceStatus.COMPLETED) return "success";
+    return "neutral";
+  };
+
   const getStatusBadge = (request: ServiceRequest) => {
-    if (request.paymentStatus === 'paid') return <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>{isAr ? 'مدفوع' : 'Paid'}</span>;
+    if (request.paymentStatus === 'paid') {
+      return (
+        <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>
+          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+          {isAr ? 'مدفوع' : 'Paid'}
+        </span>
+      );
+    }
     if (request.adminAccepted || request.clientDecision === "accepted") {
       return (
         <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>
-          <Check className="h-3 w-3" />
+          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
           {request.userId ? (isAr ? 'الفاتورة جاهزة في المحفظة' : 'Invoice ready in wallet') : (isAr ? 'تم حفظ السعر' : 'Price saved')}
         </span>
       );
@@ -292,7 +316,7 @@ export default function MyServiceRequestsPage() {
     if (Object.keys(request.departmentPrices || {}).length > 0) {
       return (
         <span className={`${styles.statusBadge} ${styles.statusPending}`}>
-          <Clock className="h-3 w-3" />
+          <Clock className="h-3.5 w-3.5" aria-hidden="true" />
           {isAr ? "بانتظار اعتماد الإدارة" : "Pending Admin Review"}
         </span>
       );
@@ -301,28 +325,28 @@ export default function MyServiceRequestsPage() {
       case ServiceStatus.PENDING:
         return (
           <span className={`${styles.statusBadge} ${styles.statusNeutral}`}>
-            <Clock className="h-3 w-3" />
+            <Clock className="h-3.5 w-3.5" aria-hidden="true" />
             {isAr ? "قيد المراجعة" : "Under Review"}
           </span>
         );
       case ServiceStatus.IN_PROGRESS:
         return (
-          <span className={`${styles.statusBadge} ${styles.statusNeutral}`}>
-            <Clock className="h-3 w-3" />
+          <span className={`${styles.statusBadge} ${styles.statusPending}`}>
+            <Clock className="h-3.5 w-3.5" aria-hidden="true" />
             {isAr ? "قيد المعالجة" : "In Progress"}
           </span>
         );
       case ServiceStatus.COMPLETED:
         return (
           <span className={`${styles.statusBadge} ${styles.statusSuccess}`}>
-            <Check className="h-3 w-3" />
+            <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
             {isAr ? "مكتمل" : "Completed"}
           </span>
         );
       case ServiceStatus.CANCELLED:
         return (
           <span className={`${styles.statusBadge} ${styles.statusDanger}`}>
-            <AlertCircle className="h-3 w-3" />
+            <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
             {isAr ? "ملغي" : "Cancelled"}
           </span>
         );
@@ -832,6 +856,39 @@ export default function MyServiceRequestsPage() {
             </div>
           ) : (
             <>
+              <div className={styles.summaryStrip} aria-label={isAr ? "ملخص حالات الطلبات" : "Requests status summary"}>
+                <div className={styles.summaryCard} data-tone="neutral">
+                  <span className={styles.summaryIcon} aria-hidden="true"><Package className="h-4 w-4" /></span>
+                  <div>
+                    <div className={styles.summaryValue}>{requests.length.toLocaleString(isAr ? "ar-SA-u-nu-arab" : "en-US")}</div>
+                    <div className={styles.summaryLabel}>{isAr ? "إجمالي الطلبات" : "Total requests"}</div>
+                  </div>
+                </div>
+                <div className={styles.summaryCard} data-tone="success">
+                  <span className={styles.summaryIcon} aria-hidden="true"><CheckCircle2 className="h-4 w-4" /></span>
+                  <div>
+                    <div className={styles.summaryValue}>{requests.filter(isAcceptedRequest).length.toLocaleString(isAr ? "ar-SA-u-nu-arab" : "en-US")}</div>
+                    <div className={styles.summaryLabel}>{isAr ? "مقبولة ومكتملة" : "Accepted & completed"}</div>
+                  </div>
+                </div>
+                <div className={styles.summaryCard} data-tone="pending">
+                  <span className={styles.summaryIcon} aria-hidden="true"><Clock className="h-4 w-4" /></span>
+                  <div>
+                    <div className={styles.summaryValue}>
+                      {requests.filter((r) => !isAcceptedRequest(r) && !isRejectedRequest(r)).length.toLocaleString(isAr ? "ar-SA-u-nu-arab" : "en-US")}
+                    </div>
+                    <div className={styles.summaryLabel}>{isAr ? "قيد المراجعة والتسعير" : "In review & pricing"}</div>
+                  </div>
+                </div>
+                <div className={styles.summaryCard} data-tone="danger">
+                  <span className={styles.summaryIcon} aria-hidden="true"><XCircle className="h-4 w-4" /></span>
+                  <div>
+                    <div className={styles.summaryValue}>{requests.filter(isRejectedRequest).length.toLocaleString(isAr ? "ar-SA-u-nu-arab" : "en-US")}</div>
+                    <div className={styles.summaryLabel}>{isAr ? "مرفوضة أو ملغاة" : "Rejected or cancelled"}</div>
+                  </div>
+                </div>
+              </div>
+
               <nav className={styles.tabsNav} aria-label={isAr ? "تصفية حالة الطلبات" : "Request status filters"}>
                 {([
                   { id: "all", label: isAr ? "كل الخدمات" : "All Services", count: requests.length },
@@ -903,10 +960,12 @@ export default function MyServiceRequestsPage() {
                           {filteredRequests.map((request) => {
                             const offersCount = Object.keys(request.departmentPrices || {}).length;
                             const displayPrice = request.price !== undefined && request.price !== null ? request.price : 0;
+                            const tone = getStatusTone(request);
                             return (
                               <tr
                                 key={request.id}
                                 className={styles.registerRow}
+                                data-status={tone}
                                 onClick={() => setSelectedRequest(request)}
                                 tabIndex={0}
                                 role="button"
@@ -919,11 +978,18 @@ export default function MyServiceRequestsPage() {
                                 aria-label={`${request.serviceType || "طلب"} - #${request.id.substring(0, 8)}`}
                               >
                                 <td className={styles.registerCell}>
-                                  <div className={styles.servicePrimary}>
-                                    {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
-                                  </div>
-                                  <div className={styles.serviceSub}>
-                                    #{request.id.substring(0, 8)}
+                                  <div className={styles.serviceCellWrap}>
+                                    <span className={styles.serviceIconBadge} data-status={tone} aria-hidden="true">
+                                      <Package className="h-4 w-4" />
+                                    </span>
+                                    <div>
+                                      <div className={styles.servicePrimary}>
+                                        {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                                      </div>
+                                      <div className={styles.serviceSub}>
+                                        #{request.id.substring(0, 8)}
+                                      </div>
+                                    </div>
                                   </div>
                                 </td>
                                 <td className={styles.registerCell}>
@@ -979,10 +1045,12 @@ export default function MyServiceRequestsPage() {
                     {filteredRequests.map((request) => {
                       const offersCount = Object.keys(request.departmentPrices || {}).length;
                       const displayPrice = request.price !== undefined && request.price !== null ? request.price : 0;
+                      const tone = getStatusTone(request);
                       return (
                         <div
                           key={request.id}
                           className={styles.mobileCard}
+                          data-status={tone}
                           onClick={() => setSelectedRequest(request)}
                           tabIndex={0}
                           role="button"
@@ -995,8 +1063,13 @@ export default function MyServiceRequestsPage() {
                           aria-label={`${request.serviceType || "طلب"} - #${request.id.substring(0, 8)}`}
                         >
                           <div className={styles.mobileCardTop}>
-                            <div className={styles.mobileCardService}>
-                              {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                            <div className={styles.serviceCellWrap}>
+                              <span className={styles.serviceIconBadge} data-status={tone} aria-hidden="true">
+                                <Package className="h-4 w-4" />
+                              </span>
+                              <div className={styles.mobileCardService}>
+                                {request.serviceType || (isAr ? "طلب خدمة" : "Service Request")}
+                              </div>
                             </div>
                             {getStatusBadge(request)}
                           </div>
@@ -1007,7 +1080,10 @@ export default function MyServiceRequestsPage() {
                             {(request.city || request.district) && (
                               <>
                                 <span>·</span>
-                                <span>{`${request.city || "-"}، ${request.district || "-"}`}</span>
+                                <span className="inline-flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" aria-hidden="true" />
+                                  {`${request.city || "-"}، ${request.district || "-"}`}
+                                </span>
                               </>
                             )}
                           </div>

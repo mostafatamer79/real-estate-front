@@ -814,6 +814,16 @@
   padding-top: 0.5rem;
 }
 
+.nafathCard {
+  border-radius: 1rem;
+  background-color: var(--pr-surface);
+  border: 1px solid var(--pr-gold-border);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .pageContainer *,

@@ -71,6 +71,7 @@ export default function DetailsNeighborhood({ showTitle = true }: { showTitle?: 
               showPropertyPin={design.showPropertyPin}
               propertyPinColor={design.propertyPinColor}
               enable3d={design.enable3d}
+              showPlaces={design.showPins}
               isDark={settings.isDark}
               language={language}
               onWebGlError={handleWebGlError}

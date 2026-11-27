@@ -124,11 +124,11 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
 
   const getActivityDate = (activity: any) => {
     const value = activity?.timestamp || activity?.createdAt || activity?.updatedAt;
-    return value ? new Date(value).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US') : '';
+    return value ? new Date(value).toLocaleDateString(language === 'ar' ? 'ar-SA-u-nu-arab' : 'en-US') : '';
   };
 
   const isArabic = language === "ar";
-  const locale = isArabic ? "ar-SA" : "en-US";
+  const locale = isArabic ? "ar-SA-u-nu-arab" : "en-US";
   const walletStatus = settings.sectionFlags.wallet;
   const canViewAds = adsDetailsStatus === "enabled";
 
@@ -143,14 +143,14 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               ) : (
                 <button type="button" onClick={() => handleCardClick("operations")} aria-haspopup="dialog">
                   <span>{t("cards.prevOperations")}</span>
-                  <ActivityTotal key={operations.length} value={operations.length} locale="en-US" />
+                  <ActivityTotal key={operations.length} value={operations.length} locale={locale} />
                 </button>
               )
             )}
             {canViewAds && (
               <button type="button" onClick={() => handleCardClick("ads")} aria-haspopup="dialog">
                 <span>{isArabic ? "الطلبات الإعلانية" : "Ad requests"}</span>
-                <ActivityTotal key={marketingRequests.length} value={marketingRequests.length} locale="en-US" />
+                <ActivityTotal key={marketingRequests.length} value={marketingRequests.length} locale={locale} />
               </button>
             )}
           </div>
@@ -171,11 +171,6 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
               })}
             </ul>
           )}
-          <div className={studio.statActions}>
-            {canViewAds && <button type="button" aria-haspopup="dialog" onClick={() => setIsRequestAdModalOpen(true)}>
-              <PlusCircle size={15} aria-hidden="true" />{isArabic ? "طلب إعلان" : "Request an ad"}
-            </button>}
-          </div>
         </div>
       ) : (
       <motion.div
@@ -491,14 +486,26 @@ export default function PropertyInfoCards({ propertyId, operations = [], marketi
 
                 {selectedCard === "ads" && (
                   <div className="space-y-4">
-                    <h3 className="text-xs font-bold text-muted-foreground dark:text-slate-500 uppercase tracking-widest mb-4">{t('cards.details')}</h3>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <h3 className="text-xs font-bold text-muted-foreground dark:text-slate-500 uppercase tracking-widest">{t('cards.details')}</h3>
+                      {canViewAds && (
+                        <button
+                          type="button"
+                          onClick={() => setIsRequestAdModalOpen(true)}
+                          className="inline-flex items-center gap-1.5 min-h-10 px-3.5 py-2 rounded-xl text-xs font-bold border border-border bg-muted/50 hover:bg-muted text-foreground transition-colors"
+                        >
+                          <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                          <span>{isArabic ? "طلب إعلان" : "Request an ad"}</span>
+                        </button>
+                      )}
+                    </div>
                     <div className="grid gap-3">
                       {marketingRequests.length > 0 ? marketingRequests.map((ad, i) => (
                         <div key={i} className="calm-panel p-5 rounded-2xl bg-muted/30 dark:bg-slate-700/30 border border-border dark:border-slate-700/40 hover:border-border hover:dark:border-slate-600/50 hover:bg-muted/50 hover:dark:bg-slate-700/50 transition-all">
                           <div className="flex justify-between items-start mb-2">
                             <p className="font-bold text-foreground dark:text-slate-100 text-base">{ad.subject || ad.title || (language === 'ar' ? 'إعلان مميز' : 'Featured Ad')}</p>
                             <span className="text-[10px] font-bold uppercase text-muted-foreground dark:text-slate-500 bg-muted/60 dark:bg-slate-700/60 border border-border dark:border-slate-600/40 px-2.5 py-1 rounded-full">
-                              {ad.createdAt ? new Date(ad.createdAt).toLocaleDateString() : ""}
+                              {ad.createdAt ? new Date(ad.createdAt).toLocaleDateString(locale) : ""}
                             </span>
                           </div>
                           <p className="text-muted-foreground dark:text-slate-400 text-sm">{ad.content || ad.description || ''}</p>

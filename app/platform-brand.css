@@ -1,0 +1,45 @@
+/* Shared platform identity. Status colors retain their semantic meaning. */
+:root {
+  --brand-navy: #102b46;
+  --brand-blue: #246ba3;
+  --brand-sky: #8fc5e8;
+  --brand-tint: #dcebf7;
+  --brand-accent: var(--brand-blue);
+  --brand-on-accent: #ffffff;
+  --brand-line: #b4cce0;
+  --brand-watermark-opacity: .08;
+  --light-canvas: #e3eaf4;
+  --light-surface-soft: #edf4fb;
+}
+html:not(.dark) {
+  --light-canvas: #e3eaf4;
+  --light-surface-soft: #edf4fb;
+}
+.dark {
+  --brand-accent: var(--brand-sky);
+  --brand-on-accent: var(--brand-navy);
+  --brand-line: #365572;
+  --brand-tint: #223c56;
+  --brand-watermark-opacity: .12;
+}
+/* Same icon printed behind its own card; never intercepts input or labels. */
+.brand-watermark {
+  position: absolute;
+  inset-inline-end: 1.5rem;
+  inset-block-end: .75rem;
+  width: clamp(5rem, 12vw, 8rem);
+  height: clamp(5rem, 12vw, 8rem);
+  color: var(--brand-accent);
+  opacity: var(--brand-watermark-opacity);
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+  stroke-width: 1;
+}
+html:not(.dark) .calm-page { background-color: var(--light-canvas); }
+html:not(.dark) .calm-screen .calm-icon {
+  background-color: var(--brand-tint);
+  color: var(--brand-accent);
+  border-color: var(--brand-line);
+}
+.dark .calm-screen .calm-icon { color: var(--brand-sky); }

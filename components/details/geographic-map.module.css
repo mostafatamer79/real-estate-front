@@ -1,6 +1,6 @@
 .shell {
   --map-ink: #101d24;
-  --map-gold: #e3c69a;
+  --map-gold: var(--brand-sky, #8fc5e8);
   position: relative;
   height: 100%;
   width: 100%;
@@ -11,12 +11,12 @@
 }
 .shell:fullscreen { width: 100vw; height: 100vh !important; }
 .map { position: absolute; inset: 0; }
-.vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(#07131dcc, transparent 30%, transparent 70%, #07131db3); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(#07131dcc, transparent 24%, transparent 80%, #07131db3); }
 .header { position: absolute; inset: 20px 24px auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; pointer-events: none; text-shadow: 0 2px 12px #000; }
 .eyebrow { display: block; color: var(--map-gold); font-size: 10px; letter-spacing: .12em; margin-bottom: 4px; }
 .title { font-size: clamp(19px, 2vw, 26px); font-weight: 600; line-height: 1.3; margin: 0; }
 .badge { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid #ffffff38; border-radius: 24px; background: #101d24c9; font-size: 11px; backdrop-filter: blur(12px); }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--map-gold); box-shadow: 0 0 12px #e3c69a80; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--map-gold); box-shadow: 0 0 12px #8fc5e880; }
 .toolbar { position: absolute; inset-block-end: 62px; inset-inline-start: 24px; display: flex; padding: 4px; gap: 3px; border: 1px solid #ffffff38; border-radius: 14px; background: #101d24e6; backdrop-filter: blur(16px); }
 .segment, .control, .retry { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 0; color: #fff; cursor: pointer; font: inherit; transition: background .18s ease, color .18s ease; }
 .segment { padding: 0 16px; background: transparent; border-radius: 10px; font-size: 12px; }
@@ -32,10 +32,10 @@
 .hint { color: #e2e8ec; }
 .marker { pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .markerDot { width: 18px; height: 18px; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 12px #ffffff20, 0 0 0 24px #ffffff0d, 0 6px 24px #0008; }
-.markerLabel { background: #101d24ed; color: #fff; padding: 8px 14px; border: 1px solid #e3c69a80; border-radius: 8px; font-size: 12px; white-space: nowrap; box-shadow: 0 6px 20px #0005; }
+.markerLabel { background: #101d24ed; color: #fff; padding: 8px 14px; border: 1px solid #8fc5e880; border-radius: 8px; font-size: 12px; white-space: nowrap; box-shadow: 0 6px 20px #0005; }
 .loading, .error { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #101d24e6; font-size: 14px; z-index: 4; text-align: center; padding: 20px; }
 .loading { pointer-events: none; }
-.loading::before { content: ''; height: 28px; width: 28px; border: 1px solid #e3c69a33; border-top-color: var(--map-gold); border-radius: 50%; animation: orbit 1s linear infinite; }
+.loading::before { content: ''; height: 28px; width: 28px; border: 1px solid #8fc5e833; border-top-color: var(--map-gold); border-radius: 50%; animation: orbit 1s linear infinite; }
 .retry { gap: 8px; padding: 0 18px; background: var(--map-gold); color: var(--map-ink); border-radius: 10px; }
 @keyframes orbit { to { transform: rotate(360deg); } }
 @media (max-width: 600px) {
@@ -50,4 +50,16 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .shell *, .shell *::before { animation: none !important; transition: none !important; }
+}
+
+.placeLegend {
+  position: absolute; inset-inline-start: 24px; top: 86px;
+  display: flex; flex-wrap: wrap; gap: 5px 10px; max-width: calc(100% - 150px);
+  margin: 0; padding: 7px 10px; list-style: none; border-radius: 10px;
+  background: #102b46e8; color: #eef6ff; pointer-events: none; font-size: 11px;
+}
+.placeLegend li { display: flex; align-items: center; gap: 4px; }
+.placeLegend svg { color: var(--brand-sky); flex-shrink: 0; }
+@media (max-width: 600px) {
+  .placeLegend { top: 61px; inset-inline-start: 14px; max-width: calc(100% - 28px); gap: 4px 8px; font-size: 10px; padding: 5px 8px; }
 }

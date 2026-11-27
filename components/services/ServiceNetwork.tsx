@@ -14,7 +14,7 @@ interface ServiceNetworkProps {
   label: string;
 }
 const nodes = [[50, 13], [22, 35], [78, 35], [22, 81], [78, 81]] as const;
-const connections = nodes.map(([x, y]) => `M 50 52 Q 50 ${(52 + y) / 2} ${x} ${y}`);
+const connections = nodes.map(([x, y]) => `M 50 50 Q 50 ${(50 + y) / 2} ${x} ${y}`);
 
 export default function ServiceNetwork({ categories, selectedId, onSelect, label }: ServiceNetworkProps) {
   const { language } = useLanguage();
@@ -46,6 +46,9 @@ export default function ServiceNetwork({ categories, selectedId, onSelect, label
         }
       }}>
       {pulse > 0 && <span key={pulse} className={styles.ripple} aria-hidden="true" />}
+      <div key={selectedId} className={styles.backdropIcon} aria-hidden="true">
+        <FeaturedIcon strokeWidth={1.1} />
+      </div>
       <div className={styles.graph}>
         <button ref={hub} type="button" className={styles.center} aria-expanded={expanded}
           aria-controls={custom.length ? `${branchesId} ${branchesId}-custom` : branchesId} onClick={() => { setExpanded(value => !value); setPulse(value => value + 1); }}>
@@ -61,7 +64,7 @@ export default function ServiceNetwork({ categories, selectedId, onSelect, label
           </svg>
           {primary.map((category, index) => renderNode(category, {
             "--node-x": `${nodes[index][0]}%`, "--node-y": `${nodes[index][1]}%`, "--index": index,
-            "--from-x": `${(50 - nodes[index][0]) * (ar ? -1 : 1)}cqw`, "--from-y": `${52 - nodes[index][1]}cqh`,
+            "--from-x": `${(50 - nodes[index][0]) * (ar ? -1 : 1)}cqw`, "--from-y": `${50 - nodes[index][1]}cqh`,
           } as CSSProperties))}
         </div>
       </div>

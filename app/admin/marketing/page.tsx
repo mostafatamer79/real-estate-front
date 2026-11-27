@@ -29,10 +29,19 @@ import MarketingPageInternal from '@/components/marketing/MarketingWorkspace';
 interface EmailMarketing {
   id: string;
   category: string;
+  subject?: string;
   content: string;
   frequency: string;
   targetRole: string | null;
   isActive: boolean;
+  approvalStatus?: 'pending' | 'awaiting_payment' | 'published' | 'rejected';
+  publicationFee?: number | string | null;
+  invoiceId?: string | null;
+  invoice?: {
+    id: string;
+    status: string;
+    total: number | string;
+  };
   lastSentAt: string | null;
   createdAt: string;
 }
@@ -82,15 +91,38 @@ export default function MarketingPage() {
     }
   };
 
+  const isCampaignPaidAndPublished = (campaign: EmailMarketing) =>
+    campaign.approvalStatus === 'published' &&
+    Boolean(campaign.invoiceId) &&
+    (!campaign.invoice || campaign.invoice.status === 'paid');
+
+  const getApprovalBadge = (campaign: EmailMarketing) => {
+    switch (campaign.approvalStatus) {
+      case 'published':
+        return { label: isRtl ? 'منشور ومدفوع' : 'Published', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+      case 'awaiting_payment':
+        return { label: isRtl ? 'بانتظار السداد' : 'Awaiting Payment', cls: 'bg-amber-50 text-amber-700 border-amber-200' };
+      case 'rejected':
+        return { label: isRtl ? 'مرفوض' : 'Rejected', cls: 'bg-red-50 text-red-700 border-red-200' };
+      default:
+        return { label: isRtl ? 'قيد المراجعة' : 'Pending', cls: 'bg-slate-100 text-slate-700 border-slate-200' };
+    }
+  };
+
   const handleToggleStatus = async (campaign: EmailMarketing) => {
+    if (!isCampaignPaidAndPublished(campaign)) {
+      toast.error(isRtl ? 'لا يمكن تفعيل الإعلان قبل الاعتماد وسداد رسوم النشر' : 'Cannot activate before approval and payment');
+      return;
+    }
     try {
       await api.patch(`/marketing/email-marketing/${campaign.id}`, {
         isActive: !campaign.isActive
       });
       toast.success(t('common.success'));
       fetchCampaigns();
-    } catch (error) {
-      toast.error(t('common.error'));
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || t('common.error');
+      toast.error(Array.isArray(msg) ? msg[0] : msg);
     }
   };
 
@@ -225,6 +257,7 @@ export default function MarketingPage() {
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.category')}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.role')}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.frequency')}</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{isRtl ? 'الاعتماد / رسوم النشر' : 'Approval / Pub Fee'}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.status')}</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.lastSent')}</th>
                   <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400">{t('admin.marketing.table.action')}</th>
@@ -266,11 +299,25 @@ export default function MarketingPage() {
                       </span>
                     </td>
                     <td className="px-8 py-5">
+                      <div className="flex flex-col gap-1">
+                        <span className={`inline-flex w-fit items-center px-2.5 py-1 rounded-lg text-[10px] font-black border ${getApprovalBadge(campaign).cls}`}>
+                          {getApprovalBadge(campaign).label}
+                        </span>
+                        {campaign.publicationFee !== null && campaign.publicationFee !== undefined && (
+                          <span className="text-[10px] font-bold text-slate-600">
+                            {isRtl ? `رسوم النشر: ${Number(campaign.publicationFee).toLocaleString()} ر.س` : `Fee: ${Number(campaign.publicationFee).toLocaleString()} SAR`}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
+                          disabled={!isCampaignPaidAndPublished(campaign)}
+                          title={!isCampaignPaidAndPublished(campaign) ? (isRtl ? 'يتطلب اعتماد وسداد الفاتورة أولاً' : 'Requires approval and payment first') : ''}
                           onClick={() => handleToggleStatus(campaign)}
-                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                             campaign.isActive ? 'bg-emerald-500' : 'bg-slate-300'
                           }`}
                         >

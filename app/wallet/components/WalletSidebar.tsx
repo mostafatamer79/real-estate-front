@@ -23,9 +23,9 @@ export default function WalletTabs() {
     <header className={styles.tabHeader}>
       <div className={styles.tabHeading}>
         <h1>{t('wallet.wallet') || 'المحفظة'}</h1>
-        <Link href="/" className={styles.backLink}>
+        <Link href="/details" className={styles.backLink}>
           <ArrowLeft size={16} aria-hidden="true" />
-          {t('wallet.backToHome') || 'العودة للرئيسية'}
+          {t('common.back')}
         </Link>
       </div>
       {visibleTabs.length > 0 && (
@@ -34,9 +34,20 @@ export default function WalletTabs() {
             const isSoon = settings.moduleFlags[flag] === 'soon';
             return (
               <TabsTrigger key={id} value={id} className={styles.tabTrigger} disabled={isSoon}>
-                <span aria-hidden="true" className={styles.tabIcon} style={{ maskImage: `url("${icon}")` }} />
-                <span>{t(label) || fallback}</span>
-                {isSoon && <small>{t('common.soon') || 'قريباً'}</small>}
+                <span
+                  aria-hidden="true"
+                  className={styles.tabWatermark}
+                  style={{ maskImage: `url("${icon}")`, WebkitMaskImage: `url("${icon}")` }}
+                />
+                <span aria-hidden="true" className={styles.tabIconTile}>
+                  <span
+                    aria-hidden="true"
+                    className={styles.tabIcon}
+                    style={{ maskImage: `url("${icon}")`, WebkitMaskImage: `url("${icon}")` }}
+                  />
+                </span>
+                <span className={styles.tabLabel}>{t(label) || fallback}</span>
+                {isSoon && <small className={styles.tabSoon}>{t('common.soon') || 'قريباً'}</small>}
               </TabsTrigger>
             );
           })}

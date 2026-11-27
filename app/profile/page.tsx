@@ -465,7 +465,17 @@ export default function ProfilePage() {
                 <NafathVerification
                   userId={user.id}
                   verifiedAt={user.nafathVerifiedAt}
-                  onVerified={updateUser}
+                  onVerified={(profile) => {
+                    updateUser(profile);
+                    if (profile.nafathVerifiedAt) {
+                      try {
+                        if (sessionStorage.getItem('providerRegistrationReturn') === '1') {
+                          sessionStorage.removeItem('providerRegistrationReturn');
+                          router.replace('/service-providers');
+                        }
+                      } catch { /* Account verification remains valid if storage is unavailable. */ }
+                    }
+                  }}
                 />
 
                 {user.nafathVerifiedAt && user.nationalId && (

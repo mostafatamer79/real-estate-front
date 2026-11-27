@@ -11,6 +11,7 @@ import { opinionApi } from "@/lib/api";
 import { loginHref, requestTrackingHref, safeReturnTo } from "@/lib/auth-navigation";
 import { validateOpinionForm } from "@/lib/redesign-chat11-content";
 import BuildingIntro from "./BuildingIntro";
+import Footer from "@/app/src/components/Footer";
 import "./portal-home.css";
 
 type ViewMode = "intro" | "home";
@@ -1461,66 +1462,8 @@ export default function PortalHome() {
               </form>
             </section>
 
-            {/* Footer with real contact channels & links */}
-            <footer id="contact" className="db-footer">
-              <div className="db-brand">
-                <span>
-                  {isAr ? "الوساطة الرقمية" : "Digital Brokerage"}
-                  <small>DIGITAL BROKERAGE</small>
-                </span>
-              </div>
-
-              <div>
-                <h3>{isAr ? "لنبقَ على تواصل" : "Stay in touch"}</h3>
-                <a href={`mailto:${primaryEmail}`} dir="ltr">
-                  {primaryEmail}
-                </a>
-                {supportEmail !== primaryEmail && (
-                  <a href={`mailto:${supportEmail}`} dir="ltr">
-                    {supportEmail}
-                  </a>
-                )}
-                {settings.contactPhone && (
-                  <a href={`tel:${settings.contactPhone}`} dir="ltr">
-                    {settings.contactPhone}
-                  </a>
-                )}
-                <a
-                  href="https://x.com/DB_Aqar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  dir="ltr"
-                >
-                  @DB_Aqar ↗
-                </a>
-              </div>
-
-              <div>
-                <button
-                  type="button"
-                  className="db-text-button"
-                  onClick={openSupportDialog}
-                >
-                  {isAr ? "خدمة العملاء ↖" : "Customer Service ↖"}
-                </button>
-                <Link href="/customerservice">
-                  {isAr ? "مركز الدعم والتذاكر ↖" : "Support Center ↖"}
-                </Link>
-                <Link href="/info?tab=terms">
-                  {isAr ? "الشروط والأحكام ↖" : "Terms & Conditions ↖"}
-                </Link>
-                <Link href="/info?tab=usage">
-                  {isAr ? "سياسة الاستخدام ↖" : "Usage Policy ↖"}
-                </Link>
-                <button
-                  type="button"
-                  className="db-text-button"
-                  onClick={() => scrollToSection("about")}
-                >
-                  {isAr ? "من نحن ↖" : "About Us ↖"}
-                </button>
-              </div>
-            </footer>
+            {/* Homepage Footer */}
+            <Footer />
           </div>
         )}
       </main>

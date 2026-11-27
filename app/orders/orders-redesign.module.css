@@ -610,23 +610,79 @@
 
 /* Tab 2: My Orders Workspace */
 .myOrdersContainer {
-  max-width: 960px;
+  max-width: 1120px;
   margin-inline: auto;
 }
 
-.ordersList {
+.ordersToolbar {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  margin-bottom: 1rem;
+  background-color: var(--oo-surface);
+  border: 1px solid var(--oo-border);
+  border-radius: 1rem;
+  box-shadow: var(--oo-card-shadow);
+}
+
+.ordersSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ordersSummaryIcon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.75rem;
+  background-color: var(--oo-status-success-bg);
+  color: var(--oo-status-success-text);
+  border: 1px solid rgba(33, 97, 60, 0.22);
+}
+
+.ordersSummaryCount {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--oo-text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.ordersSummaryLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--oo-text-secondary);
+}
+
+.ordersList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 27rem), 1fr));
   gap: 1rem;
 }
 
 .orderCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   background-color: var(--oo-surface);
   border: 1px solid var(--oo-border);
-  border-radius: 1.25rem;
+  border-inline-start: 4px solid var(--oo-gold);
+  border-radius: 1.125rem;
   padding: 1.25rem;
   box-shadow: var(--oo-card-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.orderCard[data-order-type="buy"] {
+  border-inline-start-color: var(--oo-status-success-text);
+}
+
+.orderCard[data-order-type="rent"] {
+  border-inline-start-color: var(--oo-gold);
 }
 
 .orderCard:hover {
@@ -648,7 +704,7 @@
 .orderTitleGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
 .orderPropertyType {
@@ -657,7 +713,25 @@
   color: var(--oo-text-main);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.orderTypeIcon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+  background-color: var(--oo-gold-tint);
+  border: 1px solid var(--oo-gold-border);
+  color: var(--oo-gold);
+}
+
+.orderCard[data-order-type="buy"] .orderTypeIcon {
+  background-color: var(--oo-status-success-bg);
+  border-color: rgba(33, 97, 60, 0.22);
+  color: var(--oo-status-success-text);
 }
 
 .orderDate {
@@ -668,11 +742,27 @@
   gap: 0.35rem;
 }
 
+.orderPriceBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
+.orderPriceLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--oo-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .orderPrice {
   font-size: 1.125rem;
   font-weight: 900;
-  color: var(--oo-text-main);
+  color: var(--oo-gold);
   text-align: end;
+  font-variant-numeric: tabular-nums;
 }
 
 .statusBadge {

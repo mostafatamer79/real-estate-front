@@ -349,6 +349,82 @@
   outline-offset: 2px;
 }
 
+/* Summary KPI Strip */
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.summaryCard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background-color: var(--mr-surface);
+  border: 1px solid var(--mr-border);
+  border-inline-start: 4px solid var(--mr-gold);
+  border-radius: 0.875rem;
+}
+
+.summaryCard[data-tone="success"] {
+  border-inline-start-color: var(--mr-status-success-text);
+}
+
+.summaryCard[data-tone="pending"] {
+  border-inline-start-color: var(--mr-status-pending-text);
+}
+
+.summaryCard[data-tone="danger"] {
+  border-inline-start-color: var(--mr-status-danger-text);
+}
+
+.summaryCard[data-tone="neutral"] {
+  border-inline-start-color: var(--mr-gold);
+}
+
+.summaryIcon {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.675rem;
+  flex-shrink: 0;
+  background-color: var(--mr-gold-tint);
+  color: var(--mr-gold);
+}
+
+.summaryCard[data-tone="success"] .summaryIcon {
+  background-color: var(--mr-status-success-bg);
+  color: var(--mr-status-success-text);
+}
+
+.summaryCard[data-tone="pending"] .summaryIcon {
+  background-color: var(--mr-status-pending-bg);
+  color: var(--mr-status-pending-text);
+}
+
+.summaryCard[data-tone="danger"] .summaryIcon {
+  background-color: var(--mr-status-danger-bg);
+  color: var(--mr-status-danger-text);
+}
+
+.summaryValue {
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--mr-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mr-muted);
+  margin-top: 0.15rem;
+}
+
 /* Tabs / Filters */
 .tabsNav {
   display: flex;
@@ -485,6 +561,42 @@
   color: var(--mr-ink);
 }
 
+.serviceCellWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.serviceIconBadge {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  flex-shrink: 0;
+  background-color: var(--mr-status-neutral-bg);
+  color: var(--mr-status-neutral-text);
+  border: 1px solid var(--mr-status-neutral-border);
+}
+
+.serviceIconBadge[data-status="success"] {
+  background-color: var(--mr-status-success-bg);
+  color: var(--mr-status-success-text);
+  border-color: var(--mr-status-success-border);
+}
+
+.serviceIconBadge[data-status="pending"] {
+  background-color: var(--mr-status-pending-bg);
+  color: var(--mr-status-pending-text);
+  border-color: var(--mr-status-pending-border);
+}
+
+.serviceIconBadge[data-status="danger"] {
+  background-color: var(--mr-status-danger-bg);
+  color: var(--mr-status-danger-text);
+  border-color: var(--mr-status-danger-border);
+}
+
 .servicePrimary {
   font-size: 0.9375rem;
   font-weight: 800;
@@ -544,11 +656,24 @@
   padding: 1.125rem;
   background-color: var(--mr-surface);
   border: 1px solid var(--mr-border);
+  border-inline-start: 4px solid var(--mr-border);
   border-radius: 0.875rem;
   text-align: start;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease;
   box-sizing: border-box;
+}
+
+.mobileCard[data-status="success"] {
+  border-inline-start-color: var(--mr-status-success-text);
+}
+
+.mobileCard[data-status="pending"] {
+  border-inline-start-color: var(--mr-status-pending-text);
+}
+
+.mobileCard[data-status="danger"] {
+  border-inline-start-color: var(--mr-status-danger-text);
 }
 
 .mobileCard:hover {

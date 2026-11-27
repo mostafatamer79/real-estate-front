@@ -14,7 +14,6 @@ import {
   RotateCcw,
   ShieldAlert,
   ShieldCheck,
-  SlidersHorizontal,
   Wallet,
 } from "lucide-react";
 import api from "@/lib/api";
@@ -105,8 +104,8 @@ export default function RenewSubscriptionPage() {
       return {
         title: isRtl ? "حالة الاشتراك غير متاحة" : "Subscription status unavailable",
         desc: isRtl
-          ? "يمكنك اختيار باقة جديدة أو إنشاء اشتراك مخصص لمنشأتك."
-          : "Choose a ready package or create a custom subscription for your organization.",
+          ? "يمكنك اختيار إحدى الباقات الجاهزة المناسبة لمنشأتك."
+          : "Choose a ready-made package for your organization.",
         tone: "neutral",
       };
     }
@@ -165,18 +164,8 @@ export default function RenewSubscriptionPage() {
         ? "باقات إدارية متكاملة تتضمن مجموعة جاهزة من الإدارات بأسعار شهرية وسنوية مخفضة."
         : "Pre-configured department bundles with discounted monthly and yearly rates.",
       icon: PackageCheck,
-      action: () => router.push("/subscriptions/new?mode=packages"),
+      action: () => router.push("/subscriptions/new"),
       cta: isRtl ? "عرض الباقات" : "View packages",
-    },
-    {
-      id: "custom",
-      title: isRtl ? "تخصيص الإدارات" : "Custom Departments",
-      desc: isRtl
-        ? "حدد الإدارات التي تحتاجها فقط لمنشأتك مع ضبط مقاعد موظفي إدارة الموارد البشرية."
-        : "Pick only the specific departments you need with tailored HR employee seats.",
-      icon: SlidersHorizontal,
-      action: () => router.push("/subscriptions/new?mode=custom"),
-      cta: isRtl ? "إنشاء اشتراك مخصص" : "Create custom",
     },
     {
       id: "wallet",

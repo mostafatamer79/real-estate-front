@@ -57,10 +57,14 @@ import {
   validateOfferSubmission,
   getTrackingNavigationContract,
 } from "@/lib/redesign-chat02-provider-helpers";
+import NafathVerification from "@/components/profile/NafathVerification";
 import styles from "./provider-registration.module.css";
 
+const INVITE_STORAGE_KEY = "providerInvitationToken";
+type InviteState = "idle" | "checking" | "valid" | "invalid" | "missing";
+
 export default function ProviderPage() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading, isAuthenticated, updateUser } = useAuth();
   const router = useRouter();
   const { language } = useLanguage();
   const ar = language === "ar";
@@ -84,6 +88,10 @@ export default function ProviderPage() {
   const [submittingOffer, setSubmittingOffer] = useState(false);
   const [error, setError] = useState("");
   const [offerError, setOfferError] = useState("");
+  const [inviteToken, setInviteToken] = useState("");
+  const [inviteState, setInviteState] = useState<InviteState>("idle");
+  const [inviteExpiresAt, setInviteExpiresAt] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState("");
 
   // Metadata catalogs
   const [registrationFields, setRegistrationFields] = useState<ProviderRegistrationField[]>([]);
@@ -245,13 +253,124 @@ export default function ProviderPage() {
   }, []);
 
   useEffect(() => {
+    const queryInvite = new URLSearchParams(window.location.search).get("invite")?.trim() || "";
+    if (queryInvite) {
+      try {
+        sessionStorage.setItem(INVITE_STORAGE_KEY, queryInvite);
+      } catch {
+        // Storage may be unavailable; keep in state.
+      }
+      setInviteToken(queryInvite);
+      return;
+    }
+    try {
+      const storedInvite = sessionStorage.getItem(INVITE_STORAGE_KEY)?.trim() || "";
+      if (storedInvite) setInviteToken(storedInvite);
+    } catch {
+      // Ignore storage access errors.
+    }
+  }, []);
+
+  useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      sessionStorage.setItem("providerRegistrationReturn", "1");
-      router.replace(loginHref("/service-providers"));
+      const currentInvite =
+        new URLSearchParams(window.location.search).get("invite")?.trim() ||
+        inviteToken ||
+        (() => {
+          try {
+            return sessionStorage.getItem(INVITE_STORAGE_KEY)?.trim() || "";
+          } catch {
+            return "";
+          }
+        })();
+      try {
+        sessionStorage.setItem("providerRegistrationReturn", "1");
+        if (currentInvite) {
+          sessionStorage.setItem(INVITE_STORAGE_KEY, currentInvite);
+        }
+      } catch {
+        // Ignore storage errors.
+      }
+      const returnPath = currentInvite
+        ? `/service-providers?invite=${encodeURIComponent(currentInvite)}`
+        : "/service-providers";
+      router.replace(loginHref(returnPath));
     } else if (isAuthenticated) {
       void load();
     }
-  }, [isLoading, isAuthenticated, router, load]);
+  }, [isLoading, isAuthenticated, router, load, inviteToken]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !profileReady) return;
+    if (profile) {
+      setInviteError("");
+      if (profile.status === "approved") {
+        try {
+          sessionStorage.removeItem(INVITE_STORAGE_KEY);
+          sessionStorage.removeItem("providerRegistrationReturn");
+        } catch {
+          // Ignore storage errors.
+        }
+      } else if (profile.status === "pending" && !user?.nafathVerifiedAt) {
+        try {
+          sessionStorage.setItem("providerRegistrationReturn", "1");
+        } catch {
+          // Ignore storage errors.
+        }
+      }
+      return;
+    }
+
+    if (!inviteToken) {
+      setInviteState("missing");
+      setInviteExpiresAt(null);
+      setInviteError(
+        ar
+          ? "يتطلب التسجيل كمزود خدمة جديد رابط دعوة صالح من الإدارة."
+          : "Registering as a new provider requires a valid invitation link from the administration.",
+      );
+      return;
+    }
+
+    let cancelled = false;
+    setInviteState("checking");
+    setInviteError("");
+    providerApi
+      .validateInvitation(inviteToken)
+      .then((res) => {
+        if (cancelled) return;
+        if (res.data?.valid) {
+          setInviteState("valid");
+          setInviteExpiresAt(res.data.expiresAt || null);
+          setInviteError("");
+        } else {
+          setInviteState("invalid");
+          setInviteExpiresAt(null);
+          setInviteError(
+            ar
+              ? "رابط الدعوة غير صالح أو منتهي الصلاحية. يرجى طلب رابط دعوة جديد من الإدارة."
+              : "The invitation link is invalid or expired. Please request a new invitation link from the administration.",
+          );
+        }
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setInviteState("invalid");
+        setInviteExpiresAt(null);
+        setInviteError(
+          providerError(
+            err,
+            ar
+              ? "رابط الدعوة غير صالح أو منتهي الصلاحية. يرجى طلب رابط دعوة جديد من الإدارة."
+              : "The invitation link is invalid or expired. Please request a new invitation link from the administration.",
+          ),
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, profileReady, profile, inviteToken, ar, user?.nafathVerifiedAt]);
 
   const apply = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -269,12 +388,23 @@ export default function ProviderPage() {
       return;
     }
 
+    if (!profile && (inviteState !== "valid" || !inviteToken)) {
+      setError(
+        inviteError ||
+          (ar
+            ? "يلزم رابط دعوة صالح من الإدارة للتسجيل كمزود خدمة جديد."
+            : "A valid administration invitation link is required to register as a new provider."),
+      );
+      return;
+    }
+
     setSubmittingApply(true);
     setBusy(true);
     setError("");
 
     try {
       const res = await providerApi.apply({
+        invitationToken: !profile ? inviteToken : undefined,
         kind,
         registrationAnswers,
         specializationId: kind === "general" ? specializationId || undefined : undefined,
@@ -290,6 +420,14 @@ export default function ProviderPage() {
 
       if (!mountedRef.current) return;
       dirtyFieldsRef.current.clear();
+      try {
+        sessionStorage.removeItem(INVITE_STORAGE_KEY);
+        if (!user?.nafathVerifiedAt) {
+          sessionStorage.setItem("providerRegistrationReturn", "1");
+        }
+      } catch {
+        // Ignore storage errors.
+      }
       setProfile(res.data);
       await load();
     } catch (err) {
@@ -298,7 +436,7 @@ export default function ProviderPage() {
       setError(
         providerError(
           err,
-          ar ? "تعذر إرسال الطلب للمراجعة" : "Could not submit application for review",
+          ar ? "تعذر حفظ بيانات التسجيل" : "Could not save registration application",
         ),
       );
     } finally {
@@ -427,7 +565,7 @@ export default function ProviderPage() {
     }
   };
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !isAuthenticated || !user) {
     return (
       <main className={styles.pageContainer} dir={ar ? "rtl" : "ltr"}>
         <div className={styles.innerWrap}>
@@ -449,9 +587,9 @@ export default function ProviderPage() {
       <div className={styles.innerWrap}>
         {/* --- Top Navigation Bar --- */}
         <header className={styles.topNav}>
-          <Link href="/services" className={styles.backBtn}>
+          <Link href="/department-hub" className={styles.backBtn}>
             {ar ? <ArrowRight className="size-4" /> : <ArrowLeft className="size-4" />}
-            <span>{ar ? "العودة إلى الخدمات" : "Back to Services"}</span>
+            <span>{ar ? "العودة إلى مركز الإدارات" : "Back to Department Hub"}</span>
           </Link>
           {refreshing && (
             <div role="status" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -500,47 +638,47 @@ export default function ProviderPage() {
           <div className={`${styles.stageItem} ${!profile ? styles.stageItemActive : ""}`}>
             <span className={styles.stageNumber}>1</span>
             <div className={styles.stageMeta}>
-              <span className={styles.stageTitle}>{ar ? "بيانات التسجيل والترخيص" : "Application & License"}</span>
+              <span className={styles.stageTitle}>{ar ? "التسجيل والترخيص" : "Registration"}</span>
               <span className={styles.stageDesc}>
-                {profile ? (ar ? "تم إرسال البيانات" : "Submitted") : (ar ? "المرحلة الحالية" : "In Progress")}
+                {profile ? (ar ? "تم حفظ البيانات" : "Saved") : (ar ? "المرحلة الحالية" : "In Progress")}
               </span>
             </div>
           </div>
           <div
             className={`${styles.stageItem} ${
-              profile?.status === "pending" || profile?.status === "rejected" || profile?.status === "suspended"
+              profile?.status === "pending"
                 ? styles.stageItemActive
                 : ""
             }`}
           >
             <span className={styles.stageNumber}>2</span>
             <div className={styles.stageMeta}>
-              <span className={styles.stageTitle}>{ar ? "مراجعة وتدقيق الإدارة" : "Administrative Review"}</span>
+              <span className={styles.stageTitle}>{ar ? "توثيق الهوية عبر نفاذ" : "Nafath identity"}</span>
               <span className={styles.stageDesc}>
-                {profile?.status === "approved"
+                {profile?.status === "approved" || user?.nafathVerifiedAt
                   ? ar
-                    ? "تم الاعتماد"
+                    ? "تم التوثيق"
                     : "Verified"
                   : profile
                     ? providerStatus(profile.status, ar)
                     : ar
-                      ? "بانتظار التقديم"
-                      : "Pending submission"}
+                      ? "بعد حفظ التسجيل"
+                      : "After registration"}
               </span>
             </div>
           </div>
           <div className={`${styles.stageItem} ${profile?.status === "approved" ? styles.stageItemActive : ""}`}>
             <span className={styles.stageNumber}>3</span>
             <div className={styles.stageMeta}>
-              <span className={styles.stageTitle}>{ar ? "سوق الفرص وتقديم العروض" : "Opportunities & Offers"}</span>
+              <span className={styles.stageTitle}>{ar ? "الخدمات والفرص المتاحة" : "Services available"}</span>
               <span className={styles.stageDesc}>
                 {profile?.status === "approved"
                   ? ar
                     ? "مفعل ومتاح"
                     : "Active"
                   : ar
-                    ? "يتطلب الاعتماد"
-                    : "Requires approval"}
+                    ? "يتطلب إكمال نفاذ"
+                    : "Requires Nafath"}
               </span>
             </div>
           </div>
@@ -849,43 +987,105 @@ export default function ProviderPage() {
           /* --- VIEW 2: ONBOARDING & REGISTRATION FORM (When not yet approved) --- */
           !loading &&
           profileReady && (
-            <form onSubmit={apply} className={styles.formContainer}>
-              <div className={styles.formSectionHeader}>
-                <h2 className={styles.formSectionTitle}>
-                  {profile
-                    ? ar
-                      ? "تعديل واستكمال بيانات طلب الاعتماد"
-                      : "Update Application & Credentials"
-                    : ar
-                      ? "طلب التسجيل والاعتماد كمزود خدمة"
-                      : "New Provider Registration Application"}
-                </h2>
-                <p className={styles.formSectionSubtitle}>
-                  {ar
-                    ? "يرجى تعبئة كافة الحقول المطلوبة ورفع وثائق الترخيص. تبقى التعديلات والمستندات المرفوعة محفوظة أثناء تغيير اللغة وإعادة المحاولة والتحديث."
-                    : "Complete all required fields and upload license documents. Form inputs and attached documents remain preserved during language toggles, retries, and background refreshes."}
-                </p>
-              </div>
+            <>
+              {/* Invitation status for fresh registrations */}
+              {!profile && inviteState === "checking" && (
+                <div role="status" className={`${styles.alertBox} ${styles.alertBoxPending}`}>
+                  <Clock className="size-5 shrink-0 animate-spin text-[var(--pr-gold)]" />
+                  <span>{ar ? "جارٍ التحقق من صلاحية رابط الدعوة…" : "Validating invitation link…"}</span>
+                </div>
+              )}
 
-              {/* Nafath Verification Callout */}
-              {!user?.nafathVerifiedAt && (
-                <div role="alert" className={`${styles.alertBox} ${styles.alertBoxPending}`}>
+              {!profile && (inviteState === "missing" || inviteState === "invalid") && (
+                <div role="alert" className={`${styles.alertBox} ${styles.alertBoxDanger}`}>
                   <AlertCircle className="size-5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold">
-                      {ar ? "تنبيه التحقق من الهوية (نفاذ):" : "Nafath Verification Required:"}
+                      {inviteState === "missing"
+                        ? ar ? "رابط الدعوة مطلوب للتسجيل" : "Invitation Required"
+                        : ar ? "رابط الدعوة غير صالح أو منتهي" : "Invalid or Expired Invitation"}
+                    </p>
+                    <p className="text-sm mt-0.5">{inviteError}</p>
+                  </div>
+                </div>
+              )}
+
+              {!profile && inviteState === "valid" && (
+                <div role="status" className={`${styles.alertBox} ${styles.alertBoxSuccess}`}>
+                  <CheckCircle2 className="size-5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold">
+                      {ar ? "رابط الدعوة صالح" : "Valid Invitation Link"}
                     </p>
                     <p className="text-sm mt-0.5">
                       {ar
-                        ? "يمكنك استعراض الأقسام وتعبئة البيانات، ولكن يشترط توثيق الحساب عبر نفاذ الوطني قبل إرسال الطلب للاعتماد."
-                        : "You can browse and fill fields, but national Nafath identity verification is mandatory before final submission."}{" "}
-                      <Link href="/profile" className="font-bold underline text-[var(--pr-gold)]">
-                        {ar ? "الانتقال للتوثيق عبر نفاذ" : "Verify via Nafath"}
-                      </Link>
+                        ? "احفظ بيانات التسجيل أولاً ثم أكمل توثيق الهوية عبر نفاذ لتفعيل خدماتك مباشرة."
+                        : "Save your registration application first, then complete Nafath identity verification to activate your services."}
+                      {inviteExpiresAt ? ` (${ar ? "ينتهي:" : "Expires:"} ${new Date(inviteExpiresAt).toLocaleString(ar ? "ar-SA" : "en-US")})` : ""}
                     </p>
                   </div>
                 </div>
               )}
+
+              {/* Embedded Nafath Verification after application is saved */}
+              {profile && profile.status === "pending" && (
+                <section
+                  aria-label={ar ? "توثيق الهوية عبر نفاذ" : "Nafath Identity Verification"}
+                  className={styles.nafathCard}
+                >
+                  <div className={styles.formSectionHeader}>
+                    <h2 className={styles.formSectionTitle}>
+                      {ar ? "الخطوة الثانية: توثيق الهوية عبر نفاذ" : "Step 2: Complete Nafath Identity Verification"}
+                    </h2>
+                    <p className={styles.formSectionSubtitle}>
+                      {ar
+                        ? "تم حفظ طلبك بنجاح. أكمل التحقق عبر نفاذ الوطني لتفعيل حسابك والوصول إلى الفرص المتاحة."
+                        : "Your application is saved. Complete Nafath identity verification to activate your account and access available opportunities."}
+                    </p>
+                  </div>
+
+                  <NafathVerification
+                    userId={user.id}
+                    verifiedAt={user.nafathVerifiedAt}
+                    onVerified={(updatedUser) => {
+                      updateUser(updatedUser);
+                      void load();
+                    }}
+                  />
+
+                  {user.nafathVerifiedAt && (
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                      <span className="text-xs text-[var(--pr-muted)]">
+                        {ar
+                          ? "تم توثيق هويتك عبر نفاذ. حدّث الصفحة إذا لم يتم تفعيل الخدمات بعد."
+                          : "Your identity is verified via Nafath. Refresh if services are not active yet."}
+                      </span>
+                      <button type="button" onClick={() => void load()} className={styles.secondaryBtn}>
+                        <RefreshCw className="size-3.5" />
+                        <span>{ar ? "تحديث الحالة" : "Refresh status"}</span>
+                      </button>
+                    </div>
+                  )}
+                </section>
+              )}
+
+              <form onSubmit={apply} className={styles.formContainer}>
+                <div className={styles.formSectionHeader}>
+                  <h2 className={styles.formSectionTitle}>
+                    {profile
+                      ? ar
+                        ? "تعديل واستكمال بيانات التسجيل"
+                        : "Update Registration & Credentials"
+                      : ar
+                        ? "طلب التسجيل كمزود خدمة"
+                        : "New Provider Registration Application"}
+                  </h2>
+                  <p className={styles.formSectionSubtitle}>
+                    {ar
+                      ? "يرجى تعبئة كافة الحقول المطلوبة ورفع وثائق الترخيص. تبقى التعديلات والمستندات المرفوعة محفوظة أثناء تغيير اللغة وإعادة المحاولة والتحديث."
+                      : "Complete all required fields and upload license documents. Form inputs and attached documents remain preserved during language toggles, retries, and background refreshes."}
+                  </p>
+                </div>
 
               {/* Stage 1: Requested Categories & Provider Kind */}
               <div className={styles.formSection}>
@@ -1238,8 +1438,8 @@ export default function ProviderPage() {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[var(--pr-border-subtle)]">
                 <span className="text-xs text-[var(--pr-muted)]">
                   {ar
-                    ? "بإرسال الطلب، أنت تقر بصحة كافة البيانات والوثائق المرفوعة ومطابقتها للتنظيمات المعمول بها."
-                    : "By submitting, you confirm the accuracy of all credentials and compliance with official regulations."}
+                    ? "بحفظ البيانات، أنت تقر بصحة كافة المعلومات والوثائق المرفوعة ومطابقتها للتنظيمات المعمول بها."
+                    : "By saving, you confirm the accuracy of all credentials and compliance with official regulations."}
                 </span>
 
                 <button
@@ -1247,7 +1447,7 @@ export default function ProviderPage() {
                   disabled={
                     busy ||
                     submittingApply ||
-                    !user?.nafathVerifiedAt ||
+                    (!profile && inviteState !== "valid") ||
                     !categories.length ||
                     !deliveryModes.length ||
                     (kind === "notary" && !licenseDocument)
@@ -1257,37 +1457,24 @@ export default function ProviderPage() {
                   {submittingApply ? (
                     <>
                       <RefreshCw className="size-4 animate-spin" />
-                      <span>{ar ? "جارٍ إرسال الطلب…" : "Submitting…"}</span>
+                      <span>{ar ? "جارٍ حفظ الطلب…" : "Saving…"}</span>
                     </>
                   ) : (
                     <>
                       <FileCheck className="size-4" />
-                      <span>{ar ? "إرسال الطلب للمراجعة" : "Submit for Review"}</span>
+                      <span>
+                        {profile
+                          ? ar ? "حفظ التعديلات" : "Save Changes"
+                          : ar ? "حفظ والمتابعة لتوثيق نفاذ" : "Save & Continue to Nafath"}
+                      </span>
                     </>
                   )}
                 </button>
               </div>
             </form>
+            </>
           )
         )}
-
-        {/* --- All Categories Reference Tree Section --- */}
-        <section
-          aria-label={ar ? "دليل الأقسام والخدمات" : "Service catalog reference"}
-          className="space-y-3 pt-6 border-t border-[var(--pr-border-subtle)]"
-        >
-          <div className="flex flex-col gap-1">
-            <h2 className="text-base font-bold text-[var(--pr-ink)]">
-              {ar ? "دليل الأقسام والخدمات الشامل" : "All Services and Branches Catalog"}
-            </h2>
-            <p className="text-xs text-[var(--pr-muted)]">
-              {ar
-                ? "يمكنك استعراض شجرة الخدمات بالكامل. تقديم العروض والمنافسة على الفرص متاح للأقسام المعتمدة في ملفك فقط."
-                : "Browse the full service taxonomy. Submitting offers is strictly limited to your approved department grants."}
-            </p>
-          </div>
-          <ServiceCategoryTree selected={profile?.categories} />
-        </section>
 
         {/* --- Accessible Scrollable Offer Modal --- */}
         <Dialog

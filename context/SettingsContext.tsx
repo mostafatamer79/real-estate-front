@@ -151,10 +151,10 @@ interface SettingsContextType {
 }
 
 const defaultSettings: GlobalSettings = {
-    primary: "#303030",
+    primary: "#102b46",
     background: "#e3eaf4",
     foreground: "#262626",
-    accent: "#eeeeee",
+    accent: "#dcebf7",
     sidebar: "#ffffff",
     soonBadgeBg: "#ffffff",
     soonBadgeText: "#000000",
@@ -164,8 +164,8 @@ const defaultSettings: GlobalSettings = {
     cardText: "#262626",
     cardBorder: "#d8d8d8",
     cardRadius: "24px",
-    iconBg: "#eeeeee",
-    iconColor: "#303030",
+    iconBg: "#dcebf7",
+    iconColor: "#246ba3",
     buttonRadius: "16px",
     appName: "الوساطة الرقمية",
     description: "الوساطة الرقمية - منصة عقارية شاملة",
@@ -398,15 +398,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const applyTheme = useCallback((s: GlobalSettings) => {
         if (typeof document === "undefined") return;
         const root = document.documentElement;
-        const lightPrimary = ["#303030", "#262626"].includes(s.primary.toLowerCase()) ? "#102b46" : s.primary;
-        root.style.setProperty("--primary", s.isDark ? "#d8b381" : lightPrimary);
+        const lightPrimary = ["#303030", "#262626", "#d8b381", "#d4af37", "#c5a880", "#b49157"].includes(s.primary.toLowerCase()) ? "#102b46" : s.primary;
+        root.style.setProperty("--primary", s.isDark ? "#8fc5e8" : lightPrimary);
         // Normalize legacy neutral backgrounds to the selected cool blue palette.
         const legacyBackgrounds = new Set(["#f7f7f7", "#ffffff", "#fff", "#f5f4f0", "#f5f2e9", "#f8f5ee", "#fdf2f8", "#fce7f3", "#fff1f2", "#e3eaf4", "#dbe4f2", "#d5e3f2"]);
         const lightBackground = legacyBackgrounds.has(s.background.toLowerCase()) ? "#e3eaf4" : s.background;
         root.style.setProperty("--background", s.isDark ? "#101827" : lightBackground);
         const lightForeground = ["#262626", "#303030"].includes(s.foreground.toLowerCase()) ? "#182d46" : s.foreground;
         root.style.setProperty("--foreground", s.isDark ? "#edf1f7" : lightForeground);
-        root.style.setProperty("--accent", s.isDark ? "#22344f" : s.accent);
+        root.style.setProperty("--accent", s.isDark ? "#22344f" : (["#eeeeee", "#d8b381", "#d4af37"].includes(s.accent.toLowerCase()) ? "#dcebf7" : s.accent));
         root.style.setProperty("--sidebar", s.isDark ? "#142238" : s.sidebar);
         root.style.setProperty("--soon-badge-bg", s.soonBadgeBg);
         root.style.setProperty("--soon-badge-text", s.soonBadgeText);
@@ -415,8 +415,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         root.style.setProperty("--platform-card-text", s.isDark ? "#edf1f7" : s.cardText);
         root.style.setProperty("--platform-card-border", s.isDark ? "#33465f" : s.cardBorder);
         root.style.setProperty("--platform-card-radius", s.cardRadius);
-        root.style.setProperty("--platform-icon-bg", s.isDark ? "#22344f" : s.iconBg);
-        root.style.setProperty("--platform-icon-color", s.isDark ? "#c9d7e9" : s.iconColor);
+        root.style.setProperty("--platform-icon-bg", s.isDark ? "#223c56" : (["#eeeeee", "#f1f1f1"].includes(s.iconBg.toLowerCase()) ? "#dcebf7" : s.iconBg));
+        root.style.setProperty("--platform-icon-color", s.isDark ? "#8fc5e8" : (["#303030", "#262626"].includes(s.iconColor.toLowerCase()) ? "#246ba3" : s.iconColor));
         root.style.setProperty("--platform-button-radius", s.buttonRadius);
         const configuredFontSize = Number.parseFloat(s.fontSize);
         root.style.setProperty("font-size", `${Math.max(16, Number.isFinite(configuredFontSize) ? configuredFontSize : 16)}px`);

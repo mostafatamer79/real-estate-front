@@ -27,6 +27,11 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
   const { t, language } = useLanguage();
   const isRtl = language === 'ar';
   const [loading, setLoading] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+  const [publicationFeeInput, setPublicationFeeInput] = useState<string>(
+    campaign?.publicationFee ? String(campaign.publicationFee) : ''
+  );
   const [users, setUsers] = useState<any[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [sourceType, setSourceType] = useState<'existing' | 'new'>(campaign?.linkedResourceId ? 'existing' : 'new');
@@ -39,7 +44,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
     content: campaign?.content || '',
     frequency: campaign?.frequency || 'weekly',
     targetRole: campaign?.targetRole || '',
-    isActive: campaign?.isActive !== undefined ? campaign.isActive : true,
+    isActive: campaign?.isActive ?? false,
     sortOrder: campaign?.sortOrder ?? 0,
     scheduleMode: campaign?.scheduleMode || 'manual',
     assignedTo: campaign?.assignedTo || '',
@@ -164,6 +169,62 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
     loadResources();
   }, [formData.category, isOpen, isRtl, sourceType]);
 
+  useEffect(() => {
+    setPublicationFeeInput(campaign?.publicationFee ? String(campaign.publicationFee) : '');
+    setFormData((prev) => ({
+      ...prev,
+      isActive: campaign?.isActive ?? false,
+    }));
+  }, [campaign]);
+
+  const isPublishedAndPaid =
+    campaign?.approvalStatus === 'published' &&
+    Boolean(campaign?.invoiceId) &&
+    (!campaign?.invoice || campaign.invoice.status === 'paid');
+
+  const handleApproveAndIssueInvoice = async () => {
+    if (!campaign?.id) return;
+    const fee = Number(publicationFeeInput);
+    if (!Number.isFinite(fee) || fee <= 0 || fee > 9999999999) {
+      toast.error(isRtl ? 'يرجى إدخال رسوم نشر صحيحة أكبر من صفر' : 'Enter a valid positive publication fee');
+      return;
+    }
+    try {
+      setApproving(true);
+      await api.post(`/marketing/email-marketing/${campaign.id}/approve`, {
+        publicationFee: Number(fee.toFixed(2)),
+      });
+      toast.success(
+        isRtl
+          ? 'تم اعتماد الإعلان وإصدار الفاتورة للمعلن في المحفظة'
+          : 'Ad approved and invoice issued to advertiser Wallet'
+      );
+      onSuccess();
+      onClose();
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || t('common.error');
+      toast.error(Array.isArray(msg) ? msg[0] : msg);
+    } finally {
+      setApproving(false);
+    }
+  };
+
+  const handleRejectCampaign = async () => {
+    if (!campaign?.id) return;
+    try {
+      setRejecting(true);
+      await api.post(`/marketing/email-marketing/${campaign.id}/reject`, {});
+      toast.success(isRtl ? 'تم رفض الإعلان وإلغاء أي فاتورة غير مدفوعة' : 'Ad rejected and unpaid invoice cancelled');
+      onSuccess();
+      onClose();
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || t('common.error');
+      toast.error(Array.isArray(msg) ? msg[0] : msg);
+    } finally {
+      setRejecting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.content.trim()) {
@@ -174,8 +235,10 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
 
     try {
       setLoading(true);
-      const data = {
-        ...formData,
+      const { isActive, ...contentFields } = formData;
+      const data: Record<string, any> = {
+        ...contentFields,
+        ...(campaign?.id && isPublishedAndPaid ? { isActive } : {}),
         targetRole: formData.targetRole || null,
         assignedTo: formData.assignedTo || null,
         startDate: formData.startDate || null,
@@ -723,19 +786,102 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                   </div>
                 )}
               </div>
-            {/* Status */}
+            {/* Approval & Publication Fee Panel (Admin) */}
+            {campaign?.id ? (
+              <div className="md:col-span-2 rounded-2xl border border-amber-200/80 bg-amber-50/50 dark:bg-amber-950/20 p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-black text-slate-900 dark:text-slate-100">
+                      {isRtl ? 'اعتماد الإعلان وتسعير رسوم النشر' : 'Ad Approval & Publication Fee'}
+                    </p>
+                    <p className="text-[11px] font-bold text-muted-foreground">
+                      {isRtl
+                        ? 'رسوم النشر منفصلة تماماً عن سعر العقار المعلن. لا يُنشر الإعلان إلا بعد سداد الفاتورة.'
+                        : 'Publication fee is separate from property price. Ad publishes only after invoice payment.'}
+                    </p>
+                  </div>
+                  <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase bg-card border">
+                    {campaign.approvalStatus === 'published'
+                      ? (isRtl ? 'منشور ومدفوع' : 'Published & Paid')
+                      : campaign.approvalStatus === 'awaiting_payment'
+                      ? (isRtl ? 'بانتظار السداد' : 'Awaiting Payment')
+                      : campaign.approvalStatus === 'rejected'
+                      ? (isRtl ? 'مرفوض' : 'Rejected')
+                      : (isRtl ? 'قيد المراجعة' : 'Pending Review')}
+                  </span>
+                </div>
+
+                {campaign.approvalStatus !== 'published' && (
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+                    <div className="flex-1 space-y-1">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+                        {isRtl ? 'رسوم النشر (ر.س)' : 'Publication Fee (SAR)'}
+                        <SaudiRiyalSymbol iconClassName="h-3 w-3" />
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        max="9999999999"
+                        value={publicationFeeInput}
+                        onChange={(e) => setPublicationFeeInput(e.target.value)}
+                        placeholder={isRtl ? 'مثال: 250' : 'e.g. 250'}
+                        className="w-full h-[40px] bg-card border rounded-xl px-3 text-sm font-bold outline-none focus:border-blue-500"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      disabled={approving || rejecting}
+                      onClick={handleApproveAndIssueInvoice}
+                      className="px-4 h-[40px] rounded-xl bg-emerald-600 text-white text-xs font-black hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                    >
+                      {approving
+                        ? (isRtl ? 'جاري الإصدار...' : 'Issuing...')
+                        : (isRtl ? 'اعتماد وإصدار الفاتورة' : 'Approve & Issue Invoice')}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={approving || rejecting}
+                      onClick={handleRejectCampaign}
+                      className="px-4 h-[40px] rounded-xl bg-red-600 text-white text-xs font-black hover:bg-red-700 transition-colors disabled:opacity-50"
+                    >
+                      {rejecting ? (isRtl ? 'جاري الرفض...' : 'Rejecting...') : (isRtl ? 'رفض' : 'Reject')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="md:col-span-2 rounded-xl border bg-muted/60 px-4 py-3 text-[11px] font-bold text-muted-foreground">
+                {isRtl
+                  ? 'يُنشأ الإعلان أولاً بحالة «قيد المراجعة» وغير نشط، ثم يتم تسعيره وإصدار الفاتورة وسدادها قبل النشر.'
+                  : 'New ads are created as Pending and inactive until priced, invoiced, and paid.'}
+              </div>
+            )}
+
+            {/* Status (only toggleable after paid publication) */}
+            {campaign?.id && (
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">
                 <AlertCircle className="w-3 h-3" />
-                {isRtl ? 'الحالة' : t('admin.marketing.table.status')}
+                {isRtl ? 'تفعيل الظهور العام (بعد السداد فقط)' : t('admin.marketing.table.status')}
               </label>
               <div className="calm-panel flex items-center justify-between gap-3 p-3 bg-muted border border rounded-xl h-[46px]">
-                <span className="text-sm font-bold text-slate-700">{formData.isActive ? (isRtl ? 'نشط' : 'Active') : (isRtl ? 'متوقف' : 'Paused')}</span>
+                <span className="text-sm font-bold text-slate-700">
+                  {!isPublishedAndPaid
+                    ? (isRtl ? 'غير متاح قبل سداد الفاتورة' : 'Locked until invoice is paid')
+                    : formData.isActive
+                    ? (isRtl ? 'نشط' : 'Active')
+                    : (isRtl ? 'متوقف' : 'Paused')}
+                </span>
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    formData.isActive ? 'bg-card dark:bg-slate-900' : 'bg-slate-300'
+                  disabled={!isPublishedAndPaid}
+                  onClick={() => {
+                    if (!isPublishedAndPaid) return;
+                    setFormData({ ...formData, isActive: !formData.isActive });
+                  }}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    formData.isActive ? 'bg-emerald-500' : 'bg-slate-300'
                   }`}
                 >
                   <span
@@ -746,6 +892,7 @@ export default function MarketingCampaignModal({ isOpen, onClose, onSuccess, cam
                 </button>
               </div>
             </div>
+            )}
 
             <div className="space-y-2 md:col-span-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-400 flex items-center gap-1.5 px-1">

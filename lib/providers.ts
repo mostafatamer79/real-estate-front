@@ -68,7 +68,7 @@ export const deliveryLabel = (value: DeliveryMode, ar = true) =>
   value === "online" ? (ar ? "أونلاين" : "Online") : ar ? "حضوري" : "In person";
 export const providerStatus = (value: ProviderProfile["status"], ar = true) =>
   ({
-    pending: ar ? "قيد المراجعة" : "Under review",
+    pending: ar ? "أكمل توثيق نفاذ" : "Complete Nafath",
     approved: ar ? "معتمد" : "Approved",
     rejected: ar ? "مرفوض" : "Rejected",
     suspended: ar ? "معلق" : "Suspended",
@@ -83,7 +83,25 @@ export function providerError(error: unknown, fallback: string) {
       ? data.message
       : fallback;
 }
+export interface ProviderInvitation {
+  token: string;
+  expiresAt: string;
+}
+export interface ProviderInvitationValidation {
+  valid: boolean;
+  expiresAt?: string;
+}
+export type ProviderApplyInput = Partial<ProviderProfile> & {
+  invitationToken?: string;
+};
 export const providerApi = {
+  createInvitation: () =>
+    api.post<ProviderInvitation>("/service-providers/invitations"),
+  validateInvitation: (token: string) =>
+    api.get<ProviderInvitationValidation>(
+      "/service-providers/invitations/validate",
+      { params: { token } },
+    ),
   registrationFields:()=>api.get<ProviderRegistrationField[]>('/service-providers/registration-fields'),
   saveRegistrationFields:(items:ProviderRegistrationField[])=>api.put<ProviderRegistrationField[]>('/service-providers/registration-fields',{items}),
   specializations: () => api.get<ProviderSpecialization[]>('/service-providers/specializations'),
@@ -91,7 +109,7 @@ export const providerApi = {
   accountAction: (id:string,action:'activate'|'restrict'|'archive') => api.put(`/service-providers/${id}/account`,{action}),
   notice: (id:string,message:string) => api.post(`/service-providers/${id}/notice`,{message}),
   mine: () => api.get<ProviderProfile | null>("/service-providers/me"),
-  apply: (input: Partial<ProviderProfile>) =>
+  apply: (input: ProviderApplyInput) =>
     api.post<ProviderProfile>("/service-providers/apply", input),
   list: (page: number) =>
     api.get<{ items: ProviderUser[]; total: number }>("/service-providers", {

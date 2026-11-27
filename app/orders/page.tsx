@@ -1008,111 +1008,149 @@ export default function OrdersPage() {
                   </div>
                 ) : (
                   /* Architectural Order Cards List */
-                  <div className={styles.ordersList}>
-                    {myOrders.map((order) => (
-                      <article key={order.id} className={styles.orderCard}>
-                        {/* Header */}
-                        <div className={styles.orderHeader}>
-                          <div className={styles.orderTitleGroup}>
-                            <div className={styles.orderPropertyType}>
-                              <span>{order.propertyType}</span>
-                              <span
-                                className={`${styles.statusBadge} ${
-                                  order.orderType === "buy"
-                                    ? styles.statusBadgeBuy
-                                    : styles.statusBadgeRent
-                                }`}
-                              >
-                                {order.orderType === "buy" ? t("orders.buy") : t("orders.rent")}
-                              </span>
+                  <>
+                    <div className={styles.ordersToolbar}>
+                      <div className={styles.ordersSummary}>
+                        <span className={styles.ordersSummaryIcon} aria-hidden="true">
+                          <List className="w-4 h-4" />
+                        </span>
+                        <div>
+                          <span className={styles.ordersSummaryCount}>
+                            {myOrders.length.toLocaleString(language === "ar" ? "ar-SA-u-nu-arab" : "en-US")}
+                          </span>{" "}
+                          <span className={styles.ordersSummaryLabel}>
+                            {language === "ar" ? "طلب عقاري مسجل" : "registered property requests"}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={() => setActiveTab("create")}
+                        className={styles.detailsBtn}
+                      >
+                        <PlusCircle className="w-4 h-4" />
+                        <span>{t("orders.createOrder")}</span>
+                      </Button>
+                    </div>
+                    <div className={styles.ordersList}>
+                      {myOrders.map((order) => {
+                        const isBuy = order.orderType === "buy";
+                        return (
+                          <article
+                            key={order.id}
+                            className={styles.orderCard}
+                            data-order-type={isBuy ? "buy" : "rent"}
+                          >
+                            {/* Header */}
+                            <div className={styles.orderHeader}>
+                              <div className={styles.orderTitleGroup}>
+                                <div className={styles.orderPropertyType}>
+                                  <span className={styles.orderTypeIcon} aria-hidden="true">
+                                    {isBuy ? <Home className="w-4 h-4" /> : <Building className="w-4 h-4" />}
+                                  </span>
+                                  <span>{order.propertyType}</span>
+                                  <span
+                                    className={`${styles.statusBadge} ${
+                                      isBuy ? styles.statusBadgeBuy : styles.statusBadgeRent
+                                    }`}
+                                  >
+                                    {isBuy ? t("orders.buy") : t("orders.rent")}
+                                  </span>
+                                </div>
+                                <span className={styles.orderDate}>
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  <span>
+                                    {new Date(order.createdAt).toLocaleDateString(
+                                      language === "ar" ? "ar-SA" : "en-US",
+                                      { year: "numeric", month: "short", day: "numeric" }
+                                    )}
+                                  </span>
+                                </span>
+                              </div>
+                              <div className={styles.orderPriceBlock}>
+                                <span className={styles.orderPriceLabel}>
+                                  {language === "ar" ? "الميزانية" : "Budget"}
+                                </span>
+                                <div className={styles.orderPrice}>
+                                  <SaudiRiyalAmount
+                                    amount={order.price || 0}
+                                    locale={language === "ar" ? "ar-SA" : "en-US"}
+                                  />
+                                </div>
+                              </div>
                             </div>
-                            <span className={styles.orderDate}>
-                              <Calendar className="w-3.5 h-3.5" />
-                              <span>
-                                {new Date(order.createdAt).toLocaleDateString(
-                                  language === "ar" ? "ar-SA" : "en-US",
-                                  { year: "numeric", month: "short", day: "numeric" }
+
+                            {/* Details Grid */}
+                            <div className={styles.orderDetailsGrid}>
+                              <div className={styles.orderDetailItem}>
+                                <MapPin className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
+                                <span className={styles.orderDetailValue}>
+                                  {order.city} - {order.neighborhood}
+                                </span>
+                              </div>
+                              <div className={styles.orderDetailItem}>
+                                <Ruler className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
+                                <span className={styles.orderDetailValue}>
+                                  {order.area} {t("orders.unit.sqm")}
+                                </span>
+                              </div>
+                              <div className={styles.orderDetailItem}>
+                                <Calendar className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
+                                <span className={styles.orderDetailValue}>
+                                  {order.propertyAge}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Optional Specs Chips */}
+                            {((order.rooms != null && order.rooms > 0) ||
+                              (order.bathrooms != null && order.bathrooms > 0)) && (
+                              <div className={styles.specChipsRow}>
+                                {order.rooms != null && order.rooms > 0 && (
+                                  <span className={styles.specChip}>
+                                    <Bed className="w-3.5 h-3.5 text-[var(--oo-gold)]" />
+                                    <span>
+                                      {order.rooms} {t("orders.rooms")}
+                                    </span>
+                                  </span>
                                 )}
-                              </span>
-                            </span>
-                          </div>
-                          <div className={styles.orderPrice}>
-                            <SaudiRiyalAmount
-                              amount={order.price || 0}
-                              locale={language === "ar" ? "ar-SA" : "en-US"}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Details Grid */}
-                        <div className={styles.orderDetailsGrid}>
-                          <div className={styles.orderDetailItem}>
-                            <MapPin className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
-                            <span className={styles.orderDetailValue}>
-                              {order.city} - {order.neighborhood}
-                            </span>
-                          </div>
-                          <div className={styles.orderDetailItem}>
-                            <Ruler className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
-                            <span className={styles.orderDetailValue}>
-                              {order.area} {t("orders.unit.sqm")}
-                            </span>
-                          </div>
-                          <div className={styles.orderDetailItem}>
-                            <Calendar className="w-4 h-4 shrink-0 text-[var(--oo-gold)]" />
-                            <span className={styles.orderDetailValue}>
-                              {order.propertyAge}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Optional Specs Chips */}
-                        {((order.rooms != null && order.rooms > 0) ||
-                          (order.bathrooms != null && order.bathrooms > 0)) && (
-                          <div className={styles.specChipsRow}>
-                            {order.rooms != null && order.rooms > 0 && (
-                              <span className={styles.specChip}>
-                                <Bed className="w-3.5 h-3.5 text-[var(--oo-gold)]" />
-                                <span>
-                                  {order.rooms} {t("orders.rooms")}
-                                </span>
-                              </span>
+                                {order.bathrooms != null && order.bathrooms > 0 && (
+                                  <span className={styles.specChip}>
+                                    <Bath className="w-3.5 h-3.5 text-[var(--oo-gold)]" />
+                                    <span>
+                                      {order.bathrooms} {t("orders.baths")}
+                                    </span>
+                                  </span>
+                                )}
+                              </div>
                             )}
-                            {order.bathrooms != null && order.bathrooms > 0 && (
-                              <span className={styles.specChip}>
-                                <Bath className="w-3.5 h-3.5 text-[var(--oo-gold)]" />
-                                <span>
-                                  {order.bathrooms} {t("orders.baths")}
-                                </span>
-                              </span>
-                            )}
-                          </div>
-                        )}
 
-                        {/* Action Buttons */}
-                        <div className={styles.orderActions}>
-                          <button
-                            type="button"
-                            className={styles.deleteBtn}
-                            onClick={() => handleDeleteOrder(order.id)}
-                            aria-label={t("common.delete")}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>{t("common.delete")}</span>
-                          </button>
-                          <button
-                            type="button"
-                            className={styles.detailsBtn}
-                            onClick={() => router.push(`/orders/${order.id}`)}
-                            aria-label={t("orders.viewDetails")}
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>{t("orders.viewDetails")}</span>
-                          </button>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
+                            {/* Action Buttons */}
+                            <div className={styles.orderActions}>
+                              <button
+                                type="button"
+                                className={styles.deleteBtn}
+                                onClick={() => handleDeleteOrder(order.id)}
+                                aria-label={t("common.delete")}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>{t("common.delete")}</span>
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.detailsBtn}
+                                onClick={() => router.push(`/orders/${order.id}`)}
+                                aria-label={t("orders.viewDetails")}
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                                <span>{t("orders.viewDetails")}</span>
+                              </button>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </>
                 )}
               </div>
             </TabsContent>

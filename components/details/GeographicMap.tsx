@@ -5,6 +5,7 @@ import type { Map as MapInstance, Marker as MarkerInstance, StyleSpecification }
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Compass, Maximize2, Minimize2, Minus, Plus, RefreshCw } from 'lucide-react';
 import styles from './geographic-map.module.css';
+import { ensureNeighborhoodPlaces, NEIGHBORHOOD_PLACES } from './neighborhood-layers';
 
 export interface GeographicMapProps {
   latitude?: number;
@@ -12,6 +13,7 @@ export interface GeographicMapProps {
   showPropertyPin?: boolean;
   propertyPinColor?: string;
   enable3d?: boolean;
+  showPlaces?: boolean;
   isDark?: boolean;
   language?: string;
   className?: string;
@@ -28,6 +30,7 @@ const STREETS_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 // 3D building extrusions are attached progressively once the base map is ready.
 const SATELLITE_BASE_STYLE: StyleSpecification = {
   version: 8,
+  light: { anchor: 'viewport', color: '#fff3df', intensity: .35, position: [1.5, 155, 45] },
   sources: {
     'esri-satellite': {
       type: 'raster',
@@ -45,6 +48,7 @@ const SATELLITE_BASE_STYLE: StyleSpecification = {
       source: 'esri-satellite',
       minzoom: 0,
       maxzoom: 22,
+      paint: { 'raster-saturation': .12, 'raster-contrast': .06, 'raster-brightness-min': .07 },
     },
   ],
 };
@@ -61,13 +65,13 @@ const BUILDING_EXTRUSION_LAYER = {
       ['linear'],
       ['coalesce', ['get', 'render_height'], 0],
       0,
-      '#d4d4d8',
+      '#e4d8bc',
       20,
-      '#a1a1aa',
+      '#c5b899',
       60,
-      '#71717a',
+      '#a3b9bd',
       120,
-      '#52525b',
+      '#7794a5',
     ],
     'fill-extrusion-height': [
       'interpolate',
@@ -87,18 +91,18 @@ const BUILDING_EXTRUSION_LAYER = {
       14.5,
       ['coalesce', ['get', 'render_min_height'], 0],
     ],
-    'fill-extrusion-opacity': 0.85,
+    'fill-extrusion-opacity': .72,
   },
 };
 
-function ensureBuildingExtrusion(map: MapInstance, visible: boolean) {
+function ensureBuildingExtrusion(map: MapInstance, visible: boolean, showPlaces = true) {
   let sourceId = map.getSource('openfreemap')
     ? 'openfreemap'
     : map.getSource('openmaptiles')
     ? 'openmaptiles'
     : null;
 
-  if (!sourceId && visible) {
+  if (!sourceId && (visible || showPlaces)) {
     try {
       map.addSource('openfreemap', {
         type: 'vector',
@@ -118,8 +122,12 @@ function ensureBuildingExtrusion(map: MapInstance, visible: boolean) {
     }
   }
 
+  if (sourceId) ensureNeighborhoodPlaces(map, sourceId, showPlaces);
+
   if (map.getLayer('3d-buildings')) {
     map.setLayoutProperty('3d-buildings', 'visibility', visible ? 'visible' : 'none');
+    // Satellite roofs and vegetation stay visible beneath the optional volume layer.
+    map.setPaintProperty('3d-buildings', 'fill-extrusion-opacity', map.getSource('esri-satellite') ? .3 : .85);
   }
 }
 
@@ -142,6 +150,7 @@ export default function GeographicMap({
   showPropertyPin = true,
   propertyPinColor = '#d92d2d',
   enable3d = true,
+  showPlaces = true,
   language = 'ar',
   className,
   style,
@@ -166,8 +175,8 @@ export default function GeographicMap({
   const [retryKey, setRetryKey] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
-  const configRef = useRef({ latitude, longitude, showPropertyPin, propertyPinColor, isAr, mode, is3D });
-  configRef.current = { latitude, longitude, showPropertyPin, propertyPinColor, isAr, mode, is3D };
+  const configRef = useRef({ latitude, longitude, showPropertyPin, propertyPinColor, isAr, mode, is3D, showPlaces });
+  configRef.current = { latitude, longitude, showPropertyPin, propertyPinColor, isAr, mode, is3D, showPlaces };
   const initialMountCoordsRef = useRef({ latitude, longitude });
   const baseLoadedRef = useRef(false);
   const fellBackToStreetsRef = useRef(false);
@@ -277,10 +286,10 @@ export default function GeographicMap({
     };
 
     const scheduleBuildings = (map: MapInstance) => {
-      if (!configRef.current.is3D) return;
+      if (!configRef.current.is3D && !configRef.current.showPlaces) return;
       const attach = () => {
-        if (cancelled || !configRef.current.is3D) return;
-        ensureBuildingExtrusion(map, true);
+        if (cancelled) return;
+        ensureBuildingExtrusion(map, configRef.current.is3D, configRef.current.showPlaces);
       };
       if (typeof window.requestIdleCallback === 'function') {
         idleHandle = window.requestIdleCallback(attach, { timeout: 600 });
@@ -300,14 +309,15 @@ export default function GeographicMap({
         if (cancelled) return;
 
         const animateEntry = init3D && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const initialPitch = init3D ? 55 : 0;
+        const initialPitch = init3D ? 48 : 0;
         const initialStyle = initMode === 'satellite' ? SATELLITE_BASE_STYLE : STREETS_STYLE_URL;
 
         const map = new maplibregl.Map({
           container,
           style: initialStyle,
           center: [initLng, initLat],
-          zoom: animateEntry ? 15.6 : 16,
+          zoom: animateEntry ? 16 : 16.8,
+          maxZoom: 20,
           pitch: animateEntry ? 32 : initialPitch,
           bearing: -24,
           attributionControl: false,
@@ -349,7 +359,7 @@ export default function GeographicMap({
           setIsLoading(false);
           setHasError(false);
           if (animateEntry) {
-            map.easeTo({ zoom: 16, pitch: initialPitch, bearing: -24, duration: 850 });
+            map.easeTo({ zoom: 16.8, pitch: initialPitch, bearing: -24, duration: 850 });
           }
           scheduleBuildings(map);
           const attribution = map.getContainer().querySelector<HTMLDetailsElement>('.maplibregl-ctrl-attrib');
@@ -362,8 +372,8 @@ export default function GeographicMap({
           if (cancelled) return;
           const current3D = configRef.current.is3D;
           if (map.getSource('openfreemap') || map.getSource('openmaptiles')) {
-            ensureBuildingExtrusion(map, current3D);
-          } else if (baseLoadedRef.current && current3D) {
+            ensureBuildingExtrusion(map, current3D, configRef.current.showPlaces);
+          } else if (baseLoadedRef.current && (current3D || configRef.current.showPlaces)) {
             scheduleBuildings(map);
           }
         });
@@ -496,6 +506,12 @@ export default function GeographicMap({
       .addTo(map);
   }, [showPropertyPin, propertyPinColor, isAr, latitude, longitude]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || isLoading || !map.isStyleLoaded()) return;
+    ensureBuildingExtrusion(map, is3D, showPlaces);
+  }, [showPlaces, is3D, isLoading]);
+
   const handleModeChange = (newMode: 'satellite' | 'streets') => {
     if (newMode === mode) return;
     setMode(newMode);
@@ -521,7 +537,7 @@ export default function GeographicMap({
         styleTimeoutRef.current = null;
       }
       setIsLoading(false);
-      ensureBuildingExtrusion(map, configRef.current.is3D);
+      ensureBuildingExtrusion(map, configRef.current.is3D, configRef.current.showPlaces);
     });
     map.setStyle(styleTarget);
   };
@@ -532,7 +548,7 @@ export default function GeographicMap({
     const map = mapRef.current;
     if (!map) return;
 
-    const targetPitch = next3D ? 55 : 0;
+    const targetPitch = next3D ? 48 : 0;
     const targetBearing = next3D ? map.getBearing() : 0;
 
     if (reducedMotion) {
@@ -541,7 +557,7 @@ export default function GeographicMap({
       map.easeTo({ pitch: targetPitch, bearing: targetBearing, duration: 600 });
     }
 
-    ensureBuildingExtrusion(map, next3D);
+    ensureBuildingExtrusion(map, next3D, showPlaces);
   };
 
   const handleZoomIn = () => {
@@ -555,7 +571,7 @@ export default function GeographicMap({
   const handleResetBearing = () => {
     const map = mapRef.current;
     if (!map) return;
-    const targetPitch = is3D ? 55 : 0;
+    const targetPitch = is3D ? 48 : 0;
     if (reducedMotion) {
       map.jumpTo({ center: [longitude, latitude], bearing: 0, pitch: targetPitch });
     } else {
@@ -598,6 +614,12 @@ export default function GeographicMap({
     >
       <div ref={mapContainerRef} className={styles.map} />
       <div className={styles.vignette} aria-hidden="true" />
+      {showPlaces && <ul className={styles.placeLegend} aria-label={isAr ? 'الخدمات المحيطة حسب بيانات الخريطة' : 'Nearby services from map data'}>
+        {NEIGHBORHOOD_PLACES.map(place => <li key={place.id}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={place.path} /></svg>
+          {isAr ? place.ar : place.en}
+        </li>)}
+      </ul>}
 
       {/* Header */}
       <div className={styles.header}>

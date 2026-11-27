@@ -69,25 +69,24 @@ test('quote helper treats explicit numeric 0 as valid but rejects missing/negati
   assert.equal(missingQuote.total, null);
 });
 
-test('subscriptions/new page integrates quote helper, explicit availability, and scoped CSS', () => {
+test('subscriptions/new page offers ready packages with server pricing and scoped CSS', () => {
   // Scoped CSS module import & usage
   assert.match(newPageSource, /import\s+styles\s+from\s+["']\.\/subscription-redesign\.module\.css["']/);
   assert.match(newPageSource, /className=\{styles\.subscriptionPage\}/);
   assert.match(newPageSource, /className=\{styles\.packageGrid\}/);
-  assert.match(newPageSource, /className=\{styles\.departmentFieldset\}/);
   assert.match(newPageSource, /className=\{styles\.quoteSection\}/);
 
   // Real architectural artwork
   assert.match(newPageSource, /\/artworks\/chat05-subscriptions-arch\.svg/);
 
   // Production helper usage
-  assert.match(newPageSource, /buildCustomQuote\s*\(/);
-  assert.match(newPageSource, /resolveCustomQuoteGate\s*\(/);
-  assert.match(newPageSource, /pricingStatus/);
+  assert.match(newPageSource, /getPackagePrice\(selectedPackage, subscriptionType\)/);
+  assert.match(newPageSource, /packagesError/);
+  assert.doesNotMatch(renewPageSource, /mode=custom|تخصيص الإدارات/);
   assert.doesNotMatch(newPageSource, /emptyGlobalPricing/);
 
   // Retry & Pending Mutex
-  assert.match(newPageSource, /retryPricing/);
+  assert.match(newPageSource, /fetchData/);
   assert.match(newPageSource, /RotateCcw/);
   assert.match(newPageSource, /if\s*\(creating\)\s*return;/);
   assert.match(newPageSource, /isSubmitDisabled/);

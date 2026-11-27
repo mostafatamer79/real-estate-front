@@ -18,14 +18,14 @@
   --w-text-muted: #64748b;
   --w-border: #becbdc;
   --w-border-subtle: #d9e4f1;
-  --w-tab-active: #102b46;
-  --w-tab-on-active: #f6f8fc;
+  --w-tab-active: var(--brand-navy, #102b46);
+  --w-tab-on-active: #ffffff;
 
-  /* Brass / Gold Tokens (Light Mode: #946528 for high contrast on light) */
-  --w-brass: #946528;
-  --w-brass-hover: #7d5420;
-  --w-brass-tint: rgba(148, 101, 40, 0.08);
-  --w-brass-border: rgba(148, 101, 40, 0.28);
+  /* Brand Blue Accent Tokens */
+  --w-brass: var(--brand-accent, #246ba3);
+  --w-brass-hover: #1b5482;
+  --w-brass-tint: rgba(36, 107, 163, 0.09);
+  --w-brass-border: var(--brand-line, #b4cce0);
 
   /* Semantic status tokens */
   --w-status-paid-bg: #ecfdf5;
@@ -62,14 +62,14 @@
   --w-text-muted: #7d93aa;
   --w-border: #33465f;
   --w-border-subtle: #293c55;
-  --w-tab-active: var(--w-brass);
-  --w-tab-on-active: #101827;
+  --w-tab-active: var(--brand-accent, #8fc5e8);
+  --w-tab-on-active: var(--brand-on-accent, #102b46);
 
-  /* Brass / Gold Tokens (Dark Mode: #d8b381 luminous gold on dark) */
-  --w-brass: #d8b381;
-  --w-brass-hover: #ffd38c;
-  --w-brass-tint: rgba(216, 179, 129, 0.12);
-  --w-brass-border: rgba(216, 179, 129, 0.35);
+  /* Brand Blue Accent Tokens (Dark Mode) */
+  --w-brass: var(--brand-accent, #8fc5e8);
+  --w-brass-hover: #b3d8f1;
+  --w-brass-tint: rgba(143, 197, 232, 0.14);
+  --w-brass-border: var(--brand-line, #365572);
 
   --w-status-paid-bg: rgba(6, 95, 70, 0.25);
   --w-status-paid-text: #34d399;
@@ -383,31 +383,77 @@
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: 6px;
-  padding: 6px;
-  border: 1px solid var(--w-border);
-  border-radius: 12px;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--brand-line, #b4cce0);
+  border-radius: 16px;
   background: var(--w-surface);
 }
 .walletRoot .tabTrigger {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   min-width: 0;
-  min-height: 44px;
-  padding: 6px 9px;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--w-text-secondary);
-  line-height: 1.3;
-  text-align: start;
+  min-height: 92px;
+  padding: 14px 12px;
+  border: 1px solid var(--brand-line, #b4cce0);
+  border-radius: 12px;
+  background: linear-gradient(155deg, var(--brand-tint, #dcebf7) 0%, var(--w-surface-elevated) 100%);
+  color: var(--brand-navy, #102b46);
+  line-height: 1.35;
+  text-align: center;
   white-space: normal;
   box-shadow: none;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+:global(.dark) .walletRoot .tabTrigger {
+  border-color: var(--brand-line, #365572);
+  background: linear-gradient(155deg, rgba(36, 107, 163, 0.18) 0%, var(--w-surface-elevated) 100%);
+  color: var(--w-text-main);
+}
+.tabWatermark {
+  position: absolute;
+  inset-inline-end: -10px;
+  bottom: -12px;
+  width: 84px;
+  height: 84px;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--brand-blue, #246ba3);
+  opacity: var(--brand-watermark-opacity, 0.08);
+  mask-size: 500%;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+:global(.dark) .tabWatermark {
+  background-color: var(--brand-sky, #8fc5e8);
+}
+.tabIconTile {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--brand-tint, #dcebf7);
+  border: 1px solid var(--brand-line, #b4cce0);
+  color: var(--brand-blue, #246ba3);
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+:global(.dark) .tabIconTile {
+  background: rgba(143, 197, 232, 0.14);
+  border-color: var(--brand-line, #365572);
+  color: var(--brand-sky, #8fc5e8);
 }
 .tabIcon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   flex: none;
   background-color: currentColor;
   /* The original artwork occupies the central fifth of each transparent PNG. */
@@ -415,20 +461,70 @@
   mask-position: center;
   mask-repeat: no-repeat;
 }
-.tabTrigger small {
-  font-size: .6875rem;
-  font-weight: 500;
-}
-.walletRoot .tabTrigger[data-state="inactive"]:hover:not(:disabled) {
-  background: var(--w-surface-muted);
-  color: var(--w-text-main);
-}
-.walletRoot .tabTrigger[data-state="active"] {
-  background: var(--w-tab-active);
-  color: var(--w-tab-on-active);
+.tabLabel {
+  position: relative;
+  z-index: 1;
+  font-size: .875rem;
   font-weight: 700;
 }
-.walletRoot .tabTrigger:disabled { cursor: default; }
+.tabSoon {
+  position: relative;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(36, 107, 163, 0.12);
+  color: var(--brand-navy, #102b46);
+  font-size: .6875rem;
+  font-weight: 600;
+}
+:global(.dark) .tabSoon {
+  background: rgba(143, 197, 232, 0.16);
+  color: var(--brand-sky, #8fc5e8);
+}
+.walletRoot .tabTrigger[data-state="inactive"]:hover:not(:disabled) {
+  border-color: var(--brand-accent, #246ba3);
+  background: linear-gradient(155deg, #cde2f3 0%, var(--brand-tint, #dcebf7) 100%);
+  transform: translateY(-1px);
+}
+:global(.dark) .walletRoot .tabTrigger[data-state="inactive"]:hover:not(:disabled) {
+  border-color: var(--brand-accent, #8fc5e8);
+  background: linear-gradient(155deg, rgba(143, 197, 232, 0.22) 0%, var(--w-surface-elevated) 100%);
+}
+.walletRoot .tabTrigger[data-state="active"] {
+  background: linear-gradient(145deg, var(--brand-navy, #102b46) 0%, var(--brand-blue, #246ba3) 100%);
+  border-color: var(--brand-navy, #102b46);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 8px 20px -8px rgba(16, 43, 70, 0.45);
+}
+.walletRoot .tabTrigger[data-state="active"] .tabIconTile {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+.walletRoot .tabTrigger[data-state="active"] .tabWatermark {
+  background-color: #ffffff;
+  opacity: 0.12;
+}
+:global(.dark) .walletRoot .tabTrigger[data-state="active"] {
+  background: linear-gradient(145deg, #a7d4f0 0%, var(--brand-accent, #8fc5e8) 100%);
+  border-color: var(--brand-accent, #8fc5e8);
+  color: var(--brand-on-accent, #102b46);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+}
+:global(.dark) .walletRoot .tabTrigger[data-state="active"] .tabIconTile {
+  background: rgba(16, 43, 70, 0.14);
+  border-color: rgba(16, 43, 70, 0.22);
+  color: var(--brand-on-accent, #102b46);
+}
+:global(.dark) .walletRoot .tabTrigger[data-state="active"] .tabWatermark {
+  background-color: var(--brand-on-accent, #102b46);
+  opacity: 0.12;
+}
+.walletRoot .tabTrigger:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
 .walletRoot .tabTrigger:focus-visible { outline-offset: -3px !important; }
 .walletRoot .tabTrigger[data-state="active"]:focus-visible { outline-color: var(--w-tab-on-active) !important; }
 
@@ -441,7 +537,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .tabTrigger:only-child { grid-column: 1 / -1; }
-  .walletRoot .tabTrigger { font-size: .75rem; gap: 5px; }
+  .walletRoot .tabTrigger { min-height: 82px; padding: 12px 10px; gap: 6px; }
+  .tabLabel { font-size: .78rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .walletRoot .tabTrigger[data-state="inactive"]:hover:not(:disabled) { transform: none; }
 }
 .walletContentCard {
   background: var(--w-surface);
@@ -549,9 +649,9 @@
 .balanceDetails { display: flex; flex-direction: column; gap: .75rem; min-width: 0; }
 .balanceActions { display: flex; flex-direction: column; gap: .75rem; flex-shrink: 0; min-width: 150px; }
 .balanceHero {
-  background: radial-gradient(ellipse at 35% 100%, rgb(216 179 129 / 10%), transparent 65%), #0b192c;
+  background: radial-gradient(ellipse at 35% 100%, rgb(143 197 232 / 14%), transparent 65%), #0b192c;
   color: #f5f4f0;
-  border-color: rgb(216 179 129 / 22%);
+  border-color: rgb(143 197 232 / 24%);
   isolation: isolate;
 }
 .balanceHero::before {
@@ -560,23 +660,23 @@
   inset-inline: 12%;
   top: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #d8b381, transparent);
+  background: linear-gradient(90deg, transparent, var(--brand-sky, #8fc5e8), transparent);
   opacity: .55;
   pointer-events: none;
 }
 .balanceHero .balanceAmountTypography { color: #f5f4f0; }
 .balanceDetails > div:first-child > span:first-of-type { color: #c8d7e6; }
-.balanceDetails > div:first-child > div:first-child { background: #1c2e46; color: #d8b381; }
+.balanceDetails > div:first-child > div:first-child { background: #1c2e46; color: var(--brand-sky, #8fc5e8); }
 .balanceDetails > div:nth-child(2) > span { color: #c8d7e6; }
-.balanceHero .balanceStatusActive { background: #1c2e46; border-color: #506078; color: #d8b381; }
+.balanceHero .balanceStatusActive { background: #1c2e46; border-color: #506078; color: var(--brand-sky, #8fc5e8); }
 .balanceHero .balanceStatusUnavailable, .balanceHero .balanceStatusStale { background: #30291d; border-color: #9d763b; color: #ffd38c; }
-.balanceDetails > p { color: #ffd38c; }
-.balanceHero .actionBtnPrimary { background: #d8b381; border-color: #d8b381; color: #0b192c; }
-.balanceHero .actionBtnPrimary:hover:not(:disabled) { background: #ffd38c; }
+.balanceDetails > p { color: #c8d7e6; }
+.balanceHero .actionBtnPrimary { background: var(--brand-sky, #8fc5e8); border-color: var(--brand-sky, #8fc5e8); color: var(--brand-navy, #102b46); }
+.balanceHero .actionBtnPrimary:hover:not(:disabled) { background: var(--brand-tint, #dcebf7); }
 .balanceHero .actionBtnSecondary { background: transparent; border-color: #506078; color: #f5f4f0; }
-.balanceHero .actionBtnSecondary:hover:not(:disabled) { background: #1c2e46; border-color: #d8b381; }
+.balanceHero .actionBtnSecondary:hover:not(:disabled) { background: #1c2e46; border-color: var(--brand-sky, #8fc5e8); }
 .balanceHero .ledgerGraphic {
-  color: #d8b381;
+  color: var(--brand-sky, #8fc5e8);
   inset-inline-end: 12rem;
   opacity: .38;
   animation: ledgerFloat 7s ease-in-out infinite;
@@ -587,7 +687,7 @@
 .balanceHero .actionBtnPrimary:active:not(:disabled),
 .balanceHero .actionBtnSecondary:active:not(:disabled) { transform: translateY(1px); }
 .balanceHero .actionBtnPrimary:focus-visible,
-.balanceHero .actionBtnSecondary:focus-visible { outline: 2px solid #d8b381; outline-offset: 4px; }
+.balanceHero .actionBtnSecondary:focus-visible { outline: 2px solid var(--brand-sky, #8fc5e8); outline-offset: 4px; }
 @keyframes ledgerFloat {
   0%, 100% { transform: translateY(-50%) rotate(-2deg); }
   50% { transform: translateY(calc(-50% - 8px)) rotate(1deg); }

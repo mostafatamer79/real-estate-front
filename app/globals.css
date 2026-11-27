@@ -12,6 +12,7 @@
 @import "./cinematic.css";
 @import "./cinematic-site.css";
 @import "./offers-orders-design.css";
+@import "./platform-brand.css";
 
 @custom-variant dark (&:is(.dark *));
 

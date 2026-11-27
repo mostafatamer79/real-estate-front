@@ -21,6 +21,7 @@ import {
   Menu,
   X as CloseIcon,
   Loader2,
+  Wrench,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SaudiRiyalAmount, SaudiRiyalSymbol } from "@/components/ui/saudi-riyal";
@@ -123,7 +124,19 @@ function DepartmentHubContent() {
   // ── Allowed departments ───────────────────────────────────────────────────
   const allowedDepts = useMemo(() => {
     if (!user) return [];
-    return DEPTS.filter((d) => canAccessDepartment(user, d.key) && moduleStatus(d.key) !== "disabled");
+    const standardDepts = DEPTS.filter(
+      (d) => canAccessDepartment(user, d.key) && moduleStatus(d.key) !== "disabled",
+    );
+    if (moduleStatus("services") !== "disabled") {
+      standardDepts.push({
+        key: "services",
+        labelAr: "الخدمات",
+        labelEn: "Services",
+        href: user.role === "admin" ? "/admin/service-providers" : "/service-providers",
+        Icon: Wrench,
+      });
+    }
+    return standardDepts;
   }, [user, moduleStatus]);
 
   // ── Fetch dashboard summary ───────────────────────────────────────────────
@@ -356,6 +369,7 @@ function DepartmentHubContent() {
                         disabled ? "opacity-60 cursor-not-allowed" : "hover:shadow-[0_10px_26px_rgba(15,23,42,0.10)]"
                       }`}
                     >
+                      <Icon className="brand-watermark" aria-hidden="true" />
                       <div className="flex items-center justify-between px-6 py-6">
                         <div className="flex items-center gap-4">
                           <div className="calm-icon w-10 h-10 rounded-2xl bg-muted flex items-center justify-center">
@@ -369,7 +383,7 @@ function DepartmentHubContent() {
                           </div>
                         </div>
                         <div className="calm-panel w-20 h-20 rounded-[1.25rem] bg-muted shadow-[0_10px_20px_rgba(15,23,42,0.08)] flex items-center justify-center">
-                          {disabled ? <Lock className="w-9 h-9 text-muted-foreground dark:text-slate-400" /> : <Icon className="w-9 h-9 text-slate-900" />}
+                          {disabled ? <Lock className="w-9 h-9 text-muted-foreground dark:text-slate-400" /> : <Icon className="w-9 h-9 text-[var(--brand-accent)]" />}
                         </div>
                       </div>
                     </Link>

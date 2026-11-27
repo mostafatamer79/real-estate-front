@@ -1,0 +1,135 @@
+.footer {
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+  background-color: var(--brand-navy, #102b46);
+  color: #ffffff;
+  border-top: 1px solid rgba(143, 197, 232, 0.24);
+  padding: 1.75rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  transition: opacity 0.15s ease;
+}
+
+.logoLink:hover {
+  opacity: 0.9;
+}
+
+.logoLink:focus-visible {
+  outline: 2px solid var(--brand-sky, #8fc5e8);
+  outline-offset: 4px;
+}
+
+.logo {
+  display: block;
+  height: 7rem;
+  width: 7rem;
+  object-fit: contain;
+}
+
+.qrWrap {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 1rem;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: var(--brand-sky, #8fc5e8);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--brand-sky, #8fc5e8);
+  outline-offset: 3px;
+}
+
+.linkIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--brand-sky, #8fc5e8);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 2.25rem 2rem;
+  }
+
+  .inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .brandGroup {
+    justify-content: flex-start;
+    gap: 1.5rem;
+  }
+
+  .logo {
+    height: 8rem;
+    width: 8rem;
+  }
+
+  .nav {
+    width: auto;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .linkList {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+}

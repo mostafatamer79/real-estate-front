@@ -141,6 +141,8 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         { id: 'marketing', href: '/admin/marketing', label: isRtl ? 'إدارة التسويق' : 'Marketing Management' },
         { id: 'properties-management', href: '/admin/properties-management',  label: isRtl ? 'إدارة الاملاك' : 'Properties Management' },
         { id: 'legal', href: '/admin/legal',  label: isRtl ? 'الإدارة القانونية' : 'Legal Management' },
+        { id: 'service-providers', href: '/admin/service-providers', icon: Wrench, label: isRtl ? 'مزودو الخدمات والموثقون' : 'Providers and notaries' },
+        { id: 'service-requests', href: '/admin/service-requests', label: isRtl ? 'طلبات الخدمات' : 'Service Requests' },
       ]
     },
     {
@@ -156,7 +158,6 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     {
       title: isRtl ? 'الخدمات' : 'Services',
       items: [
-        { id: 'service-providers', href: '/admin/service-providers', icon: Wrench, label: isRtl ? 'مزودو الخدمات والموثقون' : 'Providers and notaries' },
         { id: 'post-purchase', href: '/admin/services?type=post_purchase', icon: Wrench, label: isRtl ? 'خدمات ما بعد الشراء' : 'Post-purchase Services' },
         { id: 'legal-services', href: '/admin/services?type=legal', icon: ShieldAlert, label: isRtl ? 'الخدمات القانونية' : 'Legal Services' },
         { id: 'construction', href: '/admin/services?type=construction', icon: Building2, label: isRtl ? 'البناء والمقاولات' : 'Construction' },
@@ -261,9 +262,7 @@ function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                       '/admin/wallet': 'financial',
                       '/admin/transactions': 'financial',
                       '/admin/marketing': 'marketing',
-                      '/admin/service-providers': 'services',
                       '/admin/services': 'services',
-                      '/admin/service-requests': 'services',
                       '/admin/legal': 'disputes',
                       '/admin/packages': 'subscriptions',
                       '/admin/customer-service': 'customerservice',

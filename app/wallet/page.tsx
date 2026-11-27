@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import MobileAppHeader from '@/app/src/components/MobileAppHeader';
 import { WalletTab, Commission } from './components/types';
 import WalletTabs from './components/WalletSidebar';
@@ -26,6 +27,7 @@ export type BalanceStatus = 'idle' | 'loading' | 'available' | 'stale' | 'error'
 export type SectionFetchStatus = 'idle' | 'loading' | 'success' | 'stale' | 'error';
 
 const WalletPage = () => {
+  const router = useRouter();
   const { t, language } = useLanguage();
   const { settings } = useSettings();
   const { isOpen, message, isAdmin } = useSectionGuard('wallet');
@@ -317,7 +319,7 @@ const WalletPage = () => {
       className={`${styles.walletRoot} w-full min-h-dvh-safe relative overflow-x-hidden`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      <MobileAppHeader theme={settings.isDark ? "dark" : "light"} title={t('action.wallet') || 'المحفظة'} />
+      <MobileAppHeader theme={settings.isDark ? "dark" : "light"} title={t('action.wallet') || 'المحفظة'} onBack={() => router.push('/details')} />
 
       {/* Loading Skeleton */}
       {isLoading && balance === null && combinedInvoices.length === 0 && (

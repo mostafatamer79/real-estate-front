@@ -12,7 +12,6 @@ import { SettingsProvider } from "@/context/SettingsContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import ThemeToggle from "./src/components/ThemeToggle";
 import { SITE_NAME, SITE_DESCRIPTION, getSiteUrl, buildPageMetadata } from "@/lib/seo";
 
 const geistSans = Geist({
@@ -108,7 +107,6 @@ export default function RootLayout({
                     <SiteFooter />
                     <AdminImpersonationReturn />
                   </div>
-                  <ThemeToggle />
                   <Toaster />
                   <SonnerToaster
                     richColors

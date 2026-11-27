@@ -70,6 +70,7 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
       setLoading(true);
       const data = {
         ...formData,
+        targetRole: formData.targetRole || undefined,
         price: Number(formData.price) || 0,
         area: Number(formData.area) || 0,
       };
@@ -85,7 +86,11 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
         });
       }
 
-      toast.success(isRtl ? 'تم إرسال طلب الإعلان للإدارة بنجاح' : 'Ad request sent to admin successfully');
+      toast.success(
+        isRtl
+          ? 'تم إرسال طلب الإعلان للمراجعة بنجاح. بعد اعتماد الإدارة وتحديد رسوم النشر، ستصلك الفاتورة في المحفظة لسدادها ونشر الإعلان.'
+          : 'Ad request submitted for review. Once priced by admin, pay the invoice in your Wallet to publish.'
+      );
       onSuccess();
       onClose();
     } catch (error) {
@@ -117,9 +122,24 @@ export default function RequestAdModal({ isOpen, onClose, onSuccess }: Props) {
                 {isRtl ? 'طلب إعلان جديد' : 'Request New Ad'}
               </h2>
               <p className="text-[11px] text-muted-foreground dark:text-slate-500 font-bold mt-1">
-                {isRtl ? 'سيتم مراجعة طلبك من قبل الإدارة' : 'Your request will be reviewed by admin'}
+                {isRtl ? 'النشر متاح فقط بعد المراجعة الإدارية وسداد رسوم النشر عبر المحفظة' : 'Publication is paid-only after admin review and Wallet invoice payment'}
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* 4-Step Paid Publication Workflow */}
+        <div className="px-3 sm:px-6 pt-4">
+          <div className="rounded-2xl border border-blue-200/70 bg-blue-50/60 dark:bg-blue-950/20 p-4 space-y-2">
+            <p className="text-[11px] font-black uppercase tracking-wider text-blue-800 dark:text-blue-300">
+              {isRtl ? 'خطوات نشر الإعلان المدفوع (4 خطوات):' : 'Paid Ad Publication Flow (4 Steps):'}
+            </p>
+            <ol className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-300 list-decimal list-inside">
+              <li>{isRtl ? 'إرسال طلب الإعلان للمراجعة' : 'Submit ad request for review'}</li>
+              <li>{isRtl ? 'مراجعة الإدارة وتحديد رسوم النشر' : 'Admin reviews & sets publication fee'}</li>
+              <li>{isRtl ? 'سداد الفاتورة من صفحة المحفظة' : 'Pay the invoice in your Wallet'}</li>
+              <li>{isRtl ? 'نشر وتفعيل الإعلان تلقائياً بعد الدفع' : 'Ad publishes automatically after payment'}</li>
+            </ol>
           </div>
         </div>
 
