@@ -2,7 +2,6 @@
 
 import MobileAppHeader from "@/app/src/components/MobileAppHeader";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Mail, MessageCircle, Phone,
@@ -653,18 +652,6 @@ export function CustomerServicePage({ sourcePath }: CustomerServicePageProps = {
 
       {/* Architectural Hero Header */}
       <header className={styles.heroSection} style={{ backgroundColor: settings.csCardBg || undefined }}>
-        {/* Architectural Concierge Artwork */}
-        <div className={styles.heroArtwork}>
-          <Image
-            src="/artworks/chat04-concierge.svg"
-            alt="Customer Service Architectural Concierge"
-            width={400}
-            height={250}
-            priority
-            className="w-full h-full object-contain"
-          />
-        </div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <button
             type="button"

@@ -191,6 +191,8 @@ export default function PortalHome() {
   const [platformInView, setPlatformInView] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [doorOpen, setDoorOpen] = useState(false);
+  const [isEnteringDoor, setIsEnteringDoor] = useState(false);
+  const [isInsideRoom, setIsInsideRoom] = useState(false);
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
 
   // Feedback form state (wired to opinionApi)
@@ -501,18 +503,77 @@ export default function PortalHome() {
     }
   };
 
-  const toggleServicesDoor = useCallback((focusOnOpen = false) => {
-    setDoorOpen((prev) => {
-      const next = !prev;
-      if (next && focusOnOpen) {
+  const enterServicesDoor = useCallback((focusOnOpen = false) => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setDoorOpen(true);
+      setIsInsideRoom(true);
+      return;
+    }
+    setDoorOpen(true);
+    setIsEnteringDoor(true);
+    const timer = setTimeout(() => {
+      setIsInsideRoom(true);
+      setIsEnteringDoor(false);
+      if (focusOnOpen) {
         requestAnimationFrame(() => {
           const firstBtn = serviceCatsRef.current?.querySelector("button");
           firstBtn?.focus({ preventScroll: true });
         });
       }
-      return next;
-    });
+    }, 650);
+    return () => clearTimeout(timer);
   }, []);
+
+  const exitServicesDoor = useCallback(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setIsInsideRoom(false);
+      setDoorOpen(false);
+      return;
+    }
+    setIsEnteringDoor(true);
+    setIsInsideRoom(false);
+    const timer = setTimeout(() => {
+      setIsEnteringDoor(false);
+      setDoorOpen(false);
+      requestAnimationFrame(() => {
+        document.getElementById("door-toggle")?.focus({ preventScroll: true });
+      });
+    }, 450);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleServicesDoor = useCallback(
+    (focusOnOpen = false) => {
+      if (doorOpen || isInsideRoom) {
+        exitServicesDoor();
+      } else {
+        enterServicesDoor(focusOnOpen);
+      }
+    },
+    [doorOpen, isInsideRoom, exitServicesDoor, enterServicesDoor],
+  );
+
+  useEffect(() => {
+    if (!isInsideRoom) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        exitServicesDoor();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isInsideRoom, exitServicesDoor]);
 
   // Support dialog controls
   const openSupportDialog = () => {
@@ -1031,7 +1092,9 @@ export default function PortalHome() {
               </div>
 
               <div className="db-door-layout">
-                <div className={`db-door-surround${doorOpen ? " is-open" : ""}`}>
+                <div
+                  className={`db-door-surround${doorOpen ? " is-open" : ""}${isEnteringDoor ? " is-entering" : ""}`}
+                >
                   <div className="db-door-inner" aria-hidden={!doorOpen}>
                     <span className="db-door-inner-title">
                       {isAr ? (
@@ -1064,38 +1127,23 @@ export default function PortalHome() {
                     type="button"
                     id="door-toggle"
                     className={`db-wood-door${doorOpen ? " open" : ""}`}
-                    aria-expanded={doorOpen}
+                    aria-expanded={doorOpen || isInsideRoom}
                     aria-controls="door-categories"
                     aria-label={
-                      doorOpen
+                      doorOpen || isInsideRoom
                         ? isAr
                           ? "إغلاق باب الخدمات"
                           : "Close services door"
                         : isAr
-                          ? "افتح باب الخدمات"
-                          : "Open services door"
+                          ? "افتح باب الخدمات وادخل للمنصة"
+                          : "Open services door and step inside"
                     }
                     onClick={() => toggleServicesDoor(false)}
                   >
                     <span className="db-door-face db-door-front">
-                      <span className="db-door-engraving">
-                        {isAr ? (
-                          <>
-                            الوساطة
-                            <br />
-                            الرقمية
-                          </>
-                        ) : (
-                          <>
-                            Digital
-                            <br />
-                            Brokerage
-                          </>
-                        )}
-                      </span>
                       <span className="db-door-handle" aria-hidden="true" />
                       <span className="db-door-prompt">
-                        {doorOpen
+                        {doorOpen || isInsideRoom
                           ? isAr
                             ? "اضغط لإغلاق الباب"
                             : "Click to close"
@@ -1139,9 +1187,9 @@ export default function PortalHome() {
                       type="button"
                       className="db-text-button"
                       id="open-door"
-                      aria-expanded={doorOpen}
+                      aria-expanded={doorOpen || isInsideRoom}
                       aria-controls="door-categories"
-                      onClick={() => toggleServicesDoor(true)}
+                      onClick={() => enterServicesDoor(true)}
                     >
                       {isAr ? "افتح باب الخدمات ←" : "Open services door →"}
                     </button>
@@ -1212,6 +1260,170 @@ export default function PortalHome() {
                 </div>
               </div>
             </section>
+
+            {/* Immersive Walkthrough Interior Stage ("كني دخلت صدق") */}
+            <div
+              className={`db-inside-portal-overlay${isInsideRoom ? " is-active" : ""}${isEnteringDoor ? " is-entering" : ""}`}
+              role="dialog"
+              aria-modal="true"
+              aria-label={isAr ? "بهو الخدمات العقارية الداخلي" : "Interior Services Hall"}
+              hidden={!isInsideRoom && !isEnteringDoor}
+            >
+              <div className="db-inside-backdrop-image" aria-hidden="true" />
+              <div className="db-inside-ambient-glow" aria-hidden="true" />
+
+              <header className="db-inside-topbar">
+                <div className="db-inside-brand">
+                  <span className="db-inside-badge">
+                    {isAr ? "02 / بهو الخدمات العقارية" : "02 / INTERIOR SERVICES HALL"}
+                  </span>
+                  <span className="db-inside-location">
+                    {isAr ? "أنت الآن داخل فضاء الخدمات" : "You have stepped inside"}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  className="db-inside-exit-button"
+                  onClick={exitServicesDoor}
+                  aria-label={isAr ? "الرجوع للخارج وإغلاق الباب" : "Step outside and close door"}
+                >
+                  <span>{isAr ? "الرجوع للخارج" : "Step Outside"}</span>
+                  <span className="db-exit-icon" aria-hidden="true">
+                    {isAr ? "↩" : "↪"}
+                  </span>
+                </button>
+              </header>
+
+              <div className="db-inside-content">
+                <div className="db-inside-header">
+                  <span className="db-inside-welcome-tag">
+                    {isAr ? "استكشف الخدمات من الداخل" : "Explore Services From Within"}
+                  </span>
+                  <h2>
+                    {isAr ? (
+                      <>
+                        خدمات متكاملة.
+                        <br />
+                        ترافق كل خطوة في رحلتك.
+                      </>
+                    ) : (
+                      <>
+                        Integrated Services.
+                        <br />
+                        Accompanying every step of your journey.
+                      </>
+                    )}
+                  </h2>
+                  <p>
+                    {isAr
+                      ? "اختر فئة الخدمة المناسبة لتتعرّف على متطلباتها وتبدأ طلبك مباشرة بموثوقية والتزام."
+                      : "Select a service category to review requirements and start your verified request."}
+                  </p>
+                </div>
+
+                <div className="db-inside-services-grid">
+                  <div
+                    className="db-inside-tabs"
+                    role="tablist"
+                    aria-label={isAr ? "فئات الخدمات" : "Service categories"}
+                  >
+                    {realServices.map((service, idx) => (
+                      <button
+                        key={service.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={selectedServiceIndex === idx}
+                        className={`db-inside-tab-item${selectedServiceIndex === idx ? " is-active" : ""}`}
+                        onClick={() => setSelectedServiceIndex(idx)}
+                      >
+                        <span className="db-tab-num">0{idx + 1}</span>
+                        <span className="db-tab-title">{service.title}</span>
+                        {service.status === "soon" && !isAdmin ? (
+                          <span className="db-soon-pill">{isAr ? "قريبًا" : "Soon"}</span>
+                        ) : (
+                          <span className="db-tab-arrow" aria-hidden="true">↖</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {activeService && (
+                    <div className="db-inside-detail-card" aria-live="polite">
+                      <div className="db-inside-card-header">
+                        <span className="db-detail-kicker">
+                          {isAr ? "تفاصيل الخدمة المختارة" : "Selected Service Details"}
+                        </span>
+                        <h3>{activeService.title}</h3>
+                      </div>
+                      <p className="db-inside-card-desc">{activeService.description}</p>
+
+                      <div className="db-inside-card-actions">
+                        {activeService.status === "soon" && !isAdmin ? (
+                          <span className="db-soon-pill">
+                            {isAr ? "هذه الخدمة ستتوفر قريبًا" : "Coming soon"}
+                          </span>
+                        ) : (
+                          <Link
+                            className="db-inside-action-btn"
+                            href={resolvePlatformHref(
+                              activeService.status === "soon"
+                                ? activeService.previewHref
+                                : activeService.href,
+                            )}
+                            onClick={(e) =>
+                              handleAuthAwareNav(
+                                activeService.status === "soon"
+                                  ? activeService.previewHref
+                                  : activeService.href,
+                                true,
+                                e,
+                              )
+                            }
+                          >
+                            <span>
+                              {activeService.status === "soon"
+                                ? t("services.adminPreview")
+                                : activeService.id === "legal"
+                                  ? isAr
+                                    ? "اختر التخصص القانوني"
+                                    : "Choose legal specialty"
+                                  : isAr
+                                    ? "ابدأ طلب الخدمة"
+                                    : "Start service request"}
+                            </span>
+                            <span aria-hidden="true">↖</span>
+                          </Link>
+                        )}
+
+                        <button
+                          type="button"
+                          className="db-inside-secondary-btn"
+                          onClick={exitServicesDoor}
+                        >
+                          {isAr ? "الرجوع للخارج ↩" : "Return outside ↩"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <footer className="db-inside-footer">
+                <p>
+                  {isAr
+                    ? "جميع الخدمات تخضع للأنظمة والمعايير المعتمدة من الهيئة العامة للعقار (فال)."
+                    : "All services comply with Real Estate General Authority standards."}
+                </p>
+                <button
+                  type="button"
+                  className="db-inside-close-text"
+                  onClick={exitServicesDoor}
+                >
+                  {isAr ? "إغلاق والعودة للرئيسية ↩" : "Close and return to home ↩"}
+                </button>
+              </footer>
+            </div>
 
             {/* About Us (Full content from /about + Digital Experience) */}
             <section id="about" className="db-section db-about">

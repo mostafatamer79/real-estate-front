@@ -244,28 +244,6 @@
   overflow: hidden;
 }
 
-.heroArtwork {
-  position: absolute;
-  top: 50%;
-  inset-inline-end: 2%;
-  transform: translateY(-50%);
-  width: clamp(240px, 35vw, 420px);
-  height: clamp(180px, 28vw, 320px);
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-:global(.dark) .heroArtwork {
-  opacity: 0.45;
-  filter: drop-shadow(0 0 20px rgba(230, 187, 120, 0.15));
-}
-
-@media (max-width: 768px) {
-  .heroArtwork {
-    display: none;
-  }
-}
-
 /* Card Foundations */
 .cardBase {
   background-color: var(--cs-surface);
